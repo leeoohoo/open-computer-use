@@ -3,9 +3,11 @@
 import { Button } from "@/components/ui/button"
 import { signInWithGoogle, signInAnonymously } from "@/lib/api"
 import { createClient } from "@/lib/supabase/client"
+import { SparklesCore } from "@/components/ui/sparkles"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
+import { useTheme } from "next-themes"
 import { HeaderGoBack } from "../components/header-go-back"
 import { useRouter } from "next/navigation"
 
@@ -14,6 +16,7 @@ export default function LoginPage() {
   const [isAnonymousLoading, setIsAnonymousLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const { theme } = useTheme()
 
   async function handleSignInWithGoogle() {
     const supabase = createClient()
@@ -73,20 +76,18 @@ export default function LoginPage() {
 
   return (
     <div className="relative bg-background flex h-dvh w-full flex-col">
-      {/* Grid Pattern with high visibility - matching landing page */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, rgb(128, 128, 128) 1px, transparent 1px),
-            linear-gradient(to bottom, rgb(128, 128, 128) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px',
-          opacity: 0.2,
-          maskImage: 'linear-gradient(to bottom, black 0%, transparent 17%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 17%)'
-        }}
-      />
+      {/* Sparkles Background */}
+      <div className="absolute inset-0 w-full h-full">
+        <SparklesCore
+          id="auth-sparkles"
+          background="transparent"
+          minSize={0.4}
+          maxSize={1}
+          particleDensity={50}
+          className="w-full h-full"
+          particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
+        />
+      </div>
       {/* Elegant monotonic bottom-up gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-blue-100/25 via-blue-50/15 via-blue-25/8 to-transparent dark:from-blue-950/20 dark:via-blue-900/12 dark:via-blue-800/6 dark:to-transparent pointer-events-none z-0" />
       <HeaderGoBack href="/" />

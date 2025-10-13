@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { Header } from "@/app/components/layout/header"
 import { AppSidebar } from "@/app/components/layout/sidebar/app-sidebar"
+import { SparklesCore } from "@/components/ui/sparkles"
+import { useTheme } from "next-themes"
 import { useUserPreferences } from "@/lib/user-preference-store/provider"
 import { MessagesProvider } from "@/lib/chat-store/messages/provider"
 import { ProjectNavigator } from "@/app/components/project/project-navigator"
@@ -13,22 +15,22 @@ import { cn } from "@/lib/utils"
 import { ChatStreamingProvider } from "@/lib/chat-streaming-store/provider"
 import dynamic from "next/dynamic"
 
-// Grid background component - matching landing page style
+// Sparkles background component - matching landing page style
 function GridBackground() {
+  const { theme } = useTheme()
+
   return (
-    <div
-      className="absolute inset-0 pointer-events-none"
-      style={{
-        backgroundImage: `
-          linear-gradient(to right, rgb(156, 163, 175) 1px, transparent 1px),
-          linear-gradient(to bottom, rgb(156, 163, 175) 1px, transparent 1px)
-        `,
-        backgroundSize: '60px 60px',
-        opacity: 0.25,
-        maskImage: 'linear-gradient(to bottom, black, transparent 100%)',
-        WebkitMaskImage: 'linear-gradient(to bottom, black, transparent 100%)'
-      }}
-    />
+    <div className="absolute inset-0 w-full h-full">
+      <SparklesCore
+        id="chat-sparkles"
+        background="transparent"
+        minSize={0.4}
+        maxSize={1}
+        particleDensity={50}
+        className="w-full h-full"
+        particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
+      />
+    </div>
   )
 }
 

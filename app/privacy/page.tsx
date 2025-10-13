@@ -3,10 +3,12 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { SparklesCore } from "@/components/ui/sparkles"
 import { ArrowLeft, Shield, Lock, Database, Globe, Users, Clock, Mail, FileText, Eye, Download, Trash2, Settings, Baby, Code, Edit, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
 import { LandingHeader } from "@/app/components/landing/landing-header"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -156,6 +158,7 @@ const privacySections = [
 export default function PrivacyPolicyPage() {
   const [activeSection, setActiveSection] = useState<string | null>(null)
   const [isMobile, setIsMobile] = useState(false)
+  const { theme } = useTheme()
 
   useEffect(() => {
     const checkMobile = () => {
@@ -191,20 +194,18 @@ export default function PrivacyPolicyPage() {
 
   return (
     <div className="min-h-screen bg-background relative">
-      {/* Grid Pattern Background */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, rgb(128, 128, 128) 1px, transparent 1px),
-            linear-gradient(to bottom, rgb(128, 128, 128) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px',
-          opacity: 0.2,
-          maskImage: 'linear-gradient(to bottom, black, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black, transparent 100%)'
-        }}
-      />
+      {/* Sparkles Background */}
+      <div className="absolute inset-0 w-full h-full">
+        <SparklesCore
+          id="privacy-sparkles"
+          background="transparent"
+          minSize={0.4}
+          maxSize={1}
+          particleDensity={50}
+          className="w-full h-full"
+          particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
+        />
+      </div>
 
       {/* Header */}
       <LandingHeader />
