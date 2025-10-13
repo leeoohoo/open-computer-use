@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { AuroraText } from "@/components/ui/aurora-text"
 import { PointerHighlight } from "@/components/ui/pointer-highlight"
 import { HeroParallaxChat } from "@/components/ui/hero-parallax-chat"
+import { SparklesCore } from "@/components/ui/sparkles"
 import { BentoGrid, BentoCard } from "@/components/magicui/bento-grid"
 import { Globe as GlobeComponent } from "@/components/magicui/globe"
 import { Tree, Folder, File, type TreeViewElement } from "@/components/magicui/file-tree"
@@ -13,6 +15,7 @@ import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, A
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
 import { LandingHeader } from "./landing-header"
 import { MockChatDemo } from "./mock-chat-demo"
 import { MockVMDisplay } from "./mock-vm-display"
@@ -279,6 +282,7 @@ function TreeItem({ element }: { element: TreeViewElement }) {
 export function LandingPage() {
   const [selectedFaq, setSelectedFaq] = useState<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
+  const { theme } = useTheme()
 
   // Detect mobile device
   useEffect(() => {
@@ -316,20 +320,18 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background relative">
-      {/* Grid Pattern with high visibility */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, rgb(128, 128, 128) 1px, transparent 1px),
-            linear-gradient(to bottom, rgb(128, 128, 128) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px',
-          opacity: 0.2,
-          maskImage: 'linear-gradient(to bottom, black 0%, transparent 17%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 17%)'
-        }}
-      />
+      {/* Sparkles Background */}
+      <div className="absolute inset-0 w-full h-full">
+        <SparklesCore
+          id="landing-sparkles"
+          background="transparent"
+          minSize={0.4}
+          maxSize={1}
+          particleDensity={50}
+          className="w-full h-full"
+          particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
+        />
+      </div>
 
       {/* Fixed header */}
       <LandingHeader />
@@ -349,24 +351,27 @@ export function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
-            className="w-full max-w-5xl"
+            className="w-full max-w-7xl"
           >
             <motion.div variants={itemVariants} className="text-center mb-8">
               <h1 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl lg:text-6xl"
+                "font-semibold tracking-tight",
+                isMobile ? "text-4xl" : "text-5xl sm:text-6xl lg:text-7xl xl:text-8xl"
               )}>
                 <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   AI Agents That{" "}
                 </span>
-                <PointerHighlight 
+                <PointerHighlight
                   containerClassName="inline-block"
                   rectangleClassName="border-primary/50"
                   pointerClassName="text-primary"
                 >
-                  <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent px-2 py-1">
+                  <AuroraText
+                    className="px-2 py-1"
+                    colors={["#7dd3fc", "#38bdf8", "#0ea5e9", "#2563eb", "#1e40af"]}
+                  >
                     Control Computers
-                  </span>
+                  </AuroraText>
                 </PointerHighlight>
                 <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   {" "}Like Humans
@@ -382,18 +387,18 @@ export function LandingPage() {
             
             {/* VM display and Chat Input */}
             <div className="relative">
-              <motion.div 
-                variants={itemVariants} 
+              <motion.div
+                variants={itemVariants}
                 className={cn(
                   "relative z-10",
-                  isMobile 
-                    ? "mb-6" 
+                  isMobile
+                    ? "mb-6"
                     : "mb-[-40px]" // Overlap on desktop
                 )}
               >
                 <div className={cn(
                   "mx-auto",
-                  isMobile ? "max-w-sm" : "max-w-2xl"
+                  isMobile ? "max-w-sm" : "max-w-3xl lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl"
                 )}>
                   <MockVMDisplay />
                 </div>

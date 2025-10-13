@@ -3,6 +3,7 @@
 import { ChatInput } from "@/app/components/chat-input/chat-input"
 import { Conversation } from "@/app/components/chat/conversation"
 import { ToolInvocation } from "@/app/components/chat/tool-invocation"
+import { AuroraText } from "@/components/ui/aurora-text"
 
 import { useChatDraft } from "@/app/hooks/use-chat-draft"
 import { useChats } from "@/lib/chat-store/chats/provider"
@@ -563,9 +564,28 @@ export function Chat() {
               className="text-center mb-2"
             >
               <h1 className="text-4xl sm:text-5xl font-bold tracking-tight relative z-10 leading-relaxed pb-1 flex items-center justify-center gap-2 flex-wrap">
-                <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  {user ? `Hello${user.display_name ? `, ${user.display_name}` : ''}!` : 'LLMHub: Your AI'}
-                </span>
+                {user ? (
+                  <>
+                    <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      Hello
+                    </span>
+                    {user.display_name && (
+                      <>
+                        <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">, </span>
+                        <AuroraText colors={["#7dd3fc", "#38bdf8", "#0ea5e9", "#2563eb", "#1e40af"]}>
+                          {user.display_name}
+                        </AuroraText>
+                      </>
+                    )}
+                    <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">!</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      LLMHub: Your AI
+                    </span>
+                  </>
+                )}
                 {!user && (
                   <motion.span 
                     className="relative inline-flex items-center overflow-hidden align-middle"

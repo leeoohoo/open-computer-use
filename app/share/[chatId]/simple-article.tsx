@@ -2,9 +2,10 @@
 
 import type { Tables } from "@/app/types/database.types"
 import { LlmhubIcon } from "@/components/icons/llmhub"
+import { SparklesCore } from "@/components/ui/sparkles"
 import { useTheme } from "next-themes"
 import Image from "next/image"
-import { 
+import {
   ChatContainerContent,
   ChatContainerRoot,
 } from "@/components/prompt-kit/chat-container"
@@ -42,22 +43,22 @@ type ArticleProps = {
   messages: MessageType[]
 }
 
-// Grid background component - matching the regular chat page
+// Sparkles background component - matching the regular chat page
 function GridBackground() {
+  const { theme } = useTheme()
+
   return (
-    <div 
-      className="absolute inset-0 pointer-events-none"
-      style={{
-        backgroundImage: `
-          linear-gradient(to right, rgb(128, 128, 128) 1px, transparent 1px),
-          linear-gradient(to bottom, rgb(128, 128, 128) 1px, transparent 1px)
-        `,
-        backgroundSize: '80px 80px',
-        opacity: 0.2,
-        maskImage: 'linear-gradient(to bottom, black, transparent 100%)',
-        WebkitMaskImage: 'linear-gradient(to bottom, black, transparent 100%)'
-      }}
-    />
+    <div className="absolute inset-0 w-full h-full">
+      <SparklesCore
+        id="share-sparkles"
+        background="transparent"
+        minSize={0.4}
+        maxSize={1}
+        particleDensity={50}
+        className="w-full h-full"
+        particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
+      />
+    </div>
   )
 }
 
