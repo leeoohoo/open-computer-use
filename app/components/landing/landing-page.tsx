@@ -358,7 +358,13 @@ export function LandingPage() {
             viewport={{ once: true, amount: 0.1 }}
             className="w-full max-w-7xl"
           >
-            <motion.div variants={itemVariants} className="text-center mb-8">
+            <motion.div
+              variants={itemVariants}
+              className={cn(
+                "text-center mb-8",
+                isMobile ? "space-y-5" : "space-y-7"
+              )}
+            >
               <h1 className={cn(
                 "font-semibold tracking-tight",
                 isMobile ? "text-4xl" : "text-5xl sm:text-6xl lg:text-7xl xl:text-8xl"
@@ -385,9 +391,39 @@ export function LandingPage() {
                   {" "}Like Humans
                 </span>
               </h1>
+              <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+                <Button
+                  asChild
+                  size={isMobile ? "lg" : "xl"}
+                  className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <Link href="/auth">
+                    Get started
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size={isMobile ? "lg" : "xl"}
+                  variant="secondary"
+                  className={cn(
+                    "w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5",
+                    "bg-muted text-foreground hover:bg-muted/80"
+                  )}
+                >
+                  <Link
+                    href="https://github.com/LLmHub-dev/open-computer-use"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Github className="mr-2 h-4 w-4" />
+                    We are open source {"<3"}
+                  </Link>
+                </Button>
+              </div>
               <p className={cn(
                 "text-muted-foreground mx-auto",
-                isMobile ? "mt-4 text-base max-w-md" : "mt-6 text-lg sm:text-xl max-w-2xl"
+                isMobile ? "text-base max-w-md" : "text-lg sm:text-xl max-w-2xl"
               )}>
                 Your AI employees work on real computers. They browse, code, and get things done while you focus on what matters.
               </p>
