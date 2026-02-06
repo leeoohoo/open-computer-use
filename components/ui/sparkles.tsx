@@ -204,8 +204,8 @@ export const SparklesCore = (props: ParticlesProps) => {
                 random: false,
                 size: false,
                 speed: {
-                  min: 0.1,
-                  max: 1,
+                  min: 0.03,
+                  max: 0.15,
                 },
                 spin: {
                   acceleration: 0,
@@ -230,7 +230,7 @@ export const SparklesCore = (props: ParticlesProps) => {
                   mode: "delete",
                   value: 0,
                 },
-                value: particleDensity || 120,
+                value: particleDensity ?? 12,
               },
               opacity: {
                 value: {
@@ -240,7 +240,7 @@ export const SparklesCore = (props: ParticlesProps) => {
                 animation: {
                   count: 0,
                   enable: true,
-                  speed: speed || 4,
+                  speed: speed ?? 1.5,
                   decay: 0,
                   delay: 0,
                   sync: false,

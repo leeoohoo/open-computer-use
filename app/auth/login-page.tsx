@@ -83,7 +83,7 @@ export default function LoginPage() {
           background="transparent"
           minSize={0.4}
           maxSize={1}
-          particleDensity={50}
+          particleDensity={6}
           className="w-full h-full"
           particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
         />
