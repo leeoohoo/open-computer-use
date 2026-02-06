@@ -394,7 +394,7 @@ export function LandingPage() {
               <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
                 <Button
                   asChild
-                  size={isMobile ? "lg" : "xl"}
+                  size="lg"
                   className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 shadow-sm hover:shadow-md transition-shadow"
                 >
                   <Link href="/auth">
@@ -404,7 +404,7 @@ export function LandingPage() {
                 </Button>
                 <Button
                   asChild
-                  size={isMobile ? "lg" : "xl"}
+                  size="lg"
                   variant="secondary"
                   className={cn(
                     "w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5",
