@@ -13,19 +13,15 @@ import { useChatSession } from "@/lib/chat-store/session/provider"
 import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
 import { Info, Users, Copy, Link as LinkIcon, UserPlus, SidebarSimple, Globe, Desktop } from "@phosphor-icons/react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 import { HeaderSidebarTrigger } from "./header-sidebar-trigger"
 import { toast } from "sonner"
 import { ChatVisibilityToggle } from "@/app/components/chat/chat-visibility-toggle"
-import { useState } from "react"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
-import { RainbowButton } from "@/components/ui/rainbow-button"
-import { VMCreationGuide } from "@/app/components/guide/vm-creation-guide"
 
 interface HeaderProps {
   hasSidebar: boolean
@@ -33,17 +29,13 @@ interface HeaderProps {
 
 export function Header({ hasSidebar }: HeaderProps) {
   const isMobile = useBreakpoint(768)
-  const pathname = usePathname()
   const { user } = useUser()
   const { preferences } = useUserPreferences()
   const { refresh, getChatById } = useChats()
   const { chatId } = useChatSession()
   const { isOpen: isNavigatorOpen, toggleNavigator } = useProjectNavigator()
   const isMultiModelEnabled = preferences.multiModelEnabled
-  const [isGuideOpen, setIsGuideOpen] = useState(false)
-
   const isLoggedIn = !!user
-  const isOnChatPage = pathname === "/" || pathname?.startsWith("/chat")
 
 
   // Get current chat to check if it's collaborative
@@ -89,7 +81,6 @@ export function Header({ hasSidebar }: HeaderProps) {
 
   return (
     <>
-      <VMCreationGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
       <header className="h-app-header pointer-events-none fixed top-0 right-0 left-0 z-40">
       <div className="relative mx-auto flex h-full max-w-full items-center justify-between px-2 sm:px-4 lg:px-6 xl:px-8">
         <div className="flex w-full items-center justify-between min-w-0">
@@ -164,14 +155,6 @@ export function Header({ hasSidebar }: HeaderProps) {
                   </TooltipTrigger>
                   <TooltipContent>{isNavigatorOpen ? "Hide" : "Show"} LLMHub's Computer</TooltipContent>
                 </Tooltip>
-              )}
-              
-              {/* Rainbow Button - only show on chat pages */}
-              {isOnChatPage && (
-                <RainbowButton 
-                  className="bg-background dark:bg-card dark:hover:bg-card/70"
-                  onClick={() => setIsGuideOpen(true)}
-                />
               )}
               
               {/* Theme Toggle */}
