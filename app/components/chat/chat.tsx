@@ -3,8 +3,6 @@
 import { ChatInput } from "@/app/components/chat-input/chat-input"
 import { Conversation } from "@/app/components/chat/conversation"
 import { ToolInvocation } from "@/app/components/chat/tool-invocation"
-import { AuroraText } from "@/components/ui/aurora-text"
-
 import { useChatDraft } from "@/app/hooks/use-chat-draft"
 import { useChats } from "@/lib/chat-store/chats/provider"
 import { useMessages } from "@/lib/chat-store/messages/provider"
@@ -16,6 +14,7 @@ import { useUser } from "@/lib/user-store/provider"
 import { cn } from "@/lib/utils"
 import type { Message } from "@ai-sdk/react"
 import { AnimatePresence, motion } from "motion/react"
+import { Caveat } from "next/font/google"
 import dynamic from "next/dynamic"
 import { redirect } from "next/navigation"
 import { useEffect, useMemo, useState, useRef, useCallback } from "react"
@@ -29,6 +28,11 @@ import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
 import { useChatStreaming } from "@/lib/chat-streaming-store/provider"
 // import { ResearchSuggestions } from "./research-suggestions" // Removed trending searches
 import { themeConfig } from "@/lib/theme-config"
+
+const handwriting = Caveat({
+  subsets: ["latin"],
+  weight: ["600"],
+})
 
 
 const DialogAuth = dynamic(
@@ -563,21 +567,21 @@ export function Chat() {
               transition={{ delay: 0.1, duration: 0.5 }}
               className="text-center mb-2"
             >
-              <h1 className="text-4xl sm:text-5xl font-bold tracking-tight relative z-10 leading-relaxed pb-1 flex items-center justify-center gap-2 flex-wrap">
+              <h1
+                className={cn(
+                  "text-4xl sm:text-5xl font-bold tracking-tight relative z-10 leading-relaxed pb-1 flex items-center justify-center gap-2 flex-wrap",
+                  user ? handwriting.className : ""
+                )}
+              >
                 {user ? (
                   <>
-                    <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
-                      Hello
-                    </span>
+                    <span className="inline-block -rotate-1 text-primary/90">Hello</span>
                     {user.display_name && (
                       <>
-                        <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">, </span>
-                        <AuroraText colors={["#7dd3fc", "#38bdf8", "#0ea5e9", "#2563eb", "#1e40af"]}>
-                          {user.display_name}
-                        </AuroraText>
+                        <span className="inline-block -rotate-1 text-primary/90">, {user.display_name}</span>
                       </>
                     )}
-                    <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">!</span>
+                    <span className="inline-block -rotate-1 text-primary/90">!</span>
                   </>
                 ) : (
                   <>
