@@ -1,16 +1,5 @@
 /* Mobile performance optimizations */
 @media (max-width: 768px) {
-  /* Disable heavy animations on mobile */
-  * {
-    animation-duration: 0.3s !important;
-    animation-delay: 0s !important;
-  }
-
-  /* Disable complex transitions on mobile */
-  .transition-all {
-    transition: opacity 0.2s ease !important;
-  }
-
   /* Reduce shadow complexity */
   .shadow-sm,
   .shadow,
@@ -40,11 +29,6 @@
   .blur-2xl,
   .blur-3xl {
     filter: blur(8px) !important;
-  }
-
-  /* Disable will-change on mobile to save memory */
-  [class*="animate-"] {
-    will-change: auto !important;
   }
 
   /* Optimize scrolling */

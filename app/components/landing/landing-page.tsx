@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { AuroraText } from "@/components/ui/aurora-text"
 import { PointerHighlight } from "@/components/ui/pointer-highlight"
 import { HeroParallaxChat } from "@/components/ui/hero-parallax-chat"
 import { SparklesCore } from "@/components/ui/sparkles"
@@ -20,6 +19,12 @@ import { LandingHeader } from "./landing-header"
 import { MockChatDemo } from "./mock-chat-demo"
 import { MockVMDisplay } from "./mock-vm-display"
 import { motion, AnimatePresence } from "framer-motion"
+import { Caveat } from "next/font/google"
+
+const handwriting = Caveat({
+  subsets: ["latin"],
+  weight: ["600"],
+})
 
 const features = [
   {
@@ -366,12 +371,15 @@ export function LandingPage() {
                   rectangleClassName="border-primary/50"
                   pointerClassName="text-primary"
                 >
-                  <AuroraText
-                    className="px-2 py-1"
-                    colors={["#7dd3fc", "#38bdf8", "#0ea5e9", "#2563eb", "#1e40af"]}
+                  <span
+                    className={cn(
+                      "inline-block px-2 py-1 text-primary/90 -rotate-1",
+                      "text-[1.05em] leading-[0.9]",
+                      handwriting.className
+                    )}
                   >
                     Control Computers
-                  </AuroraText>
+                  </span>
                 </PointerHighlight>
                 <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   {" "}Like Humans

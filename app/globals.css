@@ -905,14 +905,8 @@ code {
   transform-origin: center;
 }
 
-/* Mobile-specific optimizations */
+/* Mobile-specific optimizations (non-animation) */
 @media (max-width: 768px) {
-  .animate-ring-pulse,
-  .animate-gentle-pulse,
-  .animate-scale-bounce {
-    animation-duration: 3s; /* Slower animations on mobile */
-  }
-
   /* Simplify ring shadows on mobile for performance */
   .ring-2 {
     --tw-ring-width: 1px;
@@ -925,111 +919,6 @@ code {
   /* Disable complex shadows on mobile */
   .shadow-lg {
     --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-  }
-
-  /* Reduce animation complexity on mobile */
-  @media (prefers-reduced-motion: reduce) {
-    .animate-ring-pulse,
-    .animate-gentle-pulse,
-    .animate-scale-bounce {
-      animation: none;
-    }
-  }
-}
-
-/* Mobile-specific animation adjustments */
-@media (max-width: 768px) {
-  /* Slow down all Tailwind animations on mobile */
-  .animate-spin {
-    animation-duration: 1.5s !important;
-  }
-
-  .animate-pulse {
-    animation-duration: 4s !important;
-  }
-
-  .animate-bounce {
-    animation-duration: 1.5s !important;
-  }
-
-  /* Slow down custom animations */
-  .animate-smoke-1 {
-    animation-duration: 60s !important;
-  }
-
-  .animate-smoke-2 {
-    animation-duration: 80s !important;
-  }
-
-  .animate-smoke-3 {
-    animation-duration: 50s !important;
-  }
-
-  .animate-rainbow {
-    animation-duration: 3s !important;
-  }
-
-  .animate-scroll {
-    animation-duration: 60s !important;
-  }
-
-  /* Slow down the beam animation on mobile */
-  .animate-slow-spin {
-    animation-duration: 10s !important;
-  }
-
-  /* Slow down all transitions */
-  * {
-    transition-duration: 300ms !important;
-  }
-
-  /* Specific transition adjustments */
-  .transition-all {
-    transition-duration: 300ms !important;
-  }
-
-  .duration-150 {
-    transition-duration: 200ms !important;
-  }
-
-  .duration-200 {
-    transition-duration: 250ms !important;
-  }
-
-  .duration-300 {
-    transition-duration: 350ms !important;
-  }
-
-  .duration-500 {
-    transition-duration: 600ms !important;
-  }
-
-  /* Framer Motion specific adjustments via CSS custom properties */
-  :root {
-    --motion-duration-scale: 1.5;
-  }
-
-  /* Define spin keyframe if not already defined by Tailwind */
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  /* Slow down inline smoke animations in project navigator on mobile */
-  div[style*="smoke1"] {
-    animation: smoke1 8s ease-out infinite !important;
-  }
-
-  div[style*="smoke2"] {
-    animation: smoke2 10s ease-out infinite !important;
-  }
-
-  div[style*="smoke3"] {
-    animation: smoke3 12s ease-out infinite !important;
   }
 }
 
