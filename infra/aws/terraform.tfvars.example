@@ -1,0 +1,78 @@
+# =============================================================================
+# LLMHub — AWS ECS Fargate Deployment Configuration
+# Copy this file to terraform.tfvars and fill in your values.
+# =============================================================================
+
+aws_region   = "us-east-1"
+project_name = "llmhub"
+environment  = "production"
+
+# -----------------------------------------------------------------------------
+# Container Images (your ECR URIs)
+# -----------------------------------------------------------------------------
+
+frontend_image = "<account-id>.dkr.ecr.us-east-1.amazonaws.com/llmhub-frontend:latest"
+backend_image  = "<account-id>.dkr.ecr.us-east-1.amazonaws.com/llmhub-backend:latest"
+
+# -----------------------------------------------------------------------------
+# Task Resources
+# Fargate valid combinations: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
+# -----------------------------------------------------------------------------
+
+task_cpu        = 1024  # 1 vCPU total
+task_memory     = 2048  # 2 GB total
+frontend_cpu    = 512
+frontend_memory = 1024
+backend_cpu     = 512
+backend_memory  = 1024
+
+# -----------------------------------------------------------------------------
+# Scaling
+# -----------------------------------------------------------------------------
+
+desired_count         = 1
+min_capacity          = 1
+max_capacity          = 4
+cpu_scaling_target    = 70   # Scale out when avg CPU > 70%
+memory_scaling_target = 80   # Scale out when avg memory > 80%
+
+# -----------------------------------------------------------------------------
+# HTTPS — leave empty to run HTTP-only, or provide ACM certificate ARN
+# To create a certificate: aws acm request-certificate --domain-name yourdomain.com
+# -----------------------------------------------------------------------------
+
+certificate_arn = ""
+# certificate_arn = "arn:aws:acm:us-east-1:<account-id>:certificate/<cert-id>"
+
+# -----------------------------------------------------------------------------
+# Frontend Environment Variables
+# These are merged with the defaults (NODE_ENV, PYTHON_BACKEND_URL, etc.)
+# -----------------------------------------------------------------------------
+
+frontend_env_vars = {
+  ENCRYPTION_KEY             = "your-encryption-key"
+  CSRF_SECRET                = "your-csrf-secret"
+  NEXT_PUBLIC_SUPABASE_URL   = "https://xxxxx.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "your-supabase-anon-key"
+  SUPABASE_SERVICE_ROLE      = "your-supabase-service-role"
+  STRIPE_API_KEY             = "sk_live_xxxxx"
+  STRIPE_WEBHOOK_SECRET      = "whsec_xxxxx"
+  STRIPE_PRICE_STARTER       = "price_xxxxx"
+  STRIPE_PRICE_PROFESSIONAL  = "price_xxxxx"
+  STRIPE_PRICE_ENTERPRISE    = "price_xxxxx"
+}
+
+# -----------------------------------------------------------------------------
+# Backend Environment Variables
+# These are merged with the defaults (SERVER_HOST, SERVER_PORT, CORS_ORIGINS, etc.)
+# -----------------------------------------------------------------------------
+
+backend_env_vars = {
+  ENCRYPTION_KEY    = "your-encryption-key"
+  CSRF_SECRET       = "your-csrf-secret"
+  SUPABASE_URL      = "https://xxxxx.supabase.co"
+  SUPABASE_ANON_KEY = "your-supabase-anon-key"
+  SUPABASE_SERVICE_ROLE = "your-supabase-service-role"
+  GOOGLE_SEARCH_KEY = "your-google-search-key"
+  GOOGLE_SEARCH_CX  = "your-google-search-cx"
+}
