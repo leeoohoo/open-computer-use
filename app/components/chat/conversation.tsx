@@ -210,7 +210,7 @@ export function Conversation({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{
-                      duration: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0.3 : 0.2,
+                      duration: 0.2,
                       ease: "easeOut",
                     }}
                     layout

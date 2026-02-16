@@ -702,18 +702,6 @@
     animation: scroll 50s linear infinite;
   }
 
-  /* Responsive scroll speeds */
-  @media (max-width: 640px) {
-    .animate-scroll {
-      animation: scroll 40s linear infinite;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .animate-scroll {
-      animation: scroll 35s linear infinite;
-    }
-  }
 
   /* Enhanced rainbow animation for buttons */
   .rainbow-button-border {
@@ -804,18 +792,6 @@
     backface-visibility: hidden;
   }
 
-  /* Slow down smoke animations on mobile */
-  @media (max-width: 768px) {
-    .animate-smoke-1,
-    .animate-smoke-2,
-    .animate-smoke-3,
-    .animate-smoke-1-optimized,
-    .animate-smoke-2-optimized,
-    .animate-smoke-3-optimized {
-      animation-duration: 90s !important;
-      opacity: 0.5;
-    }
-  }
 }
 
 code {
@@ -925,13 +901,6 @@ code {
 /* Custom animation for slow spin - works on all devices */
 .animate-slow-spin {
   animation: spin 6s linear infinite;
-}
-
-/* Force slower animations on mobile with high specificity */
-@media (max-width: 768px) {
-  body .animate-slow-spin {
-    animation: spin 10s linear infinite !important;
-  }
 }
 
 /* sonner toast */

@@ -57,13 +57,9 @@ export function Chat() {
   const wordRef = useRef<HTMLSpanElement>(null)
   
   useEffect(() => {
-    // Slower interval on mobile devices
-    const isMobile = window.innerWidth <= 768
-    const intervalDuration = isMobile ? 3500 : 2500
-    
     const interval = setInterval(() => {
       setCurrentWordIndex((prev) => (prev + 1) % words.length)
-    }, intervalDuration)
+    }, 2500)
     return () => clearInterval(interval)
   }, [])
   
@@ -626,7 +622,7 @@ export function Chat() {
                         animate={{ y: "0%", opacity: 1 }}
                         exit={{ y: "-100%", opacity: 0 }}
                         transition={{ 
-                          duration: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0.7 : 0.5,
+                          duration: 0.5,
                           ease: [0.25, 0.46, 0.45, 0.94]
                         }}
                         className="absolute w-full h-full flex items-center justify-center"

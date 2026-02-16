@@ -19,7 +19,11 @@ const navItems = [
   { href: "/blog", label: "Blog", external: true }
 ]
 
-export function LandingHeader() {
+export function LandingHeader({
+  animateBrandFromIntro = false,
+}: {
+  animateBrandFromIntro?: boolean
+}) {
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState("hero")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -144,6 +148,7 @@ export function LandingHeader() {
                 className="flex items-center gap-2 group flex-shrink-0"
               >
                 <motion.div
+                  layoutId={animateBrandFromIntro ? "landing-brand-logo" : undefined}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ duration: 0.2 }}
@@ -163,12 +168,15 @@ export function LandingHeader() {
                     />
                   )}
                 </motion.div>
-                <span className={cn(
-                  "font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent transition-all duration-500 whitespace-nowrap text-base sm:text-lg",
-                  scrolled ? "lg:text-lg" : "lg:text-xl"
-                )}>
+                <motion.span
+                  layoutId={animateBrandFromIntro ? "landing-brand-text" : undefined}
+                  className={cn(
+                    "font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent transition-all duration-500 whitespace-nowrap text-base sm:text-lg",
+                    scrolled ? "lg:text-lg" : "lg:text-xl"
+                  )}
+                >
                   LLMHub
-                </span>
+                </motion.span>
               </Link>
 
               {/* Desktop Navigation */}

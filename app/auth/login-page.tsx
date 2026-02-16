@@ -77,7 +77,7 @@ export default function LoginPage() {
   return (
     <div className="relative bg-background flex h-dvh w-full flex-col">
       {/* Sparkles Background */}
-      <div className="absolute inset-0 w-full h-full">
+      <div className="pointer-events-none absolute inset-0 w-full h-full">
         <SparklesCore
           id="auth-sparkles"
           background="transparent"
@@ -96,10 +96,10 @@ export default function LoginPage() {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <h1 className="text-foreground text-3xl font-medium tracking-tight sm:text-4xl">
-              Meet your AI computer assistant
+              Meet the AI that executes, not excuses.
             </h1>
             <p className="text-muted-foreground mt-3">
-              An AI employee that controls your computer to automate tasks, browse the web, and manage your digital workspace.
+              Your always-on AI operator that runs workflows, navigates the web, and handles the busywork in your digital workspace. You decide the goal. It delivers the result.
             </p>
           </div>
           {error && (

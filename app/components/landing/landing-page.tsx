@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { NoiseBackground } from "@/components/ui/noise-background"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -18,13 +19,22 @@ import { useTheme } from "next-themes"
 import { LandingHeader } from "./landing-header"
 import { MockChatDemo } from "./mock-chat-demo"
 import { MockVMDisplay } from "./mock-vm-display"
-import { motion, AnimatePresence } from "framer-motion"
-import { Caveat } from "next/font/google"
+import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion"
+import Image from "next/image"
+import { Caveat, Cormorant_Garamond } from "next/font/google"
 
 const handwriting = Caveat({
   subsets: ["latin"],
   weight: ["600"],
 })
+
+const brandSubtitle = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  style: ["italic"],
+})
+
+const BRAND_SUBTITLE_TEXT = "I am designed to emulate you."
 
 const features = [
   {
@@ -287,10 +297,17 @@ function TreeItem({ element }: { element: TreeViewElement }) {
 export function LandingPage() {
   const [selectedFaq, setSelectedFaq] = useState<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [showBrandIntro, setShowBrandIntro] = useState(false)
+  const [showPageContent, setShowPageContent] = useState(false)
+  const [typedSubtitle, setTypedSubtitle] = useState("")
+  const [subtitleTypingDone, setSubtitleTypingDone] = useState(false)
   const { theme } = useTheme()
+  const prefersReducedMotion = useReducedMotion()
 
   // Detect mobile device
   useEffect(() => {
+    setMounted(true)
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
     }
@@ -299,53 +316,202 @@ export function LandingPage() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
+  useEffect(() => {
+    if (!mounted) {
+      return
+    }
+
+    const isSmallDevice = window.innerWidth < 768
+
+    if (prefersReducedMotion || isSmallDevice) {
+      setShowBrandIntro(false)
+      setShowPageContent(true)
+      setTypedSubtitle(BRAND_SUBTITLE_TEXT)
+      setSubtitleTypingDone(true)
+      return
+    }
+
+    setShowPageContent(false)
+    setShowBrandIntro(true)
+    setTypedSubtitle("")
+    setSubtitleTypingDone(false)
+  }, [mounted, prefersReducedMotion])
+
+  useEffect(() => {
+    if (!mounted || prefersReducedMotion || !showBrandIntro) {
+      return
+    }
+
+    let currentIndex = 0
+    const typingInterval = window.setInterval(() => {
+      currentIndex += 1
+      setTypedSubtitle(BRAND_SUBTITLE_TEXT.slice(0, currentIndex))
+
+      if (currentIndex >= BRAND_SUBTITLE_TEXT.length) {
+        window.clearInterval(typingInterval)
+        setSubtitleTypingDone(true)
+      }
+    }, 22)
+
+    return () => {
+      window.clearInterval(typingInterval)
+    }
+  }, [mounted, prefersReducedMotion, showBrandIntro])
+
+  useEffect(() => {
+    if (!mounted || prefersReducedMotion || !showBrandIntro || !subtitleTypingDone) {
+      return
+    }
+
+    const startMoveTimeout = window.setTimeout(() => {
+      setShowBrandIntro(false)
+    }, 280)
+
+    return () => {
+      window.clearTimeout(startMoveTimeout)
+    }
+  }, [mounted, prefersReducedMotion, showBrandIntro, subtitleTypingDone])
+
+  useEffect(() => {
+    if (!mounted || prefersReducedMotion || showBrandIntro || showPageContent) {
+      return
+    }
+
+    const revealTimeout = window.setTimeout(() => {
+      setShowPageContent(true)
+    }, 600)
+
+    return () => {
+      window.clearTimeout(revealTimeout)
+    }
+  }, [mounted, prefersReducedMotion, showBrandIntro, showPageContent])
+
   // Animation variants
+  const sparklesDensity = isMobile ? 3 : 6
+  const sectionViewport = { once: true, amount: isMobile ? 0.03 : 0.1 }
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1
+        staggerChildren: isMobile ? 0.06 : 0.1,
+        delayChildren: isMobile ? 0.04 : 0.1
       }
     }
   }
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: isMobile ? 18 : 30 },
     visible: { 
       opacity: 1, 
       y: 0,
       transition: {
-        duration: 0.5,
+        duration: isMobile ? 0.35 : 0.5,
         ease: "easeOut" as const
       }
     }
   }
 
+  const contentVisible = mounted && showPageContent
+  const headerVisible = mounted && !showBrandIntro
+
   return (
-    <div className="min-h-screen bg-background relative">
+    <LayoutGroup id="landing-brand-transition">
+      <div className="min-h-screen bg-background relative">
       {/* Sparkles Background */}
-      <div className="absolute inset-0 w-full h-full">
+      <div className="absolute inset-0 w-full h-full pointer-events-none">
         <SparklesCore
           id="landing-sparkles"
           background="transparent"
           minSize={0.4}
           maxSize={1}
-          particleDensity={6}
+          particleDensity={sparklesDensity}
           className="w-full h-full"
           particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
         />
       </div>
 
+      <AnimatePresence>
+        {mounted && showBrandIntro && (
+          <motion.div
+            className="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+          >
+            <div className="flex flex-col items-center gap-3 px-6">
+              <div className="flex items-center gap-3">
+                <motion.div
+                  layoutId="landing-brand-logo"
+                  transition={{ type: "spring", stiffness: 210, damping: 26 }}
+                  className="relative h-14 w-14 sm:h-16 sm:w-16"
+                >
+                  {mounted && (
+                    <Image
+                      src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                      alt="LLMHub Logo"
+                      width={64}
+                      height={64}
+                      className="h-full w-full object-contain"
+                      priority
+                    />
+                  )}
+                </motion.div>
+                <motion.span
+                  layoutId="landing-brand-text"
+                  transition={{ type: "spring", stiffness: 210, damping: 26 }}
+                  className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl"
+                >
+                  LLMHub
+                </motion.span>
+              </div>
+              <motion.p
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3, ease: "easeOut", delay: 0.15 }}
+                className={cn(
+                  "min-h-[1.75rem] text-center text-lg text-foreground/75 sm:min-h-[2rem] sm:text-xl",
+                  brandSubtitle.className
+                )}
+              >
+                {typedSubtitle}
+                {showBrandIntro && !subtitleTypingDone && (
+                  <motion.span
+                    aria-hidden="true"
+                    animate={{ opacity: [1, 0, 1] }}
+                    transition={{ duration: 0.8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                    className="ml-0.5 inline-block"
+                  >
+                    |
+                  </motion.span>
+                )}
+              </motion.p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Fixed header */}
-      <LandingHeader />
+      <div
+        className={cn(
+          "transition-opacity duration-500",
+          headerVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+      >
+        <LandingHeader animateBrandFromIntro />
+      </div>
 
       {/* Main content */}
-      <main className={cn(
-        "relative",
-        isMobile ? "pt-16" : "pt-20"
-      )}>
+      <main
+        className={cn(
+          "relative transition-opacity duration-500",
+          isMobile ? "pt-16" : "pt-20",
+          contentVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+      >
         {/* Hero Section */}
         <section id="hero" className={cn(
           "min-h-screen flex items-center justify-center",
@@ -355,7 +521,7 @@ export function LandingPage() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={sectionViewport}
             className="w-full max-w-7xl"
           >
             <motion.div
@@ -391,35 +557,39 @@ export function LandingPage() {
                   {" "}Like Humans
                 </span>
               </h1>
-              <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-                <Button
-                  asChild
-                  size="lg"
-                  className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 shadow-sm hover:shadow-md transition-shadow"
+              <div className="mx-auto flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-lg md:w-auto md:max-w-none md:flex-row md:items-center md:gap-4">
+                <NoiseBackground
+                  containerClassName="w-full md:w-auto p-[1px] rounded-full bg-transparent dark:bg-transparent"
+                  className="p-0"
+                  gradientColors={["rgb(34, 197, 94)", "rgb(16, 185, 129)", "rgb(132, 204, 22)"]}
+                  noiseIntensity={0.08}
+                  speed={0.08}
                 >
-                  <Link href="/auth">
-                    Get started
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                  <Link
+                    href="/auth"
+                    className="group inline-flex h-12 w-full items-center justify-center rounded-full bg-transparent px-5 sm:px-6 md:min-w-[220px] md:px-7 text-sm sm:text-[0.95rem] font-semibold text-slate-900 transition-opacity hover:opacity-95 dark:text-white"
+                  >
+                    Put AI to Work for You
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="lg"
-                  variant="secondary"
-                  className={cn(
-                    "w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5",
-                    "bg-muted text-foreground hover:bg-muted/80"
-                  )}
+                </NoiseBackground>
+                <NoiseBackground
+                  containerClassName="w-full md:w-auto p-[1px] rounded-full bg-transparent dark:bg-transparent"
+                  className="p-0"
+                  gradientColors={["rgb(59, 130, 246)", "rgb(14, 165, 233)", "rgb(6, 182, 212)"]}
+                  noiseIntensity={0.08}
+                  speed={0.08}
                 >
                   <Link
                     href="https://github.com/LLmHub-dev/open-computer-use"
                     target="_blank"
                     rel="noreferrer"
+                    className="group inline-flex h-12 w-full items-center justify-center rounded-full bg-transparent px-5 sm:px-6 md:min-w-[220px] md:px-7 text-sm sm:text-[0.95rem] font-semibold text-slate-900 transition-opacity hover:opacity-95 dark:text-white"
                   >
-                    <Github className="mr-2 h-4 w-4" />
-                    We are open source {"<3"}
+                    <Github className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
+                    Built in Public. Open Source.
                   </Link>
-                </Button>
+                </NoiseBackground>
               </div>
               <p className={cn(
                 "text-muted-foreground mx-auto",
@@ -475,7 +645,7 @@ export function LandingPage() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={sectionViewport}
             className="max-w-7xl mx-auto"
           >
             <motion.div variants={itemVariants} className="text-center mb-12">
@@ -609,7 +779,7 @@ export function LandingPage() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={sectionViewport}
             className="max-w-7xl mx-auto"
           >
             <motion.div variants={itemVariants} className="text-center mb-12">
@@ -641,7 +811,7 @@ export function LandingPage() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={sectionViewport}
             className="max-w-7xl mx-auto"
           >
             <motion.div variants={itemVariants} className="text-center mb-12">
@@ -835,7 +1005,7 @@ export function LandingPage() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={sectionViewport}
             className="max-w-7xl mx-auto"
           >
             <motion.div variants={itemVariants} className="text-center mb-12">
@@ -901,7 +1071,7 @@ export function LandingPage() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={sectionViewport}
             className="max-w-4xl mx-auto"
           >
             <motion.div variants={itemVariants} className="text-center mb-12">
@@ -999,6 +1169,7 @@ export function LandingPage() {
           </div>
         </footer>
       </main>
-    </div>
+      </div>
+    </LayoutGroup>
   )
 }
