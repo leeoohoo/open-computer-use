@@ -341,7 +341,7 @@ for i in range(1000):
 
 ### If You Observe Misuse
 
-Please report to: **prateek@llmhub.dev**
+Please report to: **prateek@coasty.ai**
 
 Include:
 - Description of the violation
@@ -352,7 +352,7 @@ Include:
 
 ### If Your Site is Being Scraped
 
-Contact: **prateek@llmhub.dev**
+Contact: **prateek@coasty.ai**
 
 We will:
 - Investigate the report within 24 hours
@@ -362,7 +362,7 @@ We will:
 
 ### Reporting Security Vulnerabilities
 
-For security issues: **prateek@llmhub.dev**
+For security issues: **prateek@coasty.ai**
 
 Use our [Security Policy](SECURITY.md) for responsible disclosure.
 
@@ -393,7 +393,7 @@ Use our [Security Policy](SECURITY.md) for responsible disclosure.
 **Have questions about appropriate use?**
 
 - Discord: [community server](https://discord.gg/gppEfsVt)
-- Email: support@llmhub.dev
+- Email: support@coasty.ai
 - Discussions: [GitHub Discussions](https://github.com/LLmHub-dev/open-computer-use/discussions)
 
 **Need clarification on a specific use case?**

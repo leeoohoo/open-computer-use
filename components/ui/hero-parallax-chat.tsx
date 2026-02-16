@@ -127,7 +127,7 @@ export const ChatPreviewCard = ({
       className="group h-96 w-[30rem] relative shrink-0"
     >
       <Link
-        href={`https://llmhub.dev/share/${demo.chatId}`}
+        href={`https://coasty.ai/share/${demo.chatId}`}
         target="_blank"
         className="block relative h-full w-full rounded-xl overflow-hidden border border-border/50 bg-card hover:shadow-2xl transition-shadow duration-300"
       >
@@ -208,7 +208,7 @@ export const StaticChatPreviewCard = ({
   return (
     <div className="group h-96 w-[30rem] relative shrink-0 hover:-translate-y-2 transition-transform duration-200">
       <Link
-        href={`https://llmhub.dev/share/${demo.chatId}`}
+        href={`https://coasty.ai/share/${demo.chatId}`}
         target="_blank"
         className="block relative h-full w-full rounded-xl overflow-hidden border border-border/50 bg-card hover:shadow-2xl transition-shadow duration-300"
       >

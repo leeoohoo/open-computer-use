@@ -69,7 +69,7 @@ export async function PATCH(
     }
 
     // Generate share URL using the chat ID directly
-    const baseUrl = 'https://llmhub.dev'
+    const baseUrl = 'https://coasty.ai'
     const shareUrl = isPublic 
       ? `${baseUrl}/share/${chatId}`
       : null
@@ -126,7 +126,7 @@ export async function GET(
     }
 
     // Generate share URL using the chat ID directly
-    const baseUrl = 'https://llmhub.dev'
+    const baseUrl = 'https://coasty.ai'
     const shareUrl = chat.public 
       ? `${baseUrl}/share/${chatId}`
       : null

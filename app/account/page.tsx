@@ -396,7 +396,7 @@ function AccountContent() {
                     </a>
                     
                     <a
-                      href="mailto:founders@llmhub.dev"
+                      href="mailto:founders@coasty.ai"
                       className="group flex items-center gap-4 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-all"
                     >
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-background group-hover:bg-accent transition-colors">
@@ -404,7 +404,7 @@ function AccountContent() {
                       </div>
                       <div className="flex-1">
                         <div className="font-medium text-sm">Contact Us</div>
-                        <div className="text-xs text-muted-foreground">founders@llmhub.dev</div>
+                        <div className="text-xs text-muted-foreground">founders@coasty.ai</div>
                       </div>
                       <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                     </a>

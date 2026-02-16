@@ -471,7 +471,7 @@ async def test_task_planning():
 
 - **Discord**: Join our [community server](https://discord.gg/gppEfsVt)
 - **GitHub Discussions**: Ask questions or discuss ideas
-- **Email**: For sensitive issues: support@llmhub.dev
+- **Email**: For sensitive issues: support@coasty.ai
 
 ## Recognition
 

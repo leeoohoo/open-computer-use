@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://llmhub.dev'
+  const baseUrl = 'https://coasty.ai'
   
   // Static pages
   const staticPages = [

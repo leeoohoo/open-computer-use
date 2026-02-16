@@ -23,7 +23,7 @@ export const FREE_MODELS_IDS = [
 export const MODEL_DEFAULT = "azure-gpt-4.1-nano"
 
 export const APP_NAME = "LLMHub"
-export const APP_DOMAIN = "https://llmhub.dev"
+export const APP_DOMAIN = "https://coasty.ai"
 
 export const SUGGESTIONS = [
   {

@@ -10,7 +10,7 @@
 
 **Open Computer Use** is an open-source platform that gives AI agents real computer control through browser automation, terminal access, and desktop interaction. Built for developers who want to create truly autonomous AI workflows.
 
-[**Website**](https://llmhub.dev) • [**Discord**](https://discord.gg/gppEfsVt) • [**X**](https://x.com/llmhub_dev)
+[**Website**](https://coasty.ai) • [**Discord**](https://discord.gg/gppEfsVt) • [**X**](https://x.com/llmhub_dev)
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
@@ -51,30 +51,30 @@ Unlike traditional AI assistants that only **talk** about tasks, Open Computer U
 ### Browser Automation
 *AI agent searching, navigating, and interacting with websites autonomously*
 
-[![Browser Automation Demo](https://img.shields.io/badge/🎮_Play_Demo-Browser_Automation-blue?style=for-the-badge)](https://llmhub.dev/share/2c27ad52-47e0-4ed4-9998-701cebc1c409)
+[![Browser Automation Demo](https://img.shields.io/badge/🎮_Play_Demo-Browser_Automation-blue?style=for-the-badge)](https://coasty.ai/share/2c27ad52-47e0-4ed4-9998-701cebc1c409)
 
-[**▶️ Watch: AI Agent Browsing and Playing**](https://llmhub.dev/share/2c27ad52-47e0-4ed4-9998-701cebc1c409)
+[**▶️ Watch: AI Agent Browsing and Playing**](https://coasty.ai/share/2c27ad52-47e0-4ed4-9998-701cebc1c409)
 
 ### Terminal Operations & Development
 *Executing commands, managing files, and running complex workflows*
 
-[![Terminal Operations Demo](https://img.shields.io/badge/🎮_Play_Demo-Terminal_Operations-green?style=for-the-badge)](https://llmhub.dev/share/6f24c719-868d-4308-9e54-8ab00914761d)
+[![Terminal Operations Demo](https://img.shields.io/badge/🎮_Play_Demo-Terminal_Operations-green?style=for-the-badge)](https://coasty.ai/share/6f24c719-868d-4308-9e54-8ab00914761d)
 
-[**▶️ Watch: Quant Trading & Research on QuantConnect**](https://llmhub.dev/share/6f24c719-868d-4308-9e54-8ab00914761d)
+[**▶️ Watch: Quant Trading & Research on QuantConnect**](https://coasty.ai/share/6f24c719-868d-4308-9e54-8ab00914761d)
 
 ### Multi-Agent Orchestration
 *Complex tasks broken down and executed by specialized agents*
 
-[![Multi-Agent Demo](https://img.shields.io/badge/🎮_Play_Demo-Multi_Agent_System-purple?style=for-the-badge)](https://llmhub.dev/share/fb94d739-978b-42f8-81f3-5acaaeb3420f)
+[![Multi-Agent Demo](https://img.shields.io/badge/🎮_Play_Demo-Multi_Agent_System-purple?style=for-the-badge)](https://coasty.ai/share/fb94d739-978b-42f8-81f3-5acaaeb3420f)
 
-[**▶️ Watch: Building Nvidia Options Dashboard**](https://llmhub.dev/share/fb94d739-978b-42f8-81f3-5acaaeb3420f)
+[**▶️ Watch: Building Nvidia Options Dashboard**](https://coasty.ai/share/fb94d739-978b-42f8-81f3-5acaaeb3420f)
 
 ### Advanced Features
 *Human-in-the-loop control and intelligent collaboration*
 
-[![Human Control Demo](https://img.shields.io/badge/🎮_Play_Demo-Human_Control-orange?style=for-the-badge)](https://llmhub.dev/share/977166f6-4d5f-4977-904b-603931bd8a8d)
+[![Human Control Demo](https://img.shields.io/badge/🎮_Play_Demo-Human_Control-orange?style=for-the-badge)](https://coasty.ai/share/977166f6-4d5f-4977-904b-603931bd8a8d)
 
-[**▶️ Watch: AI Agent with Human Intervention**](https://llmhub.dev/share/977166f6-4d5f-4977-904b-603931bd8a8d)
+[**▶️ Watch: AI Agent with Human Intervention**](https://coasty.ai/share/977166f6-4d5f-4977-904b-603931bd8a8d)
 
 </div>
 
@@ -647,7 +647,7 @@ Special thanks to all our [contributors](https://github.com/LLmHub-dev/open-comp
 
 - 💬 **Discord**: Join our [community server](https://discord.gg/GvdmvpJy)
 - 🐦 **Twitter**: Follow [@llmhub_dev](https://x.com/llmhub_dev)
-- 📧 **Email**: prateek@llmhub.dev
+- 📧 **Email**: prateek@coasty.ai
 - 🐛 **Issues**: [GitHub Issues](https://github.com/LLmHub-dev/open-computer-use/issues)
 - 💡 **Discussions**: [GitHub Discussions](https://github.com/LLmHub-dev/open-computer-use/discussions)
 

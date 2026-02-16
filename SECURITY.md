@@ -21,7 +21,7 @@ We recommend always using the latest version to ensure you have the most recent 
 
 If you discover a security vulnerability, please report it to:
 
-**Email**: prateek@llmhub.dev
+**Email**: prateek@coasty.ai
 
 **Subject**: [SECURITY] Brief description of the issue
 
@@ -293,8 +293,8 @@ We're working towards:
 
 ### Contact
 
-- **Security Lead**: Prateek Jannu (prateek@llmhub.dev)
-- **General Security**: prateek@llmhub.dev
+- **Security Lead**: Prateek Jannu (prateek@coasty.ai)
+- **General Security**: prateek@coasty.ai
 - **PGP Key**: [Coming soon]
 
 ### Response Team
@@ -312,8 +312,8 @@ Our security team includes:
 
 - [Responsible Use Guidelines](RESPONSIBLE_USE.md)
 - [Contributing Guide](CONTRIBUTING.md)
-- [Privacy Policy](https://llmhub.dev/privacy)
-- [Terms of Service](https://llmhub.dev/terms)
+- [Privacy Policy](https://coasty.ai/privacy)
+- [Terms of Service](https://coasty.ai/terms)
 
 ### External Resources
 
@@ -328,7 +328,7 @@ Our security team includes:
 
 Have questions about our security practices?
 
-- **Email**: security@llmhub.dev
+- **Email**: security@coasty.ai
 - **Discord**: [Join our server](https://discord.gg/gppEfsVt)
 - **Discussions**: [GitHub Discussions](https://github.com/LLmHub-dev/open-computer-use/discussions)
 

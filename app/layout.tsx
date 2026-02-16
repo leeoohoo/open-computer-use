@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://llmhub.dev",
+    url: "https://coasty.ai",
     siteName: "LLMHub - Your AI Employee",
     title: "LLMHub - Your AI Employee That Collaborates With Everyone",
     description: "Your AI employee that collaborates with everyone. Connect all your models, tools, and teams in one intelligent workspace. Work together with AI that understands your context.",
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://llmhub.dev"
+    canonical: "https://coasty.ai"
   },
   category: "productivity",
   applicationName: "LLMHub",
@@ -96,7 +96,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://llmhub.dev"),
+  metadataBase: new URL("https://coasty.ai"),
   verification: {
     google: "google-site-verification-code",
     yandex: "yandex-verification-code",
@@ -129,8 +129,8 @@ export default async function RootLayout({
             "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "LLMHub",
-            "url": "https://llmhub.dev",
-            "logo": "https://llmhub.dev/logo_light.svg",
+            "url": "https://coasty.ai",
+            "logo": "https://coasty.ai/logo_light.svg",
             "description": "Your AI employee that collaborates with everyone. Connect all your models, tools, and teams in one intelligent workspace.",
             "applicationCategory": "ProductivityApplication",
             "operatingSystem": "Web Browser",
@@ -156,7 +156,7 @@ export default async function RootLayout({
               "Custom AI Training",
               "Enterprise Security"
             ],
-            "screenshot": "https://llmhub.dev/og-image.png",
+            "screenshot": "https://coasty.ai/og-image.png",
             "sameAs": [
               "https://x.com/llmhub_dev"
             ]
@@ -171,8 +171,8 @@ export default async function RootLayout({
             "@context": "https://schema.org",
             "@type": "Organization",
             "name": "LLMHub",
-            "url": "https://llmhub.dev",
-            "logo": "https://llmhub.dev/logo_light.svg",
+            "url": "https://coasty.ai",
+            "logo": "https://coasty.ai/logo_light.svg",
             "description": "Your AI employee that collaborates with everyone in your organization",
             "contactPoint": {
               "@type": "ContactPoint",
@@ -190,12 +190,12 @@ export default async function RootLayout({
             "@context": "https://schema.org",
             "@type": "WebSite",
             "name": "LLMHub",
-            "url": "https://llmhub.dev",
+            "url": "https://coasty.ai",
             "potentialAction": {
               "@type": "SearchAction",
               "target": {
                 "@type": "EntryPoint",
-                "urlTemplate": "https://llmhub.dev/search?q={search_term_string}"
+                "urlTemplate": "https://coasty.ai/search?q={search_term_string}"
               },
               "query-input": "required name=search_term_string"
             }

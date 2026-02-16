@@ -15,7 +15,7 @@ Allow: /discover
 Allow: /knowledge-base
 
 # Sitemap location
-Sitemap: https://llmhub.dev/sitemap.xml
+Sitemap: https://coasty.ai/sitemap.xml
 
 # Crawl-delay for responsible crawling
 Crawl-delay: 1

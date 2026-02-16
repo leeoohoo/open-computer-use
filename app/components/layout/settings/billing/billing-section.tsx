@@ -439,10 +439,10 @@ export function BillingSection() {
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         Email us your feedback (good or bad!) at{" "}
                         <a
-                          href="mailto:founders@llmhub.dev?subject=Feedback%20on%20LLMHub"
+                          href="mailto:founders@coasty.ai?subject=Feedback%20on%20LLMHub"
                           className="font-medium text-primary hover:text-primary/80 underline underline-offset-2 decoration-primary/30 hover:decoration-primary/60 transition-all duration-200"
                         >
-                          founders@llmhub.dev
+                          founders@coasty.ai
                         </a>
                         {" "}and we'll probably just reset your credits or bump you up for the month.
                         We're building trust here, one happy user at a time! 🎉

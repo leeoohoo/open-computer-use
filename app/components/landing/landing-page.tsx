@@ -1161,7 +1161,7 @@ export function LandingPage() {
                 <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Blog
                 </Link>
-                <Link href="mailto:founders@llmhub.dev" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="mailto:founders@coasty.ai" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Contact
                 </Link>
               </div>
