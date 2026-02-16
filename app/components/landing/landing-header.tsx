@@ -23,7 +23,6 @@ export function LandingHeader() {
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState("hero")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [currentPath, setCurrentPath] = useState("")
@@ -33,14 +32,15 @@ export function LandingHeader() {
     setCurrentPath(window.location.pathname)
   }, [])
 
-  // Detect mobile device
+  // Ensure mobile menu is closed when resizing to desktop/tablet layouts
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+    const closeMenuOnLargeScreens = () => {
+      if (window.innerWidth >= 1024) {
+        setMobileMenuOpen(false)
+      }
     }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
+    window.addEventListener("resize", closeMenuOnLargeScreens)
+    return () => window.removeEventListener("resize", closeMenuOnLargeScreens)
   }, [])
 
   // Handle scroll events for header appearance
@@ -109,48 +109,33 @@ export function LandingHeader() {
         transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          isMobile 
-            ? "py-3" // Consistent padding on mobile
-            : scrolled ? "py-3" : "py-4"
+          scrolled ? "py-3" : "py-3.5 sm:py-4"
         )}
       >
-        <div className={cn(
-          "container mx-auto",
-          isMobile ? "px-3" : "px-4"
-        )}>
+        <div className="container mx-auto px-2 sm:px-3 md:px-4">
           <div
             className={cn(
               "relative mx-auto transition-all duration-500",
-              isMobile 
-                ? "" // Full width on mobile
-                : scrolled ? "max-w-4xl" : "max-w-5xl"
+              scrolled ? "max-w-7xl lg:max-w-6xl" : "max-w-7xl"
             )}
           >
-            {/* Background - solid on mobile, glass effect on desktop */}
             <div
               className={cn(
                 "absolute inset-0 border border-border/50 shadow-lg transition-all duration-500",
-                isMobile 
-                  ? "bg-background rounded-lg" // Solid background with less rounding on mobile
-                  : "bg-background/80 backdrop-blur-xl rounded-2xl", // Glass effect on desktop
+                "rounded-xl sm:rounded-2xl bg-background/95 sm:bg-background/90 sm:backdrop-blur-xl",
                 scrolled
                   ? "shadow-lg shadow-primary/5"
                   : "shadow-2xl shadow-primary/10"
               )}
             />
             
-            {/* Glass effect overlay - only on desktop */}
-            {!isMobile && (
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-50" />
-            )}
+            <div className="pointer-events-none absolute inset-0 hidden rounded-2xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-50 sm:block" />
             
             {/* Content */}
             <nav
               className={cn(
                 "relative flex items-center justify-between transition-all duration-500 gap-4",
-                isMobile
-                  ? "px-4 py-3" // Consistent padding on mobile
-                  : scrolled ? "px-5 py-3" : "px-6 py-3"
+                scrolled ? "px-3 py-2.5 sm:px-4 md:px-5" : "px-3 py-2.5 sm:px-4 md:px-5 lg:px-6"
               )}
             >
               {/* Logo */}
@@ -164,7 +149,7 @@ export function LandingHeader() {
                   transition={{ duration: 0.2 }}
                   className={cn(
                     "relative transition-all duration-500 flex-shrink-0",
-                    scrolled ? "h-9 w-9" : "h-10 w-10"
+                    scrolled ? "h-8 w-8 sm:h-9 sm:w-9" : "h-9 w-9 sm:h-10 sm:w-10"
                   )}
                 >
                   {mounted && (
@@ -179,20 +164,19 @@ export function LandingHeader() {
                   )}
                 </motion.div>
                 <span className={cn(
-                  "font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent transition-all duration-500 whitespace-nowrap",
-                  scrolled ? "text-lg" : "text-xl"
+                  "font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent transition-all duration-500 whitespace-nowrap text-base sm:text-lg",
+                  scrolled ? "lg:text-lg" : "lg:text-xl"
                 )}>
                   LLMHub
                 </span>
               </Link>
 
               {/* Desktop Navigation */}
-              <ul className="hidden md:flex items-center gap-1 relative flex-1 justify-center">
+              <ul className="hidden lg:flex items-center gap-1 xl:gap-1.5 relative flex-1 justify-center px-2">
                 {navItems.map((item) => {
                   const isActive = item.external 
                     ? currentPath === item.href 
                     : (currentPath === '/' || currentPath === '') && activeSection === item.href.substring(2) // substring(2) to skip "/#"
-                  const ItemWrapper = item.external ? Link : 'a'
                   
                   return (
                     <li key={item.label} className="relative">
@@ -215,8 +199,8 @@ export function LandingHeader() {
                         <Link
                           href={item.href}
                           className={cn(
-                            "relative px-3 py-2 rounded-full transition-all duration-200 cursor-pointer block whitespace-nowrap",
-                            scrolled ? "text-sm" : "text-base",
+                            "relative rounded-full transition-all duration-200 cursor-pointer block whitespace-nowrap px-2.5 xl:px-3 py-2",
+                            scrolled ? "text-sm" : "text-sm xl:text-base",
                             isActive 
                               ? "text-primary font-medium" 
                               : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -229,8 +213,8 @@ export function LandingHeader() {
                           href={item.href}
                           onClick={(e) => handleNavClick(e, item.href, item.external)}
                           className={cn(
-                            "relative px-3 py-2 rounded-full transition-all duration-200 cursor-pointer block whitespace-nowrap",
-                            scrolled ? "text-sm" : "text-base",
+                            "relative rounded-full transition-all duration-200 cursor-pointer block whitespace-nowrap px-2.5 xl:px-3 py-2",
+                            scrolled ? "text-sm" : "text-sm xl:text-base",
                             isActive 
                               ? "text-primary font-medium" 
                               : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -245,11 +229,11 @@ export function LandingHeader() {
               </ul>
 
               {/* Desktop CTA Button and Theme Toggle */}
-              <div className="hidden md:flex items-center gap-2 flex-shrink-0">
+              <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
                 <AnimatedThemeToggler 
                   className={cn(
                     "p-2 rounded-full transition-all hover:bg-muted/50",
-                    scrolled ? "h-9 w-9" : "h-10 w-10"
+                    scrolled ? "h-9 w-9" : "h-9 w-9 xl:h-10 xl:w-10"
                   )}
                 />
                 <Button 
@@ -268,14 +252,14 @@ export function LandingHeader() {
               </div>
 
               {/* Mobile Theme Toggle and Menu Button */}
-              <div className="flex items-center gap-2 md:hidden">
+              <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden">
                 <AnimatedThemeToggler 
-                  className="p-2 rounded-full h-9 w-9 hover:bg-muted/50"
+                  className="p-2 rounded-full h-8 w-8 sm:h-9 sm:w-9 hover:bg-muted/50"
                 />
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full"
+                  className="rounded-full h-8 w-8 sm:h-9 sm:w-9"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 >
                   {mobileMenuOpen ? (
@@ -298,9 +282,9 @@ export function LandingHeader() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-16 z-40 md:hidden"
+            className="fixed inset-x-0 top-[68px] z-40 lg:hidden sm:top-[72px]"
           >
-            <div className="mx-4 rounded-2xl bg-background border border-border/50 shadow-xl p-4">
+            <div className="mx-2 sm:mx-3 md:mx-4 rounded-xl sm:rounded-2xl bg-background/95 backdrop-blur-xl border border-border/50 shadow-xl p-3 sm:p-4">
               <nav className="flex flex-col gap-2">
                 {navItems.map((item) => {
                   const isActive = item.external 
@@ -313,7 +297,7 @@ export function LandingHeader() {
                         key={item.label}
                         href={item.href}
                         className={cn(
-                          "px-4 py-3 rounded-lg transition-colors",
+                          "px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-colors text-sm sm:text-base",
                           isActive
                             ? "bg-primary/10 text-primary font-medium"
                             : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -331,7 +315,7 @@ export function LandingHeader() {
                       href={item.href}
                       onClick={(e) => handleNavClick(e, item.href, item.external)}
                       className={cn(
-                        "px-4 py-3 rounded-lg transition-colors",
+                        "px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-colors text-sm sm:text-base",
                         isActive
                           ? "bg-primary/10 text-primary font-medium"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
