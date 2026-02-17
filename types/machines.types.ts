@@ -53,12 +53,19 @@ export interface MachineSettings {
   allowClipboardSync?: boolean;
   customSoftware?: string[];
   isLocal?: boolean;
-  provider?: 'azure' | 'docker' | 'local';
+  provider?: 'azure' | 'aws' | 'docker' | 'local';
   ports?: {
     vnc?: number;
     websocket?: number;
     agent?: number;
   };
+  // AWS-specific
+  awsInstanceId?: string;
+  awsRegion?: string;
+  awsKeyPairName?: string;
+  awsSecurityGroupId?: string;
+  sshPrivateKey?: string;
+  sshUsername?: string;
 }
 
 export interface MachineSession {
@@ -164,6 +171,7 @@ export type AIActionType =
 // API Request/Response types
 export interface CreateMachineRequest {
   displayName: string;
+  provider?: 'azure' | 'aws';
   cpuCores?: number;
   memoryGb?: number;
   storageGb?: number;
@@ -172,9 +180,13 @@ export interface CreateMachineRequest {
 export interface CreateMachineResponse {
   machine: UserMachine;
   connectionDetails: {
-    vncUrl: string;
-    websocketUrl: string;
-    password: string;
+    vncUrl?: string;
+    websocketUrl?: string;
+    password?: string;
+    sshHost?: string;
+    sshPort?: number;
+    sshUsername?: string;
+    sshPrivateKey?: string;
   };
 }
 

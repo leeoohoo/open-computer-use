@@ -21,7 +21,7 @@ export function transformMachineFromDB(dbMachine: any) {
     vncPassword: dbMachine.vnc_password,
     vncPort: dbMachine.vnc_port || 5901,
     websocketPort: dbMachine.websocket_port || 6080,
-    sshPort: dbMachine.ssh_port,
+    sshPort: dbMachine.ssh_port || (dbMachine.settings?.provider === 'aws' ? 22 : undefined),
     
     // Resources
     cpuCores: dbMachine.cpu_cores,

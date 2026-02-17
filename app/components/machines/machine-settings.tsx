@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Loader2, Shield, Clock } from "lucide-react";
+import { Save, Loader2, Shield, Clock, Key, Download, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -165,19 +165,62 @@ export function MachineSettings({ machine, onUpdate }: MachineSettingsProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="rounded-lg border p-4 space-y-2">
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-blue-500" />
-              <p className="text-sm font-medium">VNC Password</p>
+          {machine.settings?.provider === 'aws' ? (
+            <>
+              <div className="rounded-lg border p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Key className="h-4 w-4 text-blue-500" />
+                  <p className="text-sm font-medium">SSH Authentication</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">
+                    Username: <span className="font-mono">{machine.settings?.sshUsername || 'ubuntu'}</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Key Pair: <span className="font-mono">{machine.settings?.awsKeyPairName || 'N/A'}</span>
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const response = await fetch(`/api/machines/${machine.id}/ssh-key`);
+                    if (!response.ok) throw new Error("Failed to download key");
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `${machine.settings?.awsKeyPairName || 'key'}.pem`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    toast.success("SSH key downloaded");
+                  } catch {
+                    toast.error("Failed to download SSH key");
+                  }
+                }}
+              >
+                <Download className="h-4 w-4 mr-1.5" />
+                Download SSH Key
+              </Button>
+            </>
+          ) : (
+            <div className="rounded-lg border p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-blue-500" />
+                <p className="text-sm font-medium">VNC Password</p>
+              </div>
+              <p className="text-sm text-muted-foreground font-mono">
+                {machine.vncPassword}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                This password is required to connect to the machine
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground font-mono">
-              {machine.vncPassword}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              This password is required to connect to the machine
-            </p>
-          </div>
-
+          )}
         </CardContent>
       </Card>
 

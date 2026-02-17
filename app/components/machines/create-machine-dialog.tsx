@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Loader2, Monitor, Cpu, HardDrive, Info, AlertCircle, AlertTriangle, Crown, Clock } from "lucide-react";
+import { Loader2, HardDrive, Info, AlertCircle, AlertTriangle, Crown, Clock, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,14 +27,6 @@ interface CreateMachineDialogProps {
   onMachineCreated: () => void;
 }
 
-interface MachinePreset {
-  name: string;
-  cpu: number;
-  memory: number;
-  storage: number;
-  description: string;
-}
-
 interface MachineLimits {
   max_machines: number;
   max_cpu_cores: number;
@@ -57,50 +48,15 @@ interface MachineUsage {
   total_storage_gb: number;
 }
 
-const presets: MachinePreset[] = [
-  {
-    name: "Minimal",
-    cpu: 1,
-    memory: 3,
-    storage: 10,
-    description: "Ultra-light tasks and testing",
-  },
-  {
-    name: "Basic",
-    cpu: 2,
-    memory: 4,
-    storage: 10,
-    description: "Light web browsing and basic tasks",
-  },
-  {
-    name: "Standard",
-    cpu: 2,
-    memory: 4,
-    storage: 25,
-    description: "Development and productivity",
-  },
-  {
-    name: "Advanced",
-    cpu: 4,
-    memory: 8,
-    storage: 50,
-    description: "Heavy workloads and multitasking",
-  },
-];
-
 export function CreateMachineDialog({
   open,
   onOpenChange,
   onMachineCreated,
 }: CreateMachineDialogProps) {
-  const router = useRouter();
   const { isFreeTier, loading: subscriptionLoading } = useSubscription();
   const [creating, setCreating] = useState(false);
   const [displayName, setDisplayName] = useState("");
-  const [cpuCores, setCpuCores] = useState(1);
-  const [memoryGb, setMemoryGb] = useState(3);
-  const [storageGb, setStorageGb] = useState(10);
-  const [selectedPreset, setSelectedPreset] = useState<string | null>("Minimal");
+  const [storageGb, setStorageGb] = useState(8);
   const [limits, setLimits] = useState<MachineLimits | null>(null);
   const [usage, setUsage] = useState<MachineUsage | null>(null);
   const [subscriptionTier, setSubscriptionTier] = useState<string | null>(null);
@@ -134,22 +90,15 @@ export function CreateMachineDialog({
     }
   };
 
-  const handlePresetSelect = (preset: MachinePreset) => {
-    setSelectedPreset(preset.name);
-    setCpuCores(preset.cpu);
-    setMemoryGb(preset.memory);
-    setStorageGb(preset.storage);
-  };
-
   // Check if adding new resources would exceed limits
-  const wouldExceedLimit = (newCpu: number, newMemory: number, newStorage: number) => {
+  const wouldExceedLimit = () => {
     if (!limits || !usage) return false;
-    
+
     return (
       usage.machines_count >= limits.max_machines ||
-      usage.total_cpu_cores + newCpu > limits.max_cpu_cores ||
-      usage.total_memory_gb + newMemory > limits.max_memory_gb ||
-      usage.total_storage_gb + newStorage > limits.max_storage_gb
+      usage.total_cpu_cores + 2 > limits.max_cpu_cores ||
+      usage.total_memory_gb + 0.5 > limits.max_memory_gb ||
+      usage.total_storage_gb + storageGb > limits.max_storage_gb
     );
   };
 
@@ -180,8 +129,7 @@ export function CreateMachineDialog({
     // Store the values
     const machineConfig = {
       displayName: displayName.trim(),
-      cpuCores,
-      memoryGb,
+      provider: 'aws' as const,
       storageGb,
     };
 
@@ -195,16 +143,13 @@ export function CreateMachineDialog({
 
       // Show immediate success and close dialog
       toast.success("Machine creation started!", {
-        description: "Your machine is being set up in the background. This may take a few minutes.",
+        description: "Your cloud machine is being launched. SSH key will be available once ready.",
         duration: 5000,
       });
 
       // Reset form for next time
       setDisplayName("");
-      setSelectedPreset("Minimal");
-      setCpuCores(1);
-      setMemoryGb(3);
-      setStorageGb(10);
+      setStorageGb(8);
       setCreating(false);
 
       // Close dialog immediately
@@ -251,7 +196,7 @@ export function CreateMachineDialog({
         <DialogHeader>
           <DialogTitle>Create Virtual Machine</DialogTitle>
           <DialogDescription>
-            Configure your AI-controlled desktop environment
+            Spin up a cloud Linux machine with SSH access
           </DialogDescription>
         </DialogHeader>
 
@@ -298,7 +243,7 @@ export function CreateMachineDialog({
         ) : limits && usage ? (
           <div className="space-y-3 py-2">
             {/* Current Usage Alert */}
-            <Alert className={wouldExceedLimit(cpuCores, memoryGb, storageGb) ? "border-destructive" : ""}>
+            <Alert className={wouldExceedLimit() ? "border-destructive" : ""}>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 <div className="space-y-2">
@@ -358,7 +303,7 @@ export function CreateMachineDialog({
             </Alert>
 
             {/* Warning if would exceed limits */}
-            {wouldExceedLimit(cpuCores, memoryGb, storageGb) && (
+            {wouldExceedLimit() && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
@@ -368,7 +313,7 @@ export function CreateMachineDialog({
             )}
 
             {/* Show what resources would be after creation */}
-            {!wouldExceedLimit(cpuCores, memoryGb, storageGb) && getRemainingResources() && (
+            {!wouldExceedLimit() && getRemainingResources() && (
               <div className="text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Info className="h-3 w-3" />
@@ -390,7 +335,7 @@ export function CreateMachineDialog({
             <Label htmlFor="name">Machine Name</Label>
             <Input
               id="name"
-              placeholder="My AI Desktop"
+              placeholder="My Cloud Server"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               disabled={creating}
@@ -403,95 +348,37 @@ export function CreateMachineDialog({
             )}
           </div>
 
-          {/* Presets */}
-          <div className="space-y-2">
-            <Label>Quick Presets</Label>
-            <div className="grid grid-cols-3 gap-2">
-              {presets.map((preset) => (
-                <button
-                  key={preset.name}
-                  onClick={() => handlePresetSelect(preset)}
-                  className={`p-3 rounded-lg text-left transition-colors ${
-                    selectedPreset === preset.name
-                      ? "bg-primary/10"
-                      : "bg-secondary hover:bg-secondary/80"
-                  }`}
-                  disabled={creating}
-                >
-                  <div className="font-medium">{preset.name}</div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {preset.cpu} vCPU • {preset.memory}GB RAM
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Resource Configuration */}
+          {/* Machine Configuration */}
           <div className="space-y-4">
-            <div className="text-xs text-muted-foreground flex items-center gap-1">
-              <Info className="h-3 w-3" />
-              Minimum requirements: 1 CPU core, 1GB memory
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label className="flex items-center gap-2">
-                  <Cpu className="h-4 w-4" />
-                  CPU Cores
-                </Label>
-                <span className="text-sm font-medium">{cpuCores} vCPU</span>
-              </div>
-              <Slider
-                value={[cpuCores]}
-                onValueChange={([value]) => {
-                  setCpuCores(value);
-                  setSelectedPreset(null);
-                }}
-                min={1}
-                max={Math.max(1, Math.min(8, getRemainingResources()?.cpu ? usage!.total_cpu_cores + getRemainingResources()!.cpu : 8))}
-                step={1}
-                disabled={creating}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label className="flex items-center gap-2">
-                  <Monitor className="h-4 w-4" />
-                  Memory
-                </Label>
-                <span className="text-sm font-medium">{memoryGb} GB</span>
-              </div>
-              <Slider
-                value={[memoryGb]}
-                onValueChange={([value]) => {
-                  setMemoryGb(value);
-                  setSelectedPreset(null);
-                }}
-                min={1}
-                max={Math.max(1, Math.min(16, getRemainingResources()?.memory ? usage!.total_memory_gb + getRemainingResources()!.memory : 16))}
-                step={1}
-                disabled={creating}
-              />
-            </div>
+            <Alert>
+              <Terminal className="h-4 w-4" />
+              <AlertDescription>
+                <div className="space-y-1">
+                  <div className="font-medium">Cloud Linux Machine</div>
+                  <div className="text-xs text-muted-foreground">
+                    Your own Ubuntu server in the cloud — ready in seconds.
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    SSH access with auto-generated keys. No setup needed.
+                  </div>
+                </div>
+              </AlertDescription>
+            </Alert>
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <Label className="flex items-center gap-2">
                   <HardDrive className="h-4 w-4" />
-                  Storage
+                  Storage (EBS)
                 </Label>
                 <span className="text-sm font-medium">{storageGb} GB</span>
               </div>
               <Slider
                 value={[storageGb]}
-                onValueChange={([value]) => {
-                  setStorageGb(value);
-                  setSelectedPreset(null);
-                }}
-                min={10}
-                max={Math.min(100, getRemainingResources()?.storage ? usage!.total_storage_gb + getRemainingResources()!.storage : 100)}
-                step={5}
+                onValueChange={([value]) => setStorageGb(value)}
+                min={8}
+                max={30}
+                step={1}
                 disabled={creating}
               />
             </div>
@@ -509,7 +396,7 @@ export function CreateMachineDialog({
           </Button>
           <Button 
             onClick={handleCreate} 
-            disabled={creating || !displayName.trim() || displayName.trim().toLowerCase().startsWith("local") || wouldExceedLimit(cpuCores, memoryGb, storageGb)}
+            disabled={creating || !displayName.trim() || displayName.trim().toLowerCase().startsWith("local") || wouldExceedLimit()}
           >
             {creating ? (
               <>

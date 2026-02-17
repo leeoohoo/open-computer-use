@@ -29,6 +29,7 @@ import { MachineLayout } from "./machine-layout";
 import { SimpleVNCViewer } from "./simple-vnc-viewer";
 import { MachineSettings } from "./machine-settings";
 import { FileTransfer } from "./file-transfer";
+import { SshConnectionPanel } from "./ssh-connection-panel";
 import { toast } from "sonner";
 import type { UserMachine, MachineSession } from "@/types/machines.types";
 
@@ -294,97 +295,124 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
 
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="desktop" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
-            <TabsTrigger value="desktop" className="gap-2">
-              <Monitor className="h-4 w-4" />
-              <span className="hidden sm:inline">Desktop</span>
-            </TabsTrigger>
-            <TabsTrigger value="files" className="gap-2">
-              <FolderOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">Files</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="gap-2">
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </TabsTrigger>
-          </TabsList>
+        {machine.settings?.provider === 'aws' ? (
+          // SSH Machine Tabs
+          <Tabs defaultValue="ssh" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:inline-grid">
+              <TabsTrigger value="ssh" className="gap-2">
+                <Terminal className="h-4 w-4" />
+                <span className="hidden sm:inline">SSH</span>
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="gap-2">
+                <Settings className="h-4 w-4" />
+                <span className="hidden sm:inline">Settings</span>
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="desktop" className="space-y-4">
-            {machine.status !== "running" ? (
-              <Card>
-                <CardContent className="py-12">
-                  <div className="text-center">
-                    <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Machine Not Running</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Start the machine to access the desktop
-                    </p>
-                    <Button 
-                      onClick={() => handleAction("start")}
-                      disabled={actionLoading !== null}
-                    >
-                      {actionLoading === "start" ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      ) : (
-                        <Play className="h-4 w-4 mr-2" />
-                      )}
-                      Start Machine
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-4">
-                {/* VNC Viewer - Direct connection without session */}
-                <SimpleVNCViewer machine={machine} session={null} />
-              </div>
-            )}
-          </TabsContent>
+            <TabsContent value="ssh" className="space-y-4">
+              <SshConnectionPanel machine={machine} />
+            </TabsContent>
 
-          <TabsContent value="files" className="space-y-4">
-            {machine.status !== "running" ? (
-              <Card>
-                <CardContent className="py-12">
-                  <div className="text-center">
-                    <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Machine Not Running</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Start the machine to access file transfer
-                    </p>
-                    <Button 
-                      onClick={() => handleAction("start")}
-                      disabled={actionLoading !== null}
-                    >
-                      {actionLoading === "start" ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      ) : (
-                        <Play className="h-4 w-4 mr-2" />
-                      )}
-                      Start Machine
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <FileTransfer 
-                machineId={machine.id}
-                connectionInfo={{
-                  publicIpAddress: machine.publicIpAddress,
-                  vncPort: machine.vncPort,
-                  vncPassword: machine.vncPassword
-                }}
+            <TabsContent value="settings" className="space-y-4">
+              <MachineSettings
+                machine={machine}
+                onUpdate={fetchMachineData}
               />
-            )}
-          </TabsContent>
+            </TabsContent>
+          </Tabs>
+        ) : (
+          // Azure / Docker Tabs
+          <Tabs defaultValue="desktop" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
+              <TabsTrigger value="desktop" className="gap-2">
+                <Monitor className="h-4 w-4" />
+                <span className="hidden sm:inline">Desktop</span>
+              </TabsTrigger>
+              <TabsTrigger value="files" className="gap-2">
+                <FolderOpen className="h-4 w-4" />
+                <span className="hidden sm:inline">Files</span>
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="gap-2">
+                <Settings className="h-4 w-4" />
+                <span className="hidden sm:inline">Settings</span>
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="settings" className="space-y-4">
-            <MachineSettings 
-              machine={machine} 
-              onUpdate={fetchMachineData}
-            />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="desktop" className="space-y-4">
+              {machine.status !== "running" ? (
+                <Card>
+                  <CardContent className="py-12">
+                    <div className="text-center">
+                      <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">Machine Not Running</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Start the machine to access the desktop
+                      </p>
+                      <Button
+                        onClick={() => handleAction("start")}
+                        disabled={actionLoading !== null}
+                      >
+                        {actionLoading === "start" ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <Play className="h-4 w-4 mr-2" />
+                        )}
+                        Start Machine
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-4">
+                  <SimpleVNCViewer machine={machine} session={null} />
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="files" className="space-y-4">
+              {machine.status !== "running" ? (
+                <Card>
+                  <CardContent className="py-12">
+                    <div className="text-center">
+                      <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">Machine Not Running</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Start the machine to access file transfer
+                      </p>
+                      <Button
+                        onClick={() => handleAction("start")}
+                        disabled={actionLoading !== null}
+                      >
+                        {actionLoading === "start" ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <Play className="h-4 w-4 mr-2" />
+                        )}
+                        Start Machine
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <FileTransfer
+                  machineId={machine.id}
+                  connectionInfo={{
+                    publicIpAddress: machine.publicIpAddress,
+                    vncPort: machine.vncPort,
+                    vncPassword: machine.vncPassword
+                  }}
+                />
+              )}
+            </TabsContent>
+
+            <TabsContent value="settings" className="space-y-4">
+              <MachineSettings
+                machine={machine}
+                onUpdate={fetchMachineData}
+              />
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
     </MachineLayout>
   );

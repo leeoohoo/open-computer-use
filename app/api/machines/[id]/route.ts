@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { getAzureContainerService } from "@/lib/azure/container-instances";
+import { getAwsEc2Service } from "@/lib/aws/ec2-service";
 import { transformMachineFromDB, transformSessionFromDB } from "@/lib/utils/db-transforms";
 import type { MachineActionRequest } from "@/types/machines.types";
 
@@ -105,7 +106,8 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const azureService = getAzureContainerService();
+    const settings = machine.settings as any;
+    const isAws = settings?.provider === 'aws';
 
     switch (body.action) {
       case "start":
@@ -115,8 +117,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
             { status: 400 }
           );
         }
-        
-        // Allow starting from error state as well
+
         if (!["stopped", "error"].includes(machine.status)) {
           return NextResponse.json(
             { error: `Cannot start machine in ${machine.status} state` },
@@ -125,58 +126,69 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         }
 
         try {
-          // Update status to starting
           await supabase
             .from("user_machines")
-            .update({ status: "starting", status_message: "Initializing container..." })
+            .update({ status: "starting", status_message: isAws ? "Starting machine..." : "Initializing container..." })
             .eq("id", machineId);
 
-          // Start container (may recreate if deallocated)
-          const startResult = await azureService.startContainer(
-            machine.azure_container_group,
-            machine.azure_resource_group,
-            userId
-          );
+          if (isAws) {
+            const awsService = getAwsEc2Service();
+            const instanceId = settings?.awsInstanceId;
+            if (!instanceId) {
+              throw new Error("AWS instance ID not found");
+            }
 
-          // If container was recreated, update the VNC password in database
-          if (startResult.recreated && startResult.vncPassword) {
-            await supabase
-              .from("user_machines")
-              .update({ 
-                vnc_password: startResult.vncPassword,
-                status_message: "Container recreated with new password" 
-              })
-              .eq("id", machineId);
-          }
+            await awsService.startInstance(instanceId);
 
-          // Immediately check status after start
-          await updateMachineStatus(machineId, machine.azure_container_group);
+            // Poll for status
+            setTimeout(async () => {
+              await updateMachineStatusAws(machineId, instanceId);
+            }, 10000);
 
-          // Schedule additional status check
-          // Note: In production, consider using a queue or cron job instead
-          setTimeout(async () => {
+            return NextResponse.json({ message: "Machine starting" });
+          } else {
+            const azureService = getAzureContainerService();
+            const startResult = await azureService.startContainer(
+              machine.azure_container_group,
+              machine.azure_resource_group,
+              userId
+            );
+
+            if (startResult.recreated && startResult.vncPassword) {
+              await supabase
+                .from("user_machines")
+                .update({
+                  vnc_password: startResult.vncPassword,
+                  status_message: "Container recreated with new password"
+                })
+                .eq("id", machineId);
+            }
+
             await updateMachineStatus(machineId, machine.azure_container_group);
-          }, 10000);
 
-          return NextResponse.json({ 
-            message: startResult.recreated 
-              ? "Machine recreated with new password" 
-              : "Machine starting",
-            recreated: startResult.recreated,
-            ...(startResult.recreated && startResult.vncPassword ? { 
-              vncPassword: startResult.vncPassword 
-            } : {})
-          });
+            setTimeout(async () => {
+              await updateMachineStatus(machineId, machine.azure_container_group);
+            }, 10000);
+
+            return NextResponse.json({
+              message: startResult.recreated
+                ? "Machine recreated with new password"
+                : "Machine starting",
+              recreated: startResult.recreated,
+              ...(startResult.recreated && startResult.vncPassword ? {
+                vncPassword: startResult.vncPassword
+              } : {})
+            });
+          }
         } catch (error: any) {
-          // Update status to error if start fails
           await supabase
             .from("user_machines")
-            .update({ 
-              status: "error", 
+            .update({
+              status: "error",
               status_message: error.message || "Failed to start machine"
             })
             .eq("id", machineId);
-          
+
           throw error;
         }
 
@@ -188,93 +200,118 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           );
         }
 
-        // End any active sessions
         await supabase
           .from("machine_sessions")
           .update({ ended_at: new Date().toISOString() })
           .eq("machine_id", machineId)
           .is("ended_at", null);
 
-        // Update status to stopping
         await supabase
           .from("user_machines")
           .update({ status: "stopping" })
           .eq("id", machineId);
 
-        // Stop container
-        await azureService.stopContainer(machine.azure_container_group);
+        if (isAws) {
+          const awsService = getAwsEc2Service();
+          const instanceId = settings?.awsInstanceId;
+          if (instanceId) {
+            await awsService.stopInstance(instanceId);
+          }
+        } else {
+          const azureService = getAzureContainerService();
+          await azureService.stopContainer(machine.azure_container_group);
+        }
 
-        // Update status
         await supabase
           .from("user_machines")
-          .update({ status: "stopped" })
+          .update({ status: "stopped", started_at: null })
           .eq("id", machineId);
 
-        // Record usage
         await recordMachineUsage(machine);
 
         return NextResponse.json({ message: "Machine stopped" });
 
       case "restart":
-        // End any active sessions before restarting
         await supabase
           .from("machine_sessions")
           .update({ ended_at: new Date().toISOString() })
           .eq("machine_id", machineId)
           .is("ended_at", null);
 
-        // Update status to stopping
         await supabase
           .from("user_machines")
           .update({ status: "stopping", status_message: "Restarting machine..." })
           .eq("id", machineId);
 
-        // Stop and start
-        await azureService.stopContainer(machine.azure_container_group);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Update status to starting
-        await supabase
-          .from("user_machines")
-          .update({ status: "starting", status_message: "Machine is starting up..." })
-          .eq("id", machineId);
+        if (isAws) {
+          const awsService = getAwsEc2Service();
+          const instanceId = settings?.awsInstanceId;
+          if (!instanceId) {
+            throw new Error("AWS instance ID not found");
+          }
 
-        const startResult = await azureService.startContainer(
-          machine.azure_container_group,
-          machine.azure_resource_group,
-          userId
-        );
+          await awsService.stopInstance(instanceId);
+          await new Promise(resolve => setTimeout(resolve, 5000));
 
-        // If container was recreated, update the VNC password in database
-        if (startResult.recreated && startResult.vncPassword) {
           await supabase
             .from("user_machines")
-            .update({ 
-              vnc_password: startResult.vncPassword,
-              status_message: "Container recreated with new password" 
-            })
+            .update({ status: "starting", status_message: "Machine is starting up..." })
             .eq("id", machineId);
-        }
 
-        // Immediately check status after restart
-        await updateMachineStatus(machineId, machine.azure_container_group);
+          await awsService.startInstance(instanceId);
 
-        setTimeout(async () => {
+          setTimeout(async () => {
+            await updateMachineStatusAws(machineId, instanceId);
+          }, 15000);
+
+          await recordMachineUsage(machine);
+
+          return NextResponse.json({ message: "Machine restarting" });
+        } else {
+          const azureService = getAzureContainerService();
+
+          await azureService.stopContainer(machine.azure_container_group);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+
+          await supabase
+            .from("user_machines")
+            .update({ status: "starting", status_message: "Machine is starting up..." })
+            .eq("id", machineId);
+
+          const startResult = await azureService.startContainer(
+            machine.azure_container_group,
+            machine.azure_resource_group,
+            userId
+          );
+
+          if (startResult.recreated && startResult.vncPassword) {
+            await supabase
+              .from("user_machines")
+              .update({
+                vnc_password: startResult.vncPassword,
+                status_message: "Container recreated with new password"
+              })
+              .eq("id", machineId);
+          }
+
           await updateMachineStatus(machineId, machine.azure_container_group);
-        }, 5000);
 
-        // Record usage for the previous session
-        await recordMachineUsage(machine);
+          setTimeout(async () => {
+            await updateMachineStatus(machineId, machine.azure_container_group);
+          }, 5000);
 
-        return NextResponse.json({ 
-          message: startResult.recreated 
-            ? "Machine restarted with new password" 
-            : "Machine restarting",
-          recreated: startResult.recreated,
-          ...(startResult.recreated && startResult.vncPassword ? { 
-            vncPassword: startResult.vncPassword 
-          } : {})
-        });
+          await recordMachineUsage(machine);
+
+          return NextResponse.json({
+            message: startResult.recreated
+              ? "Machine restarted with new password"
+              : "Machine restarting",
+            recreated: startResult.recreated,
+            ...(startResult.recreated && startResult.vncPassword ? {
+              vncPassword: startResult.vncPassword
+            } : {})
+          });
+        }
 
       case "delete":
         if (machine.status === "running") {
@@ -284,16 +321,23 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           );
         }
 
-        // Update status to deleting
         await supabase
           .from("user_machines")
           .update({ status: "deleting" })
           .eq("id", machineId);
 
-        // Delete container
-        await azureService.deleteContainer(machine.azure_container_group);
+        if (isAws) {
+          const awsService = getAwsEc2Service();
+          const instanceId = settings?.awsInstanceId;
+          const keyPairName = settings?.awsKeyPairName;
+          if (instanceId) {
+            await awsService.terminateInstance(instanceId, keyPairName);
+          }
+        } else {
+          const azureService = getAzureContainerService();
+          await azureService.deleteContainer(machine.azure_container_group);
+        }
 
-        // Delete from database (cascades will handle related records)
         await supabase
           .from("user_machines")
           .delete()
@@ -365,6 +409,52 @@ async function updateMachineStatus(machineId: string, containerGroupName: string
   }
 }
 
+// Helper function to update AWS EC2 machine status
+async function updateMachineStatusAws(machineId: string, instanceId: string) {
+  try {
+    const supabase = await createClient();
+    if (!supabase) {
+      console.error("Database connection failed in updateMachineStatusAws");
+      return;
+    }
+    const awsService = getAwsEc2Service();
+
+    const { data: currentMachine } = await supabase
+      .from("user_machines")
+      .select("started_at")
+      .eq("id", machineId)
+      .single();
+
+    const status = await awsService.getInstanceStatus(instanceId);
+
+    const updateData: any = {
+      status: status.state,
+      status_message: status.message,
+      last_active_at: new Date().toISOString(),
+    };
+
+    if (status.ipAddress) {
+      updateData.public_ip_address = status.ipAddress;
+    }
+
+    if (status.state === "running" && !currentMachine?.started_at) {
+      updateData.started_at = new Date().toISOString();
+    }
+
+    if (status.state === "stopped") {
+      updateData.started_at = null;
+    }
+
+    await supabase
+      .from("user_machines")
+      .update(updateData)
+      .eq("id", machineId);
+
+  } catch (error) {
+    console.error("Error updating AWS machine status:", error);
+  }
+}
+
 // Helper function to record machine usage
 async function recordMachineUsage(machine: any) {
   try {
@@ -373,20 +463,30 @@ async function recordMachineUsage(machine: any) {
       console.error("Database connection failed in recordMachineUsage");
       return;
     }
-    const azureService = getAzureContainerService();
-    
+
     const startTime = machine.started_at || machine.created_at;
     const endTime = new Date();
     const durationHours = (endTime.getTime() - new Date(startTime).getTime()) / (1000 * 60 * 60);
-    
+
     const cpuSeconds = machine.cpu_cores * durationHours * 3600;
     const memoryGbSeconds = machine.memory_gb * durationHours * 3600;
-    const estimatedCost = azureService.estimateCost(
-      machine.cpu_cores,
-      machine.memory_gb,
-      durationHours
-    );
-    
+
+    let estimatedCost: number;
+    if ((machine.settings as any)?.provider === 'aws') {
+      const awsService = getAwsEc2Service();
+      estimatedCost = awsService.estimateCost(
+        process.env.AWS_EC2_INSTANCE_TYPE || 't4g.nano',
+        durationHours
+      );
+    } else {
+      const azureService = getAzureContainerService();
+      estimatedCost = azureService.estimateCost(
+        machine.cpu_cores,
+        machine.memory_gb,
+        durationHours
+      );
+    }
+
     await supabase.from("machine_usage").insert({
       user_id: machine.user_id,
       machine_id: machine.id,
@@ -395,10 +495,10 @@ async function recordMachineUsage(machine: any) {
       cpu_seconds: cpuSeconds,
       memory_gb_seconds: memoryGbSeconds,
       storage_gb_hours: machine.storage_gb * durationHours,
-      network_gb_transferred: 0, // TODO: Implement network tracking
+      network_gb_transferred: 0,
       estimated_cost: estimatedCost,
     });
-    
+
   } catch (error) {
     console.error("Error recording machine usage:", error);
   }

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { getAzureContainerService } from "@/lib/azure/container-instances";
+import { getAwsEc2Service } from "@/lib/aws/ec2-service";
 import { transformMachineFromDB } from "@/lib/utils/db-transforms";
 import type { UserMachine, CreateMachineRequest, MachineStatus } from "@/types/machines.types";
 import { dockerService } from "@/lib/docker/docker-service";
@@ -207,6 +208,7 @@ export async function POST(request: NextRequest) {
 
     const userId = authData.user.id;
     const body: CreateMachineRequest = await request.json();
+    const provider = body.provider || 'azure';
 
     // Validate request
     if (!body.displayName) {
@@ -318,12 +320,13 @@ export async function POST(request: NextRequest) {
     } : baseLimits;
 
     // Validate resources against limits and minimum requirements
-    const requestedCpu = body.cpuCores || 1;
-    const requestedMemory = body.memoryGb || 3;
-    const requestedStorage = body.storageGb || 10;
+    const isAws = provider === 'aws';
+    const requestedCpu = isAws ? 2 : (body.cpuCores || 1);     // t4g.nano = 2 ARM vCPU
+    const requestedMemory = isAws ? 0.5 : (body.memoryGb || 3); // t4g.nano = 0.5 GB
+    const requestedStorage = body.storageGb || (isAws ? 8 : 10);
 
-    // Enforce minimum requirements
-    if (requestedCpu < 1 || requestedMemory < 1) {
+    // Enforce minimum requirements (only for Azure)
+    if (!isAws && (requestedCpu < 1 || requestedMemory < 1)) {
       return NextResponse.json(
         { error: "Minimum requirements: 1 CPU core and 1GB memory" },
         { status: 400 }
@@ -341,26 +344,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate the container name and VNC password once for consistency
-    // Container name must be lowercase, alphanumeric + hyphens, 1-63 chars
+    // Generate the container/instance name
     const uniqueId = `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
     const containerName = `vm-${userId.substring(0, 8)}-${uniqueId}`.toLowerCase().replace(/[^a-z0-9-]/g, '');
-    const vncPassword = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 8);
-    
+    const vncPassword = isAws ? '' : (Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 8));
+
     // First, create a placeholder in the database so it appears immediately
     const placeholderData = {
       user_id: userId,
       container_name: containerName,
       display_name: body.displayName,
       status: "creating" as const,
-      azure_resource_group: process.env.AZURE_RESOURCE_GROUP || "llmhub-resources",
-      azure_container_group: containerName,
+      azure_resource_group: isAws ? '' : (process.env.AZURE_RESOURCE_GROUP || "llmhub-resources"),
+      azure_container_group: isAws ? '' : containerName,
       vnc_password: vncPassword,
       cpu_cores: requestedCpu,
       memory_gb: requestedMemory,
       storage_gb: requestedStorage,
       gpu_enabled: false,
-      settings: {},
+      settings: isAws ? { provider: 'aws' as const, sshUsername: 'ubuntu' } : {},
     };
 
     const { data: dbMachine, error: insertError } = await supabase
@@ -370,72 +372,142 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      // Error creating machine placeholder
       return NextResponse.json(
         { error: "Failed to create machine" },
         { status: 500 }
       );
     }
-    
+
     if (!dbMachine) {
       return NextResponse.json(
         { error: "Failed to create machine record" },
         { status: 500 }
       );
     }
-    
+
     const machine = transformMachineFromDB(dbMachine);
     const machineId = machine?.id || dbMachine.id;
-    
-    // Now create the Azure container asynchronously
+
+    if (isAws) {
+      // AWS EC2 creation flow
+      const awsService = getAwsEc2Service();
+
+      (async () => {
+        try {
+          console.log(`Creating AWS EC2 instance (t4g.nano) with ${requestedStorage}GB storage`);
+
+          const result = await awsService.createInstance(userId, {
+            name: containerName,
+            storageGb: requestedStorage,
+          });
+
+          console.log(`AWS EC2 instance created: ${result.instanceId}`);
+
+          // Store AWS details in settings
+          await supabase
+            .from("user_machines")
+            .update({
+              settings: {
+                provider: 'aws',
+                awsInstanceId: result.instanceId,
+                awsRegion: process.env.AWS_REGION || 'us-east-1',
+                awsKeyPairName: result.keyPairName,
+                sshPrivateKey: result.privateKeyPem,
+                sshUsername: 'ubuntu',
+              },
+              ssh_port: 22,
+            })
+            .eq("id", machineId);
+
+          // Poll for IP assignment
+          let checkCount = 0;
+          const checkInterval = setInterval(async () => {
+            checkCount++;
+            await updateMachineStatusAws(machineId, result.instanceId);
+
+            const { data: updatedMachine } = await supabase
+              .from("user_machines")
+              .select("public_ip_address, status")
+              .eq("id", machineId)
+              .single();
+
+            if (updatedMachine?.public_ip_address || checkCount > 24 || updatedMachine?.status === "error") {
+              clearInterval(checkInterval);
+            }
+          }, 5000);
+
+        } catch (awsError: any) {
+          console.error("AWS EC2 instance creation failed:", awsError);
+
+          await supabase
+            .from("user_machines")
+            .update({
+              status: "error",
+              status_message: awsError.message || "Failed to create EC2 instance",
+            })
+            .eq("id", machineId);
+
+          setTimeout(async () => {
+            await supabase
+              .from("user_machines")
+              .delete()
+              .eq("id", machineId)
+              .eq("status", "error");
+          }, 30000);
+        }
+      })();
+
+      return NextResponse.json({
+        machine,
+        connectionDetails: {
+          sshPort: 22,
+          sshUsername: 'ubuntu',
+        },
+      });
+    }
+
+    // Azure creation flow (existing)
     const azureService = getAzureContainerService();
-    
-    // Start Azure creation in background
+
     (async () => {
       try {
         console.log(`Creating Azure container with ${requestedCpu} vCPU, ${requestedMemory}GB RAM`);
-        
+
         const containerResult = await azureService.createDesktopContainer(userId, {
           cpu: requestedCpu,
           memoryGb: requestedMemory,
           containerName: containerName,
           vncPassword: vncPassword,
         });
-        
+
         console.log(`Azure container created successfully`);
-        
-        // Update the machine with Azure resource ID (container name and password are already correct)
+
         await supabase
           .from("user_machines")
           .update({
             azure_resource_id: containerResult.resourceId,
           })
           .eq("id", machineId);
-          
-        // Start monitoring container status (should be same as containerName)
+
         await updateMachineStatus(machineId, containerName);
-        
-        // Continue checking for IP assignment
+
         let checkCount = 0;
         const checkInterval = setInterval(async () => {
           checkCount++;
           await updateMachineStatus(machineId, containerName);
-          
+
           const { data: updatedMachine } = await supabase
             .from("user_machines")
             .select("public_ip_address, status")
             .eq("id", machineId)
             .single();
-            
+
           if (updatedMachine?.public_ip_address || checkCount > 12 || updatedMachine?.status === "error") {
             clearInterval(checkInterval);
           }
         }, 5000);
-        
+
       } catch (azureError: any) {
-        // Azure container creation failed
-        
-        // Update machine status to error
         await supabase
           .from("user_machines")
           .update({
@@ -443,25 +515,23 @@ export async function POST(request: NextRequest) {
             status_message: azureError.message || "Failed to create container",
           })
           .eq("id", machineId);
-          
-        // Clean up the failed machine from database after a delay
+
         setTimeout(async () => {
           await supabase
             .from("user_machines")
             .delete()
             .eq("id", machineId)
             .eq("status", "error");
-        }, 30000); // Clean up after 30 seconds if still in error state
+        }, 30000);
       }
     })();
-      
-      // Return immediately with the placeholder machine
+
       return NextResponse.json({
         machine,
         connectionDetails: {
           vncUrl: `vnc://localhost:5901`,
           websocketUrl: `wss://${request.headers.get("host")}/api/machines/${machineId}/vnc`,
-          password: vncPassword, // Same password will be used in Azure
+          password: vncPassword,
         },
       });
   } catch (error) {
@@ -505,5 +575,40 @@ async function updateMachineStatus(machineId: string, containerGroupName: string
       
   } catch (error) {
     // Error updating machine status
+  }
+}
+
+// Helper function to update AWS EC2 machine status
+async function updateMachineStatusAws(machineId: string, instanceId: string) {
+  try {
+    const supabase = await createClient();
+    if (!supabase) {
+      console.error("Database connection failed in updateMachineStatusAws");
+      return;
+    }
+    const awsService = getAwsEc2Service();
+
+    const status = await awsService.getInstanceStatus(instanceId);
+
+    const updateData: any = {
+      status: status.state,
+      status_message: status.message,
+    };
+
+    if (status.ipAddress) {
+      updateData.public_ip_address = status.ipAddress;
+    }
+
+    if (status.state === "running") {
+      updateData.started_at = new Date().toISOString();
+    }
+
+    await supabase
+      .from("user_machines")
+      .update(updateData)
+      .eq("id", machineId);
+
+  } catch (error) {
+    // Error updating AWS machine status
   }
 }

@@ -15,7 +15,9 @@ import {
   CheckCircle,
   Loader2,
   AlertTriangle,
-  Crown
+  Crown,
+  Terminal,
+  Server
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,6 +72,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
   const StatusIcon = status.icon;
   const isTemporary = machine.id.startsWith('temp-');
   const isLocal = machine.settings?.isLocal || machine.id.startsWith('local-');
+  const isAws = machine.settings?.provider === 'aws';
 
   // Update time remaining for free tier users
   useEffect(() => {
@@ -294,9 +297,15 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
               <CardTitle className="text-base sm:text-lg truncate pr-2 flex items-center gap-2">
                 {machine.displayName}
                 {isLocal && <span className="text-blue-500 text-sm">🐳</span>}
+                {isAws && (
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-normal gap-1">
+                    <Server className="h-3 w-3" />
+                    SSH
+                  </Badge>
+                )}
               </CardTitle>
               <CardDescription className="text-xs truncate pr-2">
-                {isLocal ? `Local Docker: ${machine.containerName}` : machine.containerName}
+                {isLocal ? `Local Docker: ${machine.containerName}` : isAws ? `Cloud Machine - SSH` : machine.containerName}
               </CardDescription>
             </div>
             <DropdownMenu>
@@ -444,8 +453,17 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
                   onClick={handleConnect}
                   className="flex-1"
                 >
-                  <Monitor className="h-4 w-4 mr-1" />
-                  Open
+                  {isAws ? (
+                    <>
+                      <Terminal className="h-4 w-4 mr-1" />
+                      Connect
+                    </>
+                  ) : (
+                    <>
+                      <Monitor className="h-4 w-4 mr-1" />
+                      Open
+                    </>
+                  )}
                 </Button>
                 <Button
                   size="sm"
