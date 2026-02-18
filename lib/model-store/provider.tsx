@@ -11,14 +11,8 @@ import {
 } from "react"
 
 type UserKeyStatus = {
-  openrouter: boolean
-  openai: boolean
-  mistral: boolean
-  google: boolean
-  perplexity: boolean
-  xai: boolean
-  anthropic: boolean
-  [key: string]: boolean // Allow for additional providers
+  bedrock: boolean
+  [key: string]: boolean
 }
 
 type ModelContextType = {
@@ -38,13 +32,7 @@ const ModelContext = createContext<ModelContextType | undefined>(undefined)
 export function ModelProvider({ children }: { children: React.ReactNode }) {
   const [models, setModels] = useState<ModelConfig[]>([])
   const [userKeyStatus, setUserKeyStatus] = useState<UserKeyStatus>({
-    openrouter: false,
-    openai: false,
-    mistral: false,
-    google: false,
-    perplexity: false,
-    xai: false,
-    anthropic: false,
+    bedrock: false,
   })
   const [favoriteModels, setFavoriteModels] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)

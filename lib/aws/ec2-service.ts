@@ -370,7 +370,8 @@ try:
 except:_HAS_OCR=False
 try:
  from selenium import webdriver
- from selenium.webdriver.chrome.options import Options
+ from selenium.webdriver.firefox.options import Options as FFOptions
+ from selenium.webdriver.firefox.service import Service as FFService
  from selenium.webdriver.common.by import By
  _HAS_SEL=True
 except:_HAS_SEL=False
@@ -380,7 +381,7 @@ DISPLAY=os.environ.get("DISPLAY",":1")
 VNC_PASSWORD=os.environ.get("VNC_PASSWORD","")
 PORT=int(os.environ.get("AGENT_PORT","8080"))
 HOST=os.environ.get("AGENT_HOST","0.0.0.0")
-_browser=None
+_browser_instance=None
 def _xdo(*a):
  env={**os.environ,"DISPLAY":DISPLAY}
  r=subprocess.run(["xdotool"]+list(a),capture_output=True,text=True,env=env,timeout=10)
@@ -406,23 +407,25 @@ def _shot():
  img.thumbnail((1280,720),Image.LANCZOS);buf=io.BytesIO()
  img.convert("RGB").save(buf,format="JPEG",quality=80)
  return "data:image/jpeg;base64,"+base64.b64encode(buf.getvalue()).decode()
-def _browser():
- global _browser
- if _browser is not None:
-  try:_=_browser.title;return _browser
-  except:_browser=None
+def _get_browser():
+ global _browser_instance
+ if _browser_instance is not None:
+  try:_=_browser_instance.title;return _browser_instance
+  except:_browser_instance=None
  if not _HAS_SEL:raise RuntimeError("selenium unavailable")
- import shutil;opts=Options()
- opts.add_argument("--no-sandbox");opts.add_argument("--disable-dev-shm-usage")
- opts.add_argument("--disable-gpu");opts.add_argument("--remote-debugging-port=9222")
- dp=None
- for p in ["chromedriver","/usr/bin/chromedriver","/usr/lib/chromium-browser/chromedriver","/snap/bin/chromium.chromedriver"]:
-  if shutil.which(p) or os.path.exists(p):dp=shutil.which(p) or p;break
- if dp:
-  from selenium.webdriver.chrome.service import Service;svc=Service(executable_path=dp)
-  _browser=webdriver.Chrome(service=svc,options=opts)
- else:_browser=webdriver.Chrome(options=opts)
- return _browser
+ import shutil
+ opts=FFOptions()
+ opts.add_argument("--width=1280");opts.add_argument("--height=720")
+ gd=None
+ for p in ["/usr/local/bin/geckodriver","/usr/bin/geckodriver"]:
+  if os.path.exists(p):gd=p;break
+ if not gd and shutil.which("geckodriver"):gd=shutil.which("geckodriver")
+ if gd:
+  svc=FFService(executable_path=gd)
+  _browser_instance=webdriver.Firefox(service=svc,options=opts)
+ else:_browser_instance=webdriver.Firefox(options=opts)
+ _browser_instance.set_window_size(1280,720)
+ return _browser_instance
 class Agent:
  def __init__(self):self._t=time.time();self._n=0
  async def serve(self,ws):
@@ -488,9 +491,12 @@ class Agent:
  def _tt(self,p):
   env={**os.environ,"DISPLAY":DISPLAY};subprocess.run(["xdotool","type","--",p.get("text","")],env=env,timeout=10);return{"success":True}
  def _ex(self,p):
-  cmd=p.get("command","");cwd=p.get("cwd","/home/ubuntu");env={**os.environ,"DISPLAY":DISPLAY,"HOME":"/home/ubuntu"}
+  cmd=p.get("command","");cwd=p.get("cwd","/home/ubuntu")
+  use_sudo=p.get("sudo",False)
+  env={**os.environ,"DISPLAY":DISPLAY,"HOME":"/home/ubuntu","PATH":"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"}
+  if use_sudo and not cmd.strip().startswith("sudo"):cmd="sudo "+cmd
   try:
-   r=subprocess.run(cmd,shell=True,capture_output=True,text=True,timeout=60,cwd=cwd,env=env)
+   r=subprocess.run(cmd,shell=True,capture_output=True,text=True,timeout=120,cwd=cwd,env=env)
    out=(r.stdout+r.stderr)[:5000]
    if len(r.stdout+r.stderr)>5000:out+="\\n...[truncated]"
    return{"success":True,"output":out,"exit_code":r.returncode}
@@ -531,29 +537,29 @@ class Agent:
   b64=img_data.split(",",1)[1];img=Image.open(io.BytesIO(base64.b64decode(b64)))
   return{"success":True,"text":pytesseract.image_to_string(img),"screenshot":img_data}
  def _bo(self,p):
-  try:b=_browser();u=p.get("url","about:blank");b.get(u) if u!="about:blank" else None;return{"success":True}
+  try:b=_get_browser();u=p.get("url","about:blank");b.get(u) if u!="about:blank" else None;return{"success":True}
   except Exception as e:return{"success":False,"error":str(e)}
  def _bn(self,p):
-  try:b=_browser();b.get(p.get("url",""));return{"success":True,"url":b.current_url,"title":b.title}
+  try:b=_get_browser();b.get(p.get("url",""));return{"success":True,"url":b.current_url,"title":b.title}
   except Exception as e:return{"success":False,"error":str(e)}
  def _bc(self,p):
-  try:_browser().find_element(By.CSS_SELECTOR,p.get("selector","")).click();return{"success":True}
+  try:_get_browser().find_element(By.CSS_SELECTOR,p.get("selector","")).click();return{"success":True}
   except Exception as e:return{"success":False,"error":str(e)}
  def _bt(self,p):
   try:
-   el=_browser().find_element(By.CSS_SELECTOR,p.get("selector",""));el.clear();el.send_keys(p.get("text",""));return{"success":True}
+   el=_get_browser().find_element(By.CSS_SELECTOR,p.get("selector",""));el.clear();el.send_keys(p.get("text",""));return{"success":True}
   except Exception as e:return{"success":False,"error":str(e)}
  def _bx(self,p):
-  try:r=_browser().execute_script(p.get("script",""));return{"success":True,"result":str(r) if r is not None else None}
+  try:r=_get_browser().execute_script(p.get("script",""));return{"success":True,"result":str(r) if r is not None else None}
   except Exception as e:return{"success":False,"error":str(e)}
  def _bd(self,p):
   try:
-   b=_browser();dom=b.execute_script("return document.documentElement.outerHTML")
+   b=_get_browser();dom=b.execute_script("return document.documentElement.outerHTML")
    if len(dom)>10000:dom=dom[:10000]+"...[truncated]"
    return{"success":True,"dom":dom,"url":b.current_url,"title":b.title}
   except Exception as e:return{"success":False,"error":str(e)}
  def _bs(self,p):
-  try:b=_browser();return{"success":True,"url":b.current_url,"title":b.title}
+  try:b=_get_browser();return{"success":True,"url":b.current_url,"title":b.title}
   except Exception as e:return{"success":False,"error":str(e)}
 async def main():
  agent=Agent()
@@ -600,7 +606,35 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \\
   tesseract-ocr \\
   tesseract-ocr-eng \\
   imagemagick \\
-  chromium-browser
+  xdg-utils \\
+  fonts-liberation \\
+  software-properties-common \\
+  sudo
+
+# Grant ubuntu user passwordless sudo (full admin access for AI agent)
+echo "ubuntu ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ubuntu-nopasswd
+chmod 440 /etc/sudoers.d/ubuntu-nopasswd
+
+# Install Firefox as native deb (not snap — snap breaks in VNC/cloud-init)
+add-apt-repository -y ppa:mozillateam/ppa
+cat > /etc/apt/preferences.d/mozilla-firefox << 'MOZPREF'
+Package: *
+Pin: release o=LP-PPA-mozillateam
+Pin-Priority: 1001
+MOZPREF
+apt-get update -y
+DEBIAN_FRONTEND=noninteractive apt-get install -y firefox
+
+# Install geckodriver for Selenium
+ARCH=$(dpkg --print-architecture)
+if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
+  GD_ARCH="linux-aarch64"
+else
+  GD_ARCH="linux64"
+fi
+GD_VER=$(curl -sL https://api.github.com/repos/mozilla/geckodriver/releases/latest | python3 -c "import sys,json;print(json.load(sys.stdin)['tag_name'])" 2>/dev/null || echo "v0.35.0")
+curl -sL "https://github.com/mozilla/geckodriver/releases/download/\${GD_VER}/geckodriver-\${GD_VER}-\${GD_ARCH}.tar.gz" | tar xz -C /usr/local/bin
+chmod +x /usr/local/bin/geckodriver
 
 # Python AI agent dependencies
 pip3 install --quiet \\
@@ -616,7 +650,13 @@ pip3 install --quiet \\
 # Remove screen lockers that get pulled in by xfce4-goodies
 apt-get remove -y light-locker xfce4-screensaver xscreensaver 2>/dev/null || true
 
-echo "Python packages installed"
+echo "Firefox + geckodriver installed"
+
+# Set Firefox as default browser
+update-alternatives --set x-www-browser /usr/bin/firefox 2>/dev/null || true
+update-alternatives --set gnome-www-browser /usr/bin/firefox 2>/dev/null || true
+
+echo "Browser setup completed"
 
 # Clone noVNC
 git clone --depth 1 https://github.com/novnc/noVNC.git /opt/novnc
@@ -845,6 +885,59 @@ systemctl daemon-reload
 systemctl enable keep-screen-alive.service
 systemctl start keep-screen-alive.service
 
+# Set up desktop shortcuts and browser defaults for ubuntu user
+USER_DESKTOP=$USER_HOME/Desktop
+mkdir -p $USER_DESKTOP
+cat > $USER_DESKTOP/firefox.desktop << 'BROWSER_DESKTOP_EOF'
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Firefox
+Comment=Browse the Web
+Exec=firefox %U
+Icon=firefox
+Terminal=false
+Categories=Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
+BROWSER_DESKTOP_EOF
+chmod 755 $USER_DESKTOP/firefox.desktop
+chown ubuntu:ubuntu $USER_DESKTOP/firefox.desktop
+
+# Terminal shortcut
+cat > $USER_DESKTOP/terminal.desktop << 'TERM_DESKTOP_EOF'
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Terminal
+Comment=Use the command line
+Exec=xfce4-terminal
+Icon=utilities-terminal
+Terminal=false
+Categories=System;TerminalEmulator;
+TERM_DESKTOP_EOF
+chmod 755 $USER_DESKTOP/terminal.desktop
+chown ubuntu:ubuntu $USER_DESKTOP/terminal.desktop
+chown -R ubuntu:ubuntu $USER_DESKTOP
+
+# Set MIME defaults for ubuntu user
+mkdir -p $USER_HOME/.local/share/applications
+cat > $USER_HOME/.local/share/applications/mimeapps.list << 'MIME_EOF'
+[Default Applications]
+text/html=firefox.desktop
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
+x-scheme-handler/about=firefox.desktop
+x-scheme-handler/unknown=firefox.desktop
+MIME_EOF
+chown -R ubuntu:ubuntu $USER_HOME/.local
+
+# Add useful aliases to ubuntu's bashrc
+cat >> $USER_HOME/.bashrc << 'BASHRC_EOF'
+alias browser='firefox'
+export DISPLAY=:1
+BASHRC_EOF
+chown ubuntu:ubuntu $USER_HOME/.bashrc
+
 # AI Agent Server
 mkdir -p /opt/ai-agent && chown ubuntu:ubuntu /opt/ai-agent
 printf 'VNC_PASSWORD=%s\\n' "${vncPassword}" > /opt/ai-agent/.env
@@ -856,7 +949,7 @@ ${agentB64}
 AGENT_B64_EOF
 chown ubuntu:ubuntu /opt/ai-agent/server.py
 
-# Create systemd service for AI agent
+# Create systemd service for AI agent with full environment
 cat > /etc/systemd/system/ai-agent.service << 'AGENT_SVC_EOF'
 [Unit]
 Description=LLMHub AI Agent WebSocket Server
@@ -868,9 +961,14 @@ Type=simple
 User=ubuntu
 WorkingDirectory=/home/ubuntu
 Environment=DISPLAY=:1
+Environment=HOME=/home/ubuntu
 Environment=AGENT_PORT=8080
 Environment=AGENT_HOST=0.0.0.0
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+Environment=XDG_RUNTIME_DIR=/tmp/runtime-ubuntu
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/tmp/runtime-ubuntu/bus
 EnvironmentFile=/opt/ai-agent/.env
+ExecStartPre=/bin/bash -c 'mkdir -p /tmp/runtime-ubuntu && chmod 700 /tmp/runtime-ubuntu && chown ubuntu:ubuntu /tmp/runtime-ubuntu'
 ExecStartPre=/bin/bash -c 'for i in $(seq 1 60); do xdpyinfo -display :1 >/dev/null 2>&1 && exit 0; sleep 1; done; exit 1'
 ExecStart=/usr/bin/python3 /opt/ai-agent/server.py
 Restart=on-failure
@@ -888,7 +986,9 @@ echo "DESKTOP_INIT_STATUS=ready" > /var/run/desktop-init-status
 echo "Desktop setup complete at $(date)"
 `;
 
-    return Buffer.from(script).toString("base64");
+    // Gzip the entire script — cloud-init auto-detects gzip magic bytes
+    const scriptGz = zlib.gzipSync(Buffer.from(script), { level: 9 });
+    return scriptGz.toString("base64");
   }
 
   private async resolveUbuntuAmi(): Promise<string> {

@@ -14,13 +14,15 @@ export const REMAINING_QUERY_ALERT_THRESHOLD = 3
 export const DAILY_FILE_UPLOAD_LIMIT = 5
 export const DAILY_LIMIT_PRO_MODELS = 100
 
-export const NON_AUTH_ALLOWED_MODELS = ["azure-gpt-4.1-nano"]
+export const NON_AUTH_ALLOWED_MODELS = ["amazon.nova-lite-v1:0"]
 
 export const FREE_MODELS_IDS = [
-  "azure-gpt-4.1-nano",
+  "amazon.nova-lite-v1:0",
 ]
 
-export const MODEL_DEFAULT = "azure-gpt-4.1-nano"
+// Model is controlled by backend BEDROCK_DEFAULT_MODEL env var.
+// This value is only used as a placeholder ID for the frontend request.
+export const MODEL_DEFAULT = "bedrock-default"
 
 export const APP_NAME = "LLMHub"
 export const APP_DOMAIN = "https://coasty.ai"
