@@ -22,7 +22,6 @@ import { useChatCore } from "./use-chat-core"
 import { InsufficientCreditsModal } from "@/app/components/credits/insufficient-credits-modal"
 import { useChatOperations } from "./use-chat-operations"
 import { useVMFileUpload } from "./use-vm-file-upload"
-import { type ResearchDepth } from "@/lib/research-depth"
 import { Card } from "@/components/ui/card"
 import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
 import { useChatStreaming } from "@/lib/chat-streaming-store/provider"
@@ -192,9 +191,6 @@ export function Chat() {
   // Always use the default model
   const selectedModel = MODEL_DEFAULT
 
-  // Research depth state
-  const [researchDepth, setResearchDepth] = useState<ResearchDepth>("moderate")
-
   // State to pass between hooks
   const [hasDialogAuth, setHasDialogAuth] = useState(false)
   const isAuthenticated = useMemo(() => !!user?.id, [user?.id])
@@ -254,7 +250,6 @@ export function Chat() {
     ensureChatExists,
     handleFileUploads,
     selectedModel,
-    researchDepth,
     selectedVMId,
     clearDraft,
     bumpChat,
@@ -465,8 +460,6 @@ export function Chat() {
       onFileUpload: handleFileUpload,
       onFileRemove: handleFileRemove,
       hasSuggestions: false,
-      researchDepth,
-      setResearchDepth,
       selectedVMId,
       setSelectedVMId,
       isUserAuthenticated: isAuthenticated,
@@ -490,8 +483,6 @@ export function Chat() {
       handleFileRemove,
       preferences.promptSuggestions,
       effectiveChatId,
-      researchDepth,
-      setResearchDepth,
       selectedVMId,
       setSelectedVMId,
       isAuthenticated,

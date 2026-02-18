@@ -102,7 +102,9 @@ export function SimpleVNCViewer({ machine, session }: SimpleVNCViewerProps) {
           <CardContent className="space-y-4">
             <Alert>
               <AlertDescription>
-                Azure is assigning a public IP address to your container. This usually takes 30-60 seconds after the container starts.
+                {currentMachine.settings?.provider === 'aws'
+                  ? 'Your instance is starting up. A public IP address will be assigned shortly.'
+                  : 'Azure is assigning a public IP address to your container. This usually takes 30-60 seconds after the container starts.'}
               </AlertDescription>
             </Alert>
             
@@ -166,9 +168,13 @@ export function SimpleVNCViewer({ machine, session }: SimpleVNCViewerProps) {
             <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950/20">
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-xs">
-                <strong>Desktop Login:</strong> If you see a desktop login screen after connecting, use username "desktop" with password: <span className="font-mono font-bold">desktop</span>
-                <br />
                 <strong>VNC Password:</strong> The VNC connection password is: <span className="font-mono font-bold">{currentMachine.vncPassword}</span>
+                {currentMachine.settings?.provider !== 'aws' && (
+                  <>
+                    <br />
+                    <strong>Desktop Login:</strong> If you see a desktop login screen, use username &quot;desktop&quot; with password: <span className="font-mono font-bold">desktop</span>
+                  </>
+                )}
               </AlertDescription>
             </Alert>
             {machine.status === "running" && !machine.startedAt && (

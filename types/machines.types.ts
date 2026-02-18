@@ -66,6 +66,9 @@ export interface MachineSettings {
   awsSecurityGroupId?: string;
   sshPrivateKey?: string;
   sshUsername?: string;
+  awsInstanceType?: string;
+  desktopEnabled?: boolean;
+  desktopInitStatus?: 'installing' | 'ready' | 'failed';
 }
 
 export interface MachineSession {
@@ -175,6 +178,7 @@ export interface CreateMachineRequest {
   cpuCores?: number;
   memoryGb?: number;
   storageGb?: number;
+  desktopEnabled?: boolean;
 }
 
 export interface CreateMachineResponse {

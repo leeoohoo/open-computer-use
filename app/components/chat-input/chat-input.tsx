@@ -7,9 +7,7 @@ import {
   PromptInputTextarea,
 } from "@/components/prompt-kit/prompt-input"
 import { Button } from "@/components/ui/button"
-import { ResearchDepthSelector } from "@/components/common/research-depth-selector/base"
 import { VMSelector } from "@/components/common/vm-selector/vm-selector"
-import { type ResearchDepth } from "@/lib/research-depth"
 import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Desktop } from "@phosphor-icons/react"
 import { useCallback, useMemo, useState, useEffect } from "react"
 import { PromptSystem } from "../suggestions/prompt-system"
@@ -32,8 +30,6 @@ type ChatInputProps = {
   onFileRemove: (file: File) => void
   onSuggestion: (suggestion: string) => void
   hasSuggestions?: boolean
-  researchDepth: ResearchDepth
-  setResearchDepth: (depth: ResearchDepth) => void
   selectedVMId: string | null
   setSelectedVMId: (vmId: string | null) => void
   isUserAuthenticated: boolean
@@ -323,8 +319,6 @@ export function ChatInput({
   onFileRemove,
   onSuggestion,
   hasSuggestions,
-  researchDepth,
-  setResearchDepth,
   selectedVMId,
   setSelectedVMId,
   isUserAuthenticated,
@@ -382,7 +376,7 @@ export function ChatInput({
   // Start VM if it's stopped
   const startVMIfNeeded = async (): Promise<boolean> => {
     if (!selectedVMId || selectedVMId === "none") {
-      return true // No VM selected, proceed with web search
+      return false // A machine must be selected to send messages
     }
     
     // If machine status hasn't been loaded yet, wait a moment and fetch it
@@ -545,8 +539,8 @@ export function ChatInput({
           return
         }
         
-        // Don't allow sending if VM is in creating state
-        if (selectedVMId && selectedVMId !== "none" && machineStatus === "creating") {
+        // Don't allow sending without a machine selected or if VM is creating
+        if (!selectedVMId || selectedVMId === "none" || machineStatus === "creating") {
           return
         }
         
@@ -639,12 +633,6 @@ export function ChatInput({
           />
           <PromptInputActions className="mt-5 w-full justify-between px-2 sm:px-3 pb-3">
             <div className="flex gap-1 sm:gap-2 overflow-hidden">
-              <ResearchDepthSelector
-                selectedDepth={researchDepth}
-                setSelectedDepth={setResearchDepth}
-                isUserAuthenticated={isUserAuthenticated}
-                className="h-9 flex-shrink-0"
-              />
               <VMSelector
                 selectedVMId={selectedVMId}
                 setSelectedVMId={setSelectedVMId}
@@ -662,15 +650,16 @@ export function ChatInput({
             </div>
             <PromptInputAction
               tooltip={
-                status === "streaming" ? "Stop" : 
-                (selectedVMId && selectedVMId !== "none" && machineStatus === "creating") ? "Please wait for VM to be created" :
+                status === "streaming" ? "Stop" :
+                (!selectedVMId || selectedVMId === "none") ? "Select a computer to send messages" :
+                (machineStatus === "creating") ? "Please wait for VM to be created" :
                 "Send"
               }
             >
               <Button
                 size="sm"
                 className="size-9 rounded-full transition-all duration-300 ease-out"
-                disabled={status === "streaming" ? false : (!!(!value || isSubmitting || isOnlyWhitespace(value) || (selectedVMId && selectedVMId !== "none" && machineStatus === "creating")))}
+                disabled={status === "streaming" ? false : (!!(!value || isSubmitting || isOnlyWhitespace(value) || !selectedVMId || selectedVMId === "none" || machineStatus === "creating"))}
                 type="button"
                 onClick={handleSend}
                 aria-label={status === "streaming" ? "Stop" : "Send message"}

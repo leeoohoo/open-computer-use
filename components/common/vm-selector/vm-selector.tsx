@@ -206,10 +206,10 @@ export function VMSelector({
         ) : (
           <div className="flex items-center gap-1 sm:gap-2">
             <Monitor className="h-3.5 w-3.5 opacity-50 shrink-0" />
-            <span className="hidden sm:inline">No Computer</span>
-            <span className="sm:hidden text-[11px]">None</span>
-            <span className="hidden sm:inline-flex px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 border bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20">
-              Search web only
+            <span className="hidden sm:inline">Select a Computer</span>
+            <span className="sm:hidden text-[11px]">Select</span>
+            <span className="hidden sm:inline-flex px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 border bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20">
+              Required
             </span>
           </div>
         )}
@@ -221,15 +221,6 @@ export function VMSelector({
             <span className="text-sm font-medium text-primary">Create Machine</span>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-primary text-primary-foreground">
               New
-            </span>
-          </div>
-        </SelectItem>
-        <SelectItem value="none">
-          <div className="flex items-center gap-2 w-full">
-            <Monitor className="h-3.5 w-3.5 opacity-50 shrink-0" />
-            <span className="text-xs">No Computer Selected</span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 border bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20">
-              Search web only
             </span>
           </div>
         </SelectItem>

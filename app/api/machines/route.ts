@@ -321,9 +321,10 @@ export async function POST(request: NextRequest) {
 
     // Validate resources against limits and minimum requirements
     const isAws = provider === 'aws';
-    const requestedCpu = isAws ? 2 : (body.cpuCores || 1);     // t4g.nano = 2 ARM vCPU
-    const requestedMemory = isAws ? 0.5 : (body.memoryGb || 3); // t4g.nano = 0.5 GB
-    const requestedStorage = body.storageGb || (isAws ? 8 : 10);
+    const isDesktop = isAws && body.desktopEnabled;
+    const requestedCpu = isAws ? 2 : (body.cpuCores || 1);
+    const requestedMemory = isDesktop ? 2 : (isAws ? 0.5 : (body.memoryGb || 3));
+    const requestedStorage = body.storageGb || (isDesktop ? 16 : (isAws ? 8 : 10));
 
     // Enforce minimum requirements (only for Azure)
     if (!isAws && (requestedCpu < 1 || requestedMemory < 1)) {
@@ -347,7 +348,11 @@ export async function POST(request: NextRequest) {
     // Generate the container/instance name
     const uniqueId = `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
     const containerName = `vm-${userId.substring(0, 8)}-${uniqueId}`.toLowerCase().replace(/[^a-z0-9-]/g, '');
-    const vncPassword = isAws ? '' : (Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 8));
+    // Generate VNC password for Azure and AWS desktop machines
+    const needsVnc = !isAws || isDesktop;
+    const vncPassword = needsVnc
+      ? (Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 8))
+      : '';
 
     // First, create a placeholder in the database so it appears immediately
     const placeholderData = {
@@ -358,11 +363,15 @@ export async function POST(request: NextRequest) {
       azure_resource_group: isAws ? '' : (process.env.AZURE_RESOURCE_GROUP || "llmhub-resources"),
       azure_container_group: isAws ? '' : containerName,
       vnc_password: vncPassword,
+      vnc_port: isDesktop ? 5901 : (isAws ? 0 : 5901),
+      websocket_port: isDesktop ? 6080 : (isAws ? 0 : 6080),
       cpu_cores: requestedCpu,
       memory_gb: requestedMemory,
       storage_gb: requestedStorage,
       gpu_enabled: false,
-      settings: isAws ? { provider: 'aws' as const, sshUsername: 'ubuntu' } : {},
+      settings: isAws
+        ? { provider: 'aws' as const, sshUsername: 'ubuntu', desktopEnabled: isDesktop }
+        : {},
     };
 
     const { data: dbMachine, error: insertError } = await supabase
@@ -391,14 +400,17 @@ export async function POST(request: NextRequest) {
     if (isAws) {
       // AWS EC2 creation flow
       const awsService = getAwsEc2Service();
+      const awsInstanceType = isDesktop ? 't4g.small' : 't4g.nano';
 
       (async () => {
         try {
-          console.log(`Creating AWS EC2 instance (t4g.nano) with ${requestedStorage}GB storage`);
+          console.log(`Creating AWS EC2 instance (${awsInstanceType}) with ${requestedStorage}GB storage${isDesktop ? ' + desktop' : ''}`);
 
           const result = await awsService.createInstance(userId, {
             name: containerName,
             storageGb: requestedStorage,
+            desktopEnabled: isDesktop,
+            vncPassword: isDesktop ? vncPassword : undefined,
           });
 
           console.log(`AWS EC2 instance created: ${result.instanceId}`);
@@ -414,6 +426,10 @@ export async function POST(request: NextRequest) {
                 awsKeyPairName: result.keyPairName,
                 sshPrivateKey: result.privateKeyPem,
                 sshUsername: 'ubuntu',
+                awsInstanceType,
+                desktopEnabled: isDesktop,
+                desktopInitStatus: isDesktop ? 'installing' as const : undefined,
+                agent_port: isDesktop ? 8080 : undefined,
               },
               ssh_port: 22,
             })
@@ -433,6 +449,58 @@ export async function POST(request: NextRequest) {
 
             if (updatedMachine?.public_ip_address || checkCount > 24 || updatedMachine?.status === "error") {
               clearInterval(checkInterval);
+
+              // If desktop enabled and IP assigned, poll for desktop readiness
+              if (isDesktop && updatedMachine?.public_ip_address) {
+                let desktopCheckCount = 0;
+                const desktopCheckInterval = setInterval(async () => {
+                  desktopCheckCount++;
+                  try {
+                    const res = await fetch(
+                      `http://${updatedMachine.public_ip_address}:6080/`,
+                      { signal: AbortSignal.timeout(3000) }
+                    );
+                    if (res.ok || res.status === 200) {
+                      // Desktop is ready
+                      const { data: m } = await supabase
+                        .from("user_machines")
+                        .select("settings")
+                        .eq("id", machineId)
+                        .single();
+                      const currentSettings = (m?.settings || {}) as Record<string, any>;
+                      await supabase
+                        .from("user_machines")
+                        .update({
+                          settings: { ...currentSettings, desktopInitStatus: 'ready' },
+                          status_message: 'Desktop ready',
+                        })
+                        .eq("id", machineId);
+                      clearInterval(desktopCheckInterval);
+                    }
+                  } catch {
+                    // noVNC not ready yet
+                  }
+                  if (desktopCheckCount > 90) {
+                    // ~7.5 minutes - mark as failed
+                    clearInterval(desktopCheckInterval);
+                    const { data: m } = await supabase
+                      .from("user_machines")
+                      .select("settings")
+                      .eq("id", machineId)
+                      .single();
+                    const currentSettings = (m?.settings || {}) as Record<string, any>;
+                    if (currentSettings?.desktopInitStatus !== 'ready') {
+                      await supabase
+                        .from("user_machines")
+                        .update({
+                          settings: { ...currentSettings, desktopInitStatus: 'failed' },
+                          status_message: 'Desktop setup may have failed. Check /var/log/desktop-setup.log via SSH.',
+                        })
+                        .eq("id", machineId);
+                    }
+                  }
+                }, 5000);
+              }
             }
           }, 5000);
 
@@ -462,6 +530,7 @@ export async function POST(request: NextRequest) {
         connectionDetails: {
           sshPort: 22,
           sshUsername: 'ubuntu',
+          ...(isDesktop ? { password: vncPassword } : {}),
         },
       });
     }

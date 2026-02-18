@@ -9,7 +9,6 @@ import type { Message } from "@ai-sdk/react"
 import { useChat } from "@ai-sdk/react"
 import { useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { type ResearchDepth } from "@/lib/research-depth"
 import { insertMessageToDb } from "@/lib/chat-store/messages/api"
 import { InsufficientCreditsModal } from "@/app/components/credits/insufficient-credits-modal"
 
@@ -42,7 +41,6 @@ type UseChatCoreProps = {
     chatId: string
   ) => Promise<Attachment[] | null>
   selectedModel: string
-  researchDepth: ResearchDepth
   selectedVMId: string | null
   clearDraft: () => void
   bumpChat: (chatId: string) => void
@@ -63,7 +61,6 @@ export function useChatCore({
   ensureChatExists,
   handleFileUploads,
   selectedModel,
-  researchDepth,
   selectedVMId,
   clearDraft,
   bumpChat,
@@ -278,7 +275,7 @@ export function useChatCore({
           systemPrompt: systemPrompt || SystemPrompts.main(),
           enableSearch,
           forceSearch,
-          researchDepth,
+
           machineId: selectedVMId,
         },
         experimental_attachments: (attachments || []).filter(a => a.url) as any,
@@ -329,7 +326,7 @@ export function useChatCore({
     systemPrompt,
     enableSearch,
     forceSearch,
-    researchDepth,
+
     selectedVMId,
     handleSubmit,
     cacheAndAddMessage,
@@ -399,7 +396,7 @@ export function useChatCore({
             systemPrompt: SystemPrompts.main(),
             enableSearch, // Always enable search for suggestions
             forceSearch, // Always force search for suggestions
-            researchDepth,
+  
           },
         }
 
@@ -427,7 +424,7 @@ export function useChatCore({
       isAuthenticated,
       enableSearch,
       forceSearch,
-      researchDepth,
+  
       setMessages,
       setIsSubmitting,
     ]
@@ -449,12 +446,12 @@ export function useChatCore({
         systemPrompt: systemPrompt || SystemPrompts.main(),
         enableSearch, // Always enable search for regenerate
         forceSearch, // Always force search for regenerate
-        researchDepth,
+    
       },
     }
 
     reload(options)
-  }, [user, chatId, selectedModel, isAuthenticated, systemPrompt, enableSearch, forceSearch, reload, researchDepth])
+  }, [user, chatId, selectedModel, isAuthenticated, systemPrompt, enableSearch, forceSearch, reload])
 
   // Handle input change - now with access to the real setInput function!
   const { setDraftValue } = useChatDraft(chatId)

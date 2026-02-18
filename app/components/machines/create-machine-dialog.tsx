@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, HardDrive, Info, AlertCircle, AlertTriangle, Crown, Clock, Terminal } from "lucide-react";
+import { Loader2, HardDrive, Info, AlertCircle, AlertTriangle, Crown, Clock, Terminal, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -56,6 +56,7 @@ export function CreateMachineDialog({
   const { isFreeTier, loading: subscriptionLoading } = useSubscription();
   const [creating, setCreating] = useState(false);
   const [displayName, setDisplayName] = useState("");
+  const [desktopEnabled, setDesktopEnabled] = useState(false);
   const [storageGb, setStorageGb] = useState(8);
   const [limits, setLimits] = useState<MachineLimits | null>(null);
   const [usage, setUsage] = useState<MachineUsage | null>(null);
@@ -94,10 +95,11 @@ export function CreateMachineDialog({
   const wouldExceedLimit = () => {
     if (!limits || !usage) return false;
 
+    const memoryNeeded = desktopEnabled ? 2 : 0.5;
     return (
       usage.machines_count >= limits.max_machines ||
       usage.total_cpu_cores + 2 > limits.max_cpu_cores ||
-      usage.total_memory_gb + 0.5 > limits.max_memory_gb ||
+      usage.total_memory_gb + memoryNeeded > limits.max_memory_gb ||
       usage.total_storage_gb + storageGb > limits.max_storage_gb
     );
   };
@@ -131,6 +133,7 @@ export function CreateMachineDialog({
       displayName: displayName.trim(),
       provider: 'aws' as const,
       storageGb,
+      desktopEnabled,
     };
 
     try {
@@ -143,12 +146,15 @@ export function CreateMachineDialog({
 
       // Show immediate success and close dialog
       toast.success("Machine creation started!", {
-        description: "Your cloud machine is being launched. SSH key will be available once ready.",
+        description: desktopEnabled
+          ? "Your desktop machine is being launched. Desktop will be ready in 3-5 minutes."
+          : "Your cloud machine is being launched. SSH key will be available once ready.",
         duration: 5000,
       });
 
       // Reset form for next time
       setDisplayName("");
+      setDesktopEnabled(false);
       setStorageGb(8);
       setCreating(false);
 
@@ -348,23 +354,79 @@ export function CreateMachineDialog({
             )}
           </div>
 
-          {/* Machine Configuration */}
-          <div className="space-y-4">
-            <Alert>
-              <Terminal className="h-4 w-4" />
+          {/* Machine Type Selector */}
+          <div className="space-y-3">
+            <Label>Machine Type</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setDesktopEnabled(false);
+                  if (storageGb > 8 && storageGb <= 16) setStorageGb(8);
+                }}
+                disabled={creating}
+                className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors text-left ${
+                  !desktopEnabled
+                    ? "border-primary bg-primary/5"
+                    : "border-muted hover:border-muted-foreground/30"
+                }`}
+              >
+                <Terminal className="h-6 w-6" />
+                <span className="font-medium text-sm">SSH Only</span>
+                <span className="text-xs text-muted-foreground text-center">
+                  Terminal access, minimal resources
+                </span>
+                <Badge variant="outline" className="text-xs">
+                  t4g.nano · $0.004/hr
+                </Badge>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setDesktopEnabled(true);
+                  if (storageGb < 16) setStorageGb(16);
+                }}
+                disabled={creating}
+                className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors text-left ${
+                  desktopEnabled
+                    ? "border-primary bg-primary/5"
+                    : "border-muted hover:border-muted-foreground/30"
+                }`}
+              >
+                <Monitor className="h-6 w-6" />
+                <span className="font-medium text-sm">Desktop (GUI)</span>
+                <span className="text-xs text-muted-foreground text-center">
+                  Full Ubuntu desktop with mouse & keyboard
+                </span>
+                <Badge variant="outline" className="text-xs">
+                  t4g.small · $0.017/hr
+                </Badge>
+              </button>
+            </div>
+          </div>
+
+          {/* Desktop Mode Info */}
+          {desktopEnabled && (
+            <Alert className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/20">
+              <Monitor className="h-4 w-4 text-blue-600 dark:text-blue-400" />
               <AlertDescription>
                 <div className="space-y-1">
-                  <div className="font-medium">Cloud Linux Machine</div>
-                  <div className="text-xs text-muted-foreground">
-                    Your own Ubuntu server in the cloud — ready in seconds.
+                  <div className="font-medium text-blue-800 dark:text-blue-200">
+                    Desktop Mode
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    SSH access with auto-generated keys. No setup needed.
+                  <div className="text-xs text-blue-700 dark:text-blue-300 space-y-0.5">
+                    <p>Instance: t4g.small (2 vCPU, 2 GB RAM)</p>
+                    <p>XFCE desktop with VNC access via browser</p>
+                    <p>Desktop takes 3-5 min to initialize after machine starts</p>
                   </div>
                 </div>
               </AlertDescription>
             </Alert>
+          )}
 
+          {/* Machine Configuration */}
+          <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <Label className="flex items-center gap-2">
@@ -376,7 +438,7 @@ export function CreateMachineDialog({
               <Slider
                 value={[storageGb]}
                 onValueChange={([value]) => setStorageGb(value)}
-                min={8}
+                min={desktopEnabled ? 16 : 8}
                 max={30}
                 step={1}
                 disabled={creating}

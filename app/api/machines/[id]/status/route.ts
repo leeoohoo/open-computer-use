@@ -81,6 +81,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           publicDnsName: status.publicDnsName,
           canStart: status.state === "stopped",
           provider: 'aws',
+          desktopEnabled: settings?.desktopEnabled || false,
+          desktopInitStatus: settings?.desktopInitStatus,
+          agentPort: settings?.agent_port ?? (settings?.desktopEnabled ? 8080 : undefined),
         });
       } catch (awsError: any) {
         console.error("Error getting EC2 instance status:", awsError);

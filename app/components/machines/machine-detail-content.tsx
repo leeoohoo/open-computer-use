@@ -48,15 +48,18 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
   useEffect(() => {
     fetchMachineData();
     
-    // Poll for updates if machine is in transitional state
+    // Poll for updates if machine is in transitional state or desktop is initializing
     const interval = setInterval(() => {
-      if (machine && ['creating', 'starting', 'stopping'].includes(machine.status)) {
+      if (machine && (
+        ['creating', 'starting', 'stopping'].includes(machine.status) ||
+        machine.settings?.desktopInitStatus === 'installing'
+      )) {
         fetchMachineData();
       }
     }, 3000);
-    
+
     return () => clearInterval(interval);
-  }, [machineId, machine?.status]);
+  }, [machineId, machine?.status, machine?.settings?.desktopInitStatus]);
 
   const fetchMachineData = async () => {
     try {
@@ -295,8 +298,95 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
 
 
         {/* Main Content Tabs */}
-        {machine.settings?.provider === 'aws' ? (
-          // SSH Machine Tabs
+        {machine.settings?.provider === 'aws' && machine.settings?.desktopEnabled ? (
+          // AWS Desktop Machine - Desktop + SSH + Settings
+          <Tabs defaultValue="desktop" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
+              <TabsTrigger value="desktop" className="gap-2">
+                <Monitor className="h-4 w-4" />
+                <span className="hidden sm:inline">Desktop</span>
+              </TabsTrigger>
+              <TabsTrigger value="ssh" className="gap-2">
+                <Terminal className="h-4 w-4" />
+                <span className="hidden sm:inline">SSH</span>
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="gap-2">
+                <Settings className="h-4 w-4" />
+                <span className="hidden sm:inline">Settings</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="desktop" className="space-y-4">
+              {machine.status !== "running" ? (
+                <Card>
+                  <CardContent className="py-12">
+                    <div className="text-center">
+                      <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">Machine Not Running</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Start the machine to access the desktop
+                      </p>
+                      <Button
+                        onClick={() => handleAction("start")}
+                        disabled={actionLoading !== null}
+                      >
+                        {actionLoading === "start" ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <Play className="h-4 w-4 mr-2" />
+                        )}
+                        Start Machine
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : machine.settings?.desktopInitStatus === 'installing' ? (
+                <Card>
+                  <CardContent className="py-12">
+                    <div className="text-center">
+                      <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">Desktop Initializing...</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Installing desktop environment. This takes 3-5 minutes on first boot.
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        You can use SSH while the desktop is being set up.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : machine.settings?.desktopInitStatus === 'failed' ? (
+                <Card>
+                  <CardContent className="py-12">
+                    <div className="text-center">
+                      <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">Desktop Setup Failed</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Check /var/log/desktop-setup.log via SSH for details.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-4">
+                  <SimpleVNCViewer machine={machine} session={null} />
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="ssh" className="space-y-4">
+              <SshConnectionPanel machine={machine} />
+            </TabsContent>
+
+            <TabsContent value="settings" className="space-y-4">
+              <MachineSettings
+                machine={machine}
+                onUpdate={fetchMachineData}
+              />
+            </TabsContent>
+          </Tabs>
+        ) : machine.settings?.provider === 'aws' ? (
+          // AWS SSH-Only Machine
           <Tabs defaultValue="ssh" className="space-y-4">
             <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:inline-grid">
               <TabsTrigger value="ssh" className="gap-2">

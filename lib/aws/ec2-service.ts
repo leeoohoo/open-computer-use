@@ -1,3 +1,4 @@
+import zlib from "zlib";
 import {
   EC2Client,
   RunInstancesCommand,
@@ -13,6 +14,7 @@ import {
   DescribeImagesCommand,
   type Instance,
   type _InstanceType,
+  type RunInstancesCommandInput,
 } from "@aws-sdk/client-ec2";
 
 export interface EC2InstanceConfig {
@@ -20,6 +22,8 @@ export interface EC2InstanceConfig {
   instanceType?: string;
   amiId?: string;
   storageGb?: number;
+  desktopEnabled?: boolean;
+  vncPassword?: string;
 }
 
 export interface EC2InstanceStatus {
@@ -38,7 +42,7 @@ export interface EC2CreateResult {
 export class AwsEc2Service {
   private client: EC2Client;
   private region: string;
-  private cachedSecurityGroupId: string | null = null;
+  private cachedSecurityGroupIds: Map<string, string> = new Map();
   private cachedAmiId: string | null = null;
 
   constructor() {
@@ -101,11 +105,15 @@ export class AwsEc2Service {
     userId: string,
     config: EC2InstanceConfig
   ): Promise<EC2CreateResult> {
-    const instanceType = config.instanceType || process.env.AWS_EC2_INSTANCE_TYPE || "t4g.nano";
-    const storageGb = config.storageGb || 8;
+    // Desktop mode forces t4g.small (2GB RAM minimum for XFCE desktop)
+    let instanceType = config.instanceType || process.env.AWS_EC2_INSTANCE_TYPE || "t4g.nano";
+    if (config.desktopEnabled) {
+      instanceType = "t4g.small";
+    }
+    const storageGb = config.storageGb || (config.desktopEnabled ? 16 : 8);
 
-    // Ensure security group exists
-    const securityGroupId = await this.ensureSecurityGroup();
+    // Ensure security group exists (desktop needs port 6080 for noVNC)
+    const securityGroupId = await this.ensureSecurityGroup(config.desktopEnabled);
 
     // Generate key pair
     const keyPrefix = process.env.AWS_EC2_KEY_PREFIX || "llmhub";
@@ -130,36 +138,45 @@ export class AwsEc2Service {
     // Build instance name tag
     const instanceName = config.name || `llmhub-${userId.substring(0, 8)}-${shortId}`;
 
+    // Build RunInstances input
+    const runInput: RunInstancesCommandInput = {
+      ImageId: amiId,
+      InstanceType: instanceType as _InstanceType,
+      MinCount: 1,
+      MaxCount: 1,
+      KeyName: keyPairName,
+      SecurityGroupIds: [securityGroupId],
+      BlockDeviceMappings: [
+        {
+          DeviceName: "/dev/sda1",
+          Ebs: {
+            VolumeSize: storageGb,
+            VolumeType: "gp3",
+            DeleteOnTermination: true,
+          },
+        },
+      ],
+      TagSpecifications: [
+        {
+          ResourceType: "instance",
+          Tags: [
+            { Key: "Name", Value: instanceName },
+            { Key: "UserId", Value: userId },
+            { Key: "ManagedBy", Value: "llmhub" },
+            { Key: "DesktopEnabled", Value: config.desktopEnabled ? "true" : "false" },
+          ],
+        },
+      ],
+    };
+
+    // Add cloud-init UserData for desktop mode
+    if (config.desktopEnabled && config.vncPassword) {
+      runInput.UserData = this.generateDesktopUserData(config.vncPassword);
+    }
+
     // Launch instance
     const runResult = await this.client.send(
-      new RunInstancesCommand({
-        ImageId: amiId,
-        InstanceType: instanceType as _InstanceType,
-        MinCount: 1,
-        MaxCount: 1,
-        KeyName: keyPairName,
-        SecurityGroupIds: [securityGroupId],
-        BlockDeviceMappings: [
-          {
-            DeviceName: "/dev/sda1",
-            Ebs: {
-              VolumeSize: storageGb,
-              VolumeType: "gp3",
-              DeleteOnTermination: true,
-            },
-          },
-        ],
-        TagSpecifications: [
-          {
-            ResourceType: "instance",
-            Tags: [
-              { Key: "Name", Value: instanceName },
-              { Key: "UserId", Value: userId },
-              { Key: "ManagedBy", Value: "llmhub" },
-            ],
-          },
-        ],
-      })
+      new RunInstancesCommand(runInput)
     );
 
     const instanceId = runResult.Instances?.[0]?.InstanceId;
@@ -238,14 +255,27 @@ export class AwsEc2Service {
     }
   }
 
-  private async ensureSecurityGroup(): Promise<string> {
-    if (this.cachedSecurityGroupId) {
-      return this.cachedSecurityGroupId;
+  private async ensureSecurityGroup(desktopEnabled?: boolean): Promise<string> {
+    const sgName = desktopEnabled
+      ? (process.env.AWS_EC2_DESKTOP_SG_NAME || "llmhub-ec2-desktop")
+      : (process.env.AWS_EC2_SECURITY_GROUP_NAME || "llmhub-ec2-ssh");
+
+    const cached = this.cachedSecurityGroupIds.get(sgName);
+    if (cached) {
+      return cached;
     }
 
-    const sgName = process.env.AWS_EC2_SECURITY_GROUP_NAME || "llmhub-ec2-ssh";
+    // Required ports for this SG type
+    const requiredPorts: number[] = desktopEnabled ? [22, 6080, 8080] : [22];
+
+    const portDescriptions: Record<number, string> = {
+      22: "SSH access",
+      6080: "noVNC web access",
+      8080: "AI agent WebSocket",
+    };
 
     // Check if security group exists
+    let groupId: string | undefined;
     try {
       const describeResult = await this.client.send(
         new DescribeSecurityGroupsCommand({
@@ -256,43 +286,609 @@ export class AwsEc2Service {
       );
 
       if (describeResult.SecurityGroups && describeResult.SecurityGroups.length > 0) {
-        this.cachedSecurityGroupId = describeResult.SecurityGroups[0].GroupId!;
-        return this.cachedSecurityGroupId;
+        const sg = describeResult.SecurityGroups[0];
+        groupId = sg.GroupId!;
+
+        // Check which required ports are already open
+        const openPorts = new Set<number>();
+        for (const perm of sg.IpPermissions || []) {
+          if (perm.IpProtocol === "tcp" && perm.FromPort === perm.ToPort) {
+            openPorts.add(perm.FromPort!);
+          }
+        }
+
+        // Add any missing rules
+        const missingPorts = requiredPorts.filter((p) => !openPorts.has(p));
+        if (missingPorts.length > 0) {
+          console.log(`Adding missing SG rules to ${sgName}: ports ${missingPorts.join(", ")}`);
+          await this.client.send(
+            new AuthorizeSecurityGroupIngressCommand({
+              GroupId: groupId,
+              IpPermissions: missingPorts.map((port) => ({
+                IpProtocol: "tcp",
+                FromPort: port,
+                ToPort: port,
+                IpRanges: [{ CidrIp: "0.0.0.0/0", Description: portDescriptions[port] || `Port ${port}` }],
+              })),
+            })
+          );
+        }
+
+        this.cachedSecurityGroupIds.set(sgName, groupId);
+        return groupId;
       }
     } catch (error) {
-      // Group doesn't exist, create it
+      // Group doesn't exist, fall through to create it
     }
 
     // Create security group
     const createResult = await this.client.send(
       new CreateSecurityGroupCommand({
         GroupName: sgName,
-        Description: "LLMHub EC2 SSH access",
+        Description: desktopEnabled
+          ? "LLMHub EC2 SSH + Desktop (noVNC) access"
+          : "LLMHub EC2 SSH access",
       })
     );
 
-    const groupId = createResult.GroupId;
+    groupId = createResult.GroupId;
     if (!groupId) {
       throw new Error("Failed to create security group");
     }
 
-    // Allow SSH inbound
+    // Add all required inbound rules
     await this.client.send(
       new AuthorizeSecurityGroupIngressCommand({
         GroupId: groupId,
-        IpPermissions: [
-          {
-            IpProtocol: "tcp",
-            FromPort: 22,
-            ToPort: 22,
-            IpRanges: [{ CidrIp: "0.0.0.0/0", Description: "SSH access" }],
-          },
-        ],
+        IpPermissions: requiredPorts.map((port) => ({
+          IpProtocol: "tcp",
+          FromPort: port,
+          ToPort: port,
+          IpRanges: [{ CidrIp: "0.0.0.0/0", Description: portDescriptions[port] || `Port ${port}` }],
+        })),
       })
     );
 
-    this.cachedSecurityGroupId = groupId;
+    this.cachedSecurityGroupIds.set(sgName, groupId);
     return groupId;
+  }
+
+  private generateDesktopUserData(vncPassword: string): string {
+    // Python agent source — extracted so we can gzip it to stay within the
+    // 25,600 byte AWS UserData base64 limit.
+    const agentPy = `#!/usr/bin/env python3
+import asyncio,base64,io,json,os,subprocess,tempfile,time
+from typing import Any,Dict
+try:
+ import mss;_HAS_MSS=True
+except:_HAS_MSS=False
+try:
+ import pyautogui;pyautogui.FAILSAFE=False;_HAS_PAG=True
+except:_HAS_PAG=False
+try:
+ import pytesseract;_HAS_OCR=True
+except:_HAS_OCR=False
+try:
+ from selenium import webdriver
+ from selenium.webdriver.chrome.options import Options
+ from selenium.webdriver.common.by import By
+ _HAS_SEL=True
+except:_HAS_SEL=False
+from PIL import Image
+import websockets
+DISPLAY=os.environ.get("DISPLAY",":1")
+VNC_PASSWORD=os.environ.get("VNC_PASSWORD","")
+PORT=int(os.environ.get("AGENT_PORT","8080"))
+HOST=os.environ.get("AGENT_HOST","0.0.0.0")
+_browser=None
+def _xdo(*a):
+ env={**os.environ,"DISPLAY":DISPLAY}
+ r=subprocess.run(["xdotool"]+list(a),capture_output=True,text=True,env=env,timeout=10)
+ return r.stdout.strip()
+def _shot():
+ env={**os.environ,"DISPLAY":DISPLAY};img=None
+ if _HAS_MSS:
+  try:
+   with mss.mss() as s:
+    m=s.monitors[1];sh=s.grab(m);img=Image.frombytes("RGB",sh.size,sh.bgra,"raw","BGRX")
+  except:img=None
+ if img is None:
+  try:
+   f=tempfile.mktemp(suffix=".png");subprocess.run(["scrot",f],env=env,timeout=10,check=True)
+   img=Image.open(f).copy();os.unlink(f)
+  except:img=None
+ if img is None:
+  try:
+   f=tempfile.mktemp(suffix=".png");subprocess.run(["import","-window","root",f],env=env,timeout=10,check=True)
+   img=Image.open(f).copy();os.unlink(f)
+  except:img=None
+ if img is None:return None
+ img.thumbnail((1280,720),Image.LANCZOS);buf=io.BytesIO()
+ img.convert("RGB").save(buf,format="JPEG",quality=80)
+ return "data:image/jpeg;base64,"+base64.b64encode(buf.getvalue()).decode()
+def _browser():
+ global _browser
+ if _browser is not None:
+  try:_=_browser.title;return _browser
+  except:_browser=None
+ if not _HAS_SEL:raise RuntimeError("selenium unavailable")
+ import shutil;opts=Options()
+ opts.add_argument("--no-sandbox");opts.add_argument("--disable-dev-shm-usage")
+ opts.add_argument("--disable-gpu");opts.add_argument("--remote-debugging-port=9222")
+ dp=None
+ for p in ["chromedriver","/usr/bin/chromedriver","/usr/lib/chromium-browser/chromedriver","/snap/bin/chromium.chromedriver"]:
+  if shutil.which(p) or os.path.exists(p):dp=shutil.which(p) or p;break
+ if dp:
+  from selenium.webdriver.chrome.service import Service;svc=Service(executable_path=dp)
+  _browser=webdriver.Chrome(service=svc,options=opts)
+ else:_browser=webdriver.Chrome(options=opts)
+ return _browser
+class Agent:
+ def __init__(self):self._t=time.time();self._n=0
+ async def serve(self,ws):
+  ok=not bool(VNC_PASSWORD)
+  try:
+   async for raw in ws:
+    self._n+=1
+    try:msg=json.loads(raw)
+    except:continue
+    t=msg.get("type")
+    if t=="ping":
+     await ws.send(json.dumps({"type":"pong","timestamp":time.time(),"uptime":time.time()-self._t,"messages_processed":self._n}));continue
+    if t=="auth":
+     pw=msg.get("password","")
+     if not VNC_PASSWORD or pw==VNC_PASSWORD:
+      ok=True;await ws.send(json.dumps({"type":"auth_success","data":{"message":"Authentication successful","sessionId":msg.get("sessionId",""),"userId":msg.get("userId",""),"persistent":True}}))
+     else:await ws.send(json.dumps({"type":"error","data":{"error":"Invalid password","code":"AUTH_FAILED"}}))
+     continue
+    if not ok:await ws.send(json.dumps({"type":"error","data":{"error":"Not authenticated"}}));continue
+    if t=="command":
+     d=msg.get("data",{});cmd=d.get("command","");params=d.get("parameters",{})
+     to=75.0 if cmd in{"browser_get_dom","browser_navigate","browser_open","ocr"} else 45.0
+     try:
+      res=await asyncio.wait_for(asyncio.get_event_loop().run_in_executor(None,self._run,cmd,params),timeout=to)
+     except asyncio.TimeoutError:res={"success":False,"error":f"timeout: {cmd}"}
+     except Exception as e:res={"success":False,"error":str(e)}
+     await ws.send(json.dumps({"type":"result","data":res}))
+  except websockets.exceptions.ConnectionClosed:pass
+ def _run(self,command,p):
+  fn={"screenshot":self._ss,"click":self._cl,"double_click":self._dc,"right_click":self._rc,
+   "type":self._ty,"key_press":self._kp,"key_combo":self._kc,
+   "execute_command":self._ex,"terminal_execute":self._ex,
+   "terminal_connect":lambda _:{"success":True,"session_id":"default"},
+   "terminal_read":lambda _:{"success":True,"output":""},
+   "terminal_type":self._tt,
+   "file_read":self._fr,"file_write":self._fw,"file_append":self._fa,
+   "file_delete":self._fd,"file_exists":self._fe,"directory_list":self._dl,
+   "ocr":self._ocr,
+   "browser_open":self._bo,"browser_navigate":self._bn,"browser_click":self._bc,
+   "browser_type":self._bt,"browser_execute":self._bx,"browser_get_dom":self._bd,
+   "browser_state":self._bs,"browser_get_context":self._bd,
+  }.get(command)
+  if fn is None:return{"success":False,"error":f"Unknown: {command}"}
+  return fn(p)
+ def _ss(self,p):
+  i=_shot()
+  return{"success":True,"screenshot":i,"timestamp":time.time()} if i else{"success":False,"error":"screenshot failed"}
+ def _cl(self,p):
+  x,y=int(p.get("x",0)),int(p.get("y",0));b={"left":"1","middle":"2","right":"3"}.get(p.get("button","left"),"1")
+  _xdo("mousemove",str(x),str(y),"click",b);return{"success":True,"action":"click","x":x,"y":y}
+ def _dc(self,p):
+  x,y=int(p.get("x",0)),int(p.get("y",0));_xdo("mousemove",str(x),str(y),"click","--repeat","2","1");return{"success":True}
+ def _rc(self,p):
+  x,y=int(p.get("x",0)),int(p.get("y",0));_xdo("mousemove",str(x),str(y),"click","3");return{"success":True}
+ def _ty(self,p):
+  env={**os.environ,"DISPLAY":DISPLAY};subprocess.run(["xdotool","type","--delay",str(p.get("interval",50)),"--",p.get("text","")],env=env,timeout=30)
+  return{"success":True,"action":"type"}
+ def _kp(self,p):
+  env={**os.environ,"DISPLAY":DISPLAY}
+  for k in(p.get("keys") or[p.get("key","")]):subprocess.run(["xdotool","key","--",k],env=env,timeout=10)
+  return{"success":True}
+ def _kc(self,p):_xdo("key","+".join(p.get("keys",[])));return{"success":True}
+ def _tt(self,p):
+  env={**os.environ,"DISPLAY":DISPLAY};subprocess.run(["xdotool","type","--",p.get("text","")],env=env,timeout=10);return{"success":True}
+ def _ex(self,p):
+  cmd=p.get("command","");cwd=p.get("cwd","/home/ubuntu");env={**os.environ,"DISPLAY":DISPLAY,"HOME":"/home/ubuntu"}
+  try:
+   r=subprocess.run(cmd,shell=True,capture_output=True,text=True,timeout=60,cwd=cwd,env=env)
+   out=(r.stdout+r.stderr)[:5000]
+   if len(r.stdout+r.stderr)>5000:out+="\\n...[truncated]"
+   return{"success":True,"output":out,"exit_code":r.returncode}
+  except subprocess.TimeoutExpired:return{"success":False,"error":"timed out"}
+ def _fr(self,p):
+  try:
+   path=os.path.expanduser(p.get("path",""))
+   with open(path,"r",errors="replace") as f:c=f.read()
+   if len(c)>50000:c=c[:50000]+"\\n...[truncated]"
+   return{"success":True,"content":c}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _fw(self,p):
+  try:
+   path=os.path.expanduser(p.get("path",""));os.makedirs(os.path.dirname(path) or".",exist_ok=True)
+   with open(path,"w") as f:f.write(p.get("content",""))
+   return{"success":True}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _fa(self,p):
+  try:
+   with open(os.path.expanduser(p.get("path","")),"a") as f:f.write(p.get("content",""))
+   return{"success":True}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _fd(self,p):
+  try:os.remove(os.path.expanduser(p.get("path","")));return{"success":True}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _fe(self,p):return{"success":True,"exists":os.path.exists(os.path.expanduser(p.get("path","")))}
+ def _dl(self,p):
+  try:
+   path=os.path.expanduser(p.get("path","/home/ubuntu"));entries=[]
+   for e in sorted(os.listdir(path)):
+    full=os.path.join(path,e);entries.append({"name":e,"type":"directory" if os.path.isdir(full) else"file","size":os.path.getsize(full) if os.path.isfile(full) else 0})
+   return{"success":True,"entries":entries}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _ocr(self,p):
+  if not _HAS_OCR:return{"success":False,"error":"tesseract unavailable"}
+  img_data=_shot()
+  if not img_data:return{"success":False,"error":"screenshot failed"}
+  b64=img_data.split(",",1)[1];img=Image.open(io.BytesIO(base64.b64decode(b64)))
+  return{"success":True,"text":pytesseract.image_to_string(img),"screenshot":img_data}
+ def _bo(self,p):
+  try:b=_browser();u=p.get("url","about:blank");b.get(u) if u!="about:blank" else None;return{"success":True}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _bn(self,p):
+  try:b=_browser();b.get(p.get("url",""));return{"success":True,"url":b.current_url,"title":b.title}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _bc(self,p):
+  try:_browser().find_element(By.CSS_SELECTOR,p.get("selector","")).click();return{"success":True}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _bt(self,p):
+  try:
+   el=_browser().find_element(By.CSS_SELECTOR,p.get("selector",""));el.clear();el.send_keys(p.get("text",""));return{"success":True}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _bx(self,p):
+  try:r=_browser().execute_script(p.get("script",""));return{"success":True,"result":str(r) if r is not None else None}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _bd(self,p):
+  try:
+   b=_browser();dom=b.execute_script("return document.documentElement.outerHTML")
+   if len(dom)>10000:dom=dom[:10000]+"...[truncated]"
+   return{"success":True,"dom":dom,"url":b.current_url,"title":b.title}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _bs(self,p):
+  try:b=_browser();return{"success":True,"url":b.current_url,"title":b.title}
+  except Exception as e:return{"success":False,"error":str(e)}
+async def main():
+ agent=Agent()
+ print(f"AI Agent listening on {HOST}:{PORT}",flush=True)
+ async with websockets.serve(agent.serve,HOST,PORT,max_size=100*1024*1024,ping_interval=None,ping_timeout=None,close_timeout=60,compression=None):
+  await asyncio.Future()
+if __name__=="__main__":asyncio.run(main())
+`;
+
+    // Gzip-compress the Python agent to fit within AWS UserData 25,600 byte base64 limit
+    const agentGz = zlib.gzipSync(Buffer.from(agentPy), { level: 9 });
+    const agentB64 = agentGz.toString("base64").match(/.{1,76}/g)?.join("\n") ?? "";
+
+    const script = `#!/bin/bash
+set -e
+exec > /var/log/desktop-setup.log 2>&1
+
+echo "DESKTOP_INIT_STATUS=installing" > /var/run/desktop-init-status
+echo "Desktop setup started at $(date)"
+
+# Update packages
+apt-get update -y
+
+# Install desktop + VNC + AI agent dependencies
+DEBIAN_FRONTEND=noninteractive apt-get install -y \\
+  xfce4 \\
+  xfce4-terminal \\
+  xfce4-goodies \\
+  dbus-x11 \\
+  x11-xserver-utils \\
+  x11-utils \\
+  tigervnc-standalone-server \\
+  tigervnc-common \\
+  python3-websockify \\
+  python3-pip \\
+  python3-dev \\
+  git \\
+  curl \\
+  wget \\
+  net-tools \\
+  scrot \\
+  xdotool \\
+  wmctrl \\
+  tesseract-ocr \\
+  tesseract-ocr-eng \\
+  imagemagick \\
+  chromium-browser
+
+# Python AI agent dependencies
+pip3 install --quiet \\
+  websockets \\
+  pyautogui \\
+  Pillow \\
+  mss \\
+  requests \\
+  python-xlib \\
+  pytesseract \\
+  selenium
+
+# Remove screen lockers that get pulled in by xfce4-goodies
+apt-get remove -y light-locker xfce4-screensaver xscreensaver 2>/dev/null || true
+
+echo "Python packages installed"
+
+# Clone noVNC
+git clone --depth 1 https://github.com/novnc/noVNC.git /opt/novnc
+git clone --depth 1 https://github.com/novnc/websockify.git /opt/novnc/utils/websockify
+ln -sf /opt/novnc/vnc.html /opt/novnc/index.html
+
+# Set up VNC for ubuntu user
+USER_HOME=/home/ubuntu
+mkdir -p $USER_HOME/.vnc
+chown ubuntu:ubuntu $USER_HOME/.vnc
+
+# Set VNC password
+echo "${vncPassword}" | vncpasswd -f > $USER_HOME/.vnc/passwd
+chmod 600 $USER_HOME/.vnc/passwd
+chown ubuntu:ubuntu $USER_HOME/.vnc/passwd
+
+# Create xstartup
+cat > $USER_HOME/.vnc/xstartup << 'XSTARTUP_EOF'
+#!/bin/bash
+export XDG_RUNTIME_DIR=/tmp/runtime-ubuntu
+export XDG_CURRENT_DESKTOP=XFCE
+export DESKTOP_SESSION=xfce
+mkdir -p $XDG_RUNTIME_DIR
+chmod 700 $XDG_RUNTIME_DIR
+
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+    if which dbus-launch >/dev/null 2>&1; then
+        eval $(dbus-launch --sh-syntax)
+        export DBUS_SESSION_BUS_ADDRESS
+    fi
+fi
+
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+
+xset s off 2>/dev/null || true
+xset s noblank 2>/dev/null || true
+xset s 0 0 2>/dev/null || true
+xset -dpms 2>/dev/null || true
+
+# Kill screen lockers
+pkill -f light-locker 2>/dev/null || true
+pkill -f xfce4-screensaver 2>/dev/null || true
+pkill -f xscreensaver 2>/dev/null || true
+
+# Disable XFCE screensaver and power manager idle via xfconf
+xfconf-query -c xfce4-screensaver -p /saver/enabled -s false 2>/dev/null || true
+xfconf-query -c xfce4-screensaver -p /lock/enabled -s false 2>/dev/null || true
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-enabled -s false 2>/dev/null || true
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-ac -s 0 2>/dev/null || true
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/inactivity-on-ac -s 0 2>/dev/null || true
+
+exec /usr/bin/startxfce4 --disable-wm-check
+XSTARTUP_EOF
+chmod 755 $USER_HOME/.vnc/xstartup
+chown -R ubuntu:ubuntu $USER_HOME/.vnc
+
+# VNC startup wrapper (Xvnc + xstartup in foreground for systemd Type=simple)
+cat > /usr/local/bin/start-vnc.sh << 'VNC_WRAPPER_EOF'
+#!/bin/bash
+# Clean up stale locks
+rm -f /tmp/.X1-lock /tmp/.X11-unix/X1 2>/dev/null || true
+
+# Start Xvnc directly in the background
+/usr/bin/Xvnc :1 \
+  -geometry 1280x720 \
+  -depth 24 \
+  -SecurityTypes VncAuth \
+  -PasswordFile /home/ubuntu/.vnc/passwd \
+  -desktop "Ubuntu Desktop" \
+  -alwaysshared &
+XVNC_PID=$!
+
+# Wait for display to be ready
+sleep 2
+
+# Launch xstartup (XFCE desktop)
+export DISPLAY=:1
+exec /home/ubuntu/.vnc/xstartup
+VNC_WRAPPER_EOF
+chmod 755 /usr/local/bin/start-vnc.sh
+
+# Create systemd service for VNC
+cat > /etc/systemd/system/vncserver@.service << 'SYSTEMD_VNC_EOF'
+[Unit]
+Description=TigerVNC Server for display %i
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu
+Environment=HOME=/home/ubuntu
+ExecStartPre=/bin/bash -c 'rm -f /tmp/.X*-lock /tmp/.X11-unix/X* 2>/dev/null || :'
+ExecStart=/usr/local/bin/start-vnc.sh
+ExecStop=/bin/bash -c '/usr/bin/vncserver -kill %i 2>/dev/null; kill $(cat /tmp/.X1-lock 2>/dev/null) 2>/dev/null || true'
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target
+SYSTEMD_VNC_EOF
+
+# Create systemd service for noVNC
+cat > /etc/systemd/system/novnc.service << 'SYSTEMD_NOVNC_EOF'
+[Unit]
+Description=noVNC WebSocket Proxy
+After=vncserver@:1.service
+Wants=vncserver@:1.service
+
+[Service]
+Type=simple
+User=root
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 30); do ss -tln | grep -q :5901 && exit 0; sleep 1; done; exit 1'
+ExecStart=/opt/novnc/utils/novnc_proxy --vnc localhost:5901 --listen 6080
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+SYSTEMD_NOVNC_EOF
+
+# Enable and start services
+systemctl daemon-reload
+systemctl enable vncserver@:1.service
+systemctl enable novnc.service
+systemctl start vncserver@:1.service
+sleep 5
+systemctl start novnc.service
+
+# Comprehensive screen keep-alive script (prevents sleep/lock)
+cat > /usr/local/bin/keep-screen-alive.sh << 'KEEPALIVE_EOF'
+#!/bin/bash
+export DISPLAY=:1
+
+disable_dpms() {
+    xset -dpms 2>/dev/null || true
+    xset s off 2>/dev/null || true
+    xset s noblank 2>/dev/null || true
+    xset s 0 0 2>/dev/null || true
+}
+
+disable_screensaver() {
+    xfconf-query -c xfce4-screensaver -p /saver/enabled -s false 2>/dev/null || true
+    xfconf-query -c xfce4-screensaver -p /saver/mode -s 0 2>/dev/null || true
+    xfconf-query -c xfce4-screensaver -p /lock/enabled -s false 2>/dev/null || true
+    pkill -f screensaver 2>/dev/null || true
+    pkill -f xscreensaver 2>/dev/null || true
+    pkill -f light-locker 2>/dev/null || true
+}
+
+disable_power_management() {
+    xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-enabled -s false 2>/dev/null || true
+    xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-ac -s 0 2>/dev/null || true
+    xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-on-ac-sleep -s 0 2>/dev/null || true
+    xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-on-ac-off -s 0 2>/dev/null || true
+    xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/inactivity-on-ac -s 0 2>/dev/null || true
+}
+
+simulate_activity() {
+    if command -v xdotool >/dev/null 2>&1; then
+        eval $(xdotool getmouselocation --shell 2>/dev/null || echo "X=100 Y=100")
+        xdotool mousemove $((X+1)) $((Y+1)) 2>/dev/null || true
+        sleep 0.1
+        xdotool mousemove $X $Y 2>/dev/null || true
+    fi
+}
+
+# Initial setup
+disable_dpms
+disable_screensaver
+disable_power_management
+
+COUNTER=0
+while true; do
+    disable_dpms
+    xset s reset 2>/dev/null || true
+
+    if [ $((COUNTER % 2)) -eq 0 ]; then
+        simulate_activity
+        disable_screensaver
+    fi
+
+    if [ $((COUNTER % 4)) -eq 0 ]; then
+        xdotool key shift 2>/dev/null || true
+        disable_power_management
+    fi
+
+    if [ $((COUNTER % 10)) -eq 0 ]; then
+        if xset q 2>/dev/null | grep -q "DPMS is Enabled"; then
+            disable_dpms
+        fi
+    fi
+
+    COUNTER=$((COUNTER + 1))
+    sleep 30
+done
+KEEPALIVE_EOF
+chmod 755 /usr/local/bin/keep-screen-alive.sh
+
+# Systemd service for keep-alive
+cat > /etc/systemd/system/keep-screen-alive.service << 'KEEPALIVE_SVC_EOF'
+[Unit]
+Description=Screen Keep-Alive Service
+After=vncserver@:1.service
+Wants=vncserver@:1.service
+
+[Service]
+Type=simple
+User=ubuntu
+Environment=DISPLAY=:1
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 60); do xdpyinfo -display :1 >/dev/null 2>&1 && exit 0; sleep 1; done; exit 1'
+ExecStart=/usr/local/bin/keep-screen-alive.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+KEEPALIVE_SVC_EOF
+
+systemctl daemon-reload
+systemctl enable keep-screen-alive.service
+systemctl start keep-screen-alive.service
+
+# AI Agent Server
+mkdir -p /opt/ai-agent && chown ubuntu:ubuntu /opt/ai-agent
+printf 'VNC_PASSWORD=%s\\n' "${vncPassword}" > /opt/ai-agent/.env
+chmod 600 /opt/ai-agent/.env && chown ubuntu:ubuntu /opt/ai-agent/.env
+
+# Agent server (gzip+base64 to fit AWS UserData 25,600-byte limit)
+base64 -d << 'AGENT_B64_EOF' | gunzip > /opt/ai-agent/server.py
+${agentB64}
+AGENT_B64_EOF
+chown ubuntu:ubuntu /opt/ai-agent/server.py
+
+# Create systemd service for AI agent
+cat > /etc/systemd/system/ai-agent.service << 'AGENT_SVC_EOF'
+[Unit]
+Description=LLMHub AI Agent WebSocket Server
+After=vncserver@:1.service
+Wants=vncserver@:1.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu
+Environment=DISPLAY=:1
+Environment=AGENT_PORT=8080
+Environment=AGENT_HOST=0.0.0.0
+EnvironmentFile=/opt/ai-agent/.env
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 60); do xdpyinfo -display :1 >/dev/null 2>&1 && exit 0; sleep 1; done; exit 1'
+ExecStart=/usr/bin/python3 /opt/ai-agent/server.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+AGENT_SVC_EOF
+
+systemctl daemon-reload
+systemctl enable ai-agent.service
+systemctl start ai-agent.service
+
+echo "DESKTOP_INIT_STATUS=ready" > /var/run/desktop-init-status
+echo "Desktop setup complete at $(date)"
+`;
+
+    return Buffer.from(script).toString("base64");
   }
 
   private async resolveUbuntuAmi(): Promise<string> {
