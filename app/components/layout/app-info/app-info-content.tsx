@@ -10,7 +10,7 @@ export function AppInfoContent() {
       <p className="text-foreground leading-relaxed">
         Follow us on{" "}
         <a
-          href="https://github.com/LLmHub-dev"
+          href="https://github.com/coasty-ai"
           target="_blank"
           rel="noopener noreferrer"
           className="underline"

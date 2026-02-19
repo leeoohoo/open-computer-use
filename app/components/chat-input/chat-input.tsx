@@ -336,7 +336,12 @@ export function ChatInput({
   const [showVMError, setShowVMError] = useState(false)
   const [showVMStatusBar, setShowVMStatusBar] = useState(false)
   const [currentMachine, setCurrentMachine] = useState<UserMachine | null>(null)
-  const [agentReady, setAgentReady] = useState(true)
+  const [agentReady, setAgentReady] = useState(false)
+
+  // Reset agentReady whenever VM selection changes
+  useEffect(() => {
+    setAgentReady(false)
+  }, [selectedVMId])
 
   // Fetch machine status when VM is selected
   useEffect(() => {
@@ -390,7 +395,7 @@ export function ChatInput({
       setMachineName(null)
       setCurrentMachine(null)
       setShowVMStatusBar(false)
-      setAgentReady(true)
+      setAgentReady(false)
     }
   }, [selectedVMId, isUserAuthenticated, showVMStatusBar])
   
@@ -401,7 +406,7 @@ export function ChatInput({
       return false // A machine must be selected to send messages
     }
     
-    // If machine status hasn't been loaded yet, wait a moment and fetch it
+    // If machine status hasn't been loaded yet, fetch it but don't allow sending
     if (machineStatus === null) {
       console.log("Machine status not loaded yet, fetching...")
       try {
@@ -412,20 +417,23 @@ export function ChatInput({
           if (machine) {
             setMachineStatus(machine.status)
             setMachineName(machine.displayName)
-            // Recursively call with the updated status
-            return startVMIfNeeded()
           }
         }
       } catch (error) {
         console.error("Failed to fetch machine status:", error)
       }
-      return true // Allow proceeding if we can't determine status
+      // Don't allow sending — the polling useEffect will update state and re-enable the button
+      return false
     }
     
     console.log(`VM Status Check - ID: ${selectedVMId}, Status: ${machineStatus}`)
     
     if (machineStatus === "running") {
-      return true // VM is already running
+      if (!agentReady) {
+        setShowVMStatusBar(true)
+        return false // VM is running but agent is still initiating
+      }
+      return true // VM is running and agent is ready
     }
     
     if (machineStatus === "creating") {
@@ -435,7 +443,7 @@ export function ChatInput({
     
     if (machineStatus === "starting") {
       setShowVMStatusBar(true)
-      return true // VM is already starting, allow message to be sent
+      return false // VM is still starting, don't allow message yet
     }
     
     if (machineStatus === "stopped") {
@@ -462,7 +470,7 @@ export function ChatInput({
           console.log("VM start initiated successfully")
           // Update the local status to starting immediately
           setMachineStatus("starting")
-          return true // Allow the message to be sent
+          return false // Don't allow sending yet — wait for running + agent ready
         } else {
           let errorMessage = "Failed to start VM"
           try {
@@ -499,8 +507,8 @@ export function ChatInput({
       return false
     }
     
-    // For any other state, allow proceeding
-    return true
+    // For any unknown state, don't allow proceeding
+    return false
   }
 
   // Typing participants removed - no longer collaborative
@@ -532,7 +540,7 @@ export function ChatInput({
     // Send message - VM ID is already being sent through use-chat-core
     onSend()
 
-  }, [isSubmitting, onSend, status, stop, isUserAuthenticated, onAuthRequired, selectedVMId, machineStatus, startVMIfNeeded])
+  }, [isSubmitting, onSend, status, stop, isUserAuthenticated, onAuthRequired, selectedVMId, machineStatus, agentReady, startVMIfNeeded])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -561,8 +569,12 @@ export function ChatInput({
           return
         }
         
-        // Don't allow sending without a machine selected or if VM is creating
-        if (!selectedVMId || selectedVMId === "none" || machineStatus === "creating") {
+        // Don't allow sending unless machine is running and agent is ready
+        if (!selectedVMId || selectedVMId === "none") {
+          return
+        }
+        const machineReady = machineStatus === "running" && agentReady
+        if (!machineReady) {
           return
         }
         
@@ -570,7 +582,7 @@ export function ChatInput({
         handleSend()
       }
     },
-    [isSubmitting, status, value, isUserAuthenticated, onAuthRequired, handleSend, stop, selectedVMId, machineStatus]
+    [isSubmitting, status, value, isUserAuthenticated, onAuthRequired, handleSend, stop, selectedVMId, machineStatus, agentReady]
   )
 
   const handlePaste = useCallback(
@@ -675,13 +687,16 @@ export function ChatInput({
                 status === "streaming" ? "Stop" :
                 (!selectedVMId || selectedVMId === "none") ? "Select a computer to send messages" :
                 (machineStatus === "creating") ? "Please wait for VM to be created" :
+                (machineStatus === "starting" || machineStatus === "stopped") ? "Please wait for VM to start" :
+                (machineStatus === "running" && !agentReady) ? "Please wait for agent to initialize" :
+                (machineStatus === "stopping") ? "VM is stopping" :
                 "Send"
               }
             >
               <Button
                 size="sm"
                 className="size-9 rounded-full transition-all duration-300 ease-out"
-                disabled={status === "streaming" ? false : (!!(!value || isSubmitting || isOnlyWhitespace(value) || !selectedVMId || selectedVMId === "none" || machineStatus === "creating"))}
+                disabled={status === "streaming" ? false : (!!(!value || isSubmitting || isOnlyWhitespace(value) || !selectedVMId || selectedVMId === "none" || machineStatus !== "running" || !agentReady))}
                 type="button"
                 onClick={handleSend}
                 aria-label={status === "streaming" ? "Stop" : "Send message"}

@@ -18,6 +18,22 @@ from app.core.config import settings
 logger = logging.getLogger(__name__)
 
 
+async def _safe_call_next(call_next, request: Request) -> Response:
+    """Wrapper around call_next that handles client disconnects during streaming.
+
+    Starlette's BaseHTTPMiddleware raises RuntimeError("No response returned.")
+    when the client disconnects mid-stream (e.g. SSE). This is expected behavior,
+    not a real error.
+    """
+    try:
+        return await call_next(request)
+    except RuntimeError as exc:
+        if "No response returned" in str(exc):
+            logger.debug(f"Client disconnected during {request.method} {request.url.path}")
+            return Response(status_code=204)
+        raise
+
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """Rate limiting middleware"""
     
@@ -29,7 +45,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         # Skip rate limiting for health checks
         if request.url.path in ["/", "/api/health", "/docs", "/redoc", "/openapi.json"]:
-            return await call_next(request)
+            return await _safe_call_next(call_next, request)
         
         # Get client identifier (IP address or user ID)
         client_id = request.client.host if request.client else "unknown"
@@ -72,8 +88,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.hourly_requests[client_id].append(now)
         
         # Process the request
-        response = await call_next(request)
-        return response
+        return await _safe_call_next(call_next, request)
 
 
 class CSRFMiddleware(BaseHTTPMiddleware):
@@ -86,7 +101,7 @@ class CSRFMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         # Skip CSRF for GET, HEAD, OPTIONS requests
         if request.method in ["GET", "HEAD", "OPTIONS"]:
-            return await call_next(request)
+            return await _safe_call_next(call_next, request)
         
         # Skip CSRF for certain paths and API routes
         skip_paths = [
@@ -96,35 +111,34 @@ class CSRFMiddleware(BaseHTTPMiddleware):
         
         # Check if path should skip CSRF
         if any(request.url.path.startswith(path) for path in skip_paths):
-            return await call_next(request)
-        
+            return await _safe_call_next(call_next, request)
+
         # In development mode, skip CSRF entirely
         if settings.DEBUG:
-            return await call_next(request)
-        
+            return await _safe_call_next(call_next, request)
+
         # Check for CSRF token in headers
         csrf_token = request.headers.get("X-CSRF-Token")
-        
+
         if not csrf_token:
             logger.warning(f"Missing CSRF token for {request.url.path}")
             return JSONResponse(
                 status_code=403,
                 content={"error": "CSRF token missing"}
             )
-        
+
         # Validate CSRF token (simple implementation)
         # In production, use a more secure validation method
         expected_token = self._generate_token(request)
-        
+
         if csrf_token != expected_token:
             logger.warning(f"Invalid CSRF token for {request.url.path}")
             return JSONResponse(
                 status_code=403,
                 content={"error": "Invalid CSRF token"}
             )
-        
-        response = await call_next(request)
-        return response
+
+        return await _safe_call_next(call_next, request)
     
     def _generate_token(self, request: Request) -> str:
         """Generate a CSRF token"""
@@ -148,22 +162,31 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
         
         try:
             response = await call_next(request)
-            
+
             # Calculate process time
             process_time = time.time() - start_time
-            
+
             # Add headers
             response.headers["X-Request-ID"] = request_id
             response.headers["X-Process-Time"] = str(process_time)
-            
+
             # Log response
             logger.info(
                 f"Response {request_id}: {response.status_code} "
                 f"({process_time:.3f}s)"
             )
-            
+
             return response
-            
+
+        except RuntimeError as e:
+            if "No response returned" in str(e):
+                process_time = time.time() - start_time
+                logger.debug(
+                    f"Request {request_id}: client disconnected ({process_time:.3f}s)"
+                )
+                return Response(status_code=204)
+            raise
+
         except Exception as e:
             process_time = time.time() - start_time
             logger.error(

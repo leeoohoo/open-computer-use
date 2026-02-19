@@ -579,7 +579,7 @@ export function LandingPage() {
                   animating={false}
                 >
                   <Link
-                    href="https://github.com/LLmHub-dev/open-computer-use"
+                    href="https://github.com/coasty-ai/open-computer-use"
                     target="_blank"
                     rel="noreferrer"
                     className="group inline-flex h-10 w-full items-center justify-center rounded-full bg-transparent px-4 sm:px-5 md:min-w-[200px] md:px-6 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white"

@@ -489,13 +489,13 @@ export default function ChangelogPage() {
                               {/* Actions */}
                               <div className="mt-6 flex flex-wrap gap-3">
                                 <Button variant="outline" size="sm" asChild>
-                                  <Link href="https://github.com/LLmHub-dev" target="_blank">
+                                  <Link href="https://github.com/coasty-ai" target="_blank">
                                     <Github className="mr-2 h-4 w-4" />
                                     View Release
                                   </Link>
                                 </Button>
                                 <Button variant="ghost" size="sm" asChild>
-                                  <Link href="https://github.com/LLmHub-dev" target="_blank">
+                                  <Link href="https://github.com/coasty-ai" target="_blank">
                                     <ExternalLink className="mr-2 h-4 w-4" />
                                     View Changes
                                   </Link>
@@ -537,13 +537,13 @@ export default function ChangelogPage() {
                 <CardContent className="text-center relative z-10">
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Button size="lg" className="group" asChild>
-                      <Link href="https://github.com/LLmHub-dev" target="_blank">
+                      <Link href="https://github.com/coasty-ai" target="_blank">
                         <Star className="mr-2 h-4 w-4 group-hover:fill-current transition-all" />
                         Star on GitHub
                       </Link>
                     </Button>
                     <Button variant="outline" size="lg" className="group" asChild>
-                      <Link href="https://github.com/LLmHub-dev" target="_blank">
+                      <Link href="https://github.com/coasty-ai" target="_blank">
                         <Github className="mr-2 h-4 w-4" />
                         Watch Releases
                       </Link>

@@ -375,7 +375,7 @@ export function MultiModelSelector({
                     No results found.
                   </p>
                   <a
-                    href="https://github.com/LLmHub-dev"
+                    href="https://github.com/coasty-ai"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-muted-foreground text-sm underline"
@@ -500,7 +500,7 @@ export function MultiModelSelector({
                     No results found.
                   </p>
                   <a
-                    href="https://github.com/LLmHub-dev"
+                    href="https://github.com/coasty-ai"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-muted-foreground text-sm underline"

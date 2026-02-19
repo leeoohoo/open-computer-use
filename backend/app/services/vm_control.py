@@ -24,6 +24,7 @@ class VMControlService:
         self.connections: Dict[str, WebSocketClientProtocol] = {}
         self.session_data: Dict[str, Dict] = {}
         self.connection_locks: Dict[str, asyncio.Lock] = {}
+        self.command_locks: Dict[str, asyncio.Lock] = {}  # Prevents concurrent recv on same WS
         self.heartbeat_tasks: Dict[str, asyncio.Task] = {}
         self.reconnect_attempts: Dict[str, int] = {}
         self.max_reconnect_attempts = 7  # Reasonable retry attempts
@@ -310,6 +311,12 @@ class VMControlService:
         
         return False
     
+    def _get_command_lock(self, machine_id: str) -> asyncio.Lock:
+        """Get or create a per-machine command lock to serialize WebSocket recv calls."""
+        if machine_id not in self.command_locks:
+            self.command_locks[machine_id] = asyncio.Lock()
+        return self.command_locks[machine_id]
+
     async def execute_command(
         self,
         machine_id: str,
@@ -318,7 +325,21 @@ class VMControlService:
         timeout: Optional[float] = None
     ) -> Dict[str, Any]:
         """
-        Execute a command on the VM using PERSISTENT connection
+        Execute a command on the VM using PERSISTENT connection.
+        Serialized per-machine to prevent concurrent recv on the same WebSocket.
+        """
+        async with self._get_command_lock(machine_id):
+            return await self._execute_command_inner(machine_id, command, parameters, timeout)
+
+    async def _execute_command_inner(
+        self,
+        machine_id: str,
+        command: str,
+        parameters: Dict[str, Any],
+        timeout: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """
+        Inner implementation of execute_command (called under command lock).
         """
         # Ensure we have a connection (will reuse if exists)
         if not await self.ensure_connection(machine_id):
@@ -327,7 +348,7 @@ class VMControlService:
                 "success": False,
                 "error": "Cannot establish connection to VM agent"
             }
-        
+
         websocket = self.connections[machine_id]
         
         # Determine timeout for this command
@@ -372,7 +393,7 @@ class VMControlService:
                             # The provider will filter this out before sending to model
                             if command.startswith("browser"):
                                 try:
-                                    screenshot_data = await self.capture_screenshot(machine_id)
+                                    screenshot_data = await self._capture_screenshot_inner(machine_id)
                                     if screenshot_data:
                                         command_result["frontendScreenshot"] = screenshot_data
                                         logger.info(f"Screenshot captured after browser command: {command}, size: {len(screenshot_data)} chars")
@@ -453,7 +474,12 @@ class VMControlService:
         }
     
     async def capture_screenshot(self, machine_id: str) -> Optional[str]:
-        """Capture a screenshot from the VM (separate from command execution)"""
+        """Capture a screenshot from the VM (public, lock-safe entry point)."""
+        async with self._get_command_lock(machine_id):
+            return await self._capture_screenshot_inner(machine_id)
+
+    async def _capture_screenshot_inner(self, machine_id: str) -> Optional[str]:
+        """Capture a screenshot (must be called under command lock)."""
         try:
             if not await self.ensure_connection(machine_id):
                 return None
@@ -529,6 +555,8 @@ class VMControlService:
         # Remove locks
         if machine_id in self.connection_locks:
             del self.connection_locks[machine_id]
+        if machine_id in self.command_locks:
+            del self.command_locks[machine_id]
         
         # Reset reconnect attempts
         if machine_id in self.reconnect_attempts:

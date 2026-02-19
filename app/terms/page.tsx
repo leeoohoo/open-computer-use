@@ -483,7 +483,7 @@ export default function TermsPage() {
                               {section.cta && (
                                 <div className="mt-6 flex gap-4">
                                   <Button asChild>
-                                    <Link href="https://github.com/LLmHub-dev" target="_blank">
+                                    <Link href="https://github.com/coasty-ai" target="_blank">
                                       <Mail className="mr-2 h-4 w-4" />
                                       Contact via GitHub
                                     </Link>

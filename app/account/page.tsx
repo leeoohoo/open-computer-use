@@ -338,7 +338,7 @@ function AccountContent() {
                             </Link>
                           </Button>
                           <Button variant="outline" size="sm" asChild>
-                            <Link href="https://github.com/LLmHub-dev" target="_blank">
+                            <Link href="https://github.com/coasty-ai" target="_blank">
                               View on GitHub
                             </Link>
                           </Button>
@@ -363,7 +363,7 @@ function AccountContent() {
                         <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
                       </a>
                       <a
-                        href="https://github.com/LLmHub-dev"
+                        href="https://github.com/coasty-ai"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors"
@@ -373,7 +373,7 @@ function AccountContent() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-sm">Star us on GitHub</div>
-                          <div className="text-xs text-muted-foreground">LLmHub-dev</div>
+                          <div className="text-xs text-muted-foreground">coasty-ai</div>
                         </div>
                         <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
                       </a>
@@ -544,7 +544,7 @@ function AccountContent() {
                         </Link>
                       </Button>
                       <Button variant="outline" asChild>
-                        <Link href="https://github.com/LLmHub-dev" target="_blank">
+                        <Link href="https://github.com/coasty-ai" target="_blank">
                           View on GitHub
                         </Link>
                       </Button>
@@ -571,7 +571,7 @@ function AccountContent() {
                     </a>
 
                     <a
-                      href="https://github.com/LLmHub-dev"
+                      href="https://github.com/coasty-ai"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group flex items-center gap-4 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-all"
@@ -581,7 +581,7 @@ function AccountContent() {
                       </div>
                       <div className="flex-1">
                         <div className="font-medium text-sm">Star us on GitHub</div>
-                        <div className="text-xs text-muted-foreground">LLmHub-dev</div>
+                        <div className="text-xs text-muted-foreground">coasty-ai</div>
                       </div>
                       <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                     </a>

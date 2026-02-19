@@ -442,7 +442,7 @@ export function AppSidebar() {
             
             {/* <button
               onClick={() =>
-                window.open("https://github.com/LLmHub-dev", "_blank")
+                window.open("https://github.com/coasty-ai", "_blank")
               }
               className={cn(
                 "group relative flex w-full items-center rounded-md text-sm font-medium transition-all",
