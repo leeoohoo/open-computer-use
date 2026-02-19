@@ -2,7 +2,6 @@
 
 import { LayoutApp } from "@/app/components/layout/layout-app"
 import { Button } from "@/components/ui/button"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import {
   User,
@@ -106,7 +105,7 @@ const sections = [
     id: "changelog" as SectionType,
     label: "Changelog",
     icon: GitBranch,
-    description: "See what&apos;s new in Coasty",
+    description: "See what's new in Coasty",
     component: "changelog", // Special handling
   },
   {
@@ -124,7 +123,7 @@ function AccountContent() {
   const { user, isLoading } = useUser()
   const sectionParam = searchParams.get("section") as SectionType | null
   const [activeSection, setActiveSection] = useState<SectionType>(sectionParam || "account")
-  const [hasScrolled, setHasScrolled] = useState(false)
+  const [mobileView, setMobileView] = useState<"menu" | "content">(sectionParam ? "content" : "menu")
 
   // Check authentication on client side as well
   useEffect(() => {
@@ -137,6 +136,7 @@ function AccountContent() {
   useEffect(() => {
     if (sectionParam && sections.some(s => s.id === sectionParam)) {
       setActiveSection(sectionParam)
+      setMobileView("content")
     }
   }, [sectionParam])
 
@@ -171,57 +171,251 @@ function AccountContent() {
   return (
     <div className="w-full h-full overflow-y-auto">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        {/* Mobile and Tablet Navigation - Horizontal scrollable tabs */}
-        <div className="lg:hidden sticky top-0 z-40 bg-background border-b -mx-4 px-4 sm:-mx-6 sm:px-6">
-          <div className="relative">
-            <div className="py-3">
-              {/* Fade indicators for scroll - enhanced visibility */}
-              <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background via-background/90 to-transparent pointer-events-none z-10" />
-              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background via-background/90 to-transparent pointer-events-none z-10" />
+        {/* Mobile Navigation - Section menu or back button + content */}
+        <div className="lg:hidden">
+          <div className="py-4">
+            {mobileView === "menu" ? (
+              <>
+                {/* Mobile section menu */}
+                <h1 className="text-xl font-semibold tracking-tight mb-4 px-1">Settings</h1>
 
-              <ScrollArea
-                className="w-full"
-                onScroll={() => !hasScrolled && setHasScrolled(true)}
-              >
-                <div className="flex space-x-1 pb-2">
-                  {sections.filter(s => s.component).map((section, index) => {
-                    const Icon = section.icon
-                    const isActive = activeSection === section.id
-
-                    return (
-                      <button
-                        key={section.id}
-                        onClick={() => handleSectionChange(section.id)}
-                        className={cn(
-                          "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all",
-                          isActive
-                            ? "bg-primary text-primary-foreground shadow-sm"
-                            : "bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground"
-                        )}
-                      >
-                        <Icon className="h-4 w-4" />
-                        <span>{section.label}</span>
-                      </button>
-                    )
-                  })}
+                {/* Account sections */}
+                <div className="mb-4">
+                  <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 px-1">Account</h3>
+                  <div className="rounded-lg border bg-card divide-y">
+                    {sections.slice(0, 3).map((section) => {
+                      const Icon = section.icon
+                      const isDisabled = !section.component
+                      return (
+                        <button
+                          key={section.id}
+                          onClick={() => {
+                            if (!isDisabled) {
+                              setActiveSection(section.id)
+                              setMobileView("content")
+                              window.history.pushState(null, "", `/account?section=${section.id}`)
+                            }
+                          }}
+                          disabled={isDisabled}
+                          className={cn(
+                            "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50",
+                            isDisabled && "opacity-40 cursor-not-allowed"
+                          )}
+                        >
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted flex-shrink-0">
+                            <Icon className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium">{section.label}</div>
+                            <div className="text-xs text-muted-foreground truncate">{section.description}</div>
+                          </div>
+                          {isDisabled ? (
+                            <span className="text-xs text-muted-foreground flex-shrink-0">Soon</span>
+                          ) : (
+                            <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground flex-shrink-0" />
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
-                <ScrollBar orientation="horizontal" className="h-1.5 opacity-60" />
-              </ScrollArea>
-            </div>
 
-            {/* Swipe hint below tabs - only shows initially */}
-            {!hasScrolled && (
-              <div className="pb-2 text-center">
-                <span className="text-xs text-muted-foreground italic">↔️ Swipe for more options</span>
-              </div>
+                {/* Support sections */}
+                <div className="mb-4">
+                  <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 px-1">Support</h3>
+                  <div className="rounded-lg border bg-card divide-y">
+                    {sections.slice(7).map((section) => {
+                      const Icon = section.icon
+                      const isDisabled = !section.component
+                      return (
+                        <button
+                          key={section.id}
+                          onClick={() => {
+                            if (!isDisabled) {
+                              setActiveSection(section.id)
+                              setMobileView("content")
+                              window.history.pushState(null, "", `/account?section=${section.id}`)
+                            }
+                          }}
+                          disabled={isDisabled}
+                          className={cn(
+                            "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50",
+                            isDisabled && "opacity-40 cursor-not-allowed"
+                          )}
+                        >
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted flex-shrink-0">
+                            <Icon className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium">{section.label}</div>
+                            <div className="text-xs text-muted-foreground truncate">{section.description}</div>
+                          </div>
+                          <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground flex-shrink-0" />
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Preferences sections */}
+                <div>
+                  <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 px-1">Preferences</h3>
+                  <div className="rounded-lg border bg-card divide-y">
+                    {sections.slice(3, 7).map((section) => {
+                      const Icon = section.icon
+                      const isDisabled = !section.component
+                      return (
+                        <button
+                          key={section.id}
+                          onClick={() => {
+                            if (!isDisabled) {
+                              setActiveSection(section.id)
+                              setMobileView("content")
+                              window.history.pushState(null, "", `/account?section=${section.id}`)
+                            }
+                          }}
+                          disabled={isDisabled}
+                          className={cn(
+                            "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50",
+                            isDisabled && "opacity-40 cursor-not-allowed"
+                          )}
+                        >
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted flex-shrink-0">
+                            <Icon className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium">{section.label}</div>
+                            <div className="text-xs text-muted-foreground truncate">{section.description}</div>
+                          </div>
+                          {isDisabled ? (
+                            <span className="text-xs text-muted-foreground flex-shrink-0">Soon</span>
+                          ) : (
+                            <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground flex-shrink-0" />
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Back button + section content */}
+                <button
+                  onClick={() => {
+                    setMobileView("menu")
+                    window.history.pushState(null, "", "/account")
+                  }}
+                  className="flex items-center gap-2 text-sm text-muted-foreground mb-4"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>Settings</span>
+                </button>
+                <h1 className="text-xl font-semibold tracking-tight mb-1">{activeConfig?.label}</h1>
+                <p className="text-sm text-muted-foreground mb-4">{activeConfig?.description}</p>
+
+                {/* Mobile content */}
+                <div className="rounded-lg border bg-card">
+                  {activeConfig?.component === "feedback" ? (
+                    <FeedbackForm authUserId={user?.id} onClose={() => {}} />
+                  ) : activeConfig?.component === "about" ? (
+                    <div className="space-y-6">
+                      <AppInfoContent />
+                    </div>
+                  ) : activeConfig?.component === "changelog" ? (
+                    <div className="p-5">
+                      <div className="text-center space-y-3">
+                        <GitBranch className="h-10 w-10 text-primary mx-auto" />
+                        <h3 className="text-base font-semibold">View Full Changelog</h3>
+                        <p className="text-sm text-muted-foreground">
+                          See all the new features and improvements.
+                        </p>
+                        <div className="flex flex-col gap-2 pt-2">
+                          <Button size="sm" asChild>
+                            <Link href="/changelog" target="_blank">
+                              <GitBranch className="mr-2 h-3.5 w-3.5" />
+                              View Changelog
+                            </Link>
+                          </Button>
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href="https://github.com/LLmHub-dev" target="_blank">
+                              View on GitHub
+                            </Link>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : activeConfig?.component === "social" ? (
+                    <div className="divide-y">
+                      <a
+                        href="https://x.com/llmhub_dev"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
+                          <XIcon className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm">Follow us on X</div>
+                          <div className="text-xs text-muted-foreground">@llmhub_dev</div>
+                        </div>
+                        <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
+                      </a>
+                      <a
+                        href="https://github.com/LLmHub-dev"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
+                          <GithubLogoIcon className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm">Star us on GitHub</div>
+                          <div className="text-xs text-muted-foreground">LLmHub-dev</div>
+                        </div>
+                        <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
+                      </a>
+                      <a
+                        href="mailto:founders@coasty.ai"
+                        className="flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
+                          <Mail className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm">Contact Us</div>
+                          <div className="text-xs text-muted-foreground">founders@coasty.ai</div>
+                        </div>
+                        <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
+                      </a>
+                    </div>
+                  ) : ActiveComponent ? (
+                    <div className="p-4">
+                      <ActiveComponent />
+                    </div>
+                  ) : (
+                    <div className="text-center py-10">
+                      <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-muted mb-3">
+                        {activeConfig && <activeConfig.icon className="h-5 w-5 text-muted-foreground" />}
+                      </div>
+                      <h3 className="text-base font-medium mb-1">Coming Soon</h3>
+                      <p className="text-sm text-muted-foreground">
+                        This section will be available soon.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>
 
-        <div className="flex gap-8 py-6 lg:py-8">
+        <div className="hidden lg:flex gap-8 py-8">
           {/* Desktop Sidebar */}
-          <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="sticky top-8 space-y-6">
+          <aside className="w-64 flex-shrink-0">
+            <div className="sticky top-4 space-y-6">
               {/* Account Section */}
               <div className="space-y-1">
                 <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3 px-1">Account</h3>
@@ -230,7 +424,7 @@ function AccountContent() {
                     const Icon = section.icon
                     const isActive = activeSection === section.id
                     const isDisabled = !section.component
-                    
+
                     return (
                       <button
                         key={section.id}
@@ -238,8 +432,8 @@ function AccountContent() {
                         disabled={isDisabled}
                         className={cn(
                           "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all",
-                          isActive 
-                            ? "bg-accent text-accent-foreground shadow-sm" 
+                          isActive
+                            ? "bg-accent text-accent-foreground shadow-sm"
                             : "hover:bg-accent/50 text-muted-foreground hover:text-foreground",
                           isDisabled && "opacity-40 cursor-not-allowed"
                         )}
@@ -320,7 +514,7 @@ function AccountContent() {
             </div>
           </aside>
 
-          {/* Main Content Area */}
+          {/* Desktop Main Content Area */}
           <main className="flex-1 min-w-0">
             <div className="mb-6">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{activeConfig?.label}</h1>
@@ -328,40 +522,37 @@ function AccountContent() {
             </div>
 
             <div className="bg-card rounded-lg border shadow-sm">
-              {/* Handle special sections */}
               {activeConfig?.component === "feedback" ? (
                 <FeedbackForm authUserId={user?.id} onClose={() => {}} />
               ) : activeConfig?.component === "about" ? (
-                <div className="space-y-6">
+                <div className="p-6">
                   <AppInfoContent />
                 </div>
               ) : activeConfig?.component === "changelog" ? (
-                <div className="space-y-6">
-                  <div className="p-6">
-                    <div className="text-center space-y-4">
-                      <GitBranch className="h-12 w-12 text-primary mx-auto" />
-                      <h3 className="text-lg font-semibold">View Full Changelog</h3>
-                      <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                        Track our journey of continuous improvement. See all the new features, enhancements, and bug fixes we&apos;ve released.
-                      </p>
-                      <div className="flex gap-4 justify-center pt-4">
-                        <Button asChild>
-                          <Link href="/changelog" target="_blank">
-                            <GitBranch className="mr-2 h-4 w-4" />
-                            View Changelog
-                          </Link>
-                        </Button>
-                        <Button variant="outline" asChild>
-                          <Link href="https://github.com/LLmHub-dev" target="_blank">
-                            View on GitHub
-                          </Link>
-                        </Button>
-                      </div>
+                <div className="p-6">
+                  <div className="text-center space-y-4">
+                    <GitBranch className="h-12 w-12 text-primary mx-auto" />
+                    <h3 className="text-lg font-semibold">View Full Changelog</h3>
+                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                      Track our journey of continuous improvement. See all the new features, enhancements, and bug fixes we&apos;ve released.
+                    </p>
+                    <div className="flex gap-4 justify-center pt-4">
+                      <Button asChild>
+                        <Link href="/changelog" target="_blank">
+                          <GitBranch className="mr-2 h-4 w-4" />
+                          View Changelog
+                        </Link>
+                      </Button>
+                      <Button variant="outline" asChild>
+                        <Link href="https://github.com/LLmHub-dev" target="_blank">
+                          View on GitHub
+                        </Link>
+                      </Button>
                     </div>
                   </div>
                 </div>
               ) : activeConfig?.component === "social" ? (
-                <div className="space-y-8">
+                <div className="p-6 space-y-6">
                   <div className="grid gap-4">
                     <a
                       href="https://x.com/llmhub_dev"
@@ -378,7 +569,7 @@ function AccountContent() {
                       </div>
                       <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                     </a>
-                    
+
                     <a
                       href="https://github.com/LLmHub-dev"
                       target="_blank"
@@ -394,7 +585,7 @@ function AccountContent() {
                       </div>
                       <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                     </a>
-                    
+
                     <a
                       href="mailto:founders@coasty.ai"
                       className="group flex items-center gap-4 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-all"
@@ -409,8 +600,8 @@ function AccountContent() {
                       <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                     </a>
                   </div>
-                  
-                  <div className="p-6 rounded-lg bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
+
+                  <div className="p-5 rounded-lg bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
                     <h4 className="font-medium text-sm mb-2">Join the Community</h4>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       Connect with other users, share feedback, and stay updated with the latest features and improvements.

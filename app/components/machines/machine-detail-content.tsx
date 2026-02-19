@@ -347,7 +347,7 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
                       <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
                       <h3 className="text-lg font-semibold mb-2">Desktop Initializing...</h3>
                       <p className="text-muted-foreground mb-4">
-                        Installing desktop environment. This takes 3-5 minutes on first boot.
+                        Installing desktop environment. This takes 1-3 minutes on first boot.
                       </p>
                       <p className="text-xs text-muted-foreground">
                         You can use SSH while the desktop is being set up.

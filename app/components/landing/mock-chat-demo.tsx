@@ -305,23 +305,6 @@ export function MockChatDemo() {
         </div>
       </motion.div>
 
-      {/* Limited usage text */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className={cn(
-          "text-center",
-          isMobile ? "pt-1" : "pt-2"
-        )}
-      >
-        <p className={cn(
-          "text-muted-foreground",
-          isMobile ? "text-xs" : "text-sm"
-        )}>
-          Limited to 1 hour per task. We are not funded.
-        </p>
-      </motion.div>
     </div>
   )
 }

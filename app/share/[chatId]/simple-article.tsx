@@ -152,7 +152,7 @@ function PlayOverlay({ onPlay, title }: { onPlay: () => void, title?: string }) 
       >
         <div className="flex items-center justify-center gap-3 mb-4">
           <CoastyIcon className="h-10 w-10 text-primary" />
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent leading-normal pb-0.5">
             {APP_NAME}
           </h1>
         </div>
@@ -238,38 +238,14 @@ function PlayOverlay({ onPlay, title }: { onPlay: () => void, title?: string }) 
           See the intelligent automation, tools utilized, and solutions executed in real-time.
         </p>
         
-        {/* Stats or highlights */}
-        <motion.div
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.5 }}
-          className="mt-8 flex items-center justify-center gap-8 text-sm"
+          className="mt-6 text-sm text-muted-foreground"
         >
-          <div className="flex items-center gap-2">
-            <motion.div 
-              className="h-1.5 w-1.5 rounded-full bg-primary/60"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <span className="text-muted-foreground">Coasty Intelligence</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <motion.div 
-              className="h-1.5 w-1.5 rounded-full bg-primary/60"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            />
-            <span className="text-muted-foreground">Coasty Agent</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <motion.div 
-              className="h-1.5 w-1.5 rounded-full bg-primary/60"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            />
-            <span className="text-muted-foreground">Tool Orchestration</span>
-          </div>
-        </motion.div>
+          AI that works on real computers, so you don&apos;t have to.
+        </motion.p>
         
         {/* CTA hint */}
         <motion.p
@@ -448,6 +424,7 @@ function SimpleArticleContent({
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [showActionButtons, setShowActionButtons] = useState(false)
   const [currentToolInvocations, setCurrentToolInvocations] = useState<any[]>([])
+  const [cuaSectionIndex, setCuaSectionIndex] = useState(0) // tracks which CUA section we're on within a message
   const replayIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const { isOpen: isNavigatorOpen, setIsOpen: setNavigatorOpen, toggleNavigator, width: navigatorWidth } = useProjectNavigator()
   const [isMobile, setIsMobile] = useState(false)
@@ -469,28 +446,43 @@ function SimpleArticleContent({
   }, [])
   
   // Transform database messages to match the format expected by Message component
+  // CUA messages get cuaSections metadata for progressive replay within the same bubble
   useEffect(() => {
-    const transformed = messages.map(msg => {
-      // Parse parts if they exist - messages from DB have parts field
+    const CUA_TAG_REGEX = /<cua-section\s+[^>]*>[\s\S]*?<\/cua-section>/g
+    const transformed: any[] = []
+
+    messages.forEach(msg => {
       let parts = undefined
-      
       if (msg.parts) {
         try {
-          // Parts is already a JSON field in the database
           parts = msg.parts
         } catch (e) {
           console.error('Error parsing parts:', e)
         }
       }
-      
-      return {
-        id: msg.id.toString(), // Convert numeric ID to string
-        role: msg.role as "user" | "assistant",
-        content: msg.content || "",
-        parts: parts,
-        experimental_attachments: msg.experimental_attachments || undefined,
+
+      const content = msg.content || ""
+      const hasCuaTags = /<cua-section\s/.test(content)
+
+      // Extract CUA sections as metadata for progressive streaming
+      let cuaSections: string[] | undefined
+      if (msg.role === "assistant" && hasCuaTags) {
+        const sections = content.match(CUA_TAG_REGEX)
+        if (sections && sections.length > 1) {
+          cuaSections = sections
+        }
       }
+
+      transformed.push({
+        id: msg.id.toString(),
+        role: msg.role as "user" | "assistant",
+        content,
+        parts,
+        experimental_attachments: msg.experimental_attachments || undefined,
+        cuaSections, // array of individual section strings for progressive replay
+      })
     })
+
     setTransformedMessages(transformed)
   }, [messages])
   
@@ -511,16 +503,18 @@ function SimpleArticleContent({
     setShowPlayOverlay(false)
     setIsReplaying(true)
     setCurrentMessageIndex(0)
+    setCuaSectionIndex(0)
     setVisibleMessages([])
     setStreamingMessages([]) // Clear streaming messages for Project Navigator
     setCurrentToolInvocations([])
     setShowActionButtons(false)
   }, [setStreamingMessages])
-  
+
   const restartReplay = useCallback(() => {
     setShowActionButtons(false)
     setShowPlayOverlay(true)
     setCurrentMessageIndex(0)
+    setCuaSectionIndex(0)
     setVisibleMessages([])
     setStreamingMessages([]) // Clear streaming messages for Project Navigator
     setCurrentToolInvocations([])
@@ -530,17 +524,17 @@ function SimpleArticleContent({
     router.push('/')
   }, [router])
   
-  // Task replay effect - shows complete formatted messages
+  // Task replay effect - shows messages progressively
+  // For CUA messages with multiple sections, streams sections into the same bubble
   useEffect(() => {
     if (!isReplaying) {
       return
     }
-    
+
     if (currentMessageIndex >= transformedMessages.length) {
       // Replay complete - restore full messages with tool invocations
       setIsReplaying(false)
       setShowActionButtons(true)
-      // Restore full messages with all their parts including tools
       const fullMessages = transformedMessages.map(msg => ({ ...msg, isNew: false }))
       setVisibleMessages(fullMessages)
       setStreamingMessages(fullMessages)
@@ -555,84 +549,190 @@ function SimpleArticleContent({
       setCurrentToolInvocations(allTools)
       return
     }
-    
+
     const currentMessage = transformedMessages[currentMessageIndex]
-    
-    // Calculate delay based on message type and content
-    let baseDelay = 500 // Default delay between messages
-    
-    // Faster for user messages, slower for complex assistant responses
-    if (currentMessage.role === "user") {
+    const hasCuaSections = currentMessage.cuaSections && currentMessage.cuaSections.length > 1
+
+    // Calculate delay
+    let baseDelay = 500
+    if (hasCuaSections) {
+      baseDelay = cuaSectionIndex === 0 ? 500 : 350 // First section slightly longer, subsequent faster
+    } else if (currentMessage.role === "user") {
       baseDelay = 250
     } else if (currentMessage.content && currentMessage.content.length > 500) {
-      baseDelay = 800 // Longer delay for lengthy responses
+      baseDelay = 800
     } else if (currentMessage.parts?.some((p: any) => p.type === 'tool-invocation')) {
-      baseDelay = 600 // Medium delay for tool invocations
+      baseDelay = 600
     }
-    
-    const delay = baseDelay
-    
+
+    // Check if this message has tool invocations with screenshots
+    const hasToolParts = currentMessage.parts?.some((p: any) => p.type === 'tool-invocation')
+
     replayIntervalRef.current = setTimeout(() => {
-      // Filter out tool-invocation parts during replay
-      // We'll show them separately in the tool invocation display
-      const messageWithoutTools = {
-        ...currentMessage,
-        parts: currentMessage.parts ? 
-          currentMessage.parts.filter((p: any) => p.type !== 'tool-invocation') : 
-          undefined,
-        isNew: true // Flag for animation
+      // Auto-open the computer tab when first message with tools appears
+      if (hasToolParts && !isNavigatorOpen) {
+        setNavigatorOpen(true)
       }
-      
-      // Update visible messages (without tool invocations)
-      setVisibleMessages(prev => {
-        // Remove isNew flag from previous messages
-        const updated = prev.map(msg => ({ ...msg, isNew: false }))
-        return [...updated, messageWithoutTools]
-      })
-      
-      // Update streaming messages for Project Navigator
-      // Project Navigator gets the message without tools too
-      const updatedStreamingMessages = streamingMessages.map(msg => ({ ...msg, isNew: false }))
-      setStreamingMessages([...updatedStreamingMessages, messageWithoutTools])
-      
-      setCurrentMessageIndex(prev => prev + 1)
-      
-      // Auto-scroll to the new message
+
+      if (hasCuaSections) {
+        // Progressive CUA streaming: build up content section by section within same bubble
+        const sectionsToShow = currentMessage.cuaSections!.slice(0, cuaSectionIndex + 1)
+        const partialContent = sectionsToShow.join("\n")
+
+        // Count action-result sections visible so far — each one maps to a tool invocation screenshot
+        const actionResultCount = (partialContent.match(/<cua-section[^>]*type="action-result"[^>]*>/g) || []).length
+
+        // Split parts into tool and non-tool
+        const allToolParts = currentMessage.parts?.filter((p: any) => p.type === 'tool-invocation') || []
+        const nonToolParts = currentMessage.parts?.filter((p: any) => p.type !== 'tool-invocation') || []
+
+        // Only include tool invocations up to the number of action-results shown
+        const syncedToolParts = allToolParts.slice(0, actionResultCount)
+
+        // visibleMessages: no tool parts (rendered by Message component)
+        const messageForDisplay = {
+          ...currentMessage,
+          content: partialContent,
+          parts: nonToolParts.length > 0 ? nonToolParts : undefined,
+          isNew: cuaSectionIndex === 0,
+          isStreaming: true,
+        }
+
+        // streamingMessages: synced tool parts for ProjectNavigator (screenshot per action-result)
+        const messageForNavigator = {
+          ...currentMessage,
+          content: partialContent,
+          parts: [...nonToolParts, ...syncedToolParts],
+          isNew: cuaSectionIndex === 0,
+          isStreaming: true,
+        }
+
+        setVisibleMessages(prev => {
+          const existingIndex = prev.findIndex(m => m.id === currentMessage.id)
+          if (existingIndex >= 0) {
+            const updated = [...prev]
+            updated[existingIndex] = { ...messageForDisplay, isNew: false }
+            return updated
+          } else {
+            const updated = prev.map(msg => ({ ...msg, isNew: false }))
+            return [...updated, messageForDisplay]
+          }
+        })
+
+        // ProjectNavigator gets only the tool invocations matching revealed action-results
+        setStreamingMessages(prev => {
+          const existingIndex = prev.findIndex(m => m.id === currentMessage.id)
+          if (existingIndex >= 0) {
+            const updated = [...prev]
+            updated[existingIndex] = { ...messageForNavigator, isNew: false }
+            return updated
+          } else {
+            return [...prev.map(msg => ({ ...msg, isNew: false })), messageForNavigator]
+          }
+        })
+
+        if (cuaSectionIndex + 1 < currentMessage.cuaSections!.length) {
+          setCuaSectionIndex(prev => prev + 1)
+        } else {
+          // All sections streamed — finalize with full parts
+          setVisibleMessages(prev => {
+            const idx = prev.findIndex(m => m.id === currentMessage.id)
+            if (idx >= 0) {
+              const updated = [...prev]
+              updated[idx] = {
+                ...currentMessage,
+                parts: nonToolParts.length > 0 ? nonToolParts : undefined,
+                isNew: false,
+                isStreaming: false,
+              }
+              return updated
+            }
+            return prev
+          })
+          setStreamingMessages(prev => {
+            const idx = prev.findIndex(m => m.id === currentMessage.id)
+            if (idx >= 0) {
+              const updated = [...prev]
+              updated[idx] = { ...currentMessage, isNew: false, isStreaming: false }
+              return updated
+            }
+            return prev
+          })
+          setCuaSectionIndex(0)
+          setCurrentMessageIndex(prev => prev + 1)
+        }
+      } else {
+        // Non-CUA message: add it in one shot
+        // visibleMessages: no tool parts
+        const messageForDisplay = {
+          ...currentMessage,
+          parts: currentMessage.parts
+            ? currentMessage.parts.filter((p: any) => p.type !== 'tool-invocation')
+            : undefined,
+          isNew: true,
+        }
+
+        // streamingMessages: full parts for ProjectNavigator
+        const messageForNavigator = {
+          ...currentMessage,
+          isNew: true,
+        }
+
+        setVisibleMessages(prev => {
+          const updated = prev.map(msg => ({ ...msg, isNew: false }))
+          return [...updated, messageForDisplay]
+        })
+
+        setStreamingMessages(prev => {
+          return [...prev.map(msg => ({ ...msg, isNew: false })), messageForNavigator]
+        })
+
+        setCurrentMessageIndex(prev => prev + 1)
+      }
+
+      // Auto-scroll to the message
       setTimeout(() => {
         const element = document.getElementById(`message-${currentMessage.id}`)
         if (element) {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }
       }, 50)
-    }, delay)
-    
+    }, baseDelay)
+
     return () => {
       if (replayIntervalRef.current) {
         clearTimeout(replayIntervalRef.current)
         replayIntervalRef.current = null
       }
     }
-  }, [isReplaying, currentMessageIndex, transformedMessages, streamingMessages, setStreamingMessages])
+  }, [isReplaying, currentMessageIndex, cuaSectionIndex, transformedMessages, setStreamingMessages, isNavigatorOpen, setNavigatorOpen])
 
-  // Update tool invocations based on messages shown so far
+  // Update tool invocations synced with CUA sections — each action-result reveals one screenshot
   useEffect(() => {
     if (!isReplaying && !showActionButtons) {
       return
     }
-    
-    // Collect all tools from messages shown so far
+
     const allTools: any[] = []
-    for (let i = 0; i < currentMessageIndex && i < transformedMessages.length; i++) {
+    const upTo = Math.min(currentMessageIndex + 1, transformedMessages.length)
+    for (let i = 0; i < upTo; i++) {
       const message = transformedMessages[i]
       if (message.role === 'assistant' && message.parts) {
         const toolParts = message.parts.filter((p: any) => p.type === 'tool-invocation')
-        allTools.push(...toolParts)
+
+        // For the current CUA message being streamed, only show tools matching action-result count
+        if (i === currentMessageIndex && message.cuaSections && message.cuaSections.length > 1) {
+          const sectionsShown = message.cuaSections.slice(0, cuaSectionIndex + 1).join("\n")
+          const actionResultCount = (sectionsShown.match(/<cua-section[^>]*type="action-result"[^>]*>/g) || []).length
+          allTools.push(...toolParts.slice(0, actionResultCount))
+        } else {
+          allTools.push(...toolParts)
+        }
       }
     }
-    
-    // Show all collected tools at once
+
     setCurrentToolInvocations(allTools)
-  }, [currentMessageIndex, transformedMessages, isReplaying, showActionButtons])
+  }, [currentMessageIndex, cuaSectionIndex, transformedMessages, isReplaying, showActionButtons])
   
   // No-op handlers for read-only view
   const handleDelete = (id: string) => {}
@@ -781,10 +881,9 @@ function SimpleArticleContent({
       
       {/* Project Navigator - show for shared chat */}
       {chatId && (
-        <ProjectNavigator 
-          isOpen={isNavigatorOpen} 
+        <ProjectNavigator
+          isOpen={isNavigatorOpen}
           onToggle={toggleNavigator}
-          disableAutoOpen={true}
         />
       )}
     </div>

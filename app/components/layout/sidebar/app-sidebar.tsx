@@ -164,7 +164,7 @@ export function AppSidebar() {
                   <CoastyIcon className="h-6 w-6 text-primary transition-all duration-300 ease-in-out" />
                 </div>
                 <div className="flex flex-col justify-center min-w-0 overflow-hidden">
-                  <span className="text-sm font-semibold text-foreground leading-none truncate transition-opacity duration-300 ease-in-out">Coasty</span>
+                  <span className="text-sm font-semibold text-foreground leading-normal truncate transition-opacity duration-300 ease-in-out">Coasty</span>
                 </div>
               </button>
             )}

@@ -171,7 +171,7 @@ export function LandingHeader({
                 <motion.span
                   layoutId={animateBrandFromIntro ? "landing-brand-text" : undefined}
                   className={cn(
-                    "font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent transition-all duration-500 whitespace-nowrap text-base sm:text-lg",
+                    "font-semibold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent transition-all duration-500 whitespace-nowrap text-base sm:text-lg leading-normal pb-0.5",
                     scrolled ? "lg:text-lg" : "lg:text-xl"
                   )}
                 >

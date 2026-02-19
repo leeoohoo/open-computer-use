@@ -65,6 +65,10 @@ export async function getChatsForUserInDb(userId: string): Promise<Chats[]> {
           preview = preview.replace(/\[TASK_PLAN_START\][\s\S]*?\[TASK_PLAN_END\]/g, '')
           preview = preview.replace(/\[REASONING_START\][\s\S]*?\[REASONING_END\]/g, '')
           preview = preview.replace(/\[THINKING_START\][\s\S]*?\[THINKING_END\]/g, '')
+
+          // Remove CUA section tags, keeping inner text content
+          preview = preview.replace(/<cua-section\s+[^>]*>/g, '')
+          preview = preview.replace(/<\/cua-section>/g, '')
           
           // Remove status updates
           preview = preview.replace(/\[TASK_STATUS:[^:]+:[^\]]+\]/g, '')

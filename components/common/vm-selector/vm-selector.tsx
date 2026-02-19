@@ -20,7 +20,9 @@ interface VMSelectorProps {
   className?: string
 }
 
-function getStatusStyles(status: UserMachine['status']) {
+type DisplayStatus = UserMachine['status'] | 'initiating'
+
+function getStatusStyles(status: DisplayStatus) {
   switch (status) {
     case 'running':
       return {
@@ -35,6 +37,7 @@ function getStatusStyles(status: UserMachine['status']) {
         border: 'border-yellow-500/20'
       }
     case 'starting':
+    case 'initiating':
       return {
         bg: 'bg-blue-500/10',
         text: 'text-blue-700 dark:text-blue-400',
@@ -73,7 +76,7 @@ function getStatusStyles(status: UserMachine['status']) {
   }
 }
 
-function getStatusText(status: UserMachine['status']) {
+function getStatusText(status: DisplayStatus) {
   switch (status) {
     case 'running':
       return 'Running'
@@ -81,6 +84,8 @@ function getStatusText(status: UserMachine['status']) {
       return 'Creating'
     case 'starting':
       return 'Starting'
+    case 'initiating':
+      return 'Initiating Agent'
     case 'stopping':
       return 'Stopping'
     case 'stopped':
@@ -105,18 +110,19 @@ export function VMSelector({
   const [isLoading, setIsLoading] = useState(false)
   const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [agentReady, setAgentReady] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     if (isUserAuthenticated) {
       fetchMachines()
-      
+
       // Set up polling for creating/starting machines
       const interval = setInterval(() => {
         fetchMachines()
       }, 10000) // Poll every 10 seconds
-      
+
       setPollInterval(interval)
-      
+
       return () => {
         if (interval) {
           clearInterval(interval)
@@ -125,11 +131,41 @@ export function VMSelector({
     }
   }, [isUserAuthenticated])
 
+  // Check agent health for selected running machine
+  useEffect(() => {
+    if (!selectedVMId || selectedVMId === "none") return
+
+    const machine = allMachines.find(m => m.id === selectedVMId)
+    if (!machine || machine.status !== "running") return
+
+    const checkAgentHealth = async () => {
+      try {
+        const res = await fetch(`/api/machines/${selectedVMId}/agent-health`)
+        if (res.ok) {
+          const data = await res.json()
+          setAgentReady(prev => ({ ...prev, [selectedVMId]: data.agentReady }))
+        }
+      } catch {
+        // On network error, assume not ready
+        setAgentReady(prev => ({ ...prev, [selectedVMId]: false }))
+      }
+    }
+
+    checkAgentHealth()
+
+    // Poll health every 5 seconds while agent isn't ready
+    const isReady = agentReady[selectedVMId]
+    if (!isReady) {
+      const healthInterval = setInterval(checkAgentHealth, 5000)
+      return () => clearInterval(healthInterval)
+    }
+  }, [selectedVMId, allMachines, agentReady[selectedVMId ?? ""]])
+
   const fetchMachines = async () => {
     try {
       setIsLoading(true)
       const response = await fetch("/api/machines")
-      
+
       if (response.ok) {
         const data = await response.json()
         // Store all machines for display
@@ -145,6 +181,14 @@ export function VMSelector({
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Get the display status for a machine — overrides "running" to "initiating" when agent isn't ready
+  const getDisplayStatus = (machine: UserMachine): DisplayStatus => {
+    if (machine.status === "running" && agentReady[machine.id] === false) {
+      return 'initiating'
+    }
+    return machine.status
   }
 
   if (!isUserAuthenticated) {
@@ -186,8 +230,8 @@ export function VMSelector({
                 </span>
                 <span className="hidden sm:flex">
                   {(() => {
-                    const status = selectedMachine?.status || 'stopped';
-                    const styles = getStatusStyles(status);
+                    const displayStatus = selectedMachine ? getDisplayStatus(selectedMachine) : 'stopped';
+                    const styles = getStatusStyles(displayStatus);
                     return (
                       <span className={cn(
                         "px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 border",
@@ -195,7 +239,7 @@ export function VMSelector({
                         styles.text,
                         styles.border
                       )}>
-                        {getStatusText(status)}
+                        {getStatusText(displayStatus)}
                       </span>
                     );
                   })()}
@@ -236,7 +280,8 @@ export function VMSelector({
                   )}
                 </span>
                 {(() => {
-                  const styles = getStatusStyles(machine.status);
+                  const displayStatus = getDisplayStatus(machine);
+                  const styles = getStatusStyles(displayStatus);
                   return (
                     <span className={cn(
                       "px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 border",
@@ -244,7 +289,7 @@ export function VMSelector({
                       styles.text,
                       styles.border
                     )}>
-                      {getStatusText(machine.status)}
+                      {getStatusText(displayStatus)}
                     </span>
                   );
                 })()}

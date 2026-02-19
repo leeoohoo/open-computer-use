@@ -191,18 +191,21 @@ function VMStatusBar({ isVisible, machineName, status }: { isVisible: boolean; m
       case "starting":
       case "stopped": // When stopped but starting
         return `${startupMessages[messageIndex]}...`
+      case "initiating":
+        return `Initiating agent on ${machineName || "computer"}...`
       case "stopping":
         return `Stopping ${machineName || "computer"}...`
       default:
         return `Preparing ${machineName || "computer"}...`
     }
   }
-  
+
   const getStatusColor = () => {
     switch (status) {
       case "creating":
         return `bg-${themeConfig.primary.tw.bg.medium} dark:bg-${themeConfig.primary.tw.bg.strong} text-${themeConfig.primary.tw.dark} dark:text-purple-300`
       case "starting":
+      case "initiating":
         return "bg-blue-500/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300"
       case "stopped":
         return "bg-blue-500/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300"
@@ -212,12 +215,13 @@ function VMStatusBar({ isVisible, machineName, status }: { isVisible: boolean; m
         return "bg-gray-500/10 dark:bg-gray-500/20 text-gray-700 dark:text-gray-300"
     }
   }
-  
+
   const getIconColor = () => {
     switch (status) {
       case "creating":
         return themeConfig.primary.tw.text.base
       case "starting":
+      case "initiating":
         return "text-blue-600 dark:text-blue-400"
       case "stopped":
         return "text-blue-600 dark:text-blue-400"
@@ -332,7 +336,8 @@ export function ChatInput({
   const [showVMError, setShowVMError] = useState(false)
   const [showVMStatusBar, setShowVMStatusBar] = useState(false)
   const [currentMachine, setCurrentMachine] = useState<UserMachine | null>(null)
-  
+  const [agentReady, setAgentReady] = useState(true)
+
   // Fetch machine status when VM is selected
   useEffect(() => {
     if (selectedVMId && selectedVMId !== "none" && isUserAuthenticated) {
@@ -346,12 +351,28 @@ export function ChatInput({
               setMachineStatus(machine.status)
               setMachineName(machine.displayName)
               setCurrentMachine(machine)
-              
-              // Show status bar for creating, starting, or stopped (being started) states
+
+              // Show status bar for creating, starting states
               if (machine.status === "creating" || machine.status === "starting") {
                 setShowVMStatusBar(true)
               } else if (machine.status === "running") {
-                setShowVMStatusBar(false)
+                // Machine is running — check if agent is actually ready
+                try {
+                  const healthRes = await fetch(`/api/machines/${selectedVMId}/agent-health`)
+                  if (healthRes.ok) {
+                    const healthData = await healthRes.json()
+                    setAgentReady(healthData.agentReady)
+                    // Show status bar while agent is initiating
+                    if (!healthData.agentReady) {
+                      setShowVMStatusBar(true)
+                    } else {
+                      setShowVMStatusBar(false)
+                    }
+                  }
+                } catch {
+                  setAgentReady(false)
+                  setShowVMStatusBar(true)
+                }
               }
             }
           }
@@ -359,7 +380,7 @@ export function ChatInput({
           console.error("Failed to fetch machine status:", error)
         }
       }
-      
+
       fetchMachineStatus()
       // Poll for status updates every 3 seconds when showing status bar, 10 seconds otherwise
       const interval = setInterval(fetchMachineStatus, showVMStatusBar ? 3000 : 10000)
@@ -369,6 +390,7 @@ export function ChatInput({
       setMachineName(null)
       setCurrentMachine(null)
       setShowVMStatusBar(false)
+      setAgentReady(true)
     }
   }, [selectedVMId, isUserAuthenticated, showVMStatusBar])
   
@@ -599,7 +621,7 @@ export function ChatInput({
     <>
       <VMErrorDialog isOpen={showVMError} onClose={() => setShowVMError(false)} />
       <div className="relative flex w-full flex-col gap-4">
-        <VMStatusBar isVisible={showVMStatusBar} machineName={machineName || undefined} status={machineStatus || undefined} />
+        <VMStatusBar isVisible={showVMStatusBar} machineName={machineName || undefined} status={machineStatus === "running" && !agentReady ? "initiating" : (machineStatus || undefined)} />
       {hasSuggestions && (
         <PromptSystem
           onValueChange={onValueChange}

@@ -2,9 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { NoiseBackground } from "@/components/ui/noise-background"
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import { PointerHighlight } from "@/components/ui/pointer-highlight"
 import { HeroParallaxChat } from "@/components/ui/hero-parallax-chat"
 import { SparklesCore } from "@/components/ui/sparkles"
@@ -82,41 +80,36 @@ const pricingPlans = [
     cta: "Start Free",
     highlighted: false,
   },
-  // {
-  //   name: "Starter",
-  //   price: "$19",
-  //   period: "per month",
-  //   description: "Learn and automate your routine computer operations",
-  //   agentMinutes: 200,
-  //   features: [
-  //     "Up to 2 virtual machines",
-  //     "5 CPU cores, 5GB RAM",
-  //     "20GB storage",
-  //     "Upload/download files from your personal machine",
-  //     "One-click remote connection - no setup required",
-  //     "Your files & apps remain intact between sessions",
-  //     "Standard support",
-  //     "Multiple active projects",
-  //     "Web search & browsing",
-  //     "Basic integrations",
-  //   ],
-  //   limitations: [],
-  //   cta: "Start with Starter",
-  //   highlighted: false,
-  // },
+  {
+    name: "Starter",
+    price: "$19",
+    period: "per month",
+    description: "Learn and automate your routine computer operations",
+    agentMinutes: 20,
+    features: [
+      "Free virtual machine included",
+      "20 min of CUA agent time per month",
+      "Upload/download files from your personal machine",
+      "One-click remote connection - no setup required",
+      "Standard support",
+      "Web search & browsing",
+    ],
+    limitations: [],
+    cta: "Start with Starter",
+    highlighted: false,
+  },
   {
     name: "Professional",
     price: "$50",
     period: "per month",
     description: "Professional-grade automation for demanding workflows",
-    agentMinutes: "Unlimited Usage*",
+    agentMinutes: 60,
     features: [
-      "1 virtual machine and computer using agent",
+      "Free virtual machine included",
+      "60 min of CUA agent time per month",
       "Upload/download files from your personal machine",
       "One-click remote connection - no setup required",
-      "Priority VM performance & faster processing",
       "Priority support with 24hr response",
-      "Unlimited projects",
       "Advanced web search & data extraction",
       "API access",
       "Custom workflows",
@@ -130,15 +123,14 @@ const pricingPlans = [
     name: "Enterprise",
     price: "$100",
     period: "per month",
-    description: "Unrestricted automation with premium capabilities and priority processing",
-    agentMinutes: "Unlimited Premium*",
+    description: "Maximum automation with premium capabilities and priority processing",
+    agentMinutes: 150,
     features: [
-      "1 virtual machine and computer using agent",
+      "Free virtual machine included",
+      "150 min of CUA agent time per month",
       "Upload/download files from your personal machine",
       "One-click remote connection - no setup required",
-      "Dedicated high-performance resources",
       "Premium support with 1hr response",
-      "Unlimited everything",
       "Early access to new features",
       "Custom integrations & workflows",
       "SSO authentication",
@@ -462,7 +454,7 @@ export function LandingPage() {
                 <motion.span
                   layoutId="landing-brand-text"
                   transition={{ type: "spring", stiffness: 210, damping: 26 }}
-                  className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl"
+                  className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-3xl font-semibold text-transparent sm:text-4xl leading-normal pb-0.5"
                 >
                   Coasty
                 </motion.span>
@@ -515,7 +507,7 @@ export function LandingPage() {
         {/* Hero Section */}
         <section id="hero" className={cn(
           "min-h-screen flex items-center justify-center",
-          isMobile ? "px-4 py-12" : "px-6 py-20"
+          isMobile ? "px-4 pt-8 pb-12" : "px-6 pt-10 pb-20"
         )}>
           <motion.div
             variants={containerVariants}
@@ -528,12 +520,17 @@ export function LandingPage() {
               variants={itemVariants}
               className={cn(
                 "text-center mb-8",
-                isMobile ? "space-y-5" : "space-y-7"
+                isMobile ? "space-y-6" : "space-y-9"
               )}
             >
+              <div className="flex justify-center">
+                <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs sm:text-sm font-medium text-primary">
+                  State of the Art, 82% on OSWorld Benchmark
+                </span>
+              </div>
               <h1 className={cn(
                 "font-semibold tracking-tight",
-                isMobile ? "text-4xl" : "text-5xl sm:text-6xl lg:text-7xl xl:text-8xl"
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl lg:text-6xl"
               )}>
                 <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   AI Agents That{" "}
@@ -553,8 +550,9 @@ export function LandingPage() {
                     Control Computers
                   </span>
                 </PointerHighlight>
+                <br />
                 <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  {" "}Like Humans
+                  Like Humans
                 </span>
               </h1>
               <div className="mx-auto flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-lg md:w-auto md:max-w-none md:flex-row md:items-center md:gap-4">
@@ -563,13 +561,13 @@ export function LandingPage() {
                   className="p-0"
                   gradientColors={["rgb(34, 197, 94)", "rgb(16, 185, 129)", "rgb(132, 204, 22)"]}
                   noiseIntensity={0.08}
-                  speed={0.08}
+                  animating={false}
                 >
                   <Link
                     href="/auth"
-                    className="group inline-flex h-12 w-full items-center justify-center rounded-full bg-transparent px-5 sm:px-6 md:min-w-[220px] md:px-7 text-sm sm:text-[0.95rem] font-semibold text-slate-900 transition-opacity hover:opacity-95 dark:text-white"
+                    className="group inline-flex h-10 w-full items-center justify-center rounded-full bg-transparent px-4 sm:px-5 md:min-w-[200px] md:px-6 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white"
                   >
-                    Put AI to Work for You
+                    Start Free, Let AI Do the Work
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </NoiseBackground>
@@ -578,13 +576,13 @@ export function LandingPage() {
                   className="p-0"
                   gradientColors={["rgb(59, 130, 246)", "rgb(14, 165, 233)", "rgb(6, 182, 212)"]}
                   noiseIntensity={0.08}
-                  speed={0.08}
+                  animating={false}
                 >
                   <Link
                     href="https://github.com/LLmHub-dev/open-computer-use"
                     target="_blank"
                     rel="noreferrer"
-                    className="group inline-flex h-12 w-full items-center justify-center rounded-full bg-transparent px-5 sm:px-6 md:min-w-[220px] md:px-7 text-sm sm:text-[0.95rem] font-semibold text-slate-900 transition-opacity hover:opacity-95 dark:text-white"
+                    className="group inline-flex h-10 w-full items-center justify-center rounded-full bg-transparent px-4 sm:px-5 md:min-w-[200px] md:px-6 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white"
                   >
                     <Github className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
                     Built in Public. Open Source.
@@ -633,6 +631,103 @@ export function LandingPage() {
                 </div>
               </motion.div>
             </div>
+          </motion.div>
+        </section>
+
+        {/* OSWorld Benchmark Section */}
+        <section className={cn(
+          "py-20",
+          isMobile ? "px-4" : "px-6"
+        )}>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-3xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-10">
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+              )}>
+                State of the Art Computer-Using Performance
+              </h2>
+              <p className={cn(
+                "text-muted-foreground mt-3",
+                isMobile ? "text-sm" : "text-base"
+              )}>
+                OSWorld benchmark measures real-world computer task completion across browsers, office apps, and system operations.
+              </p>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="space-y-3">
+              {[
+                { name: "Coasty", org: "Ours", score: 82.0, highlight: true },
+                { name: "Kimi K2.5", org: "Moonshot AI", score: 63.3 },
+                { name: "Claude Sonnet 4.5", org: "Anthropic", score: 62.9 },
+                { name: "Seed-1.8", org: "ByteDance", score: 61.9 },
+                { name: "Claude Sonnet 4.5", org: "Anthropic · 50 steps", score: 58.1 },
+              ].map((entry, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.4 }}
+                  className={cn(
+                    "flex items-center gap-3",
+                    entry.highlight && "py-1"
+                  )}
+                >
+                  <div className={cn(
+                    "flex-shrink-0 text-right",
+                    isMobile ? "w-24 text-xs" : "w-40 text-sm"
+                  )}>
+                    <span className={cn(
+                      "font-medium inline-flex items-center justify-end gap-1.5",
+                      entry.highlight ? "text-primary" : "text-foreground"
+                    )}>
+                      {entry.highlight && mounted && (
+                        <Image
+                          src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                          alt="Coasty"
+                          width={16}
+                          height={16}
+                          className={cn(isMobile ? "h-3.5 w-3.5" : "h-4 w-4")}
+                        />
+                      )}
+                      {entry.name}
+                    </span>
+                    <span className="text-muted-foreground block text-xs">{entry.org}</span>
+                  </div>
+                  <div className={cn(
+                    "flex-1 relative rounded-md bg-muted/50 overflow-hidden",
+                    entry.highlight ? "h-10 shadow-md shadow-primary/20 ring-1 ring-primary/20" : "h-8"
+                  )}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${(entry.score / 82) * 100}%` }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.08 + 0.2, duration: 0.7, ease: "easeOut" }}
+                      className={cn(
+                        "absolute inset-y-0 left-0 rounded-md",
+                        entry.highlight
+                          ? "bg-gradient-to-r from-primary to-primary/80"
+                          : "bg-muted-foreground/20"
+                      )}
+                    />
+                    <span className={cn(
+                      "absolute right-2 top-1/2 -translate-y-1/2 font-semibold tabular-nums",
+                      isMobile ? "text-xs" : "text-sm",
+                      entry.highlight ? "text-primary-foreground" : "text-foreground"
+                    )}>
+                      {entry.score}%
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
           </motion.div>
         </section>
 
@@ -812,183 +907,96 @@ export function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-7xl mx-auto"
+            className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-12">
+            <motion.div variants={itemVariants} className="text-center mb-14">
               <h2 className={cn(
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  Monthly Plans That Actually Make Sense! 🎉
-                </span>
+                Simple, transparent pricing
               </h2>
               <p className={cn(
-                "text-muted-foreground",
-                isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
+                "text-muted-foreground mt-3",
+                isMobile ? "text-sm" : "text-base"
               )}>
-                <span className="bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-                  No confusing credits, no hourly stress - just pick your plan and let your AI employees work their magic! ✨
-                </span>
+                Start free. Upgrade when you need more.
               </p>
             </motion.div>
-            
+
             <div className={cn(
-              "grid gap-6 justify-center",
+              "grid gap-4",
               isMobile
                 ? "grid-cols-1"
-                : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto"
+                : "grid-cols-1 md:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto items-start"
             )}>
               {pricingPlans.map((plan, index) => (
                 <motion.div
                   key={plan.name}
                   variants={itemVariants}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ 
-                    delay: index * 0.1,
-                    duration: 0.5,
-                    ease: "easeOut" as const
-                  }}
-                  className="h-full group"
+                  className="h-full"
                 >
-                  <div className="relative h-full">
-                    {/* Badge positioned outside the card */}
+                  <div className={cn(
+                    "relative h-full rounded-xl border p-6 transition-shadow duration-200",
+                    plan.highlighted
+                      ? "border-primary bg-primary/[0.03] shadow-sm shadow-primary/10"
+                      : "border-border"
+                  )}>
                     {plan.badge && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                        <Badge className="bg-primary text-primary-foreground shadow-lg px-4 py-1 text-xs font-bold animate-pulse">
-                          ⭐ {plan.badge}
-                        </Badge>
+                      <div className="absolute -top-2.5 left-4">
+                        <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-medium text-primary-foreground">
+                          {plan.badge}
+                        </span>
                       </div>
                     )}
-                    
-                    <Card 
+
+                    <div className="mb-5">
+                      <h3 className="text-sm font-medium text-muted-foreground">{plan.name}</h3>
+                      <div className="mt-2 flex items-baseline gap-1">
+                        <span className="text-4xl font-semibold tracking-tight">{plan.price}</span>
+                        <span className="text-sm text-muted-foreground">/{plan.period}</span>
+                      </div>
+                      <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{plan.description}</p>
+                    </div>
+
+                    <div className="mb-5 flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2">
+                      <Zap className="h-4 w-4 text-primary flex-shrink-0" />
+                      <span className="text-sm font-medium">
+                        {typeof plan.agentMinutes === 'string'
+                          ? plan.agentMinutes
+                          : plan.agentMinutes >= 60
+                            ? `${Math.floor(plan.agentMinutes / 60)}${plan.agentMinutes % 60 > 0 ? '+' : ''} hours`
+                            : `${plan.agentMinutes} min`
+                        }
+                        <span className="text-muted-foreground font-normal"> agent time/mo</span>
+                      </span>
+                    </div>
+
+                    <Button
                       className={cn(
-                        "relative h-full overflow-hidden transition-all duration-300",
-                        "border-2 hover:border-primary/50",
-                        "hover:shadow-2xl hover:shadow-primary/10",
-                        "hover:-translate-y-2",
-                        "bg-gradient-to-b from-background to-background/80",
-                        plan.highlighted && [
-                          "border-primary shadow-xl",
-                          "bg-gradient-to-b from-primary/5 to-background",
-                          "scale-[1.02]"
-                        ]
+                        "w-full mb-6",
+                        plan.highlighted
+                          ? ""
+                          : "hover:bg-primary hover:text-primary-foreground"
                       )}
+                      variant={plan.highlighted ? "default" : "outline"}
+                      size="sm"
+                      asChild
                     >
-                      {/* Glow effect on hover */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      
-                      {/* Top gradient line for highlighted plan */}
-                      {plan.badge && (
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
-                      )}
-                    
-                    <CardHeader className="relative space-y-4 pb-6">
-                      <div className="space-y-2">
-                        <CardTitle className="text-2xl font-bold tracking-tight group-hover:text-primary transition-colors duration-200">
-                          {plan.name}
-                        </CardTitle>
-                        <CardDescription className="text-sm leading-relaxed min-h-[3rem]">
-                          {plan.description}
-                        </CardDescription>
-                      </div>
-                      
-                      <div className="pt-4 pb-2">
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-5xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                            {plan.price}
-                          </span>
-                          <span className="text-sm text-muted-foreground font-medium">
-                            /{plan.period}
-                          </span>
+                      <Link href="/auth">
+                        {plan.cta}
+                        <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                      </Link>
+                    </Button>
+
+                    <div className="space-y-2.5">
+                      {plan.features.map((feature) => (
+                        <div key={feature} className="flex items-start gap-2">
+                          <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-muted-foreground">{feature}</span>
                         </div>
-                      </div>
-                      
-                      {/* Agent Execution Time Highlight */}
-                      <div className="p-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg border border-primary/20">
-                        <div className="flex items-center gap-2">
-                          <Zap className="h-5 w-5 text-primary" />
-                          <div className="flex flex-col">
-                            <span className="text-2xl font-bold text-primary">
-                              {typeof plan.agentMinutes === 'string'
-                                ? plan.agentMinutes
-                                : plan.agentMinutes >= 60
-                                  ? `${Math.floor(plan.agentMinutes / 60)}${plan.agentMinutes % 60 > 0 ? '+' : ''} hours`
-                                  : `${plan.agentMinutes} minutes`
-                              }
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              AI agent automation per month
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <Separator className="opacity-50" />
-                    </CardHeader>
-                    
-                    <CardContent className="relative space-y-4">
-                      <div className="space-y-3">
-                        {plan.features.map((feature, idx) => (
-                          <motion.div
-                            key={feature}
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.05 }}
-                            className="flex items-start gap-3 group/item"
-                          >
-                            <div className="rounded-full bg-green-500/10 p-1 mt-0.5">
-                              <Check className="h-3.5 w-3.5 text-green-500" />
-                            </div>
-                            <span className="text-sm leading-relaxed text-foreground/90 group-hover/item:text-foreground transition-colors">
-                              {feature}
-                            </span>
-                          </motion.div>
-                        ))}
-                        {plan.limitations.map((limitation, idx) => (
-                          <motion.div
-                            key={limitation}
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ delay: (plan.features.length + idx) * 0.05 }}
-                            className="flex items-start gap-3"
-                          >
-                            <div className="rounded-full bg-muted p-1 mt-0.5">
-                              <X className="h-3.5 w-3.5 text-muted-foreground" />
-                            </div>
-                            <span className="text-sm leading-relaxed text-muted-foreground">
-                              {limitation}
-                            </span>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </CardContent>
-                    
-                    <CardFooter className="relative pt-6">
-                      <Button 
-                        className={cn(
-                          "w-full h-12 text-sm font-semibold transition-all duration-200",
-                          "shadow-sm hover:shadow-lg",
-                          plan.highlighted ? [
-                            "bg-primary hover:bg-primary/90",
-                            "shadow-primary/25 hover:shadow-primary/40",
-                          ] : [
-                            "hover:bg-primary hover:text-primary-foreground",
-                            "hover:border-primary"
-                          ]
-                        )}
-                        variant={plan.highlighted ? "default" : "outline"}
-                        size="lg"
-                        asChild
-                      >
-                        <Link href="/auth" className="flex items-center justify-center gap-2">
-                          <span>{plan.cta}</span>
-                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                        </Link>
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               ))}

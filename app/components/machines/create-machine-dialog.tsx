@@ -147,7 +147,7 @@ export function CreateMachineDialog({
       // Show immediate success and close dialog
       toast.success("Machine creation started!", {
         description: desktopEnabled
-          ? "Your desktop machine is being launched. Desktop will be ready in 3-5 minutes."
+          ? "Your desktop machine is being launched. Desktop will be ready in 1-3 minutes."
           : "Your cloud machine is being launched. SSH key will be available once ready.",
         duration: 5000,
       });
@@ -360,7 +360,7 @@ export function CreateMachineDialog({
             <div className="text-xs text-muted-foreground space-y-0.5">
               <p className="font-medium text-foreground">Ubuntu Desktop (2 vCPU, 2 GB RAM)</p>
               <p>Full desktop with VNC access via browser</p>
-              <p>Desktop takes 3-5 min to initialize after machine starts</p>
+              <p>Desktop takes 1-3 min to initialize after machine starts</p>
             </div>
           </div>
 
