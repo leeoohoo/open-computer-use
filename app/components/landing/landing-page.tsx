@@ -292,7 +292,6 @@ export function LandingPage() {
   const [mounted, setMounted] = useState(false)
   const [showBrandIntro, setShowBrandIntro] = useState(false)
   const [showPageContent, setShowPageContent] = useState(false)
-  const [typedSubtitle, setTypedSubtitle] = useState("")
   const [subtitleTypingDone, setSubtitleTypingDone] = useState(false)
   const { theme } = useTheme()
   const prefersReducedMotion = useReducedMotion()
@@ -308,75 +307,37 @@ export function LandingPage() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
+  // Single consolidated intro timeline — no per-character re-renders.
+  // CSS animation handles the visual typing; JS only fires 3 state updates total.
   useEffect(() => {
-    if (!mounted) {
-      return
-    }
+    if (!mounted) return
 
     const isSmallDevice = window.innerWidth < 768
 
     if (prefersReducedMotion || isSmallDevice) {
       setShowBrandIntro(false)
       setShowPageContent(true)
-      setTypedSubtitle(BRAND_SUBTITLE_TEXT)
       setSubtitleTypingDone(true)
       return
     }
 
     setShowPageContent(false)
     setShowBrandIntro(true)
-    setTypedSubtitle("")
     setSubtitleTypingDone(false)
+
+    // t=1800ms — CSS typing animation finishes → mark done
+    const typingDone = window.setTimeout(() => setSubtitleTypingDone(true), 1800)
+    // t=2100ms — begin exit (after brief pause to read)
+    const exitIntro = window.setTimeout(() => setShowBrandIntro(false), 2100)
+    // t=2450ms — reveal page content (overlaps with exit fade)
+    const revealPage = window.setTimeout(() => setShowPageContent(true), 2450)
+
+    return () => {
+      window.clearTimeout(typingDone)
+      window.clearTimeout(exitIntro)
+      window.clearTimeout(revealPage)
+    }
   }, [mounted, prefersReducedMotion])
-
-  useEffect(() => {
-    if (!mounted || prefersReducedMotion || !showBrandIntro) {
-      return
-    }
-
-    let currentIndex = 0
-    const typingInterval = window.setInterval(() => {
-      currentIndex += 1
-      setTypedSubtitle(BRAND_SUBTITLE_TEXT.slice(0, currentIndex))
-
-      if (currentIndex >= BRAND_SUBTITLE_TEXT.length) {
-        window.clearInterval(typingInterval)
-        setSubtitleTypingDone(true)
-      }
-    }, 22)
-
-    return () => {
-      window.clearInterval(typingInterval)
-    }
-  }, [mounted, prefersReducedMotion, showBrandIntro])
-
-  useEffect(() => {
-    if (!mounted || prefersReducedMotion || !showBrandIntro || !subtitleTypingDone) {
-      return
-    }
-
-    const startMoveTimeout = window.setTimeout(() => {
-      setShowBrandIntro(false)
-    }, 280)
-
-    return () => {
-      window.clearTimeout(startMoveTimeout)
-    }
-  }, [mounted, prefersReducedMotion, showBrandIntro, subtitleTypingDone])
-
-  useEffect(() => {
-    if (!mounted || prefersReducedMotion || showBrandIntro || showPageContent) {
-      return
-    }
-
-    const revealTimeout = window.setTimeout(() => {
-      setShowPageContent(true)
-    }, 600)
-
-    return () => {
-      window.clearTimeout(revealTimeout)
-    }
-  }, [mounted, prefersReducedMotion, showBrandIntro, showPageContent])
 
   // Animation variants
   const sparklesDensity = isMobile ? 3 : 6
@@ -410,35 +371,62 @@ export function LandingPage() {
 
   return (
     <LayoutGroup id="landing-brand-transition">
+      {/* CSS keyframes for the typing reveal — runs on compositor, zero JS overhead */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes brand-typing-reveal {
+          from { max-width: 0; }
+          to   { max-width: 20em; }
+        }
+        @keyframes brand-cursor-blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        .brand-typing-text {
+          display: inline-block;
+          overflow: hidden;
+          white-space: nowrap;
+          max-width: 0;
+          vertical-align: bottom;
+          animation: brand-typing-reveal 1.8s steps(28, end) forwards;
+        }
+        .brand-cursor {
+          animation: brand-cursor-blink 0.7s step-end infinite;
+        }
+      ` }} />
+
       <div className="min-h-screen bg-background relative">
-      {/* Sparkles Background */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none">
-        <SparklesCore
-          id="landing-sparkles"
-          background="transparent"
-          minSize={0.4}
-          maxSize={1}
-          particleDensity={sparklesDensity}
-          className="w-full h-full"
-          particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
-        />
-      </div>
+      {/* Sparkles Background — deferred until after brand intro to avoid competing for GPU */}
+      {contentVisible && (
+        <div className="absolute inset-0 w-full h-full pointer-events-none">
+          <SparklesCore
+            id="landing-sparkles"
+            background="transparent"
+            minSize={0.4}
+            maxSize={1}
+            particleDensity={sparklesDensity}
+            className="w-full h-full"
+            particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
+          />
+        </div>
+      )}
 
       <AnimatePresence>
         {mounted && showBrandIntro && (
           <motion.div
             className="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center"
+            style={{ willChange: "opacity" }}
             initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: "easeInOut" }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
           >
             <div className="flex flex-col items-center gap-3 px-6">
               <div className="flex items-center gap-3">
                 <motion.div
                   layoutId="landing-brand-logo"
-                  transition={{ type: "spring", stiffness: 210, damping: 26 }}
+                  transition={{ type: "spring", stiffness: 250, damping: 28 }}
                   className="relative h-14 w-14 sm:h-16 sm:w-16"
+                  style={{ willChange: "transform" }}
                 >
                   {mounted && (
                     <Image
@@ -453,33 +441,29 @@ export function LandingPage() {
                 </motion.div>
                 <motion.span
                   layoutId="landing-brand-text"
-                  transition={{ type: "spring", stiffness: 210, damping: 26 }}
+                  transition={{ type: "spring", stiffness: 250, damping: 28 }}
                   className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-3xl font-semibold text-transparent sm:text-4xl leading-normal pb-0.5"
+                  style={{ willChange: "transform" }}
                 >
                   Coasty
                 </motion.span>
               </div>
               <motion.p
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.3, ease: "easeOut", delay: 0.15 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.25, ease: "easeOut", delay: 0.1 }}
                 className={cn(
                   "min-h-[1.75rem] text-center text-lg text-foreground/75 sm:min-h-[2rem] sm:text-xl",
                   brandSubtitle.className
                 )}
               >
-                {typedSubtitle}
-                {showBrandIntro && !subtitleTypingDone && (
-                  <motion.span
-                    aria-hidden="true"
-                    animate={{ opacity: [1, 0, 1] }}
-                    transition={{ duration: 0.8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                    className="ml-0.5 inline-block"
-                  >
-                    |
-                  </motion.span>
-                )}
+                <span className="brand-typing-text">
+                  {BRAND_SUBTITLE_TEXT}
+                  {!subtitleTypingDone && (
+                    <span aria-hidden="true" className="brand-cursor ml-0.5">|</span>
+                  )}
+                </span>
               </motion.p>
             </div>
           </motion.div>
