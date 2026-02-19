@@ -238,7 +238,7 @@ Security advisories will be published at:
 - Discord announcements
 - Email to registered users
 
-Subscribe to our [GitHub releases](https://github.com/LLmHub-dev/open-computer-use/releases) to stay informed.
+Subscribe to our [GitHub releases](https://github.com/coasty-ai/open-computer-use/releases) to stay informed.
 
 ---
 
@@ -330,7 +330,7 @@ Have questions about our security practices?
 
 - **Email**: security@coasty.ai
 - **Discord**: [Join our server](https://discord.gg/gppEfsVt)
-- **Discussions**: [GitHub Discussions](https://github.com/LLmHub-dev/open-computer-use/discussions)
+- **Discussions**: [GitHub Discussions](https://github.com/coasty-ai/open-computer-use/discussions)
 
 ---
 

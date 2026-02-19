@@ -36,7 +36,7 @@ This project and everyone participating in it is governed by our commitment to f
 
 ### Reporting Bugs
 
-Before creating bug reports, please check the [existing issues](https://github.com/LLmHub-dev/open-computer-use/issues) to avoid duplicates.
+Before creating bug reports, please check the [existing issues](https://github.com/coasty-ai/open-computer-use/issues) to avoid duplicates.
 
 When you create a bug report, please include as many details as possible:
 
@@ -131,7 +131,7 @@ We love code contributions! Here's how to get started:
 1. **Clone your fork:**
 
 ```bash
-git clone https://github.com/LLmHub-dev/open-computer-use.git
+git clone https://github.com/coasty-ai/open-computer-use.git
 cd open-computer-use
 ```
 
@@ -476,7 +476,7 @@ async def test_task_planning():
 ## Recognition
 
 All contributors will be:
-- Listed in our [Contributors](https://github.com/LLmHub-dev/open-computer-use/graphs/contributors) page
+- Listed in our [Contributors](https://github.com/coasty-ai/open-computer-use/graphs/contributors) page
 - Mentioned in release notes for their contributions
 - Part of our growing community!
 

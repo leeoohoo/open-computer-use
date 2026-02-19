@@ -192,7 +192,7 @@ Unlike traditional AI assistants that only **talk** about tasks, Open Computer U
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/LLmHub-dev/open-computer-use.git
+git clone https://github.com/coasty-ai/open-computer-use.git
 cd open-computer-use
 ```
 
@@ -509,7 +509,7 @@ We love contributions! Here's how you can help:
 
 ### 🐛 Found a Bug?
 
-Open an [issue](https://github.com/LLmHub-dev/open-computer-use/issues) with:
+Open an [issue](https://github.com/coasty-ai/open-computer-use/issues) with:
 - Clear description of the bug
 - Steps to reproduce
 - Expected vs actual behavior
@@ -517,7 +517,7 @@ Open an [issue](https://github.com/LLmHub-dev/open-computer-use/issues) with:
 
 ### 💡 Have a Feature Idea?
 
-1. Check if it's already [requested](https://github.com/LLmHub-dev/open-computer-use/issues)
+1. Check if it's already [requested](https://github.com/coasty-ai/open-computer-use/issues)
 2. Open a new issue with the `enhancement` label
 3. Describe your use case and proposed solution
 
@@ -564,7 +564,7 @@ Open an [issue](https://github.com/LLmHub-dev/open-computer-use/issues) with:
 - [ ] Multi-modal agent interactions
 - [ ] Community agent templates
 
-**Vote on features**: [Feature Requests](https://github.com/LLmHub-dev/open-computer-use/discussions)
+**Vote on features**: [Feature Requests](https://github.com/coasty-ai/open-computer-use/discussions)
 
 ---
 
@@ -633,13 +633,13 @@ Built with amazing open-source projects:
 - [Anthropic](https://www.anthropic.com/) - Inspiration from Claude Computer Use
 - [Docker](https://www.docker.com/) - Containerization platform
 
-Special thanks to all our [contributors](https://github.com/LLmHub-dev/open-computer-use/graphs/contributors)! 💙
+Special thanks to all our [contributors](https://github.com/coasty-ai/open-computer-use/graphs/contributors)! 💙
 
 ---
 
 ## 🌟 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=LLmHub-dev/open-computer-use&type=Date)](https://star-history.com/#LLmHub-dev/open-computer-use&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=coasty-ai/open-computer-use&type=Date)](https://star-history.com/#coasty-ai/open-computer-use&Date)
 
 ---
 
@@ -648,8 +648,8 @@ Special thanks to all our [contributors](https://github.com/LLmHub-dev/open-comp
 - 💬 **Discord**: Join our [community server](https://discord.gg/GvdmvpJy)
 - 🐦 **Twitter**: Follow [@llmhub_dev](https://x.com/llmhub_dev)
 - 📧 **Email**: prateek@coasty.ai
-- 🐛 **Issues**: [GitHub Issues](https://github.com/LLmHub-dev/open-computer-use/issues)
-- 💡 **Discussions**: [GitHub Discussions](https://github.com/LLmHub-dev/open-computer-use/discussions)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/coasty-ai/open-computer-use/issues)
+- 💡 **Discussions**: [GitHub Discussions](https://github.com/coasty-ai/open-computer-use/discussions)
 
 ---
 
@@ -659,6 +659,6 @@ Special thanks to all our [contributors](https://github.com/LLmHub-dev/open-comp
 
 Made with ❤️ by the Open Computer Use community
 
-[**Star on GitHub**](https://github.com/LLmHub-dev/open-computer-use) • [**Join Discord**](https://discord.gg/GvdmvpJy)
+[**Star on GitHub**](https://github.com/coasty-ai/open-computer-use) • [**Join Discord**](https://discord.gg/GvdmvpJy)
 
 </div>

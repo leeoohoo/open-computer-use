@@ -394,7 +394,7 @@ Use our [Security Policy](SECURITY.md) for responsible disclosure.
 
 - Discord: [community server](https://discord.gg/gppEfsVt)
 - Email: support@coasty.ai
-- Discussions: [GitHub Discussions](https://github.com/LLmHub-dev/open-computer-use/discussions)
+- Discussions: [GitHub Discussions](https://github.com/coasty-ai/open-computer-use/discussions)
 
 **Need clarification on a specific use case?**
 
