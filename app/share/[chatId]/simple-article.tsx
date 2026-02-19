@@ -429,8 +429,16 @@ function SimpleArticleContent({
   const { isOpen: isNavigatorOpen, setIsOpen: setNavigatorOpen, toggleNavigator, width: navigatorWidth } = useProjectNavigator()
   const [isMobile, setIsMobile] = useState(false)
   const { streamingMessages, setStreamingMessages } = useChatStreaming()
+  const streamingMessagesRef = useRef<any[]>([])
   const router = useRouter()
-  
+
+  // Helper to update streaming messages (supports callback pattern)
+  const updateStreamingMessages = useCallback((updater: any[] | ((prev: any[]) => any[])) => {
+    const newMessages = typeof updater === 'function' ? updater(streamingMessagesRef.current) : updater
+    streamingMessagesRef.current = newMessages
+    setStreamingMessages(newMessages)
+  }, [setStreamingMessages])
+
   // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
@@ -491,12 +499,12 @@ function SimpleArticleContent({
     if (showPlayOverlay) {
       // Clear everything when showing play overlay
       setVisibleMessages([])
-      setStreamingMessages([])
+      updateStreamingMessages([])
       setCurrentToolInvocations([])
       // Ensure navigator starts closed
       setNavigatorOpen(false)
     }
-  }, [showPlayOverlay, setStreamingMessages, setNavigatorOpen])
+  }, [showPlayOverlay, updateStreamingMessages, setNavigatorOpen])
   
   // Replay functions
   const startReplay = useCallback(() => {
@@ -505,10 +513,10 @@ function SimpleArticleContent({
     setCurrentMessageIndex(0)
     setCuaSectionIndex(0)
     setVisibleMessages([])
-    setStreamingMessages([]) // Clear streaming messages for Project Navigator
+    updateStreamingMessages([]) // Clear streaming messages for Project Navigator
     setCurrentToolInvocations([])
     setShowActionButtons(false)
-  }, [setStreamingMessages])
+  }, [updateStreamingMessages])
 
   const restartReplay = useCallback(() => {
     setShowActionButtons(false)
@@ -516,9 +524,9 @@ function SimpleArticleContent({
     setCurrentMessageIndex(0)
     setCuaSectionIndex(0)
     setVisibleMessages([])
-    setStreamingMessages([]) // Clear streaming messages for Project Navigator
+    updateStreamingMessages([]) // Clear streaming messages for Project Navigator
     setCurrentToolInvocations([])
-  }, [setStreamingMessages])
+  }, [updateStreamingMessages])
   
   const handleTryItOut = useCallback(() => {
     router.push('/')
@@ -537,7 +545,7 @@ function SimpleArticleContent({
       setShowActionButtons(true)
       const fullMessages = transformedMessages.map(msg => ({ ...msg, isNew: false }))
       setVisibleMessages(fullMessages)
-      setStreamingMessages(fullMessages)
+      updateStreamingMessages(fullMessages)
       // Show all tools at completion
       const allTools: any[] = []
       transformedMessages.forEach(message => {
@@ -620,7 +628,7 @@ function SimpleArticleContent({
         })
 
         // ProjectNavigator gets only the tool invocations matching revealed action-results
-        setStreamingMessages(prev => {
+        updateStreamingMessages((prev: any[]) => {
           const existingIndex = prev.findIndex(m => m.id === currentMessage.id)
           if (existingIndex >= 0) {
             const updated = [...prev]
@@ -649,7 +657,7 @@ function SimpleArticleContent({
             }
             return prev
           })
-          setStreamingMessages(prev => {
+          updateStreamingMessages((prev: any[]) => {
             const idx = prev.findIndex(m => m.id === currentMessage.id)
             if (idx >= 0) {
               const updated = [...prev]
@@ -683,8 +691,8 @@ function SimpleArticleContent({
           return [...updated, messageForDisplay]
         })
 
-        setStreamingMessages(prev => {
-          return [...prev.map(msg => ({ ...msg, isNew: false })), messageForNavigator]
+        updateStreamingMessages((prev: any[]) => {
+          return [...prev.map((msg: any) => ({ ...msg, isNew: false })), messageForNavigator]
         })
 
         setCurrentMessageIndex(prev => prev + 1)
@@ -705,7 +713,7 @@ function SimpleArticleContent({
         replayIntervalRef.current = null
       }
     }
-  }, [isReplaying, currentMessageIndex, cuaSectionIndex, transformedMessages, setStreamingMessages, isNavigatorOpen, setNavigatorOpen])
+  }, [isReplaying, currentMessageIndex, cuaSectionIndex, transformedMessages, updateStreamingMessages, isNavigatorOpen, setNavigatorOpen])
 
   // Update tool invocations synced with CUA sections — each action-result reveals one screenshot
   useEffect(() => {

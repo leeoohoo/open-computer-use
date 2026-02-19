@@ -51,7 +51,7 @@ export async function PATCH(
     // Update the chat's public status
     const { data: updatedChat, error: updateError } = await supabase
       .from("chats")
-      .update({ 
+      .update({
         public: isPublic,
         updated_at: new Date().toISOString()
       })

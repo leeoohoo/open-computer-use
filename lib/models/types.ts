@@ -1,5 +1,3 @@
-import { LanguageModelV1 } from "ai"
-
 type ModelConfig = {
   id: string // "gpt-4.1-nano" // same from AI SDKs
   name: string // "GPT-4.1 Nano"
@@ -37,7 +35,7 @@ type ModelConfig = {
   apiSdk?: (
     apiKey?: string,
     opts?: { enableSearch?: boolean }
-  ) => LanguageModelV1
+  ) => any
 
   accessible?: boolean // true if the model is accessible to the user
 }

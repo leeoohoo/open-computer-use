@@ -81,7 +81,7 @@ export async function GET(
     if (adminClient && messages) {
       // Enhance messages with avatar URLs from user metadata for user messages only
       const enhancedMessages = await Promise.all(
-        messages.map(async (message) => {
+        messages.map(async (message: any) => {
           // Only enhance user messages, not assistant messages
           if (message.role === 'user' && message.user_id) {
             try {

@@ -116,7 +116,7 @@ export async function GET(
         
         // Enhance participants with avatar URLs from user metadata
         const enhancedParticipants = await Promise.allSettled(
-          room.chat_participants.map(async (participant) => {
+          room.chat_participants.map(async (participant: any) => {
             const userData = await safeUserMetadataFetch(
               async () => {
                 // Fetching user metadata

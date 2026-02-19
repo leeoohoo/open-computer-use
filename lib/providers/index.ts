@@ -10,6 +10,7 @@ export const PROVIDERS: Provider[] = [
   {
     id: "bedrock",
     name: "Amazon Bedrock",
+    available: true,
     icon: () => null,
   },
-] as Provider[]
+]

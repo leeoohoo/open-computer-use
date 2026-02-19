@@ -83,7 +83,7 @@ export function subscribeToUserUpdates(
         table: "users",
         filter: `id=eq.${userId}`,
       },
-      (payload) => {
+      (payload: any) => {
         onUpdate(payload.new as Partial<UserProfile>)
       }
     )

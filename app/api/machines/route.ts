@@ -36,9 +36,63 @@ export async function GET(request: NextRequest) {
       );
     }
     
+    // Reconcile stale "creating"/"starting" AWS machines against real cloud status
+    const staleMachines = (dbMachines || []).filter((m: any) => {
+      const settings = m.settings as any;
+      return (
+        (m.status === "creating" || m.status === "starting") &&
+        settings?.provider === "aws" &&
+        settings?.awsInstanceId
+      );
+    });
+
+    if (staleMachines.length > 0) {
+      const awsService = getAwsEc2Service();
+      await Promise.all(
+        staleMachines.map(async (m: any) => {
+          try {
+            const settings = m.settings as any;
+            const status = await awsService.getInstanceStatus(settings.awsInstanceId);
+
+            // Only update if the real state differs from what's in the DB
+            if (status.state !== m.status) {
+              const updateData: any = {
+                status: status.state,
+                status_message: status.message,
+              };
+              if (status.ipAddress) {
+                updateData.public_ip_address = status.ipAddress;
+              }
+              if (status.state === "running" && !m.started_at) {
+                updateData.started_at = new Date().toISOString();
+              }
+
+              await supabase
+                .from("user_machines")
+                .update(updateData)
+                .eq("id", m.id);
+
+              // Apply the update to the in-memory row so the response is fresh
+              m.status = updateData.status;
+              m.status_message = updateData.status_message;
+              if (updateData.public_ip_address) {
+                m.public_ip_address = updateData.public_ip_address;
+              }
+              if (updateData.started_at) {
+                m.started_at = updateData.started_at;
+              }
+            }
+          } catch (err) {
+            // If AWS call fails, leave the row as-is — next poll will retry
+            console.error(`Failed to reconcile AWS status for machine ${m.id}:`, err);
+          }
+        })
+      );
+    }
+
     // Transform database results to TypeScript format
     const azureMachines = (dbMachines || []).map(transformMachineFromDB);
-    
+
     // Get local Docker machines
     const localMachines = await dockerService.getLocalMachines();
     
@@ -169,9 +223,9 @@ export async function GET(request: NextRequest) {
 
     // Calculate current resource usage (only count Azure machines for limits)
     const activeMachines = azureMachines || [];
-    const totalCpuCores = activeMachines.reduce((sum, m) => sum + (m?.cpuCores || 0), 0);
-    const totalMemoryGb = activeMachines.reduce((sum, m) => sum + (m?.memoryGb || 0), 0);
-    const totalStorageGb = activeMachines.reduce((sum, m) => sum + (m?.storageGb || 0), 0);
+    const totalCpuCores = activeMachines.reduce((sum: number, m: any) => sum + (m?.cpuCores || 0), 0);
+    const totalMemoryGb = activeMachines.reduce((sum: number, m: any) => sum + (m?.memoryGb || 0), 0);
+    const totalStorageGb = activeMachines.reduce((sum: number, m: any) => sum + (m?.storageGb || 0), 0);
 
     return NextResponse.json({
       machines: machines || [],

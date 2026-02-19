@@ -3,7 +3,7 @@ import { getCurrentTemporalInfo, createDetailedTemporalContext, formatDateForSea
 import { getAllModels } from "@/lib/models";
 import type { ModelConfig } from "@/lib/models/types";
 import { getProviderForModel } from "@/lib/openproviders/provider-map";
-import type { ProviderWithoutOllama } from "@/lib/user-keys";
+import type { Provider } from "@/lib/user-keys";
 import { Attachment } from "@ai-sdk/ui-utils";
 import { Message as MessageAISDK, streamText, generateText, tool } from "ai";
 import { z } from "zod";
@@ -174,7 +174,7 @@ export async function POST(req: Request) {
     if (isAuthenticated) {
       const { getEffectiveApiKey } = await import("@/lib/user-keys");
       apiKey =
-        (await getEffectiveApiKey(userId, getProviderForModel(model) as ProviderWithoutOllama)) ??
+        (await getEffectiveApiKey(userId, getProviderForModel(model) as Provider)) ??
         undefined;
     }
 

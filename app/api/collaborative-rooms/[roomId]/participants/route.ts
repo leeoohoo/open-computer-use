@@ -67,7 +67,7 @@ export async function GET(
     if (adminClient && participants) {
       // Enhance participants with avatar URLs from user metadata
       const enhancedParticipants = await Promise.all(
-        participants.map(async (participant) => {
+        participants.map(async (participant: any) => {
           try {
             const { data: userData } = await adminClient.auth.admin.getUserById(participant.user_id)
             return {

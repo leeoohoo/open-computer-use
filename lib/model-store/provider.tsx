@@ -60,6 +60,7 @@ export function ModelProvider({ children }: { children: React.ReactNode }) {
       console.error("Failed to fetch user key status:", error)
       // Set default values on error
       setUserKeyStatus({
+        bedrock: false,
         openrouter: false,
         openai: false,
         mistral: false,

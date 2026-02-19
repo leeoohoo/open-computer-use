@@ -24,7 +24,7 @@ export async function getChatsForUserInDb(userId: string): Promise<Chats[]> {
 
   // For each chat, get the last assistant message
   const chatsWithPreviews = await Promise.all(
-    (ownedChats || []).map(async (chat) => {
+    (ownedChats || []).map(async (chat: any) => {
       const { data: lastMessage } = await supabase
         .from("messages")
         .select("content")

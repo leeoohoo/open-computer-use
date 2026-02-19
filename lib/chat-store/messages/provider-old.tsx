@@ -390,7 +390,7 @@ export function MessagesProvider({ children }: { children: React.ReactNode }) {
               table: "messages",
               filter: `chat_id=eq.${chatId}`,
             },
-            (payload) => {
+            (payload: any) => {
               const messageData = payload.new as any
               if (messageData?.chat_id !== chatId) return
               
@@ -503,7 +503,7 @@ export function MessagesProvider({ children }: { children: React.ReactNode }) {
             reject(new Error('Subscription timeout'))
           }, 5000)
 
-          channel.subscribe((status) => {
+          channel.subscribe((status: any) => {
             // Subscription status changed
             if (status === 'SUBSCRIBED') {
               clearTimeout(timeout)

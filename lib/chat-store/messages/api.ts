@@ -66,7 +66,7 @@ export async function getMessagesFromDb(
       return cached
     }
 
-    const formattedMessages = messages.map((message) => ({
+    const formattedMessages = messages.map((message: any) => ({
       id: String(message.id),
       content: message.content ?? "",
       role: message.role,

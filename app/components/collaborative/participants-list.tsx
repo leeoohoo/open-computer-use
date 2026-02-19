@@ -78,7 +78,7 @@ export function ParticipantsList({
           table: "chat_activity",
           filter: `chat_id=eq.${roomId}`,
         },
-        (payload) => {
+        (payload: any) => {
           // Activity update detected
           fetchActivities()
         }

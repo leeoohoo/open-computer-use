@@ -114,11 +114,22 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       {!isDev ? (
-        <Script
-          async
-          src="https://analytics.umami.is/script.js"
-          data-website-id="42e5b68c-5478-41a6-bc68-088d029cee52"
-        />
+        <>
+          <Script
+            async
+            src="https://analytics.umami.is/script.js"
+            data-website-id="42e5b68c-5478-41a6-bc68-088d029cee52"
+          />
+          {process.env.NEXT_PUBLIC_CLARITY_ID && (
+            <Script
+              id="microsoft-clarity"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${process.env.NEXT_PUBLIC_CLARITY_ID}");`,
+              }}
+            />
+          )}
+        </>
       ) : null}
       {/* Structured Data for SEO */}
       <Script

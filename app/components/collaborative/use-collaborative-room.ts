@@ -164,13 +164,13 @@ export function useCollaborativeRoom({ roomId, userId }: UseCollaborativeRoomPro
           table: "chat_participants",
           filter: `chat_id=eq.${roomId}`,
         },
-        (payload) => {
+        (payload: any) => {
           // Participant change detected
           // Use a small delay to batch multiple rapid changes
           setTimeout(() => fetchRoom(), 100)
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: any) => {
         // Participants subscription status changed
         setIsConnected(status === "SUBSCRIBED")
         if (status === "SUBSCRIBED") {
@@ -189,14 +189,14 @@ export function useCollaborativeRoom({ roomId, userId }: UseCollaborativeRoomPro
           table: "chat_activity",
           filter: `chat_id=eq.${roomId}`,
         },
-        (payload) => {
+        (payload: any) => {
           // Activity change detected
           // Activities are handled by the ParticipantsList component
           // Small delay to batch updates
           setTimeout(() => fetchRoom(), 50)
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: any) => {
         // Activities subscription status changed
         if (status === "SUBSCRIBED") {
           // User subscribed to activities channel

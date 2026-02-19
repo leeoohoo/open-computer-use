@@ -10,7 +10,7 @@ import { getProviderForModel } from "@/lib/openproviders/provider-map"
 import { sanitizeUserInput } from "@/lib/sanitize"
 import { validateUserIdentity } from "@/lib/server/api"
 import { checkUsageByModel, incrementUsage } from "@/lib/usage"
-import { getUserKey, type ProviderWithoutOllama } from "@/lib/user-keys"
+import { getUserKey, type Provider } from "@/lib/user-keys"
 
 export async function validateAndTrackUsage({
   userId,
@@ -32,25 +32,20 @@ export async function validateAndTrackUsage({
     // For authenticated users, check API key requirements
     const provider = getProviderForModel(model)
 
-    if (provider !== "ollama") {
-      const userApiKey = await getUserKey(
-        userId,
-        provider as ProviderWithoutOllama
-      )
+    const userApiKey = await getUserKey(userId, provider)
 
-      // If no API key and model is not in free list, deny access
-      if (!userApiKey && !FREE_MODELS_IDS.includes(model)) {
-        throw new Error(
-          `This model requires an API key for ${provider}. Please add your API key in settings or use a free model.`
-        )
-      }
+    // If no API key and model is not in free list, deny access
+    if (!userApiKey && !FREE_MODELS_IDS.includes(model)) {
+      throw new Error(
+        `This model requires an API key for ${provider}. Please add your API key in settings or use a free model.`
+      )
     }
   }
 
   // Check usage limits for the model
   await checkUsageByModel(supabase, userId, model, isAuthenticated)
 
-  return supabase
+  return supabase as any
 }
 
 export async function incrementMessageCount({

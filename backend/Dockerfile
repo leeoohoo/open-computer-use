@@ -14,9 +14,10 @@ WORKDIR /app
 # Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies
+# Install Python dependencies (filter out Windows-only packages)
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    grep -viE '^(pywin32|pywinauto|comtypes|pygetwindow|mouseinfo|pymsgbox|pyscreeze|pyautogui|pyrect)==' requirements.txt > requirements-linux.txt && \
+    pip install --no-cache-dir -r requirements-linux.txt
 
 # Copy application code
 COPY . .

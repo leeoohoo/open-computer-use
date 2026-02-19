@@ -66,7 +66,7 @@ export async function getCleanupCandidates(): Promise<{
   }
 
   // Get subscription tiers for all users
-  const userIds = [...new Set(machines.map(m => m.user_id))];
+  const userIds = [...new Set(machines.map((m: any) => m.user_id))];
 
   // Use the same pattern as other parts of the codebase to bypass TypeScript issues
   const { data: subscriptions } = await (supabase as any)
