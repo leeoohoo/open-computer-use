@@ -14,8 +14,7 @@ import {
   AlertCircle,
   CheckCircle,
   Loader2,
-  AlertTriangle,
-  Crown,
+  ArrowRight,
   Terminal,
   Server
 } from "lucide-react";
@@ -41,6 +40,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { NoiseBackground } from "@/components/ui/noise-background";
 import { useSubscription } from "@/hooks/use-subscription";
 import { formatTimeRemaining } from "@/lib/utils/subscription";
 import type { UserMachine, MachineStatus } from "@/types/machines.types";
@@ -376,37 +376,38 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
             </div>
           </div>
 
-          {/* Auto-deletion warning for free tier users */}
+          {/* Auto-deletion notice for free tier users */}
           {timeRemaining && isFreeTier && !subscriptionLoading && (
-            <div className={`rounded-md p-2 border ${
-              timeRemaining.isExpiringSoon
-                ? "bg-destructive/10 border-destructive/20"
-                : "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800"
-            }`}>
-              <div className="flex items-start gap-2">
-                <AlertTriangle className={`h-3 w-3 mt-0.5 flex-shrink-0 ${
-                  timeRemaining.isExpiringSoon ? "text-destructive" : "text-amber-600 dark:text-amber-400"
-                }`} />
-                <div className="flex-1 min-w-0">
-                  <p className={`text-xs font-medium ${
-                    timeRemaining.isExpiringSoon ? "text-destructive" : "text-amber-800 dark:text-amber-200"
-                  }`}>
+            <NoiseBackground
+              containerClassName="w-full p-[1px] rounded-lg bg-transparent dark:bg-transparent shadow-none"
+              className="p-0"
+              gradientColors={
+                timeRemaining.isExpiringSoon
+                  ? ["rgb(239, 68, 68)", "rgb(220, 38, 38)", "rgb(248, 113, 113)"]
+                  : ["rgb(139, 92, 246)", "rgb(99, 102, 241)", "rgb(168, 85, 247)"]
+              }
+              noiseIntensity={0.06}
+              speed={0.06}
+            >
+              <div className="flex items-center justify-between gap-2 rounded-[7px] bg-background/80 px-3 py-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Clock className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  <p className="text-xs text-muted-foreground truncate">
                     {timeRemaining.timeString === "Expired"
-                      ? "Machine expired"
-                      : `Auto-deletes in ${timeRemaining.timeString}`
+                      ? <span className="font-medium text-destructive">Machine expired</span>
+                      : <>Deletes in <span className="font-medium text-foreground">{timeRemaining.timeString}</span></>
                     }
                   </p>
-                  <p className={`text-xs mt-0.5 ${
-                    timeRemaining.isExpiringSoon
-                      ? "text-destructive/80"
-                      : "text-amber-700 dark:text-amber-300"
-                  }`}>
-                    <Crown className="h-3 w-3 inline mr-1" />
-                    Upgrade for persistent machines
-                  </p>
                 </div>
+                <a
+                  href="/account?section=billing"
+                  className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-foreground hover:opacity-80 transition-opacity"
+                >
+                  Upgrade
+                  <ArrowRight className="h-3 w-3" />
+                </a>
               </div>
-            </div>
+            </NoiseBackground>
           )}
 
           {/* Status Message */}

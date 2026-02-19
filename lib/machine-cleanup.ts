@@ -6,7 +6,6 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
-import { getAzureContainerService } from "@/lib/azure/container-instances";
 
 export interface CleanupResult {
   machineId: string;
@@ -51,8 +50,7 @@ export async function getCleanupCandidates(): Promise<{
       display_name,
       status,
       started_at,
-      azure_resource_group,
-      azure_container_group
+      settings
     `)
     .eq("status", "running")
     .lt("started_at", twoHoursAgo.toISOString());
@@ -105,7 +103,7 @@ export function calculateRunningDuration(startedAt: string): string {
 }
 
 /**
- * Delete a single machine (both Azure and database)
+ * Delete a single machine (terminate EC2 instance + delete database record)
  */
 export async function deleteMachine(machine: any): Promise<CleanupResult> {
   const result: CleanupResult = {
@@ -118,18 +116,19 @@ export async function deleteMachine(machine: any): Promise<CleanupResult> {
   };
 
   try {
-    const azureService = getAzureContainerService();
-
-    // Delete Azure container first
-    try {
-      await azureService.deleteContainer(
-        machine.azure_container_group,
-        machine.azure_resource_group
-      );
-      console.log(`Azure container ${machine.azure_container_group} deleted`);
-    } catch (azureError: any) {
-      console.error(`Failed to delete Azure container: ${azureError.message}`);
-      // Continue with database deletion even if Azure fails
+    // Terminate AWS EC2 instance if applicable
+    const settings = machine.settings as any;
+    if (settings?.provider === 'aws' && settings?.awsInstanceId) {
+      try {
+        // Dynamic import to avoid pulling Node.js modules (zlib) into Edge Runtime
+        const { getAwsEc2Service } = await import("@/lib/aws/ec2-service");
+        const awsService = getAwsEc2Service();
+        await awsService.terminateInstance(settings.awsInstanceId, settings.awsKeyPairName);
+        console.log(`Terminated EC2 instance: ${settings.awsInstanceId}`);
+      } catch (awsError: any) {
+        console.warn(`Failed to terminate EC2 instance ${settings.awsInstanceId}:`, awsError.message);
+        // Continue with DB deletion — instance may already be gone
+      }
     }
 
     // Delete from database

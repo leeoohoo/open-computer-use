@@ -1,5 +1,4 @@
 import { createServiceClient } from "@/lib/supabase/service";
-import { getAzureContainerService } from "@/lib/azure/container-instances";
 
 interface CleanupStats {
   deleted: number;
@@ -79,8 +78,7 @@ export class MachineCleanupService {
           user_id,
           container_name,
           display_name,
-          azure_container_group,
-          azure_resource_group,
+          settings,
           status,
           created_at,
           users!inner (
@@ -153,7 +151,7 @@ export class MachineCleanupService {
   }
 
   /**
-   * Delete a single machine (both Azure and database)
+   * Delete a single machine (terminate EC2 instance + delete database record)
    */
   private async deleteMachine(machine: any, supabase: any): Promise<void> {
     try {
@@ -163,23 +161,18 @@ export class MachineCleanupService {
         .update({ status: 'deleting' })
         .eq('id', machine.id);
 
-      // Try to delete from Azure if it's not a local machine
-      if (!machine.container_name?.startsWith('local-')) {
+      // Terminate AWS EC2 instance if applicable
+      const settings = machine.settings as any;
+      if (settings?.provider === 'aws' && settings?.awsInstanceId) {
         try {
-          // Check if Azure is properly configured before attempting deletion
-          if (process.env.AZURE_SUBSCRIPTION_ID && process.env.AZURE_RESOURCE_GROUP) {
-            const azureService = getAzureContainerService();
-            await azureService.deleteContainer(
-              machine.azure_container_group || machine.container_name,
-              machine.azure_resource_group
-            );
-            console.log(`Deleted Azure container: ${machine.azure_container_group || machine.container_name}`);
-          } else {
-            console.log(`Skipping Azure deletion for ${machine.id} - Azure not configured`);
-          }
-        } catch (azureError) {
-          // Log but don't fail - Azure resource might already be gone or service unavailable
-          console.warn(`Failed to delete Azure container for ${machine.id}:`, azureError);
+          // Dynamic import to avoid pulling Node.js modules (zlib) into Edge Runtime
+          const { getAwsEc2Service } = await import("@/lib/aws/ec2-service");
+          const awsService = getAwsEc2Service();
+          await awsService.terminateInstance(settings.awsInstanceId, settings.awsKeyPairName);
+          console.log(`Terminated EC2 instance: ${settings.awsInstanceId}`);
+        } catch (awsError) {
+          console.warn(`Failed to terminate EC2 instance ${settings.awsInstanceId} for machine ${machine.id}:`, awsError);
+          // Continue with DB deletion — instance may already be gone
         }
       }
 

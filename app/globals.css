@@ -15,6 +15,21 @@
   }
 }
 
+@keyframes coasty-smoke-1 {
+  0% { transform: translateX(-20%) translateY(-10%); }
+  100% { transform: translateX(20%) translateY(10%); }
+}
+
+@keyframes coasty-smoke-2 {
+  0% { transform: translateX(15%) translateY(10%); }
+  100% { transform: translateX(-15%) translateY(-10%); }
+}
+
+@keyframes coasty-smoke-3 {
+  0% { transform: translateX(-10%) translateY(8%) scale(1.1); }
+  100% { transform: translateX(18%) translateY(-8%) scale(0.9); }
+}
+
 /* Horizontal bounce animation for scroll indicators */
 @keyframes bounce-horizontal {
   0%, 100% {

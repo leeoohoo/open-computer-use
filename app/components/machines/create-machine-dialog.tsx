@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, HardDrive, Info, AlertCircle, AlertTriangle, Crown, Clock, Monitor } from "lucide-react";
+import { Loader2, HardDrive, Info, AlertCircle, Clock, Monitor, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { NoiseBackground } from "@/components/ui/noise-background";
 import { useSubscription } from "@/hooks/use-subscription";
 import type { UserMachine } from "@/types/machines.types";
 
@@ -216,28 +217,31 @@ export function CreateMachineDialog({
           </div>
         )}
 
-        {/* Free Tier Auto-Deletion Warning */}
+        {/* Free Tier Notice */}
         {!subscriptionLoading && isFreeTier && (
-          <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
-            <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-            <AlertDescription>
-              <div className="space-y-2">
-                <div className="font-medium text-amber-800 dark:text-amber-200">
-                  Free Tier Limitation
-                </div>
-                <div className="text-xs text-amber-700 dark:text-amber-300">
-                  <div className="flex items-center gap-1 mb-1">
-                    <Clock className="h-3 w-3" />
-                    Machines auto-delete after 2 hours
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Crown className="h-3 w-3" />
-                    Upgrade to a paid plan for persistent machines
-                  </div>
-                </div>
+          <NoiseBackground
+            containerClassName="w-full p-[1px] rounded-lg bg-transparent dark:bg-transparent shadow-none"
+            className="p-0"
+            gradientColors={["rgb(139, 92, 246)", "rgb(99, 102, 241)", "rgb(168, 85, 247)"]}
+            noiseIntensity={0.06}
+            speed={0.06}
+          >
+            <div className="flex items-center justify-between gap-3 rounded-[7px] bg-background/80 px-4 py-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Clock className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground truncate">
+                  Free machines expire after <span className="font-medium text-foreground">2 hours</span>
+                </p>
               </div>
-            </AlertDescription>
-          </Alert>
+              <a
+                href="/account?section=billing"
+                className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-foreground hover:opacity-80 transition-opacity"
+              >
+                Upgrade
+                <ArrowRight className="h-3 w-3" />
+              </a>
+            </div>
+          </NoiseBackground>
         )}
 
         {/* Usage and Limits Display */}

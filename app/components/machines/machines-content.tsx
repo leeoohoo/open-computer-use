@@ -2,16 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Monitor, Cpu, HardDrive, MemoryStick, MonitorCog } from "lucide-react";
+import { Plus, Monitor, Cpu, HardDrive, MemoryStick, MonitorCog, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { toast } from "sonner";
 import { NoiseBackground } from "@/components/ui/noise-background";
 import { MachineCard } from "@/app/components/machines/machine-card";
 import { CreateMachineDialog } from "@/app/components/machines/create-machine-dialog";
 import { UsageStats } from "@/app/components/machines/usage-stats";
 import type { UserMachine, MachineUsage } from "@/types/machines.types";
+import { useSubscription } from "@/hooks/use-subscription";
 
 interface MachinesData {
   machines: UserMachine[];
@@ -31,6 +32,7 @@ interface MachinesData {
 
 export function MachinesContent() {
   const router = useRouter();
+  const { isFreeTier, loading: subscriptionLoading } = useSubscription();
   // Remove unused store methods since we're fetching directly from database
   const [loading, setLoading] = useState(true);
   const [machines, setMachines] = useState<UserMachine[]>([]);
@@ -224,22 +226,13 @@ export function MachinesContent() {
 
   if (loading) {
     return (
-      <div className="h-full overflow-y-auto scrollbar-invisible relative bg-transparent">
-        <div className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl space-y-6 relative z-10">
-          <div className="flex justify-between items-center">
-            <Skeleton className="h-10 w-48" />
-            <Skeleton className="h-10 w-32" />
+      <div className="h-full flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="relative h-10 w-10">
+            <div className="absolute inset-0 rounded-full border-2 border-muted" />
+            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-foreground animate-spin" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map(i => (
-              <Skeleton key={i} className="h-32" />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map(i => (
-              <Skeleton key={i} className="h-64" />
-            ))}
-          </div>
+          <span className="text-sm text-muted-foreground">Loading machines...</span>
         </div>
       </div>
     );
@@ -274,21 +267,48 @@ export function MachinesContent() {
             </p>
           </div>
           <NoiseBackground
-            containerClassName="w-auto p-[1px] rounded-md bg-transparent dark:bg-transparent shadow-none"
+            containerClassName="w-auto p-[1px] rounded-lg bg-transparent dark:bg-transparent shadow-none"
             className="p-0"
-            gradientColors={["rgb(34, 197, 94)", "rgb(16, 185, 129)", "rgb(132, 204, 22)"]}
-            noiseIntensity={0.08}
-            speed={0.08}
+            gradientColors={["rgb(139, 92, 246)", "rgb(99, 102, 241)", "rgb(168, 85, 247)"]}
+            noiseIntensity={0.06}
+            speed={0.06}
           >
             <button
               onClick={() => setShowCreateDialog(true)}
-              className="inline-flex h-10 items-center justify-center rounded-[5px] bg-transparent px-5 text-sm font-semibold text-slate-900 transition-opacity hover:opacity-95 dark:text-white gap-2"
+              className="inline-flex h-10 items-center justify-center rounded-[7px] bg-background/80 px-5 text-sm font-medium text-foreground transition-opacity hover:opacity-80 gap-2"
             >
               <Plus className="h-4 w-4" />
               New Machine
             </button>
           </NoiseBackground>
         </div>
+
+        {/* Free Tier Notice */}
+        {!subscriptionLoading && isFreeTier && (
+          <NoiseBackground
+            containerClassName="w-full p-[1px] rounded-lg bg-transparent dark:bg-transparent shadow-none"
+            className="p-0"
+            gradientColors={["rgb(139, 92, 246)", "rgb(99, 102, 241)", "rgb(168, 85, 247)"]}
+            noiseIntensity={0.06}
+            speed={0.06}
+          >
+            <div className="flex items-center justify-between gap-3 rounded-[7px] bg-background/80 px-4 py-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Clock className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground truncate">
+                  Free machines expire after <span className="font-medium text-foreground">2 hours</span>
+                </p>
+              </div>
+              <a
+                href="/account?section=billing"
+                className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-foreground hover:opacity-80 transition-opacity"
+              >
+                Upgrade
+                <ArrowRight className="h-3 w-3" />
+              </a>
+            </div>
+          </NoiseBackground>
+        )}
 
         {/* Usage Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">

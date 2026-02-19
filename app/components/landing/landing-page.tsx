@@ -645,20 +645,36 @@ export function LandingPage() {
               </p>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="space-y-3">
+            {/* Legend */}
+            <motion.div variants={itemVariants} className="flex items-center justify-center gap-4 sm:gap-6 mb-4">
+              <div className="flex items-center gap-1.5">
+                <div className="h-2.5 w-2.5 rounded-full bg-sky-500/70" />
+                <span className="text-xs text-muted-foreground">Agentic Framework</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />
+                <span className="text-xs text-muted-foreground">Foundation Model</span>
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="space-y-2.5">
               {[
-                { name: "Coasty", org: "Ours", score: 82.0, highlight: true },
-                { name: "Kimi K2.5", org: "Moonshot AI", score: 63.3 },
-                { name: "Claude Sonnet 4.5", org: "Anthropic", score: 62.9 },
-                { name: "Seed-1.8", org: "ByteDance", score: 61.9 },
-                { name: "Claude Sonnet 4.5", org: "Anthropic · 50 steps", score: 58.1 },
+                { name: "Coasty", org: "Ours", score: 82.0, highlight: true, type: "framework" as const },
+                { name: "Agent S3", org: "Simular · Opus 4.5 + GPT-5", score: 72.6, type: "framework" as const },
+                { name: "Agent S3", org: "Simular · GPT-5", score: 69.9, type: "framework" as const },
+                { name: "UiPath Screen Agent", org: "UiPath · Opus 4.5", score: 67.1, type: "framework" as const },
+                { name: "Agent S3", org: "Simular · Opus 4.5", score: 66.0, type: "framework" as const },
+                { name: "Kimi K2.5", org: "Moonshot AI", score: 63.3, type: "model" as const },
+                { name: "Claude Sonnet 4.5", org: "Anthropic", score: 62.9, type: "model" as const },
+                { name: "Seed-1.8", org: "ByteDance", score: 61.9, type: "model" as const },
+                { name: "Claude Sonnet 4.5", org: "Anthropic · 50 steps", score: 58.1, type: "model" as const },
               ].map((entry, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.08, duration: 0.4 }}
+                  transition={{ delay: i * 0.06, duration: 0.4 }}
                   className={cn(
                     "flex items-center gap-3",
                     entry.highlight && "py-1"
@@ -666,7 +682,7 @@ export function LandingPage() {
                 >
                   <div className={cn(
                     "flex-shrink-0 text-right",
-                    isMobile ? "w-24 text-xs" : "w-40 text-sm"
+                    isMobile ? "w-28 text-xs" : "w-44 text-sm"
                   )}>
                     <span className={cn(
                       "font-medium inline-flex items-center justify-end gap-1.5",
@@ -687,24 +703,54 @@ export function LandingPage() {
                   </div>
                   <div className={cn(
                     "flex-1 relative rounded-md bg-muted/50 overflow-hidden",
-                    entry.highlight ? "h-10 shadow-md shadow-primary/20 ring-1 ring-primary/20" : "h-8"
+                    entry.highlight ? "h-10 shadow-[0_0_20px_rgba(59,130,246,0.3)] ring-1 ring-blue-500/30" : "h-7"
                   )}>
+                    {/* Bar fill */}
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${(entry.score / 82) * 100}%` }}
                       viewport={{ once: true }}
-                      transition={{ delay: i * 0.08 + 0.2, duration: 0.7, ease: "easeOut" }}
+                      transition={{ delay: i * 0.06 + 0.2, duration: 0.7, ease: "easeOut" }}
                       className={cn(
-                        "absolute inset-y-0 left-0 rounded-md",
+                        "absolute inset-y-0 left-0 rounded-md overflow-hidden",
                         entry.highlight
-                          ? "bg-gradient-to-r from-primary to-primary/80"
-                          : "bg-muted-foreground/20"
+                          ? "bg-[#0f2557]"
+                          : entry.type === "framework"
+                            ? "bg-sky-500/25"
+                            : "bg-muted-foreground/20"
                       )}
-                    />
+                    >
+                      {/* Smoke layers inside the bar */}
+                      {entry.highlight && (
+                        <>
+                          <div
+                            className="absolute inset-[-40%]"
+                            style={{
+                              background: "radial-gradient(circle 120px at 20% 50%, #60a5fa, transparent), radial-gradient(circle 100px at 80% 50%, #22d3ee, transparent)",
+                              animation: "coasty-smoke-1 4s ease-in-out infinite alternate",
+                            }}
+                          />
+                          <div
+                            className="absolute inset-[-40%]"
+                            style={{
+                              background: "radial-gradient(circle 90px at 55% 30%, #f472b6, transparent), radial-gradient(circle 110px at 35% 70%, #818cf8, transparent)",
+                              animation: "coasty-smoke-2 5s ease-in-out infinite alternate",
+                            }}
+                          />
+                          <div
+                            className="absolute inset-[-40%]"
+                            style={{
+                              background: "radial-gradient(circle 100px at 70% 60%, #34d399, transparent), radial-gradient(circle 80px at 10% 40%, #38bdf8, transparent)",
+                              animation: "coasty-smoke-3 3.5s ease-in-out infinite alternate",
+                            }}
+                          />
+                        </>
+                      )}
+                    </motion.div>
                     <span className={cn(
-                      "absolute right-2 top-1/2 -translate-y-1/2 font-semibold tabular-nums",
+                      "absolute right-2 top-1/2 -translate-y-1/2 font-semibold tabular-nums z-10",
                       isMobile ? "text-xs" : "text-sm",
-                      entry.highlight ? "text-primary-foreground" : "text-foreground"
+                      entry.highlight ? "text-white" : "text-foreground"
                     )}>
                       {entry.score}%
                     </span>

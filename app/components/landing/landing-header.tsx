@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight, Menu, X } from "lucide-react"
 import Image from "next/image"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
@@ -46,6 +46,18 @@ export function LandingHeader({
     window.addEventListener("resize", closeMenuOnLargeScreens)
     return () => window.removeEventListener("resize", closeMenuOnLargeScreens)
   }, [])
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => { document.body.style.overflow = "" }
+  }, [mobileMenuOpen])
+
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), [])
 
   // Handle scroll events for header appearance
   useEffect(() => {
@@ -282,66 +294,90 @@ export function LandingHeader({
         </div>
       </motion.header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — full-screen overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-[68px] z-40 lg:hidden sm:top-[72px]"
-          >
-            <div className="mx-2 sm:mx-3 md:mx-4 rounded-xl sm:rounded-2xl bg-background/95 backdrop-blur-xl border border-border/50 shadow-xl p-3 sm:p-4">
-              <nav className="flex flex-col gap-2">
-                {navItems.map((item) => {
-                  const isActive = item.external 
-                    ? currentPath === item.href 
-                    : (currentPath === '/' || currentPath === '') && activeSection === item.href.substring(2) // substring(2) to skip "/#"
-                  
-                  if (item.external) {
-                    return (
-                      <Link
-                        key={item.label}
-                        href={item.href}
-                        className={cn(
-                          "px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-colors text-sm sm:text-base",
-                          isActive
-                            ? "bg-primary/10 text-primary font-medium"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                        )}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {item.label}
-                      </Link>
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
+              onClick={closeMobileMenu}
+            />
+
+            {/* Menu panel — slides down from header */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="fixed inset-x-0 top-0 z-40 lg:hidden pt-[68px] sm:pt-[76px]"
+            >
+              <div className="mx-0 sm:mx-3 bg-background border-b border-border/50 sm:border sm:rounded-b-2xl shadow-2xl">
+                <nav className="flex flex-col px-4 sm:px-6 py-4 sm:py-5 gap-1">
+                  {navItems.map((item, index) => {
+                    const isActive = item.external
+                      ? currentPath === item.href
+                      : (currentPath === '/' || currentPath === '') && activeSection === item.href.substring(2)
+
+                    const linkClasses = cn(
+                      "flex items-center px-4 py-3 sm:py-3.5 rounded-xl transition-all duration-200 text-[15px] sm:text-base font-medium",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50 active:bg-muted"
                     )
-                  }
-                  
-                  return (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      onClick={(e) => handleNavClick(e, item.href, item.external)}
-                      className={cn(
-                        "px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-colors text-sm sm:text-base",
-                        isActive
-                          ? "bg-primary/10 text-primary font-medium"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                      )}
-                    >
-                      {item.label}
-                    </a>
-                  )
-                })}
-                <Button className="mt-2 rounded-full" asChild>
-                  <Link href="/auth">
-                    Let AI Steal Your Busywork
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </nav>
-            </div>
-          </motion.div>
+
+                    return (
+                      <motion.div
+                        key={item.label}
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.04, duration: 0.2 }}
+                      >
+                        {item.external ? (
+                          <Link
+                            href={item.href}
+                            className={linkClasses}
+                            onClick={closeMobileMenu}
+                          >
+                            {item.label}
+                          </Link>
+                        ) : (
+                          <a
+                            href={item.href}
+                            onClick={(e) => handleNavClick(e, item.href, item.external)}
+                            className={linkClasses}
+                          >
+                            {item.label}
+                          </a>
+                        )}
+                      </motion.div>
+                    )
+                  })}
+
+                  {/* Divider */}
+                  <div className="my-2 border-t border-border/50" />
+
+                  {/* CTA */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: navItems.length * 0.04, duration: 0.25 }}
+                  >
+                    <Button className="w-full rounded-xl h-12 text-[15px] sm:text-base font-semibold group" asChild>
+                      <Link href="/auth" onClick={closeMobileMenu}>
+                        Let AI Steal Your Busywork
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </Link>
+                    </Button>
+                  </motion.div>
+                </nav>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
