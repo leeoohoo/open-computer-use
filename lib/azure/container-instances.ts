@@ -118,7 +118,7 @@ export class AzureContainerService {
   ): Promise<{ containerGroupName: string; resourceId: string; vncPassword: string }> {
     // Use provided container name or generate a new one
     const containerGroupName = config.containerName || `vm-${userId.substring(0, 8)}-${uuidv4().substring(0, 8)}`;
-    const resourceGroup = process.env.AZURE_RESOURCE_GROUP || "llmhub-resources";
+    const resourceGroup = process.env.AZURE_RESOURCE_GROUP || "coasty-resources";
     const location = config.location || "eastus";
 
     // Use provided VNC password or generate a new one
@@ -141,7 +141,7 @@ export class AzureContainerService {
       containers: [
         {
           name: "desktop",
-          image: config.image || process.env.AZURE_DESKTOP_IMAGE || "llmhub/ai-desktop:latest",
+          image: config.image || process.env.AZURE_DESKTOP_IMAGE || "coasty/ai-desktop:latest",
           resources: {
             requests: {
               cpu: config.cpu || 1,
@@ -219,7 +219,7 @@ export class AzureContainerService {
     resourceGroup?: string
   ): Promise<ContainerStatus> {
     try {
-      const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "llmhub-resources";
+      const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "coasty-resources";
       const containerGroup = await this.client.containerGroups.get(
         rg,
         containerGroupName
@@ -259,7 +259,7 @@ export class AzureContainerService {
     resourceGroup?: string,
     userId?: string
   ): Promise<{ recreated: boolean; vncPassword?: string }> {
-    const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "llmhub-resources";
+    const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "coasty-resources";
     const maxRetries = 3;
     const baseDelay = 2000;
     
@@ -373,7 +373,7 @@ export class AzureContainerService {
     containerGroupName: string,
     resourceGroup?: string
   ): Promise<void> {
-    const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "llmhub-resources";
+    const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "coasty-resources";
     await this.client.containerGroups.stop(rg, containerGroupName);
   }
 
@@ -384,7 +384,7 @@ export class AzureContainerService {
     containerGroupName: string,
     resourceGroup?: string
   ): Promise<void> {
-    const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "llmhub-resources";
+    const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "coasty-resources";
     const response = await this.client.containerGroups.beginDelete(
       rg,
       containerGroupName
@@ -396,7 +396,7 @@ export class AzureContainerService {
    * List all containers for a resource group
    */
   async listContainers(resourceGroup?: string): Promise<any[]> {
-    const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "llmhub-resources";
+    const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "coasty-resources";
     const containers = [];
     
     for await (const container of this.client.containerGroups.listByResourceGroup(rg)) {
@@ -429,7 +429,7 @@ export class AzureContainerService {
     userId: string,
     resourceGroup?: string
   ): Promise<void> {
-    const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "llmhub-resources";
+    const rg = resourceGroup || process.env.AZURE_RESOURCE_GROUP || "coasty-resources";
     
     try {
       // Get existing container configuration

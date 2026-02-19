@@ -1,7 +1,7 @@
 "use client"
 
 import type { Tables } from "@/app/types/database.types"
-import { LlmhubIcon } from "@/components/icons/llmhub"
+import { CoastyIcon } from "@/components/icons/coasty"
 import { SparklesCore } from "@/components/ui/sparkles"
 import { useTheme } from "next-themes"
 import Image from "next/image"
@@ -151,13 +151,13 @@ function PlayOverlay({ onPlay, title }: { onPlay: () => void, title?: string }) 
         className="relative z-10 mb-12 text-center"
       >
         <div className="flex items-center justify-center gap-3 mb-4">
-          <LlmhubIcon className="h-10 w-10 text-primary" />
+          <CoastyIcon className="h-10 w-10 text-primary" />
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             {APP_NAME}
           </h1>
         </div>
         <p className="text-muted-foreground text-sm font-medium tracking-wide uppercase">
-          LLMHub Agent Platform
+          Coasty Agent Platform
         </p>
       </motion.div>
       
@@ -226,7 +226,7 @@ function PlayOverlay({ onPlay, title }: { onPlay: () => void, title?: string }) 
         className="relative z-10 mt-10 text-center max-w-md px-6"
       >
         <h2 className="text-2xl font-bold text-foreground mb-2">
-          LLMHub Agent Execution Replay
+          Coasty Agent Execution Replay
         </h2>
         {title && (
           <p className="text-lg font-medium text-foreground/80 mb-3">
@@ -251,7 +251,7 @@ function PlayOverlay({ onPlay, title }: { onPlay: () => void, title?: string }) 
               animate={{ opacity: [0.3, 1, 0.3] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             />
-            <span className="text-muted-foreground">LLMHub Intelligence</span>
+            <span className="text-muted-foreground">Coasty Intelligence</span>
           </div>
           <div className="flex items-center gap-2">
             <motion.div 
@@ -259,7 +259,7 @@ function PlayOverlay({ onPlay, title }: { onPlay: () => void, title?: string }) 
               animate={{ opacity: [0.3, 1, 0.3] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
             />
-            <span className="text-muted-foreground">LLMHub Agent</span>
+            <span className="text-muted-foreground">Coasty Agent</span>
           </div>
           <div className="flex items-center gap-2">
             <motion.div 
@@ -303,7 +303,7 @@ function ReversedLogo({ className }: { className?: string }) {
   return (
     <Image
       src={logoSrc}
-      alt="LlmHub Logo"
+      alt="Coasty Logo"
       width={20}
       height={20}
       className={className}
@@ -376,7 +376,7 @@ function ActionButtons({ onReplay, onTryItOut }: { onReplay: () => void, onTryIt
           {/* Right side - Input-like area with Try it Out button */}
           <div className="flex-1 flex items-center justify-between px-3">
             <span className="text-sm text-muted-foreground hidden md:inline">
-              Deploy your own LLMHub Agent
+              Deploy your own Coasty Agent
             </span>
             <span className="text-sm text-muted-foreground md:hidden">
               Deploy Agent
@@ -387,7 +387,7 @@ function ActionButtons({ onReplay, onTryItOut }: { onReplay: () => void, onTryIt
               className="ml-3 flex items-center gap-2 rounded-xl px-3 md:px-4 py-2 h-9 bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               <ReversedLogo className="h-5 w-5 object-contain flex-shrink-0" />
-              <span className="hidden lg:inline">Launch LLMHub Agent</span>
+              <span className="hidden lg:inline">Launch Coasty Agent</span>
               <span className="lg:hidden">Launch Agent</span>
             </Button>
           </div>
@@ -408,7 +408,7 @@ function ShareHeader() {
               href="/"
               className="pointer-events-auto inline-flex items-center text-xl sm:text-2xl font-semibold tracking-tight min-w-0"
             >
-              <LlmhubIcon className="mr-2 size-6 sm:size-7 flex-shrink-0" />
+              <CoastyIcon className="mr-2 size-6 sm:size-7 flex-shrink-0" />
               <span className="hidden sm:inline truncate">{APP_NAME}</span>
             </Link>
           </div>

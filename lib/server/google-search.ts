@@ -72,7 +72,7 @@ export async function googleSearch(
       try {
         res = await fetch(url, { 
           headers: { 
-            "User-Agent": "llmhub-dev",
+            "User-Agent": "coasty-ai",
             "Accept": "application/json"
           },
           signal: controller.signal,

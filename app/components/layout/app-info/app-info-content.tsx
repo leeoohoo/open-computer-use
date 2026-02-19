@@ -2,7 +2,7 @@ export function AppInfoContent() {
   return (
     <div className="space-y-4">
       <p className="text-foreground leading-relaxed">
-        <span className="font-medium">llmhub</span> transforms search into a collaborative group process.
+        <span className="font-medium">coasty</span> transforms search into a collaborative group process.
         <br />
         Work together with your team to research, discover, and explore information in real-time.
         <br />

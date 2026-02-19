@@ -99,14 +99,14 @@ const sections = [
     id: "about" as SectionType,
     label: "About",
     icon: Info,
-    description: "About LLMHub",
+    description: "About Coasty",
     component: "about", // Special handling
   },
   {
     id: "changelog" as SectionType,
     label: "Changelog",
     icon: GitBranch,
-    description: "See what&apos;s new in LLMHub",
+    description: "See what&apos;s new in Coasty",
     component: "changelog", // Special handling
   },
   {

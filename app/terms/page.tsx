@@ -17,7 +17,7 @@ const termsSections = [
     id: "acceptance",
     title: "Acceptance of Terms",
     icon: Shield,
-    content: "By accessing and using LLMHub, your AI employee that collaborates with everyone, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service."
+    content: "By accessing and using Coasty, your AI employee that collaborates with everyone, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service."
   },
   {
     id: "service-description",
@@ -193,11 +193,11 @@ const termsSections = [
     subsections: [
       {
         title: "Our Property",
-        description: "LLMHub and its original content, features, and functionality are owned by us and are protected by international copyright, trademark, and other intellectual property laws."
+        description: "Coasty and its original content, features, and functionality are owned by us and are protected by international copyright, trademark, and other intellectual property laws."
       },
       {
         title: "Your Content",
-        description: "You retain all rights to content you create using our service. By using LLMHub, you grant us a worldwide, non-exclusive license to use, reproduce, and distribute your content solely for providing and improving our services."
+        description: "You retain all rights to content you create using our service. By using Coasty, you grant us a worldwide, non-exclusive license to use, reproduce, and distribute your content solely for providing and improving our services."
       },
       {
         title: "AI-Generated Content",
@@ -209,14 +209,14 @@ const termsSections = [
     id: "limitation-liability",
     title: "Limitation of Liability",
     icon: AlertCircle,
-    content: "TO THE MAXIMUM EXTENT PERMITTED BY LAW, LLMHUB SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES. OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT PAID BY YOU IN THE PAST TWELVE MONTHS.",
+    content: "TO THE MAXIMUM EXTENT PERMITTED BY LAW, Coasty SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES. OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT PAID BY YOU IN THE PAST TWELVE MONTHS.",
     highlight: true
   },
   {
     id: "indemnification",
     title: "Indemnification",
     icon: Heart,
-    content: "You agree to indemnify and hold harmless LLMHub, its affiliates, and their respective officers, directors, employees, and agents from any claims, damages, losses, liabilities, costs, and expenses arising from your use of the service or violation of these terms."
+    content: "You agree to indemnify and hold harmless Coasty, its affiliates, and their respective officers, directors, employees, and agents from any claims, damages, losses, liabilities, costs, and expenses arising from your use of the service or violation of these terms."
   },
   {
     id: "termination",
@@ -253,7 +253,7 @@ const termsSections = [
     id: "changes",
     title: "Changes to Terms",
     icon: FileText,
-    content: "We reserve the right to modify these terms at any time. We will notify users of any material changes via email or through the service. Your continued use of LLMHub after such modifications constitutes acceptance of the updated terms."
+    content: "We reserve the right to modify these terms at any time. We will notify users of any material changes via email or through the service. Your continued use of Coasty after such modifications constitutes acceptance of the updated terms."
   },
   {
     id: "contact",
@@ -352,7 +352,7 @@ export default function TermsPage() {
                 "text-muted-foreground mx-auto",
                 isMobile ? "mt-4 text-base max-w-md" : "mt-6 text-lg sm:text-xl max-w-2xl"
               )}>
-                Please read these terms carefully before using LLMHub, your AI employee that collaborates with everyone.
+                Please read these terms carefully before using Coasty, your AI employee that collaborates with everyone.
               </p>
               <p className="text-sm text-muted-foreground mt-4">
                 Effective Date: August 1, 2025
@@ -513,9 +513,9 @@ export default function TermsPage() {
             >
               <div className="text-center space-y-4">
                 <Shield className="h-8 w-8 text-primary mx-auto" />
-                <h3 className="text-lg font-semibold">By using LLMHub, you agree to these Terms of Service</h3>
+                <h3 className="text-lg font-semibold">By using Coasty, you agree to these Terms of Service</h3>
                 <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-                  These terms constitute a legally binding agreement between you and LLMHub. 
+                  These terms constitute a legally binding agreement between you and Coasty. 
                   If you do not agree to these terms, you must not use our service.
                 </p>
               </div>
@@ -554,7 +554,7 @@ export default function TermsPage() {
               isMobile && "flex-col gap-6"
             )}>
               <p className="text-sm text-muted-foreground">
-                © {new Date().getFullYear()} LLMHub. All rights reserved.
+                © {new Date().getFullYear()} Coasty. All rights reserved.
               </p>
               <div className="flex gap-6">
                 <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

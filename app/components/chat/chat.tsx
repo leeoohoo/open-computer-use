@@ -573,7 +573,7 @@ export function Chat() {
                 ) : (
                   <>
                     <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
-                      LLMHub: Your AI
+                      Coasty: Your AI
                     </span>
                   </>
                 )}

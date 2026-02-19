@@ -1,5 +1,5 @@
 @echo off
-echo Starting LLMHub Python Backend...
+echo Starting Coasty Python Backend...
 echo.
 
 REM Check if virtual environment exists

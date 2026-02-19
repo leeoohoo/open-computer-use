@@ -38,12 +38,12 @@ export async function generateMetadata({
   if (!chat || (!isPublic && !isOwner)) {
     return {
       title: "Session Not Found",
-      description: "This LLMHub Agent session is not available for viewing."
+      description: "This Coasty Agent session is not available for viewing."
     }
   }
 
-  const title = chat?.title || "LLMHub Agent Session"
-  const description = "LLMHub Agent autonomous workflow demonstrating multi-model orchestration and intelligent problem-solving"
+  const title = chat?.title || "Coasty Agent Session"
+  const description = "Coasty Agent autonomous workflow demonstrating multi-model orchestration and intelligent problem-solving"
 
   return {
     title,
@@ -113,7 +113,7 @@ export default async function ShareChat({
       messages={messagesData}
       date={chatData.created_at || ""}
       title={chatData.title || ""}
-      subtitle={"Autonomous execution by LLMHub Agent"}
+      subtitle={"Autonomous execution by Coasty Agent"}
     />
   )
 }

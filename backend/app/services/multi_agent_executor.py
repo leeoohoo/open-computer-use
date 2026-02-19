@@ -1336,10 +1336,10 @@ Keep it under 200 words."""
             # Complete execution
             plan.completed_at = datetime.utcnow()
             
-            # Generate LLMHUB report with structured data
+            # Generate Coasty report with structured data
             report_data = self._generate_report_data(plan, task_summaries)
             if report_data:
-                report_content = f"[LLMHUB_REPORT_START]{json.dumps(report_data)}[LLMHUB_REPORT_END]\n"
+                report_content = f"[Coasty_REPORT_START]{json.dumps(report_data)}[Coasty_REPORT_END]\n"
                 all_content += report_content
                 yield {
                     "type": "text",
@@ -1617,7 +1617,7 @@ Keep it under 200 words."""
             }
     
     def _generate_report_data(self, plan: TaskPlan, summaries: Dict[str, str]) -> Dict:
-        """Generate structured LLMHUB report data"""
+        """Generate structured Coasty report data"""
         completed_tasks = [t for t in plan.subtasks if t.status == TaskStatus.COMPLETED]
         failed_tasks = [t for t in plan.subtasks if t.status == TaskStatus.FAILED]
         skipped_tasks = [t for t in plan.subtasks if t.status == TaskStatus.SKIPPED]

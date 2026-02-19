@@ -142,3 +142,9 @@ backend/prod.env
 .claude\settings.local.json
 
 .claude/skills/frontend-design/SKILL.md
+backend/app/services/cua_action_bridge.py
+backend/app/services/cua_executor.py
+backend/app/services/cua_remote_env.py
+backend/app/services/cua_screenshot.py
+backend/app/cua.py
+backend/app/computer_use_agent/

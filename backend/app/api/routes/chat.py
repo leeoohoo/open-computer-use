@@ -136,7 +136,7 @@ async def get_machine_connection_info(machine_id: str, user_id: str) -> Optional
                 "vnc_port": 5901,
                 "websocket_port": 6080,
                 "machine_name": f"Local Docker Container ({container_id[:8]})",
-                "vnc_password": "llmhub123",  # Local containers may have different auth
+                "vnc_password": "coasty123",  # Local containers may have different auth
                 "is_local": True
             }
         
@@ -163,7 +163,7 @@ async def get_machine_connection_info(machine_id: str, user_id: str) -> Optional
                 "vnc_port": ports.get("vnc", 5901),
                 "websocket_port": ports.get("websocket", 6080),
                 "machine_name": machine.get("display_name", "Local VM"),
-                "vnc_password": machine.get("vnc_password", "llmhub123"),  # Include password
+                "vnc_password": machine.get("vnc_password", "coasty123"),  # Include password
                 "is_local": True
             }
         

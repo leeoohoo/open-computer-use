@@ -360,7 +360,7 @@ export async function POST(request: NextRequest) {
       container_name: containerName,
       display_name: body.displayName,
       status: "creating" as const,
-      azure_resource_group: isAws ? '' : (process.env.AZURE_RESOURCE_GROUP || "llmhub-resources"),
+      azure_resource_group: isAws ? '' : (process.env.AZURE_RESOURCE_GROUP || "coasty-resources"),
       azure_container_group: isAws ? '' : containerName,
       vnc_password: vncPassword,
       vnc_port: isDesktop ? 5901 : (isAws ? 0 : 5901),

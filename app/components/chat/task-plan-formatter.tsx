@@ -46,7 +46,7 @@ interface TaskPlanData {
   created_at?: string
 }
 
-interface LLMHubReport {
+interface CoastyReport {
   title: string
   timestamp: string
   objective: string
@@ -115,9 +115,9 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
 
   // Debug content changes
   useEffect(() => {
-    if (content.includes('[LLMHUB_REPORT_END]')) {
-      const reportEndIndex = content.lastIndexOf('[LLMHUB_REPORT_END]')
-      const afterReportEnd = reportEndIndex + '[LLMHUB_REPORT_END]'.length
+    if (content.includes('[Coasty_REPORT_END]')) {
+      const reportEndIndex = content.lastIndexOf('[Coasty_REPORT_END]')
+      const afterReportEnd = reportEndIndex + '[Coasty_REPORT_END]'.length
       const remainingContent = content.substring(afterReportEnd)
       console.log('[TaskPlanFormatter] Content update:', {
         hasReportEnd: true,
@@ -132,17 +132,17 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
   // Re-parse on every content change to catch streaming updates
   const { taskPlan, report, reportDetails, formattedContent, hasUpdates } = useMemo(() => {
     let plan: TaskPlanData | null = null
-    let report: LLMHubReport | null = null
+    let report: CoastyReport | null = null
     let cleanContent = content
     let updates: Record<string, { status?: string; summary?: string }> = {}
     
-    // Extract LLMHUB report and everything after the START tag
+    // Extract Coasty report and everything after the START tag
     let reportDetails = ''
-    const reportStartIndex = content.indexOf('[LLMHUB_REPORT_START]')
+    const reportStartIndex = content.indexOf('[Coasty_REPORT_START]')
 
     if (reportStartIndex !== -1) {
       // Find the complete JSON report if END tag exists
-      const reportMatch = content.match(/\[LLMHUB_REPORT_START\]([\s\S]*?)\[LLMHUB_REPORT_END\]/)
+      const reportMatch = content.match(/\[Coasty_REPORT_START\]([\s\S]*?)\[Coasty_REPORT_END\]/)
 
       if (reportMatch) {
         // We have a complete report with END tag
@@ -151,20 +151,20 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
           // Remove just the JSON markers from content
           cleanContent = cleanContent.replace(reportMatch[0], '')
         } catch (e) {
-          console.error('Failed to parse LLMHUB report:', e)
+          console.error('Failed to parse Coasty report:', e)
         }
       }
 
-      // Get everything after LLMHUB_REPORT_START (including the JSON and detailed report)
+      // Get everything after Coasty_REPORT_START (including the JSON and detailed report)
       // This will work even while streaming
-      const afterStartTag = reportStartIndex + '[LLMHUB_REPORT_START]'.length
+      const afterStartTag = reportStartIndex + '[Coasty_REPORT_START]'.length
       let allContentAfterStart = content.substring(afterStartTag)
 
       // If we have the END tag, extract everything after it as the detailed report
-      const endTagInRemaining = allContentAfterStart.indexOf('[LLMHUB_REPORT_END]')
+      const endTagInRemaining = allContentAfterStart.indexOf('[Coasty_REPORT_END]')
       if (endTagInRemaining !== -1) {
         // Get content after the END tag
-        const afterEndTag = endTagInRemaining + '[LLMHUB_REPORT_END]'.length
+        const afterEndTag = endTagInRemaining + '[Coasty_REPORT_END]'.length
         reportDetails = allContentAfterStart.substring(afterEndTag).trim()
       } else if (isStreaming) {
         // While streaming and no END tag yet, show everything we have
@@ -335,7 +335,7 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
             <div className="flex items-center gap-2 text-sm">
               <Image
                 src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
-                alt="llmhub"
+                alt="coasty"
                 width={24}
                 height={24}
                 className="shrink-0"
@@ -531,7 +531,7 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
               <div className="flex items-center gap-2 text-sm">
                 <Image
                   src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
-                  alt="llmhub"
+                  alt="coasty"
                   width={24}
                   height={24}
                   className="shrink-0"
@@ -554,7 +554,7 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
               <div className="flex items-center gap-2 text-sm">
                 <Image
                   src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
-                  alt="llmhub"
+                  alt="coasty"
                   width={24}
                   height={24}
                   className="shrink-0"
@@ -655,7 +655,7 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
                 <div className="flex items-center gap-2 text-sm">
                   <Image
                     src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
-                    alt="llmhub"
+                    alt="coasty"
                     width={24}
                     height={24}
                     className="shrink-0"
@@ -726,8 +726,8 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
           )}
           
             {/* Detailed Report Content if available or loading */}
-            {/* Show as soon as we detect LLMHUB_REPORT_START in content */}
-            {(content.includes('[LLMHUB_REPORT_START]') || report) && (
+            {/* Show as soon as we detect Coasty_REPORT_START in content */}
+            {(content.includes('[Coasty_REPORT_START]') || report) && (
               <>
                 <div className="border-t border-border/20 mt-6"></div>
                 <div className="mt-6">

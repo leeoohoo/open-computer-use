@@ -24,7 +24,7 @@
  * const contents = await scrapeMultipleUrls(['url1', 'url2'], { maxContentLength: 3000 })
  * ```
  * 
- * @author LLMHub
+ * @author Coasty
  * @version 1.0.0
  */
 import * as cheerio from 'cheerio'
@@ -59,7 +59,7 @@ const DEFAULT_OPTIONS: ScrapingOptions = {
   timeout: 8000,
   includeImages: false,
   includeLinks: false,
-  userAgent: 'Mozilla/5.0 (compatible; LLMHub/1.0; +https://llmhub.com/bot)',
+  userAgent: 'Mozilla/5.0 (compatible; Coasty/1.0; +https://coasty.ai/bot)',
   retryAttempts: 2,
   retryDelay: 1000,
   logLevel: 'error'

@@ -2,7 +2,7 @@
 
 import { AppInfoTrigger } from "@/app/components/layout/app-info/app-info-trigger"
 import { useBreakpoint } from "@/app/hooks/use-breakpoint"
-import { LlmhubIcon } from "@/components/icons/llmhub"
+import { CoastyIcon } from "@/components/icons/coasty"
 import { Button } from "@/components/ui/button"
 import { APP_NAME } from "@/lib/config"
 import { cn } from "@/lib/utils"
@@ -92,7 +92,7 @@ export function Header({ hasSidebar }: HeaderProps) {
                   href="/"
                   className="pointer-events-auto inline-flex items-center text-lg sm:text-xl font-medium tracking-tight min-w-0"
                 >
-                  <LlmhubIcon className="mr-1 size-4 flex-shrink-0" />
+                  <CoastyIcon className="mr-1 size-4 flex-shrink-0" />
                   <span className="hidden sm:inline truncate">{APP_NAME}</span>
                 </Link>
               )}
@@ -153,7 +153,7 @@ export function Header({ hasSidebar }: HeaderProps) {
                       <span className="relative hidden sm:inline text-sm font-medium">Computer</span>
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>{isNavigatorOpen ? "Hide" : "Show"} LLMHub's Computer</TooltipContent>
+                  <TooltipContent>{isNavigatorOpen ? "Hide" : "Show"} Coasty's Computer</TooltipContent>
                 </Tooltip>
               )}
               

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting LLMHub Python Backend..."
+echo "Starting Coasty Python Backend..."
 echo
 
 # Check if virtual environment exists

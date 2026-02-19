@@ -5,9 +5,9 @@ services:
     build:
       context: ./docker/ai-desktop
       dockerfile: Dockerfile
-    container_name: llmhub-ai-desktop
+    container_name: Coasty-ai-desktop
     environment:
-      - VNC_PASSWORD=llmhub123
+      - VNC_PASSWORD=Coasty123
       - VNC_RESOLUTION=1920x1080
       - VNC_COL_DEPTH=24
       - USER_ID=test-user
@@ -21,7 +21,7 @@ services:
     volumes:
       - desktop-home:/home/desktop
     networks:
-      - llmhub-network
+      - Coasty-network
     restart: unless-stopped
     shm_size: '2gb'  # Shared memory for Chrome/Firefox
     cap_add:
@@ -42,7 +42,7 @@ services:
   # Commented out by default to avoid port conflicts
   # nginx-proxy:
   #   image: nginx:alpine
-  #   container_name: llmhub-vnc-proxy
+  #   container_name: Coasty-vnc-proxy
   #   volumes:
   #     - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
   #   ports:
@@ -51,12 +51,12 @@ services:
   #   depends_on:
   #     - ai-desktop
   #   networks:
-  #     - llmhub-network
+  #     - Coasty-network
 
 volumes:
   desktop-home:
     driver: local
 
 networks:
-  llmhub-network:
+  Coasty-network:
     driver: bridge

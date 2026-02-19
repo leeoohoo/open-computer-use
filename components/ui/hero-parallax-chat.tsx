@@ -8,7 +8,7 @@ import {
   MotionValue,
 } from "framer-motion";
 import { Play } from "@phosphor-icons/react";
-import { LlmhubIcon } from "@/components/icons/llmhub";
+import { CoastyIcon } from "@/components/icons/coasty";
 import Link from "next/link";
 
 // Main component that handles client-side detection
@@ -148,7 +148,7 @@ export const ChatPreviewCard = ({
           <div className="text-center space-y-4">
             {/* Icon */}
             <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-              <LlmhubIcon className="h-10 w-10 text-primary/60" />
+              <CoastyIcon className="h-10 w-10 text-primary/60" />
             </div>
             
             {/* Title */}
@@ -229,7 +229,7 @@ export const StaticChatPreviewCard = ({
           <div className="text-center space-y-4">
             {/* Icon */}
             <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-              <LlmhubIcon className="h-10 w-10 text-primary/60" />
+              <CoastyIcon className="h-10 w-10 text-primary/60" />
             </div>
             
             {/* Title */}

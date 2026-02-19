@@ -101,7 +101,7 @@ export function WhatsNew() {
               <div className="absolute inset-0 rounded-xl bg-primary/20 blur-xl opacity-50" />
             </div>
             <div className="flex items-center gap-2">
-              What's New in LLMHub
+              What's New in Coasty
               <Badge 
                 variant="outline" 
                 className="ml-2 text-[10px] border-primary/30 text-primary bg-primary/5"

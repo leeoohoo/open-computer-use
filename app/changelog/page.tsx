@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { SparklesCore } from "@/components/ui/sparkles"
 import { ArrowLeft, Sparkles, Rocket, Bug, Wrench, Plus, Zap, Shield, Globe, Users, GitBranch, ChevronRight, Calendar, Tag, Star, TrendingUp, MessageSquare, Code, Cpu, Database, ExternalLink, Github } from "lucide-react"
-import { LlmhubIcon } from "@/components/icons/llmhub"
+import { CoastyIcon } from "@/components/icons/coasty"
 import Link from "next/link"
 import { useState, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
@@ -258,7 +258,7 @@ export default function ChangelogPage() {
                 isMobile ? "text-4xl" : "text-5xl sm:text-6xl"
               )}>
                 <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  What's New in LLMHub
+                  What's New in Coasty
                 </span>
               </h1>
               <p className={cn(
@@ -525,13 +525,13 @@ export default function ChangelogPage() {
 
                 <CardHeader className="text-center relative z-10">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 mb-4 mx-auto">
-                    <LlmhubIcon className="h-8 w-8 text-primary" />
+                    <CoastyIcon className="h-8 w-8 text-primary" />
                   </div>
                   <CardTitle className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                     Stay in the Loop
                   </CardTitle>
                   <CardDescription className="mt-2 text-base">
-                    Get notified about new features, improvements, and updates as we continue to evolve LLMHub.
+                    Get notified about new features, improvements, and updates as we continue to evolve Coasty.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center relative z-10">
@@ -589,7 +589,7 @@ export default function ChangelogPage() {
               isMobile && "flex-col gap-6"
             )}>
               <p className="text-sm text-muted-foreground">
-                © {new Date().getFullYear()} LLMHub. All rights reserved.
+                © {new Date().getFullYear()} Coasty. All rights reserved.
               </p>
               <div className="flex gap-6">
                 <Link href="/changelog" className="text-sm text-primary hover:text-primary/80 transition-colors">

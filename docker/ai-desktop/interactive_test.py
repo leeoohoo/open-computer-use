@@ -58,7 +58,7 @@ class InteractiveClient:
                 # Send authentication
                 auth_message = {
                     "type": "auth",
-                    "password": "llmhub123",
+                    "password": "coasty123",
                     "sessionId": "interactive_session_" + str(int(time.time())),
                     "userId": "interactive_user"
                 }

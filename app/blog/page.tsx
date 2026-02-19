@@ -82,7 +82,7 @@ const blogPosts = [
       {
         type: "section",
         title: "The Evidence Is Already Here",
-        text: "Look at what's happening with tools like LLMHub's virtual machines. AI agents are already writing entire applications, conducting research, and solving complex problems by controlling desktop environments. They're not just following instructions; they're exploring, learning, and adapting. Each interaction makes them more capable. Each task completed is training data for the next level of capability."
+        text: "Look at what's happening with tools like Coasty's virtual machines. AI agents are already writing entire applications, conducting research, and solving complex problems by controlling desktop environments. They're not just following instructions; they're exploring, learning, and adapting. Each interaction makes them more capable. Each task completed is training data for the next level of capability."
       },
       {
         type: "section",
@@ -122,7 +122,7 @@ const blogPosts = [
   },
   {
     id: "ai-employee-revolution",
-    title: "The AI Employee Revolution: How LLMHub is Changing Work",
+    title: "The AI Employee Revolution: How Coasty is Changing Work",
     excerpt: "Discover how AI employees are transforming the workplace by collaborating seamlessly with human teams, automating complex tasks, and enhancing productivity across organizations.",
     author: "Sarah Chen",
     date: "2025-01-15",
@@ -139,7 +139,7 @@ const blogPosts = [
       {
         type: "section",
         title: "The Rise of AI Collaboration",
-        text: "Unlike traditional automation tools, AI employees like those powered by LLMHub don't just execute predefined tasks. They understand context, learn from interactions, and adapt to your team's unique workflows. This represents a paradigm shift from automation to true collaboration."
+        text: "Unlike traditional automation tools, AI employees like those powered by Coasty don't just execute predefined tasks. They understand context, learn from interactions, and adapt to your team's unique workflows. This represents a paradigm shift from automation to true collaboration."
       },
       {
         type: "highlight",
@@ -164,7 +164,7 @@ const blogPosts = [
   {
     id: "virtual-machines-ai-agents",
     title: "Virtual Machines Meet AI: The Perfect Development Environment",
-    excerpt: "Learn how LLMHub's AI-controlled virtual machines are creating the ultimate development environment where AI agents can write, test, and deploy code autonomously.",
+    excerpt: "Learn how Coasty's AI-controlled virtual machines are creating the ultimate development environment where AI agents can write, test, and deploy code autonomously.",
     author: "Michael Rodriguez",
     date: "2025-01-10",
     readTime: "10 min read",
@@ -179,7 +179,7 @@ const blogPosts = [
       {
         type: "section",
         title: "Beyond Traditional IDEs",
-        text: "Traditional development environments limit AI to suggestions and completions. With LLMHub's virtual machines, AI agents have full control over a complete development environment, enabling them to perform complex, multi-step development tasks autonomously."
+        text: "Traditional development environments limit AI to suggestions and completions. With Coasty's virtual machines, AI agents have full control over a complete development environment, enabling them to perform complex, multi-step development tasks autonomously."
       },
       {
         type: "section",
@@ -201,7 +201,7 @@ const blogPosts = [
   {
     id: "multi-model-comparison",
     title: "Multi-Model AI: Why One Size Doesn't Fit All",
-    excerpt: "Explore why using multiple AI models simultaneously leads to better results and how LLMHub makes it easy to leverage the strengths of different models.",
+    excerpt: "Explore why using multiple AI models simultaneously leads to better results and how Coasty makes it easy to leverage the strengths of different models.",
     author: "Emily Watson",
     date: "2025-01-05",
     readTime: "6 min read",
@@ -270,7 +270,7 @@ const blogPosts = [
   {
     id: "open-source-ai-movement",
     title: "The Open Source AI Movement: Why It Matters",
-    excerpt: "Understanding the importance of open-source AI models and how LLMHub supports the democratization of AI technology through tools like Ollama.",
+    excerpt: "Understanding the importance of open-source AI models and how Coasty supports the democratization of AI technology through tools like Ollama.",
     author: "Alex Thompson",
     date: "2024-12-20",
     readTime: "9 min read",
@@ -302,7 +302,7 @@ const blogPosts = [
   {
     id: "ai-code-execution",
     title: "Secure Code Execution: How We Run Your AI-Generated Code Safely",
-    excerpt: "A deep dive into LLMHub's sandboxed code execution environment and the security measures that keep your AI experiments safe and isolated.",
+    excerpt: "A deep dive into Coasty's sandboxed code execution environment and the security measures that keep your AI experiments safe and isolated.",
     author: "Rachel Kim",
     date: "2024-12-15",
     readTime: "11 min read",
@@ -493,7 +493,7 @@ export default function BlogPage() {
                 isMobile ? "text-4xl" : "text-5xl sm:text-6xl"
               )}>
                 <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  LLMHub Blog
+                  Coasty Blog
                 </span>
               </h1>
               <p className={cn(
@@ -745,7 +745,7 @@ export default function BlogPage() {
                 </Button>
                 <Button size="lg" asChild>
                   <Link href="/auth">
-                    Try LLMHub Free
+                    Try Coasty Free
                   </Link>
                 </Button>
               </div>
@@ -875,7 +875,7 @@ export default function BlogPage() {
                         <div className="flex justify-between items-center pt-6 border-t">
                           <Button variant="outline" asChild>
                             <Link href="/auth">
-                              Try LLMHub
+                              Try Coasty
                             </Link>
                           </Button>
                           <Button onClick={() => setSelectedPost(null)}>
@@ -902,7 +902,7 @@ export default function BlogPage() {
               isMobile && "flex-col gap-6"
             )}>
               <p className="text-sm text-muted-foreground">
-                © {new Date().getFullYear()} LLMHub. All rights reserved.
+                © {new Date().getFullYear()} Coasty. All rights reserved.
               </p>
               <div className="flex gap-6">
                 <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

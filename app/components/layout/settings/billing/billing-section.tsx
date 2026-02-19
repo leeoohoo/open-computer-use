@@ -13,7 +13,7 @@ import { Lightning, ShoppingCart, ArrowUp, CheckCircle, XCircle, Spinner, Credit
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
 import { Check, X, Zap, ArrowRight } from "lucide-react"
-import { LlmhubIcon } from "@/components/icons/llmhub"
+import { CoastyIcon } from "@/components/icons/coasty"
 
 const subscriptionPlans = [
   // {
@@ -380,7 +380,7 @@ export function BillingSection() {
         <CardHeader className="relative pb-3">
           <CardTitle className="text-sm font-semibold flex items-center gap-2">
             <div className="p-1.5 rounded-full bg-primary/10">
-              <LlmhubIcon className="h-4 w-4 text-primary" />
+              <CoastyIcon className="h-4 w-4 text-primary" />
             </div>
             Current Balance
           </CardTitle>
@@ -408,7 +408,7 @@ export function BillingSection() {
               {/* Visual indicator */}
               <div className="relative">
                 <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                  <LlmhubIcon className="h-8 w-8 text-primary opacity-80" />
+                  <CoastyIcon className="h-8 w-8 text-primary opacity-80" />
                 </div>
               </div>
             </div>
@@ -430,7 +430,7 @@ export function BillingSection() {
                 <div className="relative p-4 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm border border-border/50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-                      <LlmhubIcon className="h-4 w-4 text-primary" />
+                      <CoastyIcon className="h-4 w-4 text-primary" />
                     </div>
                     <div className="flex-1 space-y-2">
                       <p className="text-sm font-medium text-foreground">
@@ -439,7 +439,7 @@ export function BillingSection() {
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         Email us your feedback (good or bad!) at{" "}
                         <a
-                          href="mailto:founders@coasty.ai?subject=Feedback%20on%20LLMHub"
+                          href="mailto:founders@coasty.ai?subject=Feedback%20on%20Coasty"
                           className="font-medium text-primary hover:text-primary/80 underline underline-offset-2 decoration-primary/30 hover:decoration-primary/60 transition-all duration-200"
                         >
                           founders@coasty.ai
@@ -520,7 +520,7 @@ export function BillingSection() {
                       {/* Agent Execution Time Highlight */}
                       <div className="p-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg border border-primary/20">
                         <div className="flex items-center gap-2">
-                          <LlmhubIcon className="h-4 w-4 text-primary" />
+                          <CoastyIcon className="h-4 w-4 text-primary" />
                           <div className="flex flex-col">
                             <span className="text-xl font-bold text-primary">
                               {typeof plan.agentMinutes === 'string' ? plan.agentMinutes : `${plan.agentMinutes} minutes`}

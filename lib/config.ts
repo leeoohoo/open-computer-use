@@ -24,7 +24,7 @@ export const FREE_MODELS_IDS = [
 // This value is only used as a placeholder ID for the frontend request.
 export const MODEL_DEFAULT = "bedrock-default"
 
-export const APP_NAME = "LLMHub"
+export const APP_NAME = "Coasty"
 export const APP_DOMAIN = "https://coasty.ai"
 
 export const SUGGESTIONS = [

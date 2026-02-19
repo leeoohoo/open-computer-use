@@ -121,12 +121,12 @@ export function ChatVisibilityToggle({
   const shareToSocial = (platform: string) => {
     if (!shareUrl) return
 
-    // Create a more specific share message for llmhub
+    // Create a more specific share message for coasty
     const baseText = chatTitle 
-      ? `"${chatTitle}" - LLMHub Agent Autonomous Workflow`
-      : "LLMHub Agent Autonomous Workflow"
+      ? `"${chatTitle}" - Coasty Agent Autonomous Workflow`
+      : "Coasty Agent Autonomous Workflow"
     
-    const text = `${baseText} | Watch how LLMHub Agents autonomously solve complex tasks with multi-model intelligence, tool orchestration, and real-time execution`
+    const text = `${baseText} | Watch how Coasty Agents autonomously solve complex tasks with multi-model intelligence, tool orchestration, and real-time execution`
     
     const encodedUrl = encodeURIComponent(shareUrl)
     const encodedText = encodeURIComponent(text)
@@ -200,11 +200,11 @@ export function ChatVisibilityToggle({
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-xl">Share LLMHub Agent Session</DialogTitle>
+            <DialogTitle className="text-xl">Share Coasty Agent Session</DialogTitle>
             <DialogDescription className="text-base">
               {isPublic 
-                ? "Your LLMHub Agent session is live. Share this intelligent workflow with others" 
-                : "Enable public access to showcase this LLMHub Agent's problem-solving capabilities"}
+                ? "Your Coasty Agent session is live. Share this intelligent workflow with others" 
+                : "Enable public access to showcase this Coasty Agent's problem-solving capabilities"}
             </DialogDescription>
           </DialogHeader>
 
@@ -234,14 +234,14 @@ export function ChatVisibilityToggle({
 
             <p className="text-sm text-muted-foreground px-1">
               {isPublic
-                ? "Anyone with the link can view this LLMHub Agent's autonomous execution and results"
-                : "This session is private. Enable sharing to demonstrate LLMHub Agent capabilities"}
+                ? "Anyone with the link can view this Coasty Agent's autonomous execution and results"
+                : "This session is private. Enable sharing to demonstrate Coasty Agent capabilities"}
             </p>
 
             {isPublic && shareUrl && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="share-url">LLMHub Agent Session Link</Label>
+                  <Label htmlFor="share-url">Coasty Agent Session Link</Label>
                   <div className="flex gap-2">
                     <Input
                       id="share-url"
@@ -272,7 +272,7 @@ export function ChatVisibilityToggle({
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Share This LLMHub Agent Workflow</Label>
+                  <Label>Share This Coasty Agent Workflow</Label>
                   <div className="grid grid-cols-3 gap-2">
                     <Button
                       type="button"

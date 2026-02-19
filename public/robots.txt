@@ -1,4 +1,4 @@
-# LLMHub Robots.txt
+# Coasty Robots.txt
 # Free AI Search Platform for Students
 
 User-agent: *

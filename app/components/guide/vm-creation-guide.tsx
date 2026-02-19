@@ -17,7 +17,7 @@ interface VMCreationGuideProps {
 const guideSteps = [
   {
     id: "welcome",
-    title: "Welcome to LLMHub!",
+    title: "Welcome to Coasty!",
     description: "So glad to have you as our early customer! We appreciate your feedback. Let me guide you through creating your own AI-controlled virtual machine.",
     icon: Sparkle,
     targetElement: null,

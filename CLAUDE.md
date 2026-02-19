@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**LLMHub** is a full-stack AI collaboration platform with computer automation capabilities. It features a Next.js frontend with a FastAPI Python backend that orchestrates multi-agent AI systems capable of browser automation, terminal operations, and desktop control through containerized virtual machines.
+**Coasty** is a full-stack AI collaboration platform with computer automation capabilities. It features a Next.js frontend with a FastAPI Python backend that orchestrates multi-agent AI systems capable of browser automation, terminal operations, and desktop control through containerized virtual machines.
 
 ## Architecture
 

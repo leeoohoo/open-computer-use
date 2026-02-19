@@ -160,7 +160,7 @@ export function LandingHeader({
                   {mounted && (
                     <Image
                       src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
-                      alt="LLMHub Logo"
+                      alt="Coasty Logo"
                       width={40}
                       height={40}
                       className="w-full h-full object-contain"
@@ -175,7 +175,7 @@ export function LandingHeader({
                     scrolled ? "lg:text-lg" : "lg:text-xl"
                   )}
                 >
-                  LLMHub
+                  Coasty
                 </motion.span>
               </Link>
 

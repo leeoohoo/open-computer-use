@@ -27,8 +27,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "LLMHub - Your AI Employee That Collaborates With Everyone",
-    template: "%s | LLMHub - Your AI Employee"
+    default: "Coasty - Your AI Employee That Collaborates With Everyone",
+    template: "%s | Coasty - Your AI Employee"
   },
   description:
     "Your AI employee that collaborates with everyone. Connect all your models, tools, and teams in one intelligent workspace. Work together with AI that understands your context.",
@@ -48,31 +48,31 @@ export const metadata: Metadata = {
     "AI-powered workplace",
     "intelligent automation"
   ],
-  authors: [{ name: "LLMHub Team" }],
-  creator: "LLMHub",
-  publisher: "LLMHub",
+  authors: [{ name: "Coasty Team" }],
+  creator: "Coasty",
+  publisher: "Coasty",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://coasty.ai",
-    siteName: "LLMHub - Your AI Employee",
-    title: "LLMHub - Your AI Employee That Collaborates With Everyone",
+    siteName: "Coasty - Your AI Employee",
+    title: "Coasty - Your AI Employee That Collaborates With Everyone",
     description: "Your AI employee that collaborates with everyone. Connect all your models, tools, and teams in one intelligent workspace. Work together with AI that understands your context.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "LLMHub - Your AI Employee That Collaborates With Everyone"
+        alt: "Coasty - Your AI Employee That Collaborates With Everyone"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "LLMHub - Your AI Employee That Collaborates With Everyone",
+    title: "Coasty - Your AI Employee That Collaborates With Everyone",
     description: "Your AI employee that collaborates with everyone. Connect all your models, tools, and teams in one intelligent workspace.",
     images: ["/og-image.png"],
-    creator: "@llmhub"
+    creator: "@coasty_ai"
   },
   robots: {
     index: true,
@@ -89,7 +89,7 @@ export const metadata: Metadata = {
     canonical: "https://coasty.ai"
   },
   category: "productivity",
-  applicationName: "LLMHub",
+  applicationName: "Coasty",
   referrer: "origin-when-cross-origin",
   formatDetection: {
     email: false,
@@ -128,7 +128,7 @@ export default async function RootLayout({
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            "name": "LLMHub",
+            "name": "Coasty",
             "url": "https://coasty.ai",
             "logo": "https://coasty.ai/logo_light.svg",
             "description": "Your AI employee that collaborates with everyone. Connect all your models, tools, and teams in one intelligent workspace.",
@@ -170,7 +170,7 @@ export default async function RootLayout({
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            "name": "LLMHub",
+            "name": "Coasty",
             "url": "https://coasty.ai",
             "logo": "https://coasty.ai/logo_light.svg",
             "description": "Your AI employee that collaborates with everyone in your organization",
@@ -189,7 +189,7 @@ export default async function RootLayout({
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            "name": "LLMHub",
+            "name": "Coasty",
             "url": "https://coasty.ai",
             "potentialAction": {
               "@type": "SearchAction",

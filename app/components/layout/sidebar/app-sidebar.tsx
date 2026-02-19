@@ -31,7 +31,7 @@ import { useMemo, useState, useEffect } from "react"
 import { DialogCollaborativeAuth } from "../../collaborative/dialog-collaborative-auth"
 import { SidebarList } from "./sidebar-list"
 import { getChatIcon } from "./sidebar-item"
-import { LlmhubIcon } from "@/components/icons/llmhub"
+import { CoastyIcon } from "@/components/icons/coasty"
 import { cn } from "@/lib/utils"
 import { UserMenu } from "../user-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -147,10 +147,10 @@ export function AppSidebar() {
               <button
                 onClick={() => handleNavigation(() => router.push("/"))}
                 className="flex w-full flex-col items-center justify-center hover:bg-accent/50 rounded-md p-1 transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                title="LLMHub - Your AI Employee That Collaborates With Everyone"
+                title="Coasty - Your AI Employee That Collaborates With Everyone"
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-md transition-transform duration-300 ease-in-out">
-                  <LlmhubIcon className="h-6 w-6 text-primary transition-all duration-300 ease-in-out" />
+                  <CoastyIcon className="h-6 w-6 text-primary transition-all duration-300 ease-in-out" />
                 </div>
               </button>
             ) : (
@@ -158,13 +158,13 @@ export function AppSidebar() {
               <button
                 onClick={() => handleNavigation(() => router.push("/"))}
                 className="flex items-center gap-2 flex-1 min-w-0 hover:bg-accent/50 rounded-md p-1.5 transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                title="LLMHub - Your AI Employee That Collaborates With Everyone"
+                title="Coasty - Your AI Employee That Collaborates With Everyone"
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0 transition-transform duration-300 ease-in-out">
-                  <LlmhubIcon className="h-6 w-6 text-primary transition-all duration-300 ease-in-out" />
+                  <CoastyIcon className="h-6 w-6 text-primary transition-all duration-300 ease-in-out" />
                 </div>
                 <div className="flex flex-col justify-center min-w-0 overflow-hidden">
-                  <span className="text-sm font-semibold text-foreground leading-none truncate transition-opacity duration-300 ease-in-out">LLMHub</span>
+                  <span className="text-sm font-semibold text-foreground leading-none truncate transition-opacity duration-300 ease-in-out">Coasty</span>
                 </div>
               </button>
             )}
@@ -391,7 +391,7 @@ export function AppSidebar() {
                     }}
                     title={`${Math.floor((credits?.balance || 0) / 10)} minutes of agent time remaining`}
                   >
-                    <LlmhubIcon className="h-4 w-4 text-primary" />
+                    <CoastyIcon className="h-4 w-4 text-primary" />
                   </button>
                 ) : (
                   <div className="relative">
@@ -416,7 +416,7 @@ export function AppSidebar() {
                       }}
                     >
                       {/* Icon */}
-                      <LlmhubIcon className="h-4 w-4 text-primary" />
+                      <CoastyIcon className="h-4 w-4 text-primary" />
                       
                       {/* Content */}
                       <div className="flex-1 ml-2 min-w-0 flex items-center">

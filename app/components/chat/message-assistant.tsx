@@ -66,8 +66,8 @@ export function MessageAssistant({
   
   // Check if content contains task plan or report markers
   const hasTaskPlan = children?.includes?.('[TASK_PLAN_START]')
-  const hasLLMHubReport = children?.includes?.('[LLMHUB_REPORT_START]')
-  const hasTaskMarkers = hasTaskPlan || hasLLMHubReport
+  const hasCoastyReport = children?.includes?.('[Coasty_REPORT_START]')
+  const hasTaskMarkers = hasTaskPlan || hasCoastyReport
   const hasCuaTags = children ? hasCuaSections(children) : false
   const searchImageResults =
     parts

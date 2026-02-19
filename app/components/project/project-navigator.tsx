@@ -2097,7 +2097,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
             <div className="flex items-center justify-between p-4 sm:p-4">
               {/* Content */}
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-sm">LLMHub's personal machine</h3>
+                <h3 className="font-semibold text-sm">Coasty's personal machine</h3>
                 {activeTab === 'activity' && !taskPlan && (
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="text-xs" title="Total number of tasks performed">
@@ -2187,7 +2187,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                     <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3 animate-scale-bounce">
                       <Globe className="h-6 w-6 text-muted-foreground" />
                     </div>
-                    <p className="text-sm font-medium text-foreground">LLMHub's personal machine is ready</p>
+                    <p className="text-sm font-medium text-foreground">Coasty's personal machine is ready</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       I'll search the web, run code, and more to help complete your tasks
                     </p>

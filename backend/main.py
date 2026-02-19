@@ -1,5 +1,5 @@
 """
-LLMHub Chat Backend - FastAPI Application
+Coasty Chat Backend - FastAPI Application
 Main entry point for the Python backend server
 """
 
@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Handle application startup and shutdown events"""
     # Startup
-    logger.info(f"Starting LLMHub Backend Server v1.0.0")
+    logger.info(f"Starting Coasty Backend Server v1.0.0")
     logger.info(f"Environment: {settings.ENVIRONMENT}")
     logger.info(f"Debug mode: {settings.DEBUG}")
     
@@ -66,7 +66,7 @@ async def lifespan(app: FastAPI):
     yield
     
     # Shutdown
-    logger.info("Shutting down LLMHub Backend Server")
+    logger.info("Shutting down Coasty Backend Server")
     if cleanup_task:
         cleanup_task.cancel()
         try:
@@ -78,8 +78,8 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title="LLMHub Chat Backend",
-    description="Python backend for LLMHub multi-model AI chat application",
+    title="Coasty Chat Backend",
+    description="Python backend for Coasty multi-model AI chat application",
     version="1.0.0",
     docs_url="/docs" if settings.DEBUG else None,
     redoc_url="/redoc" if settings.DEBUG else None,
@@ -126,7 +126,7 @@ async def root():
     """Root endpoint"""
     return JSONResponse(
         content={
-            "message": "LLMHub Chat Backend API",
+            "message": "Coasty Chat Backend API",
             "version": "1.0.0",
             "docs": "/docs" if settings.DEBUG else None,
         }

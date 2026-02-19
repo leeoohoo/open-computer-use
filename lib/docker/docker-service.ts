@@ -80,7 +80,7 @@ class DockerService {
    */
   private isAIDesktopContainer(container: any): boolean {
     // Check if it's an AI desktop based on image name or exposed ports
-    const aiDesktopImages = ['ai-desktop', 'llmhub-ai-desktop', 'vm-desktop', 'ubuntu-desktop'];
+    const aiDesktopImages = ['ai-desktop', 'Coasty-ai-desktop', 'vm-desktop', 'ubuntu-desktop'];
     const aiDesktopPorts = [5901, 6080, 8080, 8081, 9222]; // VNC, WebSocket, Agent, Chrome DevTools
     
     // Check image name

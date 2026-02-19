@@ -23,7 +23,7 @@ class ScreenshotStorageService:
     3. Automatic cleanup of old screenshots
     """
     
-    def __init__(self, storage_path: str = "/tmp/llmhub_screenshots"):
+    def __init__(self, storage_path: str = "/tmp/coasty_screenshots"):
         """Initialize screenshot storage service"""
         self.storage_path = Path(storage_path)
         self.storage_path.mkdir(parents=True, exist_ok=True)

@@ -451,7 +451,7 @@ export function LandingPage() {
                   {mounted && (
                     <Image
                       src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
-                      alt="LLMHub Logo"
+                      alt="Coasty Logo"
                       width={64}
                       height={64}
                       className="h-full w-full object-contain"
@@ -464,7 +464,7 @@ export function LandingPage() {
                   transition={{ type: "spring", stiffness: 210, damping: 26 }}
                   className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl"
                 >
-                  LLMHub
+                  Coasty
                 </motion.span>
               </div>
               <motion.p
@@ -1146,7 +1146,7 @@ export function LandingPage() {
               isMobile && "flex-col gap-6"
             )}>
               <p className="text-sm text-muted-foreground">
-                © {new Date().getFullYear()} LLMHub. All rights reserved.
+                © {new Date().getFullYear()} Coasty. All rights reserved.
               </p>
               <div className="flex gap-6">
                 <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
