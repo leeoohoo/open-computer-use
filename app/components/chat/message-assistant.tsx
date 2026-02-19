@@ -18,6 +18,7 @@ import { useChats } from "@/lib/chat-store/chats/provider"
 import { useChatSession } from "@/lib/chat-store/session/provider"
 import { TaskPlanFormatter } from "./task-plan-formatter"
 import { MessageStatusIndicator } from "./message-status-indicator"
+import { CuaSectionRenderer, hasCuaSections } from "./cua-section-renderer"
 
 type MessageAssistantProps = {
   children: string
@@ -67,6 +68,7 @@ export function MessageAssistant({
   const hasTaskPlan = children?.includes?.('[TASK_PLAN_START]')
   const hasLLMHubReport = children?.includes?.('[LLMHUB_REPORT_START]')
   const hasTaskMarkers = hasTaskPlan || hasLLMHubReport
+  const hasCuaTags = children ? hasCuaSections(children) : false
   const searchImageResults =
     parts
       ?.filter(
@@ -121,6 +123,11 @@ export function MessageAssistant({
         {contentNullOrEmpty ? null : hasTaskMarkers ? (
           // Use TaskPlanFormatter for messages with task plans or reports
           <TaskPlanFormatter content={children} isStreaming={status === "streaming"} />
+        ) : hasCuaTags ? (
+          // CUA agent sections with structured rendering
+          <div className="bg-muted rounded-3xl px-5 py-3 max-w-none">
+            <CuaSectionRenderer content={children} />
+          </div>
         ) : (
           // Regular markdown content
           <MessageContent

@@ -9,7 +9,7 @@ import asyncio
 import time
 from typing import Dict, Any, Optional, List
 import websockets
-from websockets.client import WebSocketClientProtocol
+from websockets.protocol import State as WSState
 
 from app.core.config import settings
 from app.utils.image_compression import ImageCompressor
@@ -67,7 +67,7 @@ class VMControlService:
             # IMPORTANT: Check and reuse existing connections aggressively
             if machine_id in self.connections:
                 ws = self.connections[machine_id]
-                if not ws.closed:
+                if ws.state == WSState.OPEN:
                     # Connection appears open - try to reuse without testing
                     # Testing adds latency and can cause issues
                     logger.info(f"✅ Reusing existing persistent connection for machine {machine_id}")
@@ -190,7 +190,7 @@ class VMControlService:
         if machine_id in self.connections:
             try:
                 ws = self.connections[machine_id]
-                if not ws.closed:
+                if ws.state == WSState.OPEN:
                     await ws.close(code=1000, reason="Session ended")
                 # Give it a moment to close cleanly
                 await asyncio.sleep(0.1)
@@ -218,7 +218,7 @@ class VMControlService:
         while machine_id in self.connections:
             try:
                 ws = self.connections.get(machine_id)
-                if not ws or ws.closed:
+                if not ws or ws.state != WSState.OPEN:
                     logger.warning(f"Connection lost for machine {machine_id}")
                     break
                 
@@ -279,7 +279,7 @@ class VMControlService:
         # CRITICAL: Check if we have an active connection and REUSE it
         if machine_id in self.connections:
             ws = self.connections[machine_id]
-            if not ws.closed:
+            if ws.state == WSState.OPEN:
                 # Quick check - don't ping every time (causes overhead)
                 # Just verify the socket is open
                 try:
@@ -561,7 +561,7 @@ class VMControlService:
         session = self.session_data.get(machine_id, {})
         
         return {
-            "connected": not ws.closed,
+            "connected": ws.state == WSState.OPEN,
             "public_ip": session.get("public_ip"),
             "agent_port": session.get("agent_port"),
             "session_id": session.get("session_id"),

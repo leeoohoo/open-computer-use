@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, HardDrive, Info, AlertCircle, AlertTriangle, Crown, Clock, Terminal, Monitor } from "lucide-react";
+import { Loader2, HardDrive, Info, AlertCircle, AlertTriangle, Crown, Clock, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -56,8 +56,8 @@ export function CreateMachineDialog({
   const { isFreeTier, loading: subscriptionLoading } = useSubscription();
   const [creating, setCreating] = useState(false);
   const [displayName, setDisplayName] = useState("");
-  const [desktopEnabled, setDesktopEnabled] = useState(false);
-  const [storageGb, setStorageGb] = useState(8);
+  const [desktopEnabled, setDesktopEnabled] = useState(true);
+  const [storageGb, setStorageGb] = useState(16);
   const [limits, setLimits] = useState<MachineLimits | null>(null);
   const [usage, setUsage] = useState<MachineUsage | null>(null);
   const [subscriptionTier, setSubscriptionTier] = useState<string | null>(null);
@@ -154,8 +154,8 @@ export function CreateMachineDialog({
 
       // Reset form for next time
       setDisplayName("");
-      setDesktopEnabled(false);
-      setStorageGb(8);
+      setDesktopEnabled(true);
+      setStorageGb(16);
       setCreating(false);
 
       // Close dialog immediately
@@ -354,76 +354,15 @@ export function CreateMachineDialog({
             )}
           </div>
 
-          {/* Machine Type Selector */}
-          <div className="space-y-3">
-            <Label>Machine Type</Label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setDesktopEnabled(false);
-                  if (storageGb > 8 && storageGb <= 16) setStorageGb(8);
-                }}
-                disabled={creating}
-                className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors text-left ${
-                  !desktopEnabled
-                    ? "border-primary bg-primary/5"
-                    : "border-muted hover:border-muted-foreground/30"
-                }`}
-              >
-                <Terminal className="h-6 w-6" />
-                <span className="font-medium text-sm">SSH Only</span>
-                <span className="text-xs text-muted-foreground text-center">
-                  Terminal access, minimal resources
-                </span>
-                <Badge variant="outline" className="text-xs">
-                  t4g.nano · $0.004/hr
-                </Badge>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setDesktopEnabled(true);
-                  if (storageGb < 16) setStorageGb(16);
-                }}
-                disabled={creating}
-                className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors text-left ${
-                  desktopEnabled
-                    ? "border-primary bg-primary/5"
-                    : "border-muted hover:border-muted-foreground/30"
-                }`}
-              >
-                <Monitor className="h-6 w-6" />
-                <span className="font-medium text-sm">Desktop (GUI)</span>
-                <span className="text-xs text-muted-foreground text-center">
-                  Full Ubuntu desktop with mouse & keyboard
-                </span>
-                <Badge variant="outline" className="text-xs">
-                  t4g.small · $0.017/hr
-                </Badge>
-              </button>
+          {/* Machine Info */}
+          <div className="flex items-start gap-3 rounded-lg border p-3 bg-muted/30">
+            <Monitor className="h-4 w-4 mt-0.5 text-muted-foreground" />
+            <div className="text-xs text-muted-foreground space-y-0.5">
+              <p className="font-medium text-foreground">Ubuntu Desktop (2 vCPU, 2 GB RAM)</p>
+              <p>Full desktop with VNC access via browser</p>
+              <p>Desktop takes 3-5 min to initialize after machine starts</p>
             </div>
           </div>
-
-          {/* Desktop Mode Info */}
-          {desktopEnabled && (
-            <Alert className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/20">
-              <Monitor className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <AlertDescription>
-                <div className="space-y-1">
-                  <div className="font-medium text-blue-800 dark:text-blue-200">
-                    Desktop Mode
-                  </div>
-                  <div className="text-xs text-blue-700 dark:text-blue-300 space-y-0.5">
-                    <p>Instance: t4g.small (2 vCPU, 2 GB RAM)</p>
-                    <p>XFCE desktop with VNC access via browser</p>
-                    <p>Desktop takes 3-5 min to initialize after machine starts</p>
-                  </div>
-                </div>
-              </AlertDescription>
-            </Alert>
-          )}
 
           {/* Machine Configuration */}
           <div className="space-y-4">
@@ -431,14 +370,14 @@ export function CreateMachineDialog({
               <div className="flex justify-between items-center">
                 <Label className="flex items-center gap-2">
                   <HardDrive className="h-4 w-4" />
-                  Storage (EBS)
+                  Storage
                 </Label>
                 <span className="text-sm font-medium">{storageGb} GB</span>
               </div>
               <Slider
                 value={[storageGb]}
                 onValueChange={([value]) => setStorageGb(value)}
-                min={desktopEnabled ? 16 : 8}
+                min={16}
                 max={30}
                 step={1}
                 disabled={creating}

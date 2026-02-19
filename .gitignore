@@ -141,3 +141,4 @@ backend/prod.env
 
 .claude\settings.local.json
 
+.claude/skills/frontend-design/SKILL.md

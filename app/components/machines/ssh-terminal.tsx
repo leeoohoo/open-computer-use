@@ -30,11 +30,12 @@ export function SshTerminal({ machineId }: SshTerminalProps) {
   const fitAddonRef = useRef<any>(null);
   const sessionIdRef = useRef<string | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
-  const [status, setStatus] = useState<TerminalStatus>("connecting");
+  const [status, setStatus] = useState<TerminalStatus>("disconnected");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const inputBufferRef = useRef<string>("");
   const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
+  const hasConnectedRef = useRef(false);
   const machineIdRef = useRef(machineId);
   machineIdRef.current = machineId;
 
@@ -88,6 +89,7 @@ export function SshTerminal({ machineId }: SshTerminalProps) {
   const connectToSSH = useCallback(
     async (term: any) => {
       cleanupSession();
+      hasConnectedRef.current = true;
       setStatus("connecting");
       setErrorMsg(null);
       term.clear();
@@ -220,8 +222,8 @@ export function SshTerminal({ machineId }: SshTerminalProps) {
         queueInput(data);
       });
 
-      // Auto-connect
-      connectToSSH(term);
+      // Show prompt to connect
+      term.writeln("\x1b[90mPress 'Connect' to start an SSH session.\x1b[0m");
     };
 
     init();
@@ -310,7 +312,7 @@ export function SshTerminal({ machineId }: SshTerminalProps) {
           {(status === "disconnected" || status === "error") && (
             <Button size="sm" variant="outline" onClick={handleReconnect}>
               <RotateCcw className="h-3 w-3 mr-1" />
-              Reconnect
+              {hasConnectedRef.current ? "Reconnect" : "Connect"}
             </Button>
           )}
           {status === "connecting" && (

@@ -5,6 +5,7 @@ Chat API endpoints - Main chat functionality
 import json
 import logging
 import asyncio
+import os
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 import uuid
@@ -22,6 +23,7 @@ from app.services.agent_billing import agent_billing_service
 from app.utils.sanitize import sanitize_content
 from app.providers.provider_factory import ProviderFactory
 from app.services.multi_agent_executor import MultiAgentExecutor
+from app.services.cua_executor import CUAExecutor
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -32,6 +34,24 @@ usage_tracker = UsageTracker()
 provider_factory = ProviderFactory()
 
 
+def _build_message_parts(tool_invocations: List[Dict]) -> List[Dict]:
+    """Transform tool invocations into the parts format expected by the frontend/DB."""
+    parts = []
+    for tool_inv in tool_invocations:
+        tool_invocation_data = {
+            "toolCallId": tool_inv.get("toolCallId", tool_inv.get("id", "")),
+            "toolName": tool_inv.get("toolName", ""),
+            "args": tool_inv.get("args", {}),
+            "state": "result",
+        }
+        if "result" in tool_inv:
+            tool_invocation_data["result"] = tool_inv["result"]
+        if "frontendScreenshot" in tool_inv:
+            tool_invocation_data["frontendScreenshot"] = tool_inv["frontendScreenshot"]
+        parts.append({"type": "tool-invocation", "toolInvocation": tool_invocation_data})
+    return parts
+
+
 async def store_assistant_message(
     chat_id: str,
     content: str,
@@ -39,74 +59,62 @@ async def store_assistant_message(
     model: str,
     message_group_id: Optional[str] = None
 ):
-    """Store assistant message in database with improved error handling"""
+    """Store (INSERT) a new assistant message in database."""
     try:
-        # Debug logging
-        logger.info(f"[store_assistant_message] Storing message for chat {chat_id}")
-        logger.info(f"[store_assistant_message] Content length: {len(content)}")
-        logger.info(f"[store_assistant_message] Tool invocations: {len(tool_invocations) if tool_invocations else 0}")
-        
-        # Sanitize content
+        logger.info(f"[store_assistant_message] Storing for chat {chat_id} "
+                    f"({len(content)} chars, {len(tool_invocations) if tool_invocations else 0} tools)")
+
         sanitized = sanitize_content(content)
-        
-        # Log content size but don't truncate
-        if len(sanitized) > 1000000:  # 1MB
-            logger.info(f"Large content detected ({len(sanitized)} chars), saving as-is")
-        
-        message_data = {
+
+        message_data: Dict[str, Any] = {
             "chat_id": chat_id,
             "role": "assistant",
             "content": sanitized,
             "model": model,
             "message_group_id": message_group_id,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.utcnow().isoformat(),
         }
-        
-        # Transform tool invocations to frontend expected format for parts
+
         if tool_invocations:
-            logger.debug(f"Processing {len(tool_invocations)} tool invocations for storage")
-            parts = []
-            for tool_inv in tool_invocations:
-                tool_invocation_data = {
-                    "toolCallId": tool_inv.get("toolCallId", tool_inv.get("id", "")),
-                    "toolName": tool_inv.get("toolName", ""),
-                    "args": tool_inv.get("args", {}),
-                    "state": "result"  # Stored invocations are completed
-                }
-                # Include result if present
-                if "result" in tool_inv:
-                    result = tool_inv["result"]
-                    tool_invocation_data["result"] = result
-                
-                # Include frontendScreenshot if present (already compressed)
-                if "frontendScreenshot" in tool_inv:
-                    tool_invocation_data["frontendScreenshot"] = tool_inv["frontendScreenshot"]
-                    screenshot_size = len(tool_inv["frontendScreenshot"])
-                    if screenshot_size > 100000:  # 100KB
-                        logger.info(f"Large compressed screenshot being stored inline: {screenshot_size:,} chars")
-                
-                parts.append({
-                    "type": "tool-invocation",
-                    "toolInvocation": tool_invocation_data
-                })
-            message_data["parts"] = parts
-            logger.debug(f"Prepared {len(parts)} parts for storage")
-        
-        # Attempt to save with the improved retry logic
-        logger.info(f"[store_assistant_message] Calling db_service.save_message for chat {chat_id}")
+            message_data["parts"] = _build_message_parts(tool_invocations)
+
         result = await db_service.save_message(message_data)
-        
         if result:
-            logger.info(f"[store_assistant_message] Successfully stored message for chat {chat_id} - "
-                       f"message ID: {result.get('id', 'unknown')}")
+            logger.info(f"[store_assistant_message] Stored message {result.get('id', '?')} for chat {chat_id}")
         else:
-            logger.warning(f"[store_assistant_message] Message save returned None for chat {chat_id}, but continuing")
-        
+            logger.warning(f"[store_assistant_message] save_message returned None for chat {chat_id}")
         return result
-        
+
     except Exception as e:
-        logger.error(f"Failed to store assistant message: {str(e)}", exc_info=True)
-        # Don't re-raise - we don't want to break the chat flow
+        logger.error(f"Failed to store assistant message: {e}", exc_info=True)
+        return None
+
+
+async def update_assistant_message(
+    message_id: str,
+    content: str,
+    tool_invocations: List[Dict],
+):
+    """Update an existing assistant message with new accumulated content.
+
+    Called after each CUA step so long-running sessions are persisted
+    incrementally rather than only at the very end.
+    """
+    try:
+        sanitized = sanitize_content(content)
+        update_data: Dict[str, Any] = {"content": sanitized}
+
+        if tool_invocations:
+            update_data["parts"] = _build_message_parts(tool_invocations)
+
+        result = await db_service.update_message(message_id, update_data)
+        if result:
+            logger.debug(f"[update_assistant_message] Updated {message_id} "
+                        f"({len(sanitized)} chars, {len(tool_invocations)} tools)")
+        return result
+
+    except Exception as e:
+        logger.error(f"Failed to update assistant message {message_id}: {e}", exc_info=True)
         return None
 
 
@@ -235,25 +243,9 @@ async def chat_endpoint(
                 "created_at": datetime.utcnow().isoformat()
             })
         
-        # Get provider for the model
+        # Get Bedrock provider (all models route through Bedrock)
         provider = provider_factory.get_provider(chat_request.model)
-        if not provider:
-            raise HTTPException(status_code=400, detail=f"Model {chat_request.model} not supported")
-        
-        # Get API key (either from settings or user's BYOK)
-        api_key = None
-        
-        if not api_key:
-            api_key = settings.get_provider_api_key(provider.name)
-        
-        if not api_key and chat_request.model not in settings.FREE_MODELS:
-            raise HTTPException(
-                status_code=403,
-                detail=f"API key required for {provider.name}"
-            )
-        
-        # Initialize provider with API key
-        provider.initialize(api_key)
+        provider.initialize()
         
         # Multi-agent execution with VM
         logger.info(f"Machine selected ({chat_request.machine_id}), using multi-agent execution")
@@ -317,15 +309,32 @@ async def chat_endpoint(
         except Exception as e:
             logger.error(f"Error connecting to VM: {str(e)}")
 
-        # Initialize multi-agent executor
-        executor = MultiAgentExecutor(
-            machine_id=chat_request.machine_id,
-            connection_info=connection_info,
-            provider=provider,
-            model=chat_request.model,
-            temperature=1.0,
-            max_tokens=None
-        )
+        # Use the model from backend settings (env-configurable), not from frontend
+        bedrock_model = settings.BEDROCK_DEFAULT_MODEL
+
+        # Initialize executor — CUA or legacy multi-agent based on feature flag
+        use_cua = os.environ.get("USE_CUA_EXECUTOR", "true").lower() == "true"
+
+        if use_cua:
+            executor = CUAExecutor(
+                machine_id=chat_request.machine_id,
+                connection_info=connection_info,
+                provider=provider,
+                model=bedrock_model,
+                temperature=1.0,
+                max_tokens=None,
+            )
+            logger.info(f"Using CUA executor with model {bedrock_model}")
+        else:
+            executor = MultiAgentExecutor(
+                machine_id=chat_request.machine_id,
+                connection_info=connection_info,
+                provider=provider,
+                model=bedrock_model,
+                temperature=1.0,
+                max_tokens=None,
+            )
+            logger.info(f"Using legacy multi-agent executor with model {bedrock_model}")
 
         # Get user request and context
         user_request = chat_request.messages[-1].content if chat_request.messages else ""
@@ -352,10 +361,13 @@ async def chat_endpoint(
 
         # Stream multi-agent execution
         async def stream_multi_agent_response():
-            """Stream multi-agent execution with proper SSE formatting and billing"""
+            """Stream multi-agent execution with per-step billing and incremental DB saves."""
             completion_status = "failed"  # Default to failed, update on success
             error_message = None
-            was_cancelled = False  # Track if we got CancelledError
+            was_cancelled = False
+
+            # Track the DB message ID so we INSERT once then UPDATE on each step
+            assistant_message_id: Optional[str] = None
 
             try:
                 all_content = ""
@@ -379,217 +391,259 @@ async def chat_endpoint(
                     # Format chunks for SSE based on type
                     if chunk_type == "text":
                         content = chunk.get("content", "")
-                        if content:  # Only send if there's actual content
+                        if content:
                             all_content += content
                             yield f"0:{json.dumps(content)}\n\n"
 
                     elif chunk_type == "tool_call":
-                        # Extract fields from chunk (which comes from multi-agent executor)
                         tool_call_id = chunk.get("toolCallId") or chunk.get("id", str(uuid.uuid4()))
                         tool_name = chunk.get("toolName") or chunk.get("tool") or chunk.get("name", "")
                         tool_args = chunk.get("args") or {}
 
-                        # Track for storage
                         tool_call = {
                             "toolCallId": tool_call_id,
                             "toolName": tool_name,
-                            "args": tool_args
+                            "args": tool_args,
                         }
                         all_tool_invocations.append(tool_call)
 
-                        # Send to frontend - AI SDK expects ONLY these three fields (no type field)
                         frontend_chunk = {
                             "toolCallId": tool_call_id,
                             "toolName": tool_name,
-                            "args": tool_args
+                            "args": tool_args,
                         }
-                        logger.debug(f"Multi-agent sending tool call: {json.dumps(frontend_chunk)}")
                         yield f"9:{json.dumps(frontend_chunk)}\n\n"
 
                     elif chunk_type == "tool_result":
-                        # Extract fields from chunk
                         tool_call_id = chunk.get("toolCallId") or chunk.get("id", "")
                         result = chunk.get("result")
+                        screenshot = chunk.get("frontendScreenshot")
 
-                        # Find the matching tool call and update it with the result
                         for tool_inv in all_tool_invocations:
                             if tool_inv.get("toolCallId") == tool_call_id:
                                 tool_inv["result"] = result
+                                if screenshot:
+                                    tool_inv["frontendScreenshot"] = screenshot
                                 break
 
-                        # Send to frontend - AI SDK expects specific format
+                        # Embed screenshot INSIDE result so Vercel AI SDK
+                        # carries it through to toolInvocation.result on the frontend
+                        frontend_result = result
+                        if screenshot:
+                            if isinstance(result, dict):
+                                frontend_result = {**result, "frontendScreenshot": screenshot}
+                            else:
+                                frontend_result = {"_result": result, "frontendScreenshot": screenshot}
+
                         frontend_chunk = {
                             "toolCallId": tool_call_id,
-                            "result": result
+                            "result": frontend_result,
                         }
                         yield f"a:{json.dumps(frontend_chunk)}\n\n"
 
                     elif chunk_type == "reasoning":
-                        yield f"2:{json.dumps({'reasoning': chunk.get('content', '')})}\n\n"
+                        yield f"g:{json.dumps(chunk.get('content', ''))}\n\n"
+
+                    elif chunk_type == "error":
+                        error_content = chunk.get("content", "Unknown error")
+                        all_content += f"\n{error_content}\n"
+                        yield f"3:{json.dumps(str(error_content))}\n\n"
 
                     elif chunk_type == "user_input_required":
-                        # This indicates the agent needs user input
                         logger.info(f"User input requested: {chunk.get('question', '')}")
-                        # The actual user input prompt is sent as text, this is just metadata
+
+                    elif chunk_type == "step_complete":
+                        # ── Per-step billing ──
+                        step_num = chunk.get("step", 0)
+                        step_content = chunk.get("content", all_content)
+                        step_tools = chunk.get("tool_invocations", all_tool_invocations)
+
+                        try:
+                            billing_info = await agent_billing_service.charge_step(
+                                billing_session_id, step_num
+                            )
+                            if billing_info.get("charged", 0) > 0:
+                                logger.info(
+                                    f"Step {step_num} billed: {billing_info['charged']} credits, "
+                                    f"balance: {billing_info.get('remaining_balance', '?')}"
+                                )
+                            # Stop execution if user ran out of credits
+                            if billing_info.get("should_stop"):
+                                logger.warning("User out of credits — stopping execution")
+                                stop_text = "\n[Session ended: insufficient credits]\n"
+                                all_content += stop_text
+                                yield f"0:{json.dumps(stop_text)}\n\n"
+                                stream_cancelled = True
+                                break
+                        except Exception as billing_err:
+                            logger.error(f"Step billing error: {billing_err}")
+
+                        # ── Incremental DB save ──
+                        try:
+                            if assistant_message_id is None:
+                                # First step — INSERT the message
+                                save_result = await store_assistant_message(
+                                    chat_id=chat_request.chat_id,
+                                    content=step_content,
+                                    tool_invocations=step_tools,
+                                    model=chat_request.model,
+                                    message_group_id=chat_request.message_group_id,
+                                )
+                                if save_result:
+                                    assistant_message_id = save_result.get("id")
+                                    logger.info(
+                                        f"Created assistant message {assistant_message_id} at step {step_num}"
+                                    )
+                            else:
+                                # Subsequent steps — UPDATE existing message
+                                await update_assistant_message(
+                                    assistant_message_id,
+                                    step_content,
+                                    step_tools,
+                                )
+                        except Exception as save_err:
+                            logger.error(f"Step DB save error: {save_err}")
 
                     elif chunk_type == "finish":
-                        # Mark execution as successful
                         completion_status = "completed"
 
-                        # Store final message with all content and tool invocations
-                        # IMPORTANT: Use content from chunk (MultiAgentExecutor's accumulated content)
-                        # which includes task plan markers, status updates, etc.
                         chunk_content = chunk.get("content", "")
-                        chat_accumulated = all_content
-
-                        # Use the chunk's content if provided (it should have everything)
-                        final_content = chunk_content if chunk_content else chat_accumulated
-
-                        # Log to debug what we're saving
-                        logger.info(f"Multi-agent finish - chunk content length: {len(chunk_content)}, "
-                                   f"chat accumulated length: {len(chat_accumulated)}, "
-                                   f"using: {'chunk' if chunk_content else 'chat accumulated'}")
-
-                        # Check for task plan markers
-                        has_task_plan = "[TASK_PLAN_START]" in final_content
-                        has_status = "[TASK_STATUS:" in final_content
-                        logger.info(f"Content check - has task plan: {has_task_plan}, has status: {has_status}")
-
-                        # Log first 500 chars for debugging
-                        logger.info(f"Content preview: {final_content[:500]}...")
-
-                        # Use tool invocations from chunk if available, otherwise use accumulated
+                        final_content = chunk_content if chunk_content else all_content
                         final_tool_invocations = chunk.get("tool_invocations", all_tool_invocations)
 
-                        logger.info(f"Saving to DB - content length: {len(final_content)}, "
-                                   f"tool invocations: {len(final_tool_invocations)}")
-
-                        # Note: Multi-agent executor already provides merged tool invocations with results
-                        # from the finish chunk, so we can pass them directly
-                        await store_assistant_message(
-                            chat_id=chat_request.chat_id,
-                            content=final_content,
-                            tool_invocations=final_tool_invocations,
-                            model=chat_request.model,
-                            message_group_id=chat_request.message_group_id
+                        logger.info(
+                            f"Finish — content: {len(final_content)} chars, "
+                            f"tools: {len(final_tool_invocations)}"
                         )
 
-                        # Send finish event with content and tool invocations for frontend
+                        # Final DB save (update if already created, insert if not)
+                        if assistant_message_id:
+                            await update_assistant_message(
+                                assistant_message_id,
+                                final_content,
+                                final_tool_invocations,
+                            )
+                        else:
+                            await store_assistant_message(
+                                chat_id=chat_request.chat_id,
+                                content=final_content,
+                                tool_invocations=final_tool_invocations,
+                                model=chat_request.model,
+                                message_group_id=chat_request.message_group_id,
+                            )
+
                         finish_data = {
-                            'finishReason': 'stop',
-                            'content': final_content,
-                            'toolInvocations': final_tool_invocations if final_tool_invocations else []
+                            "finishReason": "stop",
+                            "content": final_content,
+                            "toolInvocations": final_tool_invocations or [],
                         }
                         yield f"d:{json.dumps(finish_data)}\n\n"
 
-                # Check if stream was cancelled and save partial message
+                # Handle stream cancellation (client disconnect)
                 if stream_cancelled and (all_content or all_tool_invocations):
                     completion_status = "cancelled"
-                    logger.info(f"Saving partial multi-agent message after stream cancellation - "
-                               f"content: {len(all_content)} chars, tool invocations: {len(all_tool_invocations)}")
-
-                    # Log tool invocation details
-                    for idx, tool_inv in enumerate(all_tool_invocations):
-                        has_result = "result" in tool_inv
-                        logger.debug(f"Tool invocation {idx}: {tool_inv.get('toolName')} "
-                                   f"(ID: {tool_inv.get('toolCallId')[:8]}...) has_result: {has_result}")
+                    cancelled_content = (
+                        all_content + "\n\n[Response stopped by user]"
+                        if all_content
+                        else "[Response stopped by user]"
+                    )
 
                     try:
-                        await store_assistant_message(
-                            chat_id=chat_request.chat_id,
-                            content=all_content + "\n\n[Response stopped by user]" if all_content else "[Response stopped by user]",
-                            tool_invocations=all_tool_invocations,
-                            model=chat_request.model,
-                            message_group_id=chat_request.message_group_id
-                        )
-                        # Send finish event for the partial message
+                        if assistant_message_id:
+                            await update_assistant_message(
+                                assistant_message_id,
+                                cancelled_content,
+                                all_tool_invocations,
+                            )
+                        else:
+                            await store_assistant_message(
+                                chat_id=chat_request.chat_id,
+                                content=cancelled_content,
+                                tool_invocations=all_tool_invocations,
+                                model=chat_request.model,
+                                message_group_id=chat_request.message_group_id,
+                            )
+
                         finish_data = {
-                            'finishReason': 'cancelled',
-                            'content': all_content + "\n\n[Response stopped by user]" if all_content else "[Response stopped by user]",
-                            'toolInvocations': all_tool_invocations if all_tool_invocations else []
+                            "finishReason": "cancelled",
+                            "content": cancelled_content,
+                            "toolInvocations": all_tool_invocations or [],
                         }
                         yield f"d:{json.dumps(finish_data)}\n\n"
-                        logger.info(f"Saved partial multi-agent message with {len(all_content)} chars and "
-                                   f"{len(all_tool_invocations)} tool invocations after cancellation")
                     except Exception as save_error:
-                        logger.error(f"Failed to save partial multi-agent message after cancellation: {save_error}")
+                        logger.error(f"Failed to save cancelled message: {save_error}")
 
                 logger.info(f"Finished streaming {chunk_count} chunks")
+
             except asyncio.CancelledError:
-                # Handle asyncio cancellation
                 completion_status = "cancelled"
                 error_message = "Stream cancelled by client"
-                logger.info(f"Multi-agent stream cancelled by client disconnect (asyncio) - "
-                           f"content: {len(all_content)} chars, tool invocations: {len(all_tool_invocations)}")
+                logger.info(
+                    f"Stream cancelled (asyncio) — {len(all_content)} chars, "
+                    f"{len(all_tool_invocations)} tools"
+                )
 
-                # Log tool invocation details
-                for idx, tool_inv in enumerate(all_tool_invocations):
-                    has_result = "result" in tool_inv
-                    logger.debug(f"Tool invocation {idx}: {tool_inv.get('toolName')} "
-                               f"(ID: {tool_inv.get('toolCallId')[:8]}...) has_result: {has_result}")
+                cancelled_content = (
+                    all_content + "\n\n[Response stopped by user]"
+                    if all_content
+                    else "[Response stopped by user]"
+                )
 
-                # Save partial message if we have content - MUST complete before re-raising
-                if all_content or all_tool_invocations:
-                    try:
-                        # Create a task to ensure it completes
-                        save_result = await store_assistant_message(
+                try:
+                    if assistant_message_id:
+                        await update_assistant_message(
+                            assistant_message_id,
+                            cancelled_content,
+                            all_tool_invocations,
+                        )
+                    else:
+                        await store_assistant_message(
                             chat_id=chat_request.chat_id,
-                            content=all_content + "\n\n[Response stopped by user]" if all_content else "[Response stopped by user]",
+                            content=cancelled_content,
                             tool_invocations=all_tool_invocations,
                             model=chat_request.model,
-                            message_group_id=chat_request.message_group_id
+                            message_group_id=chat_request.message_group_id,
                         )
 
-                        if save_result:
-                            logger.info(f"Successfully saved partial multi-agent message with {len(all_content)} chars and "
-                                       f"{len(all_tool_invocations)} tool invocations")
-                        else:
-                            logger.warning(f"Save returned None for partial message")
+                    try:
+                        finish_data = {
+                            "finishReason": "cancelled",
+                            "content": cancelled_content,
+                            "toolInvocations": all_tool_invocations or [],
+                        }
+                        yield f"d:{json.dumps(finish_data)}\n\n"
+                    except Exception:
+                        pass  # Connection might be closed
 
-                        # Try to send finish event (might fail if connection is closed)
-                        try:
-                            finish_data = {
-                                'finishReason': 'cancelled',
-                                'content': all_content + "\n\n[Response stopped by user]" if all_content else "[Response stopped by user]",
-                                'toolInvocations': all_tool_invocations if all_tool_invocations else []
-                            }
-                            yield f"d:{json.dumps(finish_data)}\n\n"
-                        except:
-                            pass  # Connection might be closed, that's ok
+                except Exception as save_error:
+                    logger.error(f"Failed to save partial message: {save_error}", exc_info=True)
 
-                    except Exception as save_error:
-                        logger.error(f"Failed to save partial multi-agent message: {save_error}", exc_info=True)
-
-                # Mark that we got cancelled so we can re-raise after finally
                 was_cancelled = True
 
             except Exception as e:
                 error_message = str(e)
                 logger.error(f"Error in multi-agent streaming: {error_message}", exc_info=True)
-                yield f"3:{json.dumps({'error': error_message})}\n\n"
+                yield f"3:{json.dumps(error_message)}\n\n"
 
             finally:
-                # Always end the billing session
+                # Always end the billing session (charges only the uncharged remainder)
                 try:
                     billing_summary = await agent_billing_service.end_session(
                         billing_session_id,
                         completion_status,
-                        error_message
+                        error_message,
                     )
 
-                    # Log billing summary
-                    logger.info(f"Billing summary for session {billing_session_id}: "
-                               f"{billing_summary.get('duration_minutes', 0)} minutes, "
-                               f"{billing_summary.get('credits_charged', 0)} credits charged, "
-                               f"final balance: {billing_summary.get('final_balance', 0)}")
-
-                    # Don't send billing event as it's not a standard SSE event type
-                    # The frontend doesn't need to know about billing details in the stream
+                    logger.info(
+                        f"Billing summary for session {billing_session_id}: "
+                        f"{billing_summary.get('duration_minutes', 0)} min, "
+                        f"{billing_summary.get('credits_charged', 0)} credits total, "
+                        f"balance: {billing_summary.get('final_balance', 0)}"
+                    )
 
                 except Exception as billing_error:
-                    logger.error(f"Failed to end billing session: {str(billing_error)}")
+                    logger.error(f"Failed to end billing session: {billing_error}")
 
-                # Re-raise CancelledError if we got one, after finally block completes
                 if was_cancelled:
                     logger.debug("Re-raising CancelledError after cleanup")
                     raise asyncio.CancelledError()

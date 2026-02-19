@@ -41,17 +41,18 @@ def sanitize_content(content: Union[str, Any]) -> str:
     except:
         pass  # If encoding check fails, continue
     
-    # Allow basic formatting tags and file-attachment tags
+    # Allow basic formatting tags, file-attachment tags, and CUA section tags
     allowed_tags = [
         'p', 'br', 'strong', 'em', 'u', 'code', 'pre',
         'blockquote', 'ul', 'ol', 'li', 'a', 'h1', 'h2',
-        'h3', 'h4', 'h5', 'h6', 'file-attachment'
+        'h3', 'h4', 'h5', 'h6', 'file-attachment', 'cua-section'
     ]
-    
+
     allowed_attributes = {
         'a': ['href', 'title'],
         'code': ['class'],
-        'file-attachment': ['name', 'path', 'size']
+        'file-attachment': ['name', 'path', 'size'],
+        'cua-section': ['type', 'status', 'step', 'budget']
     }
     
     # Clean the content

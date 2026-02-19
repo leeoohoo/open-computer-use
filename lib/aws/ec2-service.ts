@@ -462,6 +462,7 @@ class Agent:
    "terminal_read":lambda _:{"success":True,"output":""},
    "terminal_type":self._tt,
    "file_read":self._fr,"file_write":self._fw,"file_append":self._fa,
+   "file_upload":self._fu,"file_download":self._fdn,"file_list_downloads":self._fld,
    "file_delete":self._fd,"file_exists":self._fe,"directory_list":self._dl,
    "ocr":self._ocr,
    "browser_open":self._bo,"browser_navigate":self._bn,"browser_click":self._bc,
@@ -513,6 +514,48 @@ class Agent:
    path=os.path.expanduser(p.get("path",""));os.makedirs(os.path.dirname(path) or".",exist_ok=True)
    with open(path,"w") as f:f.write(p.get("content",""))
    return{"success":True}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _fu(self,p):
+  try:
+   path=os.path.expanduser(p.get("filepath",p.get("path","")))
+   if path.startswith("/home/desktop"):path="/home/ubuntu"+path[len("/home/desktop"):]
+   if not os.path.isabs(path):path=os.path.join("/home/ubuntu/Desktop",path)
+   os.makedirs(os.path.dirname(path) or".",exist_ok=True)
+   enc=p.get("encoding","utf-8");content=p.get("content","")
+   if enc=="base64":
+    with open(path,"wb") as f:f.write(base64.b64decode(content))
+   else:
+    with open(path,"w") as f:f.write(content)
+   sz=os.path.getsize(path)
+   return{"success":True,"filepath":path,"size":sz,"message":f"Uploaded {sz} bytes"}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _fdn(self,p):
+  try:
+   path=os.path.expanduser(p.get("filepath",""))
+   if path.startswith("/home/desktop"):path="/home/ubuntu"+path[len("/home/desktop"):]
+   if not os.path.isfile(path):return{"success":False,"error":f"Not found: {path}"}
+   sz=os.path.getsize(path);name=os.path.basename(path);enc=p.get("encoding","auto")
+   if enc=="auto":
+    try:
+     with open(path,"r") as f:content=f.read();enc="utf-8"
+    except UnicodeDecodeError:
+     with open(path,"rb") as f:content=base64.b64encode(f.read()).decode("ascii");enc="base64"
+   elif enc=="base64":
+    with open(path,"rb") as f:content=base64.b64encode(f.read()).decode("ascii")
+   else:
+    with open(path,"r",errors="replace") as f:content=f.read()
+   return{"success":True,"filename":name,"filepath":path,"size":sz,"encoding":enc,"content":content}
+  except Exception as e:return{"success":False,"error":str(e)}
+ def _fld(self,p):
+  try:
+   path=os.path.expanduser(p.get("dirpath",p.get("path","/home/ubuntu")))
+   if path.startswith("/home/desktop"):path="/home/ubuntu"+path[len("/home/desktop"):]
+   if not os.path.isdir(path):return{"success":False,"error":f"Not a directory: {path}"}
+   files=[]
+   for e in sorted(os.listdir(path)):
+    full=os.path.join(path,e);is_dir=os.path.isdir(full)
+    files.append({"filename":e,"path":full,"is_directory":is_dir,"size":0 if is_dir else os.path.getsize(full)})
+   return{"success":True,"files":files,"count":len(files)}
   except Exception as e:return{"success":False,"error":str(e)}
  def _fa(self,p):
   try:

@@ -178,6 +178,64 @@ class DatabaseService:
             logger.error(f"Error processing message data: {str(e)}")
             return None
     
+    async def update_message(self, message_id: str, update_data: Dict[str, Any]) -> Optional[Dict]:
+        """Update an existing message by ID.
+
+        Used for incremental saves during long-running CUA sessions so that
+        content and tool invocations are persisted after every step rather
+        than only at the very end.
+        """
+        if not self.client:
+            logger.warning("Database client not initialized")
+            return None
+
+        try:
+            from app.utils.content_sanitizer import ContentSanitizer
+
+            data = update_data.copy()
+
+            # Sanitize content if present
+            if "content" in data and isinstance(data["content"], str):
+                data["content"] = ContentSanitizer.sanitize_content(data["content"])
+
+            # Sanitize parts if present
+            if "parts" in data and isinstance(data["parts"], list):
+                for part in data["parts"]:
+                    if isinstance(part, dict) and "toolInvocation" in part:
+                        tool_inv = part["toolInvocation"]
+                        for field in ("args", "result"):
+                            if field in tool_inv and isinstance(tool_inv[field], str):
+                                tool_inv[field] = ContentSanitizer.sanitize_content(tool_inv[field])
+
+            content_size = len(str(data.get("content", "")))
+            parts_size = len(json.dumps(data.get("parts", [])) if data.get("parts") else "")
+            total_size = content_size + parts_size
+            timeout_seconds = min(60.0 + (total_size / 1_000_000) * 20, 300.0)
+
+            loop = asyncio.get_event_loop()
+            response = await asyncio.wait_for(
+                loop.run_in_executor(
+                    None,
+                    lambda: self.client.table("messages")
+                        .update(data)
+                        .eq("id", message_id)
+                        .execute(),
+                ),
+                timeout=timeout_seconds,
+            )
+
+            if response and response.data:
+                logger.debug(f"Updated message {message_id} ({total_size:,} bytes)")
+                return response.data[0]
+            return None
+
+        except asyncio.TimeoutError:
+            logger.error(f"Timeout updating message {message_id}")
+            return None
+        except Exception as e:
+            logger.error(f"Error updating message {message_id}: {e}")
+            return None
+
     async def get_chat_messages(
         self,
         chat_id: str,

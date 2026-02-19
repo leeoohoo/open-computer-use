@@ -14,8 +14,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 
-# Add the app directory to path
+# Add the backend directory to path
 sys.path.insert(0, str(Path(__file__).parent))
+# Add backend/app to path so computer_use_agent internal imports resolve
+sys.path.insert(0, str(Path(__file__).parent / "app"))
 
 from app.core.config import settings
 from app.core.logging import setup_logging

@@ -88,8 +88,7 @@ export function SimpleVNCViewer({ machine, session }: SimpleVNCViewerProps) {
 
   if (!currentMachine.publicIpAddress) {
     return (
-      <div className="h-full flex items-center justify-center p-4 sm:p-8">
-        <Card className="max-w-md w-full">
+      <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-yellow-500" />
@@ -131,14 +130,12 @@ export function SimpleVNCViewer({ machine, session }: SimpleVNCViewerProps) {
               )}
             </Button>
           </CardContent>
-        </Card>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="h-full overflow-auto p-4 sm:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+    <div className="space-y-4">
         {/* Quick Connect */}
         <Card>
           <CardHeader>
@@ -188,7 +185,6 @@ export function SimpleVNCViewer({ machine, session }: SimpleVNCViewerProps) {
           </CardContent>
         </Card>
 
-      </div>
     </div>
   );
 }

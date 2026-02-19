@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { SshTerminal } from "./ssh-terminal";
 import type { UserMachine } from "@/types/machines.types";
 
 interface SshConnectionPanelProps {
@@ -16,7 +15,7 @@ interface SshConnectionPanelProps {
 export function SshConnectionPanel({ machine }: SshConnectionPanelProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(true);
 
   const ip = machine.publicIpAddress;
   const username = machine.settings?.sshUsername || "ubuntu";
@@ -65,55 +64,39 @@ export function SshConnectionPanel({ machine }: SshConnectionPanelProps) {
 
   if (machine.status !== "running") {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Card className="max-w-md w-full">
-          <CardContent className="pt-6 text-center space-y-2">
-            <Terminal className="h-12 w-12 mx-auto text-muted-foreground" />
-            <p className="text-lg font-medium">Machine Not Running</p>
-            <p className="text-sm text-muted-foreground">
+      <Card>
+        <CardContent className="py-12">
+          <div className="text-center">
+            <Terminal className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Machine Not Running</h3>
+            <p className="text-muted-foreground">
               Start the machine to connect via SSH.
             </p>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   if (!ip) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Card className="max-w-md w-full">
-          <CardContent className="pt-6 text-center space-y-2">
-            <Globe className="h-12 w-12 mx-auto text-muted-foreground animate-pulse" />
-            <p className="text-lg font-medium">Waiting for IP Address</p>
-            <p className="text-sm text-muted-foreground">
+      <Card>
+        <CardContent className="py-12">
+          <div className="text-center">
+            <Globe className="h-12 w-12 mx-auto text-muted-foreground animate-pulse mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Waiting for IP Address</h3>
+            <p className="text-muted-foreground">
               The machine is starting up. An IP address will be assigned shortly.
             </p>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-4 p-4">
-      {/* Web Terminal */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Terminal className="h-5 w-5" />
-            Terminal
-          </CardTitle>
-          <CardDescription>
-            SSH into your machine directly from the browser
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <SshTerminal machineId={machine.id} />
-        </CardContent>
-      </Card>
-
-      {/* Collapsible Connection Details */}
+    <div className="space-y-4">
+      {/* Connection Details */}
       <Card>
         <button
           onClick={() => setShowDetails(!showDetails)}

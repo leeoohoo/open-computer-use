@@ -368,9 +368,7 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="space-y-4">
-                  <SimpleVNCViewer machine={machine} session={null} />
-                </div>
+                <SimpleVNCViewer machine={machine} session={null} />
               )}
             </TabsContent>
 
@@ -453,9 +451,7 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="space-y-4">
-                  <SimpleVNCViewer machine={machine} session={null} />
-                </div>
+                <SimpleVNCViewer machine={machine} session={null} />
               )}
             </TabsContent>
 

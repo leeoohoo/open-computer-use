@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Monitor, Cpu, HardDrive, Clock, DollarSign, MonitorCog } from "lucide-react";
+import { Plus, Monitor, Cpu, HardDrive, MemoryStick, MonitorCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { NoiseBackground } from "@/components/ui/noise-background";
 import { MachineCard } from "@/app/components/machines/machine-card";
 import { CreateMachineDialog } from "@/app/components/machines/create-machine-dialog";
 import { UsageStats } from "@/app/components/machines/usage-stats";
@@ -272,110 +273,76 @@ export function MachinesContent() {
               Manage your AI-controlled desktop environments
             </p>
           </div>
-          <Button 
-            onClick={() => setShowCreateDialog(true)}
-            size="lg"
-            className="gap-2"
+          <NoiseBackground
+            containerClassName="w-auto p-[1px] rounded-md bg-transparent dark:bg-transparent shadow-none"
+            className="p-0"
+            gradientColors={["rgb(34, 197, 94)", "rgb(16, 185, 129)", "rgb(132, 204, 22)"]}
+            noiseIntensity={0.08}
+            speed={0.08}
           >
-            <Plus className="h-4 w-4" />
-            New Machine
-          </Button>
-        </div>
-
-        {/* Simple Banner */}
-        <div className="rounded-lg bg-primary text-primary-foreground p-3 sm:p-4">
-          <div className="flex items-center gap-3">
-            <MonitorCog className="h-5 w-5 flex-shrink-0" />
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold">AI-Optimized VMs, Zero Hassle</h3>
-              <p className="text-xs opacity-90 mt-0.5">
-                AI automatically selects ideal specs for your workflow
-              </p>
-            </div>
-          </div>
+            <button
+              onClick={() => setShowCreateDialog(true)}
+              className="inline-flex h-10 items-center justify-center rounded-[5px] bg-transparent px-5 text-sm font-semibold text-slate-900 transition-opacity hover:opacity-95 dark:text-white gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              New Machine
+            </button>
+          </NoiseBackground>
         </div>
 
         {/* Usage Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border-0">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Machines
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-baseline justify-between">
-                <span className="text-2xl font-bold">{usage.machines_count}</span>
-                <span className="text-sm text-muted-foreground">of {limits.max_machines}</span>
-              </div>
-              <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-foreground/80 transition-all duration-500"
-                  style={{ width: `${Math.min((usage.machines_count / limits.max_machines) * 100, 100)}%` }}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+          {[
+            { label: "Machines", used: usage.machines_count, max: limits.max_machines, icon: Monitor },
+            { label: "CPU Cores", used: usage.total_cpu_cores, max: limits.max_cpu_cores, icon: Cpu },
+            { label: "Memory", used: usage.total_memory_gb, max: limits.max_memory_gb, unit: "GB", icon: MemoryStick },
+            { label: "Storage", used: usage.total_storage_gb, max: limits.max_storage_gb, unit: "GB", icon: HardDrive },
+          ].map((stat) => {
+            const pct = stat.max > 0 ? Math.min((stat.used / stat.max) * 100, 100) : 0;
+            const r = 20;
+            const circ = 2 * Math.PI * r;
+            const offset = circ - (pct / 100) * circ;
+            const Icon = stat.icon;
+            return (
+              <div
+                key={stat.label}
+                className="group relative flex items-center gap-3 rounded-xl border bg-card p-3.5 overflow-hidden transition-colors hover:border-foreground/15"
+              >
+                {/* Subtle usage fill */}
+                <div
+                  className="absolute inset-y-0 left-0 bg-foreground/[0.03] transition-all duration-700 ease-out"
+                  style={{ width: `${pct}%` }}
                 />
+                {/* Ring */}
+                <div className="relative h-11 w-11 flex-shrink-0">
+                  <svg className="h-11 w-11 -rotate-90" viewBox="0 0 44 44">
+                    <circle
+                      cx="22" cy="22" r={r}
+                      fill="none" strokeWidth="2.5"
+                      className="stroke-muted"
+                    />
+                    <circle
+                      cx="22" cy="22" r={r}
+                      fill="none" strokeWidth="2.5" strokeLinecap="round"
+                      className="stroke-foreground/70 transition-all duration-700 ease-out"
+                      style={{ strokeDasharray: circ, strokeDashoffset: offset }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                  </div>
+                </div>
+                {/* Text */}
+                <div className="relative min-w-0">
+                  <p className="text-sm font-semibold tabular-nums leading-none">
+                    {stat.used}
+                    <span className="text-muted-foreground font-normal text-xs ml-0.5">/ {stat.max}{stat.unit ? ` ${stat.unit}` : ""}</span>
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1 truncate">{stat.label}</p>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                CPU Cores
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-baseline justify-between">
-                <span className="text-2xl font-bold">{usage.total_cpu_cores}</span>
-                <span className="text-sm text-muted-foreground">of {limits.max_cpu_cores}</span>
-              </div>
-              <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-foreground/80 transition-all duration-500"
-                  style={{ width: `${Math.min((usage.total_cpu_cores / limits.max_cpu_cores) * 100, 100)}%` }}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Memory
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-baseline justify-between">
-                <span className="text-2xl font-bold">{usage.total_memory_gb}</span>
-                <span className="text-sm text-muted-foreground">of {limits.max_memory_gb} GB</span>
-              </div>
-              <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-foreground/80 transition-all duration-500"
-                  style={{ width: `${Math.min((usage.total_memory_gb / limits.max_memory_gb) * 100, 100)}%` }}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Storage
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-baseline justify-between">
-                <span className="text-2xl font-bold">{usage.total_storage_gb}</span>
-                <span className="text-sm text-muted-foreground">of {limits.max_storage_gb} GB</span>
-              </div>
-              <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-foreground/80 transition-all duration-500"
-                  style={{ width: `${Math.min((usage.total_storage_gb / limits.max_storage_gb) * 100, 100)}%` }}
-                />
-              </div>
-            </CardContent>
-          </Card>
+            );
+          })}
         </div>
 
         {/* Status Filters */}

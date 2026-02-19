@@ -99,6 +99,74 @@ class AgentBillingService:
             logger.error(f"Error starting billing session: {str(e)}")
             return None
     
+    async def charge_step(self, session_id: str, step_number: int = 0) -> Dict[str, Any]:
+        """Charge credits for time elapsed since last charge.
+
+        Called at the end of each CUA executor step for granular billing.
+        Only charges for NEW minutes not yet billed.
+
+        Returns:
+            Dict with charged credits, totals, remaining balance, and
+            a should_stop flag if the user is out of credits.
+        """
+        if session_id not in self.active_sessions:
+            return {"error": "Session not found", "should_stop": False}
+
+        try:
+            async with self.session_locks.get(session_id, asyncio.Lock()):
+                session = self.active_sessions[session_id]
+                now = datetime.utcnow()
+
+                total_seconds = (now - session["started_at"]).total_seconds()
+                total_minutes = math.ceil(total_seconds / 60)
+
+                already_charged_minutes = session.get("charged_minutes", 0)
+                new_minutes = total_minutes - already_charged_minutes
+
+                if new_minutes <= 0:
+                    balance = await self._get_user_balance(session["user_id"])
+                    return {
+                        "step": step_number,
+                        "charged": 0,
+                        "total_charged_minutes": already_charged_minutes,
+                        "total_credits_used": already_charged_minutes * self.CREDITS_PER_MINUTE,
+                        "remaining_balance": balance,
+                        "should_stop": balance <= 0,
+                    }
+
+                new_credits = new_minutes * self.CREDITS_PER_MINUTE
+                actual = await self._deduct_credits(
+                    session["user_id"],
+                    new_credits,
+                    f"Step {step_number}: {new_minutes} min on {session['machine_id']}",
+                    session_id,
+                )
+
+                session["charged_minutes"] = total_minutes
+                session["credits_used"] = total_minutes * self.CREDITS_PER_MINUTE
+                session["last_check"] = now
+
+                balance = await self._get_user_balance(session["user_id"])
+
+                logger.info(
+                    f"Step {step_number} charge for session {session_id}: "
+                    f"{actual} credits ({new_minutes} new min), balance: {balance}"
+                )
+
+                return {
+                    "step": step_number,
+                    "charged": actual,
+                    "new_minutes": new_minutes,
+                    "total_charged_minutes": total_minutes,
+                    "total_credits_used": session["credits_used"],
+                    "remaining_balance": balance,
+                    "should_stop": balance <= 0,
+                }
+
+        except Exception as e:
+            logger.error(f"Error in charge_step: {e}")
+            return {"error": str(e), "should_stop": False}
+
     async def end_session(
         self,
         session_id: str,
@@ -122,20 +190,32 @@ class AgentBillingService:
                 duration_seconds = (ended_at - session["started_at"]).total_seconds()
                 duration_minutes = math.ceil(duration_seconds / 60)  # Round up to nearest minute
                 total_credits = duration_minutes * self.CREDITS_PER_MINUTE
-                
-                # Deduct credits from user balance (partial deduction if insufficient)
-                actual_deducted = await self._deduct_credits(
-                    session["user_id"],
-                    total_credits,
-                    f"AI Agent session on machine {session['machine_id']}",
-                    session_id
-                )
-                
-                if actual_deducted == 0:
-                    logger.error(f"Failed to deduct any credits for session {session_id}")
-                elif actual_deducted < total_credits:
-                    logger.warning(f"Partial deduction for session {session_id}: {actual_deducted} of {total_credits} credits")
-                    total_credits = actual_deducted  # Update to reflect actual amount charged
+
+                # Only charge the REMAINDER not already billed by charge_step()
+                already_charged_minutes = session.get("charged_minutes", 0)
+                remaining_minutes = duration_minutes - already_charged_minutes
+                remaining_credits = remaining_minutes * self.CREDITS_PER_MINUTE
+
+                actual_deducted = 0
+                if remaining_credits > 0:
+                    actual_deducted = await self._deduct_credits(
+                        session["user_id"],
+                        remaining_credits,
+                        f"Final charge: {remaining_minutes} min on {session['machine_id']}",
+                        session_id,
+                    )
+
+                    if actual_deducted == 0:
+                        logger.error(f"Failed to deduct remaining credits for session {session_id}")
+                    elif actual_deducted < remaining_credits:
+                        logger.warning(
+                            f"Partial final deduction for session {session_id}: "
+                            f"{actual_deducted} of {remaining_credits} credits"
+                        )
+
+                # total_credits reflects everything actually charged across all steps + final
+                already_charged_credits = already_charged_minutes * self.CREDITS_PER_MINUTE
+                total_credits = already_charged_credits + actual_deducted
                 
                 # Update session in database
                 if self.db_service.client:

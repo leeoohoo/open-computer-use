@@ -6,7 +6,6 @@ import {
   ArrowsOut,
   ArrowsIn,
   Monitor,
-  Terminal,
 } from "@phosphor-icons/react"
 import { AnimatePresence, motion } from "framer-motion"
 import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
@@ -297,42 +296,33 @@ export function ToolInvocation({
   }, [toolInvocationsData])
 
   // Extract screenshot from tool results (check all tools, use the most recent screenshot)
+  // Returns a full data URI string ready to use as img src
+  // Checks both: result.frontendScreenshot (streaming) and toolInvocation.frontendScreenshot (DB persisted)
   const latestScreenshot = useMemo(() => {
-    // Check all completed tools for screenshots (in reverse order to get most recent)
+    function toDataUri(raw: string): string | null {
+      const clean = raw.trim()
+      if (!clean) return null
+      if (clean.startsWith('data:image/')) return clean
+      if (clean.startsWith('/9j/')) return `data:image/jpeg;base64,${clean}`
+      if (clean.startsWith('iVBOR')) return `data:image/png;base64,${clean}`
+      return `data:image/jpeg;base64,${clean}`
+    }
+
     for (let i = toolInvocationsData.length - 1; i >= 0; i--) {
-      const tool = toolInvocationsData[i]
-      
-      if (tool.toolInvocation.state === "result" && tool.toolInvocation.result) {
-        const result = tool.toolInvocation.result
-        
-        // Check if result contains frontendScreenshot
-        if (result && typeof result === 'object' && 'frontendScreenshot' in result) {
-          const screenshot = result.frontendScreenshot
-          
-          // Ensure it's a valid base64 string
-          if (screenshot && typeof screenshot === 'string' && screenshot.length > 0) {
-            // Clean up the screenshot data
-            let cleanScreenshot = screenshot.trim()
-            
-            // Check if it already has the data URI prefix
-            if (cleanScreenshot.startsWith('data:image/')) {
-              // Return just the base64 part
-              const base64Part = cleanScreenshot.split(',')[1]
-              return base64Part
-            }
-            
-            // Check if it starts with base64 markers
-            if (cleanScreenshot.startsWith('iVBOR') || cleanScreenshot.startsWith('/9j/')) {
-              return cleanScreenshot
-            }
-            
-            // Otherwise return as is
-            return cleanScreenshot
-          }
-        }
+      const inv = toolInvocationsData[i].toolInvocation as any
+
+      // 1. Check toolInvocation.frontendScreenshot (DB-persisted format)
+      if (inv.frontendScreenshot && typeof inv.frontendScreenshot === 'string') {
+        const uri = toDataUri(inv.frontendScreenshot)
+        if (uri) return uri
+      }
+
+      // 2. Check result.frontendScreenshot (streaming format)
+      if (inv.state === "result" && inv.result && typeof inv.result === 'object' && 'frontendScreenshot' in inv.result) {
+        const uri = toDataUri(inv.result.frontendScreenshot)
+        if (uri) return uri
       }
     }
-    
     return null
   }, [toolInvocationsData])
   
@@ -488,25 +478,14 @@ export function ToolInvocation({
                     className="absolute inset-0 z-10"
                   >
                     <div className="relative h-full w-full rounded-lg overflow-hidden border border-border/50 bg-gray-900 shadow-sm">
-                      <motion.img 
+                      <motion.img
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.4, delay: 0.1 }}
-                        src={`data:image/png;base64,${latestScreenshot}`}
+                        src={latestScreenshot}
                         alt="Computer screenshot"
                         className="h-full w-full object-cover"
                         style={{ objectPosition: 'top center' }}
-                        onError={(e) => {
-                          console.error('[ToolInvocation] Image failed to load')
-                          // Try different format
-                          const target = e.target as HTMLImageElement
-                          if (!target.src.includes('jpeg')) {
-                            target.src = `data:image/jpeg;base64,${latestScreenshot}`
-                          }
-                        }}
-                        onLoad={() => {
-                          console.log('[ToolInvocation] Screenshot loaded successfully')
-                        }}
                       />
                       {/* Small monitor icon in corner */}
                       <div className="absolute bottom-1 right-1 bg-black/50 backdrop-blur-sm rounded p-0.5">
@@ -515,124 +494,10 @@ export function ToolInvocation({
                     </div>
                   </motion.div>
                 ) : (
-                  // Show a terminal execution animation
-                  <motion.div
-                    key="placeholder"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.05 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="absolute inset-0 z-10"
-                  >
-                    <div className="relative h-full w-full rounded-lg overflow-hidden border border-border/50 bg-black shadow-sm">
-                      {/* Terminal container */}
-                      <div className="absolute inset-0 font-mono text-[6px] leading-tight">
-                        {/* Terminal header */}
-                        <div className="bg-gray-900 px-1 py-0.5 flex items-center gap-1 border-b border-gray-800">
-                          <div className="flex gap-0.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-600" />
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-500" />
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                          </div>
-                          <span className="text-gray-500 ml-1">terminal</span>
-                        </div>
-                        
-                        {/* Terminal content */}
-                        <div className="p-1 text-gray-300 overflow-hidden h-full">
-                          {/* Command lines with typing animation */}
-                          <div className="space-y-0.5">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: "100%" }}
-                              transition={{ duration: 1.5, ease: "linear" }}
-                              className="overflow-hidden whitespace-nowrap"
-                            >
-                              <span className="text-gray-500">&gt;</span> initializing system...
-                            </motion.div>
-                            
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: 1.5, duration: 0.3 }}
-                              className="text-gray-400"
-                            >
-                              [<span className="text-white">OK</span>] System ready
-                            </motion.div>
-                            
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: "100%" }}
-                              transition={{ delay: 2, duration: 1.2, ease: "linear" }}
-                              className="overflow-hidden whitespace-nowrap"
-                            >
-                              <span className="text-gray-500">&gt;</span> connecting to agent...
-                            </motion.div>
-                            
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: 3.2, duration: 0.3 }}
-                              className="text-gray-400"
-                            >
-                              [<span className="text-white">OK</span>] Connected
-                            </motion.div>
-                            
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: "100%" }}
-                              transition={{ delay: 3.5, duration: 1, ease: "linear" }}
-                              className="overflow-hidden whitespace-nowrap"
-                            >
-                              <span className="text-gray-500">&gt;</span> executing task...
-                            </motion.div>
-                            
-                            {/* Blinking cursor */}
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: 4.5 }}
-                              className="inline-block"
-                            >
-                              <span className="text-gray-500">&gt;</span> 
-                              <motion.span
-                                animate={{ opacity: [1, 0] }}
-                                transition={{ duration: 1, repeat: Infinity }}
-                                className="inline-block w-2 h-3 bg-gray-400 ml-1"
-                              >
-                                _
-                              </motion.span>
-                            </motion.div>
-                          </div>
-                          
-                          {/* Progress indicator dots */}
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 4.8 }}
-                            className="absolute bottom-1 right-1 flex gap-0.5"
-                          >
-                            {[0, 1, 2].map((i) => (
-                              <motion.div
-                                key={i}
-                                animate={{ opacity: [0.3, 1, 0.3] }}
-                                transition={{
-                                  duration: 1.5,
-                                  repeat: Infinity,
-                                  delay: i * 0.2,
-                                }}
-                                className="w-1 h-1 bg-gray-400 rounded-full"
-                              />
-                            ))}
-                          </motion.div>
-                        </div>
-                      </div>
-                      
-                      {/* Small terminal icon in corner */}
-                      <div className="absolute bottom-1 right-4 bg-black/50 backdrop-blur-sm rounded p-0.5">
-                        <Terminal className="h-3 w-3 text-gray-500" weight="duotone" />
-                      </div>
-                    </div>
-                  </motion.div>
+                  // Simple monitor placeholder when no screenshot available
+                  <div className="absolute inset-0 z-10 rounded-lg border border-border/50 bg-muted/50 flex items-center justify-center">
+                    <Monitor className="h-6 w-6 text-muted-foreground/40" weight="duotone" />
+                  </div>
                 )}
               </AnimatePresence>
             </div>

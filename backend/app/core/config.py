@@ -41,22 +41,17 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str = Field(default="your-secret-key-change-in-production")
     CSRF_SECRET: str = Field(default="")
     
-    # AI Provider API Keys
-    OPENAI_API_KEY: Optional[str] = Field(default=None)
-    ANTHROPIC_API_KEY: Optional[str] = Field(default=None)
-    GOOGLE_GENERATIVE_AI_API_KEY: Optional[str] = Field(default=None)
-    MISTRAL_API_KEY: Optional[str] = Field(default=None)
-    XAI_API_KEY: Optional[str] = Field(default=None)
-    PERPLEXITY_API_KEY: Optional[str] = Field(default=None)
-    DEEPSEEK_API_KEY: Optional[str] = Field(default=None)
-    OPENROUTER_API_KEY: Optional[str] = Field(default=None)
-    
-    # Azure OpenAI Configuration
-    AZURE_OPENAI_API_KEY: Optional[str] = Field(default=None)
-    AZURE_OPENAI_ENDPOINT: Optional[str] = Field(default=None)
-    AZURE_OPENAI_API_VERSION: str = Field(default="2024-02-15-preview")
-    AZURE_OPENAI_DEPLOYMENT_NAME: Optional[str] = Field(default="gpt-4.1-nano")
-    AZURE_OPENAI_DEPLOYMENT: Optional[str] = Field(default="gpt-4.1-nano")
+    # AWS Bedrock Configuration
+    AWS_ACCESS_KEY_ID: Optional[str] = Field(default=None)
+    AWS_SECRET_ACCESS_KEY: Optional[str] = Field(default=None)
+    AWS_REGION: str = Field(default="us-east-1")
+
+    # Bedrock Model Configuration (env-configurable with fallbacks)
+    BEDROCK_DEFAULT_MODEL: str = Field(default="anthropic.claude-sonnet-4-20250514-v1:0")
+    BEDROCK_GROUNDING_MODEL: str = Field(default="anthropic.claude-3-5-sonnet-20241022-v2:0")
+    BEDROCK_AVAILABLE_MODELS: str = Field(
+        default="anthropic.claude-sonnet-4-20250514-v1:0,anthropic.claude-3-5-sonnet-20241022-v2:0,anthropic.claude-3-haiku-20240307-v1:0,meta.llama3-2-90b-instruct-v1:0,mistral.mistral-large-2407-v1:0,amazon.nova-pro-v1:0,amazon.nova-lite-v1:0"
+    )
     
     # Google Search Configuration
     GOOGLE_SEARCH_KEY: Optional[str] = Field(default=None)
@@ -88,11 +83,11 @@ class Settings(BaseSettings):
     
     # Model Configuration
     FREE_MODELS: Union[str, List[str]] = Field(
-        default="gpt-4o-mini,gpt-4.1-nano,azure-gpt-4.1-nano,claude-3-haiku-20240307,gemini-1.5-flash-latest,llama-3.2-90b-text-preview,deepseek-chat"
+        default="amazon.nova-lite-v1:0,anthropic.claude-3-haiku-20240307-v1:0"
     )
-    
+
     NON_AUTH_ALLOWED_MODELS: Union[str, List[str]] = Field(
-        default="gpt-4o-mini,gpt-4.1-nano,azure-gpt-4.1-nano,claude-3-haiku-20240307,gemini-1.5-flash-latest"
+        default="amazon.nova-lite-v1:0"
     )
     
     # Request Configuration
@@ -133,20 +128,11 @@ class Settings(BaseSettings):
         """Check if running in development"""
         return self.ENVIRONMENT == "development"
     
-    def get_provider_api_key(self, provider: str) -> Optional[str]:
-        """Get API key for a specific provider"""
-        provider_map = {
-            "openai": self.OPENAI_API_KEY,
-            "anthropic": self.ANTHROPIC_API_KEY,
-            "google": self.GOOGLE_GENERATIVE_AI_API_KEY,
-            "mistral": self.MISTRAL_API_KEY,
-            "xai": self.XAI_API_KEY,
-            "perplexity": self.PERPLEXITY_API_KEY,
-            "deepseek": self.DEEPSEEK_API_KEY,
-            "openrouter": self.OPENROUTER_API_KEY,
-            "azure": self.AZURE_OPENAI_API_KEY,
-        }
-        return provider_map.get(provider)
+    def get_bedrock_models_list(self) -> List[str]:
+        """Get list of available Bedrock model IDs from config."""
+        if isinstance(self.BEDROCK_AVAILABLE_MODELS, str):
+            return [m.strip() for m in self.BEDROCK_AVAILABLE_MODELS.split(",") if m.strip()]
+        return list(self.BEDROCK_AVAILABLE_MODELS)
 
 
 @lru_cache()

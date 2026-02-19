@@ -561,7 +561,7 @@ export function FileExplorer({ machineId, userId, className }: FileExplorerProps
   if (!machineId) {
     return (
       <div className={cn("w-full h-full p-2", className)}>
-        <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-zinc-950 rounded-lg border border-gray-200 dark:border-zinc-800">
+        <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800">
           <div className="text-center">
             <Folder className="h-12 w-12 text-gray-400 dark:text-zinc-600 mx-auto mb-3" />
             <p className="text-sm text-gray-600 dark:text-zinc-400">No machine connected</p>
@@ -575,7 +575,7 @@ export function FileExplorer({ machineId, userId, className }: FileExplorerProps
   return (
     <TooltipProvider>
       <div className={cn("flex flex-col h-full p-2", className)}>
-        <div className="flex-1 flex flex-col bg-white dark:bg-zinc-950 rounded-lg border border-gray-200 dark:border-zinc-800 overflow-hidden min-h-0">
+        <div className="flex-1 flex flex-col bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 overflow-hidden min-h-0">
         {/* Header Toolbar */}
         <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 border-b border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/50 overflow-x-auto">
           {/* Navigation */}

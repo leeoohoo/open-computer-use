@@ -3,7 +3,6 @@ import {
   ChatContainerRoot,
 } from "@/components/prompt-kit/chat-container"
 import { Loader } from "@/components/prompt-kit/loader"
-import { ScrollButton } from "@/components/prompt-kit/scroll-button"
 import { Message as MessageType } from "@ai-sdk/react"
 import { useRef, useEffect, useState } from "react"
 import { Message } from "./message"
@@ -268,9 +267,6 @@ export function Conversation({
               }
               return null
             })()}
-          </div>
-          <div className="absolute bottom-0 right-0 pb-2 pr-4">
-            <ScrollButton />
           </div>
         </ChatContainerContent>
       </ChatContainerRoot>
