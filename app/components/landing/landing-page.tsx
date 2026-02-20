@@ -595,7 +595,7 @@ export function LandingPage() {
                   rel="noreferrer"
                 >
                   <Github className="mr-2 h-4 w-4" />
-                  View on GitHub
+                  We are Open Source
                 </Link>
               </Button>
             </motion.div>
