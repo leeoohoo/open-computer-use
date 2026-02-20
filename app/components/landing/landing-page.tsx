@@ -5,18 +5,22 @@ import { NoiseBackground } from "@/components/ui/noise-background"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { PointerHighlight } from "@/components/ui/pointer-highlight"
 import { HeroParallaxChat } from "@/components/ui/hero-parallax-chat"
-import { SparklesCore } from "@/components/ui/sparkles"
+// SparklesCore available but not used in current hero design
+// import { SparklesCore } from "@/components/ui/sparkles"
 import { BentoGrid, BentoCard } from "@/components/magicui/bento-grid"
 import { Globe as GlobeComponent } from "@/components/magicui/globe"
 import { Tree, Folder, File, type TreeViewElement } from "@/components/magicui/file-tree"
-import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, Github, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity } from "lucide-react"
+import { GridPattern } from "@/components/magicui/grid-pattern"
+import { RainbowButton } from "@/components/magicui/rainbow-button"
+import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, Github, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play } from "lucide-react"
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
 import { LandingHeader } from "./landing-header"
-import { MockChatDemo } from "./mock-chat-demo"
-import { MockVMDisplay } from "./mock-vm-display"
+// MockChatDemo moved out of hero — still available for other sections
+// import { MockChatDemo } from "./mock-chat-demo"
+// import { MockVMDisplay } from "./mock-vm-display"
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion"
 import Image from "next/image"
 import { Caveat, Cormorant_Garamond } from "next/font/google"
@@ -31,6 +35,17 @@ const brandSubtitle = Cormorant_Garamond({
   weight: ["500", "600"],
   style: ["italic"],
 })
+
+const heroUseCases = [
+  "browse the web",
+  "write & debug code",
+  "analyze spreadsheets",
+  "fill out forms",
+  "research markets",
+  "automate workflows",
+  "manage files",
+  "test applications",
+]
 
 const BRAND_SUBTITLE_TEXT = "I am designed to emulate you."
 
@@ -296,25 +311,25 @@ export function LandingPage() {
   const { theme } = useTheme()
   const prefersReducedMotion = useReducedMotion()
 
-  // Detect mobile device
+  // Detect mobile — single mount effect that batches all initial state
   useEffect(() => {
+    const isSmallDevice = window.innerWidth < 768
+    setIsMobile(isSmallDevice)
     setMounted(true)
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
+
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Single consolidated intro timeline — no per-character re-renders.
-  // CSS animation handles the visual typing; JS only fires 3 state updates total.
+  // Intro timeline — skip entirely on mobile (no brand intro, instant content)
   useEffect(() => {
     if (!mounted) return
 
     const isSmallDevice = window.innerWidth < 768
 
     if (prefersReducedMotion || isSmallDevice) {
+      // Batch all state in one tick — no cascading re-renders
       setShowBrandIntro(false)
       setShowPageContent(true)
       setSubtitleTypingDone(true)
@@ -325,11 +340,8 @@ export function LandingPage() {
     setShowBrandIntro(true)
     setSubtitleTypingDone(false)
 
-    // t=1800ms — CSS typing animation finishes → mark done
     const typingDone = window.setTimeout(() => setSubtitleTypingDone(true), 1800)
-    // t=2100ms — begin exit (after brief pause to read)
     const exitIntro = window.setTimeout(() => setShowBrandIntro(false), 2100)
-    // t=2450ms — reveal page content (overlaps with exit fade)
     const revealPage = window.setTimeout(() => setShowPageContent(true), 2450)
 
     return () => {
@@ -339,35 +351,42 @@ export function LandingPage() {
     }
   }, [mounted, prefersReducedMotion])
 
-  // Animation variants
-  const sparklesDensity = isMobile ? 3 : 6
-  const sectionViewport = { once: true, amount: isMobile ? 0.03 : 0.1 }
+  // Animation variants — no motion on mobile (instant reveal)
+  const sectionViewport = { once: true, amount: isMobile ? 0.05 : 0.1 }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: isMobile ? 0.06 : 0.1,
-        delayChildren: isMobile ? 0.04 : 0.1
+  const containerVariants = isMobile
+    ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+    : {
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+        }
       }
-    }
-  }
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: isMobile ? 18 : 30 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: isMobile ? 0.35 : 0.5,
-        ease: "easeOut" as const
+  const itemVariants = isMobile
+    ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
+    : {
+        hidden: { opacity: 0, y: 30 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.5, ease: "easeOut" as const }
+        }
       }
-    }
-  }
 
-  const contentVisible = mounted && showPageContent
-  const headerVisible = mounted && !showBrandIntro
+  // Animated use-case cycling for hero
+  const [useCaseIndex, setUseCaseIndex] = useState(0)
+  useEffect(() => {
+    if (!mounted) return
+    const interval = setInterval(() => {
+      setUseCaseIndex((prev) => (prev + 1) % heroUseCases.length)
+    }, 2400)
+    return () => clearInterval(interval)
+  }, [mounted])
+
+  const contentVisible = mounted && (isMobile || showPageContent)
+  const headerVisible = mounted && (isMobile || !showBrandIntro)
 
   return (
     <LayoutGroup id="landing-brand-transition">
@@ -395,20 +414,6 @@ export function LandingPage() {
       ` }} />
 
       <div className="min-h-screen bg-background relative">
-      {/* Sparkles Background — deferred until after brand intro to avoid competing for GPU */}
-      {contentVisible && (
-        <div className="absolute inset-0 w-full h-full pointer-events-none">
-          <SparklesCore
-            id="landing-sparkles"
-            background="transparent"
-            minSize={0.4}
-            maxSize={1}
-            particleDensity={sparklesDensity}
-            className="w-full h-full"
-            particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
-          />
-        </div>
-      )}
 
       <AnimatePresence>
         {mounted && showBrandIntro && (
@@ -473,148 +478,187 @@ export function LandingPage() {
       {/* Fixed header */}
       <div
         className={cn(
-          "transition-opacity duration-500",
-          headerVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+          isMobile
+            ? (mounted ? "opacity-100" : "opacity-0")
+            : "transition-opacity duration-500",
+          !isMobile && (headerVisible ? "opacity-100" : "opacity-0 pointer-events-none")
         )}
       >
-        <LandingHeader animateBrandFromIntro />
+        <LandingHeader animateBrandFromIntro={!isMobile} />
       </div>
 
       {/* Main content */}
       <main
         className={cn(
-          "relative transition-opacity duration-500",
-          isMobile ? "pt-16" : "pt-20",
-          contentVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+          "relative",
+          isMobile ? "pt-16" : "pt-20 transition-opacity duration-500",
+          isMobile
+            ? (mounted ? "opacity-100" : "opacity-0")
+            : (contentVisible ? "opacity-100" : "opacity-0 pointer-events-none")
         )}
       >
         {/* Hero Section */}
         <section id="hero" className={cn(
-          "min-h-screen flex items-center justify-center",
-          isMobile ? "px-4 pt-8 pb-12" : "px-6 pt-10 pb-20"
+          "relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-hidden",
+          isMobile ? "px-4 pt-8 pb-16" : "px-6 pt-16 pb-24"
         )}>
+          {/* Subtle grid pattern background */}
+          <GridPattern
+            width={48}
+            height={48}
+            className={cn(
+              "absolute inset-0 h-full w-full",
+              "fill-neutral-200/40 stroke-neutral-200/40",
+              "dark:fill-neutral-800/30 dark:stroke-neutral-800/30",
+              "[mask-image:radial-gradient(ellipse_at_center,white_20%,transparent_70%)]"
+            )}
+          />
+          {/* Soft radial glow behind content */}
+          <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-primary/[0.04] blur-3xl dark:bg-primary/[0.06]" />
+
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="w-full max-w-7xl"
+            className="relative z-10 w-full max-w-5xl"
           >
-            <motion.div
-              variants={itemVariants}
-              className={cn(
-                "text-center mb-8",
-                isMobile ? "space-y-6" : "space-y-9"
-              )}
-            >
-              <div className="flex justify-center">
-                <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs sm:text-sm font-medium text-primary">
-                  State of the Art, 82% on OSWorld Benchmark
+            {/* Badge */}
+            <motion.div variants={itemVariants} className="flex justify-center mb-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 backdrop-blur-sm px-4 py-1.5 shadow-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground">
+                  #1 on OSWorld Benchmark · <span className="text-foreground font-semibold">82%</span>
                 </span>
               </div>
+            </motion.div>
+
+            {/* Headline */}
+            <motion.div variants={itemVariants} className="text-center mb-6">
               <h1 className={cn(
-                "font-semibold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl lg:text-6xl"
+                "font-bold tracking-tight leading-[1.1]",
+                isMobile ? "text-4xl" : "text-5xl sm:text-6xl lg:text-7xl"
               )}>
-                <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  AI Agents That{" "}
-                </span>
-                <PointerHighlight
-                  containerClassName="inline-block"
-                  rectangleClassName="border-primary/50"
-                  pointerClassName="text-primary"
-                >
-                  <span
-                    className={cn(
-                      "inline-block px-2 py-1 text-primary/90 -rotate-1",
-                      "text-[1.05em] leading-[0.9]",
-                      handwriting.className
-                    )}
-                  >
-                    Control Computers
-                  </span>
-                </PointerHighlight>
+                <span className="text-foreground">Automate anything</span>
                 <br />
-                <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  Like Humans
+                <span className="text-foreground">humans can </span>
+                {/* Fixed-width container: invisible longest text reserves space, animated text is layered on top */}
+                <span className="relative inline-block align-bottom">
+                  <span className={cn("invisible whitespace-nowrap", handwriting.className)} aria-hidden="true">
+                    analyze spreadsheets
+                  </span>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={useCaseIndex}
+                      initial={{ y: 16, opacity: 0, filter: "blur(4px)" }}
+                      animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                      exit={{ y: -16, opacity: 0, filter: "blur(4px)" }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className={cn(
+                        "absolute inset-0 flex items-center justify-start whitespace-nowrap text-foreground",
+                        handwriting.className
+                      )}
+                    >
+                      {heroUseCases[useCaseIndex]}
+                    </motion.span>
+                  </AnimatePresence>
                 </span>
               </h1>
-              <div className="mx-auto flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-lg md:w-auto md:max-w-none md:flex-row md:items-center md:gap-4">
-                <NoiseBackground
-                  containerClassName="w-full md:w-auto p-[1px] rounded-full bg-transparent dark:bg-transparent"
-                  className="p-0"
-                  gradientColors={["rgb(34, 197, 94)", "rgb(16, 185, 129)", "rgb(132, 204, 22)"]}
-                  noiseIntensity={0.08}
-                  animating={false}
-                >
-                  <Link
-                    href="/auth"
-                    className="group inline-flex h-10 w-full items-center justify-center rounded-full bg-transparent px-4 sm:px-5 md:min-w-[200px] md:px-6 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white"
-                  >
-                    Start Free, Let AI Do the Work
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </NoiseBackground>
-                <NoiseBackground
-                  containerClassName="w-full md:w-auto p-[1px] rounded-full bg-transparent dark:bg-transparent"
-                  className="p-0"
-                  gradientColors={["rgb(59, 130, 246)", "rgb(14, 165, 233)", "rgb(6, 182, 212)"]}
-                  noiseIntensity={0.08}
-                  animating={false}
-                >
-                  <Link
-                    href="https://github.com/coasty-ai/open-computer-use"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group inline-flex h-10 w-full items-center justify-center rounded-full bg-transparent px-4 sm:px-5 md:min-w-[200px] md:px-6 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white"
-                  >
-                    <Github className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
-                    Built in Public. Open Source.
-                  </Link>
-                </NoiseBackground>
-              </div>
+            </motion.div>
+
+            {/* Subheadline */}
+            <motion.div variants={itemVariants} className="text-center mb-10">
               <p className={cn(
-                "text-muted-foreground mx-auto",
-                isMobile ? "text-base max-w-md" : "text-lg sm:text-xl max-w-2xl"
+                "text-muted-foreground mx-auto leading-relaxed",
+                isMobile ? "text-base max-w-sm" : "text-lg max-w-2xl"
               )}>
-                Your AI employees work on real computers. They browse, code, and get things done while you focus on what matters.
+                AI agents that control real computers. They browse, code, and
+                complete tasks end-to-end. Just describe what you need done.
               </p>
             </motion.div>
-            
-            {/* VM display and Chat Input */}
-            <div className="relative">
-              <motion.div
-                variants={itemVariants}
-                className={cn(
-                  "relative z-10",
-                  isMobile
-                    ? "mb-6"
-                    : "mb-[-40px]" // Overlap on desktop
-                )}
-              >
-                <div className={cn(
-                  "mx-auto",
-                  isMobile ? "max-w-sm" : "max-w-3xl lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl"
-                )}>
-                  <MockVMDisplay />
+
+            {/* CTA Buttons */}
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">
+              <RainbowButton size="lg" className="w-full sm:w-auto" asChild>
+                <Link href="/auth">
+                  Start Automating for Free
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </RainbowButton>
+              <Button variant="outline" size="lg" className="w-full sm:w-auto rounded-3xl" asChild>
+                <Link
+                  href="https://github.com/coasty-ai/open-computer-use"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Github className="mr-2 h-4 w-4" />
+                  View on GitHub
+                </Link>
+              </Button>
+            </motion.div>
+
+            {/* Demo Showcase with browser chrome */}
+            <motion.div variants={itemVariants} className="relative">
+              {/* Glow behind the browser frame */}
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-b from-white/40 via-white/20 to-transparent blur-2xl dark:from-white/10 dark:via-white/5" />
+
+              {/* Browser chrome frame */}
+              <div className="relative rounded-xl border border-border/60 bg-background/80 backdrop-blur-sm shadow-2xl shadow-black/5 dark:shadow-black/20 overflow-hidden">
+                {/* Title bar */}
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-border/40 bg-muted/30">
+                  <div className="flex items-center gap-1.5">
+                    <div className="h-3 w-3 rounded-full bg-red-400/80 dark:bg-red-500/60" />
+                    <div className="h-3 w-3 rounded-full bg-yellow-400/80 dark:bg-yellow-500/60" />
+                    <div className="h-3 w-3 rounded-full bg-green-400/80 dark:bg-green-500/60" />
+                  </div>
+                  <div className="flex-1 flex justify-center">
+                    <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-1 text-xs text-muted-foreground min-w-[200px] justify-center">
+                      <div className="h-3 w-3 rounded-full border border-muted-foreground/30 flex items-center justify-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      </div>
+                      coasty.ai · AI Agent Session
+                    </div>
+                  </div>
+                  <div className="w-[52px]" /> {/* Spacer to balance traffic lights */}
                 </div>
-              </motion.div>
-              
-              <motion.div 
-                variants={itemVariants} 
-                className={cn(
-                  "relative z-20",
-                  isMobile ? "pt-0" : "pt-16"
-                )}
-              >
-                <div className={cn(
-                  "mx-auto",
-                  isMobile ? "max-w-full" : "max-w-3xl"
-                )}>
-                  <MockChatDemo />
+                {/* Video/GIF content */}
+                <div className="relative">
+                  <Image
+                    src="/Pi7_Gif.gif"
+                    alt="AI Agent controlling a computer — browsing, coding, and completing tasks autonomously"
+                    width={1200}
+                    height={675}
+                    className="w-full h-auto"
+                    unoptimized
+                    priority
+                  />
                 </div>
-              </motion.div>
-            </div>
+              </div>
+            </motion.div>
+
+            {/* Social proof strip */}
+            <motion.div variants={itemVariants} className={cn(
+              "flex items-center justify-center gap-6 mt-10",
+              isMobile ? "flex-col gap-3" : "flex-row"
+            )}>
+              <p className="text-xs text-muted-foreground/70 uppercase tracking-wider font-medium">Built with</p>
+              <div className="flex items-center gap-5 text-muted-foreground/50">
+                {[
+                  { label: "Next.js", icon: "N" },
+                  { label: "Python", icon: "Py" },
+                  { label: "Docker", icon: "D" },
+                  { label: "Selenium", icon: "Se" },
+                ].map((tech) => (
+                  <span key={tech.label} className="flex items-center gap-1.5 text-xs font-medium">
+                    <span className="flex h-5 w-5 items-center justify-center rounded bg-muted/60 text-[10px] font-bold text-muted-foreground/70">{tech.icon}</span>
+                    {tech.label}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
         </section>
 
@@ -671,10 +715,10 @@ export function LandingPage() {
               ].map((entry, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={isMobile ? false : { opacity: 0, x: -20 }}
+                  whileInView={isMobile ? undefined : { opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.06, duration: 0.4 }}
+                  transition={isMobile ? undefined : { delay: i * 0.06, duration: 0.4 }}
                   className={cn(
                     "flex items-center gap-3",
                     entry.highlight && "py-1"
@@ -706,47 +750,70 @@ export function LandingPage() {
                     entry.highlight ? "h-10 shadow-[0_0_20px_rgba(59,130,246,0.3)] ring-1 ring-blue-500/30" : "h-7"
                   )}>
                     {/* Bar fill */}
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${(entry.score / 82) * 100}%` }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.06 + 0.2, duration: 0.7, ease: "easeOut" }}
-                      className={cn(
-                        "absolute inset-y-0 left-0 rounded-md overflow-hidden",
-                        entry.highlight
-                          ? "bg-[#0f2557]"
-                          : entry.type === "framework"
-                            ? "bg-sky-500/25"
-                            : "bg-muted-foreground/20"
-                      )}
-                    >
-                      {/* Smoke layers inside the bar */}
-                      {entry.highlight && (
-                        <>
+                    {isMobile ? (
+                      <div
+                        className={cn(
+                          "absolute inset-y-0 left-0 rounded-md overflow-hidden",
+                          entry.highlight
+                            ? "bg-[#0f2557]"
+                            : entry.type === "framework"
+                              ? "bg-sky-500/25"
+                              : "bg-muted-foreground/20"
+                        )}
+                        style={{ width: `${(entry.score / 82) * 100}%` }}
+                      >
+                        {entry.highlight && (
                           <div
-                            className="absolute inset-[-40%]"
+                            className="absolute inset-0"
                             style={{
-                              background: "radial-gradient(circle 120px at 20% 50%, #60a5fa, transparent), radial-gradient(circle 100px at 80% 50%, #22d3ee, transparent)",
-                              animation: "coasty-smoke-1 4s ease-in-out infinite alternate",
+                              background: "linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4)",
                             }}
                           />
-                          <div
-                            className="absolute inset-[-40%]"
-                            style={{
-                              background: "radial-gradient(circle 90px at 55% 30%, #f472b6, transparent), radial-gradient(circle 110px at 35% 70%, #818cf8, transparent)",
-                              animation: "coasty-smoke-2 5s ease-in-out infinite alternate",
-                            }}
-                          />
-                          <div
-                            className="absolute inset-[-40%]"
-                            style={{
-                              background: "radial-gradient(circle 100px at 70% 60%, #34d399, transparent), radial-gradient(circle 80px at 10% 40%, #38bdf8, transparent)",
-                              animation: "coasty-smoke-3 3.5s ease-in-out infinite alternate",
-                            }}
-                          />
-                        </>
-                      )}
-                    </motion.div>
+                        )}
+                      </div>
+                    ) : (
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${(entry.score / 82) * 100}%` }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.06 + 0.2, duration: 0.7, ease: "easeOut" }}
+                        className={cn(
+                          "absolute inset-y-0 left-0 rounded-md overflow-hidden",
+                          entry.highlight
+                            ? "bg-[#0f2557]"
+                            : entry.type === "framework"
+                              ? "bg-sky-500/25"
+                              : "bg-muted-foreground/20"
+                        )}
+                      >
+                        {/* Smoke layers inside the bar — desktop only */}
+                        {entry.highlight && (
+                          <>
+                            <div
+                              className="absolute inset-[-40%]"
+                              style={{
+                                background: "radial-gradient(circle 120px at 20% 50%, #60a5fa, transparent), radial-gradient(circle 100px at 80% 50%, #22d3ee, transparent)",
+                                animation: "coasty-smoke-1 4s ease-in-out infinite alternate",
+                              }}
+                            />
+                            <div
+                              className="absolute inset-[-40%]"
+                              style={{
+                                background: "radial-gradient(circle 90px at 55% 30%, #f472b6, transparent), radial-gradient(circle 110px at 35% 70%, #818cf8, transparent)",
+                                animation: "coasty-smoke-2 5s ease-in-out infinite alternate",
+                              }}
+                            />
+                            <div
+                              className="absolute inset-[-40%]"
+                              style={{
+                                background: "radial-gradient(circle 100px at 70% 60%, #34d399, transparent), radial-gradient(circle 80px at 10% 40%, #38bdf8, transparent)",
+                                animation: "coasty-smoke-3 3.5s ease-in-out infinite alternate",
+                              }}
+                            />
+                          </>
+                        )}
+                      </motion.div>
+                    )}
                     <span className={cn(
                       "absolute right-2 top-1/2 -translate-y-1/2 font-semibold tabular-nums z-10",
                       isMobile ? "text-xs" : "text-sm",
@@ -832,44 +899,47 @@ export function LandingPage() {
                       ) : feature.title === "Unlimited Requests" ? (
                         <div className="absolute inset-0 overflow-hidden">
                           <div className="absolute inset-0 flex items-center justify-center">
-                            {/* Animated infinity symbol */}
-                            <motion.div
-                              className="opacity-20"
-                              animate={{
-                                rotate: 360,
-                              }}
-                              transition={{
-                                duration: 20,
-                                ease: "linear",
-                                repeat: Number.POSITIVE_INFINITY,
-                              }}
-                            >
-                              <Infinity className="w-48 h-48" />
-                            </motion.div>
-                          </div>
-                          {/* Animated rings */}
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            {[0, 1, 2].map((index) => (
+                            {isMobile ? (
+                              <Infinity className="w-48 h-48 opacity-20" />
+                            ) : (
                               <motion.div
-                                key={index}
-                                className="absolute w-32 h-32 border-2 border-primary/10 rounded-full"
-                                initial={{ scale: 1, opacity: 0 }}
-                                animate={{
-                                  scale: [1, 2.5],
-                                  opacity: [0.5, 0],
-                                }}
+                                className="opacity-20"
+                                animate={{ rotate: 360 }}
                                 transition={{
-                                  duration: 3,
-                                  ease: "easeOut" as const,
+                                  duration: 20,
+                                  ease: "linear",
                                   repeat: Number.POSITIVE_INFINITY,
-                                  delay: index * 1,
                                 }}
-                              />
-                            ))}
+                              >
+                                <Infinity className="w-48 h-48" />
+                              </motion.div>
+                            )}
                           </div>
+                          {/* Animated rings — desktop only */}
+                          {!isMobile && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              {[0, 1, 2].map((index) => (
+                                <motion.div
+                                  key={index}
+                                  className="absolute w-32 h-32 border-2 border-primary/10 rounded-full"
+                                  initial={{ scale: 1, opacity: 0 }}
+                                  animate={{
+                                    scale: [1, 2.5],
+                                    opacity: [0.5, 0],
+                                  }}
+                                  transition={{
+                                    duration: 3,
+                                    ease: "easeOut" as const,
+                                    repeat: Number.POSITIVE_INFINITY,
+                                    delay: index * 1,
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          )}
                           {/* Grid dots pattern */}
                           <div className="absolute inset-0">
-                            <div 
+                            <div
                               className="w-full h-full opacity-5"
                               style={{
                                 backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
@@ -1071,7 +1141,7 @@ export function LandingPage() {
                 <motion.div
                   key={testimonial.name}
                   variants={itemVariants}
-                  whileHover={{ scale: 1.02 }}
+                  {...(!isMobile && { whileHover: { scale: 1.02 } })}
                   transition={{ duration: 0.2 }}
                 >
                   <Card className="border-muted/50 hover:border-primary/50 transition-all hover:shadow-lg">
@@ -1132,10 +1202,10 @@ export function LandingPage() {
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  whileHover={{ scale: 1.01 }}
+                  {...(!isMobile && { whileHover: { scale: 1.01 } })}
                   transition={{ duration: 0.2 }}
                 >
-                  <Card 
+                  <Card
                     className="cursor-pointer border-muted/50 hover:border-primary/50 transition-all"
                     onClick={() => setSelectedFaq(selectedFaq === index ? null : index)}
                   >
