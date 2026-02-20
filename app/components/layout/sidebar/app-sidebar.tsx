@@ -25,6 +25,7 @@ import {
   Plus,
   CaretRight,
   CaretLeft,
+  Gift,
 } from "@phosphor-icons/react"
 import { useParams, useRouter } from "next/navigation"
 import { useMemo, useState, useEffect } from "react"
@@ -36,6 +37,7 @@ import { cn } from "@/lib/utils"
 import { UserMenu } from "../user-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useCredits } from "@/lib/hooks/use-credits"
+import { ReferralPopup } from "../../referral/referral-popup"
 
 export function AppSidebar() {
   const isMobile = useBreakpoint(768)
@@ -51,6 +53,7 @@ export function AppSidebar() {
 
   // State for dialogs
   const [isCollaborativeAuthDialogOpen, setIsCollaborativeAuthDialogOpen] = useState(false)
+  const [isReferralPopupOpen, setIsReferralPopupOpen] = useState(false)
 
   const groupedChats = useMemo(() => {
     // Simple grouping by date
@@ -367,6 +370,49 @@ export function AppSidebar() {
         {/* Footer Section */}
         <SidebarFooter className="relative pt-0 transition-all duration-300 ease-in-out">
           <div className={cn("space-y-1.5 transition-all duration-300 ease-in-out", shouldShowCollapsed ? "p-2 pt-1" : "p-3 pt-1")}>
+            {/* Referral Section */}
+            {user && (
+              <div className="mb-1.5">
+                {shouldShowCollapsed ? (
+                  <button
+                    className={cn(
+                      "group flex w-full h-8 items-center justify-center rounded-md transition-all duration-200",
+                      "bg-transparent hover:bg-muted/50",
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    )}
+                    type="button"
+                    onClick={() => setIsReferralPopupOpen(true)}
+                    title="Invite friends & earn 5 free minutes"
+                  >
+                    <Gift size={18} weight="duotone" className="text-muted-foreground group-hover:text-foreground transition-colors" />
+                  </button>
+                ) : (
+                  <div className="relative">
+                    <button
+                      className={cn(
+                        "group relative flex w-full items-center rounded-md text-sm transition-all duration-200",
+                        "bg-muted/30 hover:bg-muted/60",
+                        "border border-border/60 hover:border-border",
+                        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                        "px-2.5 py-1.5",
+                        "overflow-hidden"
+                      )}
+                      type="button"
+                      onClick={() => setIsReferralPopupOpen(true)}
+                    >
+                      <Gift size={16} weight="duotone" className="shrink-0 text-foreground/70 group-hover:text-foreground transition-colors" />
+                      <span className="ml-2 truncate text-sm text-foreground/70 group-hover:text-foreground transition-colors">
+                        Invite & Earn
+                      </span>
+                      <span className="ml-auto pl-1.5 text-[10px] font-medium text-muted-foreground whitespace-nowrap">
+                        +5 min
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Credits Section */}
             {user && (
               <div className="mb-3">
@@ -493,6 +539,10 @@ export function AppSidebar() {
         <DialogCollaborativeAuth
           open={isCollaborativeAuthDialogOpen}
           setOpen={setIsCollaborativeAuthDialogOpen}
+        />
+        <ReferralPopup
+          open={isReferralPopupOpen}
+          onOpenChange={setIsReferralPopupOpen}
         />
       </Sidebar>
     </>

@@ -6,6 +6,7 @@ import { MessagesProvider } from "@/lib/chat-store/messages/provider"
 import { LandingPage } from "@/app/components/landing/landing-page"
 import { Toaster } from "@/components/ui/sonner"
 import { PaymentHandler } from "@/app/components/payment-handler"
+import { ReferralProcessor } from "@/app/components/referral/referral-processor"
 
 export function HomeClient({ isAuthenticated }: { isAuthenticated: boolean }) {
   // Landing page doesn't need sidebar
@@ -23,6 +24,7 @@ export function HomeClient({ isAuthenticated }: { isAuthenticated: boolean }) {
     <>
       <Toaster position="top-center" />
       <PaymentHandler />
+      <ReferralProcessor />
       <MessagesProvider>
         <LayoutApp>
           <ChatContainer />

@@ -17,6 +17,7 @@ import Link from "next/link"
 import { useState, useEffect, useCallback } from "react"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
+import { useSearchParams } from "next/navigation"
 import { LandingHeader } from "./landing-header"
 // MockChatDemo moved out of hero — still available for other sections
 // import { MockChatDemo } from "./mock-chat-demo"
@@ -310,6 +311,18 @@ export function LandingPage() {
   const [subtitleTypingDone, setSubtitleTypingDone] = useState(false)
   const { theme } = useTheme()
   const prefersReducedMotion = useReducedMotion()
+  const searchParams = useSearchParams()
+
+  // Capture referral code from URL
+  useEffect(() => {
+    const ref = searchParams.get("ref")
+    if (ref) {
+      localStorage.setItem("coasty_referral_code", ref)
+      const url = new URL(window.location.href)
+      url.searchParams.delete("ref")
+      window.history.replaceState({}, "", url.toString())
+    }
+  }, [searchParams])
 
   // Detect mobile — single mount effect that batches all initial state
   useEffect(() => {

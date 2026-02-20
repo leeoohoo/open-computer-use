@@ -6,17 +6,26 @@ import { createClient } from "@/lib/supabase/client"
 import { SparklesCore } from "@/components/ui/sparkles"
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTheme } from "next-themes"
 import { HeaderGoBack } from "../components/header-go-back"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isAnonymousLoading, setIsAnonymousLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { theme } = useTheme()
+
+  // Capture referral code from URL
+  useEffect(() => {
+    const ref = searchParams.get("ref")
+    if (ref) {
+      localStorage.setItem("coasty_referral_code", ref)
+    }
+  }, [searchParams])
 
   async function handleSignInWithGoogle() {
     const supabase = createClient()
