@@ -4,6 +4,7 @@
 *.tfstate.backup
 *.tfplan
 .terraform.lock.hcl
+terraform.tfstate.*
 
 # Secrets
 terraform.tfvars
