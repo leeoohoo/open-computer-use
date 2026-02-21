@@ -2590,26 +2590,41 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                               </div>
                             </div>
                           ) : (
-                            /* Non-CUA fallback: compact action label */
-                            action && (
-                              <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-background/60 dark:bg-neutral-700/50 border border-border/30">
-                                <div className={cn(
-                                  "flex items-center justify-center w-6 h-6 rounded-md flex-shrink-0",
-                                  action.type === 'search' && "bg-violet-500/15 text-violet-500 dark:text-violet-400",
-                                  action.type === 'terminal' && "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-                                  action.type === 'browser' && "bg-sky-500/15 text-sky-500 dark:text-sky-400",
-                                  action.type === 'file' && "bg-orange-500/15 text-orange-500 dark:text-orange-400",
-                                  action.type === 'screenshot' && "bg-pink-500/15 text-pink-500 dark:text-pink-400",
-                                  (!['search','terminal','browser','file','screenshot'].includes(action.type)) && "bg-gray-500/15 text-gray-500 dark:text-gray-400",
-                                )}>
-                                  {action.icon}
+                            /* Non-CUA fallback: idle keyboard + mouse placeholder */
+                            <div className="flex items-stretch gap-2.5">
+                              {/* Idle Keyboard */}
+                              <div className="flex-1 flex flex-col gap-[2px] min-w-0 opacity-30">
+                                {KEYBOARD_LAYOUT.map((row, rowIdx) => (
+                                  <div key={rowIdx} className="flex gap-[2px]">
+                                    {row.map((key) => (
+                                      <div
+                                        key={key.id}
+                                        className="h-[15px] rounded-[3px] flex items-center justify-center select-none text-[7px] leading-none font-medium border bg-neutral-200/80 dark:bg-neutral-700/80 text-neutral-500 dark:text-neutral-400 border-neutral-300/60 dark:border-neutral-600/60"
+                                        style={{ flex: key.w }}
+                                      >
+                                        {key.label}
+                                      </div>
+                                    ))}
+                                  </div>
+                                ))}
+                              </div>
+                              {/* Idle Mouse */}
+                              <div className="flex flex-col items-center justify-center w-[42px] flex-shrink-0 opacity-30">
+                                <div className="relative w-[34px] h-[58px] rounded-[14px] border-2 border-neutral-300 dark:border-neutral-600 bg-neutral-200/60 dark:bg-neutral-700/60 overflow-hidden flex flex-col">
+                                  <div className="flex h-[22px] border-b border-neutral-300/80 dark:border-neutral-600/80">
+                                    <div className="flex-1 rounded-tl-[12px] border-r border-neutral-300/80 dark:border-neutral-600/80 bg-transparent" />
+                                    <div className="flex-1 rounded-tr-[12px] bg-transparent" />
+                                  </div>
+                                  <div className="flex items-start justify-center pt-1.5">
+                                    <div className="w-[6px] h-[10px] rounded-full border bg-neutral-400 dark:bg-neutral-500 border-neutral-300 dark:border-neutral-600" />
+                                  </div>
+                                  <div className="flex-1" />
                                 </div>
-                                <span className="text-xs font-semibold text-foreground/90 flex-shrink-0">{action.label}</span>
-                                {action.detail && (
-                                  <span className="text-[11px] text-muted-foreground truncate min-w-0">{action.detail}</span>
+                                {action && (
+                                  <span className="text-[8px] text-muted-foreground mt-1 truncate max-w-[42px] text-center">{action.label}</span>
                                 )}
                               </div>
-                            )
+                            </div>
                           )}
                         </motion.div>
                       </AnimatePresence>

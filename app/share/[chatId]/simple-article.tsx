@@ -9,7 +9,6 @@ import {
   ChatContainerContent,
   ChatContainerRoot,
 } from "@/components/prompt-kit/chat-container"
-import { ScrollButton } from "@/components/prompt-kit/scroll-button"
 import { Message } from "@/app/components/chat/message"
 import { ToolInvocation } from "@/app/components/chat/tool-invocation"
 import { motion, AnimatePresence } from "motion/react"
@@ -19,7 +18,7 @@ import { APP_NAME } from "@/lib/config"
 import { useRef, useState, useEffect, useCallback } from "react"
 import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
 import { Button } from "@/components/ui/button"
-import { ArrowUpRight, Play } from "@phosphor-icons/react"
+import { ArrowUpRight, Play, FastForward } from "@phosphor-icons/react"
 import { useRouter } from "next/navigation"
 import { ProjectNavigatorProvider, useProjectNavigator } from "@/lib/project-navigator-store/provider"
 import { MessagesProvider } from "@/lib/chat-store/messages/provider"
@@ -62,204 +61,89 @@ function GridBackground() {
   )
 }
 
-// Play button overlay component with glassmorphic design
+// Play button overlay — clean frosted glass design
 function PlayOverlay({ onPlay, title }: { onPlay: () => void, title?: string }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.4 }}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center cursor-pointer"
       onClick={onPlay}
     >
-      {/* Multiple gradient layers for progressive blur effect */}
-      <div className="absolute inset-0">
-        {/* Top section - nearly transparent with minimal blur */}
-        <div 
-          className="absolute inset-x-0 top-0 h-1/3"
-          style={{
-            background: 'rgba(var(--background), 0.1)',
-            backdropFilter: 'blur(2px)',
-            WebkitBackdropFilter: 'blur(2px)',
-          }}
-        />
-        
-        {/* Upper middle section - slightly more opaque and blurred */}
-        <div 
-          className="absolute inset-x-0 top-1/3 h-1/6"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(var(--background), 0.2), rgba(var(--background), 0.4))',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-          }}
-        />
-        
-        {/* Middle section - increasing opacity and blur */}
-        <div 
-          className="absolute inset-x-0 top-1/2 h-1/6"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(var(--background), 0.4), rgba(var(--background), 0.6))',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-          }}
-        />
-        
-        {/* Lower section - heavy blur and more opaque */}
-        <div 
-          className="absolute inset-x-0 bottom-1/3 h-1/6"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(var(--background), 0.6), rgba(var(--background), 0.8))',
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
-          }}
-        />
-        
-        {/* Bottom section - maximum blur and nearly opaque */}
-        <div 
-          className="absolute inset-x-0 bottom-0 h-1/3"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(var(--background), 0.8), rgba(var(--background), 0.95))',
-            backdropFilter: 'blur(32px)',
-            WebkitBackdropFilter: 'blur(32px)',
-          }}
-        />
-      </div>
-      {/* Subtle animated background gradient */}
-      <div className="absolute inset-0 opacity-10">
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-primary/20"
-          animate={{
-            backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          style={{
-            backgroundSize: '200% 200%',
-          }}
-        />
-      </div>
-      
-      {/* Company branding section */}
-      <motion.div
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.1, duration: 0.5 }}
-        className="relative z-10 mb-12 text-center"
-      >
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <CoastyIcon className="h-10 w-10 text-primary" />
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent leading-normal pb-0.5">
+      {/* Single frosted backdrop */}
+      <div
+        className="absolute inset-0 bg-background/80"
+        style={{
+          backdropFilter: 'blur(24px) saturate(1.2)',
+          WebkitBackdropFilter: 'blur(24px) saturate(1.2)',
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-lg">
+        {/* Brand — thin style matching landing header */}
+        <motion.div
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1, duration: 0.4 }}
+          className="flex items-center gap-2.5 mb-8"
+        >
+          <CoastyIcon className="h-8 w-8 sm:h-9 sm:w-9 text-primary" />
+          <span className="text-xl sm:text-2xl font-semibold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {APP_NAME}
-          </h1>
-        </div>
-        <p className="text-muted-foreground text-sm font-medium tracking-wide uppercase truncate">
-          Coasty Agent Platform
-        </p>
-      </motion.div>
-      
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.4, type: "spring" }}
-        className="relative z-10"
-      >
-        {/* Subtle ripple effect behind button */}
-        <div className="absolute inset-0 -m-16">
-          <motion.div 
-            className="absolute inset-0 rounded-full border border-primary/10"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ 
-              scale: [0.8, 1.2, 0.8],
-              opacity: [0, 0.3, 0] 
-            }}
-            transition={{ 
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          <motion.div 
-            className="absolute inset-0 rounded-full border border-primary/5"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ 
-              scale: [0.9, 1.3, 0.9],
-              opacity: [0, 0.2, 0] 
-            }}
-            transition={{ 
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1.3
-            }}
-          />
-        </div>
-        
-        {/* Play button with theme-matched colors */}
-        <button
-          className="relative group flex h-36 w-36 items-center justify-center rounded-full bg-card hover:bg-accent border border-border shadow-xl transition-all duration-300 hover:scale-105"
+          </span>
+        </motion.div>
+
+        {/* Play button */}
+        <motion.button
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.15, duration: 0.35, type: "spring", stiffness: 200 }}
+          className="group flex h-20 w-20 items-center justify-center rounded-full border border-border/60 bg-card/60 hover:bg-card transition-all duration-200 hover:scale-105 hover:border-border"
           style={{
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
           }}
           onClick={(e) => {
             e.stopPropagation()
             onPlay()
           }}
         >
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 opacity-50" />
           <Play
             weight="fill"
-            className="h-14 w-14 text-primary ml-1 group-hover:scale-110 transition-transform relative z-10"
+            className="h-8 w-8 text-foreground/80 ml-0.5 group-hover:text-foreground transition-colors"
           />
-        </button>
-      </motion.div>
-      
-      {/* Enhanced information section */}
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-        className="relative z-10 mt-10 text-center max-w-md px-6"
-      >
-        <h2 className="text-2xl font-bold text-foreground mb-2 truncate">
-          Coasty Agent Execution Replay
-        </h2>
-        {title && (
-          <p className="text-lg font-medium text-foreground/80 mb-3 line-clamp-2">
-            &ldquo;{title}&rdquo;
+        </motion.button>
+
+        {/* Title & subtitle */}
+        <motion.div
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.25, duration: 0.4 }}
+          className="mt-8"
+        >
+          {title && (
+            <p className="text-base sm:text-lg font-medium text-foreground/80 mb-2 line-clamp-2">
+              {title}
+            </p>
+          )}
+          <p className="text-sm text-muted-foreground">
+            Watch how Coasty completed this task autonomously.
           </p>
-        )}
-        <p className="text-muted-foreground leading-relaxed line-clamp-3">
-          Watch how the computer autonomously completed this task through our advanced HCI system.
-          See the intelligent automation, tools utilized, and solutions executed in real-time.
-        </p>
-        
+        </motion.div>
+
+        {/* Tap hint */}
         <motion.p
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-          className="mt-6 text-sm text-muted-foreground"
+          animate={{ opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+          className="mt-10 text-xs text-muted-foreground"
         >
-          AI that works on real computers, so you don&apos;t have to.
+          Tap anywhere to play
         </motion.p>
-        
-        {/* CTA hint */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0.4, 0.6, 0.4] }}
-          transition={{ 
-            opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" },
-            delay: 0.7
-          }}
-          className="mt-8 text-xs text-muted-foreground"
-        >
-          Click to begin replay
-        </motion.p>
-      </motion.div>
+      </div>
     </motion.div>
   )
 }
@@ -531,7 +415,34 @@ function SimpleArticleContent({
   const handleTryItOut = useCallback(() => {
     router.push('/')
   }, [router])
-  
+
+  const skipToEnd = useCallback(() => {
+    // Stop any running replay timer
+    if (replayIntervalRef.current) {
+      clearTimeout(replayIntervalRef.current)
+      replayIntervalRef.current = null
+    }
+    setIsReplaying(false)
+    // Show all messages immediately
+    const fullMessages = transformedMessages.map(msg => ({ ...msg, isNew: false }))
+    setVisibleMessages(fullMessages)
+    updateStreamingMessages(fullMessages)
+    // Show all tool invocations
+    const allTools: any[] = []
+    transformedMessages.forEach(message => {
+      if (message.role === 'assistant' && message.parts) {
+        const toolParts = message.parts.filter((p: any) => p.type === 'tool-invocation')
+        allTools.push(...toolParts)
+      }
+    })
+    setCurrentToolInvocations(allTools)
+    setShowActionButtons(true)
+    // Open navigator if there are tools
+    if (allTools.length > 0 && !isNavigatorOpen) {
+      setNavigatorOpen(true)
+    }
+  }, [transformedMessages, updateStreamingMessages, isNavigatorOpen, setNavigatorOpen])
+
   // Task replay effect - shows messages progressively
   // For CUA messages with multiple sections, streams sections into the same bubble
   useEffect(() => {
@@ -758,8 +669,30 @@ function SimpleArticleContent({
           <PlayOverlay onPlay={startReplay} title={title} />
         )}
       </AnimatePresence>
-      
-      
+
+      {/* Skip to End button - floating during replay */}
+      <AnimatePresence>
+        {isReplaying && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.25 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60]"
+          >
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={skipToEnd}
+              className="rounded-full px-4 h-9 shadow-lg border border-border/50 bg-card/90 backdrop-blur-md hover:bg-card gap-2"
+            >
+              <span className="text-xs font-medium">Skip to End</span>
+              <FastForward className="h-3.5 w-3.5" weight="bold" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main content - matching the main app layout exactly */}
       <div 
         className="flex-1 flex transition-all duration-300"
@@ -838,11 +771,6 @@ function SimpleArticleContent({
                             )
                           })}
                         </AnimatePresence>
-                      </div>
-                      
-                      {/* Scroll button - exact same position as main chat */}
-                      <div className="absolute bottom-0 right-0 pb-2 pr-4">
-                        <ScrollButton />
                       </div>
                     </ChatContainerContent>
                   </ChatContainerRoot>
