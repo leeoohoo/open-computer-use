@@ -30,8 +30,14 @@ import {
   Brain,
   FileText,
   Terminal,
+  Keyboard,
+  CursorClick,
+  ArrowsDownUp,
+  DotsSixVertical,
+  Timer,
+  Command,
 } from "@phosphor-icons/react"
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ArrowUpRight, MousePointer, Loader2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ArrowUpRight, MousePointer, Loader2, Mouse } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useChatSession } from "@/lib/chat-store/session/provider"
 import { useChats } from "@/lib/chat-store/chats/provider"
@@ -45,6 +51,7 @@ import { TaskChecklist } from "./task-checklist"
 import { FileExplorer } from "./file-explorer"
 import { FolderOpen, Monitor } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { CoastyIcon } from "@/components/icons/coasty"
 
 interface ToolInvocationData {
   id: string
@@ -56,6 +63,75 @@ interface ToolInvocationData {
   timestamp?: string
   messageId?: string
   isNew?: boolean
+}
+
+// Compact keyboard layout for action visualization
+const KEYBOARD_LAYOUT: Array<Array<{ id: string; label: string; w: number }>> = [
+  [
+    { id: 'esc', label: 'Esc', w: 1.2 },
+    { id: '1', label: '1', w: 1 }, { id: '2', label: '2', w: 1 }, { id: '3', label: '3', w: 1 },
+    { id: '4', label: '4', w: 1 }, { id: '5', label: '5', w: 1 }, { id: '6', label: '6', w: 1 },
+    { id: '7', label: '7', w: 1 }, { id: '8', label: '8', w: 1 }, { id: '9', label: '9', w: 1 },
+    { id: '0', label: '0', w: 1 }, { id: '-', label: '-', w: 1 }, { id: '=', label: '=', w: 1 },
+    { id: 'backspace', label: '⌫', w: 1.4 },
+  ],
+  [
+    { id: 'tab', label: 'Tab', w: 1.5 },
+    { id: 'q', label: 'Q', w: 1 }, { id: 'w', label: 'W', w: 1 }, { id: 'e', label: 'E', w: 1 },
+    { id: 'r', label: 'R', w: 1 }, { id: 't', label: 'T', w: 1 }, { id: 'y', label: 'Y', w: 1 },
+    { id: 'u', label: 'U', w: 1 }, { id: 'i', label: 'I', w: 1 }, { id: 'o', label: 'O', w: 1 },
+    { id: 'p', label: 'P', w: 1 }, { id: '[', label: '[', w: 1 }, { id: ']', label: ']', w: 1 },
+    { id: '\\', label: '\\', w: 1.1 },
+  ],
+  [
+    { id: 'capslock', label: 'Caps', w: 1.7 },
+    { id: 'a', label: 'A', w: 1 }, { id: 's', label: 'S', w: 1 }, { id: 'd', label: 'D', w: 1 },
+    { id: 'f', label: 'F', w: 1 }, { id: 'g', label: 'G', w: 1 }, { id: 'h', label: 'H', w: 1 },
+    { id: 'j', label: 'J', w: 1 }, { id: 'k', label: 'K', w: 1 }, { id: 'l', label: 'L', w: 1 },
+    { id: ';', label: ';', w: 1 }, { id: "'", label: "'", w: 1 },
+    { id: 'enter', label: '↵', w: 1.9 },
+  ],
+  [
+    { id: 'shift', label: '⇧', w: 2.2 },
+    { id: 'z', label: 'Z', w: 1 }, { id: 'x', label: 'X', w: 1 }, { id: 'c', label: 'C', w: 1 },
+    { id: 'v', label: 'V', w: 1 }, { id: 'b', label: 'B', w: 1 }, { id: 'n', label: 'N', w: 1 },
+    { id: 'm', label: 'M', w: 1 }, { id: ',', label: ',', w: 1 }, { id: '.', label: '.', w: 1 },
+    { id: '/', label: '/', w: 1 }, { id: 'shift_r', label: '⇧', w: 2.4 },
+  ],
+  [
+    { id: 'ctrl', label: 'Ctrl', w: 1.3 }, { id: 'alt', label: 'Alt', w: 1.1 },
+    { id: 'cmd', label: '⌘', w: 1.3 }, { id: 'space', label: '', w: 5.6 },
+    { id: 'cmd_r', label: '⌘', w: 1.3 }, { id: 'alt_r', label: 'Alt', w: 1.1 },
+    { id: 'left', label: '←', w: 1 }, { id: 'up', label: '↑', w: 1 },
+    { id: 'down', label: '↓', w: 1 }, { id: 'right', label: '→', w: 1 },
+  ],
+]
+
+// Normalize key names from CUA actions to keyboard layout IDs
+const normalizeKeyId = (key: string): string => {
+  const k = key.toLowerCase().trim()
+  if (k === 'control' || k === 'ctrl') return 'ctrl'
+  if (k === 'command' || k === 'meta' || k === 'super' || k === 'win' || k === 'cmd') return 'cmd'
+  if (k === 'alt' || k === 'option') return 'alt'
+  if (k === 'shift') return 'shift'
+  if (k === 'return' || k === 'enter') return 'enter'
+  if (k === 'backspace' || k === 'delete') return 'backspace'
+  if (k === 'escape' || k === 'esc') return 'esc'
+  if (k === 'capslock' || k === 'caps_lock' || k === 'caps') return 'capslock'
+  if (k === 'space' || k === ' ') return 'space'
+  if (k === 'arrowleft' || k === 'left') return 'left'
+  if (k === 'arrowright' || k === 'right') return 'right'
+  if (k === 'arrowup' || k === 'up') return 'up'
+  if (k === 'arrowdown' || k === 'down') return 'down'
+  return k
+}
+
+// Check if a keyboard key should be highlighted
+const isKeyActive = (keyId: string, activeKeys: Set<string>): boolean => {
+  if (activeKeys.has(keyId)) return true
+  const base = keyId.replace('_r', '')
+  if (base !== keyId && activeKeys.has(base)) return true
+  return false
 }
 
 interface SubTask {
@@ -493,6 +569,19 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
   // Track if user has manually navigated
   const [hasUserNavigated, setHasUserNavigated] = useState(false)
   const [lastAutoNavigatedTo, setLastAutoNavigatedTo] = useState(-1)
+  const hasInitializedPosition = useRef(false)
+
+  // On first load, jump to the latest step so user sees LIVE state
+  useEffect(() => {
+    if (!hasInitializedPosition.current && toolInvocations.length > 0) {
+      hasInitializedPosition.current = true
+      const lastIdx = toolInvocations.length - 1
+      const lastTaskIdx = Math.floor(lastIdx / itemsPerTask)
+      setCurrentTask(lastTaskIdx)
+      setCurrentStep(lastIdx)
+      setLastAutoNavigatedTo(lastTaskIdx)
+    }
+  }, [toolInvocations.length, itemsPerTask])
   
   // Auto-expand current task tool and auto-navigate to latest
   useEffect(() => {
@@ -919,6 +1008,61 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
       default:
         return toolName
     }
+  }
+
+  // Get action indicator info for the current tool step
+  const getActionIndicator = (invocation: ToolInvocationData | undefined) => {
+    if (!invocation) return null
+    const { toolName, args } = invocation
+    const parsedArgs = typeof args === 'string' ? (() => { try { return JSON.parse(args) } catch { return {} } })() : (args || {})
+
+    // CUA actions
+    if (toolName === 'cua_click') {
+      const btn = parsedArgs.button || 'left'
+      const clicks = parsedArgs.clicks || 1
+      const label = clicks > 1 ? 'Double Click' : btn === 'right' ? 'Right Click' : 'Click'
+      return { icon: <CursorClick className="h-4 w-4" weight="duotone" />, label, detail: `(${parsedArgs.x}, ${parsedArgs.y})`, type: 'mouse' as const }
+    }
+    if (toolName === 'cua_type_text') {
+      const text = parsedArgs.text || ''
+      const display = text.length > 30 ? text.slice(0, 30) + '...' : text
+      return { icon: <Keyboard className="h-4 w-4" weight="duotone" />, label: 'Typing', detail: display, type: 'keyboard' as const }
+    }
+    if (toolName === 'cua_key_press') {
+      const keys = (parsedArgs.keys || []).map((k: string) => k.charAt(0).toUpperCase() + k.slice(1))
+      return { icon: <Keyboard className="h-4 w-4" weight="duotone" />, label: 'Key Press', detail: keys.join(', '), type: 'keyboard' as const }
+    }
+    if (toolName === 'cua_key_combo') {
+      const keys = (parsedArgs.keys || []).map((k: string) => k.charAt(0).toUpperCase() + k.slice(1))
+      return { icon: <Command className="h-4 w-4" weight="duotone" />, label: 'Shortcut', detail: keys.join(' + '), type: 'keyboard' as const }
+    }
+    if (toolName === 'cua_scroll') {
+      const dir = parsedArgs.clicks > 0 ? 'Up' : 'Down'
+      return { icon: <ArrowsDownUp className="h-4 w-4" weight="duotone" />, label: `Scroll ${dir}`, detail: null, type: 'mouse' as const }
+    }
+    if (toolName === 'cua_drag') {
+      return { icon: <DotsSixVertical className="h-4 w-4" weight="duotone" />, label: 'Drag', detail: `(${parsedArgs.x1},${parsedArgs.y1}) → (${parsedArgs.x2},${parsedArgs.y2})`, type: 'mouse' as const }
+    }
+    if (toolName === 'cua_wait') {
+      return { icon: <Timer className="h-4 w-4" weight="duotone" />, label: 'Waiting', detail: parsedArgs.seconds ? `${parsedArgs.seconds}s` : null, type: 'wait' as const }
+    }
+    // Non-CUA tools
+    if (toolName === 'webSearch' || toolName === 'googleSearch') {
+      return { icon: <MagnifyingGlass className="h-4 w-4" weight="duotone" />, label: 'Web Search', detail: parsedArgs.query ? (parsedArgs.query.length > 30 ? parsedArgs.query.slice(0, 30) + '...' : parsedArgs.query) : null, type: 'search' as const }
+    }
+    if (toolName.startsWith('terminal')) {
+      return { icon: <Terminal className="h-4 w-4" weight="duotone" />, label: 'Terminal', detail: parsedArgs.command ? (parsedArgs.command.length > 30 ? parsedArgs.command.slice(0, 30) + '...' : parsedArgs.command) : null, type: 'terminal' as const }
+    }
+    if (toolName.startsWith('browser')) {
+      return { icon: <Globe className="h-4 w-4" weight="duotone" />, label: 'Browser', detail: null, type: 'browser' as const }
+    }
+    if (toolName.startsWith('file_')) {
+      return { icon: <FileText className="h-4 w-4" weight="duotone" />, label: 'File Op', detail: null, type: 'file' as const }
+    }
+    if (toolName === 'vmScreenshot') {
+      return { icon: <Camera className="h-4 w-4" weight="duotone" />, label: 'Screenshot', detail: null, type: 'screenshot' as const }
+    }
+    return { icon: <Wrench className="h-4 w-4" weight="duotone" />, label: toolName.replace(/_/g, ' '), detail: null, type: 'other' as const }
   }
 
   const renderToolResult = (invocation: ToolInvocationData) => {
@@ -2069,57 +2213,64 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
               ease: "easeOut"
             }}
             className={cn(
-            "fixed bg-neutral-100 dark:bg-neutral-800 shadow-xl z-50 flex flex-col",
+            "fixed z-50",
             "top-[var(--spacing-app-header,56px)] sm:top-[calc(var(--spacing-app-header,56px)+1rem)]",
             "bottom-0 sm:bottom-4",
-            "rounded-t-xl sm:rounded-xl overflow-hidden",
             isMobile ? "right-0 w-full" : ""
           )}
           style={{
-              transformOrigin: "center bottom", 
+              transformOrigin: "center bottom",
             ...(isMobile ? {} : {
               width: `${width}%`,
               right: '1rem'
             })
           }}
         >
-          {/* Resize handle */}
+          {/* Resize handle — floating tab that sticks out from the left edge */}
           <div
-            className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize group hidden sm:flex items-center justify-center z-10"
+            className="absolute -left-3 top-0 bottom-0 w-6 cursor-col-resize group hidden sm:flex items-center justify-center z-10"
             onMouseDown={handleMouseDown}
           >
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute left-0 top-1/2 -translate-y-1/2">
-              <div className="w-1 h-8 bg-primary/50 rounded-full" />
+            {/* Floating pill handle — always visible, sticks out to the left */}
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-10 rounded-l-lg bg-neutral-200/80 dark:bg-neutral-700/80 group-hover:bg-neutral-300 dark:group-hover:bg-neutral-600 border border-r-0 border-border/50 shadow-sm group-hover:shadow-md transition-all duration-200">
+              <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
             </div>
           </div>
+          {/* Panel body with background, shadow, and overflow clipping */}
+          <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-800 shadow-xl rounded-t-xl sm:rounded-xl overflow-hidden flex flex-col">
           <div className="relative flex-1 flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 sm:p-4">
+            <div className="flex items-center justify-between px-4 py-3 sm:px-4 sm:py-3 border-b border-border/40">
               {/* Content */}
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-sm">Coasty's personal machine</h3>
-                {activeTab === 'activity' && !taskPlan && (
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs" title="Total number of tasks performed">
-                      {toolInvocations.length} {toolInvocations.length === 1 ? 'action' : 'actions'}
-                    </Badge>
-                    {activeTools > 0 && (
-                      <Badge variant="default" className="text-xs bg-orange-500">
-                        {activeTools} active
+              <div className="flex items-center gap-3">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 flex-shrink-0">
+                  <CoastyIcon className="h-4 w-4" />
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <h3 className="font-medium text-sm tracking-tight">Coasty's personal machine</h3>
+                  {activeTab === 'activity' && !taskPlan && (
+                    <div className="flex items-center gap-1.5">
+                      <Badge variant="secondary" className="text-[10px] font-medium px-1.5 py-0 h-5 rounded-md" title="Total number of tasks performed">
+                        {toolInvocations.length} {toolInvocations.length === 1 ? 'action' : 'actions'}
                       </Badge>
-                    )}
-                  </div>
-                )}
+                      {activeTools > 0 && (
+                        <Badge variant="default" className="text-[10px] font-medium px-1.5 py-0 h-5 rounded-md bg-orange-500">
+                          {activeTools} active
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="relative flex items-center gap-1">
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-8 w-8 hover:bg-neutral-200/50 dark:hover:bg-neutral-700/50"
+                  className="h-7 w-7 rounded-lg hover:bg-muted/80 transition-colors"
                   onClick={onToggle}
                   title="Minimize panel"
                 >
-                  <ArrowsIn className="h-4 w-4" weight="bold" />
+                  <ArrowsIn className="h-3.5 w-3.5 text-muted-foreground" weight="bold" />
                 </Button>
               </div>
             </div>
@@ -2179,24 +2330,24 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                     }}
                     className={cn(
                       "p-3 sm:p-3 flex-1 overflow-y-auto scrollbar-invisible absolute top-0 left-0 right-0",
-                      toolInvocations.length > 0 ? "bottom-[72px]" : "bottom-0"
+                      toolInvocations.length > 0 ? "bottom-[152px]" : "bottom-0"
                     )}
                   >
                     {toolInvocations.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3 animate-scale-bounce">
-                      <Globe className="h-6 w-6 text-muted-foreground" />
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="relative mb-4">
+                      <div className="w-14 h-14 rounded-2xl bg-primary/8 flex items-center justify-center animate-scale-bounce">
+                        <CoastyIcon className="h-7 w-7" />
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500/90 border-2 border-neutral-100 dark:border-neutral-800" />
                     </div>
-                    <p className="text-sm font-medium text-foreground">Coasty's personal machine is ready</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      I'll search the web, run code, and more to help complete your tasks
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Tasks will appear here in real-time as I work
+                    <p className="text-sm font-medium text-foreground tracking-tight">Machine ready</p>
+                    <p className="text-xs text-muted-foreground mt-1.5 max-w-[220px] leading-relaxed">
+                      Web search, code execution, and more — tasks appear here in real-time
                     </p>
                   </div>
                   ) : (
-                    <div className="relative w-full h-full">
+                    <div className="relative w-full h-full bg-black/5 dark:bg-black/20 rounded-lg overflow-hidden">
                     <AnimatePresence mode="wait">
                       {(() => {
                         // Find the screenshot for the current step
@@ -2224,17 +2375,17 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                           return (
                             <motion.div
                               key={`screenshot-${currentTask}`}
-                              className="w-full h-full"
+                              className="absolute inset-0 flex items-center justify-center"
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               exit={{ opacity: 0 }}
                               transition={{ duration: 0.15, ease: "easeOut" }}
                             >
-                              <div className="relative w-full h-full rounded-lg overflow-hidden">
+                              <div className="relative w-full h-full flex items-center justify-center">
                                 <img
                                   src={displayScreenshot}
                                   alt="VM Screenshot"
-                                  className="w-full h-auto object-cover"
+                                  className="max-w-full max-h-full object-contain"
                                 />
                                 {/* Processing overlay when current step has no screenshot yet */}
                                 {!screenshot && lastBrowserScreenshot && (
@@ -2263,7 +2414,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                         return (
                           <motion.div
                             key="placeholder"
-                            className="w-full h-full flex items-center justify-center"
+                            className="absolute inset-0 flex items-center justify-center"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -2321,10 +2472,152 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
               </AnimatePresence>
             </div>
             
-            {/* Progress Bar / Player Controls - Minimal Design */}
+            {/* Keyboard/Mouse Visualization + Player Controls */}
             {activeTab === 'activity' && toolInvocations.length > 0 && (
-              <div className="absolute bottom-0 left-0 right-0 bg-muted/80 dark:bg-neutral-800/90 backdrop-blur-sm rounded-b-xl border-t border-border/40 min-h-[72px] shadow-lg">
-                <div className="p-3">
+              <div className="absolute bottom-0 left-0 right-0 bg-muted/80 dark:bg-neutral-800/90 backdrop-blur-sm rounded-b-xl border-t border-border/40 shadow-lg">
+                {/* Keyboard + Mouse Action Visualizer */}
+                {(() => {
+                  const currentInv = currentTaskTools[0] || toolInvocations[currentTask]
+                  const action = getActionIndicator(currentInv)
+                  const parsedArgs = currentInv ? (typeof currentInv.args === 'string' ? (() => { try { return JSON.parse(currentInv.args) } catch { return {} } })() : (currentInv.args || {})) : {}
+                  const toolName = currentInv?.toolName || ''
+                  const isCUA = toolName.startsWith('cua_')
+
+                  // Compute active keys
+                  const activeKeys = new Set<string>()
+                  if (toolName === 'cua_type_text') {
+                    const text = (parsedArgs.text || '').toLowerCase()
+                    const chars = Array.from(new Set<string>(text.slice(-8).split('').filter((c: string) => c !== ' ')))
+                    chars.forEach((c) => activeKeys.add(c))
+                    if (text.includes(' ')) activeKeys.add('space')
+                    if (/[A-Z]/.test(parsedArgs.text || '')) activeKeys.add('shift')
+                  } else if (toolName === 'cua_key_press') {
+                    (parsedArgs.keys || []).forEach((k: string) => activeKeys.add(normalizeKeyId(k)))
+                  } else if (toolName === 'cua_key_combo') {
+                    (parsedArgs.keys || []).forEach((k: string) => activeKeys.add(normalizeKeyId(k)))
+                  }
+
+                  // Compute mouse state
+                  const mouseLeft = (toolName === 'cua_click' || toolName === 'cua_drag') && (parsedArgs.button || 'left') === 'left'
+                  const mouseRight = (toolName === 'cua_click') && parsedArgs.button === 'right'
+                  const scrollDir = toolName === 'cua_scroll' ? (parsedArgs.clicks > 0 ? 'up' : 'down') : null
+
+                  return (
+                    <div className="px-3 pt-2.5 pb-1.5">
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={`action-vis-${currentTask}`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                        >
+                          {isCUA ? (
+                            /* Keyboard + Mouse for CUA actions */
+                            <div className="flex items-stretch gap-2.5">
+                              {/* Keyboard */}
+                              <div className="flex-1 flex flex-col gap-[2px] min-w-0">
+                                {KEYBOARD_LAYOUT.map((row, rowIdx) => (
+                                  <div key={rowIdx} className="flex gap-[2px]">
+                                    {row.map((key) => {
+                                      const active = isKeyActive(key.id, activeKeys)
+                                      return (
+                                        <motion.div
+                                          key={key.id}
+                                          className={cn(
+                                            "h-[15px] rounded-[3px] flex items-center justify-center select-none",
+                                            "text-[7px] leading-none font-medium",
+                                            "border transition-colors duration-100",
+                                            active
+                                              ? "bg-primary text-primary-foreground border-primary shadow-[0_0_6px_rgba(var(--primary),0.4)] z-10"
+                                              : "bg-neutral-200/80 dark:bg-neutral-700/80 text-neutral-500 dark:text-neutral-400 border-neutral-300/60 dark:border-neutral-600/60"
+                                          )}
+                                          style={{ flex: key.w }}
+                                          animate={active ? { scale: [1, 1.12, 1] } : { scale: 1 }}
+                                          transition={{ duration: 0.2 }}
+                                        >
+                                          {key.label}
+                                        </motion.div>
+                                      )
+                                    })}
+                                  </div>
+                                ))}
+                              </div>
+                              {/* Mouse */}
+                              <div className="flex flex-col items-center justify-center w-[42px] flex-shrink-0">
+                                <div className="relative w-[34px] h-[58px] rounded-[14px] border-2 border-neutral-300 dark:border-neutral-600 bg-neutral-200/60 dark:bg-neutral-700/60 overflow-hidden flex flex-col">
+                                  {/* Buttons */}
+                                  <div className="flex h-[22px] border-b border-neutral-300/80 dark:border-neutral-600/80">
+                                    {/* Left button */}
+                                    <motion.div
+                                      className={cn(
+                                        "flex-1 rounded-tl-[12px] border-r border-neutral-300/80 dark:border-neutral-600/80 transition-colors duration-100",
+                                        mouseLeft ? "bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" : "bg-transparent"
+                                      )}
+                                      animate={mouseLeft ? { scale: [1, 0.92, 1] } : { scale: 1 }}
+                                      transition={{ duration: 0.15 }}
+                                    />
+                                    {/* Right button */}
+                                    <motion.div
+                                      className={cn(
+                                        "flex-1 rounded-tr-[12px] transition-colors duration-100",
+                                        mouseRight ? "bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" : "bg-transparent"
+                                      )}
+                                      animate={mouseRight ? { scale: [1, 0.92, 1] } : { scale: 1 }}
+                                      transition={{ duration: 0.15 }}
+                                    />
+                                  </div>
+                                  {/* Scroll wheel */}
+                                  <div className="flex items-start justify-center pt-1.5">
+                                    <motion.div
+                                      className={cn(
+                                        "w-[6px] h-[10px] rounded-full border",
+                                        scrollDir
+                                          ? "bg-emerald-500 border-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.5)]"
+                                          : "bg-neutral-400 dark:bg-neutral-500 border-neutral-300 dark:border-neutral-600"
+                                      )}
+                                      animate={scrollDir === 'up' ? { y: [0, -2, 0] } : scrollDir === 'down' ? { y: [0, 2, 0] } : { y: 0 }}
+                                      transition={{ duration: 0.4, repeat: scrollDir ? Infinity : 0 }}
+                                    />
+                                  </div>
+                                  {/* Body */}
+                                  <div className="flex-1" />
+                                </div>
+                                {/* Action label under mouse */}
+                                {action && (
+                                  <span className="text-[8px] text-muted-foreground mt-1 truncate max-w-[42px] text-center">{action.label}</span>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            /* Non-CUA fallback: compact action label */
+                            action && (
+                              <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-background/60 dark:bg-neutral-700/50 border border-border/30">
+                                <div className={cn(
+                                  "flex items-center justify-center w-6 h-6 rounded-md flex-shrink-0",
+                                  action.type === 'search' && "bg-violet-500/15 text-violet-500 dark:text-violet-400",
+                                  action.type === 'terminal' && "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+                                  action.type === 'browser' && "bg-sky-500/15 text-sky-500 dark:text-sky-400",
+                                  action.type === 'file' && "bg-orange-500/15 text-orange-500 dark:text-orange-400",
+                                  action.type === 'screenshot' && "bg-pink-500/15 text-pink-500 dark:text-pink-400",
+                                  (!['search','terminal','browser','file','screenshot'].includes(action.type)) && "bg-gray-500/15 text-gray-500 dark:text-gray-400",
+                                )}>
+                                  {action.icon}
+                                </div>
+                                <span className="text-xs font-semibold text-foreground/90 flex-shrink-0">{action.label}</span>
+                                {action.detail && (
+                                  <span className="text-[11px] text-muted-foreground truncate min-w-0">{action.detail}</span>
+                                )}
+                              </div>
+                            )
+                          )}
+                        </motion.div>
+                      </AnimatePresence>
+                    </div>
+                  )
+                })()}
+                {/* Player controls */}
+                <div className="px-3 pb-2.5 pt-1">
                   <div className="flex items-center gap-2 sm:gap-3">
                     {/* Play Controls */}
                     <div className="flex items-center gap-1 sm:gap-1.5">
@@ -2467,6 +2760,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
               </div>
             )}
           </div>
+          </div>{/* close panel body */}
         </motion.div>
       )}
       </AnimatePresence>

@@ -44,12 +44,12 @@ interface ReferralStats {
 }
 
 const shareMessage =
-  "I've been using Coasty, an AI that actually does the work instead of just talking about it. It browses, clicks, types, and automates tasks on a real computer. Try it out with my link and we both win!"
+  "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!"
 
 const socials = [
   {
     id: "twitter",
-    label: "Twitter",
+    label: "X",
     icon: TwitterLogo,
     hover: "hover:bg-[#1DA1F2] hover:text-white hover:border-[#1DA1F2]",
     urlFn: (link: string) =>
@@ -96,7 +96,7 @@ const socials = [
       `https://reddit.com/submit?url=${encodeURIComponent(
         link
       )}&title=${encodeURIComponent(
-        "This AI actually does the work: browses, clicks, and automates tasks on a real computer"
+        "This AI can actually use a computer for you. Browsing, clicking, typing, all of it."
       )}`,
   },
   {
@@ -106,9 +106,9 @@ const socials = [
     hover: "hover:bg-foreground hover:text-background hover:border-foreground",
     urlFn: (link: string) =>
       `mailto:?subject=${encodeURIComponent(
-        "You need to try this AI tool"
+        "Check out this AI tool"
       )}&body=${encodeURIComponent(
-        `Hey!\n\n${shareMessage}\n\nHere's my referral link: ${link}\n\nEnjoy!`
+        `${shareMessage}\n\nHere's my link: ${link}`
       )}`,
   },
 ]
@@ -255,7 +255,7 @@ export function ReferralPopup({ open, onOpenChange }: ReferralPopupProps) {
                   <CoastyIcon className="h-6 w-6" />
                 </div>
                 <DialogTitle className="text-lg font-semibold">
-                  Invite & Earn
+                  Good friends share memes. Great friends share AI agents.
                 </DialogTitle>
                 <p className="text-[13px] text-muted-foreground mt-1.5 leading-relaxed">
                   You both get{" "}
@@ -263,9 +263,6 @@ export function ReferralPopup({ open, onOpenChange }: ReferralPopupProps) {
                     5 free minutes
                   </span>{" "}
                   of agent time when your friend joins.
-                </p>
-                <p className="text-[12px] text-muted-foreground/50 mt-1 italic">
-                  Good friends share memes. Great friends share AI agents.
                 </p>
               </DialogHeader>
             </div>

@@ -85,9 +85,9 @@ export function ChatVisibilityToggle({
 
       toast({
         title: newPublicState ? "Chat is now public!" : "Chat is now private",
-        description: newPublicState 
-          ? "Your brilliant conversation is ready to inspire the world!" 
-          : "Your chat is safely tucked away, just for you",
+        description: newPublicState
+          ? "Nice, anyone with the link can see it now."
+          : "Back to private, just for your eyes.",
         status: "success",
       })
     } catch (error) {
@@ -122,11 +122,11 @@ export function ChatVisibilityToggle({
     if (!shareUrl) return
 
     // Create a more specific share message for coasty
-    const baseText = chatTitle 
-      ? `"${chatTitle}" - Coasty Agent Autonomous Workflow`
-      : "Coasty Agent Autonomous Workflow"
-    
-    const text = `${baseText} | Watch how Coasty Agents autonomously solve complex tasks with multi-model intelligence, tool orchestration, and real-time execution`
+    const baseText = chatTitle
+      ? `"${chatTitle}" on Coasty`
+      : "Check out what I got Coasty to do"
+
+    const text = `${baseText}. I just told an AI what I wanted and it went and did the whole thing on a real computer. No copy pasting, no hand holding.`
     
     const encodedUrl = encodeURIComponent(shareUrl)
     const encodedText = encodeURIComponent(text)
@@ -200,11 +200,11 @@ export function ChatVisibilityToggle({
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-xl">Share Coasty Agent Session</DialogTitle>
+            <DialogTitle className="text-xl">Share this session</DialogTitle>
             <DialogDescription className="text-base">
-              {isPublic 
-                ? "Your Coasty Agent session is live. Share this intelligent workflow with others" 
-                : "Enable public access to showcase this Coasty Agent's problem-solving capabilities"}
+              {isPublic
+                ? "Your session is live. Anyone with the link can check it out."
+                : "Make this session public so others can see what you built."}
             </DialogDescription>
           </DialogHeader>
 
@@ -234,14 +234,14 @@ export function ChatVisibilityToggle({
 
             <p className="text-sm text-muted-foreground px-1">
               {isPublic
-                ? "Anyone with the link can view this Coasty Agent's autonomous execution and results"
-                : "This session is private. Enable sharing to demonstrate Coasty Agent capabilities"}
+                ? "Anyone with the link can see everything that happened in this session."
+                : "This session is private right now. Flip the switch to let others see it."}
             </p>
 
             {isPublic && shareUrl && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="share-url">Coasty Agent Session Link</Label>
+                  <Label htmlFor="share-url">Share link</Label>
                   <div className="flex gap-2">
                     <Input
                       id="share-url"
@@ -272,7 +272,7 @@ export function ChatVisibilityToggle({
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Share This Coasty Agent Workflow</Label>
+                  <Label>Spread the word</Label>
                   <div className="grid grid-cols-3 gap-2">
                     <Button
                       type="button"
@@ -282,7 +282,7 @@ export function ChatVisibilityToggle({
                       className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
                     >
                       <TwitterLogo size={18} className="mr-2" />
-                      Twitter
+                      X
                     </Button>
                     <Button
                       type="button"

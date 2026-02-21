@@ -7,8 +7,10 @@ import {
   PromptInputTextarea,
 } from "@/components/prompt-kit/prompt-input"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { VMSelector } from "@/components/common/vm-selector/vm-selector"
-import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Desktop } from "@phosphor-icons/react"
+import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Desktop, Monitor } from "@phosphor-icons/react"
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { useCallback, useMemo, useState, useEffect } from "react"
 import { PromptSystem } from "../suggestions/prompt-system"
 import { AnimatePresence, motion } from "motion/react"
@@ -36,6 +38,7 @@ type ChatInputProps = {
   stop: () => void
   status?: "submitted" | "streaming" | "ready" | "error"
   onAuthRequired: () => void
+  hasToolInvocations?: boolean
 }
 
 // Fun startup messages
@@ -329,6 +332,7 @@ export function ChatInput({
   stop,
   status,
   onAuthRequired,
+  hasToolInvocations,
 }: ChatInputProps) {
   const isOnlyWhitespace = (text: string) => !/[^\s]/.test(text)
   const [machineStatus, setMachineStatus] = useState<UserMachine['status'] | null>(null)
@@ -646,7 +650,7 @@ export function ChatInput({
 
       <div className="relative order-2 pb-3 sm:pb-4 md:order-1">
         <PromptInput
-            className="relative shadow-xl hover:shadow-2xl focus-within:shadow-2xl focus-within:ring-0 !border-0 [&>*]:border-0 transition-all duration-300 z-10 bg-neutral-100 dark:bg-neutral-800 rounded-2xl border border-border/50"
+            className={cn("relative shadow-xl hover:shadow-2xl focus-within:shadow-2xl focus-within:ring-0 !border-0 [&>*]:border-0 transition-all duration-300 z-10 bg-neutral-100 dark:bg-neutral-800 border border-border/50", hasToolInvocations ? "rounded-b-2xl rounded-t-none" : "rounded-2xl")}
             maxHeight={200}
             value={value}
             onValueChange={onValueChange}
@@ -673,6 +677,32 @@ export function ChatInput({
                 isUserAuthenticated={isUserAuthenticated}
                 className="h-9 min-w-0 flex-shrink"
               />
+              {/* Connect to Desktop - opens noVNC in new tab */}
+              {selectedVMId && selectedVMId !== "none" && machineStatus === "running" && agentReady && currentMachine?.publicIpAddress && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      type="button"
+                      onClick={() => {
+                        const websocketPort = currentMachine.websocketPort || 6080
+                        const encodedPassword = encodeURIComponent(currentMachine.vncPassword)
+                        const url = `http://${currentMachine.publicIpAddress}:${websocketPort}/vnc.html?autoconnect=1&resize=scale&password=${encodedPassword}`
+                        window.open(url, '_blank')
+                      }}
+                      className="border-border dark:bg-secondary h-9 rounded-full border bg-transparent px-2.5 sm:px-3"
+                      aria-label="Connect to desktop"
+                    >
+                      <Monitor className="size-4 flex-shrink-0" weight="duotone" />
+                      <span className="hidden sm:inline text-xs ml-1.5">Desktop</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[200px] text-center">
+                    Watch your agent work on a separate screen. Just don't touch anything or it gets stage fright!
+                  </TooltipContent>
+                </Tooltip>
+              )}
               {/* File upload feature - only show when VM is selected */}
               {selectedVMId && selectedVMId !== "none" && (
                 <ButtonVMFileUpload

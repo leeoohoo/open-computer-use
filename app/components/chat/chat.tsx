@@ -446,6 +446,19 @@ export function Chat() {
     [effectiveMessages, status, handleDelete, handleEdit, handleReload]
   )
 
+  // Check if there are tool invocations to show above the chat input
+  const hasToolInvocations = useMemo(() => {
+    const messagesWithTools = [...effectiveMessages]
+      .reverse()
+      .filter(m => m.role === 'assistant' && m.parts?.some((p: any) => p.type === 'tool-invocation'))
+    if (messagesWithTools.length === 0) return false
+    const latestMessageWithTools = messagesWithTools[0]
+    const toolInvocationParts = (latestMessageWithTools.parts?.filter(
+      (part: any) => part.type === 'tool-invocation'
+    ) || []) as any[]
+    return toolInvocationParts.length > 0
+  }, [effectiveMessages])
+
   // Memoize the chat input props
   const chatInputProps = useMemo(
     () => {
@@ -466,6 +479,7 @@ export function Chat() {
       stop,
       status,
       onAuthRequired: () => setHasDialogAuth(true),
+      hasToolInvocations,
       }
     },
     [
@@ -489,6 +503,7 @@ export function Chat() {
       stop,
       status,
       setHasDialogAuth,
+      hasToolInvocations,
     ]
   )
 
@@ -670,31 +685,28 @@ export function Chat() {
           },
         }}
       >
-        {/* Show tool invocations above chat input for any message */}
+        {/* Show tool invocations dock above chat input */}
         {(() => {
-          // Find ANY assistant message with tool invocations (from newest to oldest)
           const messagesWithTools = [...effectiveMessages]
             .reverse()
             .filter(m => m.role === 'assistant' && m.parts?.some((p: any) => p.type === 'tool-invocation'))
-          
+
           if (messagesWithTools.length === 0) return null
-          
-          // Get the latest message with tools
+
           const latestMessageWithTools = messagesWithTools[0]
-          
+
           const toolInvocationParts = (latestMessageWithTools.parts?.filter(
             (part: any) => part.type === 'tool-invocation'
           ) || []) as any[]
-          
-          // Always show if there are tool invocations
+
           if (toolInvocationParts.length > 0) {
             return (
-              <div className="relative z-0 px-1 mx-auto max-w-[52rem]">
+              <div className="relative z-10">
                 <ToolInvocation toolInvocations={toolInvocationParts} />
               </div>
             )
           }
-          
+
           return null
         })()}
         

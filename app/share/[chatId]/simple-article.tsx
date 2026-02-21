@@ -156,7 +156,7 @@ function PlayOverlay({ onPlay, title }: { onPlay: () => void, title?: string }) 
             {APP_NAME}
           </h1>
         </div>
-        <p className="text-muted-foreground text-sm font-medium tracking-wide uppercase">
+        <p className="text-muted-foreground text-sm font-medium tracking-wide uppercase truncate">
           Coasty Agent Platform
         </p>
       </motion.div>
@@ -225,16 +225,16 @@ function PlayOverlay({ onPlay, title }: { onPlay: () => void, title?: string }) 
         transition={{ delay: 0.3, duration: 0.5 }}
         className="relative z-10 mt-10 text-center max-w-md px-6"
       >
-        <h2 className="text-2xl font-bold text-foreground mb-2">
+        <h2 className="text-2xl font-bold text-foreground mb-2 truncate">
           Coasty Agent Execution Replay
         </h2>
         {title && (
-          <p className="text-lg font-medium text-foreground/80 mb-3">
-            "{title}"
+          <p className="text-lg font-medium text-foreground/80 mb-3 line-clamp-2">
+            &ldquo;{title}&rdquo;
           </p>
         )}
-        <p className="text-muted-foreground leading-relaxed">
-          Watch how the computer autonomously completed this task through our advanced HCI system. 
+        <p className="text-muted-foreground leading-relaxed line-clamp-3">
+          Watch how the computer autonomously completed this task through our advanced HCI system.
           See the intelligent automation, tools utilized, and solutions executed in real-time.
         </p>
         
@@ -303,7 +303,7 @@ function ActionButtons({ onReplay, onTryItOut }: { onReplay: () => void, onTryIt
         <div className="relative flex flex-col gap-2 rounded-2xl border bg-card p-3 shadow-sm">
           {/* Top section - CTA text and Launch button */}
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground truncate">
               Deploy your own AI Agent
             </span>
             <Button
@@ -351,10 +351,10 @@ function ActionButtons({ onReplay, onTryItOut }: { onReplay: () => void, onTryIt
           
           {/* Right side - Input-like area with Try it Out button */}
           <div className="flex-1 flex items-center justify-between px-3">
-            <span className="text-sm text-muted-foreground hidden md:inline">
+            <span className="text-sm text-muted-foreground hidden md:inline truncate">
               Deploy your own Coasty Agent
             </span>
-            <span className="text-sm text-muted-foreground md:hidden">
+            <span className="text-sm text-muted-foreground md:hidden truncate">
               Deploy Agent
             </span>
             <Button
@@ -786,10 +786,10 @@ function SimpleArticleContent({
                       )}>
                         {/* Chat title as a subtle header */}
                         <div className="mb-8 text-center">
-                          <h1 className="text-2xl font-semibold text-foreground/80 mb-2">
+                          <h1 className="text-2xl font-semibold text-foreground/80 mb-2 line-clamp-2">
                             {title}
                           </h1>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-muted-foreground truncate">
                             {subtitle} • {new Date(date).toLocaleDateString("en-US", {
                               year: "numeric",
                               month: "long",

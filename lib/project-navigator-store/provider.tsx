@@ -23,9 +23,9 @@ export function ProjectNavigatorProvider({ children }: { children: React.ReactNo
     // Load saved width from localStorage
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('project-navigator-width')
-      return saved ? parseInt(saved, 10) : 30
+      return saved ? parseInt(saved, 10) : 50
     }
-    return 30
+    return 50
   })
   const { chatId } = useChatSession()
   const { getChatById } = useChats()

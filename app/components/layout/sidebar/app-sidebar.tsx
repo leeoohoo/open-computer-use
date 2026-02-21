@@ -231,68 +231,68 @@ export function AppSidebar() {
             
             {/* Project Actions Section */}
             <div className="border-b border-border/30 pb-2 mb-2 transition-all duration-300 ease-in-out">
-              <div className="space-y-1.5 transition-all duration-300 ease-in-out">
+              <div className="space-y-1 transition-all duration-300 ease-in-out">
                 {/* Assign Task Button */}
                 {shouldShowCollapsed ? (
                   <button
                     className={cn(
-                      "group relative flex w-full items-center justify-center rounded-md text-sm font-medium transition-all duration-200 ease-in-out",
+                      "group flex w-full h-8 items-center justify-center rounded-md transition-all duration-200",
                       "bg-primary text-primary-foreground hover:bg-primary/90",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                      "p-1.5"
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     )}
                     type="button"
                     onClick={() => handleNavigation(() => router.push("/"))}
-                    title="Assign New Task"
+                    title="New Task"
                   >
                     <Plus size={16} className="shrink-0 transition-transform duration-200 group-hover:rotate-90" />
                   </button>
                 ) : (
                   <button
                     className={cn(
-                      "group relative flex w-full items-center rounded-md text-sm font-medium transition-all duration-200 ease-in-out",
+                      "group flex w-full items-center gap-2 rounded-md text-sm transition-all duration-200",
                       "bg-primary text-primary-foreground hover:bg-primary/90",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                      "gap-2 px-2.5 py-2"
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                      "px-2.5 py-1.5"
                     )}
                     type="button"
                     onClick={() => handleNavigation(() => router.push("/"))}
                   >
                     <Plus size={16} className="shrink-0 transition-transform duration-200 group-hover:rotate-90" />
-                    <span className="truncate">Assign New Task</span>
+                    <span className="truncate text-sm">New Task</span>
                   </button>
                 )}
-                
+
                 {/* My Computers Button */}
                 {shouldShowCollapsed ? (
                   <button
                     id="sidebar-machines-link-collapsed"
                     className={cn(
-                      "group relative flex w-full items-center justify-center rounded-md text-sm font-medium transition-all duration-200 ease-in-out",
-                      "bg-muted-foreground/20 hover:bg-muted-foreground/30 text-foreground",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                      "p-1.5"
+                      "group flex w-full h-8 items-center justify-center rounded-md transition-all duration-200",
+                      "border border-border/60 hover:border-border",
+                      "hover:bg-accent hover:text-accent-foreground",
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     )}
                     type="button"
                     onClick={() => handleNavigation(() => router.push("/machines"))}
                     title="My Computers"
                   >
-                    <Desktop size={16} className="shrink-0 transition-transform duration-200 group-hover:scale-110" />
+                    <Desktop size={16} className="shrink-0" />
                   </button>
                 ) : (
                   <button
                     id="sidebar-machines-link"
                     className={cn(
-                      "group relative flex w-full items-center rounded-md text-sm font-medium transition-all duration-200 ease-in-out",
-                      "bg-muted-foreground/20 hover:bg-muted-foreground/30 text-foreground",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                      "gap-2 px-2.5 py-2"
+                      "group flex w-full items-center gap-2 rounded-md text-sm transition-all duration-200",
+                      "border border-border/60 hover:border-border",
+                      "hover:bg-accent hover:text-accent-foreground",
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                      "px-2.5 py-1.5"
                     )}
                     type="button"
                     onClick={() => handleNavigation(() => router.push("/machines"))}
                   >
-                    <Desktop size={16} className="shrink-0 transition-transform duration-200 group-hover:scale-110" />
-                    <span className="truncate">My Computers</span>
+                    <Desktop size={16} className="shrink-0" />
+                    <span className="truncate text-sm">My Computers</span>
                   </button>
                 )}
               </div>
@@ -370,52 +370,9 @@ export function AppSidebar() {
         {/* Footer Section */}
         <SidebarFooter className="relative pt-0 transition-all duration-300 ease-in-out">
           <div className={cn("space-y-1.5 transition-all duration-300 ease-in-out", shouldShowCollapsed ? "p-2 pt-1" : "p-3 pt-1")}>
-            {/* Referral Section */}
-            {user && (
-              <div className="mb-1.5">
-                {shouldShowCollapsed ? (
-                  <button
-                    className={cn(
-                      "group flex w-full h-8 items-center justify-center rounded-md transition-all duration-200",
-                      "bg-transparent hover:bg-muted/50",
-                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    )}
-                    type="button"
-                    onClick={() => setIsReferralPopupOpen(true)}
-                    title="Invite friends & earn 5 free minutes"
-                  >
-                    <Gift size={18} weight="duotone" className="text-muted-foreground group-hover:text-foreground transition-colors" />
-                  </button>
-                ) : (
-                  <div className="relative">
-                    <button
-                      className={cn(
-                        "group relative flex w-full items-center rounded-md text-sm transition-all duration-200",
-                        "bg-muted/30 hover:bg-muted/60",
-                        "border border-border/60 hover:border-border",
-                        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-                        "px-2.5 py-1.5",
-                        "overflow-hidden"
-                      )}
-                      type="button"
-                      onClick={() => setIsReferralPopupOpen(true)}
-                    >
-                      <Gift size={16} weight="duotone" className="shrink-0 text-foreground/70 group-hover:text-foreground transition-colors" />
-                      <span className="ml-2 truncate text-sm text-foreground/70 group-hover:text-foreground transition-colors">
-                        Invite & Earn
-                      </span>
-                      <span className="ml-auto pl-1.5 text-[10px] font-medium text-muted-foreground whitespace-nowrap">
-                        +5 min
-                      </span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
             {/* Credits Section */}
             {user && (
-              <div className="mb-3">
+              <div className="mb-1.5">
                 {!shouldShowCollapsed && (
                   <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5 px-1">
                     Agent Time Balance
@@ -485,7 +442,42 @@ export function AppSidebar() {
                 )}
               </div>
             )}
-            
+
+            {/* Referral Section */}
+            {user && (
+              <div className="mb-1.5">
+                {shouldShowCollapsed ? (
+                  <button
+                    className={cn(
+                      "group flex w-full h-8 items-center justify-center rounded-md transition-all duration-200",
+                      "hover:bg-accent/50",
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    )}
+                    type="button"
+                    onClick={() => setIsReferralPopupOpen(true)}
+                    title="Share the love, get free time"
+                  >
+                    <Gift size={18} weight="duotone" className="text-muted-foreground group-hover:text-foreground transition-colors" />
+                  </button>
+                ) : (
+                  <button
+                    className={cn(
+                      "group flex w-full items-center gap-2 rounded-md text-sm transition-all duration-200",
+                      "border border-border/60 hover:border-border",
+                      "hover:bg-accent hover:text-accent-foreground",
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                      "px-2.5 py-1.5"
+                    )}
+                    type="button"
+                    onClick={() => setIsReferralPopupOpen(true)}
+                  >
+                    <Gift size={16} weight="duotone" className="shrink-0" />
+                    <span className="truncate text-sm">Share & get free time</span>
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* <button
               onClick={() =>
                 window.open("https://github.com/coasty-ai", "_blank")

@@ -3,8 +3,8 @@
 import type { ToolInvocationUIPart } from "@ai-sdk/ui-utils"
 import { cn } from "@/lib/utils"
 import {
-  ArrowsOut,
-  ArrowsIn,
+  CaretUp,
+  CaretDown,
   Monitor,
 } from "@phosphor-icons/react"
 import { AnimatePresence, motion } from "framer-motion"
@@ -21,11 +21,10 @@ export function ToolInvocation({
   toolInvocations,
 }: ToolInvocationProps) {
   const { isOpen, setIsOpen } = useProjectNavigator()
-  const [isClicked, setIsClicked] = useState(false)
   const [previousScreenshot, setPreviousScreenshot] = useState<string | null>(null)
-  
+
   // Check environment variable for showing additional info
-  const envValue = typeof window !== 'undefined' ? 
+  const envValue = typeof window !== 'undefined' ?
     process.env.NEXT_PUBLIC_PROJECT_SHOW_ADDITIONAL_INFO : 'false'
   const showAdditionalInfo = envValue === 'true'
 
@@ -40,22 +39,25 @@ export function ToolInvocation({
   const allToolsCompleted = toolInvocationsData.every(
     (tool) => tool.toolInvocation.state === "result"
   )
-  
+
   const isLoadingState = hasLoadingTools && !allToolsCompleted
 
   // Count unique tools and extract task information
   const toolCount = toolInvocationsData.length
-  
+  const completedCount = toolInvocationsData.filter(
+    (tool) => tool.toolInvocation.state === "result"
+  ).length
+
   // Function to get descriptive action sentence based on tool type
   const getToolActionDescription = (toolName: string, state: string, args?: any) => {
     const isActive = state === 'call' || state === 'partial-call'
-    
+
     // Browser tools
     if (toolName.toLowerCase().startsWith('browser')) {
       return isActive ? 'Navigating through web pages to gather information' : 'Successfully retrieved web content'
     }
-    
-    // Terminal tools  
+
+    // Terminal tools
     if (toolName.toLowerCase().startsWith('terminal')) {
       const terminalCommand = toolName.replace('terminal_', '').toLowerCase()
       switch (terminalCommand) {
@@ -73,7 +75,7 @@ export function ToolInvocation({
           return isActive ? 'Processing terminal operation' : 'Terminal operation completed'
       }
     }
-    
+
     // File tools
     if (toolName.toLowerCase().startsWith('file_')) {
       const fileCommand = toolName.replace('file_', '').toLowerCase()
@@ -94,32 +96,32 @@ export function ToolInvocation({
           return isActive ? 'Processing file operation' : 'File operation completed'
       }
     }
-    
+
     // Directory tools
     if (toolName.toLowerCase().includes('directory') || toolName.toLowerCase().includes('dir')) {
       return isActive ? 'Navigating directory structure' : 'Directory navigation completed'
     }
-    
+
     // Search tools
     if (toolName === 'webSearch' || toolName === 'googleSearch') {
       return isActive ? 'Searching the web for relevant information' : 'Web search results obtained'
     }
-    
+
     // Code execution
     if (toolName === 'codeExecution') {
       return isActive ? 'Executing code in isolated environment' : 'Code execution completed'
     }
-    
+
     // Image search
     if (toolName === 'imageSearch') {
       return isActive ? 'Searching for relevant images' : 'Image search completed'
     }
-    
+
     // URL scraper
     if (toolName === 'urlScraper') {
       return isActive ? 'Extracting content from webpage' : 'Webpage content extracted'
     }
-    
+
     // VM tools
     if (toolName === 'vmScreenshot') {
       return isActive ? 'Capturing virtual machine screen' : 'Screen capture completed'
@@ -127,7 +129,7 @@ export function ToolInvocation({
     if (toolName === 'vmAction') {
       return isActive ? 'Performing action on virtual machine' : 'Virtual machine action completed'
     }
-    
+
     // Default
     return isActive ? 'Processing action' : 'Action completed'
   }
@@ -136,7 +138,7 @@ export function ToolInvocation({
   const taskInfo = useMemo(() => {
     const tasks = toolInvocationsData.map(tool => {
       const { toolName, args, state, result } = tool.toolInvocation as any
-      
+
       // Use descriptive sentences when not showing additional info
       if (!showAdditionalInfo) {
         const description = getToolActionDescription(toolName, state, args)
@@ -144,17 +146,17 @@ export function ToolInvocation({
         if (!description) {
           return null
         }
-        return { 
-          action: description, 
+        return {
+          action: description,
           target: '', // Empty target since it's included in the description
-          state, 
-          resultInfo: null 
+          state,
+          resultInfo: null
         }
       }
-      
+
       let action = state === 'result' ? 'Processed' : 'Processing'
       let target = 'task'
-      
+
       switch (toolName) {
         case 'webSearch':
         case 'googleSearch':
@@ -212,7 +214,7 @@ export function ToolInvocation({
         default:
           target = toolName
       }
-      
+
       // Check for results count
       let resultInfo = null
       if (state === 'result' && result) {
@@ -222,34 +224,34 @@ export function ToolInvocation({
           resultInfo = result.success ? 'Success' : 'Failed'
         }
       }
-      
+
       return { action, target, state, resultInfo }
     }).filter(task => task !== null)  // Filter out null tasks (like terminal close)
-    
+
     // Get the most recent or most important task
     const primaryTask = tasks[tasks.length - 1] || tasks[0]
-    
+
     // Summarize all tasks
-    const summary = tasks.length > 1 
+    const summary = tasks.length > 1
       ? `Running ${tasks.length} tasks`
       : primaryTask ? `${primaryTask.action} ${primaryTask.target}` : 'Processing'
-    
+
     return { tasks, primaryTask, summary }
   }, [toolInvocationsData, showAdditionalInfo])
-  
+
   // Extract web search thumbnails for composite display
   const webSearchThumbnails = useMemo(() => {
     // Check all completed tools for web search results (in reverse order to get most recent)
     for (let i = toolInvocationsData.length - 1; i >= 0; i--) {
       const tool = toolInvocationsData[i]
-      
+
       if (tool.toolInvocation.state === "result" && tool.toolInvocation.result) {
         const toolName = tool.toolInvocation.toolName
-        
+
         // Check if this is a web search tool
         if (toolName === 'webSearch' || toolName === 'googleSearch') {
           const result = tool.toolInvocation.result
-          
+
           // Try to parse the result
           let parsedResult = result
           if (result && typeof result === 'object' && 'content' in result) {
@@ -276,14 +278,14 @@ export function ToolInvocation({
               parsedResult = null
             }
           }
-          
+
           // Extract thumbnails from search results
           if (Array.isArray(parsedResult)) {
             const thumbnails = parsedResult
               .filter((item: any) => item && typeof item === 'object' && (item.image || item.thumbnail))
               .slice(0, 4) // Get up to 4 images
               .map((item: any) => item.image || item.thumbnail)
-            
+
             if (thumbnails.length > 0) {
               return thumbnails
             }
@@ -291,7 +293,7 @@ export function ToolInvocation({
         }
       }
     }
-    
+
     return null
   }, [toolInvocationsData])
 
@@ -325,7 +327,7 @@ export function ToolInvocation({
     }
     return null
   }, [toolInvocationsData])
-  
+
   // Track screenshot changes
   useEffect(() => {
     if (latestScreenshot && latestScreenshot !== previousScreenshot) {
@@ -336,320 +338,194 @@ export function ToolInvocation({
     }
   }, [latestScreenshot, previousScreenshot])
 
-  const handleToggleComputer = () => {
-    setIsClicked(true)
-    // Small delay to show the animation before toggling
-    setTimeout(() => {
-      setIsOpen(!isOpen)  // Toggle instead of always setting to true
-      setIsClicked(false)
-    }, 150)
-  }
+  // Determine the thumbnail source and extra count for web search
+  const thumbnailSrc = webSearchThumbnails?.[0] || latestScreenshot || null
+  const webSearchExtra = webSearchThumbnails && webSearchThumbnails.length > 1 ? webSearchThumbnails.length - 1 : 0
+
+  // Progress ratio
+  const progressRatio = toolCount > 0 ? completedCount / toolCount : 0
+
+  // Primary action text (truncated for single line)
+  const actionText = taskInfo.primaryTask
+    ? (taskInfo.primaryTask.target
+        ? `${taskInfo.primaryTask.action} ${taskInfo.primaryTask.target}`
+        : taskInfo.primaryTask.action)
+    : (isLoadingState ? 'Processing' : 'Completed')
+
+  const countText = isLoadingState
+    ? `${completedCount}/${toolCount} tasks`
+    : `${toolCount} ${toolCount === 1 ? 'task' : 'tasks'} done`
 
   return (
-    <div 
-      className="relative mx-auto" 
-      style={{ maxWidth: 'calc(100% - 1rem)' }}
-    >
-      {/* Ripple effect when clicked */}
-      <AnimatePresence>
-        {isClicked && (
-          <motion.div
-            className="absolute inset-0 rounded-t-2xl rounded-b-md"
-            initial={{ scale: 1, opacity: 0.3 }}
-            animate={{ scale: 1.5, opacity: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            style={{
-              background: 'radial-gradient(circle, rgba(var(--primary), 0.2) 0%, transparent 70%)',
-              pointerEvents: 'none',
-              zIndex: 1
-            }}
-          />
-        )}
-      </AnimatePresence>
-      <button
-        onClick={handleToggleComputer}
-        type="button"
-        className="group rounded-t-2xl rounded-b-md p-4 w-full bg-muted/80 backdrop-blur-md border border-border/30 hover:bg-muted/90 transition-colors duration-200"
-        style={{
-          borderBottom: '1px solid rgba(var(--border), 0.2)',
-          boxShadow: '0 -6px 12px -3px rgba(0, 0, 0, 0.08), 0 -3px 6px -2px rgba(0, 0, 0, 0.04)',
-          zIndex: 0
-        }}
+    <AnimatePresence>
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: "auto", opacity: 1 }}
+        exit={{ height: 0, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        className="overflow-hidden"
       >
-        <div className="flex items-center justify-between">
+        <motion.button
+          onClick={() => setIsOpen(!isOpen)}
+          type="button"
+          whileTap={{ scale: 0.995 }}
+          whileHover="hovered"
+          initial="idle"
+          animate="idle"
+          className={cn(
+            "group relative w-full",
+            "rounded-t-2xl rounded-b-none",
+            "bg-gradient-to-b from-neutral-300/90 to-neutral-100 dark:from-neutral-600/90 dark:to-neutral-800",
+            "px-4 py-3",
+            "cursor-pointer"
+          )}
+        >
           <div className="flex items-center gap-3">
-            {/* Computer screen preview - always show in landscape format */}
-            <div className="relative h-16 w-24 transition-transform duration-200 ease-out group-hover:scale-110">
-              {/* Aura effect based on status */}
-              {isLoadingState && (
-                <div className="absolute -inset-2 z-0">
-                  <div 
-                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 opacity-30 blur-xl animate-pulse"
-                    style={{
-                      animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, shimmerAura 3s ease-in-out infinite'
-                    }}
-                  />
-                </div>
-              )}
-              {!isLoadingState && allToolsCompleted && (
-                <div className="absolute -inset-2 z-0">
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 0.25, scale: 1 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500 via-emerald-500 to-green-500 blur-xl"
-                  />
-                </div>
-              )}
+            {/* Screenshot thumbnail */}
+            <motion.div
+              className="relative h-11 w-[4.5rem] flex-shrink-0 rounded-lg overflow-hidden ring-1 ring-black/5 dark:ring-white/10 bg-neutral-200 dark:bg-neutral-700"
+              variants={{
+                idle: { scale: 1 },
+                hovered: { scale: 1.25 },
+              }}
+              transition={{ type: "spring", stiffness: 500, damping: 15 }}
+            >
               <AnimatePresence mode="wait">
-                {webSearchThumbnails ? (
-                  // Show composite thumbnail for web search results
+                {thumbnailSrc ? (
                   <motion.div
-                    key={`search-thumbnails-${webSearchThumbnails.length}`}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.05 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="absolute inset-0 z-10"
+                    key={thumbnailSrc.substring(0, 30)}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="absolute inset-0"
                   >
-                    <div className="relative h-full w-full rounded-lg overflow-hidden bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700/50 shadow-sm">
-                      {webSearchThumbnails.length === 1 ? (
-                        // Single image
-                        <img
-                          src={webSearchThumbnails[0]}
-                          alt="Search result"
-                          className="w-full h-full object-cover opacity-95"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                          }}
-                        />
-                      ) : webSearchThumbnails.length === 2 ? (
-                        // Two images side by side
-                        <div className="flex h-full">
-                          {webSearchThumbnails.map((thumbnail: string, i: number) => (
-                            <div key={i} className="w-1/2 h-full relative overflow-hidden">
-                              <img
-                                src={thumbnail}
-                                alt={`Result ${i + 1}`}
-                                className="w-full h-full object-cover opacity-95"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none'
-                                }}
-                              />
-                              {i === 0 && <div className="absolute right-0 top-0 bottom-0 w-px bg-zinc-700/50" />}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        // 3 or 4 images in a grid
-                        <div className="grid grid-cols-2 gap-px bg-zinc-700/50 h-full">
-                          {webSearchThumbnails.map((thumbnail: string, i: number) => (
-                            <div key={i} className="relative overflow-hidden bg-zinc-900">
-                              <img
-                                src={thumbnail}
-                                alt={`Result ${i + 1}`}
-                                className="w-full h-full object-cover opacity-95"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none'
-                                }}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {/* Search indicator in corner */}
-                      <div className="absolute bottom-1 right-1 bg-black/70 backdrop-blur-sm rounded-md px-1.5 py-0.5 flex items-center gap-1">
-                        <svg className="h-3 w-3 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <span className="text-[8px] text-white/70 font-medium">Web</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : latestScreenshot ? (
-                  // Show larger screenshot preview if available
-                  <motion.div
-                    key={`screenshot-${latestScreenshot.substring(0, 20)}`} // Use part of screenshot as key
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.05 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="absolute inset-0 z-10"
-                  >
-                    <div className="relative h-full w-full rounded-lg overflow-hidden border border-border/50 bg-gray-900 shadow-sm">
-                      <motion.img
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.4, delay: 0.1 }}
-                        src={latestScreenshot}
-                        alt="Computer screenshot"
-                        className="h-full w-full object-cover"
-                        style={{ objectPosition: 'top center' }}
+                    <img
+                      src={thumbnailSrc}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      onError={(e) => { e.currentTarget.style.display = 'none' }}
+                    />
+                    {isLoadingState && (
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+                        animate={{ x: ["-100%", "100%"] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        style={{ width: "100%" }}
                       />
-                      {/* Small monitor icon in corner */}
-                      <div className="absolute bottom-1 right-1 bg-black/50 backdrop-blur-sm rounded p-0.5">
-                        <Monitor className="h-3 w-3 text-white/70" weight="duotone" />
+                    )}
+                    {webSearchExtra > 0 && (
+                      <div className="absolute bottom-0.5 right-0.5 bg-black/60 backdrop-blur-sm rounded text-[9px] text-white/80 font-medium px-1 leading-tight">
+                        +{webSearchExtra}
                       </div>
-                    </div>
+                    )}
                   </motion.div>
                 ) : (
-                  // Simple monitor placeholder when no screenshot available
-                  <div className="absolute inset-0 z-10 rounded-lg border border-border/50 bg-muted/50 flex items-center justify-center">
-                    <Monitor className="h-6 w-6 text-muted-foreground/40" weight="duotone" />
-                  </div>
+                  <motion.div
+                    key="placeholder"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <Monitor className="h-5 w-5 text-muted-foreground/40" weight="duotone" />
+                    {isLoadingState && (
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 dark:via-white/10 to-transparent"
+                        animate={{ x: ["-100%", "100%"] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        style={{ width: "100%" }}
+                      />
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+
+            {/* Text block — two clean lines */}
+            <div className="flex-1 min-w-0">
+              {/* Line 1: Action description */}
+              <motion.p
+                className={cn(
+                  "text-sm font-medium text-foreground truncate leading-tight",
+                  isLoadingState && "shimmer-text"
+                )}
+                animate={isLoadingState ? { backgroundPosition: ['200% 0', '-200% 0'] } : {}}
+                transition={{ duration: 1.5, repeat: isLoadingState ? Infinity : 0, ease: "linear" }}
+                style={isLoadingState ? {
+                  backgroundSize: '200% 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                } : {}}
+              >
+                {actionText}
+              </motion.p>
+              {/* Line 2: Count + hint */}
+              <p className="text-[11px] leading-tight mt-1 truncate">
+                <span className="text-muted-foreground">{countText}</span>
+                <span className="text-muted-foreground/30 mx-1">&middot;</span>
+                <span className="text-muted-foreground/50 group-hover:text-muted-foreground/70 transition-colors">
+                  {isOpen ? 'Click to minimize' : 'Click to view details'}
+                </span>
+              </p>
+            </div>
+
+            {/* Right side: progress pill + caret */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Progress pill */}
+              <div className="h-1.5 w-10 rounded-full bg-neutral-300/40 dark:bg-neutral-600/30 overflow-hidden relative">
+                <motion.div
+                  className="h-full rounded-full relative overflow-hidden"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.max(progressRatio * 100, isLoadingState ? 12 : 0)}%` }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                >
+                  <div className={cn(
+                    "absolute inset-0 rounded-full",
+                    allToolsCompleted
+                      ? "bg-gradient-to-r from-emerald-500/60 to-green-400/50"
+                      : "bg-gradient-to-r from-neutral-500/50 to-neutral-400/40 dark:from-neutral-400/50 dark:to-neutral-300/40"
+                  )} />
+                  {isLoadingState && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 dark:via-white/20 to-transparent"
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                  )}
+                </motion.div>
+              </div>
+
+              {/* Divider + caret */}
+              <div className="w-px h-4 bg-border/30" />
+              <AnimatePresence mode="wait" initial={false}>
+                {isOpen ? (
+                  <motion.div
+                    key="up"
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <CaretUp className="h-3.5 w-3.5 text-muted-foreground" weight="bold" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="down"
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 4 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <CaretDown className="h-3.5 w-3.5 text-muted-foreground" weight="bold" />
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
-            <div className="text-left">
-              <div className="flex items-center gap-2">
-                <motion.p 
-                  className={cn("font-medium text-sm", isLoadingState && "shimmer-text")}
-                  animate={isLoadingState ? {
-                    backgroundPosition: ['200% 0', '-200% 0']
-                  } : {}}
-                  transition={{
-                    duration: 3,
-                    repeat: isLoadingState ? Infinity : 0,
-                    ease: "linear"
-                  }}
-                  style={isLoadingState ? {
-                    backgroundSize: '200% 100%',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                  } : {}}
-                >
-                  {taskInfo.primaryTask ? 
-                    (taskInfo.primaryTask.target ? 
-                      `${taskInfo.primaryTask.action} ${taskInfo.primaryTask.target}` : 
-                      taskInfo.primaryTask.action) : 
-                    (isLoadingState ? 'Processing...' : 'Processed')
-                  }
-                </motion.p>
-              </div>
-              <div className="flex items-center gap-3 mt-1">
-                <motion.div
-                  animate={isLoadingState ? {
-                    backgroundPosition: ['200% 0', '-200% 0']
-                  } : {}}
-                  transition={{
-                    duration: 3,
-                    repeat: isLoadingState ? Infinity : 0,
-                    ease: "linear",
-                    delay: 0.5
-                  }}
-                  className={isLoadingState ? "shimmer-text-muted" : ""}
-                  style={isLoadingState ? {
-                    backgroundSize: '200% 100%',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    display: 'inline-block'
-                  } : {}}
-                >
-                  <p className="text-xs text-muted-foreground">
-                    {isLoadingState && (
-                      <span>
-                        {`${toolCount} ${toolCount === 1 ? 'task' : 'tasks'} in progress`}
-                        <motion.span
-                          className="inline-block ml-0.5"
-                          animate={{
-                            opacity: [0, 1, 0]
-                          }}
-                          transition={{
-                            duration: 1.5,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                          }}
-                        >
-                          .
-                        </motion.span>
-                        <motion.span
-                          className="inline-block"
-                          animate={{
-                            opacity: [0, 1, 0]
-                          }}
-                          transition={{
-                            duration: 1.5,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                            delay: 0.2
-                          }}
-                        >
-                          .
-                        </motion.span>
-                        <motion.span
-                          className="inline-block"
-                          animate={{
-                            opacity: [0, 1, 0]
-                          }}
-                          transition={{
-                            duration: 1.5,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                            delay: 0.4
-                          }}
-                        >
-                          .
-                        </motion.span>
-                      </span>
-                    )}
-                    {!isLoadingState && (
-                      `${toolCount} ${toolCount === 1 ? 'task' : 'tasks'} completed`
-                    )}
-                  </p>
-                </motion.div>
-                {taskInfo.primaryTask?.resultInfo && (
-                  <span className="text-xs text-muted-foreground/70">
-                    • {taskInfo.primaryTask.resultInfo}
-                  </span>
-                )}
-              </div>
-              {!isLoadingState && (
-                <p className="text-xs text-muted-foreground/60 mt-0.5">
-                  {isOpen ? 'Click to minimize' : 'Click to view details'}
-                </p>
-              )}
-            </div>
           </div>
-          <div className="flex items-center">
-            <AnimatePresence mode="wait">
-              {isOpen ? (
-                <motion.div
-                  key="minimize"
-                  initial={{ opacity: 0, rotate: -90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.2 }}
-                  className="relative"
-                  title="Minimize details"
-                >
-                  <ArrowsIn 
-                    className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" 
-                    weight="bold"
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="maximize"
-                  initial={{ opacity: 0, rotate: 90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: -90 }}
-                  transition={{ duration: 0.2 }}
-                  className="relative"
-                  title="Expand details"
-                >
-                  <ArrowsOut 
-                    className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" 
-                    weight="bold"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </button>
-    </div>
+        </motion.button>
+      </motion.div>
+    </AnimatePresence>
   )
 }
