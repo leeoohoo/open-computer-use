@@ -269,7 +269,7 @@ export function MachinesContent() {
           <NoiseBackground
             containerClassName="w-auto p-[1px] rounded-lg bg-transparent dark:bg-transparent shadow-none"
             className="p-0"
-            gradientColors={["rgb(139, 92, 246)", "rgb(99, 102, 241)", "rgb(168, 85, 247)"]}
+            gradientColors={["rgb(115, 115, 115)", "rgb(163, 163, 163)", "rgb(82, 82, 82)"]}
             noiseIntensity={0.06}
             speed={0.06}
           >
@@ -288,7 +288,7 @@ export function MachinesContent() {
           <NoiseBackground
             containerClassName="w-full p-[1px] rounded-lg bg-transparent dark:bg-transparent shadow-none"
             className="p-0"
-            gradientColors={["rgb(139, 92, 246)", "rgb(99, 102, 241)", "rgb(168, 85, 247)"]}
+            gradientColors={["rgb(115, 115, 115)", "rgb(163, 163, 163)", "rgb(82, 82, 82)"]}
             noiseIntensity={0.06}
             speed={0.06}
           >
