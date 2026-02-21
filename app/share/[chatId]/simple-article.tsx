@@ -19,7 +19,7 @@ import { useRef, useState, useEffect, useCallback } from "react"
 import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
 import { Button } from "@/components/ui/button"
 import { ArrowUpRight, Play, FastForward } from "@phosphor-icons/react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { ProjectNavigatorProvider, useProjectNavigator } from "@/lib/project-navigator-store/provider"
 import { MessagesProvider } from "@/lib/chat-store/messages/provider"
 import { ChatsProvider } from "@/lib/chat-store/chats/provider"
@@ -315,6 +315,8 @@ function SimpleArticleContent({
   const { streamingMessages, setStreamingMessages } = useChatStreaming()
   const streamingMessagesRef = useRef<any[]>([])
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const isEmbed = searchParams.get("embed") === "true"
 
   // Helper to update streaming messages (supports callback pattern)
   const updateStreamingMessages = useCallback((updater: any[] | ((prev: any[]) => any[])) => {
@@ -415,6 +417,8 @@ function SimpleArticleContent({
   const handleTryItOut = useCallback(() => {
     router.push('/')
   }, [router])
+
+
 
   const skipToEnd = useCallback(() => {
     // Stop any running replay timer
@@ -701,10 +705,13 @@ function SimpleArticleContent({
         }}
       >
         <main className="@container relative h-dvh w-full">
-          <ShareHeader />
-          
+          {!isEmbed && <ShareHeader />}
+
           {/* Content area - matching main chat exactly */}
-          <div className="relative pt-[var(--spacing-app-header,56px)] h-full overflow-hidden scrollbar-invisible">
+          <div className={cn(
+            "relative h-full overflow-hidden scrollbar-invisible",
+            isEmbed ? "pt-0" : "pt-[var(--spacing-app-header,56px)]"
+          )}>
             <div className="h-full overflow-hidden scrollbar-invisible scroll-container">
               <div className="@container/main relative flex h-full flex-col items-center justify-end md:justify-center no-scrollbar">
                 
@@ -717,8 +724,8 @@ function SimpleArticleContent({
                         "max-w-3xl",
                         "mx-auto"
                       )}>
-                        {/* Chat title as a subtle header */}
-                        <div className="mb-8 text-center">
+                        {/* Chat title as a subtle header — hidden in embed mode */}
+                        <div className={cn("mb-8 text-center", isEmbed && "hidden")}>
                           <h1 className="text-2xl font-semibold text-foreground/80 mb-2 line-clamp-2">
                             {title}
                           </h1>
@@ -799,10 +806,10 @@ function SimpleArticleContent({
                     )}
                   </AnimatePresence>
                   
-                  {/* Action buttons after replay */}
+                  {/* Action buttons after replay — hidden in embed mode */}
                   <AnimatePresence>
-                    {showActionButtons && (
-                      <ActionButtons 
+                    {showActionButtons && !isEmbed && (
+                      <ActionButtons
                         onReplay={restartReplay}
                         onTryItOut={handleTryItOut}
                       />
@@ -814,7 +821,7 @@ function SimpleArticleContent({
           </div>
         </main>
       </div>
-      
+
       {/* Project Navigator - show for shared chat */}
       {chatId && (
         <ProjectNavigator

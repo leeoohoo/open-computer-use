@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { NoiseBackground } from "@/components/ui/noise-background"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { PointerHighlight } from "@/components/ui/pointer-highlight"
-import { HeroParallaxChat } from "@/components/ui/hero-parallax-chat"
+// HeroParallaxChat removed — demo section is now static
 // SparklesCore available but not used in current hero design
 // import { SparklesCore } from "@/components/ui/sparkles"
 import { BentoGrid, BentoCard } from "@/components/magicui/bento-grid"
@@ -52,29 +52,29 @@ const BRAND_SUBTITLE_TEXT = "I am designed to emulate you."
 
 const features = [
   {
+    icon: Zap,
+    title: "Self-Correcting Agent",
+    description: "Made a wrong click? Took a wrong turn? The agent detects mistakes, adapts on the fly, and keeps moving toward the goal. No hand-holding required.",
+  },
+  {
+    icon: Shield,
+    title: "Complete Audit Logging",
+    description: "Every command, every click, every action. Fully logged and reviewable. You always know exactly what your agent did and why. No black boxes.",
+  },
+  {
+    icon: Check,
+    title: "SOC 2 Compliant",
+    description: "Enterprise-grade security and compliance built in. Your data is handled with the highest standards of trust, privacy, and operational integrity.",
+  },
+  {
     icon: Monitor,
     title: "Isolated Virtual Machines",
-    description: "We provide isolated virtual machines - no need to bring anything. Complete development environments ready to use.",
+    description: "Each session runs in its own sandboxed VM. Your data stays safe, your machine stays untouched, and nothing leaks between sessions.",
   },
   {
-    icon: Zap,
-    title: "Automatic VM Switching",
-    description: "Automatic virtual machine switch anytime. Seamlessly transition between different environments as needed.",
-  },
-  {
-    icon: HardDrive,
-    title: "Storage Provided",
-    description: "Storage also provided. Keep your files, projects, and data persistent across sessions.",
-  },
-  {
-    icon: Infinity,
-    title: "Unlimited Requests",
-    description: "Unlimited requests in given time quota. Make as many AI requests as you need within your session.",
-  },
-  {
-    icon: Globe,
-    title: "Unlimited Web Search",
-    description: "Unlimited web only search. Access and analyze information from across the entire internet.",
+    icon: Star,
+    title: "State-of-the-Art Performance",
+    description: "Ranked #1 on the OSWorld benchmark. When you deploy an agent, you know the work is actually getting done, not just attempted.",
   },
 ]
 
@@ -231,29 +231,16 @@ const fileTreeElements: TreeViewElement[] = [
 
 const demoChatSessions = [
   {
-    title: "Defi Protocol Market Arbitrage Research",
-    chatId: "72ee57a3-e831-44fa-88a7-02c0f9e777d0",
-    description: "Calculate APY differences accounting for gas fees, identify profitable arbitrage paths, and generate an automated trading script",
+    title: "Proving It's Not a Robot... Or Is It?",
+    chatId: "1cd404ae-3fcb-4d7f-b9d4-dac7aa26fc6d",
+    description: "An AI agent faces the ultimate identity crisis, autonomously solving an \"I'm not a robot\" CAPTCHA in real time.",
+    tag: "Vision + Interaction",
   },
   {
-    title: "Quant Trading & Research",
-    chatId: "6f24c719-868d-4308-9e54-8ab00914761d",
-    description: "Backtest a Pairs Trading Strategy on QuantConnect",
-  },
-  {
-    title: "Nvidia Options Web app and Dashboard",
-    chatId: "fb94d739-978b-42f8-81f3-5acaaeb3420f",
-    description: " Options Greeks Dashboard Construction",
-  },
-  {
-    title: "Just Browsing and Playing",
-    chatId: "2c27ad52-47e0-4ed4-9998-701cebc1c409",
-    description: "AI agent playing your favourite songs",
-  },
-  {
-    title: "Human Control and Intervention",
-    chatId: "977166f6-4d5f-4977-904b-603931bd8a8d",
-    description: "AI agent researching ask you for instructions",
+    title: "The Perfect Circle Challenge",
+    chatId: "fb72177b-6b03-4bac-9784-df694fab268a",
+    description: "Can a machine draw a perfect circle? Watch an AI agent analyze the canvas, steady the cursor, and go for a flawless score.",
+    tag: "Precision Control",
   },
 ]
 
@@ -613,65 +600,21 @@ export function LandingPage() {
               </Button>
             </motion.div>
 
-            {/* Demo Showcase with browser chrome */}
-            <motion.div variants={itemVariants} className="relative">
-              {/* Glow behind the browser frame */}
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-b from-white/40 via-white/20 to-transparent blur-2xl dark:from-white/10 dark:via-white/5" />
-
-              {/* Browser chrome frame */}
-              <div className="relative rounded-xl border border-border/60 bg-background/80 backdrop-blur-sm shadow-2xl shadow-black/5 dark:shadow-black/20 overflow-hidden">
-                {/* Title bar */}
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-border/40 bg-muted/30">
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-3 w-3 rounded-full bg-red-400/80 dark:bg-red-500/60" />
-                    <div className="h-3 w-3 rounded-full bg-yellow-400/80 dark:bg-yellow-500/60" />
-                    <div className="h-3 w-3 rounded-full bg-green-400/80 dark:bg-green-500/60" />
-                  </div>
-                  <div className="flex-1 flex justify-center">
-                    <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-1 text-xs text-muted-foreground min-w-[200px] justify-center">
-                      <div className="h-3 w-3 rounded-full border border-muted-foreground/30 flex items-center justify-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      </div>
-                      coasty.ai · AI Agent Session
-                    </div>
-                  </div>
-                  <div className="w-[52px]" /> {/* Spacer to balance traffic lights */}
-                </div>
-                {/* Video/GIF content */}
-                <div className="relative">
-                  <Image
-                    src="/Pi7_Gif.gif"
-                    alt="AI Agent controlling a computer — browsing, coding, and completing tasks autonomously"
-                    width={1200}
-                    height={675}
-                    className="w-full h-auto"
-                    unoptimized
-                    priority
-                  />
-                </div>
-              </div>
+            {/* Live session replay */}
+            <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/40" style={{ aspectRatio: "16 / 9" }}>
+              <iframe
+                src="/share/1cd404ae-3fcb-4d7f-b9d4-dac7aa26fc6d?embed=true"
+                title="AI Agent solving a CAPTCHA — live session replay"
+                className="absolute inset-0 w-full h-full border-0"
+                loading="lazy"
+                allow="autoplay"
+              />
             </motion.div>
 
-            {/* Social proof strip */}
-            <motion.div variants={itemVariants} className={cn(
-              "flex items-center justify-center gap-6 mt-10",
-              isMobile ? "flex-col gap-3" : "flex-row"
-            )}>
-              <p className="text-xs text-muted-foreground/70 uppercase tracking-wider font-medium">Built with</p>
-              <div className="flex items-center gap-5 text-muted-foreground/50">
-                {[
-                  { label: "Next.js", icon: "N" },
-                  { label: "Python", icon: "Py" },
-                  { label: "Docker", icon: "D" },
-                  { label: "Selenium", icon: "Se" },
-                ].map((tech) => (
-                  <span key={tech.label} className="flex items-center gap-1.5 text-xs font-medium">
-                    <span className="flex h-5 w-5 items-center justify-center rounded bg-muted/60 text-[10px] font-bold text-muted-foreground/70">{tech.icon}</span>
-                    {tech.label}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
+            {/* One-liner */}
+            <motion.p variants={itemVariants} className="mt-10 text-center text-sm text-muted-foreground">
+              No time limits. No rate limits. It runs until the job is done.
+            </motion.p>
           </motion.div>
         </section>
 
@@ -714,7 +657,7 @@ export function LandingPage() {
               </div>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="space-y-2.5">
+            <motion.div variants={itemVariants} className={cn(isMobile ? "space-y-3" : "space-y-2.5")}>
               {[
                 { name: "Coasty", org: "Ours", score: 82.0, highlight: true, type: "framework" as const },
                 { name: "Agent S3", org: "Simular · Opus 4.5 + GPT-5", score: 72.6, type: "framework" as const },
@@ -733,16 +676,19 @@ export function LandingPage() {
                   viewport={{ once: true }}
                   transition={isMobile ? undefined : { delay: i * 0.06, duration: 0.4 }}
                   className={cn(
-                    "flex items-center gap-3",
+                    isMobile ? "flex flex-col gap-1" : "flex items-center gap-3",
                     entry.highlight && "py-1"
                   )}
                 >
+                  {/* Label: stacked above bar on mobile, side-by-side on desktop */}
                   <div className={cn(
-                    "flex-shrink-0 text-right",
-                    isMobile ? "w-28 text-xs" : "w-44 text-sm"
+                    isMobile
+                      ? "flex items-center justify-between text-xs"
+                      : "flex-shrink-0 text-right w-44 text-sm"
                   )}>
                     <span className={cn(
-                      "font-medium inline-flex items-center justify-end gap-1.5",
+                      "font-medium inline-flex items-center gap-1.5",
+                      isMobile ? "justify-start" : "justify-end",
                       entry.highlight ? "text-primary" : "text-foreground"
                     )}>
                       {entry.highlight && mounted && (
@@ -755,12 +701,29 @@ export function LandingPage() {
                         />
                       )}
                       {entry.name}
+                      {isMobile && (
+                        <span className="text-muted-foreground font-normal ml-1">{entry.org}</span>
+                      )}
                     </span>
-                    <span className="text-muted-foreground block text-xs">{entry.org}</span>
+                    {isMobile && (
+                      <span className={cn(
+                        "font-semibold tabular-nums",
+                        entry.highlight ? "text-primary" : "text-foreground"
+                      )}>
+                        {entry.score}%
+                      </span>
+                    )}
+                    {!isMobile && (
+                      <span className="text-muted-foreground block text-xs">{entry.org}</span>
+                    )}
                   </div>
+                  {/* Bar */}
                   <div className={cn(
-                    "flex-1 relative rounded-md bg-muted/50 overflow-hidden",
-                    entry.highlight ? "h-10 shadow-[0_0_20px_rgba(59,130,246,0.3)] ring-1 ring-blue-500/30" : "h-7"
+                    "relative rounded-md bg-muted/50 overflow-hidden",
+                    isMobile ? "w-full" : "flex-1",
+                    entry.highlight
+                      ? cn(isMobile ? "h-8" : "h-10", "shadow-[0_0_20px_rgba(59,130,246,0.3)] ring-1 ring-blue-500/30")
+                      : cn(isMobile ? "h-6" : "h-7")
                   )}>
                     {/* Bar fill */}
                     {isMobile ? (
@@ -827,13 +790,15 @@ export function LandingPage() {
                         )}
                       </motion.div>
                     )}
-                    <span className={cn(
-                      "absolute right-2 top-1/2 -translate-y-1/2 font-semibold tabular-nums z-10",
-                      isMobile ? "text-xs" : "text-sm",
-                      entry.highlight ? "text-white" : "text-foreground"
-                    )}>
-                      {entry.score}%
-                    </span>
+                    {/* Score label inside bar — desktop only (mobile shows it in the header row) */}
+                    {!isMobile && (
+                      <span className={cn(
+                        "absolute right-2 top-1/2 -translate-y-1/2 font-semibold tabular-nums z-10 text-sm",
+                        entry.highlight ? "text-white" : "text-foreground"
+                      )}>
+                        {entry.score}%
+                      </span>
+                    )}
                   </div>
                 </motion.div>
               ))}
@@ -870,102 +835,23 @@ export function LandingPage() {
             
             <BentoGrid className={cn(
               "w-full",
-              isMobile 
-                ? "grid-cols-1 auto-rows-[18rem]" 
-                : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-[20rem]"
+              isMobile
+                ? "grid-cols-1 auto-rows-[18rem]"
+                : "grid-cols-1 sm:grid-cols-2 auto-rows-[20rem]"
             )}>
               {features.map((feature, index) => (
                 <motion.div
                   key={feature.title}
                   variants={itemVariants}
-                  className={cn(
-                    index === 0 && !isMobile ? "col-span-2" : "col-span-1",
-                    index === 3 && !isMobile ? "col-span-2" : "col-span-1"
-                  )}
+                  className={cn(index === 0 && !isMobile && "col-span-2")}
                 >
                   <BentoCard
                     name={feature.title}
-                    className={cn(
-                      "h-full",
-                      index === 0 && !isMobile ? "col-span-2" : "col-span-1",
-                      index === 3 && !isMobile ? "col-span-2" : "col-span-1"
-                    )}
+                    className="h-full col-span-1"
                     background={
-                      feature.title === "Unlimited Web Search" ? (
-                        <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                          <Globe className="h-32 w-32" />
-                        </div>
-                      ) : feature.title === "Storage Provided" ? (
-                        <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
-                          <div className="p-4 scale-75">
-                            <Tree 
-                              elements={fileTreeElements}
-                              initialExpandedItems={["1", "2", "3"]}
-                              className="text-xs"
-                            >
-                              {fileTreeElements.map((element) => (
-                                <TreeItem key={element.id} element={element} />
-                              ))}
-                            </Tree>
-                          </div>
-                        </div>
-                      ) : feature.title === "Unlimited Requests" ? (
-                        <div className="absolute inset-0 overflow-hidden">
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            {isMobile ? (
-                              <Infinity className="w-48 h-48 opacity-20" />
-                            ) : (
-                              <motion.div
-                                className="opacity-20"
-                                animate={{ rotate: 360 }}
-                                transition={{
-                                  duration: 20,
-                                  ease: "linear",
-                                  repeat: Number.POSITIVE_INFINITY,
-                                }}
-                              >
-                                <Infinity className="w-48 h-48" />
-                              </motion.div>
-                            )}
-                          </div>
-                          {/* Animated rings — desktop only */}
-                          {!isMobile && (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              {[0, 1, 2].map((index) => (
-                                <motion.div
-                                  key={index}
-                                  className="absolute w-32 h-32 border-2 border-primary/10 rounded-full"
-                                  initial={{ scale: 1, opacity: 0 }}
-                                  animate={{
-                                    scale: [1, 2.5],
-                                    opacity: [0.5, 0],
-                                  }}
-                                  transition={{
-                                    duration: 3,
-                                    ease: "easeOut" as const,
-                                    repeat: Number.POSITIVE_INFINITY,
-                                    delay: index * 1,
-                                  }}
-                                />
-                              ))}
-                            </div>
-                          )}
-                          {/* Grid dots pattern */}
-                          <div className="absolute inset-0">
-                            <div
-                              className="w-full h-full opacity-5"
-                              style={{
-                                backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
-                                backgroundSize: '30px 30px',
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                          <feature.icon className="h-32 w-32" />
-                        </div>
-                      )
+                      <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                        <feature.icon className="h-32 w-32" />
+                      </div>
                     }
                     Icon={feature.icon}
                     description={feature.description}
@@ -988,26 +874,83 @@ export function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-7xl mx-auto"
+            className="max-w-4xl mx-auto"
           >
             <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className={cn(
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                See AI Agents in Action
+                See It in Action
               </h2>
               <p className={cn(
                 "text-muted-foreground",
                 isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
               )}>
-                Watch how our AI agents complete real-world tasks
+                Real sessions. No scripts. No edits.
               </p>
             </motion.div>
+
+            <motion.div
+              variants={itemVariants}
+              className={cn(
+                "grid gap-4",
+                isMobile ? "grid-cols-1" : "grid-cols-2"
+              )}
+            >
+              {demoChatSessions.map((demo) => (
+                <Link
+                  key={demo.chatId}
+                  href={`/share/${demo.chatId}`}
+                  target="_blank"
+                  className="group relative"
+                >
+                  <div className={cn(
+                    "relative h-full rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden",
+                    "transition-all duration-300",
+                    "hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5",
+                    "hover:-translate-y-1",
+                    isMobile ? "p-5" : "p-6"
+                  )}>
+                    {/* Subtle gradient bg */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                    <div className="relative h-full flex flex-col gap-4">
+                      {/* Tag */}
+                      <div className="flex items-center justify-between">
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-muted-foreground/70">
+                          <span className="h-1 w-1 rounded-full bg-emerald-500" />
+                          {demo.tag}
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
+                      </div>
+
+                      {/* Title */}
+                      <h3 className={cn(
+                        "font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors duration-200",
+                        isMobile ? "text-lg" : "text-xl"
+                      )}>
+                        {demo.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                        {demo.description}
+                      </p>
+
+                      {/* Footer */}
+                      <div className="flex items-center gap-2 pt-2">
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60">
+                          <Play className="h-3 w-3" />
+                          <span>Watch session</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </motion.div>
           </motion.div>
-          <div className="relative min-h-[400px]">
-            <HeroParallaxChat demos={demoChatSessions} />
-          </div>
         </section>
 
         {/* Pricing Section */}
