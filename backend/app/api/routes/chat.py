@@ -162,11 +162,37 @@ async def get_machine_connection_info(machine_id: str, user_id: str) -> Optional
         if not machine:
             logger.error(f"Machine {machine_id} not found for user {user_id}")
             return None
-        
+
+        # Check if it's an Electron machine in the DB (provider == "electron").
+        # When the Electron WebSocket drops briefly, cleanup sets status to
+        # "stopped" and removes session_data.  We still return Electron info
+        # so the caller can wait for the app to reconnect instead of 404-ing.
+        machine_settings = machine.get("settings", {})
+        if machine_settings.get("provider") == "electron":
+            logger.info(
+                f"Machine {machine_id} is an Electron machine in DB "
+                f"(status={machine.get('status')}), returning Electron info"
+            )
+            return {
+                "public_ip": "electron",
+                "agent_port": 0,
+                "vnc_port": 0,
+                "websocket_port": 0,
+                "machine_name": machine.get("display_name", "Local Desktop"),
+                "vnc_password": None,
+                "is_local": True,
+                "is_electron": True,
+                "system_info": {
+                    "platform": machine_settings.get("platform", "unknown"),
+                    "hostname": machine_settings.get("hostname", ""),
+                    "username": machine_settings.get("username", ""),
+                },
+            }
+
         if machine.get("status") != "running":
             logger.warning(f"Machine {machine_id} is not running (status: {machine.get('status')})")
             return None
-        
+
         # Check if it's marked as local in settings
         settings = machine.get("settings", {})
         if settings.get("isLocal"):
@@ -309,12 +335,18 @@ async def chat_endpoint(
         # Pre-establish connection to VM agent
         if connection_info.get("is_electron"):
             # Electron connections are already established via the /api/electron/ws endpoint.
-            # Just verify the connection exists in vm_control_service.
+            # If the connection isn't present yet (app still reconnecting after a
+            # brief drop), wait up to 20s for it instead of failing immediately.
             if chat_request.machine_id not in vm_control_service.connections:
-                raise HTTPException(
-                    status_code=503,
-                    detail="Electron desktop app is not connected. Please ensure the app is running."
+                logger.info(f"Electron connection not present for {chat_request.machine_id}, waiting for reconnect...")
+                reconnected = await vm_control_service._wait_for_electron_reconnect(
+                    chat_request.machine_id
                 )
+                if not reconnected:
+                    raise HTTPException(
+                        status_code=503,
+                        detail="Electron desktop app is not connected. Please ensure the app is running."
+                    )
             logger.info(f"Using existing Electron connection for {chat_request.machine_id}")
         else:
             try:

@@ -279,6 +279,33 @@ class VMControlService:
         # Clean up on exit
         await self._cleanup_connection(machine_id)
     
+    async def _wait_for_electron_reconnect(
+        self, machine_id: str, timeout: float = 20.0, poll_interval: float = 1.0
+    ) -> bool:
+        """Wait for an Electron desktop app to re-establish its WebSocket.
+
+        The Electron app has its own reconnection loop with exponential
+        backoff (1s → 2s → 4s → … capped at 15s).  Rather than failing
+        instantly, we poll for up to *timeout* seconds so that a brief
+        network hiccup doesn't kill the entire CUA session.
+        """
+        deadline = time.time() + timeout
+        attempt = 0
+        while time.time() < deadline:
+            attempt += 1
+            ws = self.connections.get(machine_id)
+            if ws is not None and ws.state == _AdapterState_OPEN:
+                logger.info(
+                    f"Electron reconnected for {machine_id} after {attempt} polls"
+                )
+                return True
+            await asyncio.sleep(poll_interval)
+
+        logger.error(
+            f"Electron did not reconnect for {machine_id} within {timeout}s"
+        )
+        return False
+
     async def ensure_connection(self, machine_id: str) -> bool:
         """Ensure connection is active and REUSE existing connections"""
         # CRITICAL: Check if we have an active connection and REUSE it
@@ -294,8 +321,10 @@ class VMControlService:
                     logger.debug(f"Reusing Electron connection for {machine_id}")
                     return True
                 else:
-                    logger.warning(f"Electron connection lost for {machine_id}")
-                    return False
+                    # Connection dropped — wait for the Electron app to reconnect
+                    # (it has its own exponential backoff reconnection loop)
+                    logger.warning(f"Electron connection lost for {machine_id}, waiting for reconnect...")
+                    return await self._wait_for_electron_reconnect(machine_id)
 
             if ws.state == WSState.OPEN:
                 # Quick check - don't ping every time (causes overhead)
@@ -318,7 +347,9 @@ class VMControlService:
         if machine_id in self.session_data:
             session = self.session_data[machine_id]
             if session.get("is_electron"):
-                return False  # Electron must reconnect on its own
+                # No existing connection object — wait for Electron to reconnect
+                logger.warning(f"No connection for Electron machine {machine_id}, waiting for reconnect...")
+                return await self._wait_for_electron_reconnect(machine_id)
             return await self.connect_to_agent(
                 machine_id,
                 session.get("public_ip"),

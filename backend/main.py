@@ -88,9 +88,13 @@ app = FastAPI(
 )
 
 # Configure CORS
+# Electron renderer sends Origin: null (file:// protocol), so we need
+# allow_origin_regex to match both configured domains and Electron clients.
+_cors_origins = [o for o in settings.CORS_ORIGINS if o != "*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=_cors_origins + ["null"],
+    allow_origin_regex=r"^(https?://localhost(:\d+)?|file://.*|null)$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
