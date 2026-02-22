@@ -6,7 +6,6 @@ directories:
 files:
   - out/**/*
   - "!node_modules/**/*"
-  - node_modules/screenshot-desktop/**/*
   - node_modules/puppeteer-core/**/*
   - node_modules/ws/**/*
 publish:

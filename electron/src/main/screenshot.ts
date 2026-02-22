@@ -1,4 +1,4 @@
-import { screen } from 'electron'
+import { desktopCapturer, screen } from 'electron'
 import { hideForScreenshot, showAfterScreenshot } from './window-manager'
 
 export async function captureScreenshot(): Promise<any> {
@@ -6,13 +6,21 @@ export async function captureScreenshot(): Promise<any> {
   await hideForScreenshot()
 
   try {
-    // Use screenshot-desktop for cross-platform support
-    const screenshot = require('screenshot-desktop')
-    const imgBuffer: Buffer = await screenshot({ format: 'png' })
-    const base64 = imgBuffer.toString('base64')
-
     const primaryDisplay = screen.getPrimaryDisplay()
     const { width, height } = primaryDisplay.size
+
+    // Use Electron's built-in desktopCapturer — works reliably in packaged apps
+    // unlike screenshot-desktop which needs asar-unpacked .bat files on Windows
+    const sources = await desktopCapturer.getSources({
+      types: ['screen'],
+      thumbnailSize: { width, height },
+    })
+
+    if (!sources || sources.length === 0) {
+      throw new Error('No screen sources found')
+    }
+
+    const base64 = sources[0].thumbnail.toPNG().toString('base64')
 
     showAfterScreenshot()
 
