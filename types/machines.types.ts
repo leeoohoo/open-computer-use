@@ -53,7 +53,7 @@ export interface MachineSettings {
   allowClipboardSync?: boolean;
   customSoftware?: string[];
   isLocal?: boolean;
-  provider?: 'azure' | 'aws' | 'docker' | 'local';
+  provider?: 'azure' | 'aws' | 'docker' | 'local' | 'electron';
   ports?: {
     vnc?: number;
     websocket?: number;

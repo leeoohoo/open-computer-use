@@ -542,18 +542,18 @@ class DatabaseService:
         """Get machine details for a user"""
         if not self.client:
             return None
-        
+
         try:
             response = (
                 self.client.table("user_machines")
                 .select("*")
                 .eq("id", machine_id)
                 .eq("user_id", user_id)
-                .single()
+                .maybe_single()
                 .execute()
             )
             return response.data
-        
+
         except Exception as e:
             logger.error(f"Failed to get machine {machine_id}: {str(e)}")
             return None
@@ -562,7 +562,7 @@ class DatabaseService:
         """Get active machine session"""
         if not self.client:
             return None
-        
+
         try:
             response = (
                 self.client.table("machine_sessions")
@@ -570,11 +570,11 @@ class DatabaseService:
                 .eq("id", session_id)
                 .eq("machine_id", machine_id)
                 .is_("ended_at", None)
-                .single()
+                .maybe_single()
                 .execute()
             )
             return response.data
-        
+
         except Exception as e:
             logger.error(f"Failed to get machine session: {str(e)}")
             return None

@@ -32,10 +32,9 @@ db_service = DatabaseService()
 @router.websocket("/ws")
 async def electron_websocket(
     websocket: WebSocket,
-    token: str = Query(...),
-    machine_id: str = Query(...),
-    user_id: str = Query(...),
-    # System details sent by the Electron app
+    # Only non-sensitive system details come via query params.
+    # Auth credentials (token, machine_id, user_id) arrive in the first
+    # WebSocket message to avoid exposing tokens in server/proxy logs.
     platform: str = Query(""),
     os_name: str = Query(""),
     os_version: str = Query(""),
@@ -50,21 +49,58 @@ async def electron_websocket(
     """
     Accept WebSocket connection from Electron desktop app.
 
-    The Electron app connects here with its auth token and system details.
-    We validate the user, accept the connection, wrap it in an adapter,
-    and store it in vm_control_service.connections[machine_id].
+    The Electron app connects here with system details in query params.
+    Auth credentials are sent in the first message body (not the URL)
+    to prevent token exposure in server/proxy/CDN access logs.
     """
-    # 1. Validate the user
-    user = await validate_user(user_id)
-    if not user:
-        await websocket.close(code=4001, reason="Invalid user")
+    # 1. Accept the WebSocket first (must accept before receiving messages)
+    await websocket.accept()
+
+    # 2. Wait for the auth message (first message from client, 10s timeout)
+    try:
+        raw = await asyncio.wait_for(websocket.receive_text(), timeout=10)
+        auth_msg = json.loads(raw)
+    except (asyncio.TimeoutError, json.JSONDecodeError, WebSocketDisconnect):
+        try:
+            await websocket.send_json({"type": "auth_failed", "reason": "No auth message received"})
+            await websocket.close(code=4001, reason="Auth timeout")
+        except Exception:
+            pass
         return
 
-    # 2. Accept the WebSocket
-    await websocket.accept()
+    if auth_msg.get("type") != "auth":
+        try:
+            await websocket.send_json({"type": "auth_failed", "reason": "Expected auth message"})
+            await websocket.close(code=4001, reason="Bad auth")
+        except Exception:
+            pass
+        return
+
+    token = auth_msg.get("token", "")
+    machine_id = auth_msg.get("machine_id", "")
+    user_id = auth_msg.get("user_id", "")
+
+    if not token or not machine_id or not user_id:
+        try:
+            await websocket.send_json({"type": "auth_failed", "reason": "Missing credentials"})
+            await websocket.close(code=4001, reason="Missing credentials")
+        except Exception:
+            pass
+        return
+
+    # 3. Validate the user
+    user = await validate_user(user_id)
+    if not user:
+        try:
+            await websocket.send_json({"type": "auth_failed", "reason": "Invalid user"})
+            await websocket.close(code=4001, reason="Invalid user")
+        except Exception:
+            pass
+        return
+
     logger.info(f"Electron app connected: machine_id={machine_id}, user_id={user_id}, platform={platform}, os={os_name}")
 
-    # 3. Wrap in adapter so vm_control_service can use .send()/.recv() as usual
+    # 4. Wrap in adapter so vm_control_service can use .send()/.recv() as usual
     adapter = FastAPIWebSocketAdapter(websocket)
 
     # Build system_info dict from query params sent by the Electron app
@@ -81,7 +117,7 @@ async def electron_websocket(
         "screen_height": int(screen_height or 0),
     }
 
-    # 4. Store in vm_control_service (same dict as regular VM connections)
+    # 5. Store in vm_control_service (same dict as regular VM connections)
     vm_control_service.connections[machine_id] = adapter
     vm_control_service.session_data[machine_id] = {
         "session_id": f"electron_session_{int(time.time())}",
@@ -101,10 +137,10 @@ async def electron_websocket(
     if machine_id not in vm_control_service.command_locks:
         vm_control_service.command_locks[machine_id] = asyncio.Lock()
 
-    # 5. Register machine in database
+    # 6. Register machine in database
     await _register_electron_machine(machine_id, user_id, hostname=hostname, username=username, platform=platform)
 
-    # 6. Send auth success
+    # 7. Send auth success
     await websocket.send_json({
         "type": "auth_success",
         "message": "Connected to Coasty backend",
@@ -112,7 +148,7 @@ async def electron_websocket(
     })
 
     try:
-        # 7. Keep connection alive.
+        # 8. Keep connection alive.
         # CRITICAL: We must NOT consume messages here — execute_command()
         # handles all command/response traffic via the stored adapter.
         # We only need to keep this coroutine alive so FastAPI doesn't

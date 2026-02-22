@@ -87,7 +87,7 @@ resource "aws_ecs_task_definition" "app" {
           { name = "SERVER_PORT", value = "8001" },
           { name = "ENVIRONMENT", value = "production" },
           { name = "DEBUG", value = "false" },
-          { name = "CORS_ORIGINS", value = "http://localhost:3000" },
+          { name = "CORS_ORIGINS", value = "http://localhost:3000,https://coasty.ai,https://www.coasty.ai" },
         ],
         [for k, v in var.backend_env_vars : { name = k, value = v }]
       )
@@ -135,6 +135,13 @@ resource "aws_ecs_service" "app" {
     container_port   = 3000
   }
 
+  # Backend API — exposed on ALB port 8001 for the Electron app
+  load_balancer {
+    target_group_arn = aws_lb_target_group.backend.arn
+    container_name   = "backend"
+    container_port   = 8001
+  }
+
   # Rolling deployment: keep at least 100% healthy, spin up to 200% during deploy
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
@@ -150,7 +157,7 @@ resource "aws_ecs_service" "app" {
     ignore_changes = [desired_count]
   }
 
-  depends_on = [aws_lb_listener.http]
+  depends_on = [aws_lb_listener.http, aws_lb_listener.backend]
 }
 
 # -----------------------------------------------------------------------------

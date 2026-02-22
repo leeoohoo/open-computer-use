@@ -17,6 +17,11 @@ output "app_url" {
   value       = var.certificate_arn != "" ? "https://${aws_lb.main.dns_name}" : "http://${aws_lb.main.dns_name}"
 }
 
+output "backend_api_url" {
+  description = "URL for the backend API (Electron app connects here)"
+  value       = "http://${aws_lb.main.dns_name}:8001"
+}
+
 output "ecs_cluster_name" {
   description = "Name of the ECS cluster"
   value       = aws_ecs_cluster.main.name

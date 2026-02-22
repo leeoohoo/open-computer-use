@@ -9,6 +9,9 @@ resource "aws_lb" "main" {
   security_groups    = [aws_security_group.alb.id]
   subnets            = aws_subnet.public[*].id
 
+  # Higher idle timeout for long-lived WebSocket connections (Electron bridge)
+  idle_timeout = 3600
+
   # Enable access logs by uncommenting and configuring an S3 bucket
   # access_logs {
   #   bucket  = aws_s3_bucket.alb_logs.id
@@ -53,6 +56,54 @@ resource "aws_lb_target_group" "frontend" {
   # }
 
   tags = { Name = "${var.project_name}-tg" }
+}
+
+# -----------------------------------------------------------------------------
+# Backend API Target Group (routes to the backend container on port 8001)
+# Used by the Electron app to hit the FastAPI backend directly.
+# -----------------------------------------------------------------------------
+
+resource "aws_lb_target_group" "backend" {
+  name        = "${var.project_name}-backend-tg"
+  port        = 8001
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "ip"
+
+  health_check {
+    enabled             = true
+    path                = "/api/health"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    healthy_threshold   = 2
+    unhealthy_threshold = 5
+    timeout             = 10
+    interval            = 30
+    matcher             = "200"
+  }
+
+  deregistration_delay = 30
+
+  tags = { Name = "${var.project_name}-backend-tg" }
+}
+
+# -----------------------------------------------------------------------------
+# Backend API Listener (port 8001) — Electron app connects here
+# HTTPS when certificate is available (required for wss:// WebSocket),
+# falls back to HTTP otherwise.
+# -----------------------------------------------------------------------------
+
+resource "aws_lb_listener" "backend" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = 8001
+  protocol          = var.certificate_arn != "" ? "HTTPS" : "HTTP"
+  ssl_policy        = var.certificate_arn != "" ? "ELBSecurityPolicy-TLS13-1-2-2021-06" : null
+  certificate_arn   = var.certificate_arn != "" ? var.certificate_arn : null
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend.arn
+  }
 }
 
 # -----------------------------------------------------------------------------

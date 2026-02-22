@@ -1,0 +1,33 @@
+appId: com.coasty.desktop
+productName: Coasty Desktop
+directories:
+  buildResources: build
+  output: dist
+files:
+  - out/**/*
+  - "!node_modules/**/*"
+  - node_modules/screenshot-desktop/**/*
+  - node_modules/puppeteer-core/**/*
+  - node_modules/ws/**/*
+publish:
+  provider: generic
+  url: https://updates.coasty.ai
+win:
+  target:
+    - nsis
+  icon: build/icon.ico
+mac:
+  target:
+    - dmg
+  icon: build/icon.icns
+  category: public.app-category.productivity
+linux:
+  target:
+    - AppImage
+  icon: build/icon.png
+  category: Utility
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true

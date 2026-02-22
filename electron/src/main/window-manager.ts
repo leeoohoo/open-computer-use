@@ -1,0 +1,231 @@
+import { BrowserWindow, screen } from 'electron'
+
+export type WindowMode = 'auth' | 'compact' | 'expanded'
+
+const MODE_CONFIG = {
+  auth:     { width: 400, height: 500, alwaysOnTop: false, skipTaskbar: false },
+  compact:  { width: 360, height: 56,  alwaysOnTop: true,  skipTaskbar: true },
+  expanded: { width: 400, height: 520, alwaysOnTop: true,  skipTaskbar: true },
+}
+
+const ANIM_DURATION = 320 // ms – longer for a relaxed, natural feel
+const ANIM_INTERVAL = 10  // ~100fps target (OS throttles gracefully)
+
+/** Quintic ease-out: fast start, long gentle deceleration */
+function easeOutQuint(t: number): number {
+  return 1 - Math.pow(1 - t, 5)
+}
+
+let mainWindow: BrowserWindow | null = null
+let currentMode: WindowMode = 'auth'
+let savedPosition: { x: number; y: number } | null = null
+let animTimer: ReturnType<typeof setInterval> | null = null
+let inPostAuthTransition = false
+
+/** Smoothly animate window bounds from current to target. */
+function animateBounds(win: BrowserWindow, target: Electron.Rectangle): void {
+  if (animTimer) {
+    clearInterval(animTimer)
+    animTimer = null
+  }
+
+  const start = win.getBounds()
+  const startTime = Date.now()
+
+  animTimer = setInterval(() => {
+    if (win.isDestroyed()) {
+      clearInterval(animTimer!)
+      animTimer = null
+      return
+    }
+
+    const elapsed = Date.now() - startTime
+    const t = Math.min(elapsed / ANIM_DURATION, 1)
+    const e = easeOutQuint(t)
+
+    win.setBounds({
+      x: Math.round(start.x + (target.x - start.x) * e),
+      y: Math.round(start.y + (target.y - start.y) * e),
+      width: Math.round(start.width + (target.width - start.width) * e),
+      height: Math.round(start.height + (target.height - start.height) * e),
+    })
+
+    if (t >= 1) {
+      clearInterval(animTimer!)
+      animTimer = null
+    }
+  }, ANIM_INTERVAL)
+}
+
+export function getMainWindow(): BrowserWindow | null {
+  return mainWindow
+}
+
+export function setMainWindow(win: BrowserWindow): void {
+  mainWindow = win
+
+  // Track position when the user drags the overlay
+  win.on('moved', () => {
+    if (currentMode !== 'auth') {
+      const [x, y] = win.getPosition()
+      savedPosition = { x, y }
+    }
+  })
+
+  // Re-assert always-on-top when the window loses focus (Windows drops it for
+  // transparent frameless windows when another app is clicked).
+  // During the post-auth transition, use 'floating' level to beat the browser.
+  win.on('blur', () => {
+    if (currentMode !== 'auth' && !win.isDestroyed()) {
+      const level = inPostAuthTransition ? 'floating' : 'screen-saver'
+      win.setAlwaysOnTop(true, level)
+    }
+  })
+}
+
+export function getWindowMode(): WindowMode {
+  return currentMode
+}
+
+export function setWindowMode(mode: WindowMode): void {
+  const win = mainWindow
+  if (!win || win.isDestroyed()) return
+
+  const prev = currentMode
+  currentMode = mode
+  const cfg = MODE_CONFIG[mode]
+
+  // Configure always-on-top, taskbar visibility, and workspace visibility
+  win.setAlwaysOnTop(cfg.alwaysOnTop, cfg.alwaysOnTop ? 'screen-saver' : undefined)
+  win.setSkipTaskbar(cfg.skipTaskbar)
+  win.setResizable(false)
+  // Show overlay on all virtual desktops (macOS Spaces / Linux workspaces)
+  if (process.platform !== 'win32') {
+    win.setVisibleOnAllWorkspaces(cfg.alwaysOnTop, { visibleOnFullScreen: true })
+  }
+
+  // Calculate position
+  const display = screen.getPrimaryDisplay()
+  const { width: screenW } = display.workAreaSize
+  const { x: workX, y: workY } = display.workArea
+
+  let x: number
+  let y: number
+
+  if (mode === 'auth') {
+    // Center on screen
+    x = workX + Math.round((screenW - cfg.width) / 2)
+    y = workY + Math.round((display.workAreaSize.height - cfg.height) / 2)
+    savedPosition = null
+  } else if (mode === 'compact') {
+    if (savedPosition) {
+      x = savedPosition.x
+      y = savedPosition.y
+    } else {
+      // Default: top-center with 16px margin
+      x = workX + Math.round((screenW - cfg.width) / 2)
+      y = workY + 16
+    }
+  } else {
+    // expanded: center-align with compact pill (grows downward from same center)
+    if (savedPosition) {
+      const compactW = MODE_CONFIG.compact.width
+      const centerX = savedPosition.x + Math.round(compactW / 2)
+      x = centerX - Math.round(cfg.width / 2)
+      y = savedPosition.y
+    } else {
+      x = workX + Math.round((screenW - cfg.width) / 2)
+      y = workY + 16
+    }
+  }
+
+  // Clamp to screen bounds
+  x = Math.max(workX, Math.min(x, workX + screenW - cfg.width))
+  y = Math.max(workY, Math.min(y, workY + display.workAreaSize.height - cfg.height))
+
+  const target = { x, y, width: cfg.width, height: cfg.height }
+
+  // Auth → overlay: on Windows, transparent frameless windows lose topmost
+  // z-order when setBounds and setAlwaysOnTop race each other (both use
+  // SetWindowPos internally). The fix: hide → apply all changes → show.
+  // ShowWindow(SW_SHOW) after hide bypasses the foreground lock and creates
+  // a clean window appearance with topmost applied atomically.
+  const isFromAuth = prev === 'auth' && mode !== 'auth'
+  if (isFromAuth) {
+    win.hide()
+  }
+
+  // Animate compact↔expanded transitions; instant for all others
+  const isOverlaySwitch =
+    (prev === 'compact' && mode === 'expanded') ||
+    (prev === 'expanded' && mode === 'compact')
+
+  if (isOverlaySwitch) {
+    animateBounds(win, target)
+  } else {
+    win.setBounds(target)
+  }
+
+  if (isFromAuth) {
+    inPostAuthTransition = true
+
+    // Show after a brief delay so Windows processes the hidden state + bounds
+    setTimeout(() => {
+      if (win.isDestroyed()) return
+      win.setAlwaysOnTop(true, 'screen-saver')
+      win.show()   // SW_SHOW activates window + brings to front
+      win.focus()
+    }, 200)
+
+    // Retries: re-assert topmost in case browser reclaims foreground
+    const keepOnTop = () => {
+      if (win.isDestroyed()) return
+      win.setAlwaysOnTop(true, 'screen-saver')
+      win.moveTop()
+    }
+    for (const delay of [600, 1200, 2000, 3000]) {
+      setTimeout(keepOnTop, delay)
+    }
+
+    // End transition period
+    setTimeout(() => {
+      inPostAuthTransition = false
+    }, 4000)
+  }
+
+  // Notify renderer of the mode change
+  if (!win.isDestroyed()) {
+    win.webContents.send('window-mode-changed', mode)
+  }
+}
+
+/** Set overlay opacity (0.15 – 1.0). Notifies renderer so UI can reflect. */
+export function setWindowOpacity(value: number): void {
+  const win = mainWindow
+  if (!win || win.isDestroyed()) return
+  const clamped = Math.max(0.15, Math.min(1, value))
+  win.setOpacity(clamped)
+  win.webContents.send('window-opacity-changed', clamped)
+}
+
+export function getWindowOpacity(): number {
+  const win = mainWindow
+  if (!win || win.isDestroyed()) return 1
+  return win.getOpacity()
+}
+
+/** Hide the overlay window before taking a screenshot. */
+export async function hideForScreenshot(): Promise<void> {
+  const win = mainWindow
+  if (!win || win.isDestroyed() || !win.isVisible()) return
+  win.hide()
+  // Wait for OS to finish hiding and repaint the desktop
+  await new Promise((resolve) => setTimeout(resolve, 150))
+}
+
+/** Show the overlay window after screenshot capture (without stealing focus). */
+export function showAfterScreenshot(): void {
+  const win = mainWindow
+  if (!win || win.isDestroyed()) return
+  win.showInactive()
+}

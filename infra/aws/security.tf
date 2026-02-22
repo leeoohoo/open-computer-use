@@ -29,6 +29,15 @@ resource "aws_vpc_security_group_ingress_rule" "alb_https" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
+resource "aws_vpc_security_group_ingress_rule" "alb_backend_api" {
+  security_group_id = aws_security_group.alb.id
+  description       = "Backend API from internet (Electron app)"
+  from_port         = 8001
+  to_port           = 8001
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/0"
+}
+
 resource "aws_vpc_security_group_egress_rule" "alb_egress" {
   security_group_id = aws_security_group.alb.id
   description       = "Allow all outbound (to ECS tasks)"
@@ -55,6 +64,15 @@ resource "aws_vpc_security_group_ingress_rule" "ecs_from_alb" {
   description                  = "Frontend port from ALB only"
   from_port                    = 3000
   to_port                      = 3000
+  ip_protocol                  = "tcp"
+  referenced_security_group_id = aws_security_group.alb.id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ecs_backend_from_alb" {
+  security_group_id            = aws_security_group.ecs.id
+  description                  = "Backend API port from ALB"
+  from_port                    = 8001
+  to_port                      = 8001
   ip_protocol                  = "tcp"
   referenced_security_group_id = aws_security_group.alb.id
 }
