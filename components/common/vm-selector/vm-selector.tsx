@@ -168,10 +168,13 @@ export function VMSelector({
 
       if (response.ok) {
         const data = await response.json()
-        // Store all machines for display
-        setAllMachines(data.machines)
+        // Store all machines for display (excluding Electron/local — they can't run cloud agents)
+        const cloudMachines = data.machines.filter(
+          (m: UserMachine) => m.settings?.provider !== 'electron' && !m.settings?.isLocal
+        )
+        setAllMachines(cloudMachines)
         // Show running, creating, starting, and stopped machines for selection
-        const selectableMachines = data.machines.filter(
+        const selectableMachines = cloudMachines.filter(
           (m: UserMachine) => m.status === "running" || m.status === "creating" || m.status === "starting" || m.status === "stopped"
         )
         setMachines(selectableMachines)

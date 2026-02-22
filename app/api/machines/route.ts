@@ -91,7 +91,20 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform database results to TypeScript format
-    const azureMachines = (dbMachines || []).map(transformMachineFromDB);
+    const allDbMachines = (dbMachines || []).map(transformMachineFromDB);
+
+    // Separate cloud machines from Electron (local) machines for limit calculations
+    // Electron machines are registered in user_machines for display but must NOT
+    // count towards cloud VM limits.
+    const parseSettings = (m: any) => {
+      const raw = m.settings;
+      if (typeof raw === 'string') try { return JSON.parse(raw); } catch { return {}; }
+      return raw || {};
+    };
+    const cloudMachines = allDbMachines.filter((m: any) => {
+      const s = parseSettings(m);
+      return s.provider !== 'electron' && !s.isLocal;
+    });
 
     // Get local Docker machines
     const localMachines = await dockerService.getLocalMachines();
@@ -129,8 +142,8 @@ export async function GET(request: NextRequest) {
       }
     }));
     
-    // Combine Azure and Docker machines
-    const machines = [...azureMachines, ...dockerMachines];
+    // Combine all machines for display (cloud + electron + docker)
+    const machines = [...allDbMachines, ...dockerMachines];
 
     // Get user's subscription tier and limits from database
     const { data: subscriptions } = await (supabase as any)
@@ -221,18 +234,17 @@ export async function GET(request: NextRequest) {
       max_storage_gb: Math.max(limitsData.max_storage_gb || 0, baseLimits.max_storage_gb),
     } : baseLimits;
 
-    // Calculate current resource usage (only count Azure machines for limits)
-    const activeMachines = azureMachines || [];
-    const totalCpuCores = activeMachines.reduce((sum: number, m: any) => sum + (m?.cpuCores || 0), 0);
-    const totalMemoryGb = activeMachines.reduce((sum: number, m: any) => sum + (m?.memoryGb || 0), 0);
-    const totalStorageGb = activeMachines.reduce((sum: number, m: any) => sum + (m?.storageGb || 0), 0);
+    // Calculate current resource usage (only count cloud machines — exclude Electron/local)
+    const totalCpuCores = cloudMachines.reduce((sum: number, m: any) => sum + (m?.cpuCores || 0), 0);
+    const totalMemoryGb = cloudMachines.reduce((sum: number, m: any) => sum + (m?.memoryGb || 0), 0);
+    const totalStorageGb = cloudMachines.reduce((sum: number, m: any) => sum + (m?.storageGb || 0), 0);
 
     return NextResponse.json({
       machines: machines || [],
       limits: effectiveLimits,
       subscriptionTier,
       usage: {
-        machines_count: activeMachines.length,
+        machines_count: cloudMachines.length,
         total_cpu_cores: totalCpuCores,
         total_memory_gb: totalMemoryGb,
         total_storage_gb: totalStorageGb,
@@ -272,17 +284,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user can create more machines
-    const { data: canCreate } = await supabase.rpc("can_user_create_machine", {
-      p_user_id: userId,
-    });
+    // Check if user can create more machines (excluding Electron/local machines)
+    // The RPC counts ALL user_machines entries, so we do our own check that
+    // excludes Electron machines — they're the user's own computer and shouldn't
+    // count towards cloud VM limits.
+    const { data: allUserMachines } = await supabase
+      .from("user_machines")
+      .select("id, status, settings")
+      .eq("user_id", userId)
+      .not("status", "in", '("deleting","error")');
 
-    if (!canCreate) {
-      return NextResponse.json(
-        { error: "Machine limit reached for your account" },
-        { status: 403 }
-      );
-    }
+    const cloudMachineCount = (allUserMachines || []).filter((m: any) => {
+      const s = typeof m.settings === 'string' ? JSON.parse(m.settings) : (m.settings || {});
+      return s.provider !== 'electron' && !s.isLocal;
+    }).length;
 
     // Get user's subscription tier and limits from database
     const { data: subscriptions } = await (supabase as any)
@@ -372,6 +387,14 @@ export async function POST(request: NextRequest) {
       max_memory_gb: Math.max(limitsData.max_memory_gb || 0, baseLimits.max_memory_gb),
       max_storage_gb: Math.max(limitsData.max_storage_gb || 0, baseLimits.max_storage_gb),
     } : baseLimits;
+
+    // Check cloud machine count against limit
+    if (cloudMachineCount >= effectiveLimits.max_machines) {
+      return NextResponse.json(
+        { error: "Machine limit reached for your account" },
+        { status: 403 }
+      );
+    }
 
     // Validate resources against limits and minimum requirements
     const isAws = provider === 'aws';

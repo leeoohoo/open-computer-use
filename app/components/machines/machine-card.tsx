@@ -72,6 +72,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
   const StatusIcon = status.icon;
   const isTemporary = machine.id.startsWith('temp-');
   const isLocal = machine.settings?.isLocal || machine.id.startsWith('local-');
+  const isElectron = machine.settings?.provider === 'electron';
   const isAws = machine.settings?.provider === 'aws';
 
   // Update time remaining for free tier users
@@ -208,7 +209,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
   return (
     <>
       <Card className={cn(
-        "relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-0"
+        "relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-0 h-full"
       )}>
         {/* Rotating beam effect for active states */}
         {(machine.status === "running" || machine.status === "creating" || machine.status === "stopping") && (
@@ -290,13 +291,17 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
         )}
         
         {/* Content container with higher z-index */}
-        <div className="relative z-[2]">
+        <div className="relative z-[2] flex flex-col h-full">
         <CardHeader>
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <CardTitle className="text-base sm:text-lg truncate pr-2 flex items-center gap-2">
                 {machine.displayName}
-                {isLocal && <span className="text-blue-500 text-sm">🐳</span>}
+                {isElectron && (
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-normal gap-1 text-blue-400 border-blue-400/30">
+                    Desktop
+                  </Badge>
+                )}
                 {isAws && (
                   <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-normal gap-1">
                     <Server className="h-3 w-3" />
@@ -305,7 +310,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
                 )}
               </CardTitle>
               <CardDescription className="text-xs truncate pr-2">
-                {isLocal ? `Local Docker: ${machine.containerName}` : isAws ? `Cloud Machine - SSH` : machine.containerName}
+                {isElectron ? `Connected via Desktop App` : isLocal ? `Local Docker: ${machine.containerName}` : isAws ? `Cloud Machine - SSH` : machine.containerName}
               </CardDescription>
             </div>
             <DropdownMenu>
@@ -315,34 +320,38 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={handleConnect}
-                  disabled={machine.status !== "running" || isTemporary}
+                  disabled={isTemporary}
                 >
                   <Monitor className="mr-2 h-4 w-4" />
                   View Details
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={() => handleAction("restart")}
-                  disabled={machine.status !== "running" || loading !== null || isTemporary}
-                >
-                  Restart
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => setShowDeleteDialog(true)}
-                  disabled={machine.status === "running" || loading !== null || isTemporary}
-                  className="text-destructive"
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
+                {!isElectron && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => handleAction("restart")}
+                      disabled={machine.status !== "running" || loading !== null || isTemporary}
+                    >
+                      Restart
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setShowDeleteDialog(true)}
+                      disabled={machine.status === "running" || loading !== null || isTemporary}
+                      className="text-destructive"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </CardHeader>
         
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 flex-1 flex flex-col">
           {/* Status */}
           <div className="flex items-center justify-between">
             <Badge 
@@ -361,20 +370,26 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
           </div>
 
           {/* Resources */}
-          <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
-            <div className="flex items-center gap-1.5">
-              <Cpu className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
-              <span className="truncate">{machine.cpuCores} vCPU</span>
+          {isElectron ? (
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Your local computer connected via the Desktop App. No cloud resources used.
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
+              <div className="flex items-center gap-1.5">
+                <Cpu className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+                <span className="truncate">{machine.cpuCores} vCPU</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <HardDrive className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+                <span className="truncate">{machine.storageGb} GB</span>
+              </div>
+              <div className="flex items-center gap-1.5 col-span-2">
+                <Monitor className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+                <span className="truncate">{machine.memoryGb} GB RAM</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5">
-              <HardDrive className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
-              <span className="truncate">{machine.storageGb} GB</span>
-            </div>
-            <div className="flex items-center gap-1.5 col-span-2">
-              <Monitor className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
-              <span className="truncate">{machine.memoryGb} GB RAM</span>
-            </div>
-          </div>
+          )}
 
           {/* Auto-deletion notice for free tier users */}
           {timeRemaining && isFreeTier && !subscriptionLoading && (
@@ -426,68 +441,85 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
             </div>
           )}
 
-          {/* Actions */}
-          <div className="flex gap-2">
-            {(machine.status === "stopped" || machine.status === "error") && !isTemporary && (
+          {/* Spacer to push actions to bottom */}
+          <div className="flex-1" />
+
+          {/* Actions — Electron machines are controlled via the desktop app, not here */}
+          {isElectron ? (
+            <div className="flex gap-2">
               <Button
                 size="sm"
-                onClick={() => handleAction("start")}
-                disabled={loading !== null}
+                variant="default"
+                onClick={handleConnect}
                 className="flex-1"
               >
-                {loading === "start" ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <Play className="h-4 w-4 mr-1" />
-                    {machine.status === "error" ? "Retry Start" : "Start"}
-                  </>
-                )}
+                <Monitor className="h-4 w-4 mr-1" />
+                View Details
               </Button>
-            )}
-            
-            {machine.status === "running" && !isTemporary && (
-              <>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              {(machine.status === "stopped" || machine.status === "error") && !isTemporary && (
                 <Button
                   size="sm"
-                  variant="default"
-                  onClick={handleConnect}
+                  onClick={() => handleAction("start")}
+                  disabled={loading !== null}
                   className="flex-1"
                 >
-                  {isAws ? (
-                    <>
-                      <Terminal className="h-4 w-4 mr-1" />
-                      Connect
-                    </>
-                  ) : (
-                    <>
-                      <Monitor className="h-4 w-4 mr-1" />
-                      Open
-                    </>
-                  )}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleAction("stop")}
-                  disabled={loading !== null}
-                >
-                  {loading === "stop" ? (
+                  {loading === "start" ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Square className="h-4 w-4" />
+                    <>
+                      <Play className="h-4 w-4 mr-1" />
+                      {machine.status === "error" ? "Retry Start" : "Start"}
+                    </>
                   )}
                 </Button>
-              </>
-            )}
-            
-            {(isTransitioning || (isTemporary && machine.status === "creating")) && (
-              <Button size="sm" disabled className="flex-1">
-                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                {isTemporary ? "Creating machine..." : `${status.label}...`}
-              </Button>
-            )}
-          </div>
+              )}
+
+              {machine.status === "running" && !isTemporary && (
+                <>
+                  <Button
+                    size="sm"
+                    variant="default"
+                    onClick={handleConnect}
+                    className="flex-1"
+                  >
+                    {isAws ? (
+                      <>
+                        <Terminal className="h-4 w-4 mr-1" />
+                        Connect
+                      </>
+                    ) : (
+                      <>
+                        <Monitor className="h-4 w-4 mr-1" />
+                        Open
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleAction("stop")}
+                    disabled={loading !== null}
+                  >
+                    {loading === "stop" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Square className="h-4 w-4" />
+                    )}
+                  </Button>
+                </>
+              )}
+
+              {(isTransitioning || (isTemporary && machine.status === "creating")) && (
+                <Button size="sm" disabled className="flex-1">
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                  {isTemporary ? "Creating machine..." : `${status.label}...`}
+                </Button>
+              )}
+            </div>
+          )}
         </CardContent>
         </div>
       </Card>

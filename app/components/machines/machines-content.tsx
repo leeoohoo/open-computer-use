@@ -100,17 +100,8 @@ export function MachinesContent() {
       setMachines(data.machines);
       setLimits(data.limits);
       
-      // Calculate usage from database machines only
-      const totalCpuCores = data.machines.reduce((sum, m) => sum + (m.cpuCores || 0), 0);
-      const totalMemoryGb = data.machines.reduce((sum, m) => sum + (m.memoryGb || 0), 0);
-      const totalStorageGb = data.machines.reduce((sum, m) => sum + (m.storageGb || 0), 0);
-      
-      setUsage({
-        machines_count: data.machines.length,
-        total_cpu_cores: totalCpuCores,
-        total_memory_gb: totalMemoryGb,
-        total_storage_gb: totalStorageGb,
-      });
+      // Use usage from API (already excludes Electron/local machines from counts)
+      setUsage(data.usage);
       
       // Start polling for machines that are in creating/starting state
       data.machines.forEach(machine => {

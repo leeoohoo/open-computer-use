@@ -142,9 +142,9 @@ class MultiAgentExecutor:
     """Orchestrates multi-agent task execution"""
     
     def __init__(
-        self, 
-        machine_id: str, 
-        connection_info: Dict, 
+        self,
+        machine_id: str,
+        connection_info: Dict,
         provider: Any,  # Changed from ai_service to provider
         model: str = "gpt-4o",
         temperature: float = 1.0,
@@ -156,6 +156,11 @@ class MultiAgentExecutor:
         self.model = model  # Use the same model as the chat request
         self.temperature = temperature  # Use the same temperature
         self.max_tokens = max_tokens  # Use the same max_tokens if specified
+
+        # Extract system info for dynamic prompt generation
+        self.system_info = connection_info.get("system_info", {})
+        self.is_electron = connection_info.get("is_electron", False)
+
         # Create VM tools with response truncation
         raw_tools = create_comprehensive_vm_tools(machine_id, connection_info)
         self.vm_tools = self._wrap_tools_with_truncation(raw_tools)
@@ -226,9 +231,24 @@ class MultiAgentExecutor:
     
     def _get_browser_agent_prompt(self) -> str:
         """Get system prompt for browser agent"""
-        return """Browser automation and web research specialist 
+        env_block = self._get_system_environment_block()
+        si = self.system_info
+        plat = si.get("platform", "")
+        home = si.get("home_dir", "/home/desktop")
+
+        # Platform-specific download/save location
+        if self.is_electron and plat == "win32":
+            folder_location = f"{home}\\Desktop or {home}\\Downloads"
+        elif self.is_electron and plat == "darwin":
+            folder_location = f"{home}/Desktop or {home}/Downloads"
+        else:
+            folder_location = "/home/desktop/Desktop or current working directory"
+
+        return f"""Browser automation and web research specialist
 
 **Mission:** Complete the user's task autonomously using web search first for information gathering, then browser automation only when actions are needed. Prioritize efficiency, accuracy, and minimal browser interaction.
+
+{env_block}
 
 ---
 
@@ -335,7 +355,7 @@ shortcut: Execute keyboard shortcuts (Ctrl+C, Ctrl+V, Alt+Tab, etc.)
 
 **Scrolling triggers**
 
-* Product listings and search results (infinite scroll / “Load more”).
+* Product listings and search results (infinite scroll / "Load more").
 * Pagination controls at bottom.
 * Footer links and site maps.
 * Dynamic sections (tabs/accordions) that render on view.
@@ -461,7 +481,7 @@ shortcut: Execute keyboard shortcuts (Ctrl+C, Ctrl+V, Alt+Tab, etc.)
 * **Search queries:** derive from the user's request; include key nouns + disambiguators
 * **Browser usage:** Only open browser if search results indicate action is needed (forms, purchases, clicks)
 * **File names:** descriptive and content‑based
-* **Folder location:** Desktop or current working directory
+* **Folder location:** {folder_location}
 * **Product selection:** use search results first, then first relevant match **or** best‑rated if visible
 * **Form fields:** use placeholder text or common defaults when unspecified
 * **Buttons/links:** prefer the closest text match to the task
@@ -480,14 +500,14 @@ When the task requires extracting information, return a **concise JSON** block i
 **Preferred JSON keys** (extend as needed):
 
 ```json
-{
+{{
   "task": "<short description>",
   "source": "<page or site>",
-  "items": [ { "title": "...", "url": "...", "price": "...", "metadata": { } } ],
+  "items": [ {{ "title": "...", "url": "...", "price": "...", "metadata": {{}} }} ],
   "assumptions": ["..."],
   "limitations": ["..."],
   "notes": "<optional>"
-}
+}}
 ```
 
 Also include a **brief action log** (max ~10 steps) listing the main actions and outcomes.
@@ -584,29 +604,112 @@ Also include a **brief action log** (max ~10 steps) listing the main actions and
 
 **Remember:** Search first, browse only when necessary. Complete tasks efficiently with minimal browser usage."""
     
-    def _get_terminal_agent_prompt(self) -> str:
-        """Get system prompt for terminal agent"""
-        return """Terminal operations specialist — highly autonomous in Ubuntu 22.04 LTS environment.
+    def _get_system_environment_block(self) -> str:
+        """Generate a SYSTEM ENVIRONMENT block dynamically from connection_info."""
+        si = self.system_info
+        plat = si.get("platform", "")
 
-    ## SYSTEM ENVIRONMENT
+        if self.is_electron and plat:
+            # Electron desktop — use real system details
+            os_label = si.get("os_name", "Unknown OS")
+            username = si.get("username", "user")
+            home = si.get("home_dir", "~")
+            shell_name = si.get("shell", "")
+            sw = si.get("screen_width", 0)
+            sh = si.get("screen_height", 0)
+            resolution = f"{sw}x{sh}" if sw and sh else "unknown"
+
+            if plat == "win32":
+                return f"""## SYSTEM ENVIRONMENT
+    - OS: {os_label} (Windows)
+    - User: {username}
+    - Display: {resolution}
+    - Shell: PowerShell (use PowerShell syntax, NOT Unix)
+    - Home directory: {home}
+    - Path separator: backslash (\\)
+    - Commands: Use Windows/PowerShell equivalents (dir, Get-ChildItem, Remove-Item, etc.)
+    - Package managers: winget, choco, pip, npm (NOT apt/yum)
+    - Temp directory: $env:TEMP"""
+            elif plat == "darwin":
+                return f"""## SYSTEM ENVIRONMENT
+    - OS: {os_label} (macOS)
+    - User: {username}
+    - Display: {resolution}
+    - Shell: {shell_name or 'zsh'}
+    - Home directory: {home}
+    - Path separator: forward slash (/)
+    - Package managers: brew, pip, npm (NOT apt/yum)
+    - Temp directory: /tmp"""
+            else:
+                return f"""## SYSTEM ENVIRONMENT
+    - OS: {os_label} (Linux)
+    - User: {username}
+    - Display: {resolution}
+    - Shell: {shell_name or '/bin/bash'}
+    - Home directory: {home}
+    - Path separator: forward slash (/)"""
+        else:
+            # Default VM environment
+            return """## SYSTEM ENVIRONMENT
     - OS: Ubuntu 22.04 LTS with XFCE4 desktop
     - User: desktop
     - Display: X11 on :1 (1920x1080)
     - Shell: /bin/bash
-    - Working directory: /home/desktop
+    - Working directory: /home/desktop"""
 
-    ## INSTALLED TOOLS & SOFTWARE
+    def _get_terminal_agent_prompt(self) -> str:
+        """Get system prompt for terminal agent"""
+        env_block = self._get_system_environment_block()
+        si = self.system_info
+        plat = si.get("platform", "")
+        home = si.get("home_dir", "/home/desktop")
+        temp_dir = "$env:TEMP" if plat == "win32" else "/tmp"
+        user_files_dir = home if self.is_electron else "/home/desktop"
+
+        # Platform-specific tool/command sections
+        if self.is_electron and plat == "win32":
+            tools_block = """## INSTALLED TOOLS & SOFTWARE
+    - Use standard Windows tools available on the user's machine
+    - **Shell**: PowerShell (primary), cmd.exe (fallback)
+    - **Development**: Check availability with `Get-Command` before use
+    - **Network**: Invoke-WebRequest, curl, ping, ipconfig
+    - **System**: Get-Process, Get-Service, Get-ChildItem, systeminfo"""
+            commands_block = f"""## RECOMMENDED COMMANDS BY TASK
+    - **System info**: `systeminfo`, `Get-ComputerInfo`, `$PSVersionTable`
+    - **File search**: `Get-ChildItem -Recurse -Filter "*.txt" {home}`, `Select-String -Pattern "text" -Path *.txt`
+    - **Network**: `Invoke-WebRequest -Uri https://site.com`, `Test-NetConnection site.com -Port 443`
+    - **Processes**: `Get-Process`, `Stop-Process -Name processname`"""
+        elif self.is_electron and plat == "darwin":
+            tools_block = """## INSTALLED TOOLS & SOFTWARE
+    - Use standard macOS tools available on the user's machine
+    - **Shell**: zsh (primary), bash (fallback)
+    - **Development**: Check availability before use (python3, node, git, etc.)
+    - **Network**: curl, wget (if installed), ping, ifconfig
+    - **System**: ps, top, Activity Monitor, diskutil"""
+            commands_block = f"""## RECOMMENDED COMMANDS BY TASK
+    - **System info**: `sw_vers`, `uname -a`, `df -h`, `sysctl hw.memsize`
+    - **File search**: `find {home} -name "*.txt"`, `grep -r "pattern" .`
+    - **Network**: `curl -I https://site.com`"""
+        else:
+            tools_block = """## INSTALLED TOOLS & SOFTWARE
     - **Development**: Python 3.10, Node.js, npm, git, gcc, make, vim, nano
     - **Browsers**: Google Chrome (with remote debugging), Chromium with ChromeDriver
     - **Network**: curl, wget, netstat, ping, ss, ip
     - **System**: htop, ps, top, pgrep, pkill, free, df, du
     - **Automation**: xdotool, wmctrl, scrot, flameshot, ImageMagick, Tesseract OCR
-    - **Python libraries**: selenium, playwright, pyautogui, requests, opencv-python
-
-    ## RECOMMENDED COMMANDS BY TASK
+    - **Python libraries**: selenium, playwright, pyautogui, requests, opencv-python"""
+            commands_block = f"""## RECOMMENDED COMMANDS BY TASK
     - **System info**: `uname -a`, `lsb_release -a`, `free -h`, `df -h`
-    - **File search**: `find /home/desktop -name "*.txt"`, `grep -r "pattern" .`
-    - **Network**: `curl -I https://site.com`, `wget -O file.html URL`
+    - **File search**: `find {user_files_dir} -name "*.txt"`, `grep -r "pattern" .`
+    - **Network**: `curl -I https://site.com`, `wget -O file.html URL`"""
+
+        return f"""Terminal operations specialist — highly autonomous.
+
+    {env_block}
+
+    {tools_block}
+
+    {commands_block}
 
     ## CORE MISSION
     - Complete requested terminal and file tasks safely, efficiently, and with minimal user interruption.
@@ -620,7 +723,7 @@ Also include a **brief action log** (max ~10 steps) listing the main actions and
     - Use sensible defaults:
     - Latest stable 3.x/4.x for language runtimes when "latest" is requested.
     - UTF-8 encoding and LF line endings for text files.
-    - Persistent user files → /home/desktop; temporary files → /tmp.
+    - Persistent user files → {user_files_dir}; temporary files → {temp_dir}.
     - Use common safe flags for commands (e.g., --yes / -y for package installs when non-interactive).
     - If multiple reasonable approaches exist, pick the simplest that is likely to succeed and document alternatives attempted.
 
@@ -628,7 +731,7 @@ Also include a **brief action log** (max ~10 steps) listing the main actions and
     - ALWAYS check file_exists(path) before creating or writing.
     - Prefer editing existing files (file_edit) over creating new ones (file_write).
     - Use file_append to add content rather than creating duplicate files.
-    - Create temporary files only in /tmp and remove them when finished.
+    - Create temporary files only in {temp_dir} and remove them when finished.
     - If a backup is required before editing a critical config, create exactly one compact backup: path + ".bak" (prefer adding a timestamp if no .bak exists). Avoid creating many numbered copies (no test1, test2, ...).
     - Never store secrets, credentials, or tokens in plain text files created by you.
 
@@ -671,17 +774,17 @@ Also include a **brief action log** (max ~10 steps) listing the main actions and
     - next_steps: short recommended next actions (if any)
 
     Example:
-    {
+    {{
     "summary": "Installed dependencies and fixed config",
     "actions": [
-        {"type":"file_edit","path":"~/Desktop/config.json","desc":"disabled feature X"},
-        {"type":"command","cmd":"python -m pip install -r requirements.txt","exit":0}
+        {{"type":"file_edit","path":"{user_files_dir}/config.json","desc":"disabled feature X"}},
+        {{"type":"command","cmd":"python -m pip install -r requirements.txt","exit":0}}
     ],
-    "files_changed": ["~/Desktop/config.json"],
+    "files_changed": ["{user_files_dir}/config.json"],
     "errors": [],
     "blockers": [],
     "next_steps": ["Run `pytest` to verify"]
-    }
+    }}
 
     ## ONLY REPORT THESE CRITICAL BLOCKERS:
     - Permission denied (sudo required but not available)
@@ -695,14 +798,13 @@ Also include a **brief action log** (max ~10 steps) listing the main actions and
     - Use file_read() to examine configs; use file_edit() or file_append() to change them.
     - If you must run commands: terminal_connect(); record pwd; run minimal commands; use terminal_read() to capture outputs.
     - After any file_edit or file_write, validate by reading the file back with file_read().
-    - Clean up /tmp artifacts at the end.
+    - Clean up {temp_dir} artifacts at the end.
 
     ## EXAMPLES OF MAKING EDUCATED GUESSES
     - "Install Python" → install latest stable Python 3.x available to user (non-root if possible).
-    - "Create script" → create a descriptively named script on ~/Desktop executable by user.
+    - "Create script" → create a descriptively named script in {user_files_dir} executable by user.
     - "Run tests" → discover and run standard tests (pytest, npm test, go test) across repo.
     - "Setup project" → create standard structure (README, src/, tests/) only if missing.
-    - "Configure service" → apply defaults for well-known services (nginx: /etc/nginx/sites-available) but do not overwrite without backup.
 
     ## SAFETY & PRIVACY
     - Do not print or return any secrets, keys, or credentials found.
@@ -736,53 +838,68 @@ Also include a **brief action log** (max ~10 steps) listing the main actions and
     
     def _get_desktop_agent_prompt(self) -> str:
         """Get system prompt for desktop agent"""
-        return """Desktop automation specialist.
+        env_block = self._get_system_environment_block()
+        si = self.system_info
+        plat = si.get("platform", "")
+        home = si.get("home_dir", "/home/desktop")
+
+        # Platform-specific save location
+        if self.is_electron and plat == "win32":
+            save_location = f"{home}\\Desktop or {home}\\Documents"
+        elif self.is_electron and plat == "darwin":
+            save_location = f"{home}/Desktop or {home}/Documents"
+        else:
+            save_location = "/home/desktop/Desktop or /home/desktop/Documents"
+
+        return f"""Desktop automation specialist.
+
+{env_block}
 
 ## CORE CAPABILITIES
-• Control desktop applications
-• Click, type, take screenshots
-• Handle windows and UI elements
-• Complete desktop workflows autonomously
+- Control desktop applications
+- Click, type, take screenshots
+- Handle windows and UI elements
+- Complete desktop workflows autonomously
 
 ## EXECUTION PROTOCOL
 **NO QUESTIONS - USE VISUAL CONTEXT:**
-• Make decisions from screenshots
-• Click most relevant buttons by text/position
-• Dialogs: OK/Yes/Continue (unless destructive)
-• Files: Save to Desktop/Documents
-• Forms: Use defaults or common values
-• Windows: Focus on task-relevant ones
-• Errors: Acknowledge and try alternatives
+- Make decisions from screenshots
+- Click most relevant buttons by text/position
+- Dialogs: OK/Yes/Continue (unless destructive)
+- Files: Save to {save_location}
+- Forms: Use defaults or common values
+- Windows: Focus on task-relevant ones
+- Errors: Acknowledge and try alternatives
 
 EXAMPLES OF MAKING EDUCATED GUESSES:
 - Multiple buttons → Click the primary/highlighted one
-- Save dialog → Use descriptive filename in Desktop
+- Save dialog → Use descriptive filename in {save_location}
 - Settings window → Use recommended/default options
 - Installation wizard → Choose typical/standard installation
 - Confirmation dialog → Proceed unless clearly destructive
 - Multiple windows → Focus on the one matching task context
 - Menu items → Choose based on standard UI patterns
 
- ONLY REPORT THESE CRITICAL BLOCKERS:
+ONLY REPORT THESE CRITICAL BLOCKERS:
 - Application not installed or won't open
 - Critical dialog requiring user decision
 - System-level authentication required
 - Application crash or freeze
 
- HANDLE THESE SITUATIONS AUTONOMOUSLY:
+HANDLE THESE SITUATIONS AUTONOMOUSLY:
 - Choose from similar UI elements (pick most likely)
 - Navigate through menus and dialogs
 - Handle notifications (dismiss if not critical)
 - Deal with multiple windows (focus on relevant one)
 - Retry clicks if first attempt fails
 
- FILE MANAGEMENT (when working with file dialogs):
+FILE MANAGEMENT (when working with file dialogs):
 - Check for existing files before saving new ones
 - Prefer "Save" over "Save As" when updating files
 - Use existing filenames when appropriate
 - Avoid creating duplicate files with numbers (file1, file2, etc.)
 
- CRITICAL RULE: EXECUTE ONLY ONE COMMAND AT A TIME
+CRITICAL RULE: EXECUTE ONLY ONE COMMAND AT A TIME
 - NEVER call multiple desktop commands simultaneously
 - ALWAYS wait for each action to complete before running the next
 - Multiple concurrent commands will cause conflicts and failures
@@ -797,7 +914,7 @@ Available tools:
 - shortcut: Execute shortcuts
 - window operations: Manage windows
 
- EXECUTION APPROACH:
+EXECUTION APPROACH:
 - Be decisive in UI interactions
 - Try alternative click locations if needed
 - Complete workflows even if UI differs slightly
@@ -807,39 +924,54 @@ Focus on completing your assigned task accurately. Return a clear summary of wha
     
     def _get_planner_prompt(self) -> str:
         """Get system prompt for task planner"""
-        return """Task planner. OUTPUT ONLY VALID JSON.
+        si = self.system_info
+        plat = si.get("platform", "")
+
+        # Platform context for planner
+        if self.is_electron and plat == "win32":
+            platform_note = "TARGET: Windows machine (PowerShell, Windows commands)."
+        elif self.is_electron and plat == "darwin":
+            platform_note = "TARGET: macOS machine (zsh/bash, Unix commands, brew)."
+        elif self.is_electron:
+            platform_note = "TARGET: Linux machine (bash, Unix commands, apt)."
+        else:
+            platform_note = "TARGET: Ubuntu 22.04 VM with XFCE desktop."
+
+        return f"""Task planner. OUTPUT ONLY VALID JSON.
+
+{platform_note}
 
 ## REQUIRED FORMAT
 ```json
-{
-    "task_plan": {
+{{
+    "task_plan": {{
         "main_objective": "goal description",
         "subtasks": [
-            {
+            {{
                 "task_id": "T1",
                 "description": "WHAT to do",
                 "assigned_agent": "browser_agent|terminal_agent",
                 "expected_output": "specific measurable result",
                 "dependencies": []
-            }
+            }}
         ]
-    }
-}
+    }}
+}}
 ```
 RULES
 
-• Use the FEWEST possible subtasks (avoid breaking down obvious/simple actions).
-• Maximum 5 subtasks total.
-• ONE clear action per subtask.
-• Do NOT add redundant steps like “open Chrome” if searching is the real goal as it is already included in the browser_agent (bundle simple context actions).
-• Even for opening terminal, do not add a subtask for it as it is already included in the terminal_agent.
-• Avoid over-explaining. Keep each description short and action-focused.
-• Only create subtasks that are necessary to achieve the main objective.
+- Use the FEWEST possible subtasks (avoid breaking down obvious/simple actions).
+- Maximum 5 subtasks total.
+- ONE clear action per subtask.
+- Do NOT add redundant steps like "open Chrome" if searching is the real goal as it is already included in the browser_agent (bundle simple context actions).
+- Even for opening terminal, do not add a subtask for it as it is already included in the terminal_agent.
+- Avoid over-explaining. Keep each description short and action-focused.
+- Only create subtasks that are necessary to achieve the main objective.
 
 AGENT SELECTION
 
-• browser_agent: Web navigation, searching, form filling, scraping.
-• terminal_agent: Commands, scripts, file operations.
+- browser_agent: Web navigation, searching, form filling, scraping.
+- terminal_agent: Commands, scripts, file operations.
 
 CRITICAL: Return ONLY JSON. No text before/after."""
     

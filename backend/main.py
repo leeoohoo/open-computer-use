@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent / "app"))
 
 from app.core.config import settings
 from app.core.logging import setup_logging
-from app.api.routes import chat, health, models, search, vm_control, screenshots, billing, file_operations
+from app.api.routes import chat, chats, health, models, search, vm_control, screenshots, billing, file_operations, electron_bridge
 from app.core.middleware import RateLimitMiddleware, CSRFMiddleware
 from app.core.exceptions import setup_exception_handlers
 
@@ -119,6 +119,8 @@ app.include_router(vm_control.router, prefix="/api/vm", tags=["vm"])
 app.include_router(screenshots.router, prefix="/api", tags=["screenshots"])
 app.include_router(billing.router, prefix="/api/billing", tags=["billing"])
 app.include_router(file_operations.router, prefix="/api/files", tags=["files"])
+app.include_router(electron_bridge.router, prefix="/api/electron", tags=["electron"])
+app.include_router(chats.router, prefix="/api/chats", tags=["chats"])
 
 # Root endpoint
 @app.get("/")

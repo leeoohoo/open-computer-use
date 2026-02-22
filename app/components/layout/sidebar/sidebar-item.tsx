@@ -3,10 +3,11 @@ import useClickOutside from "@/app/hooks/use-click-outside"
 import { useChats } from "@/lib/chat-store/chats/provider"
 import { Chat } from "@/lib/chat-store/types"
 import { cn } from "@/lib/utils"
-import { 
-  Check, 
-  X, 
+import {
+  Check,
+  X,
   Desktop,
+  Laptop,
   Code,
   Database,
   Globe,
@@ -275,6 +276,23 @@ export function SidebarItem({ chat, currentChatId, isCollaborative }: SidebarIte
     [chat.title]
   )
 
+  const isDesktopChat = useMemo(() => {
+    let rs = chat.room_settings as any
+    if (typeof rs === "string") {
+      try { rs = JSON.parse(rs) } catch { rs = {} }
+    }
+    return rs?.source === "electron"
+  }, [chat.room_settings])
+
+  const desktopLabel = useMemo(() => {
+    if (!isDesktopChat) return null
+    let rs = chat.room_settings as any
+    if (typeof rs === "string") {
+      try { rs = JSON.parse(rs) } catch { rs = {} }
+    }
+    return rs?.machine_name || "Desktop"
+  }, [isDesktopChat, chat.room_settings])
+
   const containerClassName = useMemo(
     () =>
       cn(
@@ -349,12 +367,22 @@ export function SidebarItem({ chat, currentChatId, isCollaborative }: SidebarIte
                 {chatIcon}
               </div>
               <div className="flex-1 min-w-0 space-y-0.5">
-                <p className={cn(
-                  "truncate text-sm font-medium leading-tight",
-                  isActive ? "text-foreground" : "text-foreground/80"
-                )}>
-                  {displayTitle}
-                </p>
+                <div className="flex items-center gap-1.5">
+                  <p className={cn(
+                    "truncate text-sm font-medium leading-tight",
+                    isActive ? "text-foreground" : "text-foreground/80"
+                  )}>
+                    {displayTitle}
+                  </p>
+                  {isDesktopChat && (
+                    <span
+                      className="inline-flex shrink-0 items-center gap-0.5 rounded bg-blue-500/15 px-1 py-0.5 text-[9px] font-medium text-blue-400"
+                      title={desktopLabel || "Desktop"}
+                    >
+                      <Laptop size={10} weight="fill" />
+                    </span>
+                  )}
+                </div>
                 {chat.last_message_preview && (
                   <p className={cn(
                     "truncate text-[11px] leading-tight",

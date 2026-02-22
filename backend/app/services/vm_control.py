@@ -13,6 +13,10 @@ from websockets.protocol import State as WSState
 
 from app.core.config import settings
 from app.utils.image_compression import ImageCompressor
+from app.services.ws_adapter import _AdapterState
+
+# Constant for checking Electron adapter state without importing the full class
+_AdapterState_OPEN = _AdapterState.OPEN
 
 logger = logging.getLogger(__name__)
 
@@ -280,6 +284,19 @@ class VMControlService:
         # CRITICAL: Check if we have an active connection and REUSE it
         if machine_id in self.connections:
             ws = self.connections[machine_id]
+
+            # Electron connections are managed by the electron_bridge endpoint.
+            # The WebSocket is stored here by electron_bridge.py — we never
+            # try to reconnect outbound for these.
+            session = self.session_data.get(machine_id, {})
+            if session.get("is_electron"):
+                if ws.state == _AdapterState_OPEN:
+                    logger.debug(f"Reusing Electron connection for {machine_id}")
+                    return True
+                else:
+                    logger.warning(f"Electron connection lost for {machine_id}")
+                    return False
+
             if ws.state == WSState.OPEN:
                 # Quick check - don't ping every time (causes overhead)
                 # Just verify the socket is open
@@ -289,17 +306,19 @@ class VMControlService:
                     if time.time() - last_command < 60:  # Used in last minute
                         logger.debug(f"Reusing active connection for {machine_id} (last used {time.time() - last_command:.1f}s ago)")
                         return True
-                    
+
                     # Connection idle for a while, do a quick ping test
                     await asyncio.wait_for(ws.ping(), timeout=3.0)
                     logger.debug(f"Connection for {machine_id} verified and reused")
                     return True
                 except (asyncio.TimeoutError, Exception) as e:
                     logger.warning(f"Connection test failed for machine {machine_id}: {e}")
-        
-        # Try to reconnect using stored session data
+
+        # Try to reconnect using stored session data (not for Electron — those reconnect themselves)
         if machine_id in self.session_data:
             session = self.session_data[machine_id]
+            if session.get("is_electron"):
+                return False  # Electron must reconnect on its own
             return await self.connect_to_agent(
                 machine_id,
                 session.get("public_ip"),
@@ -308,7 +327,7 @@ class VMControlService:
                 session.get("user_id"),
                 session.get("vnc_password")  # Pass stored password
             )
-        
+
         return False
     
     def _get_command_lock(self, machine_id: str) -> asyncio.Lock:

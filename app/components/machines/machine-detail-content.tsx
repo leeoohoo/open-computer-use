@@ -194,97 +194,106 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
                   Created {new Date(machine.createdAt).toLocaleDateString()}
                 </CardDescription>
               </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  variant={machine.status === "running" ? "outline" : "default"}
-                  size="sm"
-                  onClick={() => handleAction(machine.status === "running" ? "stop" : "start")}
-                  disabled={actionLoading !== null || !["running", "stopped", "error"].includes(machine.status)}
-                >
-                  {actionLoading === "start" || actionLoading === "stop" ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : machine.status === "running" ? (
-                    <>
-                      <Square className="h-4 w-4 mr-2" />
-                      Stop
-                    </>
-                  ) : (
-                    <>
-                      <Play className="h-4 w-4 mr-2" />
-                      Start
-                    </>
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleAction("restart")}
-                  disabled={actionLoading !== null || machine.status !== "running"}
-                >
-                  {actionLoading === "restart" ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Restart
-                    </>
-                  )}
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleAction("delete")}
-                  disabled={actionLoading !== null || machine.status === "running"}
-                >
-                  {actionLoading === "delete" ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </>
-                  )}
-                </Button>
-              </div>
+              {machine.settings?.provider !== 'electron' && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    variant={machine.status === "running" ? "outline" : "default"}
+                    size="sm"
+                    onClick={() => handleAction(machine.status === "running" ? "stop" : "start")}
+                    disabled={actionLoading !== null || !["running", "stopped", "error"].includes(machine.status)}
+                  >
+                    {actionLoading === "start" || actionLoading === "stop" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : machine.status === "running" ? (
+                      <>
+                        <Square className="h-4 w-4 mr-2" />
+                        Stop
+                      </>
+                    ) : (
+                      <>
+                        <Play className="h-4 w-4 mr-2" />
+                        Start
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleAction("restart")}
+                    disabled={actionLoading !== null || machine.status !== "running"}
+                  >
+                    {actionLoading === "restart" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Restart
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleAction("delete")}
+                    disabled={actionLoading !== null || machine.status === "running"}
+                  >
+                    {actionLoading === "delete" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              {/* Resource Cards */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Cpu className="h-4 w-4" />
-                  <span>CPU</span>
-                </div>
-                <p className="text-xl sm:text-2xl font-bold">{machine.cpuCores} vCPU</p>
+            {machine.settings?.provider === 'electron' ? (
+              /* Electron machines — no cloud resource details */
+              <div className="text-sm text-muted-foreground">
+                <p>This is your local computer connected via the Coasty Desktop App. It does not consume any cloud resources.</p>
               </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MemoryStick className="h-4 w-4" />
-                  <span>Memory</span>
+            ) : (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {/* Resource Cards */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Cpu className="h-4 w-4" />
+                    <span>CPU</span>
+                  </div>
+                  <p className="text-xl sm:text-2xl font-bold">{machine.cpuCores} vCPU</p>
                 </div>
-                <p className="text-xl sm:text-2xl font-bold">{machine.memoryGb} GB</p>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <HardDrive className="h-4 w-4" />
-                  <span>Storage</span>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <MemoryStick className="h-4 w-4" />
+                    <span>Memory</span>
+                  </div>
+                  <p className="text-xl sm:text-2xl font-bold">{machine.memoryGb} GB</p>
                 </div>
-                <p className="text-xl sm:text-2xl font-bold">{machine.storageGb} GB</p>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Network className="h-4 w-4" />
-                  <span>IP Address</span>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <HardDrive className="h-4 w-4" />
+                    <span>Storage</span>
+                  </div>
+                  <p className="text-xl sm:text-2xl font-bold">{machine.storageGb} GB</p>
                 </div>
-                <p className="text-xs sm:text-sm font-mono break-all">
-                  {machine.publicIpAddress || "Not assigned"}
-                </p>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Network className="h-4 w-4" />
+                    <span>IP Address</span>
+                  </div>
+                  <p className="text-xs sm:text-sm font-mono break-all">
+                    {machine.publicIpAddress || "Not assigned"}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Status Message */}
             {machine.statusMessage && (
@@ -298,7 +307,24 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
 
 
         {/* Main Content Tabs */}
-        {machine.settings?.provider === 'aws' && machine.settings?.desktopEnabled ? (
+        {machine.settings?.provider === 'electron' ? (
+          // Electron (local machine) — settings only
+          <Tabs defaultValue="settings" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-1 lg:w-auto lg:inline-grid">
+              <TabsTrigger value="settings" className="gap-2">
+                <Settings className="h-4 w-4" />
+                <span className="hidden sm:inline">Settings</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="settings" className="space-y-4">
+              <MachineSettings
+                machine={machine}
+                onUpdate={fetchMachineData}
+              />
+            </TabsContent>
+          </Tabs>
+        ) : machine.settings?.provider === 'aws' && machine.settings?.desktopEnabled ? (
           // AWS Desktop Machine - Desktop + SSH + Settings
           <Tabs defaultValue="desktop" className="space-y-4">
             <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">

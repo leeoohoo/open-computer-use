@@ -123,6 +123,23 @@ async def update_assistant_message(
 async def get_machine_connection_info(machine_id: str, user_id: str) -> Optional[Dict]:
     """Get machine connection information from database or detect local Docker"""
     try:
+        # Check if it's an Electron desktop machine (connected via electron_bridge)
+        electron_session = vm_control_service.session_data.get(machine_id, {})
+        if electron_session.get("is_electron"):
+            system_info = electron_session.get("system_info", {})
+            logger.info(f"Detected Electron desktop machine: {machine_id}, platform={system_info.get('platform')}")
+            return {
+                "public_ip": "electron",
+                "agent_port": 0,
+                "vnc_port": 0,
+                "websocket_port": 0,
+                "machine_name": f"My Computer ({system_info.get('hostname', 'Electron')})",
+                "vnc_password": None,
+                "is_local": True,
+                "is_electron": True,
+                "system_info": system_info,
+            }
+
         # Check if it's a local machine
         if machine_id.startswith("local-"):
             # Extract the container ID
@@ -290,24 +307,34 @@ async def chat_endpoint(
         logger.info(f"Started billing session {billing_session_id} for user {chat_request.user_id}")
 
         # Pre-establish connection to VM agent
-        try:
-            # Use port 8081 for localhost, 8080 for others (unless explicitly set)
-            public_ip = connection_info["public_ip"]
-            default_port = 8081 if public_ip == "localhost" else 8080
-            agent_port = connection_info.get("agent_port", default_port)
+        if connection_info.get("is_electron"):
+            # Electron connections are already established via the /api/electron/ws endpoint.
+            # Just verify the connection exists in vm_control_service.
+            if chat_request.machine_id not in vm_control_service.connections:
+                raise HTTPException(
+                    status_code=503,
+                    detail="Electron desktop app is not connected. Please ensure the app is running."
+                )
+            logger.info(f"Using existing Electron connection for {chat_request.machine_id}")
+        else:
+            try:
+                # Use port 8081 for localhost, 8080 for others (unless explicitly set)
+                public_ip = connection_info["public_ip"]
+                default_port = 8081 if public_ip == "localhost" else 8080
+                agent_port = connection_info.get("agent_port", default_port)
 
-            connected = await vm_control_service.connect_to_agent(
-                chat_request.machine_id,
-                public_ip,
-                agent_port,
-                connection_info.get("session_id"),
-                connection_info.get("user_id"),
-                connection_info.get("vnc_password")  # Pass the password
-            )
-            if not connected:
-                logger.warning(f"Failed to connect to VM {chat_request.machine_id}")
-        except Exception as e:
-            logger.error(f"Error connecting to VM: {str(e)}")
+                connected = await vm_control_service.connect_to_agent(
+                    chat_request.machine_id,
+                    public_ip,
+                    agent_port,
+                    connection_info.get("session_id"),
+                    connection_info.get("user_id"),
+                    connection_info.get("vnc_password")  # Pass the password
+                )
+                if not connected:
+                    logger.warning(f"Failed to connect to VM {chat_request.machine_id}")
+            except Exception as e:
+                logger.error(f"Error connecting to VM: {str(e)}")
 
         # Use the model from backend settings (env-configurable), not from frontend
         bedrock_model = settings.BEDROCK_DEFAULT_MODEL

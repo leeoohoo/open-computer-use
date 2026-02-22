@@ -600,16 +600,30 @@ export function LandingPage() {
               </Button>
             </motion.div>
 
-            {/* Live session replay */}
-            <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/40" style={{ aspectRatio: "16 / 9" }}>
-              <iframe
-                src="/share/1cd404ae-3fcb-4d7f-b9d4-dac7aa26fc6d?embed=true"
-                title="AI Agent solving a CAPTCHA — live session replay"
-                className="absolute inset-0 w-full h-full border-0"
-                loading="lazy"
-                allow="autoplay"
-              />
-            </motion.div>
+            {/* Hero demo: iframe replay on desktop, GIF on mobile */}
+            {isMobile ? (
+              <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden shadow-2xl">
+                <Image
+                  src="/Pi7_Gif.gif"
+                  alt="AI Agent Demo"
+                  width={1200}
+                  height={675}
+                  className="w-full h-auto"
+                  unoptimized
+                  priority
+                />
+              </motion.div>
+            ) : (
+              <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/40" style={{ aspectRatio: "16 / 9" }}>
+                <iframe
+                  src="/share/1cd404ae-3fcb-4d7f-b9d4-dac7aa26fc6d?embed=true"
+                  title="AI Agent solving a CAPTCHA — live session replay"
+                  className="absolute inset-0 w-full h-full border-0"
+                  loading="lazy"
+                  allow="autoplay"
+                />
+              </motion.div>
+            )}
 
             {/* One-liner */}
             <motion.p variants={itemVariants} className="mt-10 text-center text-sm text-muted-foreground">
@@ -671,10 +685,11 @@ export function LandingPage() {
               ].map((entry, i) => (
                 <motion.div
                   key={i}
-                  initial={isMobile ? false : { opacity: 0, x: -20 }}
+                  initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                  animate={isMobile ? { opacity: 1, x: 0 } : undefined}
                   whileInView={isMobile ? undefined : { opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={isMobile ? undefined : { delay: i * 0.06, duration: 0.4 }}
+                  transition={isMobile ? { duration: 0 } : { delay: i * 0.06, duration: 0.4 }}
                   className={cn(
                     isMobile ? "flex flex-col gap-1" : "flex items-center gap-3",
                     entry.highlight && "py-1"
