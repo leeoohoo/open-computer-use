@@ -103,8 +103,14 @@ export class MachineCleanupService {
         return stats;
       }
 
-      // Filter for free users only
+      // Filter for free users only, and skip electron/local machines
       const freeuserMachines = expiredMachines.filter((machine: any) => {
+        // Never delete electron (desktop app) or local Docker machines
+        const settings = machine.settings as any;
+        if (settings?.provider === 'electron' || settings?.isLocal) {
+          return false;
+        }
+
         const userSubscriptions = (machine.users as any)?.user_subscriptions;
 
         // If no subscriptions, user is free

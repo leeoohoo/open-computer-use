@@ -15,6 +15,7 @@ const navItems = [
   { href: "/#features", label: "Features" },
   { href: "/#demo", label: "Demo" },
   { href: "/#pricing", label: "Pricing" },
+  { href: "/download", label: "Download", external: true },
   { href: "/changelog", label: "Changelog", external: true },
   { href: "/blog", label: "Blog", external: true }
 ]

@@ -40,6 +40,7 @@ export async function GET(request: NextRequest) {
         container_name,
         display_name,
         status,
+        settings,
         created_at,
         users!inner (
           email,
@@ -79,16 +80,22 @@ export async function GET(request: NextRequest) {
         }
       }
 
+      // Electron (desktop app) and local Docker machines are never cleaned up
+      const settings = machine.settings as any;
+      const isElectronOrLocal = settings?.provider === 'electron' || settings?.isLocal;
+
       return {
         machineId: machine.id,
         machineName: machine.display_name,
         userEmail: userEmail,
         containerName: machine.container_name,
+        provider: settings?.provider || 'unknown',
         status: machine.status,
         createdAt: machine.created_at,
         ageHours: machine.created_at ? Math.round((Date.now() - new Date(machine.created_at).getTime()) / (1000 * 60 * 60) * 10) / 10 : 0,
         subscriptionStatus,
-        eligibleForCleanup: !hasActivePaidSubscription
+        isElectronOrLocal,
+        eligibleForCleanup: !hasActivePaidSubscription && !isElectronOrLocal
       };
     }) || [];
 

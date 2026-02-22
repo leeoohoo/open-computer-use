@@ -12,7 +12,8 @@ import { Globe as GlobeComponent } from "@/components/magicui/globe"
 import { Tree, Folder, File, type TreeViewElement } from "@/components/magicui/file-tree"
 import { GridPattern } from "@/components/magicui/grid-pattern"
 import { RainbowButton } from "@/components/magicui/rainbow-button"
-import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, Github, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play } from "lucide-react"
+import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, Github, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download } from "lucide-react"
+import { WindowsIcon, AppleIcon } from "@/components/icons/platform-icons"
 import Link from "next/link"
 import { useState, useEffect, useCallback } from "react"
 import { cn } from "@/lib/utils"
@@ -598,6 +599,21 @@ export function LandingPage() {
                   We are Open Source
                 </Link>
               </Button>
+            </motion.div>
+
+            {/* Desktop app pill */}
+            <motion.div variants={itemVariants} className="flex justify-center mb-16">
+              <Link
+                href="/download"
+                className="group inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 backdrop-blur-sm px-4 py-2 shadow-sm hover:border-primary/30 transition-all"
+              >
+                <span className="text-xs sm:text-sm text-muted-foreground">Also available as a desktop app</span>
+                <span className="flex items-center gap-1.5 text-muted-foreground/60">
+                  <WindowsIcon className="h-3.5 w-3.5" />
+                  <AppleIcon className="h-3.5 w-3.5" />
+                </span>
+                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+              </Link>
             </motion.div>
 
             {/* Hero demo: iframe replay on desktop, GIF on mobile */}
@@ -1239,6 +1255,9 @@ export function LandingPage() {
                 </Link>
                 <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Blog
+                </Link>
+                <Link href="/download" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Download
                 </Link>
                 <Link href="mailto:founders@coasty.ai" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Contact

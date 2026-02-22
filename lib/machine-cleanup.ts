@@ -177,8 +177,12 @@ export async function performCleanup(): Promise<CleanupSummary> {
       return summary;
     }
 
-    // Filter to only free tier users
+    // Filter to only free tier users, and skip electron/local machines
     const freeUserMachines = machines.filter(machine => {
+      const settings = machine.settings as any;
+      if (settings?.provider === 'electron' || settings?.isLocal) {
+        return false;
+      }
       const userTier = userTiers.get(machine.user_id) || "free";
       return userTier === "free";
     });

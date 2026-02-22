@@ -2,17 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Monitor, Cpu, HardDrive, MemoryStick, MonitorCog, Clock, ArrowRight } from "lucide-react";
+import { Plus, Monitor, Cpu, HardDrive, MemoryStick, MonitorCog, ArrowRight, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 
 import { toast } from "sonner";
 import { NoiseBackground } from "@/components/ui/noise-background";
+import Link from "next/link";
+import { WindowsIcon, AppleIcon } from "@/components/icons/platform-icons";
 import { MachineCard } from "@/app/components/machines/machine-card";
 import { CreateMachineDialog } from "@/app/components/machines/create-machine-dialog";
 import { UsageStats } from "@/app/components/machines/usage-stats";
 import type { UserMachine, MachineUsage } from "@/types/machines.types";
-import { useSubscription } from "@/hooks/use-subscription";
 
 interface MachinesData {
   machines: UserMachine[];
@@ -32,7 +33,6 @@ interface MachinesData {
 
 export function MachinesContent() {
   const router = useRouter();
-  const { isFreeTier, loading: subscriptionLoading } = useSubscription();
   // Remove unused store methods since we're fetching directly from database
   const [loading, setLoading] = useState(true);
   const [machines, setMachines] = useState<UserMachine[]>([]);
@@ -274,32 +274,26 @@ export function MachinesContent() {
           </NoiseBackground>
         </div>
 
-        {/* Free Tier Notice */}
-        {!subscriptionLoading && isFreeTier && (
-          <NoiseBackground
-            containerClassName="w-full p-[1px] rounded-lg bg-transparent dark:bg-transparent shadow-none"
-            className="p-0"
-            gradientColors={["rgb(115, 115, 115)", "rgb(163, 163, 163)", "rgb(82, 82, 82)"]}
-            noiseIntensity={0.06}
-            speed={0.06}
-          >
-            <div className="flex items-center justify-between gap-3 rounded-[7px] bg-background/80 px-4 py-3">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <Clock className="h-4 w-4 shrink-0 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground truncate">
-                  Free machines expire after <span className="font-medium text-foreground">2 hours</span>
-                </p>
-              </div>
-              <a
-                href="/account?section=billing"
-                className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-foreground hover:opacity-80 transition-opacity"
-              >
-                Upgrade
-                <ArrowRight className="h-3 w-3" />
-              </a>
+
+        {/* Desktop App Banner */}
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-1.5 text-muted-foreground/60">
+              <WindowsIcon className="h-3.5 w-3.5" />
+              <AppleIcon className="h-3.5 w-3.5" />
             </div>
-          </NoiseBackground>
-        )}
+            <p className="text-sm text-muted-foreground truncate">
+              Skip the VM — run AI agents on <span className="font-medium text-foreground">your own computer</span> with the native app
+            </p>
+          </div>
+          <Link
+            href="/download"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 px-3 py-1.5 text-xs font-medium text-foreground transition-colors"
+          >
+            <Download className="h-3 w-3" />
+            Get the app
+          </Link>
+        </div>
 
         {/* Usage Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
