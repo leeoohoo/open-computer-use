@@ -5,6 +5,12 @@ import { WebSocketBridge } from './ws-bridge'
 import { registerIpcHandlers } from './ipc-handlers'
 import { setMainWindow, setWindowMode, setWindowOpacity, getWindowOpacity } from './window-manager'
 import { initAutoUpdater, getUpdateStatus, getUpdateVersion, quitAndInstall } from './auto-updater'
+import {
+  checkAllPermissions,
+  requestAccessibility,
+  openScreenRecordingSettings,
+  openAccessibilitySettings,
+} from './permissions'
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
@@ -39,6 +45,14 @@ function createWindow(): void {
     hasShadow: false,
     resizable: false,
   })
+
+  // Set the dock icon on macOS (BrowserWindow.icon is ignored on macOS)
+  if (process.platform === 'darwin' && app.dock) {
+    const dockIcon = nativeImage.createFromPath(getIconPath())
+    if (!dockIcon.isEmpty()) {
+      app.dock.setIcon(dockIcon)
+    }
+  }
 
   // Register with window manager for mode switching & screenshot hiding
   setMainWindow(mainWindow)
@@ -100,6 +114,18 @@ app.whenReady().then(async () => {
   })
   ipcMain.handle('window:get-opacity', async () => {
     return getWindowOpacity()
+  })
+
+  // Permissions IPC (macOS)
+  ipcMain.handle('permissions:check', () => checkAllPermissions())
+  ipcMain.handle('permissions:request-accessibility', () => requestAccessibility())
+  ipcMain.handle('permissions:open-screen-recording', () => openScreenRecordingSettings())
+  ipcMain.handle('permissions:open-accessibility', () => openAccessibilitySettings())
+
+  // App restart (used after granting permissions)
+  ipcMain.handle('app:relaunch', () => {
+    app.relaunch()
+    app.exit(0)
   })
 
   // Auto-update IPC

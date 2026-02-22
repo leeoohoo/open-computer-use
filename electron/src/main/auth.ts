@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-js'
-import { safeStorage, shell } from 'electron'
+import { shell } from 'electron'
 import * as http from 'http'
 import * as url from 'url'
 import * as crypto from 'crypto'
@@ -270,28 +270,21 @@ export class ElectronAuth {
 
   private storeSession(session: Session): void {
     try {
-      if (safeStorage.isEncryptionAvailable()) {
-        const encrypted = safeStorage.encryptString(JSON.stringify({
-          access_token: session.access_token,
-          refresh_token: session.refresh_token,
-          expires_at: session.expires_at,
-          user: session.user,
-        }))
-        // Store encrypted buffer in a file or electron-store
-        // For simplicity, use a global variable. In production, use electron-store.
-        ;(global as any).__coasty_encrypted_session = encrypted
+      ;(global as any).__coasty_session = {
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+        expires_at: session.expires_at,
+        user: session.user,
       }
     } catch {
-      // Encryption not available, skip
+      // Ignore store errors
     }
   }
 
   private loadStoredSession(): void {
     try {
-      const encrypted = (global as any).__coasty_encrypted_session
-      if (encrypted && safeStorage.isEncryptionAvailable()) {
-        const decrypted = safeStorage.decryptString(encrypted)
-        const data = JSON.parse(decrypted)
+      const data = (global as any).__coasty_session
+      if (data) {
         this.session = data as Session
         if (this.isAuthenticated()) {
           this.scheduleRefresh(this.session!)
@@ -305,7 +298,7 @@ export class ElectronAuth {
   }
 
   private clearStoredSession(): void {
-    ;(global as any).__coasty_encrypted_session = null
+    ;(global as any).__coasty_session = null
   }
 
   private scheduleRefresh(session: Session): void {

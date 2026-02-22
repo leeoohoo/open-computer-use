@@ -1,4 +1,4 @@
-import { execFile } from 'child_process'
+import { execFile, spawn } from 'child_process'
 import * as os from 'os'
 
 function runPowershell(script: string): Promise<string> {
@@ -20,6 +20,24 @@ function runBash(command: string): Promise<string> {
       if (error) reject(error)
       else resolve(stdout.trim())
     })
+  })
+}
+
+/** Run an inline Swift script via stdin. Uses CoreGraphics for native mouse control on macOS. */
+function runSwift(code: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const proc = spawn('swift', ['-'], { timeout: 10000 })
+    let stdout = ''
+    let stderr = ''
+    proc.stdout.on('data', (d) => { stdout += d })
+    proc.stderr.on('data', (d) => { stderr += d })
+    proc.on('close', (exitCode) => {
+      if (exitCode !== 0) reject(new Error(stderr.trim() || `swift exited with code ${exitCode}`))
+      else resolve(stdout.trim())
+    })
+    proc.on('error', reject)
+    proc.stdin.write(code)
+    proc.stdin.end()
   })
 }
 
@@ -55,7 +73,16 @@ ${button === 'right'
     } else if (process.platform === 'linux') {
       await runBash(`xdotool mousemove ${x} ${y} click ${button === 'right' ? '3' : '1'}`)
     } else if (process.platform === 'darwin') {
-      await runBash(`cliclick c:${x},${y}`)
+      const downType = button === 'right' ? '.rightMouseDown' : '.leftMouseDown'
+      const upType = button === 'right' ? '.rightMouseUp' : '.leftMouseUp'
+      const btn = button === 'right' ? '.right' : '.left'
+      await runSwift(`
+import Cocoa
+let pt = CGPoint(x: ${x}, y: ${y})
+CGEvent(mouseEventSource: nil, mouseType: ${downType}, mouseCursorPosition: pt, mouseButton: ${btn})?.post(tap: .cghidEventTap)
+usleep(50000)
+CGEvent(mouseEventSource: nil, mouseType: ${upType}, mouseCursorPosition: pt, mouseButton: ${btn})?.post(tap: .cghidEventTap)
+`)
     }
 
     return { success: true, message: `Clicked at (${x}, ${y})` }
@@ -94,7 +121,23 @@ Start-Sleep -Milliseconds 50
     } else if (process.platform === 'linux') {
       await runBash(`xdotool mousemove ${x} ${y} click --repeat 2 1`)
     } else if (process.platform === 'darwin') {
-      await runBash(`cliclick dc:${x},${y}`)
+      await runSwift(`
+import Cocoa
+let pt = CGPoint(x: ${x}, y: ${y})
+let down1 = CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: pt, mouseButton: .left)
+down1?.post(tap: .cghidEventTap)
+usleep(30000)
+let up1 = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: pt, mouseButton: .left)
+up1?.post(tap: .cghidEventTap)
+usleep(50000)
+let down2 = CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: pt, mouseButton: .left)
+down2?.setIntegerValueField(.mouseEventClickState, value: 2)
+down2?.post(tap: .cghidEventTap)
+usleep(30000)
+let up2 = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: pt, mouseButton: .left)
+up2?.setIntegerValueField(.mouseEventClickState, value: 2)
+up2?.post(tap: .cghidEventTap)
+`)
     }
 
     return { success: true, message: `Double-clicked at (${x}, ${y})` }
@@ -248,7 +291,14 @@ Add-Type -AssemblyName System.Windows.Forms
       }
     } else if (process.platform === 'darwin') {
       for (const key of keys) {
-        await runBash(`osascript -e 'tell application "System Events" to key code ${key}'`)
+        const lower = key.toLowerCase()
+        const macKeyCode = KEY_MAP_MACOS[lower]
+        if (macKeyCode !== undefined) {
+          await runBash(`osascript -e 'tell application "System Events" to key code ${macKeyCode}'`)
+        } else {
+          // Single character — use keystroke
+          await runBash(`osascript -e 'tell application "System Events" to keystroke "${key.replace(/"/g, '\\"')}"'`)
+        }
       }
     }
 
@@ -260,6 +310,21 @@ Add-Type -AssemblyName System.Windows.Forms
 
 const MODIFIER_MAP_XDOTOOL: Record<string, string> = {
   ctrl: 'ctrl', alt: 'alt', shift: 'shift', cmd: 'super', win: 'super',
+}
+
+// macOS virtual key codes (CGKeyCode) for special keys
+const KEY_MAP_MACOS: Record<string, number> = {
+  enter: 36, return: 36,
+  tab: 48,
+  space: 49,
+  backspace: 51, delete: 51,
+  escape: 53, esc: 53,
+  up: 126, down: 125, left: 123, right: 124,
+  home: 115, end: 119,
+  pageup: 116, pagedown: 121,
+  forwarddelete: 117,
+  f1: 122, f2: 120, f3: 99, f4: 118, f5: 96, f6: 97,
+  f7: 98, f8: 100, f9: 101, f10: 109, f11: 103, f12: 111,
 }
 
 export async function desktopKeyCombo(params: { keys: string[] }): Promise<any> {
@@ -300,14 +365,25 @@ export async function desktopKeyCombo(params: { keys: string[] }): Promise<any> 
       let finalKey = ''
       for (const key of keys) {
         const lower = key.toLowerCase()
-        if (['ctrl', 'alt', 'shift', 'cmd', 'win'].includes(lower)) {
-          modifiers.push(lower === 'ctrl' ? 'control down' : lower === 'win' ? 'command down' : `${lower} down`)
+        if (['ctrl', 'control', 'alt', 'option', 'shift', 'cmd', 'command', 'win'].includes(lower)) {
+          const mapped = (lower === 'ctrl' || lower === 'control') ? 'control down'
+            : (lower === 'alt' || lower === 'option') ? 'option down'
+            : (lower === 'cmd' || lower === 'command' || lower === 'win') ? 'command down'
+            : `${lower} down`
+          modifiers.push(mapped)
         } else {
           finalKey = key
         }
       }
       const using = modifiers.length ? ` using {${modifiers.join(', ')}}` : ''
-      await runBash(`osascript -e 'tell application "System Events" to keystroke "${finalKey}"${using}'`)
+      const macKeyCode = KEY_MAP_MACOS[finalKey.toLowerCase()]
+      if (macKeyCode !== undefined) {
+        // Special key (Enter, Backspace, arrows, etc.) — must use key code
+        await runBash(`osascript -e 'tell application "System Events" to key code ${macKeyCode}${using}'`)
+      } else {
+        // Regular character — use keystroke
+        await runBash(`osascript -e 'tell application "System Events" to keystroke "${finalKey.replace(/"/g, '\\"')}"${using}'`)
+      }
     }
 
     return { success: true, message: `Key combo: ${keys.join('+')}` }
@@ -357,9 +433,17 @@ public class ScrollOps {
       parts.push(`xdotool click --repeat ${amount} --delay 50 ${button}`)
       await runBash(parts.join(' && '))
     } else if (process.platform === 'darwin') {
-      // AppleScript scroll (negative = down, positive = up)
-      const scrollAmount = scrollUp ? amount : -amount
-      await runBash(`osascript -e 'tell application "System Events" to scroll area 1 of front window by ${scrollAmount}'`)
+      // Use CGEvent for reliable scrolling. Positive = scroll up, negative = scroll down.
+      const delta = scrollUp ? amount * 3 : -(amount * 3)
+      const moveCmd = (x !== undefined && y !== undefined)
+        ? `CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: CGPoint(x: ${x}, y: ${y}), mouseButton: .left)?.post(tap: .cghidEventTap)\nusleep(50000)\n`
+        : ''
+      await runSwift(`
+import Cocoa
+${moveCmd}if let scrollEvent = CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 1, wheel1: Int32(${delta}), wheel2: 0, wheel3: 0) {
+    scrollEvent.post(tap: .cghidEventTap)
+}
+`)
     }
 
     return { success: true, message: `Scrolled ${scrollUp ? 'up' : 'down'} ${amount} clicks` }
@@ -422,7 +506,19 @@ Start-Sleep -Milliseconds 100
       }
       await runBash(parts.join(' && '))
     } else if (process.platform === 'darwin') {
-      await runBash(`cliclick dd:${x1},${y1} m:${x2},${y2} du:${x2},${y2}`)
+      await runSwift(`
+import Cocoa
+let start = CGPoint(x: ${x1}, y: ${y1})
+let end = CGPoint(x: ${x2}, y: ${y2})
+CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: start, mouseButton: .left)?.post(tap: .cghidEventTap)
+usleep(100000)
+let mid = CGPoint(x: (start.x + end.x) / 2, y: (start.y + end.y) / 2)
+CGEvent(mouseEventSource: nil, mouseType: .leftMouseDragged, mouseCursorPosition: mid, mouseButton: .left)?.post(tap: .cghidEventTap)
+usleep(50000)
+CGEvent(mouseEventSource: nil, mouseType: .leftMouseDragged, mouseCursorPosition: end, mouseButton: .left)?.post(tap: .cghidEventTap)
+usleep(100000)
+CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: end, mouseButton: .left)?.post(tap: .cghidEventTap)
+`)
     }
 
     return { success: true, message: `Dragged from (${x1},${y1}) to (${x2},${y2})` }

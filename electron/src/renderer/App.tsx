@@ -4,6 +4,7 @@ import { useConnectionStore } from './stores/connection-store'
 import { useWindowStore } from './stores/window-store'
 import { AuthScreen } from './components/AuthScreen'
 import { Overlay } from './components/Overlay'
+import { PermissionsGuard } from './components/PermissionsGuard'
 
 export default function App() {
   const { isAuthenticated, loading, checkSession } = useAuthStore()
@@ -25,14 +26,11 @@ export default function App() {
     return initWindow()
   }, [])
 
-  // After auth succeeds, connect bridge and switch to compact overlay
+  // After auth succeeds, connect bridge
   // When signed out, switch back to auth mode
   React.useEffect(() => {
     if (isAuthenticated) {
       connect()
-      if (mode === 'auth') {
-        setMode('compact')
-      }
     } else if (mode !== 'auth') {
       setMode('auth')
     }
@@ -52,9 +50,13 @@ export default function App() {
     )
   }
 
-  if (!isAuthenticated || mode === 'auth') {
+  if (!isAuthenticated) {
     return <AuthScreen />
   }
 
-  return <Overlay />
+  return (
+    <PermissionsGuard>
+      <Overlay />
+    </PermissionsGuard>
+  )
 }

@@ -56,6 +56,16 @@ contextBridge.exposeInMainWorld('coasty', {
     return () => ipcRenderer.removeListener('update-status-changed', handler)
   },
 
+  // Permissions (macOS)
+  checkPermissions: () => ipcRenderer.invoke('permissions:check'),
+  requestAccessibility: () => ipcRenderer.invoke('permissions:request-accessibility'),
+  openScreenRecordingSettings: () => ipcRenderer.invoke('permissions:open-screen-recording'),
+  openAccessibilitySettings: () => ipcRenderer.invoke('permissions:open-accessibility'),
+  getPlatform: () => process.platform,
+
+  // App lifecycle
+  relaunch: () => ipcRenderer.invoke('app:relaunch'),
+
   // Events from main process
   onConnectionStateChanged: (callback: (state: string) => void) => {
     const handler = (_event: any, state: string) => callback(state)
@@ -116,6 +126,18 @@ export interface CoastyAPI {
   getUpdateVersion: () => Promise<string | null>
   installUpdate: () => Promise<void>
   onUpdateStatusChanged: (callback: (status: string) => void) => () => void
+
+  // Permissions (macOS)
+  checkPermissions: () => Promise<{
+    screenRecording: 'granted' | 'denied' | 'not-applicable'
+    accessibility: 'granted' | 'denied' | 'not-applicable'
+  }>
+  requestAccessibility: () => Promise<boolean>
+  openScreenRecordingSettings: () => Promise<void>
+  openAccessibilitySettings: () => Promise<void>
+  getPlatform: () => string
+
+  relaunch: () => Promise<void>
 
   onConnectionStateChanged: (callback: (state: string) => void) => () => void
 }

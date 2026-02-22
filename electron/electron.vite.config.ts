@@ -39,7 +39,18 @@ export default defineConfig({
         }
       }
     },
-    plugins: [react()],
+    plugins: [
+      react(),
+      // Strip `crossorigin` from built HTML — it breaks script loading
+      // when Electron loads from file:// protocol inside an asar archive
+      {
+        name: 'strip-crossorigin',
+        enforce: 'post' as const,
+        transformIndexHtml(html: string) {
+          return html.replace(/ crossorigin/g, '')
+        }
+      }
+    ],
     css: {
       postcss: {
         plugins: [tailwindcss, autoprefixer]
