@@ -166,7 +166,10 @@ async def electron_websocket(
     except Exception as e:
         logger.error(f"Electron WebSocket error: {e}")
     finally:
-        await _cleanup_electron_connection(machine_id)
+        # Only clean up if OUR adapter is still the registered one.
+        # If the Electron app reconnected quickly, a new handler already
+        # stored a new adapter — we must NOT remove it.
+        await _cleanup_electron_connection(machine_id, adapter)
 
 
 async def _register_electron_machine(
@@ -231,8 +234,22 @@ async def _register_electron_machine(
         logger.error(f"Failed to register Electron machine: {e}")
 
 
-async def _cleanup_electron_connection(machine_id: str):
-    """Clean up when Electron disconnects."""
+async def _cleanup_electron_connection(machine_id: str, own_adapter=None):
+    """Clean up when Electron disconnects.
+
+    If *own_adapter* is provided, only remove the connection from
+    vm_control_service when it still points to this adapter.  This
+    prevents a stale handler from wiping out a newer connection that
+    was registered by a quick Electron reconnect.
+    """
+    current = vm_control_service.connections.get(machine_id)
+    if own_adapter is not None and current is not own_adapter:
+        # A newer handler already replaced our connection — don't touch it.
+        logger.info(
+            f"Skipping cleanup for {machine_id}: connection was replaced by a newer handler"
+        )
+        return
+
     logger.info(f"Cleaning up Electron connection: {machine_id}")
 
     # Remove from vm_control_service

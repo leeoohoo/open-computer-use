@@ -1,8 +1,10 @@
 import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-js'
-import { shell } from 'electron'
+import { app, safeStorage, shell } from 'electron'
 import * as http from 'http'
 import * as url from 'url'
 import * as crypto from 'crypto'
+import * as path from 'path'
+import * as fs from 'fs'
 
 export class ElectronAuth {
   private supabase: SupabaseClient
@@ -212,6 +214,10 @@ export class ElectronAuth {
   }
 
   async getSession(): Promise<Session | null> {
+    // If we have a stored session but the access token is expired, try refreshing
+    if (this.session && !this.isAuthenticated() && this.session.refresh_token) {
+      await this.refreshSessionNow()
+    }
     return this.session
   }
 
@@ -268,37 +274,119 @@ export class ElectronAuth {
     return uuidv5FromName(name)
   }
 
+  /** Path to the encrypted session file in the app's user data directory. */
+  private getSessionPath(): string {
+    // Windows: %APPDATA%/coasty-desktop/.session
+    // macOS:   ~/Library/Application Support/coasty-desktop/.session
+    // Linux:   ~/.config/coasty-desktop/.session
+    return path.join(app.getPath('userData'), '.session')
+  }
+
   private storeSession(session: Session): void {
     try {
-      ;(global as any).__coasty_session = {
+      const json = JSON.stringify({
         access_token: session.access_token,
         refresh_token: session.refresh_token,
         expires_at: session.expires_at,
         user: session.user,
+      })
+
+      const sessionPath = this.getSessionPath()
+
+      if (safeStorage.isEncryptionAvailable()) {
+        // Encrypt using OS keychain (macOS Keychain / Windows DPAPI / Linux libsecret)
+        const encrypted = safeStorage.encryptString(json)
+        fs.writeFileSync(sessionPath, encrypted)
+      } else {
+        // Fallback: plain JSON (still persists across restarts)
+        fs.writeFileSync(sessionPath, json, 'utf-8')
       }
-    } catch {
-      // Ignore store errors
+      console.log('[Auth] Session saved to disk')
+    } catch (err) {
+      console.error('[Auth] Failed to store session:', err)
     }
   }
 
   private loadStoredSession(): void {
     try {
-      const data = (global as any).__coasty_session
-      if (data) {
-        this.session = data as Session
-        if (this.isAuthenticated()) {
-          this.scheduleRefresh(this.session!)
-        } else {
-          this.session = null
+      const sessionPath = this.getSessionPath()
+      if (!fs.existsSync(sessionPath)) return
+
+      const raw = fs.readFileSync(sessionPath)
+      let json: string
+
+      if (safeStorage.isEncryptionAvailable()) {
+        try {
+          json = safeStorage.decryptString(raw)
+        } catch {
+          // File might be plain text from before encryption was available
+          json = raw.toString('utf-8')
         }
+      } else {
+        json = raw.toString('utf-8')
       }
-    } catch {
+
+      const data = JSON.parse(json)
+      this.session = data as Session
+
+      if (this.isAuthenticated()) {
+        console.log('[Auth] Restored valid session from disk')
+        this.scheduleRefresh(this.session!)
+      } else if (this.session?.refresh_token) {
+        // Access token expired but refresh token exists — try refreshing
+        console.log('[Auth] Access token expired, will refresh on first getSession() call')
+        // Keep session set so getSession() can attempt refresh
+      } else {
+        console.log('[Auth] Stored session fully expired, clearing')
+        this.session = null
+        this.clearStoredSession()
+      }
+    } catch (err) {
+      console.error('[Auth] Failed to load stored session:', err)
       this.session = null
     }
   }
 
   private clearStoredSession(): void {
-    ;(global as any).__coasty_session = null
+    try {
+      const sessionPath = this.getSessionPath()
+      if (fs.existsSync(sessionPath)) {
+        fs.unlinkSync(sessionPath)
+      }
+    } catch {
+      // Ignore cleanup errors
+    }
+  }
+
+  /** Immediately attempt to refresh the session using the refresh token. */
+  private async refreshSessionNow(): Promise<void> {
+    if (!this.session?.refresh_token) {
+      this.session = null
+      return
+    }
+
+    console.log('[Auth] Refreshing expired access token...')
+    try {
+      const { data, error } = await this.supabase.auth.refreshSession({
+        refresh_token: this.session.refresh_token,
+      })
+
+      if (error || !data.session) {
+        console.error('[Auth] Refresh failed:', error?.message || 'No session returned')
+        this.session = null
+        this.clearStoredSession()
+        return
+      }
+
+      this.session = data.session
+      this.storeSession(data.session)
+      this.scheduleRefresh(data.session)
+      console.log('[Auth] Token refreshed successfully')
+    } catch (err: any) {
+      console.error('[Auth] Refresh error:', err.message)
+      this.session = null
+      this.clearStoredSession()
+    }
   }
 
   private scheduleRefresh(session: Session): void {

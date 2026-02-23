@@ -320,7 +320,6 @@ export function Overlay() {
 
   const isExpanded = mode === 'expanded'
   const [input, setInput] = React.useState('')
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null)
   const [opacity, setOpacity] = React.useState(1)
   const [showMenu, setShowMenu] = React.useState(false)
   const [showHistory, setShowHistory] = React.useState(false)
@@ -402,15 +401,6 @@ export function Overlay() {
       setShowMenu(true)
     }
   }
-
-  // Auto-resize expanded textarea
-  React.useEffect(() => {
-    const el = textareaRef.current
-    if (el) {
-      el.style.height = 'auto'
-      el.style.height = Math.min(el.scrollHeight, 120) + 'px'
-    }
-  }, [input])
 
   return (
     <div className="glow-border flex flex-col w-full h-full rounded-2xl bg-neutral-900/95 backdrop-blur-xl overflow-hidden">
@@ -612,14 +602,13 @@ export function Overlay() {
 
               <form onSubmit={onSubmit} className="rounded-2xl bg-neutral-800 border border-neutral-700/50 p-2 shadow-lg transition-all duration-300 focus-within:shadow-xl focus-within:border-neutral-600/50">
                 <textarea
-                  ref={textareaRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={onKeyDown}
                   placeholder="Tell your AI what to do..."
                   rows={1}
                   disabled={connectionState !== 'connected'}
-                  className="w-full min-h-[36px] max-h-[120px] bg-transparent text-sm text-neutral-200 placeholder-neutral-500 resize-none px-3 pt-2 pb-1 outline-none disabled:opacity-50"
+                  className="w-full h-[60px] bg-transparent text-sm text-neutral-200 placeholder-neutral-500 resize-none px-3 pt-2 pb-1 outline-none overflow-y-auto disabled:opacity-50"
                 />
                 <div className="flex items-center justify-end px-1 pb-0.5">
                   {isStreaming ? (
