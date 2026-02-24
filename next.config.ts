@@ -6,6 +6,26 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 const nextConfig: NextConfig = withBundleAnalyzer({
   output: "standalone",
+  async headers() {
+    return [
+      {
+        source: "/download",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Pragma", value: "no-cache" },
+          { key: "Expires", value: "0" },
+        ],
+      },
+      {
+        source: "/api/download",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Pragma", value: "no-cache" },
+          { key: "Expires", value: "0" },
+        ],
+      },
+    ]
+  },
   experimental: {
     optimizePackageImports: ["@phosphor-icons/react"],
   },

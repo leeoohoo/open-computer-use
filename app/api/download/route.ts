@@ -70,7 +70,9 @@ export async function GET() {
     { windows, mac },
     {
       headers: {
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
       },
     }
   )
