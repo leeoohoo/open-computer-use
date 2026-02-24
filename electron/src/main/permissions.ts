@@ -26,7 +26,7 @@ export async function checkAllPermissions(): Promise<PermissionStatus> {
 
   if (!screenGranted) {
     // API didn't say granted — try an actual capture to double-check.
-    // Use a 100x100 thumbnail (1x1 can be unreliable on some macOS versions).
+    // getMediaAccessStatus often returns 'not-determined' even after granting.
     try {
       const sources = await desktopCapturer.getSources({
         types: ['screen'],
@@ -35,13 +35,19 @@ export async function checkAllPermissions(): Promise<PermissionStatus> {
       if (sources.length > 0) {
         const thumb = sources[0].thumbnail
         const size = thumb.getSize()
-        // When denied, macOS returns a 0x0 empty thumbnail.
-        // When granted, it returns the requested size with real content.
         if (size.width > 0 && size.height > 0) {
-          // Extra check: verify the image has actual pixel data (not all zeros)
+          // Check only RGB channels (every 4th byte is alpha, always 255).
+          // When denied, macOS returns a fully black image (R=0,G=0,B=0).
           const bitmap = thumb.toBitmap()
-          const hasContent = bitmap.some((byte: number) => byte !== 0)
-          screenGranted = hasContent
+          let hasRGBContent = false
+          for (let i = 0; i < bitmap.length; i += 4) {
+            // Check R, G, B (skip A at i+3)
+            if (bitmap[i] !== 0 || bitmap[i + 1] !== 0 || bitmap[i + 2] !== 0) {
+              hasRGBContent = true
+              break
+            }
+          }
+          screenGranted = hasRGBContent
         }
       }
     } catch {

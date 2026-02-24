@@ -265,9 +265,58 @@ function needsKeybdEvent(keys: string[]): boolean {
   })
 }
 
+/**
+ * On macOS, convert Windows-style key names to their macOS equivalents.
+ * Most Ctrl shortcuts on Windows correspond to Cmd shortcuts on macOS (copy, paste, save, etc.).
+ */
+const MAC_KEY_NORMALIZATION: Record<string, string> = {
+  // Modifiers: Ctrl → Cmd (Ctrl+C on Windows = Cmd+C on macOS)
+  ctrl: 'cmd',
+  control: 'cmd',
+  lctrl: 'cmd',
+  rctrl: 'cmd',
+  // Alt → Option
+  alt: 'option',
+  lalt: 'option',
+  ralt: 'option',
+  menu: 'option',
+  // Windows/Super key → Command
+  win: 'cmd',
+  lwin: 'cmd',
+  rwin: 'cmd',
+  super: 'cmd',
+  windows: 'cmd',
+  meta: 'cmd',
+  // Function key
+  fn: 'fn',
+  function: 'fn',
+  // Backspace/Delete: Windows "backspace" = Mac "delete" (the key labeled delete on Mac)
+  // Windows "delete" = Mac "forwarddelete" (fn+delete on Mac keyboards)
+  backspace: 'backspace',
+  delete: 'forwarddelete',
+  del: 'forwarddelete',
+  // Escape aliases
+  esc: 'escape',
+  // Enter aliases
+  return: 'enter',
+  // Print screen → Cmd+Shift+3 can't be mapped as a single key, keep as-is
+  // These stay the same on both platforms
+  // shift, enter, tab, escape, space, arrows, home, end, pageup, pagedown, f1-f12
+}
+
+function normalizeKeysForPlatform(keys: string[]): string[] {
+  if (process.platform !== 'darwin') return keys
+
+  return keys.map(k => {
+    const lower = k.toLowerCase()
+    return MAC_KEY_NORMALIZATION[lower] ?? k
+  })
+}
+
 export async function desktopKeyPress(params: { keys: string[] }): Promise<any> {
   try {
-    const { keys } = params
+    const { keys: rawKeys } = params
+    const keys = normalizeKeysForPlatform(rawKeys)
 
     if (process.platform === 'win32') {
       if (needsKeybdEvent(keys)) {
@@ -329,7 +378,8 @@ const KEY_MAP_MACOS: Record<string, number> = {
 
 export async function desktopKeyCombo(params: { keys: string[] }): Promise<any> {
   try {
-    const { keys } = params
+    const { keys: rawKeys } = params
+    const keys = normalizeKeysForPlatform(rawKeys)
 
     // Single key: delegate to keyPress (e.g. pyautogui.hotkey('win'))
     if (keys.length === 1) {
@@ -365,10 +415,11 @@ export async function desktopKeyCombo(params: { keys: string[] }): Promise<any> 
       let finalKey = ''
       for (const key of keys) {
         const lower = key.toLowerCase()
-        if (['ctrl', 'control', 'alt', 'option', 'shift', 'cmd', 'command', 'win'].includes(lower)) {
+        if (['ctrl', 'control', 'alt', 'option', 'shift', 'cmd', 'command', 'win', 'fn', 'function'].includes(lower)) {
           const mapped = (lower === 'ctrl' || lower === 'control') ? 'control down'
             : (lower === 'alt' || lower === 'option') ? 'option down'
             : (lower === 'cmd' || lower === 'command' || lower === 'win') ? 'command down'
+            : (lower === 'fn' || lower === 'function') ? 'fn down'
             : `${lower} down`
           modifiers.push(mapped)
         } else {

@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-js'
-import { app, safeStorage, shell } from 'electron'
+import { app, shell } from 'electron'
 import * as http from 'http'
 import * as url from 'url'
 import * as crypto from 'crypto'
@@ -420,12 +420,7 @@ export class ElectronAuth {
 
       const sessionPath = this.getSessionPath()
 
-      if (safeStorage.isEncryptionAvailable()) {
-        const encrypted = safeStorage.encryptString(json)
-        fs.writeFileSync(sessionPath, encrypted)
-      } else {
-        fs.writeFileSync(sessionPath, json, 'utf-8')
-      }
+      fs.writeFileSync(sessionPath, json, 'utf-8')
       console.log('[Auth] Session saved to disk')
     } catch (err) {
       console.error('[Auth] Failed to store session:', err)
@@ -440,15 +435,7 @@ export class ElectronAuth {
       const raw = fs.readFileSync(sessionPath)
       let json: string
 
-      if (safeStorage.isEncryptionAvailable()) {
-        try {
-          json = safeStorage.decryptString(raw)
-        } catch {
-          json = raw.toString('utf-8')
-        }
-      } else {
-        json = raw.toString('utf-8')
-      }
+      json = raw.toString('utf-8')
 
       const data = JSON.parse(json)
       this.session = data as Session

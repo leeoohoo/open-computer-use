@@ -8,6 +8,9 @@ files:
   - "!node_modules/**/*"
   - node_modules/puppeteer-core/**/*
   - node_modules/ws/**/*
+extraResources:
+  - from: build/icon.png
+    to: icon.png
 publish:
   provider: generic
   url: https://updates.coasty.ai
@@ -23,8 +26,14 @@ win:
 mac:
   target:
     - dmg
+    - zip
   icon: build/icon.icns
   category: public.app-category.productivity
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  notarize: true
 linux:
   target:
     - AppImage

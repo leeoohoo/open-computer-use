@@ -65,9 +65,16 @@ function PermissionRow({
   )
 }
 
+const PERMISSIONS_DISMISSED_KEY = 'coasty_permissions_dismissed'
+const PERMISSIONS_GRANTED_KEY = 'coasty_permissions_granted'
+
 export function PermissionsGuard({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = React.useState<PermissionStatus | null>(null)
-  const [dismissed, setDismissed] = React.useState(false)
+  const [dismissed, setDismissed] = React.useState(() => {
+    // If user previously dismissed or all permissions were granted, don't show again
+    return localStorage.getItem(PERMISSIONS_DISMISSED_KEY) === 'true' ||
+           localStorage.getItem(PERMISSIONS_GRANTED_KEY) === 'true'
+  })
   const isMac = window.coasty.getPlatform() === 'darwin'
 
   // Check permissions once on mount. macOS caches permission status in the
@@ -76,7 +83,13 @@ export function PermissionsGuard({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
     if (!isMac) return
     window.coasty.checkPermissions()
-      .then(setStatus)
+      .then((s) => {
+        setStatus(s)
+        // If all permissions are now granted, remember it permanently
+        if (allGranted(s)) {
+          localStorage.setItem(PERMISSIONS_GRANTED_KEY, 'true')
+        }
+      })
       .catch(() => setStatus(null))
   }, [isMac])
 
@@ -107,7 +120,7 @@ export function PermissionsGuard({ children }: { children: React.ReactNode }) {
         <span className="text-[11px] text-neutral-600 font-medium">Coasty Desktop</span>
         <div className="titlebar-no-drag flex items-center gap-1">
           <button
-            onClick={() => setDismissed(true)}
+            onClick={() => { localStorage.setItem(PERMISSIONS_DISMISSED_KEY, 'true'); setDismissed(true) }}
             className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-neutral-800 text-neutral-500 hover:text-neutral-300 transition-colors"
             title="Skip"
           >
@@ -162,7 +175,7 @@ export function PermissionsGuard({ children }: { children: React.ReactNode }) {
           {/* Actions */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => window.coasty.relaunch()}
+              onClick={() => { localStorage.removeItem(PERMISSIONS_DISMISSED_KEY); localStorage.removeItem(PERMISSIONS_GRANTED_KEY); window.coasty.relaunch() }}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-neutral-900 rounded-lg font-medium text-sm hover:bg-neutral-100 transition-colors"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -174,7 +187,7 @@ export function PermissionsGuard({ children }: { children: React.ReactNode }) {
               Restart &amp; Recheck
             </button>
             <button
-              onClick={() => setDismissed(true)}
+              onClick={() => { localStorage.setItem(PERMISSIONS_DISMISSED_KEY, 'true'); setDismissed(true) }}
               className="px-4 py-2.5 rounded-lg border border-neutral-700/50 text-sm text-neutral-400 hover:text-neutral-200 hover:border-neutral-600 transition-colors"
             >
               Skip
