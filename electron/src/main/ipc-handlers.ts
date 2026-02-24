@@ -54,6 +54,84 @@ export function registerIpcHandlers(
     }
   })
 
+  ipcMain.handle('auth:sign-in-email', async (_event, email: string, password: string) => {
+    try {
+      const result = await auth.signInWithEmail(email, password)
+      return {
+        success: true,
+        user: {
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.user_metadata?.full_name || null,
+          avatar: result.user.user_metadata?.avatar_url || null,
+        },
+      }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  })
+
+  // Sign-up: long-running — waits for user to click confirmation email link
+  ipcMain.handle('auth:sign-up-email', async (_event, email: string, password: string) => {
+    try {
+      const result = await auth.signUpWithEmail(email, password)
+      return {
+        success: true,
+        user: {
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.user_metadata?.full_name || null,
+          avatar: result.user.user_metadata?.avatar_url || null,
+        },
+      }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  })
+
+  // Magic link phase 1: send OTP (returns quickly)
+  ipcMain.handle('auth:send-magic-link', async (_event, email: string) => {
+    try {
+      await auth.sendMagicLink(email)
+      return { success: true }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  })
+
+  // Magic link phase 2: wait for user to click link (long-running)
+  ipcMain.handle('auth:await-magic-link', async () => {
+    try {
+      const result = await auth.awaitMagicLinkSession()
+      return {
+        success: true,
+        user: {
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.user_metadata?.full_name || null,
+          avatar: result.user.user_metadata?.avatar_url || null,
+        },
+      }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  })
+
+  ipcMain.handle('auth:reset-password', async (_event, email: string) => {
+    try {
+      await auth.resetPassword(email)
+      return { success: true }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  })
+
+  // Cancel any pending auth flow (sign-up confirmation wait, magic link wait)
+  ipcMain.handle('auth:cancel-auth', async () => {
+    auth.cancelPendingAuth()
+    return { success: true }
+  })
+
   ipcMain.handle('auth:sign-out', async () => {
     try {
       const bridge = getWsBridge()

@@ -88,15 +88,20 @@ async def electron_websocket(
             pass
         return
 
-    # 3. Validate the user
+    # 3. Validate the user (check public users table)
     user = await validate_user(user_id)
     if not user:
-        try:
-            await websocket.send_json({"type": "auth_failed", "reason": "Invalid user"})
-            await websocket.close(code=4001, reason="Invalid user")
-        except Exception:
-            pass
-        return
+        # User may exist in Supabase auth but not in the public users table
+        # (e.g. signed up via Electron app which doesn't hit the webapp callback).
+        # Try to auto-provision the users row.
+        user = await _ensure_user_row(user_id, token)
+        if not user:
+            try:
+                await websocket.send_json({"type": "auth_failed", "reason": "Invalid user"})
+                await websocket.close(code=4001, reason="Invalid user")
+            except Exception:
+                pass
+            return
 
     logger.info(f"Electron app connected: machine_id={machine_id}, user_id={user_id}, platform={platform}, os={os_name}")
 
@@ -170,6 +175,57 @@ async def electron_websocket(
         # If the Electron app reconnected quickly, a new handler already
         # stored a new adapter — we must NOT remove it.
         await _cleanup_electron_connection(machine_id, adapter)
+
+
+async def _ensure_user_row(user_id: str, token: str) -> Optional[str]:
+    """
+    Verify the user exists in Supabase auth and create the public users row.
+
+    When users sign up via the Electron app, Supabase creates the auth.users
+    entry but the public users row is never created (the webapp callback at
+    /auth/callback handles that for web sign-ups). This function fills that gap.
+
+    Returns user_id on success, None if the user can't be verified.
+    """
+    logger.info(f"Attempting to auto-provision users row for {user_id}")
+    try:
+        if not db_service.client:
+            logger.warning("No database client, cannot auto-provision user")
+            return None
+
+        # Verify the user exists in Supabase auth using the admin API
+        logger.info(f"Looking up user {user_id} in Supabase auth...")
+        auth_response = db_service.client.auth.admin.get_user_by_id(user_id)
+        logger.info(f"Auth lookup response: {auth_response}")
+
+        if not auth_response or not auth_response.user:
+            logger.warning(f"User {user_id} not found in Supabase auth")
+            return None
+
+        auth_user = auth_response.user
+        email = auth_user.email
+        logger.info(f"Found auth user: {user_id} ({email}), creating users row...")
+
+        # Create the public users row (same fields as webapp callback)
+        db_service.client.table("users").insert({
+            "id": user_id,
+            "email": email,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "message_count": 0,
+            "premium": False,
+            "favorite_models": ["bedrock-default"],
+        }).execute()
+
+        logger.info(f"Auto-provisioned users row for Electron sign-up: {user_id} ({email})")
+        return user_id
+
+    except Exception as e:
+        # 23505 = unique violation (row already exists — race condition, that's fine)
+        if "23505" in str(e):
+            logger.info(f"Users row already exists for {user_id} (race condition)")
+            return user_id
+        logger.error(f"Failed to auto-provision user {user_id}: {type(e).__name__}: {e}")
+        return None
 
 
 async def _register_electron_machine(

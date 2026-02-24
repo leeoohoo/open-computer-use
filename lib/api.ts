@@ -124,6 +124,105 @@ export async function signInAnonymously(supabase: SupabaseClient) {
 }
 
 /**
+ * Signs up a new user with email and password.
+ * Requires email confirmation before the user can sign in.
+ */
+export async function signUpWithEmail(
+  supabase: SupabaseClient,
+  email: string,
+  password: string
+) {
+  const isDev = process.env.NODE_ENV === "development"
+  const baseUrl = isDev
+    ? "http://localhost:3000"
+    : typeof window !== "undefined"
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_VERCEL_URL
+        ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+        : APP_DOMAIN
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: `${baseUrl}/auth/callback`,
+    },
+  })
+
+  if (error) throw error
+  return data
+}
+
+/**
+ * Signs in user with email and password
+ */
+export async function signInWithEmail(
+  supabase: SupabaseClient,
+  email: string,
+  password: string
+) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+
+  if (error) throw error
+  return data
+}
+
+/**
+ * Sends a magic link to the user's email for passwordless sign-in
+ */
+export async function signInWithMagicLink(
+  supabase: SupabaseClient,
+  email: string
+) {
+  const isDev = process.env.NODE_ENV === "development"
+  const baseUrl = isDev
+    ? "http://localhost:3000"
+    : typeof window !== "undefined"
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_VERCEL_URL
+        ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+        : APP_DOMAIN
+
+  const { data, error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: `${baseUrl}/auth/callback`,
+      shouldCreateUser: false,
+    },
+  })
+
+  if (error) throw error
+  return data
+}
+
+/**
+ * Sends a password reset email
+ */
+export async function resetPassword(
+  supabase: SupabaseClient,
+  email: string
+) {
+  const isDev = process.env.NODE_ENV === "development"
+  const baseUrl = isDev
+    ? "http://localhost:3000"
+    : typeof window !== "undefined"
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_VERCEL_URL
+        ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+        : APP_DOMAIN
+
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${baseUrl}/auth/reset-password`,
+  })
+
+  if (error) throw error
+  return data
+}
+
+/**
  * Signs in user with Google OAuth via Supabase
  */
 export async function signInWithGoogle(supabase: SupabaseClient) {

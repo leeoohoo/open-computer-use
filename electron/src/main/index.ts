@@ -12,6 +12,18 @@ import {
   openAccessibilitySettings,
 } from './permissions'
 
+// Prevent multiple instances — second instance just focuses the existing window.
+// This also avoids GPU cache lock conflicts on Windows.
+const gotSingleLock = app.requestSingleInstanceLock()
+if (!gotSingleLock) {
+  app.quit()
+}
+
+// Disable GPU shader disk cache — a small overlay app doesn't benefit from it,
+// and on Windows the cache directory gets locked between restarts causing
+// "Unable to move the cache: Access is denied" errors.
+app.commandLine.appendSwitch('disable-gpu-shader-disk-cache')
+
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 let auth: ElectronAuth | null = null
@@ -95,6 +107,15 @@ function createTray(): void {
     mainWindow?.show()
   })
 }
+
+// Second instance tried to launch — focus existing window instead
+app.on('second-instance', () => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore()
+    mainWindow.show()
+    mainWindow.focus()
+  }
+})
 
 app.whenReady().then(async () => {
   // Initialize auth

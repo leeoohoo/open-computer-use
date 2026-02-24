@@ -4,6 +4,17 @@ import { contextBridge, ipcRenderer } from 'electron'
 contextBridge.exposeInMainWorld('coasty', {
   // Auth
   signIn: () => ipcRenderer.invoke('auth:sign-in'),
+  signInWithEmail: (email: string, password: string) =>
+    ipcRenderer.invoke('auth:sign-in-email', email, password),
+  signUpWithEmail: (email: string, password: string) =>
+    ipcRenderer.invoke('auth:sign-up-email', email, password),
+  sendMagicLink: (email: string) =>
+    ipcRenderer.invoke('auth:send-magic-link', email),
+  awaitMagicLink: () =>
+    ipcRenderer.invoke('auth:await-magic-link'),
+  resetPassword: (email: string) =>
+    ipcRenderer.invoke('auth:reset-password', email),
+  cancelAuth: () => ipcRenderer.invoke('auth:cancel-auth'),
   signOut: () => ipcRenderer.invoke('auth:sign-out'),
   getSession: () => ipcRenderer.invoke('auth:get-session'),
   getToken: () => ipcRenderer.invoke('auth:get-token'),
@@ -77,6 +88,17 @@ contextBridge.exposeInMainWorld('coasty', {
 // Type declaration for renderer
 export interface CoastyAPI {
   signIn: () => Promise<{ success: boolean; user?: any; error?: string }>
+  signInWithEmail: (email: string, password: string) =>
+    Promise<{ success: boolean; user?: any; error?: string }>
+  signUpWithEmail: (email: string, password: string) =>
+    Promise<{ success: boolean; user?: any; error?: string }>
+  sendMagicLink: (email: string) =>
+    Promise<{ success: boolean; error?: string }>
+  awaitMagicLink: () =>
+    Promise<{ success: boolean; user?: any; error?: string }>
+  resetPassword: (email: string) =>
+    Promise<{ success: boolean; error?: string }>
+  cancelAuth: () => Promise<{ success: boolean }>
   signOut: () => Promise<{ success: boolean; error?: string }>
   getSession: () => Promise<{
     isAuthenticated: boolean
