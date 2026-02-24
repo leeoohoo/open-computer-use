@@ -31,23 +31,34 @@ function httpsGet(url: string): Promise<string> {
 }
 
 async function fetchManifest(
-  filename: string
+  filename: string,
+  preferExt?: string
 ): Promise<PlatformInfo | null> {
   try {
     const text = await httpsGet(`${UPDATES_BASE_URL}/${filename}?t=${Date.now()}`)
     const data = YAML.parse(text)
 
     // electron-builder manifests have `path`, `version`, `sha512`, `releaseDate`
-    // and sometimes `files` array. The top-level `path` is the main installer.
-    const file = data.path || data.files?.[0]?.url
-    const size = data.files?.[0]?.size ?? data.size ?? 0
+    // and sometimes `files` array. The top-level `path` is the auto-update
+    // artifact (.zip for macOS), but the user-facing download should be the
+    // installer (.dmg / .exe). Prefer the installer when available.
+    const files: { url: string; sha512?: string; size?: number }[] =
+      data.files ?? []
+    const preferred = preferExt
+      ? files.find((f) => f.url.endsWith(preferExt))
+      : undefined
+    const picked = preferred ?? files[0]
+
+    const file = picked?.url || data.path
+    const size = picked?.size ?? data.size ?? 0
+    const sha512 = picked?.sha512 ?? data.sha512 ?? ""
 
     if (!file || !data.version) return null
 
     return {
       version: data.version,
       filename: file,
-      sha512: data.sha512 || "",
+      sha512,
       size,
       releaseDate: data.releaseDate || "",
       downloadUrl: `${UPDATES_BASE_URL}/${encodeURIComponent(file)}`,
@@ -62,8 +73,8 @@ export const dynamic = "force-dynamic"
 
 export async function GET() {
   const [windows, mac] = await Promise.all([
-    fetchManifest("latest.yml"),
-    fetchManifest("latest-mac.yml"),
+    fetchManifest("latest.yml", ".exe"),
+    fetchManifest("latest-mac.yml", ".dmg"),
   ])
 
   return NextResponse.json(

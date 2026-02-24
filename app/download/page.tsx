@@ -93,7 +93,7 @@ export default function DownloadPage() {
   }, [])
 
   useEffect(() => {
-    fetch("/api/download")
+    fetch(`/api/download?_=${Date.now()}`, { cache: "no-store" })
       .then((res) => {
         if (!res.ok) throw new Error(`API returned ${res.status}`)
         return res.json()
