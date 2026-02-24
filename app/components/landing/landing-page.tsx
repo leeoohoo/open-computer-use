@@ -297,6 +297,7 @@ export function LandingPage() {
   const [showBrandIntro, setShowBrandIntro] = useState(false)
   const [showPageContent, setShowPageContent] = useState(false)
   const [subtitleTypingDone, setSubtitleTypingDone] = useState(false)
+  const [demoPlaying, setDemoPlaying] = useState(false)
   const { theme } = useTheme()
   const prefersReducedMotion = useReducedMotion()
   const searchParams = useSearchParams()
@@ -631,13 +632,39 @@ export function LandingPage() {
               </motion.div>
             ) : (
               <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/40" style={{ aspectRatio: "16 / 9" }}>
-                <iframe
-                  src="/share/1cd404ae-3fcb-4d7f-b9d4-dac7aa26fc6d?embed=true"
-                  title="AI Agent solving a CAPTCHA — live session replay"
-                  className="absolute inset-0 w-full h-full border-0"
-                  loading="lazy"
-                  allow="autoplay"
-                />
+                {demoPlaying ? (
+                  <iframe
+                    src="/share/1cd404ae-3fcb-4d7f-b9d4-dac7aa26fc6d?embed=true&autoplay=true"
+                    title="AI Agent solving a CAPTCHA — live session replay"
+                    className="absolute inset-0 w-full h-full border-0"
+                    allow="autoplay"
+                  />
+                ) : (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center cursor-pointer bg-card/80 group"
+                    style={{
+                      backdropFilter: 'blur(8px)',
+                      WebkitBackdropFilter: 'blur(8px)',
+                    }}
+                    onClick={() => setDemoPlaying(true)}
+                  >
+                    {/* Background GIF preview at low opacity */}
+                    <Image
+                      src="/Pi7_Gif.gif"
+                      alt=""
+                      fill
+                      className="object-cover opacity-30"
+                      unoptimized
+                    />
+                    {/* Play button */}
+                    <div className="relative z-10 flex flex-col items-center gap-4">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border/60 bg-card/70 group-hover:bg-card group-hover:scale-105 transition-all duration-200">
+                        <Play className="h-7 w-7 text-foreground/80 ml-0.5 group-hover:text-foreground transition-colors" />
+                      </div>
+                      <span className="text-sm text-muted-foreground font-medium">Watch the demo</span>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             )}
 

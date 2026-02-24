@@ -300,10 +300,14 @@ function SimpleArticleContent({
   subtitle,
   messages,
 }: ArticleProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const isEmbed = searchParams.get("embed") === "true"
+  const isAutoplay = searchParams.get("autoplay") === "true"
   const initialMessageCount = useRef(messages.length)
   const [transformedMessages, setTransformedMessages] = useState<any[]>([])
   const [visibleMessages, setVisibleMessages] = useState<any[]>([])
-  const [showPlayOverlay, setShowPlayOverlay] = useState(true)
+  const [showPlayOverlay, setShowPlayOverlay] = useState(!isAutoplay)
   const [isReplaying, setIsReplaying] = useState(false)
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [showActionButtons, setShowActionButtons] = useState(false)
@@ -314,9 +318,6 @@ function SimpleArticleContent({
   const [isMobile, setIsMobile] = useState(false)
   const { streamingMessages, setStreamingMessages } = useChatStreaming()
   const streamingMessagesRef = useRef<any[]>([])
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const isEmbed = searchParams.get("embed") === "true"
 
   // Helper to update streaming messages (supports callback pattern)
   const updateStreamingMessages = useCallback((updater: any[] | ((prev: any[]) => any[])) => {
@@ -391,7 +392,22 @@ function SimpleArticleContent({
       setNavigatorOpen(false)
     }
   }, [showPlayOverlay, updateStreamingMessages, setNavigatorOpen])
-  
+
+  // Auto-start replay when autoplay param is set (used by landing page embed)
+  useEffect(() => {
+    if (isAutoplay && transformedMessages.length > 0 && !isReplaying && !showPlayOverlay) {
+      setIsReplaying(true)
+      setCurrentMessageIndex(0)
+      setCuaSectionIndex(0)
+      setVisibleMessages([])
+      updateStreamingMessages([])
+      setCurrentToolInvocations([])
+      setShowActionButtons(false)
+    }
+    // Only run once when messages are first loaded with autoplay
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAutoplay, transformedMessages.length > 0])
+
   // Replay functions
   const startReplay = useCallback(() => {
     setShowPlayOverlay(false)
