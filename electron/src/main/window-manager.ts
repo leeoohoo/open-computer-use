@@ -21,6 +21,8 @@ let currentMode: WindowMode = 'auth'
 let savedPosition: { x: number; y: number } | null = null
 let animTimer: ReturnType<typeof setInterval> | null = null
 let inPostAuthTransition = false
+let enforcerInterval: ReturnType<typeof setInterval> | null = null
+let isHiddenForScreenshot = false
 
 /** Smoothly animate window bounds from current to target. */
 function animateBounds(win: BrowserWindow, target: Electron.Rectangle): void {
@@ -57,6 +59,28 @@ function animateBounds(win: BrowserWindow, target: Electron.Rectangle): void {
   }, ANIM_INTERVAL)
 }
 
+/** Start periodic topmost enforcement (Windows-only safety net). */
+function startTopmostEnforcer(win: BrowserWindow): void {
+  if (process.platform !== 'win32') return
+  stopTopmostEnforcer()
+
+  enforcerInterval = setInterval(() => {
+    if (win.isDestroyed() || isHiddenForScreenshot) return
+    if (currentMode === 'auth') return
+    if (!win.isVisible()) return
+    win.setAlwaysOnTop(true, 'screen-saver', 1)
+    win.moveTop()
+  }, 2000)
+}
+
+/** Stop the periodic enforcer. */
+function stopTopmostEnforcer(): void {
+  if (enforcerInterval) {
+    clearInterval(enforcerInterval)
+    enforcerInterval = null
+  }
+}
+
 export function getMainWindow(): BrowserWindow | null {
   return mainWindow
 }
@@ -79,6 +103,7 @@ export function setMainWindow(win: BrowserWindow): void {
     if (currentMode !== 'auth' && !win.isDestroyed()) {
       const level = inPostAuthTransition ? 'floating' : 'screen-saver'
       win.setAlwaysOnTop(true, level)
+      win.moveTop()
     }
   })
 }
@@ -99,6 +124,13 @@ export function setWindowMode(mode: WindowMode): void {
   win.setAlwaysOnTop(cfg.alwaysOnTop, cfg.alwaysOnTop ? 'screen-saver' : undefined)
   win.setSkipTaskbar(cfg.skipTaskbar)
   win.setResizable(false)
+
+  // Start/stop the periodic topmost enforcer based on mode
+  if (cfg.alwaysOnTop) {
+    startTopmostEnforcer(win)
+  } else {
+    stopTopmostEnforcer()
+  }
   // Show overlay on all virtual desktops (macOS Spaces / Linux workspaces)
   if (process.platform !== 'win32') {
     win.setVisibleOnAllWorkspaces(cfg.alwaysOnTop, { visibleOnFullScreen: true })
@@ -214,10 +246,26 @@ export function getWindowOpacity(): number {
   return win.getOpacity()
 }
 
+/**
+ * Bring the overlay to the front with focus.
+ * Use when the user MUST interact (e.g. approval prompts).
+ * Unlike the periodic enforcer, this intentionally steals focus.
+ */
+export function bringToFront(): void {
+  const win = mainWindow
+  if (!win || win.isDestroyed()) return
+  if (currentMode === 'auth') return
+
+  win.setAlwaysOnTop(true, 'screen-saver', 1)
+  win.moveTop()
+  win.focus()
+}
+
 /** Hide the overlay window before taking a screenshot. */
 export async function hideForScreenshot(): Promise<void> {
   const win = mainWindow
   if (!win || win.isDestroyed() || !win.isVisible()) return
+  isHiddenForScreenshot = true
   win.hide()
   // Wait for OS to finish hiding and repaint the desktop
   await new Promise((resolve) => setTimeout(resolve, 150))
@@ -227,5 +275,11 @@ export async function hideForScreenshot(): Promise<void> {
 export function showAfterScreenshot(): void {
   const win = mainWindow
   if (!win || win.isDestroyed()) return
+  isHiddenForScreenshot = false
   win.showInactive()
+  // Re-assert topmost after show — showInactive() doesn't restore z-order on Windows
+  if (currentMode !== 'auth') {
+    win.setAlwaysOnTop(true, 'screen-saver', 1)
+    win.moveTop()
+  }
 }

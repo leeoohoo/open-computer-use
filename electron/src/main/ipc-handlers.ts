@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import * as os from 'os'
 import { ElectronAuth } from './auth'
 import { WebSocketBridge } from './ws-bridge'
+import { ApprovalManager } from './approval-manager'
 
 /** Helper: make an authenticated fetch to the Python backend. */
 async function backendFetch(
@@ -35,6 +36,7 @@ export function registerIpcHandlers(
   getWsBridge: () => WebSocketBridge | null,
   setWsBridge: (bridge: WebSocketBridge) => void,
   backendUrl: string,
+  approvalManager: ApprovalManager,
 ): void {
   // Auth handlers
   ipcMain.handle('auth:sign-in', async () => {
@@ -176,7 +178,7 @@ export function registerIpcHandlers(
         bridge.disconnect()
       }
 
-      bridge = new WebSocketBridge(backendUrl, token, machineId, userId)
+      bridge = new WebSocketBridge(backendUrl, token, machineId, userId, approvalManager)
       setWsBridge(bridge)
       bridge.connect()
 

@@ -2,6 +2,7 @@ import React from 'react'
 import { useAuthStore } from './stores/auth-store'
 import { useConnectionStore } from './stores/connection-store'
 import { useWindowStore } from './stores/window-store'
+import { useApprovalStore } from './stores/approval-store'
 import { AuthScreen } from './components/AuthScreen'
 import { Overlay } from './components/Overlay'
 import { PermissionsGuard } from './components/PermissionsGuard'
@@ -24,6 +25,11 @@ export default function App() {
   // Subscribe to window mode changes from main process
   React.useEffect(() => {
     return initWindow()
+  }, [])
+
+  // Initialize approval store (IPC subscriptions + persisted mode)
+  React.useEffect(() => {
+    return useApprovalStore.getState().init()
   }, [])
 
   // After auth succeeds, connect bridge

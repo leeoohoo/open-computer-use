@@ -74,6 +74,22 @@ contextBridge.exposeInMainWorld('coasty', {
   openAccessibilitySettings: () => ipcRenderer.invoke('permissions:open-accessibility'),
   getPlatform: () => process.platform,
 
+  // Action approval
+  getApprovalMode: () => ipcRenderer.invoke('approval:get-mode'),
+  setApprovalMode: (mode: string) => ipcRenderer.invoke('approval:set-mode', mode),
+  respondToApproval: (id: string, approved: boolean, reason?: string) =>
+    ipcRenderer.invoke('approval:respond', id, approved, reason),
+  onApprovalRequest: (callback: (data: any) => void) => {
+    const handler = (_event: any, data: any) => callback(data)
+    ipcRenderer.on('approval-request', handler)
+    return () => ipcRenderer.removeListener('approval-request', handler)
+  },
+  onApprovalModeChanged: (callback: (mode: string) => void) => {
+    const handler = (_event: any, mode: string) => callback(mode)
+    ipcRenderer.on('approval-mode-changed', handler)
+    return () => ipcRenderer.removeListener('approval-mode-changed', handler)
+  },
+
   // App lifecycle
   relaunch: () => ipcRenderer.invoke('app:relaunch'),
 
@@ -158,6 +174,17 @@ export interface CoastyAPI {
   openScreenRecordingSettings: () => Promise<void>
   openAccessibilitySettings: () => Promise<void>
   getPlatform: () => string
+
+  // Action approval
+  getApprovalMode: () => Promise<string>
+  setApprovalMode: (mode: string) => Promise<void>
+  respondToApproval: (id: string, approved: boolean, reason?: string) => Promise<void>
+  onApprovalRequest: (callback: (data: {
+    id: string
+    command: string
+    parameters: any
+  }) => void) => () => void
+  onApprovalModeChanged: (callback: (mode: string) => void) => () => void
 
   relaunch: () => Promise<void>
 

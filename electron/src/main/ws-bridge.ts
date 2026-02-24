@@ -2,6 +2,7 @@ import WebSocket from 'ws'
 import { BrowserWindow, screen } from 'electron'
 import * as os from 'os'
 import { LocalExecutor } from './local-executor'
+import { ApprovalManager } from './approval-manager'
 
 export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error'
 
@@ -34,13 +35,15 @@ export class WebSocketBridge {
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null
   private state: ConnectionState = 'disconnected'
   private intentionalClose = false
+  private approvalManager: ApprovalManager
 
-  constructor(backendUrl: string, token: string, machineId: string, userId: string) {
+  constructor(backendUrl: string, token: string, machineId: string, userId: string, approvalManager: ApprovalManager) {
     this.backendUrl = backendUrl
     this.token = token
     this.machineId = machineId
     this.userId = userId
     this.executor = new LocalExecutor()
+    this.approvalManager = approvalManager
   }
 
   getState(): ConnectionState {
@@ -79,18 +82,49 @@ export class WebSocketBridge {
         const message = JSON.parse(data.toString())
 
         if (message.type === 'command') {
-          // Execute command locally and send result back
           const { command, parameters } = message.data
-          console.log(`[WS Bridge] Executing: ${command}`)
+          console.log(`[WS Bridge] Received command: ${command}`)
 
-          try {
-            const result = await this.executor.executeCommand(command, parameters)
-            this.send({ type: 'result', data: result })
-          } catch (error: any) {
+          // Check approval mode before executing
+          if (this.approvalManager.isDenyAll()) {
+            console.log(`[WS Bridge] Denied (mode=off): ${command}`)
             this.send({
               type: 'result',
-              data: { success: false, error: error.message || String(error) },
+              data: { success: false, error: 'Action blocked: agent actions are currently paused by user' },
             })
+          } else if (this.approvalManager.shouldAutoApprove(command)) {
+            console.log(`[WS Bridge] Auto-approved: ${command}`)
+            try {
+              const result = await this.executor.executeCommand(command, parameters)
+              this.send({ type: 'result', data: result })
+            } catch (error: any) {
+              this.send({
+                type: 'result',
+                data: { success: false, error: error.message || String(error) },
+              })
+            }
+          } else {
+            console.log(`[WS Bridge] Requesting approval: ${command}`)
+            const { approved, reason } = await this.approvalManager.requestApproval(command, parameters)
+            if (approved) {
+              console.log(`[WS Bridge] User approved: ${command}`)
+              try {
+                const result = await this.executor.executeCommand(command, parameters)
+                this.send({ type: 'result', data: result })
+              } catch (error: any) {
+                this.send({
+                  type: 'result',
+                  data: { success: false, error: error.message || String(error) },
+                })
+              }
+            } else {
+              const msg = reason ? `Action denied by user: ${reason}` : 'Action denied by user'
+              console.log(`[WS Bridge] User denied: ${command} — ${msg}`)
+              this.send({
+                type: 'result',
+                data: { success: false, error: msg },
+              })
+            }
           }
         } else if (message.type === 'ping') {
           this.send({ type: 'heartbeat' })
@@ -130,6 +164,7 @@ export class WebSocketBridge {
     this.intentionalClose = true
     this.stopHeartbeat()
     this.clearReconnectTimer()
+    this.approvalManager.cancelAll()
     this.ws?.close()
     this.ws = null
     this.setState('disconnected')

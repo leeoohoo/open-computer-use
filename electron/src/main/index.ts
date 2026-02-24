@@ -11,6 +11,7 @@ import {
   openScreenRecordingSettings,
   openAccessibilitySettings,
 } from './permissions'
+import { ApprovalManager } from './approval-manager'
 
 // Prevent multiple instances — second instance just focuses the existing window.
 // This also avoids GPU cache lock conflicts on Windows.
@@ -28,6 +29,7 @@ let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 let auth: ElectronAuth | null = null
 let wsBridge: WebSocketBridge | null = null
+let approvalManager: ApprovalManager | null = null
 
 const BACKEND_URL = process.env.COASTY_BACKEND_URL || 'http://localhost:8001'
 
@@ -118,11 +120,12 @@ app.on('second-instance', () => {
 })
 
 app.whenReady().then(async () => {
-  // Initialize auth
+  // Initialize auth and approval manager
   auth = new ElectronAuth()
+  approvalManager = new ApprovalManager()
 
   // Register IPC handlers
-  registerIpcHandlers(auth, () => wsBridge, (bridge) => { wsBridge = bridge }, BACKEND_URL)
+  registerIpcHandlers(auth, () => wsBridge, (bridge) => { wsBridge = bridge }, BACKEND_URL, approvalManager)
 
   // Window mode control — renderer requests mode changes
   ipcMain.handle('window:set-mode', async (_event, mode: string) => {
@@ -135,6 +138,15 @@ app.whenReady().then(async () => {
   })
   ipcMain.handle('window:get-opacity', async () => {
     return getWindowOpacity()
+  })
+
+  // Action approval IPC
+  ipcMain.handle('approval:get-mode', () => approvalManager!.getMode())
+  ipcMain.handle('approval:set-mode', (_event, mode: string) => {
+    approvalManager!.setMode(mode as any)
+  })
+  ipcMain.handle('approval:respond', (_event, id: string, approved: boolean, reason?: string) => {
+    approvalManager!.handleResponse(id, approved, reason)
   })
 
   // Permissions IPC (macOS)

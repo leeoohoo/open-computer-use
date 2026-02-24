@@ -6,6 +6,9 @@ import { useChatSubmit } from '../hooks/useChatSubmit'
 import { useChatStore } from '../stores/chat-store'
 import { MessageList } from './MessageList'
 import { ChatHistory } from './ChatHistory'
+import { ApprovalPrompt } from './ApprovalPrompt'
+import { useApprovalStore, APPROVAL_MODE_ORDER, APPROVAL_MODE_LABELS } from '../stores/approval-store'
+import type { ApprovalMode } from '../stores/approval-store'
 
 function statusDot(state: string): string {
   switch (state) {
@@ -54,6 +57,39 @@ function EyeIcon({ opacity }: { opacity: number }) {
       <line x1="1" y1="1" x2="23" y2="23" />
     </svg>
   )
+}
+
+/** Shield icon reflecting current approval mode */
+function ShieldIcon({ mode }: { mode: string }) {
+  const s = { width: 13, height: 13, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
+  if (mode === 'full_control') {
+    return (<svg {...s}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><polyline points="9 12 11 14 15 10" /></svg>)
+  }
+  if (mode === 'smart_approve') {
+    return (<svg {...s}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><circle cx="12" cy="12" r="2" fill="currentColor" /></svg>)
+  }
+  if (mode === 'approve_all') {
+    return (<svg {...s}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>)
+  }
+  // off
+  return (<svg {...s}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><line x1="8" y1="8" x2="16" y2="16" /></svg>)
+}
+
+/** Approval mode descriptions for dropdown */
+const MODE_DESCRIPTIONS: Record<ApprovalMode, string> = {
+  full_control: 'Execute all actions automatically',
+  smart_approve: 'Approve dangerous actions only',
+  approve_all: 'Review every action before execution',
+  off: 'Block all actions (pause agent)',
+}
+
+/** Shield button color by mode */
+function shieldColor(mode: string, hasPending: boolean): string {
+  const pulse = hasPending ? ' animate-pulse' : ''
+  if (mode === 'off') return `text-red-400 hover:bg-red-950/40${pulse}`
+  if (mode === 'approve_all') return `text-amber-400 hover:bg-amber-950/40${pulse}`
+  if (mode === 'smart_approve') return `text-blue-400 hover:bg-blue-950/40${pulse}`
+  return `text-neutral-400 hover:bg-neutral-800/60 hover:text-neutral-200${pulse}`
 }
 
 /** User avatar — profile picture or fallback initial */
@@ -317,21 +353,44 @@ export function Overlay() {
   } = useChatSubmit()
 
   const loadChat = useChatStore((s) => s.loadChat)
+  const { mode: approvalMode, setMode: setApprovalMode, pendingApprovals } = useApprovalStore()
 
   const isExpanded = mode === 'expanded'
   const [input, setInput] = React.useState('')
   const [opacity, setOpacity] = React.useState(1)
   const [showMenu, setShowMenu] = React.useState(false)
   const [showHistory, setShowHistory] = React.useState(false)
+  const [showApprovalMenu, setShowApprovalMenu] = React.useState(false)
   const [updateStatus, setUpdateStatus] = React.useState('idle')
 
-  // Close menu/history when collapsing
+  // Close menus when collapsing
   React.useEffect(() => {
     if (!isExpanded) {
       setShowMenu(false)
       setShowHistory(false)
+      setShowApprovalMenu(false)
     }
   }, [isExpanded])
+
+  // Auto-expand when an approval prompt arrives in compact mode
+  React.useEffect(() => {
+    if (pendingApprovals.length > 0 && !isExpanded) {
+      toggleExpanded()
+    }
+  }, [pendingApprovals.length])
+
+  // Close approval popup on outside click
+  const approvalPopupRef = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    if (!showApprovalMenu) return
+    const handler = (e: MouseEvent) => {
+      if (approvalPopupRef.current && !approvalPopupRef.current.contains(e.target as Node)) {
+        setShowApprovalMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showApprovalMenu])
 
   // Sync opacity from main process on mount
   React.useEffect(() => {
@@ -391,19 +450,29 @@ export function Overlay() {
   // Toggle account menu — expand window if needed
   const toggleMenu = () => {
     if (showMenu) {
-      // Close menu: if we opened it from compact, collapse back
       setShowMenu(false)
     } else {
-      // Open menu: expand window if compact
-      if (!isExpanded) {
-        toggleExpanded()
-      }
+      if (!isExpanded) toggleExpanded()
       setShowMenu(true)
+      setShowHistory(false)
+      setShowApprovalMenu(false)
+    }
+  }
+
+  // Toggle approval mode picker — expand window if needed
+  const toggleApprovalMenu = () => {
+    if (showApprovalMenu) {
+      setShowApprovalMenu(false)
+    } else {
+      if (!isExpanded) toggleExpanded()
+      setShowApprovalMenu(true)
+      setShowMenu(false)
+      setShowHistory(false)
     }
   }
 
   return (
-    <div className="glow-border flex flex-col w-full h-full rounded-2xl bg-neutral-900/95 backdrop-blur-xl overflow-hidden">
+    <div className="glow-border relative flex flex-col w-full h-full rounded-2xl bg-neutral-900/95 backdrop-blur-xl overflow-hidden">
       {/* ── Pill bar — always visible ── */}
       <div className="titlebar-drag flex items-center gap-2.5 w-full h-14 px-3 flex-shrink-0 select-none">
         {/* Coasty logo — green dot when update is ready */}
@@ -485,7 +554,7 @@ export function Overlay() {
 
           {isExpanded && !showMenu && (
             <button
-              onClick={() => setShowHistory(!showHistory)}
+              onClick={() => { setShowHistory(!showHistory); setShowApprovalMenu(false) }}
               className={`p-1.5 rounded-lg transition-colors ${
                 showHistory
                   ? 'bg-neutral-800 text-neutral-200'
@@ -508,6 +577,15 @@ export function Overlay() {
             <EyeIcon opacity={opacity} />
           </button>
 
+          {/* Shield — approval mode control */}
+          <button
+            onClick={toggleApprovalMenu}
+            className={`p-1.5 rounded-lg transition-colors ${shieldColor(approvalMode, pendingApprovals.length > 0)}`}
+            title={APPROVAL_MODE_LABELS[approvalMode]}
+          >
+            <ShieldIcon mode={approvalMode} />
+          </button>
+
           <button
             onClick={() => {
               if (showMenu) {
@@ -517,6 +595,7 @@ export function Overlay() {
               } else {
                 toggleExpanded()
               }
+              setShowApprovalMenu(false)
             }}
             className="p-1.5 rounded-lg hover:bg-neutral-800/60 text-neutral-400 hover:text-neutral-200 transition-colors"
             title={isExpanded ? 'Collapse' : 'Expand'}
@@ -539,7 +618,38 @@ export function Overlay() {
         </div>
       </div>
 
-      {/* ── Expanded panel — chat, history, or account menu ── */}
+      {/* Approval mode popup — floats over content */}
+      {showApprovalMenu && (
+        <div ref={approvalPopupRef} className="absolute right-3 top-[52px] w-56 rounded-xl bg-neutral-900 border border-neutral-700/60 shadow-2xl z-50 py-1.5 animate-chat-reveal">
+          <div className="px-3 pt-1 pb-1.5">
+            <span className="text-[9px] font-medium text-neutral-500 uppercase tracking-wider">Action Approval</span>
+          </div>
+          {APPROVAL_MODE_ORDER.map((m) => (
+            <button
+              key={m}
+              onClick={() => { setApprovalMode(m); setShowApprovalMenu(false) }}
+              className={`w-full text-left px-3 py-2 flex items-center gap-2.5 transition-colors ${
+                approvalMode === m
+                  ? 'bg-neutral-800 text-neutral-100'
+                  : 'text-neutral-400 hover:bg-neutral-800/60 hover:text-neutral-200'
+              }`}
+            >
+              <div className={`flex-shrink-0 ${approvalMode === m ? shieldColor(m, false).split(' ')[0] : 'text-neutral-500'}`}>
+                <ShieldIcon mode={m} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] font-medium">{APPROVAL_MODE_LABELS[m]}</div>
+                <div className="text-[9px] text-neutral-500">{MODE_DESCRIPTIONS[m]}</div>
+              </div>
+              {approvalMode === m && (
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400 flex-shrink-0"><polyline points="20 6 9 17 4 12" /></svg>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* ── Expanded panel — account menu, history, or chat ── */}
       {isExpanded && (
         showMenu ? (
           <AccountMenu onClose={() => setShowMenu(false)} updateStatus={updateStatus} />
@@ -590,6 +700,15 @@ export function Overlay() {
               </div>
             ) : (
               <MessageList messages={messages} isStreaming={isStreaming} />
+            )}
+
+            {/* Pending approval prompts */}
+            {pendingApprovals.length > 0 && (
+              <div className="px-3 pt-1 space-y-2 flex-shrink-0">
+                {pendingApprovals.map((a) => (
+                  <ApprovalPrompt key={a.id} approval={a} />
+                ))}
+              </div>
             )}
 
             {/* Input area */}
