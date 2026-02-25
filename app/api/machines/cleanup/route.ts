@@ -48,18 +48,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if user is admin (you can modify this check based on your admin logic)
-    const { data: userProfile } = await supabase
-      .from("users")
-      .select("email")
-      .eq("id", authData.user.id)
-      .single();
+    // Check if user is admin via ADMIN_EMAILS env var (comma-separated list)
+    const adminEmails = (process.env.ADMIN_EMAILS || "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
 
-    // For now, allow any authenticated user to trigger cleanup for testing
-    // In production, you might want to restrict this to admins only
-    const isAdmin = userProfile?.email?.endsWith("@yourcompany.com") || true; // Set to true for testing
+    const userEmail = authData.user.email?.toLowerCase() || "";
 
-    if (!isAdmin) {
+    if (!userEmail || !adminEmails.includes(userEmail)) {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
     }
 

@@ -15,6 +15,8 @@ const STRIPE_PRICE_IDS: Record<string, string> = {
   enterprise: process.env.STRIPE_PRICE_ENTERPRISE || "",
 }
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
@@ -103,8 +105,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: "subscription",
-      success_url: `${req.headers.get("origin")}/?subscription_success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/?payment_canceled=true`,
+      success_url: `${BASE_URL}/?subscription_success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${BASE_URL}/?payment_canceled=true`,
       metadata: {
         user_id: user.id,
         tier: tier,

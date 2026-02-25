@@ -2,6 +2,19 @@ import { toast } from "@/components/ui/toast"
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
+// Sanitize filename: strip path traversal, keep only the base name, remove dangerous chars
+function sanitizeFileName(name: string): string {
+  // Strip any directory components (handles both / and \ separators)
+  let safe = name.split('/').pop() || ''
+  safe = safe.split('\\').pop() || ''
+  // Remove any remaining path traversal dots at the start
+  safe = safe.replace(/^\.+/, '')
+  // Remove characters that are dangerous in file paths
+  safe = safe.replace(/[<>:"|?*\x00-\x1f]/g, '')
+  // Fallback if nothing remains
+  return safe || 'uploaded-file'
+}
+
 export type VMAttachment = {
   name: string
   type: string  // Changed from contentType to match backend
@@ -30,8 +43,9 @@ export async function uploadFileToVM(
     const content = await readFileContent(file)
     const encoding = file.type.startsWith('text/') ? 'utf-8' : 'base64'
     
-    // Determine destination path on VM
-    const vmPath = `/home/desktop/Desktop/${file.name}`
+    // Determine destination path on VM (sanitize to prevent path traversal)
+    const safeName = sanitizeFileName(file.name)
+    const vmPath = `/home/desktop/Desktop/${safeName}`
     
     // Upload via file API
     const response = await fetch('/api/files?op=upload', {
@@ -131,7 +145,8 @@ export async function processVMFiles(
 
 export function createVMOptimisticAttachments(files: File[]): VMAttachment[] {
   return files.map(file => {
-    const vmPath = `/home/desktop/Desktop/${file.name}`
+    const safeName = sanitizeFileName(file.name)
+    const vmPath = `/home/desktop/Desktop/${safeName}`
     return {
       name: file.name,
       type: file.type,  // Changed from contentType

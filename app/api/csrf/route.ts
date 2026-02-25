@@ -8,6 +8,7 @@ export async function GET() {
   cookieStore.set("csrf_token", token, {
     httpOnly: false,
     secure: true,
+    sameSite: "lax",
     path: "/",
   })
 

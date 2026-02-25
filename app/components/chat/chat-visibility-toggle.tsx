@@ -63,10 +63,15 @@ export function ChatVisibilityToggle({
     try {
       setIsLoading(true)
       
+      const csrf = document.cookie
+        .split("; ")
+        .find((c) => c.startsWith("csrf_token="))
+        ?.split("=")[1]
       const response = await fetch(`/api/chats/${chatId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "x-csrf-token": csrf || "",
         },
         body: JSON.stringify({ public: newPublicState }),
       })

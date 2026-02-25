@@ -42,6 +42,7 @@ export async function setCsrfCookie() {
   cookieStore.set("csrf_token", token, {
     httpOnly: false,
     secure: true,
+    sameSite: "lax",
     path: "/",
   })
 }

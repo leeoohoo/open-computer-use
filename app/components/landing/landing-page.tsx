@@ -544,9 +544,9 @@ export function LandingPage() {
                 "font-bold tracking-tight leading-[1.1]",
                 isMobile ? "text-4xl" : "text-5xl sm:text-6xl lg:text-7xl"
               )}>
-                <span className="text-foreground">Automate anything</span>
+                <span className="text-foreground">Computer-Using AI Agents</span>
                 <br />
-                <span className="text-foreground">humans can </span>
+                <span className="text-foreground">That </span>
                 {/* Fixed-width container: invisible longest text reserves space, animated text is layered on top */}
                 <span className="relative inline-block align-bottom">
                   <span className={cn("invisible whitespace-nowrap", handwriting.className)} aria-hidden="true">

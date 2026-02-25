@@ -263,7 +263,7 @@ export function LandingHeader({
                   asChild
                 >
                   <Link href="/auth">
-                    Let AI Steal Your Busywork
+                    Your AI, Your Computer
                     <ArrowRight className={cn(
                       "ml-2 transition-transform group-hover:translate-x-1",
                       scrolled ? "h-3 w-3" : "h-4 w-4"
@@ -370,7 +370,7 @@ export function LandingHeader({
                   >
                     <Button className="w-full rounded-xl h-12 text-[15px] sm:text-base font-semibold group" asChild>
                       <Link href="/auth" onClick={closeMobileMenu}>
-                        Let AI Steal Your Busywork
+                        Your AI, Your Computer
                         <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </Link>
                     </Button>

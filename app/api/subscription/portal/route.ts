@@ -8,6 +8,8 @@ const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
   apiVersion: "2025-08-27.basil",
 })
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
@@ -44,7 +46,7 @@ export async function POST(req: NextRequest) {
     // Create a Stripe billing portal session
     const session = await stripe.billingPortal.sessions.create({
       customer: customer.stripe_customer_id,
-      return_url: `${req.headers.get("origin")}/account?section=billing`,
+      return_url: `${BASE_URL}/account?section=billing`,
     })
 
     return NextResponse.json({ 

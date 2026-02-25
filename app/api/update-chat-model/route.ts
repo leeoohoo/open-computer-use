@@ -18,10 +18,21 @@ export async function POST(request: Request) {
       return new Response(JSON.stringify({ success: true }), { status: 200 })
     }
 
+    // Verify the user is authenticated
+    const { data: authData } = await supabase.auth.getUser()
+    if (!authData?.user?.id) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401 }
+      )
+    }
+
+    // Only update if the user owns the chat
     const { error } = await supabase
       .from("chats")
       .update({ model })
       .eq("id", chatId)
+      .eq("user_id", authData.user.id)
 
     if (error) {
       console.error("Error updating chat model:", error)

@@ -10,9 +10,11 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Sparkles, Zap, Rocket, Crown } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Crown, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useCredits } from "@/lib/hooks/use-credits"
+import { CoastyIcon } from "@/components/icons/coasty"
 
 interface InsufficientCreditsModalProps {
   isOpen: boolean
@@ -25,29 +27,31 @@ interface InsufficientCreditsModalProps {
 
 const creditPackages = [
   {
-    id: "starter",
-    name: "Quick Boost",
+    id: "boost-small",
+    name: "Small Boost",
     credits: 500,
     price: 5,
-    runtime: "50 min",
-    icon: Zap,
+    minutes: 50,
+    description: "Quick top-up",
   },
   {
-    id: "basic",
-    name: "Power Pack",
+    id: "boost-medium",
+    name: "Medium Boost",
     credits: 2000,
-    price: 15,
-    runtime: "3+ hours",
-    icon: Rocket,
+    price: 18,
+    minutes: 200,
+    description: "Standard refill",
+    savings: "10% savings",
     popular: true,
   },
   {
-    id: "pro",
-    name: "Pro Bundle",
+    id: "boost-large",
+    name: "Large Boost",
     credits: 5000,
-    price: 30,
-    runtime: "8+ hours",
-    icon: Sparkles,
+    price: 40,
+    minutes: 500,
+    description: "Bulk purchase",
+    savings: "20% savings",
   },
 ]
 
@@ -107,138 +111,106 @@ export function InsufficientCreditsModal({
     onClose()
   }
 
-  const creditsNeeded = Math.max(0, requiredCredits - currentBalance)
+  const balanceMinutes = Math.floor(currentBalance / 10)
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[420px] p-5 animate-in fade-in-0 zoom-in-95 duration-200">
-        <DialogHeader className="space-y-3">
-          <DialogTitle className="text-lg font-medium">
-            {hasSubscription ? "Let's power up your AI assistant" : "Unlock AI Features"}
+      <DialogContent className="sm:max-w-[400px] p-5 gap-0">
+        <DialogHeader className="space-y-1.5 pb-4">
+          <DialogTitle className="text-base font-semibold">
+            {hasSubscription ? "Need more minutes?" : "Unlock AI Features"}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
-            {hasSubscription 
-              ? `You're ${creditsNeeded} credits short. Top up to continue your session.`
-              : "Subscribe to get started with AI features and monthly credits."
+            {hasSubscription
+              ? "Top up your balance to continue."
+              : "Subscribe to get started with AI features."
             }
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 mb-5 flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
-          <span className="text-sm text-muted-foreground">Your balance</span>
-          <div className="text-right">
-            <div className="text-lg font-semibold">{currentBalance} credits</div>
-            {estimatedRuntime > 0 && (
-              <div className="text-xs text-muted-foreground">~{estimatedRuntime} min remaining</div>
-            )}
+        {/* Balance */}
+        <div className="flex items-center justify-between rounded-lg border px-3 py-2.5 mb-4">
+          <div className="flex items-center gap-2">
+            <CoastyIcon className="h-4 w-4 text-primary" />
+            <span className="text-sm text-muted-foreground">Balance</span>
           </div>
+          <span className="text-sm font-semibold">
+            {balanceMinutes} min remaining
+          </span>
         </div>
 
         {!hasSubscription ? (
-          // Show subscription prompt
           <div className="space-y-4">
-            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
-              <div className="flex items-start gap-3">
-                <Crown className="h-5 w-5 text-primary mt-0.5" />
-                <div className="flex-1">
-                  <h4 className="text-sm font-medium mb-1">Subscription Required</h4>
-                  <p className="text-xs text-muted-foreground mb-3">
-                    Subscribe to unlock AI features and get monthly credits.
-                  </p>
-                  <div className="space-y-2 text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="text-primary">✓</span>
-                      <span>Starting at $19/month</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-primary">✓</span>
-                      <span>2,000+ credits included monthly</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-primary">✓</span>
-                      <span>Access to all AI models</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-primary">✓</span>
-                      <span>Purchase additional credits anytime</span>
-                    </div>
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3.5">
+              <div className="flex items-start gap-2.5">
+                <Crown className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <div className="space-y-2.5">
+                  <p className="text-sm font-medium">Subscription Required</p>
+                  <div className="space-y-1.5 text-xs text-muted-foreground">
+                    <p>Starting at $19/month with 20 min included</p>
+                    <p>Purchase additional minutes anytime</p>
                   </div>
                 </div>
               </div>
             </div>
-            
-            <Button 
+
+            <Button
               onClick={handleSubscribe}
               disabled={isLoading}
               className="w-full"
-              size="default"
+              size="sm"
             >
-              <Crown className="mr-2 h-4 w-4" />
-              View Subscription Plans
+              View Plans
+              <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </Button>
           </div>
         ) : (
-          // Show credit packages for subscribed users
           <div className="space-y-2">
-            {creditPackages.map((pkg) => {
-              const Icon = pkg.icon
-              const isPopular = pkg.popular
+            {creditPackages.map((pkg) => (
+              <button
+                key={pkg.id}
+                onClick={() => handlePurchase(pkg.id)}
+                disabled={isLoading}
+                className={cn(
+                  "group relative flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-left transition-all",
+                  "hover:border-primary/40 hover:bg-accent/50",
+                  pkg.popular && "border-primary/30 bg-primary/5",
+                  isLoading && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted group-hover:bg-primary/10 transition-colors">
+                    <CoastyIcon className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-medium">{pkg.minutes} min</span>
+                      {pkg.savings && (
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-green-500/10 text-green-600 border-green-500/20">
+                          {pkg.savings}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground">{pkg.description}</div>
+                  </div>
+                </div>
 
-              return (
-                <button
-                  key={pkg.id}
-                  onClick={() => handlePurchase(pkg.id)}
-                  disabled={isLoading}
-                  className={cn(
-                    "group relative flex w-full items-center justify-between rounded-lg border p-3 text-left transition-all",
-                    "hover:border-primary/50 hover:bg-accent/50",
-                    isPopular && "border-primary/30 bg-primary/5",
-                    isLoading && "opacity-50 cursor-not-allowed"
-                  )}
-                >
-                  {isPopular && (
-                    <div className="absolute -top-2 left-3 bg-background px-1">
-                      <span className="text-[10px] font-medium text-primary">POPULAR</span>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "flex h-8 w-8 items-center justify-center rounded-full transition-colors",
-                      "bg-muted group-hover:bg-primary/10"
-                    )}>
-                      <Icon className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-sm">{pkg.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {pkg.credits.toLocaleString()} credits • {pkg.runtime}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <div className="font-semibold">${pkg.price}</div>
-                    <div className="text-xs text-muted-foreground">
-                      ${(pkg.price / pkg.credits * 100).toFixed(1)}¢/min
-                    </div>
-                  </div>
-                </button>
-              )
-            })}
+                <span className="text-sm font-semibold">${pkg.price}</span>
+              </button>
+            ))}
           </div>
         )}
 
-        <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center justify-between pt-4 mt-4 border-t text-xs text-muted-foreground">
           <button
-            onClick={() => router.push("/account?section=billing")}
-            className="hover:text-primary transition-colors"
+            onClick={() => { router.push("/account?section=billing"); onClose() }}
+            className="hover:text-foreground transition-colors"
           >
-            View all options →
+            View all options
           </button>
           <button
             onClick={onClose}
-            className="hover:text-primary transition-colors"
+            className="hover:text-foreground transition-colors"
           >
             Maybe later
           </button>

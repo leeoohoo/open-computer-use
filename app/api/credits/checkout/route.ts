@@ -8,6 +8,15 @@ const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
   apiVersion: "2025-08-27.basil",
 })
 
+// Server-side credit packages — single source of truth for pricing
+const CREDIT_PACKAGES: Record<string, { credits: number; price: number; name: string }> = {
+  "boost-small": { credits: 500, price: 5, name: "Small Boost" },
+  "boost-medium": { credits: 2000, price: 18, name: "Medium Boost" },
+  "boost-large": { credits: 5000, price: 40, name: "Large Boost" },
+}
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
@@ -17,7 +26,7 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       )
     }
-    
+
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -44,14 +53,18 @@ export async function POST(req: NextRequest) {
 
     // Parse request body
     const body = await req.json()
-    const { packageId, credits, price } = body
+    const { packageId } = body
 
-    if (!credits || !price) {
+    // Look up package server-side — never trust client-sent price/credits
+    const pkg = CREDIT_PACKAGES[packageId]
+    if (!pkg) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Invalid package ID" },
         { status: 400 }
       )
     }
+
+    const { credits, price, name } = pkg
 
     // Get or create Stripe customer
     let stripeCustomerId: string
@@ -94,17 +107,17 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: `${credits} Credits`,
+              name: `${name} — ${credits} Credits`,
               description: `Purchase ${credits} credits for your account`,
             },
-            unit_amount: Math.round(price * 100), // Convert to cents
+            unit_amount: Math.round(price * 100),
           },
           quantity: 1,
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/?payment_success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/?payment_canceled=true`,
+      success_url: `${BASE_URL}/?payment_success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${BASE_URL}/?payment_canceled=true`,
       metadata: {
         user_id: user.id,
         credits: credits.toString(),

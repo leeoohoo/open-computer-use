@@ -171,17 +171,26 @@ Add-Type -AssemblyName System.Windows.Forms
 }
 
 const KEY_MAP_WIN: Record<string, string> = {
-  enter: '{ENTER}', tab: '{TAB}', escape: '{ESC}', backspace: '{BACKSPACE}',
-  delete: '{DELETE}', up: '{UP}', down: '{DOWN}', left: '{LEFT}', right: '{RIGHT}',
+  enter: '{ENTER}', tab: '{TAB}', escape: '{ESC}', esc: '{ESC}',
+  backspace: '{BACKSPACE}', delete: '{DELETE}',
+  up: '{UP}', down: '{DOWN}', left: '{LEFT}', right: '{RIGHT}',
   home: '{HOME}', end: '{END}', pageup: '{PGUP}', pagedown: '{PGDN}', space: ' ',
+  insert: '{INSERT}', capslock: '{CAPSLOCK}',
+  numlock: '{NUMLOCK}', scrolllock: '{SCROLLLOCK}',
+  printscreen: '{PRTSC}', prtsc: '{PRTSC}',
   f1: '{F1}', f2: '{F2}', f3: '{F3}', f4: '{F4}', f5: '{F5}', f6: '{F6}',
   f7: '{F7}', f8: '{F8}', f9: '{F9}', f10: '{F10}', f11: '{F11}', f12: '{F12}',
 }
 
 const KEY_MAP_XDOTOOL: Record<string, string> = {
-  enter: 'Return', tab: 'Tab', escape: 'Escape', backspace: 'BackSpace',
-  delete: 'Delete', up: 'Up', down: 'Down', left: 'Left', right: 'Right',
+  enter: 'Return', return: 'Return', tab: 'Tab',
+  escape: 'Escape', esc: 'Escape',
+  backspace: 'BackSpace', delete: 'Delete',
+  up: 'Up', down: 'Down', left: 'Left', right: 'Right',
   home: 'Home', end: 'End', pageup: 'Page_Up', pagedown: 'Page_Down', space: 'space',
+  insert: 'Insert', capslock: 'Caps_Lock',
+  numlock: 'Num_Lock', scrolllock: 'Scroll_Lock',
+  printscreen: 'Print', prtsc: 'Print', menu: 'Menu',
   f1: 'F1', f2: 'F2', f3: 'F3', f4: 'F4', f5: 'F5', f6: 'F6',
   f7: 'F7', f8: 'F8', f9: 'F9', f10: 'F10', f11: 'F11', f12: 'F12',
 }
@@ -195,9 +204,13 @@ const VK_CODES: Record<string, number> = {
   shift: 0xA0, lshift: 0xA0, rshift: 0xA1,
   enter: 0x0D, return: 0x0D,
   tab: 0x09, escape: 0x1B, esc: 0x1B,
-  backspace: 0x08, delete: 0x2E, space: 0x20,
+  backspace: 0x08, delete: 0x2E, del: 0x2E, space: 0x20,
+  insert: 0x2D, capslock: 0x14,
+  numlock: 0x90, scrolllock: 0x91,
+  printscreen: 0x2C, prtsc: 0x2C,
   up: 0x26, down: 0x28, left: 0x25, right: 0x27,
   home: 0x24, end: 0x23, pageup: 0x21, pagedown: 0x22,
+  apps: 0x5D, menu: 0x5D,
   f1: 0x70, f2: 0x71, f3: 0x72, f4: 0x73, f5: 0x74, f6: 0x75,
   f7: 0x76, f8: 0x77, f9: 0x78, f10: 0x79, f11: 0x7A, f12: 0x7B,
   a: 0x41, b: 0x42, c: 0x43, d: 0x44, e: 0x45, f: 0x46, g: 0x47,
@@ -358,7 +371,10 @@ Add-Type -AssemblyName System.Windows.Forms
 }
 
 const MODIFIER_MAP_XDOTOOL: Record<string, string> = {
-  ctrl: 'ctrl', alt: 'alt', shift: 'shift', cmd: 'super', win: 'super',
+  ctrl: 'ctrl', control: 'ctrl',
+  alt: 'alt', option: 'alt',
+  shift: 'shift',
+  cmd: 'super', command: 'super', win: 'super', super: 'super', meta: 'super',
 }
 
 // macOS virtual key codes (CGKeyCode) for special keys
@@ -372,6 +388,7 @@ const KEY_MAP_MACOS: Record<string, number> = {
   home: 115, end: 119,
   pageup: 116, pagedown: 121,
   forwarddelete: 117,
+  capslock: 57,
   f1: 122, f2: 120, f3: 99, f4: 118, f5: 96, f6: 97,
   f7: 98, f8: 100, f9: 101, f10: 109, f11: 103, f12: 111,
 }
@@ -415,10 +432,10 @@ export async function desktopKeyCombo(params: { keys: string[] }): Promise<any> 
       let finalKey = ''
       for (const key of keys) {
         const lower = key.toLowerCase()
-        if (['ctrl', 'control', 'alt', 'option', 'shift', 'cmd', 'command', 'win', 'fn', 'function'].includes(lower)) {
+        if (['ctrl', 'control', 'alt', 'option', 'shift', 'cmd', 'command', 'win', 'super', 'meta', 'fn', 'function'].includes(lower)) {
           const mapped = (lower === 'ctrl' || lower === 'control') ? 'control down'
             : (lower === 'alt' || lower === 'option') ? 'option down'
-            : (lower === 'cmd' || lower === 'command' || lower === 'win') ? 'command down'
+            : (lower === 'cmd' || lower === 'command' || lower === 'win' || lower === 'super' || lower === 'meta') ? 'command down'
             : (lower === 'fn' || lower === 'function') ? 'fn down'
             : `${lower} down`
           modifiers.push(mapped)

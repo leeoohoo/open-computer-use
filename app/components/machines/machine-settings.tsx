@@ -30,9 +30,13 @@ export function MachineSettings({ machine, onUpdate }: MachineSettingsProps) {
     setSaving(true);
     
     try {
+      const csrf = document.cookie
+        .split("; ")
+        .find((c) => c.startsWith("csrf_token="))
+        ?.split("=")[1];
       const response = await fetch(`/api/machines/${machine.id}/settings`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrf || "" },
         body: JSON.stringify({
           displayName,
           autoShutdownMinutes: enableAutoShutdown ? autoShutdownMinutes : null,

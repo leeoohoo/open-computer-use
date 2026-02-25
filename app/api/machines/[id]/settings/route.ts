@@ -60,11 +60,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       }
     }
     
-    if (body.settings !== undefined) {
-      const currentSettings = machine.settings as Record<string, any> || {};
-      updateData.settings = { ...currentSettings, ...body.settings };
-    }
-
     // Update machine
     const { data: updatedMachine, error: updateError } = await supabase
       .from("user_machines")
