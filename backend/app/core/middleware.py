@@ -56,6 +56,10 @@ class InternalAPIKeyMiddleware(BaseHTTPMiddleware):
         if request.url.path in self._SKIP_PATHS:
             return await _safe_call_next(call_next, request)
 
+        # CORS preflight requests never carry auth headers — let them through
+        if request.method == "OPTIONS":
+            return await _safe_call_next(call_next, request)
+
         # WebSocket upgrades (Electron) use their own auth handshake
         if request.headers.get("upgrade", "").lower() == "websocket":
             return await _safe_call_next(call_next, request)
