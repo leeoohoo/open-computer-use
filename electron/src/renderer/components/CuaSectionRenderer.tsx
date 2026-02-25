@@ -378,9 +378,7 @@ function ItemRenderer({ item }: { item: TopLevelItem }) {
     }
 
     case 'code-agent-thought': {
-      const label = item.step && item.budget
-        ? `Thinking (${item.step}/${item.budget})`
-        : 'Thinking'
+      const label = 'Thinking'
       return (
         <div className="pl-6">
           <DetailRow icon={IconBrain} label={label}>
@@ -391,7 +389,7 @@ function ItemRenderer({ item }: { item: TopLevelItem }) {
     }
 
     case 'code-agent-result': {
-      const label = item.step ? `Result (step ${item.step})` : 'Result'
+      const label = 'Result'
       return (
         <div className="pl-6">
           <DetailRow icon={IconLightning} label={label} defaultOpen>
