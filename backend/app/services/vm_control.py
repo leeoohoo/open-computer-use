@@ -122,20 +122,31 @@ class VMControlService:
                     
                     await websocket.send(json.dumps(auth_message))
                     
-                    # Wait for auth response (but don't block too long)
+                    # Wait for auth response — reject connection on failure
                     try:
                         response = await asyncio.wait_for(websocket.recv(), timeout=5.0)
                         auth_result = json.loads(response)
-                        
+
                         if auth_result.get("type") == "auth_success":
                             logger.info(f"✓ Authenticated with VM agent for machine {machine_id}")
                         else:
-                            logger.warning(f"Auth response: {auth_result}")
-                            # Continue anyway - some commands may work without auth
+                            logger.error(f"VM agent auth rejected for {machine_id}: {auth_result}")
+                            await websocket.close()
+                            del self.connections[machine_id]
+                            self.reconnect_attempts[machine_id] += 1
+                            continue  # Retry with next attempt
                     except asyncio.TimeoutError:
-                        logger.warning("Auth response timeout after 5s - continuing anyway")
+                        logger.error(f"VM agent auth timeout for {machine_id} — closing connection")
+                        await websocket.close()
+                        del self.connections[machine_id]
+                        self.reconnect_attempts[machine_id] += 1
+                        continue  # Retry with next attempt
                     except Exception as e:
-                        logger.warning(f"Auth response error: {e} - continuing anyway")
+                        logger.error(f"VM agent auth error for {machine_id}: {e} — closing connection")
+                        await websocket.close()
+                        del self.connections[machine_id]
+                        self.reconnect_attempts[machine_id] += 1
+                        continue  # Retry with next attempt
                     
                     # Store connection data
                     self.session_data[machine_id] = {

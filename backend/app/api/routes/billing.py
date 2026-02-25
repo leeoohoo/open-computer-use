@@ -6,10 +6,10 @@ import logging
 from typing import Optional
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 
-from app.services.auth import validate_user
+from app.services.auth import validate_user, get_verified_user_id
 from app.services.agent_billing import agent_billing_service
 from app.services.database import DatabaseService
 
@@ -41,7 +41,7 @@ class SessionStatusResponse(BaseModel):
 
 
 @router.get("/credits/balance")
-async def get_credit_balance(user_id: str = Depends(validate_user)) -> CreditBalanceResponse:
+async def get_credit_balance(user_id: str = Depends(get_verified_user_id)) -> CreditBalanceResponse:
     """Get user's current credit balance and session eligibility"""
     try:
         balance_info = await agent_billing_service.check_balance_for_session(user_id)
@@ -61,7 +61,7 @@ async def get_credit_balance(user_id: str = Depends(validate_user)) -> CreditBal
 @router.get("/sessions/{session_id}/status")
 async def get_session_status(
     session_id: str,
-    user_id: str = Depends(validate_user)
+    user_id: str = Depends(get_verified_user_id)
 ) -> SessionStatusResponse:
     """Get current status of an active billing session"""
     try:
@@ -94,7 +94,7 @@ async def get_session_status(
 @router.post("/sessions/cleanup")
 async def cleanup_orphaned_sessions(
     max_age_hours: int = 2,
-    user_id: str = Depends(validate_user)
+    user_id: str = Depends(get_verified_user_id)
 ):
     """Manually trigger cleanup of orphaned sessions (admin only)"""
     try:
@@ -112,7 +112,7 @@ async def cleanup_orphaned_sessions(
 
 @router.get("/usage/history")
 async def get_usage_history(
-    user_id: str = Depends(validate_user),
+    user_id: str = Depends(get_verified_user_id),
     limit: int = 50
 ):
     """Get user's VM usage history"""

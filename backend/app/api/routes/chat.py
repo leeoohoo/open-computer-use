@@ -10,12 +10,12 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 import uuid
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
 from app.core.config import settings
 from app.models.chat import ChatRequest
-from app.services.auth import validate_user
+from app.services.auth import validate_user, get_verified_user_id
 from app.services.database import DatabaseService
 from app.services.usage_tracker import UsageTracker
 from app.services.vm_control import vm_control_service
@@ -229,14 +229,15 @@ async def get_machine_connection_info(machine_id: str, user_id: str) -> Optional
 @router.post("/")
 async def chat_endpoint(
     request: Request,
-    chat_request: ChatRequest
+    chat_request: ChatRequest,
+    user_id: str = Depends(get_verified_user_id),
 ) -> StreamingResponse:
     """
     Main chat endpoint - handles streaming responses with tool support
     """
     try:
         # Validate request
-        if not chat_request.messages or not chat_request.chat_id or not chat_request.user_id:
+        if not chat_request.messages or not chat_request.chat_id:
             raise HTTPException(status_code=400, detail="Missing required fields")
 
         # Require machine_id for all chat requests
@@ -244,29 +245,16 @@ async def chat_endpoint(
             raise HTTPException(status_code=400, detail="machine_id is required. Please select a machine.")
 
         logger.info(f"Virtual machine selected: {chat_request.machine_id} for chat {chat_request.chat_id}")
-        
-        # Validate user and check usage
-        if chat_request.is_authenticated:
-            user = await validate_user(chat_request.user_id)
-            if not user:
-                raise HTTPException(status_code=401, detail="Invalid user")
-            
-            # Check usage limits
-            can_proceed = await usage_tracker.check_and_increment(
-                user_id=chat_request.user_id,
-                model=chat_request.model,
-                is_authenticated=chat_request.is_authenticated
-            )
-            
-            if not can_proceed:
-                raise HTTPException(status_code=429, detail="Usage limit exceeded")
-        else:
-            # Check if model is allowed for unauthenticated users
-            if chat_request.model not in settings.NON_AUTH_ALLOWED_MODELS:
-                raise HTTPException(
-                    status_code=403,
-                    detail="This model requires authentication"
-                )
+
+        # Check usage limits
+        can_proceed = await usage_tracker.check_and_increment(
+            user_id=user_id,
+            model=chat_request.model,
+            is_authenticated=True,
+        )
+
+        if not can_proceed:
+            raise HTTPException(status_code=429, detail="Usage limit exceeded")
         
         # Log user message
         user_message = chat_request.messages[-1]
@@ -278,7 +266,7 @@ async def chat_endpoint(
             
             await db_service.save_message({
                 "chat_id": chat_request.chat_id,
-                "user_id": chat_request.user_id,
+                "user_id": user_id,
                 "role": "user",
                 "content": sanitize_content(user_message.content),
                 "attachments": attachments_dict,
@@ -294,7 +282,7 @@ async def chat_endpoint(
         logger.info(f"Machine selected ({chat_request.machine_id}), using multi-agent execution")
 
         # Check if user has sufficient credits before starting
-        balance_check = await agent_billing_service.check_balance_for_session(chat_request.user_id)
+        balance_check = await agent_billing_service.check_balance_for_session(user_id)
         if not balance_check["can_start"]:
             raise HTTPException(
                 status_code=402,  # Payment Required
@@ -303,13 +291,13 @@ async def chat_endpoint(
                        f"Please purchase more credits to continue."
             )
 
-        logger.info(f"User {chat_request.user_id} has {balance_check['current_balance']} credits, "
+        logger.info(f"User {user_id} has {balance_check['current_balance']} credits, "
                    f"estimated runtime: {balance_check['estimated_runtime_minutes']} minutes")
 
         # Get machine connection info
         connection_info = await get_machine_connection_info(
             chat_request.machine_id,
-            chat_request.user_id
+            user_id
         )
 
         if not connection_info:
@@ -317,7 +305,7 @@ async def chat_endpoint(
 
         # Start billing session
         billing_session_id = await agent_billing_service.start_session(
-            user_id=chat_request.user_id,
+            user_id=user_id,
             machine_id=chat_request.machine_id,
             session_type="ai_controlled",
             ai_model=chat_request.model,
@@ -330,7 +318,7 @@ async def chat_endpoint(
                 detail="Failed to start billing session. Please check your credit balance."
             )
 
-        logger.info(f"Started billing session {billing_session_id} for user {chat_request.user_id}")
+        logger.info(f"Started billing session {billing_session_id} for user {user_id}")
 
         # Pre-establish connection to VM agent
         if connection_info.get("is_electron"):

@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/server';
 // Python backend URL - can be configured via environment variable
 // Use 127.0.0.1 instead of localhost to force IPv4
 const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:8001';
+const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || '';
 
 export const maxDuration = 300; // 5 minutes for large messages
 
@@ -52,6 +53,10 @@ export async function POST(req: NextRequest) {
       }
     });
     
+    // Enforce server-verified values so clients cannot tamper with auth fields
+    body.user_id = authData.user.id;
+    body.isAuthenticated = true;
+
     // Forward the request to Python backend
     let response: Response;
     try {
@@ -60,12 +65,8 @@ export async function POST(req: NextRequest) {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'text/event-stream',
-          // Forward authentication headers if present
-          ...(req.headers.get('authorization') && {
-            'Authorization': req.headers.get('authorization')!
-          }),
-          // Include authenticated user ID
           'X-User-ID': authData.user.id,
+          ...(INTERNAL_API_KEY && { 'X-Internal-Key': INTERNAL_API_KEY }),
         },
         body: JSON.stringify(body),
         signal: controller.signal,

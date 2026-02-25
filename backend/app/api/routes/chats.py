@@ -12,11 +12,11 @@ import re
 from typing import Optional
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 
 from app.services.database import DatabaseService
-from app.services.auth import validate_user
+from app.services.auth import validate_user, get_verified_user_id
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -58,12 +58,8 @@ def _clean_preview(content: str) -> Optional[str]:
 
 
 @router.post("/create")
-async def create_chat(req: CreateChatRequest):
+async def create_chat(req: CreateChatRequest, user_id: str = Depends(get_verified_user_id)):
     """Create a new chat in the database. Returns the chat with its Supabase UUID."""
-    user = await validate_user(req.user_id)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid user")
-
     # Build room_settings with source metadata
     room_settings = {}
     if req.source:
@@ -76,7 +72,7 @@ async def create_chat(req: CreateChatRequest):
         room_settings["platform"] = req.platform
 
     chat_data = {
-        "user_id": req.user_id,
+        "user_id": user_id,
         "title": req.title,
         "model": req.model,
         "collaborative": False,
@@ -92,14 +88,11 @@ async def create_chat(req: CreateChatRequest):
 
 @router.get("/list")
 async def list_chats(
-    user_id: str = Query(...),
+    user_id: str = Depends(get_verified_user_id),
     machine_id: Optional[str] = Query(None),
     source: Optional[str] = Query(None),
 ):
     """List chats for a user. Optionally filter by machine_id or source."""
-    user = await validate_user(user_id)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid user")
 
     if not db_service.client:
         return {"chats": []}
@@ -160,25 +153,36 @@ async def list_chats(
         return {"chats": []}
 
 
-@router.get("/{chat_id}")
-async def get_chat(chat_id: str):
-    """Get a single chat by ID."""
+async def _get_chat_for_user(chat_id: str, user_id: str) -> dict:
+    """Fetch a chat and verify it belongs to the authenticated user."""
     result = await db_service.get_chat(chat_id)
     if not result:
         raise HTTPException(status_code=404, detail="Chat not found")
+    if result.get("user_id") != user_id:
+        raise HTTPException(status_code=404, detail="Chat not found")
+    return result
+
+
+@router.get("/{chat_id}")
+async def get_chat(chat_id: str, user_id: str = Depends(get_verified_user_id)):
+    """Get a single chat by ID."""
+    result = await _get_chat_for_user(chat_id, user_id)
     return {"chat": result}
 
 
 @router.get("/{chat_id}/messages")
-async def get_chat_messages(chat_id: str, limit: int = Query(100)):
+async def get_chat_messages(chat_id: str, limit: int = Query(100), user_id: str = Depends(get_verified_user_id)):
     """Get messages for a chat."""
+    await _get_chat_for_user(chat_id, user_id)
     messages = await db_service.get_chat_messages(chat_id, limit=limit)
     return {"messages": messages}
 
 
 @router.patch("/{chat_id}")
-async def update_chat(chat_id: str, req: UpdateChatRequest):
+async def update_chat(chat_id: str, req: UpdateChatRequest, user_id: str = Depends(get_verified_user_id)):
     """Update chat title."""
+    await _get_chat_for_user(chat_id, user_id)
+
     if not db_service.client:
         raise HTTPException(status_code=500, detail="Database not available")
 
@@ -187,7 +191,7 @@ async def update_chat(chat_id: str, req: UpdateChatRequest):
         if req.title is not None:
             update_data["title"] = req.title
 
-        db_service.client.table("chats").update(update_data).eq("id", chat_id).execute()
+        db_service.client.table("chats").update(update_data).eq("id", chat_id).eq("user_id", user_id).execute()
         return {"success": True}
     except Exception as e:
         logger.error(f"Failed to update chat: {e}")
@@ -195,16 +199,18 @@ async def update_chat(chat_id: str, req: UpdateChatRequest):
 
 
 @router.delete("/{chat_id}")
-async def delete_chat(chat_id: str):
+async def delete_chat(chat_id: str, user_id: str = Depends(get_verified_user_id)):
     """Delete a chat and its messages."""
+    await _get_chat_for_user(chat_id, user_id)
+
     if not db_service.client:
         raise HTTPException(status_code=500, detail="Database not available")
 
     try:
         # Delete messages first (FK constraint)
         db_service.client.table("messages").delete().eq("chat_id", chat_id).execute()
-        # Delete the chat
-        db_service.client.table("chats").delete().eq("id", chat_id).execute()
+        # Delete the chat — scope to user_id for defense-in-depth
+        db_service.client.table("chats").delete().eq("id", chat_id).eq("user_id", user_id).execute()
         return {"success": True}
     except Exception as e:
         logger.error(f"Failed to delete chat: {e}")

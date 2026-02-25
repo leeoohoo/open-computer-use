@@ -8,6 +8,7 @@ import { getOrCreateGuestUserId } from '@/lib/api';
 
 // Python backend URL
 const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:8001';
+const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || '';
 
 export const maxDuration = 60;
 
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
         'X-User-ID': userId,
         'X-Authenticated': user ? 'true' : 'false',
+        ...(INTERNAL_API_KEY && { 'X-Internal-Key': INTERNAL_API_KEY }),
       },
       body: JSON.stringify(body),
     });

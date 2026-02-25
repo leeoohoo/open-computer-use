@@ -3,14 +3,16 @@ File operations API endpoints for VM file transfer
 """
 import base64
 import logging
+import shlex
 from typing import Dict, Any, Optional, List
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Header
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
 import io
 
 from app.services.vm_control import VMControlService
 from app.services.database import DatabaseService
+from app.services.auth import get_verified_user_id
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -123,21 +125,21 @@ class CreateFolderRequest(BaseModel):
 @router.post("/list")
 async def list_files(
     request: FileListRequest,
-    x_user_id: Optional[str] = Header(None)
+    user_id: str = Depends(get_verified_user_id),
 ) -> Dict[str, Any]:
     """
     List files in a directory on the VM
     """
     try:
         # Verify user has access to this machine and get details
-        machine_details = await verify_machine_access(request.machine_id, x_user_id)
+        machine_details = await verify_machine_access(request.machine_id, user_id)
         if not machine_details:
             raise HTTPException(
                 status_code=403,
                 detail=f"Access denied to machine {request.machine_id}"
             )
         
-        logger.info(f"Listing files for machine {request.machine_id}, user: {x_user_id}, path: {request.path}")
+        logger.info(f"Listing files for machine {request.machine_id}, user: {user_id}, path: {request.path}")
         
         # Connect to the machine
         is_connected = await ensure_machine_connection(machine_details)
@@ -222,21 +224,21 @@ async def list_files(
 @router.post("/download")
 async def download_file(
     request: FileDownloadRequest,
-    x_user_id: Optional[str] = Header(None)
+    user_id: str = Depends(get_verified_user_id),
 ) -> Dict[str, Any]:
     """
     Download a file from the VM
     """
     try:
         # Verify user has access to this machine and get details
-        machine_details = await verify_machine_access(request.machine_id, x_user_id)
+        machine_details = await verify_machine_access(request.machine_id, user_id)
         if not machine_details:
             raise HTTPException(
                 status_code=403,
                 detail=f"Access denied to machine {request.machine_id}"
             )
-        
-        logger.info(f"Downloading file from machine {request.machine_id}, user: {x_user_id}")
+
+        logger.info(f"Downloading file from machine {request.machine_id}, user: {user_id}")
         
         # Connect to the machine
         is_connected = await ensure_machine_connection(machine_details)
@@ -282,21 +284,21 @@ async def download_file(
 @router.post("/download-stream")
 async def download_file_stream(
     request: FileDownloadRequest,
-    x_user_id: Optional[str] = Header(None)
+    user_id: str = Depends(get_verified_user_id),
 ):
     """
     Download a file from the VM as a streaming response
     """
     try:
         # Verify user has access to this machine and get details
-        machine_details = await verify_machine_access(request.machine_id, x_user_id)
+        machine_details = await verify_machine_access(request.machine_id, user_id)
         if not machine_details:
             raise HTTPException(
                 status_code=403,
                 detail=f"Access denied to machine {request.machine_id}"
             )
-        
-        logger.info(f"Streaming download from machine {request.machine_id}, user: {x_user_id}")
+
+        logger.info(f"Streaming download from machine {request.machine_id}, user: {user_id}")
         
         # Connect to the machine
         is_connected = await ensure_machine_connection(machine_details)
@@ -347,21 +349,21 @@ async def download_file_stream(
 @router.post("/upload")
 async def upload_file(
     request: FileUploadRequest,
-    x_user_id: Optional[str] = Header(None)
+    user_id: str = Depends(get_verified_user_id),
 ) -> Dict[str, Any]:
     """
     Upload a file to the VM (JSON body)
     """
     try:
         # Verify user has access to this machine and get details
-        machine_details = await verify_machine_access(request.machine_id, x_user_id)
+        machine_details = await verify_machine_access(request.machine_id, user_id)
         if not machine_details:
             raise HTTPException(
                 status_code=403,
                 detail=f"Access denied to machine {request.machine_id}"
             )
-        
-        logger.info(f"Uploading file to machine {request.machine_id}, user: {x_user_id}")
+
+        logger.info(f"Uploading file to machine {request.machine_id}, user: {user_id}")
         
         # Connect to the machine
         is_connected = await ensure_machine_connection(machine_details)
@@ -407,21 +409,21 @@ async def upload_file_multipart(
     machine_id: str = Form(...),
     filepath: str = Form(...),
     file: UploadFile = File(...),
-    x_user_id: Optional[str] = Header(None)
+    user_id: str = Depends(get_verified_user_id),
 ) -> Dict[str, Any]:
     """
     Upload a file to the VM (multipart form data)
     """
     try:
         # Verify user has access to this machine and get details
-        machine_details = await verify_machine_access(machine_id, x_user_id)
+        machine_details = await verify_machine_access(machine_id, user_id)
         if not machine_details:
             raise HTTPException(
                 status_code=403,
                 detail=f"Access denied to machine {machine_id}"
             )
-        
-        logger.info(f"Uploading file (multipart) to machine {machine_id}, user: {x_user_id}")
+
+        logger.info(f"Uploading file (multipart) to machine {machine_id}, user: {user_id}")
         
         # Check file size (10MB limit)
         if file.size and file.size > 10 * 1024 * 1024:
@@ -499,21 +501,21 @@ async def upload_file_multipart(
 async def delete_file(
     machine_id: str,
     filepath: str,
-    x_user_id: Optional[str] = Header(None)
+    user_id: str = Depends(get_verified_user_id),
 ) -> Dict[str, Any]:
     """
     Delete a file from the VM
     """
     try:
         # Verify user has access to this machine and get details
-        machine_details = await verify_machine_access(machine_id, x_user_id)
+        machine_details = await verify_machine_access(machine_id, user_id)
         if not machine_details:
             raise HTTPException(
                 status_code=403,
                 detail=f"Access denied to machine {machine_id}"
             )
-        
-        logger.info(f"Deleting file from machine {machine_id}, user: {x_user_id}")
+
+        logger.info(f"Deleting file from machine {machine_id}, user: {user_id}")
         
         # Connect to the machine
         is_connected = await ensure_machine_connection(machine_details)
@@ -554,21 +556,21 @@ async def delete_file(
 @router.post("/create-folder")
 async def create_folder(
     request: CreateFolderRequest,
-    x_user_id: Optional[str] = Header(None)
+    user_id: str = Depends(get_verified_user_id),
 ) -> Dict[str, Any]:
     """
     Create a new folder on the VM
     """
     try:
         # Verify user has access to this machine and get details
-        machine_details = await verify_machine_access(request.machine_id, x_user_id)
+        machine_details = await verify_machine_access(request.machine_id, user_id)
         if not machine_details:
             raise HTTPException(
                 status_code=403,
                 detail=f"Access denied to machine {request.machine_id}"
             )
-        
-        logger.info(f"Creating folder on machine {request.machine_id}, user: {x_user_id}, path: {request.folderpath}")
+
+        logger.info(f"Creating folder on machine {request.machine_id}, user: {user_id}, path: {request.folderpath}")
         
         # Connect to the machine
         is_connected = await ensure_machine_connection(machine_details)
@@ -578,12 +580,17 @@ async def create_folder(
                 detail=f"Cannot connect to machine {request.machine_id}"
             )
         
-        # Execute mkdir command
+        # Validate and sanitize the folder path
+        folderpath = request.folderpath.strip()
+        if not folderpath or '\x00' in folderpath:
+            raise HTTPException(status_code=400, detail="Invalid folder path")
+
+        # Execute mkdir command (shlex.quote prevents shell injection)
         result = await vm_control_service.execute_command(
             request.machine_id,
             "execute_terminal_command",
             {
-                "command": f"mkdir -p '{request.folderpath}'"
+                "command": f"mkdir -p {shlex.quote(folderpath)}"
             }
         )
         

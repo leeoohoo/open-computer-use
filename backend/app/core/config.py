@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     ENCRYPTION_KEY: str = Field(default="")
     JWT_SECRET_KEY: str = Field(default="your-secret-key-change-in-production")
     CSRF_SECRET: str = Field(default="")
+    INTERNAL_API_KEY: str = Field(default="")  # Shared secret between Next.js proxy and backend
     
     # AWS Bedrock Configuration
     AWS_ACCESS_KEY_ID: Optional[str] = Field(default=None)

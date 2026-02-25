@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent / "app"))
 from app.core.config import settings
 from app.core.logging import setup_logging
 from app.api.routes import chat, chats, health, models, search, vm_control, screenshots, billing, file_operations, electron_bridge
-from app.core.middleware import RateLimitMiddleware, CSRFMiddleware
+from app.core.middleware import InternalAPIKeyMiddleware, RateLimitMiddleware, CSRFMiddleware
 from app.core.exceptions import setup_exception_handlers
 
 # Setup logging
@@ -110,6 +110,9 @@ if settings.RATE_LIMIT_ENABLED:
 
 # Add CSRF protection for state-changing operations
 app.add_middleware(CSRFMiddleware)
+
+# Internal API key gate — blocks direct access when INTERNAL_API_KEY is set
+app.add_middleware(InternalAPIKeyMiddleware)
 
 # Setup exception handlers
 setup_exception_handlers(app)

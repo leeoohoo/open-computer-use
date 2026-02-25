@@ -17,12 +17,14 @@ import asyncio
 from typing import Optional
 from datetime import datetime, timezone
 
+import httpx
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 
 from app.services.vm_control import vm_control_service
 from app.services.ws_adapter import FastAPIWebSocketAdapter
 from app.services.database import DatabaseService
 from app.services.auth import validate_user
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -88,7 +90,19 @@ async def electron_websocket(
             pass
         return
 
-    # 3. Validate the user (check public users table)
+    # 3. Verify the Supabase JWT token and confirm it belongs to the claimed user_id.
+    #    The InternalAPIKeyMiddleware skips WebSocket upgrades, so we must verify here.
+    verified_uid = await _verify_supabase_token(token)
+    if not verified_uid or verified_uid != user_id:
+        logger.warning(f"Electron WS auth failed: token user_id mismatch (claimed={user_id})")
+        try:
+            await websocket.send_json({"type": "auth_failed", "reason": "Invalid token"})
+            await websocket.close(code=4001, reason="Invalid token")
+        except Exception:
+            pass
+        return
+
+    # 4. Ensure user row exists in public users table
     user = await validate_user(user_id)
     if not user:
         # User may exist in Supabase auth but not in the public users table
@@ -103,9 +117,42 @@ async def electron_websocket(
                 pass
             return
 
+    # 5. Verify machine ownership — reject if machine_id belongs to another user
+    try:
+        existing_machine = await db_service.get_machine(machine_id, user_id)
+        if not existing_machine:
+            # Machine doesn't exist for this user yet — check if it belongs to someone else
+            if db_service.client:
+                any_owner = (
+                    db_service.client.table("user_machines")
+                    .select("user_id")
+                    .eq("id", machine_id)
+                    .maybe_single()
+                    .execute()
+                )
+                if any_owner.data and any_owner.data.get("user_id") != user_id:
+                    logger.warning(f"Electron WS: machine {machine_id} belongs to another user (not {user_id})")
+                    await websocket.send_json({"type": "auth_failed", "reason": "Machine belongs to another user"})
+                    await websocket.close(code=4003, reason="Machine ownership mismatch")
+                    return
+            else:
+                # DB client unavailable — cannot verify ownership, reject
+                logger.error(f"Machine ownership check skipped: DB client unavailable")
+                await websocket.send_json({"type": "auth_failed", "reason": "Cannot verify machine ownership"})
+                await websocket.close(code=4003, reason="Ownership check unavailable")
+                return
+    except Exception as e:
+        logger.error(f"Machine ownership check failed: {e} — rejecting connection")
+        try:
+            await websocket.send_json({"type": "auth_failed", "reason": "Ownership verification error"})
+            await websocket.close(code=4003, reason="Ownership check error")
+        except Exception:
+            pass
+        return
+
     logger.info(f"Electron app connected: machine_id={machine_id}, user_id={user_id}, platform={platform}, os={os_name}")
 
-    # 4. Wrap in adapter so vm_control_service can use .send()/.recv() as usual
+    # 6. Wrap in adapter so vm_control_service can use .send()/.recv() as usual
     adapter = FastAPIWebSocketAdapter(websocket)
 
     # Build system_info dict from query params sent by the Electron app
@@ -122,7 +169,7 @@ async def electron_websocket(
         "screen_height": int(screen_height or 0),
     }
 
-    # 5. Store in vm_control_service (same dict as regular VM connections)
+    # 7. Store in vm_control_service (same dict as regular VM connections)
     vm_control_service.connections[machine_id] = adapter
     vm_control_service.session_data[machine_id] = {
         "session_id": f"electron_session_{int(time.time())}",
@@ -142,10 +189,10 @@ async def electron_websocket(
     if machine_id not in vm_control_service.command_locks:
         vm_control_service.command_locks[machine_id] = asyncio.Lock()
 
-    # 6. Register machine in database
+    # 8. Register machine in database
     await _register_electron_machine(machine_id, user_id, hostname=hostname, username=username, platform=platform)
 
-    # 7. Send auth success
+    # 9. Send auth success
     await websocket.send_json({
         "type": "auth_success",
         "message": "Connected to Coasty backend",
@@ -153,7 +200,7 @@ async def electron_websocket(
     })
 
     try:
-        # 8. Keep connection alive.
+        # 10. Keep connection alive.
         # CRITICAL: We must NOT consume messages here — execute_command()
         # handles all command/response traffic via the stored adapter.
         # We only need to keep this coroutine alive so FastAPI doesn't
@@ -175,6 +222,29 @@ async def electron_websocket(
         # If the Electron app reconnected quickly, a new handler already
         # stored a new adapter — we must NOT remove it.
         await _cleanup_electron_connection(machine_id, adapter)
+
+
+async def _verify_supabase_token(token: str) -> Optional[str]:
+    """Verify a Supabase JWT and return the user_id it belongs to, or None."""
+    if not settings.SUPABASE_URL or not settings.SUPABASE_ANON_KEY:
+        logger.warning("Cannot verify Supabase token: SUPABASE_URL or SUPABASE_ANON_KEY not set")
+        return None
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            resp = await client.get(
+                f"{settings.SUPABASE_URL}/auth/v1/user",
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "apikey": settings.SUPABASE_ANON_KEY,
+                },
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                return data.get("id")
+            return None
+    except Exception as e:
+        logger.error(f"Supabase token verification failed: {e}")
+        return None
 
 
 async def _ensure_user_row(user_id: str, token: str) -> Optional[str]:

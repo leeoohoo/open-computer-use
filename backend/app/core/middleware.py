@@ -2,6 +2,7 @@
 Custom middleware for the FastAPI application
 """
 
+import hmac
 import time
 import logging
 import hashlib
@@ -32,6 +33,76 @@ async def _safe_call_next(call_next, request: Request) -> Response:
             logger.debug(f"Client disconnected during {request.method} {request.url.path}")
             return Response(status_code=204)
         raise
+
+
+class InternalAPIKeyMiddleware(BaseHTTPMiddleware):
+    """Gate that requires either a shared internal key OR a valid Supabase JWT.
+
+    Accepts requests that satisfy at least one of:
+      1. X-Internal-Key header matching INTERNAL_API_KEY  (Next.js proxy)
+      2. Authorization: Bearer <jwt> verified against Supabase  (Electron app)
+
+    If INTERNAL_API_KEY is empty the middleware is a no-op (backward compat for dev).
+    """
+
+    _SKIP_PATHS = frozenset(["/", "/api/health", "/docs", "/redoc", "/openapi.json"])
+
+    async def dispatch(self, request: Request, call_next):
+        key = settings.INTERNAL_API_KEY
+        if not key:
+            return await _safe_call_next(call_next, request)
+
+        # Let health / docs through
+        if request.url.path in self._SKIP_PATHS:
+            return await _safe_call_next(call_next, request)
+
+        # WebSocket upgrades (Electron) use their own auth handshake
+        if request.headers.get("upgrade", "").lower() == "websocket":
+            return await _safe_call_next(call_next, request)
+
+        # Path 1: internal shared key (server-to-server from Next.js proxy)
+        provided_key = request.headers.get("X-Internal-Key", "")
+        if provided_key and hmac.compare_digest(provided_key, key):
+            # Trust X-User-ID set by the proxy (it verified the user via Supabase)
+            x_user_id = request.headers.get("X-User-ID")
+            if x_user_id:
+                request.state.verified_user_id = x_user_id
+            return await _safe_call_next(call_next, request)
+
+        # Path 2: Supabase Bearer token (Electron desktop app)
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer ") and settings.SUPABASE_URL and settings.SUPABASE_ANON_KEY:
+            token = auth_header[7:]
+            jwt_user_id = await self._verify_supabase_token(token)
+            if jwt_user_id:
+                request.state.verified_user_id = jwt_user_id
+                return await _safe_call_next(call_next, request)
+
+        logger.warning(f"Rejected request to {request.url.path} — no valid credential")
+        return JSONResponse(
+            status_code=403,
+            content={"error": "Forbidden"},
+        )
+
+    @staticmethod
+    async def _verify_supabase_token(token: str) -> Optional[str]:
+        """Verify a Supabase JWT. Returns the user_id if valid, None otherwise."""
+        import httpx
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.get(
+                    f"{settings.SUPABASE_URL}/auth/v1/user",
+                    headers={
+                        "Authorization": f"Bearer {token}",
+                        "apikey": settings.SUPABASE_ANON_KEY,
+                    },
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    return data.get("id")
+                return None
+        except Exception:
+            return None
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
