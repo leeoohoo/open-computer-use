@@ -243,6 +243,18 @@ const demoChatSessions = [
     description: "Can a machine draw a perfect circle? Watch an AI agent analyze the canvas, steady the cursor, and go for a flawless score.",
     tag: "Precision Control",
   },
+  {
+    title: "Filling Out a Spreadsheet, Hands-Free",
+    chatId: "02b88be4-7643-4a85-89c5-3a9deba5032c",
+    description: "Watch an AI agent open Excel, navigate cells, and fill in structured data — all without a single keystroke from you.",
+    tag: "Office Automation",
+  },
+  {
+    title: "Sending an Email on Your Behalf",
+    chatId: "60a0722b-fb98-43d6-a4e7-951d80a22363",
+    description: "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
+    tag: "Communication",
+  },
 ]
 
 const faqs = [
@@ -634,8 +646,8 @@ export function LandingPage() {
               <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/40" style={{ aspectRatio: "16 / 9" }}>
                 {demoPlaying ? (
                   <iframe
-                    src="/share/1cd404ae-3fcb-4d7f-b9d4-dac7aa26fc6d?embed=true&autoplay=true"
-                    title="AI Agent solving a CAPTCHA — live session replay"
+                    src="/share/60a0722b-fb98-43d6-a4e7-951d80a22363?embed=true&autoplay=true"
+                    title="AI Agent sending an email — live session replay"
                     className="absolute inset-0 w-full h-full border-0"
                     allow="autoplay"
                   />
