@@ -345,6 +345,7 @@ function AccountMenu({ onClose, updateStatus }: { onClose: () => void; updateSta
 
 export function Overlay() {
   const connectionState = useConnectionStore((s) => s.state)
+  const reconnect = useConnectionStore((s) => s.connect)
   const { mode, toggleExpanded } = useWindowStore()
   const { user, signOut } = useAuthStore()
   const {
@@ -494,8 +495,16 @@ export function Overlay() {
           )}
         </div>
 
-        {/* Status dot */}
-        <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot(connectionState)}`} />
+        {/* Status dot — clickable to reconnect when disconnected/error */}
+        {connectionState === 'disconnected' || connectionState === 'error' ? (
+          <button
+            onClick={reconnect}
+            className={`titlebar-no-drag w-1.5 h-1.5 rounded-full flex-shrink-0 cursor-pointer ${statusDot(connectionState)}`}
+            title="Click to reconnect"
+          />
+        ) : (
+          <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot(connectionState)}`} />
+        )}
 
         {/* Compact: inline input | Expanded: chat title or menu label */}
         {isExpanded ? (
@@ -711,11 +720,46 @@ export function Overlay() {
               </div>
             )}
 
+            {/* Update banner */}
+            {updateStatus === 'ready' && (
+              <div className="px-3 pt-1 flex-shrink-0">
+                <button
+                  onClick={() => window.coasty.installUpdate()}
+                  className="group w-full flex items-center gap-2.5 px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-950/50 to-emerald-900/30 border border-emerald-700/30 hover:border-emerald-600/50 transition-all duration-300"
+                >
+                  <div className="relative flex-shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400 group-hover:animate-bounce">
+                        <line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
+                      </svg>
+                    </div>
+                    <div className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping" />
+                  </div>
+                  <div className="flex-1 min-w-0 text-left">
+                    <span className="text-[11px] font-medium text-emerald-300">Update available</span>
+                  </div>
+                  <span className="text-[10px] font-medium text-emerald-500 group-hover:text-emerald-300 transition-colors">
+                    Restart
+                  </span>
+                </button>
+              </div>
+            )}
+
             {/* Input area */}
             <div className="px-3 pb-3 pt-1 flex-shrink-0">
               {connectionState !== 'connected' && (
-                <div className="mb-1.5 text-[10px] text-yellow-500 text-center">
-                  Not connected — waiting for backend
+                <div className="mb-1.5 flex items-center justify-center gap-2">
+                  <span className="text-[10px] text-yellow-500">
+                    {connectionState === 'connecting' ? 'Connecting to backend...' : 'Not connected to backend'}
+                  </span>
+                  {connectionState !== 'connecting' && (
+                    <button
+                      onClick={reconnect}
+                      className="text-[10px] font-medium text-brand-400 hover:text-brand-300 transition-colors"
+                    >
+                      Reconnect
+                    </button>
+                  )}
                 </div>
               )}
 

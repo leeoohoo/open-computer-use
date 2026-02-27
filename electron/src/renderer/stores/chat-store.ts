@@ -174,7 +174,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
     })
   },
 
-  clearMessages: () => set({ messages: [], chatId: '', chatTitle: null, isSynced: false }),
+  clearMessages: () => {
+    const { abortController } = get()
+    if (abortController) abortController.abort()
+    set({ messages: [], chatId: '', chatTitle: null, isSynced: false, isStreaming: false, abortController: null })
+  },
 
   ensureChat: async (firstMessageContent?: string) => {
     const state = get()
@@ -220,6 +224,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   loadChat: async (chatId: string) => {
+    // Abort any active stream before switching chats
+    const { abortController } = get()
+    if (abortController) abortController.abort()
+    set({ isStreaming: false, abortController: null })
+
     try {
       const result = await window.coasty.getChatMessages(chatId)
       if (result.success && result.messages) {
@@ -256,11 +265,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const result = await window.coasty.deleteChat(chatId)
       if (result.success) {
         const state = get()
+        // If we deleted the current chat, abort any active stream and clear
+        if (state.chatId === chatId && state.abortController) {
+          state.abortController.abort()
+        }
         set({
           chatList: state.chatList.filter((c) => c.id !== chatId),
-          // If we deleted the current chat, clear messages
           ...(state.chatId === chatId
-            ? { messages: [], chatId: '', chatTitle: null, isSynced: false }
+            ? { messages: [], chatId: '', chatTitle: null, isSynced: false, isStreaming: false, abortController: null }
             : {}),
         })
       }
