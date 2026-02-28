@@ -10,8 +10,8 @@ import { PointerHighlight } from "@/components/ui/pointer-highlight"
 import { BentoGrid, BentoCard } from "@/components/magicui/bento-grid"
 import { Globe as GlobeComponent } from "@/components/magicui/globe"
 import { Tree, Folder, File, type TreeViewElement } from "@/components/magicui/file-tree"
-import { GridPattern } from "@/components/magicui/grid-pattern"
 import { RainbowButton } from "@/components/magicui/rainbow-button"
+import { GridPattern } from "@/components/magicui/grid-pattern"
 import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, Github, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download } from "lucide-react"
 import { WindowsIcon, AppleIcon } from "@/components/icons/platform-icons"
 import { CoastyIcon } from "@/components/icons/coasty"
@@ -529,17 +529,15 @@ export function LandingPage() {
           "relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-hidden",
           isMobile ? "px-4 pt-8 pb-16" : "px-6 pt-16 pb-24"
         )}>
-          {/* Subtle grid pattern background */}
-          <GridPattern
-            width={48}
-            height={48}
-            className={cn(
-              "absolute inset-0 h-full w-full",
-              "fill-neutral-200/40 stroke-neutral-200/40",
-              "dark:fill-neutral-800/30 dark:stroke-neutral-800/30",
-              "[mask-image:radial-gradient(ellipse_at_center,white_20%,transparent_70%)]"
-            )}
-          />
+          {/* Grid texture — fades from top to transparent */}
+          {!isMobile && (
+            <GridPattern
+              width={64}
+              height={64}
+              className="absolute inset-0 h-full w-full [mask-image:linear-gradient(to_bottom,white_10%,transparent_50%)] fill-muted-foreground/[0.02] stroke-muted-foreground/[0.05]"
+            />
+          )}
+
           {/* Soft radial glow behind content */}
           <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-primary/[0.04] blur-3xl dark:bg-primary/[0.06]" />
 
