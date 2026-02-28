@@ -27,6 +27,8 @@ import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
 import { useChatStreaming } from "@/lib/chat-streaming-store/provider"
 // import { ResearchSuggestions } from "./research-suggestions" // Removed trending searches
 import { themeConfig } from "@/lib/theme-config"
+import { Switch } from "@/components/ui/switch"
+import { QuickStartGuide } from "./quick-start-guide"
 
 const handwriting = Caveat({
   subsets: ["latin"],
@@ -530,6 +532,16 @@ export function Chat() {
 
   const showOnboarding = !effectiveChatId && redirectCheckMessages.length === 0
 
+  // Quick start guide for first-time users
+  const [quickStartDismissed, setQuickStartDismissed] = useState(() => {
+    if (typeof window === "undefined") return false
+    return localStorage.getItem("coasty-quickstart-dismissed") === "true"
+  })
+  const showQuickStart =
+    showOnboarding &&
+    !!user &&
+    !quickStartDismissed
+
   return (
     <div
         className={cn(
@@ -551,7 +563,7 @@ export function Chat() {
         {showOnboarding ? (
           <motion.div
             key="onboarding"
-            className="absolute bottom-[30%] md:bottom-[60%] mx-auto max-w-[50rem] md:relative md:bottom-auto relative w-full px-4 overflow-hidden"
+            className="absolute bottom-[25%] sm:bottom-auto mx-auto sm:relative w-full overflow-visible pb-16 sm:pb-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -563,109 +575,164 @@ export function Chat() {
               },
             }}
           >
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.5 }}
-              className="text-center mb-2"
-            >
-              <h1
-                className={cn(
-                  "text-4xl sm:text-5xl font-bold tracking-tight relative z-10 leading-relaxed pb-1 flex items-center justify-center gap-2 flex-wrap",
-                  user ? handwriting.className : ""
-                )}
-              >
-                {user ? (
-                  <>
-                    <span className="inline-block -rotate-1 text-primary/90">Hello</span>
-                    {user.display_name && (
-                      <>
-                        <span className="inline-block -rotate-1 text-primary/90">, {user.display_name}</span>
-                      </>
-                    )}
-                    <span className="inline-block -rotate-1 text-primary/90">!</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
-                      Coasty: Your AI
-                    </span>
-                  </>
-                )}
-                {!user && (
-                  <motion.span 
-                    className="relative inline-flex items-center overflow-hidden align-middle"
-                    animate={{ width: wordWidth }}
-                    transition={{ 
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 15,
-                      mass: 0.5
-                    }}
-                    style={{ height: "1.4em" }}
+            {/* Crossfade between guide and greeting */}
+            <AnimatePresence mode="wait" initial={false}>
+              {showQuickStart ? (
+                <motion.div
+                  key="guide"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
+                  <QuickStartGuide
+                    userName={user?.display_name || undefined}
+                    selectedVMId={selectedVMId}
+                    setSelectedVMId={setSelectedVMId}
+                    onFillInput={handleInputChange}
+                    isUserAuthenticated={isAuthenticated}
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="greeting"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="max-w-[50rem] mx-auto px-4"
+                >
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.5 }}
+                    className="text-center mb-2"
                   >
-                    <motion.span
-                      className={`absolute inset-0 rounded-xl bg-gradient-to-r ${themeConfig.gradients.wordRotation.base}`}
-                      animate={{
-                        opacity: [0.5, 1, 0.5]
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                    <motion.span
-                      className="absolute inset-0 rounded-xl"
-                      style={{
-                        background: `radial-gradient(circle at 50% 50%, ${themeConfig.gradients.wordRotation.radialGlow} 0%, transparent 70%)`,
-                      }}
-                    />
-                    <AnimatePresence mode="sync">
-                      <motion.span
-                        key={currentWordIndex}
-                        initial={{ y: "100%", opacity: 0 }}
-                        animate={{ y: "0%", opacity: 1 }}
-                        exit={{ y: "-100%", opacity: 0 }}
-                        transition={{ 
-                          duration: 0.5,
-                          ease: [0.25, 0.46, 0.45, 0.94]
-                        }}
-                        className="absolute w-full h-full flex items-center justify-center"
-                      >
-                        <span 
-                          ref={wordRef}
-                          className={`relative px-2 ${themeConfig.primary.tw.text.base} font-bold whitespace-nowrap`}
+                    <h1
+                      className={cn(
+                        "text-4xl sm:text-5xl font-bold tracking-tight relative z-10 leading-relaxed pb-1 flex items-center justify-center gap-2 flex-wrap",
+                        user ? handwriting.className : ""
+                      )}
+                    >
+                      {user ? (
+                        <>
+                          <span className="inline-block -rotate-1 text-primary/90">Hello</span>
+                          {user.display_name && (
+                            <>
+                              <span className="inline-block -rotate-1 text-primary/90">, {user.display_name}</span>
+                            </>
+                          )}
+                          <span className="inline-block -rotate-1 text-primary/90">!</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
+                            Coasty: Your AI
+                          </span>
+                        </>
+                      )}
+                      {!user && (
+                        <motion.span
+                          className="relative inline-flex items-center overflow-hidden align-middle"
+                          animate={{ width: wordWidth }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 100,
+                            damping: 15,
+                            mass: 0.5
+                          }}
+                          style={{ height: "1.4em" }}
                         >
-                          {words[currentWordIndex]}
-                        </span>
-                      </motion.span>
-                    </AnimatePresence>
-                    <motion.span
-                      className={`absolute inset-0 rounded-xl border ${themeConfig.gradients.wordRotation.border}`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </motion.span>
-                )}
-              </h1>
-            </motion.div>
-            
-            <motion.div 
-              className="flex justify-center mb-6 px-2"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-            >
-              <p className="text-center text-muted-foreground text-sm sm:text-base md:text-lg">
-                {user 
-                  ? "I'll handle the computer work. What's the task?"
-                  : "AI that works the computer so you don't have to. Just tell it what you need done."
-                }
-              </p>
-            </motion.div>
-            
+                          <motion.span
+                            className={`absolute inset-0 rounded-xl bg-gradient-to-r ${themeConfig.gradients.wordRotation.base}`}
+                            animate={{
+                              opacity: [0.5, 1, 0.5]
+                            }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              ease: "easeInOut"
+                            }}
+                          />
+                          <motion.span
+                            className="absolute inset-0 rounded-xl"
+                            style={{
+                              background: `radial-gradient(circle at 50% 50%, ${themeConfig.gradients.wordRotation.radialGlow} 0%, transparent 70%)`,
+                            }}
+                          />
+                          <AnimatePresence mode="sync">
+                            <motion.span
+                              key={currentWordIndex}
+                              initial={{ y: "100%", opacity: 0 }}
+                              animate={{ y: "0%", opacity: 1 }}
+                              exit={{ y: "-100%", opacity: 0 }}
+                              transition={{
+                                duration: 0.5,
+                                ease: [0.25, 0.46, 0.45, 0.94]
+                              }}
+                              className="absolute w-full h-full flex items-center justify-center"
+                            >
+                              <span
+                                ref={wordRef}
+                                className={`relative px-2 ${themeConfig.primary.tw.text.base} font-bold whitespace-nowrap`}
+                              >
+                                {words[currentWordIndex]}
+                              </span>
+                            </motion.span>
+                          </AnimatePresence>
+                          <motion.span
+                            className={`absolute inset-0 rounded-xl border ${themeConfig.gradients.wordRotation.border}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        </motion.span>
+                      )}
+                    </h1>
+                  </motion.div>
+
+                  <motion.div
+                    className="flex justify-center mb-6 px-2"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                  >
+                    <p className="text-center text-muted-foreground text-sm sm:text-base md:text-lg">
+                      {user
+                        ? "I'll handle the computer work. What's the task?"
+                        : "AI that works the computer so you don't have to. Just tell it what you need done."
+                      }
+                    </p>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Guide toggle — persistent across both views */}
+            {user && (
+              <motion.div
+                className="flex justify-center mt-4 sm:mt-6 mb-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.4 }}
+              >
+                <label className="inline-flex items-center gap-2.5 cursor-pointer select-none">
+                  <span className="text-xs text-muted-foreground">Guide</span>
+                  <Switch
+                    checked={!quickStartDismissed}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        localStorage.removeItem("coasty-quickstart-dismissed")
+                        setQuickStartDismissed(false)
+                      } else {
+                        localStorage.setItem("coasty-quickstart-dismissed", "true")
+                        setQuickStartDismissed(true)
+                      }
+                    }}
+                  />
+                </label>
+              </motion.div>
+            )}
           </motion.div>
         ) : (
           <Conversation key="conversation" {...conversationProps} />
