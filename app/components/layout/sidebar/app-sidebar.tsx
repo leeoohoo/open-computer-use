@@ -196,7 +196,7 @@ export function AppSidebar() {
           >
             {/* Expand/Collapse Button */}
             {shouldShowCollapsed ? (
-              <div className="mb-2 pb-2 border-b border-border/30">
+              <div className="mb-2">
                 <button
                   onClick={() => setOpen(true)}
                   className={cn(
@@ -211,7 +211,7 @@ export function AppSidebar() {
                 </button>
               </div>
             ) : (
-              <div className="mb-2 pb-2 border-b border-border/30">
+              <div className="mb-2">
                 <button
                   onClick={() => setOpen(false)}
                   className={cn(
@@ -230,7 +230,7 @@ export function AppSidebar() {
             
             
             {/* Project Actions Section */}
-            <div className="border-b border-border/30 pb-2 mb-2 transition-all duration-300 ease-in-out">
+            <div className="relative pb-2 mb-2 transition-all duration-300 ease-in-out">
               <div className="space-y-1 transition-all duration-300 ease-in-out">
                 {/* Assign Task Button */}
                 {shouldShowCollapsed ? (
@@ -268,7 +268,6 @@ export function AppSidebar() {
                     id="sidebar-machines-link-collapsed"
                     className={cn(
                       "group flex w-full h-8 items-center justify-center rounded-md transition-all duration-200",
-                      "border border-border/60 hover:border-border",
                       "hover:bg-accent hover:text-accent-foreground",
                       "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     )}
@@ -283,7 +282,6 @@ export function AppSidebar() {
                     id="sidebar-machines-link"
                     className={cn(
                       "group flex w-full items-center gap-2 rounded-md text-sm transition-all duration-200",
-                      "border border-border/60 hover:border-border",
                       "hover:bg-accent hover:text-accent-foreground",
                       "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                       "px-2.5 py-1.5"
@@ -295,6 +293,11 @@ export function AppSidebar() {
                     <span className="truncate text-sm">My Computers</span>
                   </button>
                 )}
+              </div>
+              {/* Fading gradient separator */}
+              <div className="absolute inset-x-0 bottom-0 h-2 pointer-events-none">
+                <div className="h-full bg-gradient-to-b from-transparent via-background/20 to-background/40" />
+                <div className="absolute inset-0 backdrop-blur-[2px]" />
               </div>
             </div>
 
@@ -375,7 +378,7 @@ export function AppSidebar() {
               <div className="mb-1.5">
                 {!shouldShowCollapsed && (
                   <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5 px-1">
-                    Agent Time Balance
+                    Credits Balance
                   </div>
                 )}
                 {shouldShowCollapsed ? (
@@ -392,7 +395,7 @@ export function AppSidebar() {
                         setOpenMobile(false)
                       }
                     }}
-                    title={`${Math.floor((credits?.balance || 0) / 10)} minutes of agent time remaining`}
+                    title={`${(credits?.balance || 0).toLocaleString()} credits remaining`}
                   >
                     <CoastyIcon className="h-4 w-4 text-primary" />
                   </button>
@@ -425,14 +428,14 @@ export function AppSidebar() {
                       <div className="flex-1 ml-2 min-w-0 flex items-center">
                         <div className="flex items-baseline gap-0.5 whitespace-nowrap">
                           <span className="font-medium text-sm text-foreground">
-                            {Math.floor((credits?.balance || 0) / 10)}
+                            {(credits?.balance || 0).toLocaleString()}
                           </span>
-                          <span className="text-xs text-muted-foreground">minutes</span>
+                          <span className="text-xs text-muted-foreground">credits</span>
                         </div>
                       </div>
                       
                       {/* Buy indicator */}
-                      <div className="ml-auto pl-1.5 border-l border-border">
+                      <div className="ml-auto pl-1.5 border-l border-border flex items-center self-stretch">
                         <span className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
                           Buy
                         </span>
@@ -455,7 +458,7 @@ export function AppSidebar() {
                     )}
                     type="button"
                     onClick={() => setIsReferralPopupOpen(true)}
-                    title="Share the love, get free time"
+                    title="Share the love, get free credits"
                   >
                     <Gift size={18} weight="duotone" className="text-muted-foreground group-hover:text-foreground transition-colors" />
                   </button>
@@ -463,7 +466,6 @@ export function AppSidebar() {
                   <button
                     className={cn(
                       "group flex w-full items-center gap-2 rounded-md text-sm transition-all duration-200",
-                      "border border-border/60 hover:border-border",
                       "hover:bg-accent hover:text-accent-foreground",
                       "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                       "px-2.5 py-1.5"
@@ -472,7 +474,7 @@ export function AppSidebar() {
                     onClick={() => setIsReferralPopupOpen(true)}
                   >
                     <Gift size={16} weight="duotone" className="shrink-0" />
-                    <span className="truncate text-sm">Share & get free time</span>
+                    <span className="truncate text-sm">Share & get free credits</span>
                   </button>
                 )}
               </div>

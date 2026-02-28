@@ -21,57 +21,52 @@ const subscriptionPlans = [
     name: "Starter",
     tier: "starter",
     price: 19,
-    monthlyCredits: 2000,
+    monthlyCredits: 200,
     agentMinutes: 20,
-    description: "Learn and automate your routine computer operations",
+    description: "Saves ~6-12 hrs of manual work",
     features: [
-      "Free virtual machine included",
-      "20 min of CUA agent time per month",
-      "Upload/download files from your personal machine",
-      "One-click remote connection - no setup required",
-      "Standard support",
-      "Web search & browsing",
+      "1 virtual machine, persistent",
+      "2x more credits than Free",
+      "Advanced web search & data extraction",
+      "Standard support (real humans, not bots)",
     ],
     popular: false,
   },
   {
     id: "professional",
-    name: "Professional",
+    name: "Plus",
     tier: "professional",
     price: 50,
-    monthlyCredits: 6000,
+    monthlyCredits: 600,
     agentMinutes: 60,
-    description: "Professional-grade automation for demanding workflows",
+    description: "Saves ~18-24 hrs of manual work",
     features: [
-      "Free virtual machine included",
-      "60 min of CUA agent time per month",
-      "Upload/download files from your personal machine",
-      "One-click remote connection - no setup required",
-      "Priority support with 24hr response",
+      "1 virtual machine, persistent",
+      "3x more credits than Starter",
       "Advanced web search & data extraction",
-      "API access",
-      "Custom workflows",
+      "Full API access (coming soon)",
+      "Advanced data extraction at scale",
+      "Priority support, 24hr response",
     ],
     popular: true,
   },
   {
     id: "enterprise",
-    name: "Enterprise",
+    name: "Pro",
     tier: "enterprise",
     price: 100,
-    monthlyCredits: 15000,
+    monthlyCredits: 1500,
     agentMinutes: 150,
-    description: "Maximum automation with premium capabilities and priority processing",
+    description: "Saves ~24-36 hrs of manual work",
     features: [
-      "Free virtual machine included",
-      "150 min of CUA agent time per month",
-      "Upload/download files from your personal machine",
-      "One-click remote connection - no setup required",
-      "Premium support with 1hr response",
+      "1 virtual machine, persistent",
+      "2.5x more credits than Plus",
+      "Advanced web search & data extraction",
+      "Full API access (coming soon)",
+      "Advanced data extraction at scale",
       "Early access to new features",
-      "Custom integrations & workflows",
-      "SSO authentication",
-      "SLA guarantee",
+      "SLA guarantee, 99.9% uptime",
+      "Premium support, 12hr response",
     ],
     popular: false,
   },
@@ -394,13 +389,13 @@ export function BillingSection() {
                     {creditsLoading ? (
                       <Spinner className="h-8 w-8 animate-spin text-primary" />
                     ) : (
-                      Math.floor((credits?.balance || 0) / 10)
+                      (credits?.balance || 0).toLocaleString()
                     )}
                   </span>
-                  <span className="text-sm font-medium text-muted-foreground">minutes</span>
+                  <span className="text-sm font-medium text-muted-foreground">credits</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  AI Agent Execution Time Available
+                  AI Agent Credits Available
                 </p>
               </div>
               
@@ -412,12 +407,12 @@ export function BillingSection() {
               </div>
             </div>
             
-            {/* Minutes breakdown */}
+            {/* Credits breakdown */}
             <div className="pt-3 border-t border-primary/10">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Minutes Remaining</span>
+                <span className="text-xs text-muted-foreground">Credits Remaining</span>
                 <span className="text-xs font-medium text-foreground/70">
-                  {Math.floor((credits?.balance || 0) / 10).toLocaleString()} minutes
+                  {(credits?.balance || 0).toLocaleString()} credits
                 </span>
               </div>
 
@@ -459,131 +454,72 @@ export function BillingSection() {
       {!subscription || subscription.status !== "active" ? (
         <div>
           <h4 className="text-sm font-semibold mb-2">Choose Your Plan</h4>
-          <p className="text-xs text-muted-foreground mb-4">Subscribe to unlock AI features and get monthly execution time</p>
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 justify-center max-w-3xl mx-auto">
+          <p className="text-xs text-muted-foreground mb-4">Subscribe to unlock AI features and get monthly credits</p>
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-3 max-w-4xl mx-auto items-start">
             {subscriptionPlans.map((plan) => (
-              <div key={plan.id} className="h-full group">
-                <div className="relative h-full">
-                  {/* Badge positioned outside the card */}
+              <div key={plan.id} className="h-full">
+                <div className={cn(
+                  "relative h-full rounded-xl border p-5 transition-shadow duration-200",
+                  plan.popular
+                    ? "border-primary bg-primary/[0.03] shadow-sm shadow-primary/10"
+                    : "border-border"
+                )}>
                   {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                      <Badge className="bg-primary text-primary-foreground shadow-lg px-4 py-1 text-xs font-bold animate-pulse">
-                        ⭐ Most Popular
-                      </Badge>
+                    <div className="absolute -top-2.5 left-4">
+                      <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-medium text-primary-foreground">
+                        Most Popular
+                      </span>
                     </div>
                   )}
-                  
-                  <Card 
+
+                  <div className="mb-4">
+                    <h3 className="text-sm font-medium text-muted-foreground">{plan.name}</h3>
+                    <div className="mt-2 flex items-baseline gap-1">
+                      <span className="text-3xl font-semibold tracking-tight">${plan.price}</span>
+                      <span className="text-sm text-muted-foreground">/month</span>
+                    </div>
+                    <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">{plan.description}</p>
+                  </div>
+
+                  <div className="mb-4 flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2">
+                    <CoastyIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span className="text-sm font-medium">
+                      {plan.monthlyCredits.toLocaleString()} credits
+                      <span className="text-muted-foreground font-normal">/month</span>
+                    </span>
+                  </div>
+
+                  <Button
                     className={cn(
-                      "relative h-full overflow-hidden transition-all duration-300",
-                      "border-2 hover:border-primary/50",
-                      "hover:shadow-2xl hover:shadow-primary/10",
-                      "hover:-translate-y-2",
-                      "bg-gradient-to-b from-background to-background/80",
-                      plan.popular && [
-                        "border-primary shadow-xl",
-                        "bg-gradient-to-b from-primary/5 to-background",
-                        "scale-[1.02]"
-                      ]
+                      "w-full mb-5",
+                      !plan.popular && "hover:bg-primary hover:text-primary-foreground"
                     )}
+                    variant={plan.popular ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleSubscribe(plan.id, plan.tier, plan.price)}
+                    disabled={subscribingPlan === plan.id}
                   >
-                    {/* Glow effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
-                    {/* Top gradient line for highlighted plan */}
-                    {plan.popular && (
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+                    {subscribingPlan === plan.id ? (
+                      <>
+                        <Spinner className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        Subscribe Now
+                        <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                      </>
                     )}
-                    
-                    <CardHeader className="relative space-y-3 pb-4 pt-4">
-                      <div className="space-y-2">
-                        <CardTitle className="text-lg font-bold tracking-tight group-hover:text-primary transition-colors duration-200">
-                          {plan.name}
-                        </CardTitle>
-                        <CardDescription className="text-xs leading-relaxed min-h-[2.5rem]">
-                          {plan.description}
-                        </CardDescription>
+                  </Button>
+
+                  <div className="space-y-2.5">
+                    {plan.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-start gap-2">
+                        <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-xs text-muted-foreground">{feature}</span>
                       </div>
-                      
-                      <div className="pt-2 pb-2">
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                            ${plan.price}
-                          </span>
-                          <span className="text-sm text-muted-foreground font-medium">
-                            /month
-                          </span>
-                        </div>
-                      </div>
-                      
-                      {/* Agent Execution Time Highlight */}
-                      <div className="p-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg border border-primary/20">
-                        <div className="flex items-center gap-2">
-                          <CoastyIcon className="h-4 w-4 text-primary" />
-                          <div className="flex flex-col">
-                            <span className="text-xl font-bold text-primary">
-                              {typeof plan.agentMinutes === 'string' ? plan.agentMinutes : `${plan.agentMinutes} minutes`}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              AI agent execution per month
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <Separator className="opacity-50" />
-                    </CardHeader>
-                    
-                    <CardContent className="relative space-y-3 px-4">
-                      <div className="space-y-2.5">
-                        {plan.features.map((feature, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-start gap-2 group/item"
-                          >
-                            <div className="rounded-full bg-green-500/10 p-1 mt-0.5">
-                              <Check className="h-3 w-3 text-green-500" />
-                            </div>
-                            <span className="text-xs leading-relaxed text-foreground/90 group-hover/item:text-foreground transition-colors">
-                              {feature}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                    
-                    <CardFooter className="relative pt-4 pb-4 px-4">
-                      <Button 
-                        className={cn(
-                          "w-full h-10 text-sm font-semibold transition-all duration-200",
-                          "shadow-sm hover:shadow-lg",
-                          plan.popular ? [
-                            "bg-primary hover:bg-primary/90",
-                            "shadow-primary/25 hover:shadow-primary/40",
-                          ] : [
-                            "hover:bg-primary hover:text-primary-foreground",
-                            "hover:border-primary"
-                          ]
-                        )}
-                        variant={plan.popular ? "default" : "outline"}
-                        size="lg"
-                        onClick={() => handleSubscribe(plan.id, plan.tier, plan.price)}
-                        disabled={subscribingPlan === plan.id}
-                      >
-                        {subscribingPlan === plan.id ? (
-                          <>
-                            <Spinner className="mr-2 h-4 w-4 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <div className="flex items-center justify-center gap-2">
-                            <span>Subscribe Now</span>
-                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                          </div>
-                        )}
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}
@@ -612,8 +548,8 @@ export function BillingSection() {
                         return activePlan?.price || 0;
                       })()}/month • {(() => {
                         const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier);
-                        const agentMinutes = activePlan?.agentMinutes || 0;
-                        return typeof agentMinutes === 'string' ? agentMinutes : `${agentMinutes} minutes`;
+                        const monthlyCredits = activePlan?.monthlyCredits || 0;
+                        return `${monthlyCredits.toLocaleString()} credits`;
                       })()}
                     </CardDescription>
                   </div>
@@ -682,8 +618,8 @@ export function BillingSection() {
 
           {/* Additional Minutes */}
           <div>
-            <h4 className="text-sm font-medium mb-1">Need More Minutes?</h4>
-            <p className="text-xs text-muted-foreground mb-3">Purchase additional execution time anytime</p>
+            <h4 className="text-sm font-medium mb-1">Need More Credits?</h4>
+            <p className="text-xs text-muted-foreground mb-3">Purchase additional credits anytime</p>
             <div className="grid gap-4 sm:grid-cols-3">
               {additionalCreditPackages.map((pkg) => (
                 <div key={pkg.id} className="group">
@@ -705,7 +641,7 @@ export function BillingSection() {
                         <span className="text-lg font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">${pkg.price}</span>
                       </div>
                       <CardDescription className="text-xs mt-1">
-                        <span className="font-semibold text-primary">{pkg.agentMinutes} minutes</span>
+                        <span className="font-semibold text-primary">{pkg.credits.toLocaleString()} credits</span>
                         {pkg.savings && (
                           <Badge variant="secondary" className="ml-1 text-[10px] bg-green-500/10 text-green-600 border-green-500/20">
                             {pkg.savings}
@@ -735,7 +671,7 @@ export function BillingSection() {
                           </>
                         ) : (
                           <div className="flex items-center justify-center gap-2">
-                            <span>Add Minutes</span>
+                            <span>Add Credits</span>
                             <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                           </div>
                         )}
@@ -804,7 +740,7 @@ export function BillingSection() {
                         "font-medium",
                         transaction.amount > 0 ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500"
                       )}>
-                        {transaction.amount > 0 ? "+" : ""}{Math.floor(transaction.amount / 10)} min
+                        {transaction.amount > 0 ? "+" : ""}{transaction.amount.toLocaleString()} credits
                       </div>
                       {transaction.price_paid && (
                         <div className="text-xs text-muted-foreground">

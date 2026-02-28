@@ -260,9 +260,9 @@ export function ReferralPopup({ open, onOpenChange }: ReferralPopupProps) {
                 <p className="text-[13px] text-muted-foreground mt-1.5 leading-relaxed">
                   You both get{" "}
                   <span className="font-medium text-foreground">
-                    5 free minutes
+                    50 free credits
                   </span>{" "}
-                  of agent time when your friend joins.
+                  when your friend joins.
                 </p>
               </DialogHeader>
             </div>
@@ -352,9 +352,9 @@ export function ReferralPopup({ open, onOpenChange }: ReferralPopupProps) {
                   </div>
                   <div className="text-[11px] text-muted-foreground">
                     <span className="font-semibold text-foreground text-sm">
-                      {Math.floor((stats?.totalEarned ?? 0) / 10)}
+                      {(stats?.totalEarned ?? 0).toLocaleString()}
                     </span>{" "}
-                    min earned
+                    credits earned
                   </div>
                 </div>
 
@@ -380,7 +380,7 @@ export function ReferralPopup({ open, onOpenChange }: ReferralPopupProps) {
                         </div>
                         <div className="text-right shrink-0 ml-3">
                           <p className="text-xs font-medium">
-                            +{Math.floor(stats.referredBy.credits / 10)} min
+                            +{stats.referredBy.credits.toLocaleString()} credits
                           </p>
                           <p className="text-[10px] text-muted-foreground">
                             {timeAgo(stats.referredBy.date)}
@@ -403,7 +403,7 @@ export function ReferralPopup({ open, onOpenChange }: ReferralPopupProps) {
                         </div>
                         <div className="text-right shrink-0 ml-3">
                           <p className="text-xs font-medium">
-                            +{Math.floor(r.credits / 10)} min
+                            +{r.credits.toLocaleString()} credits
                           </p>
                           <p className="text-[10px] text-muted-foreground">
                             {timeAgo(r.date)}
@@ -418,7 +418,7 @@ export function ReferralPopup({ open, onOpenChange }: ReferralPopupProps) {
                       No users invited yet
                     </p>
                     <p className="text-[10px] text-muted-foreground/60 mt-0.5">
-                      Share your link and you both earn 5 min
+                      Share your link and you both earn 50 credits
                     </p>
                   </div>
                 )}

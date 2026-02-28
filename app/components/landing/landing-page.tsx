@@ -14,6 +14,7 @@ import { GridPattern } from "@/components/magicui/grid-pattern"
 import { RainbowButton } from "@/components/magicui/rainbow-button"
 import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, Github, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download } from "lucide-react"
 import { WindowsIcon, AppleIcon } from "@/components/icons/platform-icons"
+import { CoastyIcon } from "@/components/icons/coasty"
 import Link from "next/link"
 import { useState, useEffect, useCallback } from "react"
 import { cn } from "@/lib/utils"
@@ -83,15 +84,17 @@ const pricingPlans = [
   {
     name: "Free",
     price: "$0",
-    period: "forever",
-    description: "Try out AI automation with limited resources",
-    agentMinutes: 10,
+    period: "month",
+    description: "Save 30 min (go touch grass)",
+    agentMinutes: "100 credits/month",
     features: [
-      "1 virtual machine and computer using agent",
-      "Upload/download files from your personal machine",
-      "One-click remote connection - no setup required",
-      "Community support",
-      "Web search & browsing",
+      "1 virtual machine, 2 hours",
+      "SOTA OSWorld Agent 82%",
+      "Full AI computer-use agent",
+      "One-click remote connection",
+      "File upload & download",
+      "Full audit trail",
+      "No credit card required",
     ],
     limitations: [],
     cta: "Start Free",
@@ -100,61 +103,71 @@ const pricingPlans = [
   {
     name: "Starter",
     price: "$19",
-    period: "per month",
-    description: "Learn and automate your routine computer operations",
-    agentMinutes: 20,
+    period: "month",
+    description: "Saves ~6-12 hrs of manual work",
+    agentMinutes: "200 credits/month",
     features: [
-      "Free virtual machine included",
-      "20 min of CUA agent time per month",
-      "Upload/download files from your personal machine",
-      "One-click remote connection - no setup required",
-      "Standard support",
-      "Web search & browsing",
+      "1 virtual machine, persistent",
+      "SOTA OSWorld Agent 82%",
+      "Full AI computer-use agent",
+      "One-click remote connection",
+      "File upload & download",
+      "Full audit trail",
+      "2x more credits than Free",
+      "Advanced web search & data extraction",
+      "Standard support (real humans, not bots)",
     ],
     limitations: [],
     cta: "Start with Starter",
     highlighted: false,
   },
   {
-    name: "Professional",
+    name: "Plus",
     price: "$50",
-    period: "per month",
-    description: "Professional-grade automation for demanding workflows",
-    agentMinutes: 60,
+    period: "month",
+    description: "Saves ~18-24 hrs of manual work",
+    agentMinutes: "600 credits/month",
     features: [
-      "Free virtual machine included",
-      "60 min of CUA agent time per month",
-      "Upload/download files from your personal machine",
-      "One-click remote connection - no setup required",
-      "Priority support with 24hr response",
+      "1 virtual machine, persistent",
+      "SOTA OSWorld Agent 82%",
+      "Full AI computer-use agent",
+      "One-click remote connection",
+      "File upload & download",
+      "Full audit trail",
+      "3x more credits than Starter",
       "Advanced web search & data extraction",
-      "API access",
-      "Custom workflows",
+      "Full API access (coming soon)",
+      "Advanced data extraction at scale",
+      "Priority support, 24hr response",
     ],
     limitations: [],
-    cta: "Go Professional",
+    cta: "Go Plus",
     highlighted: true,
     badge: "Most Popular",
   },
   {
-    name: "Enterprise",
+    name: "Pro",
     price: "$100",
-    period: "per month",
-    description: "Maximum automation with premium capabilities and priority processing",
-    agentMinutes: 150,
+    period: "month",
+    description: "Saves ~24-36 hrs of manual work",
+    agentMinutes: "1500 credits/month",
     features: [
-      "Free virtual machine included",
-      "150 min of CUA agent time per month",
-      "Upload/download files from your personal machine",
-      "One-click remote connection - no setup required",
-      "Premium support with 1hr response",
+      "1 virtual machine, persistent",
+      "SOTA OSWorld Agent 82%",
+      "Full AI computer-use agent",
+      "One-click remote connection",
+      "File upload & download",
+      "Full audit trail",
+      "2.5x more credits than Plus",
+      "Advanced web search & data extraction",
+      "Full API access (coming soon)",
+      "Advanced data extraction at scale",
       "Early access to new features",
-      "Custom integrations & workflows",
-      "SSO authentication",
-      "SLA guarantee",
+      "SLA guarantee, 99.9% uptime",
+      "Premium support, 12hr response",
     ],
     limitations: [],
-    cta: "Get Enterprise",
+    cta: "Get Pro",
     highlighted: false,
   },
 ]
@@ -259,28 +272,28 @@ const demoChatSessions = [
 
 const faqs = [
   {
-    question: "What are isolated virtual machines?",
-    answer: "We provide fully isolated virtual machines with complete development environments ready to use. No need to bring your own infrastructure - everything is pre-configured and ready for your AI agents to control and execute tasks."
+    question: "What is Coasty and how does it work?",
+    answer: "Coasty is an AI-powered computer-use platform that gives you a virtual machine controlled by an intelligent agent. You describe what you need done, and the agent handles it autonomously — browsing the web, running commands, managing files, and more. Think of it as a digital employee that works inside its own computer."
   },
   {
-    question: "How does the pricing work?",
-    answer: "We offer simple, transparent hourly pricing at $3.99 per hour of agent usage. You only pay for the time your AI agents are actively working. Free tier includes unlimited web searches with a 1-hour task limit."
-  },
-  {
-    question: "What's included in the storage?",
-    answer: "With paid plans, we provide persistent storage for your files, projects, and data across sessions. Your work is automatically saved and available whenever you return, making it easy to pick up where you left off."
-  },
-  {
-    question: "What does automatic VM switching mean?",
-    answer: "Your AI agent can seamlessly transition between different virtual machine environments as needed. Switch from a development server to a testing environment instantly without manual configuration."
-  },
-  {
-    question: "Are there really unlimited requests?",
-    answer: "Yes! Within your session time, you can make unlimited requests to the AI agent. There's no cap on how many commands, questions, or tasks you can give during your allocated time."
+    question: "What are credits and how are they used?",
+    answer: "Credits are the currency that powers your AI agent sessions. Each task you assign consumes credits based on its complexity and duration. The Free plan includes 100 credits per month, and paid plans offer significantly more. You can also purchase additional credit packs anytime if you need a top-up."
   },
   {
     question: "What's the difference between the plans?",
-    answer: "Free gets you started with 10 minutes to test the waters 🌊, Professional unlocks unlimited usage for power users 💪, and Enterprise gives you the royal treatment with premium everything! Plus, paid plans get persistent machines (no more 2-hour auto-delete drama!) 👑"
+    answer: "We offer four plans to fit your needs. Free ($0/mo) gives you 100 credits and a 2-hour VM to try things out. Starter ($19/mo) provides 200 credits with a persistent VM and human support. Plus ($50/mo) includes 600 credits, API access, and priority support. Pro ($100/mo) offers 1,500 credits, early access to new features, SLA guarantees, and premium support."
+  },
+  {
+    question: "What is a persistent virtual machine?",
+    answer: "Paid plans include a persistent virtual machine that retains your files, installed software, and configuration across sessions. Unlike the Free plan's VM (which resets after 2 hours), a persistent VM lets you pick up exactly where you left off — no re-setup required."
+  },
+  {
+    question: "Can I purchase additional credits?",
+    answer: "Yes. All subscribers can purchase additional credit packs at any time from the billing section of their account. Packs are available in multiple sizes with bulk discounts of up to 20%, so you never have to worry about running out mid-project."
+  },
+  {
+    question: "What can the AI agent actually do?",
+    answer: "The agent can browse websites, fill out forms, extract data, run terminal commands, manage files, automate desktop applications, and much more. It operates inside a full Ubuntu desktop environment with Chrome, development tools, and office software pre-installed. You can also connect your own desktop via our Electron app for local automation."
   },
 ]
 
@@ -1086,15 +1099,15 @@ export function LandingPage() {
                     </div>
 
                     <div className="mb-5 flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2">
-                      <Zap className="h-4 w-4 text-primary flex-shrink-0" />
+                      <CoastyIcon className="h-4 w-4 text-primary flex-shrink-0" />
                       <span className="text-sm font-medium">
                         {typeof plan.agentMinutes === 'string'
                           ? plan.agentMinutes
-                          : plan.agentMinutes >= 60
-                            ? `${Math.floor(plan.agentMinutes / 60)}${plan.agentMinutes % 60 > 0 ? '+' : ''} hours`
-                            : `${plan.agentMinutes} min`
+                          : <>
+                              {`${(plan.agentMinutes * 10).toLocaleString()} credits`}
+                              <span className="text-muted-foreground font-normal">/month</span>
+                            </>
                         }
-                        <span className="text-muted-foreground font-normal"> agent time/mo</span>
                       </span>
                     </div>
 

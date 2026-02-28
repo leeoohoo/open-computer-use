@@ -31,7 +31,7 @@ const creditPackages = [
     name: "Small Boost",
     credits: 500,
     price: 5,
-    minutes: 50,
+    displayCredits: 500,
     description: "Quick top-up",
   },
   {
@@ -39,7 +39,7 @@ const creditPackages = [
     name: "Medium Boost",
     credits: 2000,
     price: 18,
-    minutes: 200,
+    displayCredits: 2000,
     description: "Standard refill",
     savings: "10% savings",
     popular: true,
@@ -49,7 +49,7 @@ const creditPackages = [
     name: "Large Boost",
     credits: 5000,
     price: 40,
-    minutes: 500,
+    displayCredits: 5000,
     description: "Bulk purchase",
     savings: "20% savings",
   },
@@ -111,14 +111,14 @@ export function InsufficientCreditsModal({
     onClose()
   }
 
-  const balanceMinutes = Math.floor(currentBalance / 10)
+  const balanceCredits = currentBalance
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[400px] p-5 gap-0">
         <DialogHeader className="space-y-1.5 pb-4">
           <DialogTitle className="text-base font-semibold">
-            {hasSubscription ? "Need more minutes?" : "Unlock AI Features"}
+            {hasSubscription ? "Need more credits?" : "Unlock AI Features"}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
             {hasSubscription
@@ -135,7 +135,7 @@ export function InsufficientCreditsModal({
             <span className="text-sm text-muted-foreground">Balance</span>
           </div>
           <span className="text-sm font-semibold">
-            {balanceMinutes} min remaining
+            {balanceCredits.toLocaleString()} credits remaining
           </span>
         </div>
 
@@ -147,8 +147,8 @@ export function InsufficientCreditsModal({
                 <div className="space-y-2.5">
                   <p className="text-sm font-medium">Subscription Required</p>
                   <div className="space-y-1.5 text-xs text-muted-foreground">
-                    <p>Starting at $19/month with 20 min included</p>
-                    <p>Purchase additional minutes anytime</p>
+                    <p>Starting at $19/month with 200 credits included</p>
+                    <p>Purchase additional credits anytime</p>
                   </div>
                 </div>
               </div>
@@ -184,7 +184,7 @@ export function InsufficientCreditsModal({
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-medium">{pkg.minutes} min</span>
+                      <span className="text-sm font-medium">{pkg.displayCredits.toLocaleString()} credits</span>
                       {pkg.savings && (
                         <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-green-500/10 text-green-600 border-green-500/20">
                           {pkg.savings}
