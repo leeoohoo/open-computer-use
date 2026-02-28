@@ -95,6 +95,12 @@ class Settings(BaseSettings):
     MAX_REQUEST_SIZE: int = Field(default=10 * 1024 * 1024)  # 10MB
     REQUEST_TIMEOUT: int = Field(default=60)  # seconds
     STREAM_TIMEOUT: int = Field(default=120)  # seconds
+
+    # Task Scheduler
+    SCHEDULER_ENABLED: bool = Field(default=True)
+    SCHEDULER_POLL_INTERVAL: int = Field(default=60)  # seconds
+    MAX_CONSECUTIVE_FAILURES: int = Field(default=5)
+    SCHEDULE_LIMITS: str = Field(default="free:3,basic:3,pro:10,enterprise:50")
     
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod

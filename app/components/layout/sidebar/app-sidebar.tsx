@@ -26,6 +26,7 @@ import {
   CaretRight,
   CaretLeft,
   Gift,
+  Timer,
 } from "@phosphor-icons/react"
 import { useParams, useRouter } from "next/navigation"
 import { useMemo, useState, useEffect } from "react"
@@ -291,6 +292,38 @@ export function AppSidebar() {
                   >
                     <Desktop size={16} className="shrink-0" />
                     <span className="truncate text-sm">My Computers</span>
+                  </button>
+                )}
+
+                {/* Scheduled Tasks Button */}
+                {shouldShowCollapsed ? (
+                  <button
+                    id="sidebar-schedules-link-collapsed"
+                    className={cn(
+                      "group flex w-full h-8 items-center justify-center rounded-md transition-all duration-200",
+                      "hover:bg-accent hover:text-accent-foreground",
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    )}
+                    type="button"
+                    onClick={() => handleNavigation(() => router.push("/schedules"))}
+                    title="Scheduled Tasks"
+                  >
+                    <Timer size={16} className="shrink-0" />
+                  </button>
+                ) : (
+                  <button
+                    id="sidebar-schedules-link"
+                    className={cn(
+                      "group flex w-full items-center gap-2 rounded-md text-sm transition-all duration-200",
+                      "hover:bg-accent hover:text-accent-foreground",
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                      "px-2.5 py-1.5"
+                    )}
+                    type="button"
+                    onClick={() => handleNavigation(() => router.push("/schedules"))}
+                  >
+                    <Timer size={16} className="shrink-0" />
+                    <span className="truncate text-sm">Scheduled Tasks</span>
                   </button>
                 )}
               </div>

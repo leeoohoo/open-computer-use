@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent / "app"))
 
 from app.core.config import settings
 from app.core.logging import setup_logging
-from app.api.routes import chat, chats, health, models, search, vm_control, screenshots, billing, file_operations, electron_bridge
+from app.api.routes import chat, chats, health, models, search, vm_control, screenshots, billing, file_operations, electron_bridge, schedules
 from app.core.middleware import InternalAPIKeyMiddleware, RateLimitMiddleware, CSRFMiddleware
 from app.core.exceptions import setup_exception_handlers
 
@@ -42,11 +42,12 @@ async def lifespan(app: FastAPI):
     from app.services.cache import cache_service
     from app.services.screenshot_storage import screenshot_storage
     from app.services.agent_billing import agent_billing_service
+    from app.services.task_scheduler import task_scheduler
     import asyncio
-    
+
     await cache_service.initialize()
     await screenshot_storage.initialize()
-    
+
     # Start periodic cleanup task for orphaned sessions
     cleanup_task = None
     async def periodic_cleanup():
@@ -60,13 +61,22 @@ async def lifespan(app: FastAPI):
                 break
             except Exception as e:
                 logger.error(f"Error in periodic cleanup: {str(e)}")
-    
+
     cleanup_task = asyncio.create_task(periodic_cleanup())
-    
+
+    # Start task scheduler for automated/recurring tasks
+    scheduler_task = asyncio.create_task(task_scheduler.start())
+
     yield
-    
+
     # Shutdown
     logger.info("Shutting down Coasty Backend Server")
+    if scheduler_task:
+        scheduler_task.cancel()
+        try:
+            await scheduler_task
+        except asyncio.CancelledError:
+            pass
     if cleanup_task:
         cleanup_task.cancel()
         try:
@@ -128,6 +138,7 @@ app.include_router(billing.router, prefix="/api/billing", tags=["billing"])
 app.include_router(file_operations.router, prefix="/api/files", tags=["files"])
 app.include_router(electron_bridge.router, prefix="/api/electron", tags=["electron"])
 app.include_router(chats.router, prefix="/api/chats", tags=["chats"])
+app.include_router(schedules.router, prefix="/api/schedules", tags=["schedules"])
 
 # Root endpoint
 @app.get("/")

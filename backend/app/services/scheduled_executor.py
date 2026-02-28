@@ -1,0 +1,466 @@
+"""
+Scheduled Executor — Headless execution pipeline for scheduled tasks.
+
+Reuses CUAExecutor.stream_execution() but consumes the async generator
+internally (no SSE streaming). Results are stored as messages in the chat.
+Billing is handled identically to manual runs.
+"""
+
+import asyncio
+import json
+import logging
+import os
+import uuid
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
+
+from app.core.config import settings
+from app.services.database import DatabaseService
+from app.services.agent_billing import agent_billing_service
+from app.services.vm_control import vm_control_service
+from app.providers.provider_factory import ProviderFactory
+from app.utils.sanitize import sanitize_content
+
+logger = logging.getLogger(__name__)
+
+db_service = DatabaseService()
+provider_factory = ProviderFactory()
+
+
+def _build_message_parts(tool_invocations: List[Dict]) -> List[Dict]:
+    """Transform tool invocations into the parts format expected by the DB."""
+    parts = []
+    for tool_inv in tool_invocations:
+        tool_invocation_data = {
+            "toolCallId": tool_inv.get("toolCallId", tool_inv.get("id", "")),
+            "toolName": tool_inv.get("toolName", ""),
+            "args": tool_inv.get("args", {}),
+            "state": "result",
+        }
+        if "result" in tool_inv:
+            tool_invocation_data["result"] = tool_inv["result"]
+        parts.append({"type": "tool-invocation", "toolInvocation": tool_invocation_data})
+    return parts
+
+
+async def _store_message(
+    chat_id: str,
+    content: str,
+    tool_invocations: List[Dict],
+    model: str,
+    message_group_id: Optional[str] = None,
+) -> Optional[Dict]:
+    """Store a new assistant message in the database."""
+    try:
+        sanitized = sanitize_content(content)
+        message_data: Dict[str, Any] = {
+            "chat_id": chat_id,
+            "role": "assistant",
+            "content": sanitized,
+            "model": model,
+            "message_group_id": message_group_id,
+            "created_at": datetime.utcnow().isoformat(),
+        }
+        if tool_invocations:
+            message_data["parts"] = _build_message_parts(tool_invocations)
+
+        return await db_service.save_message(message_data)
+    except Exception as e:
+        logger.error(f"Failed to store scheduled message: {e}", exc_info=True)
+        return None
+
+
+async def _update_message(
+    message_id: str,
+    content: str,
+    tool_invocations: List[Dict],
+) -> Optional[Dict]:
+    """Update an existing assistant message."""
+    try:
+        sanitized = sanitize_content(content)
+        update_data: Dict[str, Any] = {"content": sanitized}
+        if tool_invocations:
+            update_data["parts"] = _build_message_parts(tool_invocations)
+        return await db_service.update_message(message_id, update_data)
+    except Exception as e:
+        logger.error(f"Failed to update scheduled message {message_id}: {e}")
+        return None
+
+
+async def _get_task_prompt(chat_id: str) -> Optional[str]:
+    """Extract the task prompt — first user message from the chat."""
+    try:
+        messages = await db_service.get_chat_messages(chat_id, limit=50)
+        for msg in messages:
+            if msg.get("role") == "user" and msg.get("content"):
+                content = msg["content"]
+                if isinstance(content, str):
+                    return content
+                elif isinstance(content, list):
+                    # Extract text from structured content
+                    texts = []
+                    for part in content:
+                        if isinstance(part, dict) and part.get("type") == "text":
+                            texts.append(part.get("text", ""))
+                        elif isinstance(part, str):
+                            texts.append(part)
+                    return " ".join(texts) if texts else None
+        return None
+    except Exception as e:
+        logger.error(f"Failed to get task prompt for chat {chat_id}: {e}")
+        return None
+
+
+async def _get_machine_connection_info(
+    machine_id: str, user_id: str
+) -> Optional[Dict]:
+    """Get machine connection info — reuses logic from chat.py."""
+    try:
+        # Check Electron machine
+        electron_session = vm_control_service.session_data.get(machine_id, {})
+        if electron_session.get("is_electron"):
+            system_info = electron_session.get("system_info", {})
+            return {
+                "public_ip": "electron",
+                "agent_port": 0,
+                "vnc_port": 0,
+                "websocket_port": 0,
+                "machine_name": f"My Computer ({system_info.get('hostname', 'Electron')})",
+                "vnc_password": None,
+                "is_local": True,
+                "is_electron": True,
+                "system_info": system_info,
+            }
+
+        # Local Docker
+        if machine_id.startswith("local-"):
+            container_id = machine_id.replace("local-", "")
+            return {
+                "public_ip": "localhost",
+                "agent_port": 8081,
+                "vnc_port": 5901,
+                "websocket_port": 6080,
+                "machine_name": f"Local Docker ({container_id[:8]})",
+                "vnc_password": "coasty123",
+                "is_local": True,
+            }
+
+        # DB-registered machine
+        machine = await db_service.get_machine(machine_id, user_id)
+        if not machine:
+            return None
+
+        machine_settings = machine.get("settings", {})
+        if machine_settings.get("provider") == "electron":
+            return {
+                "public_ip": "electron",
+                "agent_port": 0,
+                "vnc_port": 0,
+                "websocket_port": 0,
+                "machine_name": machine.get("display_name", "Local Desktop"),
+                "vnc_password": None,
+                "is_local": True,
+                "is_electron": True,
+                "system_info": {
+                    "platform": machine_settings.get("platform", "unknown"),
+                    "hostname": machine_settings.get("hostname", ""),
+                    "username": machine_settings.get("username", ""),
+                },
+            }
+
+        if machine.get("status") != "running":
+            return None
+
+        ms = machine.get("settings", {})
+        if ms.get("isLocal"):
+            ports = ms.get("ports", {})
+            public_ip = machine.get("public_ip_address", "localhost")
+            default_agent_port = 8081 if public_ip == "localhost" else 8080
+            return {
+                "public_ip": public_ip,
+                "agent_port": ports.get("agent", default_agent_port),
+                "vnc_port": ports.get("vnc", 5901),
+                "websocket_port": ports.get("websocket", 6080),
+                "machine_name": machine.get("display_name", "Local VM"),
+                "vnc_password": machine.get("vnc_password", "coasty123"),
+                "is_local": True,
+            }
+
+        return {
+            "public_ip": machine.get("public_ip_address"),
+            "agent_port": machine.get("ai_agent_port", 8080),
+            "vnc_port": machine.get("vnc_port", 5901),
+            "websocket_port": machine.get("websocket_port", 6080),
+            "machine_name": machine.get("display_name", "VM Desktop"),
+            "vnc_password": machine.get("vnc_password"),
+            "is_local": False,
+        }
+    except Exception as e:
+        logger.error(f"Error getting machine connection info: {e}")
+        return None
+
+
+async def execute_scheduled_chat(
+    chat_id: str,
+    user_id: str,
+    machine_id: str,
+    model: Optional[str] = None,
+) -> Dict[str, Any]:
+    """
+    Execute a scheduled chat task headlessly.
+
+    Reuses CUAExecutor but consumes the async generator internally.
+    Returns execution summary dict.
+    """
+    start_time = datetime.now(timezone.utc)
+    billing_session_id = None
+    completion_status = "failed"
+    credits_charged = 0
+    error_message = None
+
+    try:
+        # 1. Get task prompt
+        task_prompt = await _get_task_prompt(chat_id)
+        if not task_prompt:
+            return {
+                "status": "failed",
+                "error": "No user message found in chat to use as task prompt",
+                "duration_seconds": 0,
+                "credits_charged": 0,
+            }
+
+        # 2. Store a system message indicating scheduled execution
+        scheduled_marker = (
+            f"[Scheduled execution at {start_time.strftime('%Y-%m-%d %H:%M UTC')}]\n"
+            f"Re-running task: {task_prompt[:200]}"
+        )
+        await db_service.save_message({
+            "chat_id": chat_id,
+            "role": "user",
+            "content": scheduled_marker,
+            "created_at": start_time.isoformat(),
+        })
+
+        # 3. Get machine connection info
+        connection_info = await _get_machine_connection_info(machine_id, user_id)
+        if not connection_info:
+            return {
+                "status": "failed",
+                "error": f"Machine {machine_id} not found or not running",
+                "duration_seconds": 0,
+                "credits_charged": 0,
+            }
+
+        # 4. Start billing session
+        billing_session_id = await agent_billing_service.start_session(
+            user_id=user_id,
+            machine_id=machine_id,
+            session_type="ai_controlled",
+            ai_model=model or settings.BEDROCK_DEFAULT_MODEL,
+            ai_objective=f"[SCHEDULED:{chat_id}] {task_prompt[:500]}",
+        )
+
+        if not billing_session_id:
+            return {
+                "status": "failed",
+                "error": "Failed to start billing session",
+                "duration_seconds": 0,
+                "credits_charged": 0,
+            }
+
+        # 5. Connect to machine (for non-Electron machines)
+        if connection_info.get("is_electron"):
+            if machine_id not in vm_control_service.connections:
+                reconnected = await vm_control_service._wait_for_electron_reconnect(
+                    machine_id
+                )
+                if not reconnected:
+                    return {
+                        "status": "failed",
+                        "error": "Electron app not connected",
+                        "duration_seconds": 0,
+                        "credits_charged": 0,
+                    }
+        else:
+            public_ip = connection_info["public_ip"]
+            default_port = 8081 if public_ip == "localhost" else 8080
+            agent_port = connection_info.get("agent_port", default_port)
+            await vm_control_service.connect_to_agent(
+                machine_id,
+                public_ip,
+                agent_port,
+                connection_info.get("session_id"),
+                connection_info.get("user_id"),
+                connection_info.get("vnc_password"),
+            )
+
+        # 6. Initialize executor
+        bedrock_model = model or settings.BEDROCK_DEFAULT_MODEL
+        provider = provider_factory.get_provider(bedrock_model)
+        provider.initialize()
+
+        use_cua = os.environ.get("USE_CUA_EXECUTOR", "true").lower() == "true"
+
+        if use_cua:
+            from app.services.cua_executor import CUAExecutor
+
+            executor = CUAExecutor(
+                machine_id=machine_id,
+                connection_info=connection_info,
+                provider=provider,
+                model=bedrock_model,
+                temperature=1.0,
+                max_tokens=None,
+            )
+        else:
+            from app.services.multi_agent_executor import MultiAgentExecutor
+
+            executor = MultiAgentExecutor(
+                machine_id=machine_id,
+                connection_info=connection_info,
+                provider=provider,
+                model=bedrock_model,
+                temperature=1.0,
+                max_tokens=None,
+            )
+
+        # 7. Consume the stream internally (no SSE)
+        all_content = ""
+        all_tool_invocations: List[Dict] = []
+        assistant_message_id: Optional[str] = None
+        message_group_id = str(uuid.uuid4())
+
+        async for chunk in executor.stream_execution(task_prompt, None, None):
+            chunk_type = chunk.get("type")
+
+            if chunk_type == "text":
+                content = chunk.get("content", "")
+                if content:
+                    all_content += content
+
+            elif chunk_type == "tool_call":
+                tool_call = {
+                    "toolCallId": chunk.get("toolCallId")
+                    or chunk.get("id", str(uuid.uuid4())),
+                    "toolName": chunk.get("toolName")
+                    or chunk.get("tool")
+                    or chunk.get("name", ""),
+                    "args": chunk.get("args") or {},
+                }
+                all_tool_invocations.append(tool_call)
+
+            elif chunk_type == "tool_result":
+                tool_call_id = chunk.get("toolCallId") or chunk.get("id", "")
+                result = chunk.get("result")
+                for inv in all_tool_invocations:
+                    if inv.get("toolCallId") == tool_call_id:
+                        inv["result"] = result
+                        break
+
+            elif chunk_type == "step_complete":
+                step_num = chunk.get("step", 0)
+                step_content = chunk.get("content", all_content)
+                step_tools = chunk.get("tool_invocations", all_tool_invocations)
+
+                # Bill this step
+                try:
+                    billing_info = await agent_billing_service.charge_step(
+                        billing_session_id, step_num
+                    )
+                    if billing_info.get("charged", 0) > 0:
+                        credits_charged += billing_info["charged"]
+                    if billing_info.get("should_stop"):
+                        logger.warning(
+                            f"Scheduled task {chat_id} stopped: out of credits"
+                        )
+                        all_content += "\n[Scheduled run ended: insufficient credits]\n"
+                        completion_status = "cancelled"
+                        break
+                except Exception as e:
+                    logger.error(f"Step billing error: {e}")
+
+                # Incremental DB save
+                try:
+                    if assistant_message_id is None:
+                        save_result = await _store_message(
+                            chat_id=chat_id,
+                            content=step_content,
+                            tool_invocations=step_tools,
+                            model=bedrock_model,
+                            message_group_id=message_group_id,
+                        )
+                        if save_result:
+                            assistant_message_id = save_result.get("id")
+                    else:
+                        await _update_message(
+                            assistant_message_id, step_content, step_tools
+                        )
+                except Exception as e:
+                    logger.error(f"Step DB save error: {e}")
+
+            elif chunk_type == "error":
+                error_content = chunk.get("content", "Unknown error")
+                all_content += f"\n{error_content}\n"
+                error_message = str(error_content)
+
+            elif chunk_type == "finish":
+                completion_status = "completed"
+                final_content = chunk.get("content", "") or all_content
+                final_tools = chunk.get("tool_invocations", all_tool_invocations)
+
+                if assistant_message_id:
+                    await _update_message(
+                        assistant_message_id, final_content, final_tools
+                    )
+                else:
+                    await _store_message(
+                        chat_id=chat_id,
+                        content=final_content,
+                        tool_invocations=final_tools,
+                        model=bedrock_model,
+                        message_group_id=message_group_id,
+                    )
+
+        # If no finish event was received, save whatever we have
+        if completion_status == "failed" and all_content:
+            if assistant_message_id:
+                await _update_message(
+                    assistant_message_id, all_content, all_tool_invocations
+                )
+            else:
+                await _store_message(
+                    chat_id=chat_id,
+                    content=all_content,
+                    tool_invocations=all_tool_invocations,
+                    model=bedrock_model,
+                    message_group_id=message_group_id,
+                )
+
+    except Exception as e:
+        error_message = str(e)
+        logger.error(
+            f"Scheduled execution failed for chat {chat_id}: {e}", exc_info=True
+        )
+
+    finally:
+        # End billing session
+        if billing_session_id:
+            try:
+                billing_summary = await agent_billing_service.end_session(
+                    billing_session_id,
+                    completion_status,
+                    error_message,
+                )
+                credits_charged = billing_summary.get("credits_charged", credits_charged)
+            except Exception as e:
+                logger.error(f"Failed to end billing session: {e}")
+
+    end_time = datetime.now(timezone.utc)
+    duration = int((end_time - start_time).total_seconds())
+
+    return {
+        "status": completion_status,
+        "duration_seconds": duration,
+        "credits_charged": credits_charged,
+        "error": error_message,
+    }

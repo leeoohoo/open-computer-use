@@ -27,7 +27,8 @@ import {
   Lock,
   MagnifyingGlass,
   Cpu,
-  Package
+  Package,
+  Timer,
 } from "@phosphor-icons/react"
 import Link from "next/link"
 import { useCallback, useMemo, useRef, useState } from "react"
@@ -293,6 +294,14 @@ export function SidebarItem({ chat, currentChatId, isCollaborative }: SidebarIte
     return rs?.machine_name || "Desktop"
   }, [isDesktopChat, chat.room_settings])
 
+  const hasSchedule = useMemo(() => {
+    let rs = chat.room_settings as any
+    if (typeof rs === "string") {
+      try { rs = JSON.parse(rs) } catch { rs = {} }
+    }
+    return rs?.schedule?.enabled === true
+  }, [chat.room_settings])
+
   const containerClassName = useMemo(
     () =>
       cn(
@@ -380,6 +389,14 @@ export function SidebarItem({ chat, currentChatId, isCollaborative }: SidebarIte
                       title={desktopLabel || "Desktop"}
                     >
                       <Laptop size={10} weight="fill" />
+                    </span>
+                  )}
+                  {hasSchedule && (
+                    <span
+                      className="inline-flex shrink-0 items-center rounded bg-emerald-500/15 px-1 py-0.5 text-[9px] font-medium text-emerald-400"
+                      title="Scheduled"
+                    >
+                      <Timer size={10} weight="fill" />
                     </span>
                   )}
                 </div>

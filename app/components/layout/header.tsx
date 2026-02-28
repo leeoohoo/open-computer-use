@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useCallback } from "react"
 import { AppInfoTrigger } from "@/app/components/layout/app-info/app-info-trigger"
 import { useBreakpoint } from "@/app/hooks/use-breakpoint"
 import { CoastyIcon } from "@/components/icons/coasty"
@@ -11,11 +12,13 @@ import { useUser } from "@/lib/user-store/provider"
 import { useChats } from "@/lib/chat-store/chats/provider"
 import { useChatSession } from "@/lib/chat-store/session/provider"
 import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
-import { Info, Users, Copy, Link as LinkIcon, UserPlus, SidebarSimple, Globe, Desktop } from "@phosphor-icons/react"
+import { Info, Users, Copy, Link as LinkIcon, UserPlus, SidebarSimple, Globe, Desktop, Timer } from "@phosphor-icons/react"
 import Link from "next/link"
 import { HeaderSidebarTrigger } from "./header-sidebar-trigger"
 import { toast } from "sonner"
 import { ChatVisibilityToggle } from "@/app/components/chat/chat-visibility-toggle"
+import { ScheduleDialog } from "@/app/components/schedules/schedule-dialog"
+import type { UserMachine } from "@/types/machines.types"
 import {
   Tooltip,
   TooltipContent,
@@ -33,10 +36,27 @@ export function Header({ hasSidebar }: HeaderProps) {
   const { preferences } = useUserPreferences()
   const { refresh, getChatById } = useChats()
   const { chatId } = useChatSession()
-  const { isOpen: isNavigatorOpen, toggleNavigator } = useProjectNavigator()
+  const { isOpen: isNavigatorOpen, toggleNavigator, selectedVMId } = useProjectNavigator()
   const isMultiModelEnabled = preferences.multiModelEnabled
   const isLoggedIn = !!user
 
+
+  // Schedule dialog state
+  const [scheduleOpen, setScheduleOpen] = useState(false)
+  const [scheduleMachines, setScheduleMachines] = useState<UserMachine[]>([])
+
+  const openScheduleDialog = useCallback(async () => {
+    try {
+      const res = await fetch("/api/machines")
+      if (res.ok) {
+        const data = await res.json()
+        setScheduleMachines(data.machines || [])
+      }
+    } catch {
+      setScheduleMachines([])
+    }
+    setScheduleOpen(true)
+  }, [])
 
   // Get current chat to check if it's collaborative
   const currentChat = chatId ? getChatById(chatId) : null
@@ -127,12 +147,30 @@ export function Header({ hasSidebar }: HeaderProps) {
             <div className="pointer-events-auto flex items-center justify-end gap-1 sm:gap-2 min-w-0 flex-shrink-0">
               {/* Show share button for non-collaborative chats */}
               {chatId && !isCollaborativeRoom && currentChat && (
-                <ChatVisibilityToggle 
-                  chatId={chatId} 
+                <ChatVisibilityToggle
+                  chatId={chatId}
                   initialPublic={currentChat.public || false}
                 />
               )}
-              
+
+              {/* Schedule button - show for active chats */}
+              {chatId && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={mobileHeaderButtonClass}
+                      onClick={openScheduleDialog}
+                    >
+                      <Timer className="size-4 mr-0 sm:mr-2" />
+                      <span className="hidden sm:inline text-sm font-medium">Schedule</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Automate this task on a schedule</TooltipContent>
+                </Tooltip>
+              )}
+
               {/* Project Navigator Toggle - show for all active chats */}
               {chatId && (
                 <Tooltip>
@@ -166,6 +204,26 @@ export function Header({ hasSidebar }: HeaderProps) {
         </div>
       </div>
       </header>
+
+      {/* Schedule Dialog */}
+      {chatId && (
+        <ScheduleDialog
+          open={scheduleOpen}
+          onOpenChange={setScheduleOpen}
+          chatId={chatId}
+          chatTitle={currentChat?.title || undefined}
+          machines={scheduleMachines}
+          defaultMachineId={selectedVMId}
+          onScheduleCreated={() => {
+            toast.success("Schedule created!")
+            refresh()
+          }}
+          onScheduleDeleted={() => {
+            toast.success("Schedule removed")
+            refresh()
+          }}
+        />
+      )}
     </>
   )
 }
