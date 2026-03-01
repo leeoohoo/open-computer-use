@@ -285,13 +285,6 @@ function AccountMenu({ onClose, updateStatus }: { onClose: () => void; updateSta
             url="https://coasty.ai"
             onClose={onClose}
           />
-          <MenuLink
-            icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><line x1="12" y1="3" x2="12" y2="6" /><line x1="12" y1="18" x2="12" y2="21" /><line x1="3" y1="12" x2="6" y2="12" /><line x1="18" y1="12" x2="21" y2="12" /><line x1="5.64" y1="5.64" x2="7.76" y2="7.76" /><line x1="16.24" y1="16.24" x2="18.36" y2="18.36" /><line x1="5.64" y1="18.36" x2="7.76" y2="16.24" /><line x1="16.24" y1="7.76" x2="18.36" y2="5.64" /></svg>}
-            label="Changelog"
-            desc="See what's new"
-            url="https://coasty.ai/changelog"
-            onClose={onClose}
-          />
         </div>
 
         <div className="h-px bg-neutral-800/40" />

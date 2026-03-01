@@ -474,9 +474,6 @@ export default function PrivacyPolicyPage() {
                 <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Terms
                 </Link>
-                <Link href="/changelog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Changelog
-                </Link>
                 <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Blog
                 </Link>

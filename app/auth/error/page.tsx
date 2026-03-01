@@ -77,9 +77,6 @@ export default function AuthErrorPage() {
           <Link href="/terms" className="hover:text-foreground transition-colors">
             Terms
           </Link>
-          <Link href="/changelog" className="hover:text-foreground transition-colors">
-            Changelog
-          </Link>
         </div>
       </footer>
     </div>

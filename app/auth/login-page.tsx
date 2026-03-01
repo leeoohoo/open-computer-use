@@ -526,9 +526,6 @@ export default function LoginPage() {
           </Link>
         </p>
         <div className="flex gap-4 justify-center text-xs">
-          <Link href="/changelog" className="hover:text-foreground transition-colors">
-            Changelog
-          </Link>
           <Link href="/blog" className="hover:text-foreground transition-colors">
             Blog
           </Link>

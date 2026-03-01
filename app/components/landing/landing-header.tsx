@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ArrowRight, Menu, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import Image from "next/image"
 import { useState, useEffect, useCallback } from "react"
 import { cn } from "@/lib/utils"
@@ -256,17 +256,13 @@ export function LandingHeader({
                     scrolled ? "h-9 w-9" : "h-9 w-9 xl:h-10 xl:w-10"
                   )}
                 />
-                <Button 
+                <Button
                   size={scrolled ? "sm" : "default"}
                   className="rounded-full group whitespace-nowrap"
                   asChild
                 >
                   <Link href="/auth">
-                    Your AI, Your Computer
-                    <ArrowRight className={cn(
-                      "ml-2 transition-transform group-hover:translate-x-1",
-                      scrolled ? "h-3 w-3" : "h-4 w-4"
-                    )} />
+                    Sign Up / Log In
                   </Link>
                 </Button>
               </div>
@@ -367,10 +363,9 @@ export function LandingHeader({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: navItems.length * 0.04, duration: 0.25 }}
                   >
-                    <Button className="w-full rounded-xl h-12 text-[15px] sm:text-base font-semibold group" asChild>
+                    <Button className="w-full rounded-xl h-12 text-[15px] sm:text-base font-semibold" asChild>
                       <Link href="/auth" onClick={closeMobileMenu}>
-                        Your AI, Your Computer
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        Sign Up / Log In
                       </Link>
                     </Button>
                   </motion.div>

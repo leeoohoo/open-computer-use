@@ -256,7 +256,6 @@ Subscribe to our [GitHub releases](https://github.com/coasty-ai/open-computer-us
 1. **Update regularly**: `git pull && npm install && pip install -r requirements.txt`
 2. **Watch releases**: Enable GitHub notifications
 3. **Join Discord**: Get real-time security updates
-4. **Review changelog**: Check CHANGELOG.md for security fixes
 
 ---
 

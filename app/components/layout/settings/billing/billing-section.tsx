@@ -5,14 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "sonner"
 import { useCredits } from "@/lib/hooks/use-credits"
 import { useUser } from "@/lib/user-store/provider"
-import { Lightning, ShoppingCart, ArrowUp, CheckCircle, XCircle, Spinner, CreditCard, Receipt, Coins } from "@phosphor-icons/react"
+import { ShoppingCart, ArrowUp, CheckCircle, XCircle, Spinner, CreditCard, Receipt, Coins } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
-import { Separator } from "@/components/ui/separator"
-import { Check, X, Zap, ArrowRight } from "lucide-react"
+import { Check, Zap, ArrowRight, Clock } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
 
 const subscriptionPlans = [
@@ -134,6 +132,7 @@ export function BillingSection() {
   const [showAllTransactions, setShowAllTransactions] = useState(false)
   const [allTransactions, setAllTransactions] = useState<Transaction[]>([])
   const [loadingAllTransactions, setLoadingAllTransactions] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState(1) // default to Plus
 
   // Fetch subscription status
   useEffect(() => {
@@ -165,15 +164,13 @@ export function BillingSection() {
     if (success === "true") {
       toast.success("Payment successful! Your credits have been added.")
       refetchCredits()
-      // Clear the URL params
       window.history.replaceState({}, '', window.location.pathname)
     } else if (subscriptionSuccess === "true") {
       toast.success("Subscription activated successfully!")
       refetchCredits()
-      window.location.reload() // Reload to update subscription status
+      window.location.reload()
     } else if (canceled === "true") {
       toast.error("Payment was canceled. No charges were made.")
-      // Clear the URL params
       window.history.replaceState({}, '', window.location.pathname)
     }
   }, [searchParams, refetchCredits])
@@ -186,7 +183,7 @@ export function BillingSection() {
       try {
         const response = await fetch("/api/credits/history?limit=5")
         if (!response.ok) throw new Error("Failed to fetch transactions")
-        
+
         const data = await response.json()
         setTransactions(data.transactions)
       } catch (error) {
@@ -207,7 +204,7 @@ export function BillingSection() {
       setLoadingAllTransactions(true)
       const response = await fetch("/api/credits/history?limit=100")
       if (!response.ok) throw new Error("Failed to fetch all transactions")
-      
+
       const data = await response.json()
       setAllTransactions(data.transactions)
     } catch (error) {
@@ -218,7 +215,6 @@ export function BillingSection() {
     }
   }
 
-  // Handle View All toggle
   const handleToggleViewAll = async () => {
     if (!showAllTransactions && allTransactions.length === 0) {
       await fetchAllTransactions()
@@ -234,7 +230,7 @@ export function BillingSection() {
 
     try {
       setSubscribingPlan(planId)
-      
+
       const response = await fetch("/api/subscription/checkout", {
         method: "POST",
         headers: {
@@ -252,7 +248,7 @@ export function BillingSection() {
       }
 
       const { url } = await response.json()
-      
+
       if (url) {
         window.location.href = url
       }
@@ -277,7 +273,7 @@ export function BillingSection() {
 
     try {
       setPurchasingPackage(packageId)
-      
+
       const response = await fetch("/api/credits/checkout", {
         method: "POST",
         headers: {
@@ -295,7 +291,7 @@ export function BillingSection() {
       }
 
       const { url } = await response.json()
-      
+
       if (url) {
         window.location.href = url
       }
@@ -318,7 +314,7 @@ export function BillingSection() {
       }
 
       const { url } = await response.json()
-      
+
       if (url) {
         window.location.href = url
       }
@@ -351,333 +347,299 @@ export function BillingSection() {
     }
   }
 
+  const plan = subscriptionPlans[selectedPlan]
+
   return (
-    <div className="space-y-6">
-      {/* Billing Header */}
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <CreditCard className="h-5 w-5" />
-          <h3 className="text-lg font-semibold">Billing & Usage</h3>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Manage your usage and view transaction history
-        </p>
-      </div>
-
-      <Separator />
-
+    <div className="space-y-8">
       {/* Current Balance */}
-      <Card className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-background border-2 border-primary/20 shadow-lg">
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50" />
-        
-        <CardHeader className="relative pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <div className="p-1.5 rounded-full bg-primary/10">
+      <div className="rounded-xl border border-primary/20 bg-gradient-to-b from-primary/[0.04] to-transparent p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
               <CoastyIcon className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium text-muted-foreground">Current Balance</span>
             </div>
-            Current Balance
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="relative">
-          <div className="space-y-4">
-            {/* Main balance display */}
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                    {creditsLoading ? (
-                      <Spinner className="h-8 w-8 animate-spin text-primary" />
-                    ) : (
-                      (credits?.balance || 0).toLocaleString()
-                    )}
-                  </span>
-                  <span className="text-sm font-medium text-muted-foreground">credits</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  AI Agent Credits Available
-                </p>
-              </div>
-              
-              {/* Visual indicator */}
-              <div className="relative">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                  <CoastyIcon className="h-8 w-8 text-primary opacity-80" />
-                </div>
-              </div>
-            </div>
-            
-            {/* Credits breakdown */}
-            <div className="pt-3 border-t border-primary/10">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Credits Remaining</span>
-                <span className="text-xs font-medium text-foreground/70">
-                  {(credits?.balance || 0).toLocaleString()} credits
-                </span>
-              </div>
-
-              {/* Fun feedback message */}
-              <div className="mt-4 relative">
-                {/* Subtle glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-xl blur-lg" />
-
-                <div className="relative p-4 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm border border-border/50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-                      <CoastyIcon className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      <p className="text-sm font-medium text-foreground">
-                        Having a blast? Running low? Facing issues?
-                      </p>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Email us your feedback (good or bad!) at{" "}
-                        <a
-                          href="mailto:founders@coasty.ai?subject=Feedback%20on%20Coasty"
-                          className="font-medium text-primary hover:text-primary/80 underline underline-offset-2 decoration-primary/30 hover:decoration-primary/60 transition-all duration-200"
-                        >
-                          founders@coasty.ai
-                        </a>
-                        {" "}and we'll probably just reset your credits or bump you up for the month.
-                        We're building trust here, one happy user at a time! 🎉
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-foreground">
+                {creditsLoading ? (
+                  <Spinner className="h-7 w-7 animate-spin text-primary" />
+                ) : (
+                  (credits?.balance || 0).toLocaleString()
+                )}
+              </span>
+              <span className="text-sm text-muted-foreground">credits</span>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+            <CoastyIcon className="h-6 w-6 text-primary" />
+          </div>
+        </div>
+
+        {/* Feedback note */}
+        <div className="mt-4 pt-4 border-t border-primary/10">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Running low or having issues? Email{" "}
+            <a
+              href="mailto:founders@coasty.ai?subject=Feedback%20on%20Coasty"
+              className="font-medium text-primary hover:text-primary/80 underline underline-offset-2 decoration-primary/30 transition-colors"
+            >
+              founders@coasty.ai
+            </a>
+            {" "}— we&apos;ll probably just reset your credits for the month.
+          </p>
+        </div>
+      </div>
 
       {/* Subscription Plans */}
       {!subscription || subscription.status !== "active" ? (
         <div>
-          <h4 className="text-sm font-semibold mb-2">Choose Your Plan</h4>
-          <p className="text-xs text-muted-foreground mb-4">Subscribe to unlock AI features and get monthly credits</p>
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-3 max-w-4xl mx-auto items-start">
-            {subscriptionPlans.map((plan) => (
-              <div key={plan.id} className="h-full">
-                <div className={cn(
-                  "relative h-full rounded-xl border p-5 transition-shadow duration-200",
-                  plan.popular
-                    ? "border-primary bg-primary/[0.03] shadow-sm shadow-primary/10"
-                    : "border-border"
+          <h4 className="text-base font-semibold mb-1">Choose Your Plan</h4>
+          <p className="text-sm text-muted-foreground mb-6">Subscribe to unlock AI features and get monthly credits</p>
+
+          {/* Plan pills */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            {subscriptionPlans.map((p, i) => (
+              <button
+                key={p.name}
+                onClick={() => setSelectedPlan(i)}
+                className={cn(
+                  "relative rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5 px-4 py-2.5",
+                  selectedPlan === i
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                {p.name}
+                <span className={cn(
+                  "text-xs font-normal",
+                  selectedPlan === i ? "text-primary-foreground/70" : "text-muted-foreground/60"
                 )}>
-                  {plan.popular && (
-                    <div className="absolute -top-2.5 left-4">
-                      <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-medium text-primary-foreground">
-                        Most Popular
-                      </span>
-                    </div>
-                  )}
+                  ${p.price}
+                </span>
+                {p.popular && selectedPlan !== i && (
+                  <span className="absolute -top-1.5 -right-1.5 flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
 
-                  <div className="mb-4">
-                    <h3 className="text-sm font-medium text-muted-foreground">{plan.name}</h3>
-                    <div className="mt-2 flex items-baseline gap-1">
-                      <span className="text-3xl font-semibold tracking-tight">${plan.price}</span>
-                      <span className="text-sm text-muted-foreground">/month</span>
-                    </div>
-                    <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">{plan.description}</p>
-                  </div>
-
-                  <div className="mb-4 flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2">
-                    <CoastyIcon className="h-4 w-4 text-primary flex-shrink-0" />
-                    <span className="text-sm font-medium">
-                      {plan.monthlyCredits.toLocaleString()} credits
-                      <span className="text-muted-foreground font-normal">/month</span>
-                    </span>
-                  </div>
-
-                  <Button
-                    className={cn(
-                      "w-full mb-5",
-                      !plan.popular && "hover:bg-primary hover:text-primary-foreground"
-                    )}
-                    variant={plan.popular ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handleSubscribe(plan.id, plan.tier, plan.price)}
-                    disabled={subscribingPlan === plan.id}
-                  >
-                    {subscribingPlan === plan.id ? (
-                      <>
-                        <Spinner className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        Subscribe Now
-                        <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                      </>
-                    )}
-                  </Button>
-
-                  <div className="space-y-2.5">
-                    {plan.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-start gap-2">
-                        <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-xs text-muted-foreground">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
+          {/* Savings pill */}
+          {(() => {
+            const humanCost = plan.price === 19 ? 1500 : plan.price === 50 ? 3000 : 5000
+            const moneySaved = (humanCost - plan.price).toLocaleString()
+            const timeSaved = plan.price === 19 ? "6-12 hrs" : plan.price === 50 ? "18-24 hrs" : "24-36 hrs"
+            const multiplier = plan.price === 19 ? "79x" : plan.price === 50 ? "60x" : "50x"
+            return (
+              <div className="flex justify-center mb-6">
+                <div className="inline-flex items-center gap-3 rounded-full border border-border bg-muted/40 px-4 py-2">
+                  <span className="text-xs text-muted-foreground">
+                    Save <span className="font-semibold text-foreground">${moneySaved}/mo</span> vs human
+                  </span>
+                  <span className="h-3 w-px bg-border" />
+                  <span className="text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground">{timeSaved}</span> saved monthly
+                  </span>
+                  <span className="h-3 w-px bg-border" />
+                  <span className="text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground">{multiplier}</span> cheaper
+                  </span>
                 </div>
               </div>
-            ))}
+            )
+          })()}
+
+          {/* Plan card + features */}
+          <div className={cn(
+            "relative rounded-xl border p-6",
+            plan.popular
+              ? "border-primary/30 bg-gradient-to-b from-primary/[0.06] to-primary/[0.02] shadow-sm shadow-primary/10"
+              : "border-border"
+          )}>
+            {plan.popular && (
+              <div className="absolute -top-2.5 left-4">
+                <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-medium text-primary-foreground">
+                  Most Popular
+                </span>
+              </div>
+            )}
+
+            <div className="flex items-start justify-between mb-5">
+              <div>
+                <div className="flex items-center gap-2">
+                  <CoastyIcon className="h-5 w-5 text-primary" />
+                  <h3 className="text-sm font-semibold text-primary">Coasty {plan.name}</h3>
+                </div>
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="text-4xl font-semibold tracking-tight text-foreground">${plan.price}</span>
+                  <span className="text-sm text-muted-foreground">/month</span>
+                </div>
+                <p className="mt-1.5 text-sm text-muted-foreground">{plan.description}</p>
+              </div>
+            </div>
+
+            <div className="mb-5 flex items-center gap-2 rounded-lg bg-primary/[0.08] border border-primary/10 px-3 py-2">
+              <Zap className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+              <span className="text-sm font-medium text-foreground">
+                {plan.monthlyCredits.toLocaleString()} credits<span className="text-muted-foreground font-normal">/month</span>
+              </span>
+            </div>
+
+            <Button
+              className={cn(
+                "w-full mb-5",
+                !plan.popular && "hover:bg-primary hover:text-primary-foreground"
+              )}
+              variant={plan.popular ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleSubscribe(plan.id, plan.tier, plan.price)}
+              disabled={subscribingPlan === plan.id}
+            >
+              {subscribingPlan === plan.id ? (
+                <>
+                  <Spinner className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  Subscribe to {plan.name}
+                  <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                </>
+              )}
+            </Button>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {plan.features.map((feature, idx) => (
+                <div key={idx} className="flex items-start gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">{feature}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       ) : (
         <>
-          {/* Active Subscription Info - Compact Version */}
-          <Card className="bg-gradient-to-br from-green-500/5 to-background border-2 border-green-500/20">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">
-                      {(() => {
-                        const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier);
-                        return activePlan?.name || "Active Plan";
-                      })()}
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      ${(() => {
-                        const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier);
-                        return activePlan?.price || 0;
-                      })()}/month • {(() => {
-                        const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier);
-                        const monthlyCredits = activePlan?.monthlyCredits || 0;
-                        return `${monthlyCredits.toLocaleString()} credits`;
-                      })()}
-                    </CardDescription>
-                  </div>
+          {/* Active Subscription */}
+          <div className="rounded-xl border border-green-500/20 bg-gradient-to-b from-green-500/[0.04] to-transparent p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleManageSubscription}
-                  className="hover:bg-primary hover:text-primary-foreground"
-                >
-                  <CreditCard className="mr-1 h-3 w-3" />
-                  Manage
-                </Button>
+                <div>
+                  <h4 className="font-semibold text-foreground">
+                    {(() => {
+                      const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier)
+                      return activePlan?.name || "Active Plan"
+                    })()}
+                  </h4>
+                  <p className="text-xs text-muted-foreground">
+                    ${(() => {
+                      const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier)
+                      return activePlan?.price || 0
+                    })()}/month
+                    <span className="mx-1.5 text-border">·</span>
+                    {(() => {
+                      const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier)
+                      return (activePlan?.monthlyCredits || 0).toLocaleString()
+                    })()} credits/mo
+                  </p>
+                </div>
               </div>
-            </CardHeader>
-            <CardContent className="pt-0 pb-4">
-              <div className="space-y-3">
-                {/* Renewal info */}
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Status</span>
-                  <div className="flex items-center gap-1">
-                    {subscription.cancel_at_period_end ? (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleManageSubscription}
+                className="hover:bg-primary hover:text-primary-foreground"
+              >
+                <CreditCard className="mr-1.5 h-3.5 w-3.5" />
+                Manage
+              </Button>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-green-500/10 flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Status</span>
+              <div className="flex items-center gap-1.5">
+                {subscription.cancel_at_period_end ? (
+                  <>
+                    <XCircle className="h-3 w-3 text-yellow-600" />
+                    <span className="text-yellow-600">Cancels {subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : 'N/A'}</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-3 w-3 text-green-500" />
+                    <span className="text-green-600">Renews {subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : 'N/A'}</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Plan features collapsible */}
+            <details className="mt-3 group">
+              <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors flex items-center gap-1">
+                View plan features
+                <ArrowRight className="h-3 w-3 transition-transform group-open:rotate-90" />
+              </summary>
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {(() => {
+                  const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier)
+                  return activePlan?.features.map((feature, idx) => (
+                    <div key={idx} className="flex items-start gap-2">
+                      <Check className="h-3 w-3 text-green-500 mt-0.5" />
+                      <span className="text-xs text-muted-foreground">{feature}</span>
+                    </div>
+                  )) || []
+                })()}
+              </div>
+            </details>
+          </div>
+
+          {/* Additional Credits */}
+          <div>
+            <h4 className="text-base font-semibold mb-1">Need More Credits?</h4>
+            <p className="text-sm text-muted-foreground mb-4">Purchase additional credits anytime</p>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {additionalCreditPackages.map((pkg) => (
+                <div
+                  key={pkg.id}
+                  className="rounded-xl border border-border p-4 hover:border-primary/30 hover:shadow-sm transition-all duration-200"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-foreground">{pkg.name}</span>
+                    <span className="text-lg font-bold text-foreground">${pkg.price}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <Zap className="h-3.5 w-3.5 text-primary" />
+                    <span className="text-sm font-medium text-primary">{pkg.credits.toLocaleString()} credits</span>
+                    {pkg.savings && (
+                      <Badge variant="secondary" className="text-[10px] bg-green-500/10 text-green-600 border-green-500/20 ml-1">
+                        {pkg.savings}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-3">{pkg.description}</p>
+                  <Button
+                    size="sm"
+                    className="w-full hover:bg-primary hover:text-primary-foreground"
+                    variant="outline"
+                    onClick={() => handlePurchaseCredits(pkg.id, pkg.credits, pkg.price)}
+                    disabled={purchasingPackage === pkg.id}
+                  >
+                    {purchasingPackage === pkg.id ? (
                       <>
-                        <XCircle className="h-3 w-3 text-yellow-600" />
-                        <span className="text-yellow-600">Cancels {subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : 'N/A'}</span>
+                        <Spinner className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                        Processing...
                       </>
                     ) : (
                       <>
-                        <CheckCircle className="h-3 w-3 text-green-500" />
-                        <span className="text-green-600">Renews {subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : 'N/A'}</span>
+                        Add Credits
+                        <ArrowRight className="ml-1.5 h-3 w-3" />
                       </>
                     )}
-                  </div>
-                </div>
-                
-                {/* Quick features list */}
-                <div className="pt-2 border-t">
-                  <details className="group">
-                    <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors flex items-center gap-1">
-                      <span>View plan features</span>
-                      <ArrowRight className="h-3 w-3 transition-transform group-open:rotate-90" />
-                    </summary>
-                    <div className="mt-3 space-y-2">
-                      {(() => {
-                        const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier);
-                        return activePlan?.features.slice(0, 4).map((feature, idx) => (
-                          <div key={idx} className="flex items-start gap-2">
-                            <Check className="h-3 w-3 text-green-500 mt-0.5" />
-                            <span className="text-xs text-muted-foreground">{feature}</span>
-                          </div>
-                        )) || [];
-                      })()}
-                      {(() => {
-                        const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier);
-                        const remaining = (activePlan?.features.length || 0) - 4;
-                        return remaining > 0 ? (
-                          <span className="text-xs text-muted-foreground ml-5">+{remaining} more features</span>
-                        ) : null;
-                      })()}
-                    </div>
-                  </details>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Additional Minutes */}
-          <div>
-            <h4 className="text-sm font-medium mb-1">Need More Credits?</h4>
-            <p className="text-xs text-muted-foreground mb-3">Purchase additional credits anytime</p>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {additionalCreditPackages.map((pkg) => (
-                <div key={pkg.id} className="group">
-                  <Card
-                    className={cn(
-                      "relative h-full transition-all duration-300",
-                      "border-2 hover:border-primary/30",
-                      "hover:shadow-lg hover:shadow-primary/5",
-                      "hover:-translate-y-1",
-                      "bg-gradient-to-b from-background to-background/95"
-                    )}
-                  >
-                    {/* Subtle glow effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
-                    
-                    <CardHeader className="relative pb-3 pt-4">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-sm group-hover:text-primary transition-colors">{pkg.name}</CardTitle>
-                        <span className="text-lg font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">${pkg.price}</span>
-                      </div>
-                      <CardDescription className="text-xs mt-1">
-                        <span className="font-semibold text-primary">{pkg.credits.toLocaleString()} credits</span>
-                        {pkg.savings && (
-                          <Badge variant="secondary" className="ml-1 text-[10px] bg-green-500/10 text-green-600 border-green-500/20">
-                            {pkg.savings}
-                          </Badge>
-                        )}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="relative pb-3">
-                      <p className="text-xs text-muted-foreground">{pkg.description}</p>
-                    </CardContent>
-                    <CardFooter className="relative pt-0">
-                      <Button
-                        size="sm"
-                        className={cn(
-                          "w-full h-8 text-xs transition-all duration-200",
-                          "hover:bg-primary hover:text-primary-foreground",
-                          "hover:shadow-md hover:shadow-primary/20"
-                        )}
-                        variant="outline"
-                        onClick={() => handlePurchaseCredits(pkg.id, pkg.credits, pkg.price)}
-                        disabled={purchasingPackage === pkg.id}
-                      >
-                        {purchasingPackage === pkg.id ? (
-                          <>
-                            <Spinner className="mr-1 h-3 w-3 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <div className="flex items-center justify-center gap-2">
-                            <span>Add Credits</span>
-                            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
-                          </div>
-                        )}
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -685,10 +647,10 @@ export function BillingSection() {
         </>
       )}
 
-      {/* Recent Transactions */}
+      {/* Transactions */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-medium">
+          <h4 className="text-base font-semibold">
             {showAllTransactions ? "Transaction History" : "Recent Transactions"}
           </h4>
           <Button
@@ -706,54 +668,53 @@ export function BillingSection() {
             {loadingAllTransactions ? "Loading..." : showAllTransactions ? "Show Less" : "View All"}
           </Button>
         </div>
-        
-        <Card className={showAllTransactions ? "" : ""}>
-          <CardContent className={showAllTransactions ? "p-0 max-h-[500px] overflow-y-auto" : "p-0"}>
-            {(loadingTransactions || loadingAllTransactions) ? (
-              <div className="flex justify-center py-6">
-                <Spinner className="h-6 w-6 animate-spin text-muted-foreground" />
-              </div>
-            ) : transactions.length === 0 ? (
-              <div className="text-center py-6 text-sm text-muted-foreground">
-                No transactions yet
-              </div>
-            ) : (
-              <div className="divide-y">
-                {(showAllTransactions ? (allTransactions.length > 0 ? allTransactions : transactions) : transactions.slice(0, 5)).map((transaction) => (
-                  <div
-                    key={transaction.id}
-                    className="flex items-center justify-between px-4 py-3 text-sm"
-                  >
-                    <div className="flex items-center gap-3">
-                      {getTransactionIcon(transaction.type)}
-                      <div>
-                        <div className="font-medium capitalize">
-                          {transaction.type}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {formatDate(transaction.created_at)}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className={cn(
-                        "font-medium",
-                        transaction.amount > 0 ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500"
-                      )}>
-                        {transaction.amount > 0 ? "+" : ""}{transaction.amount.toLocaleString()} credits
-                      </div>
-                      {transaction.price_paid && (
-                        <div className="text-xs text-muted-foreground">
-                          ${transaction.price_paid}
-                        </div>
-                      )}
+
+        <div className={cn(
+          "rounded-xl border border-border overflow-hidden",
+          showAllTransactions && "max-h-[500px] overflow-y-auto"
+        )}>
+          {(loadingTransactions || loadingAllTransactions) ? (
+            <div className="flex justify-center py-8">
+              <Spinner className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : transactions.length === 0 ? (
+            <div className="text-center py-8 text-sm text-muted-foreground">
+              No transactions yet
+            </div>
+          ) : (
+            <div>
+              {(showAllTransactions ? (allTransactions.length > 0 ? allTransactions : transactions) : transactions.slice(0, 5)).map((transaction, i, arr) => (
+                <div
+                  key={transaction.id}
+                  className={cn(
+                    "flex items-center justify-between px-4 py-3",
+                    i < arr.length - 1 && "border-b border-border",
+                    i % 2 === 1 && "bg-muted/20"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    {getTransactionIcon(transaction.type)}
+                    <div>
+                      <div className="text-sm font-medium capitalize">{transaction.type}</div>
+                      <div className="text-xs text-muted-foreground">{formatDate(transaction.created_at)}</div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  <div className="text-right">
+                    <div className={cn(
+                      "text-sm font-medium",
+                      transaction.amount > 0 ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500"
+                    )}>
+                      {transaction.amount > 0 ? "+" : ""}{transaction.amount.toLocaleString()} credits
+                    </div>
+                    {transaction.price_paid && (
+                      <div className="text-xs text-muted-foreground">${transaction.price_paid}</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         {!showAllTransactions && transactions.length >= 5 && (
           <p className="text-xs text-muted-foreground text-center mt-2">
             Showing recent 5 transactions

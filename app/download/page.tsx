@@ -499,12 +499,6 @@ export default function DownloadPage() {
                   Terms
                 </Link>
                 <Link
-                  href="/changelog"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Changelog
-                </Link>
-                <Link
                   href="/blog"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >

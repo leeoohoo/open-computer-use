@@ -1,7 +1,6 @@
 "use client"
 
 import { LayoutApp } from "@/app/components/layout/layout-app"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import {
   User,
@@ -17,11 +16,9 @@ import {
   Share2,
   Mail,
   Loader2,
-  GitBranch
 } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
-import Link from "next/link"
 
 // Import settings components
 import { CombinedAccount } from "@/app/components/layout/settings/general/combined-account"
@@ -34,7 +31,7 @@ import XIcon from "@/components/icons/x"
 import { GithubLogoIcon } from "@phosphor-icons/react"
 
 // Define section types
-type SectionType = "account" | "billing" | "privacy" | "notifications" | "appearance" | "api-keys" | "data" | "feedback" | "about" | "changelog" | "social"
+type SectionType = "account" | "billing" | "privacy" | "notifications" | "appearance" | "api-keys" | "data" | "feedback" | "about" | "social"
 
 // Define sections with their components
 const sections = [
@@ -100,13 +97,6 @@ const sections = [
     icon: Info,
     description: "About Coasty",
     component: "about", // Special handling
-  },
-  {
-    id: "changelog" as SectionType,
-    label: "Changelog",
-    icon: GitBranch,
-    description: "See what's new in Coasty",
-    component: "changelog", // Special handling
   },
   {
     id: "social" as SectionType,
@@ -322,29 +312,6 @@ function AccountContent() {
                     <div className="space-y-6">
                       <AppInfoContent />
                     </div>
-                  ) : activeConfig?.component === "changelog" ? (
-                    <div className="p-5">
-                      <div className="text-center space-y-3">
-                        <GitBranch className="h-10 w-10 text-primary mx-auto" />
-                        <h3 className="text-base font-semibold">View Full Changelog</h3>
-                        <p className="text-sm text-muted-foreground">
-                          See all the new features and improvements.
-                        </p>
-                        <div className="flex flex-col gap-2 pt-2">
-                          <Button size="sm" asChild>
-                            <Link href="/changelog" target="_blank">
-                              <GitBranch className="mr-2 h-3.5 w-3.5" />
-                              View Changelog
-                            </Link>
-                          </Button>
-                          <Button variant="outline" size="sm" asChild>
-                            <Link href="https://github.com/coasty-ai" target="_blank">
-                              View on GitHub
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
                   ) : activeConfig?.component === "social" ? (
                     <div className="divide-y">
                       <a
@@ -527,29 +494,6 @@ function AccountContent() {
               ) : activeConfig?.component === "about" ? (
                 <div className="p-6">
                   <AppInfoContent />
-                </div>
-              ) : activeConfig?.component === "changelog" ? (
-                <div className="p-6">
-                  <div className="text-center space-y-4">
-                    <GitBranch className="h-12 w-12 text-primary mx-auto" />
-                    <h3 className="text-lg font-semibold">View Full Changelog</h3>
-                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                      Track our journey of continuous improvement. See all the new features, enhancements, and bug fixes we&apos;ve released.
-                    </p>
-                    <div className="flex gap-4 justify-center pt-4">
-                      <Button asChild>
-                        <Link href="/changelog" target="_blank">
-                          <GitBranch className="mr-2 h-4 w-4" />
-                          View Changelog
-                        </Link>
-                      </Button>
-                      <Button variant="outline" asChild>
-                        <Link href="https://github.com/coasty-ai" target="_blank">
-                          View on GitHub
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
                 </div>
               ) : activeConfig?.component === "social" ? (
                 <div className="p-6 space-y-6">

@@ -911,9 +911,6 @@ export default function BlogPage() {
                 <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Terms
                 </Link>
-                <Link href="/changelog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Changelog
-                </Link>
                 <Link href="/blog" className="text-sm text-primary hover:text-primary/80 transition-colors">
                   Blog
                 </Link>

@@ -231,7 +231,6 @@ test: add tests for browser agent
 1. **Update documentation** if needed (README, CLAUDE.md, etc.)
 2. **Add or update tests** for your changes
 3. **Ensure all tests pass** and code follows style guidelines
-4. **Update the CHANGELOG.md** if applicable
 5. **Fill out the PR template** completely
 6. **Request review** from maintainers
 

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { NoiseBackground } from "@/components/ui/noise-background"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { PointerHighlight } from "@/components/ui/pointer-highlight"
 // HeroParallaxChat removed — demo section is now static
 // SparklesCore available but not used in current hero design
@@ -12,7 +12,7 @@ import { Globe as GlobeComponent } from "@/components/magicui/globe"
 import { Tree, Folder, File, type TreeViewElement } from "@/components/magicui/file-tree"
 import { RainbowButton } from "@/components/magicui/rainbow-button"
 import { GridPattern } from "@/components/magicui/grid-pattern"
-import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, Github, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download } from "lucide-react"
+import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download, CalendarCheck, RefreshCw } from "lucide-react"
 import { WindowsIcon, AppleIcon } from "@/components/icons/platform-icons"
 import { CoastyIcon } from "@/components/icons/coasty"
 import Link from "next/link"
@@ -40,14 +40,14 @@ const brandSubtitle = Cormorant_Garamond({
 })
 
 const heroUseCases = [
-  "browse the web",
-  "write & debug code",
-  "analyze spreadsheets",
-  "fill out forms",
-  "research markets",
-  "automate workflows",
-  "manage files",
-  "test applications",
+  "browses the web",
+  "writes & debugs code",
+  "analyzes spreadsheets",
+  "fills out forms",
+  "researches markets",
+  "automates workflows",
+  "manages files",
+  "tests applications",
 ]
 
 const BRAND_SUBTITLE_TEXT = "I am designed to emulate you."
@@ -64,9 +64,9 @@ const features = [
     description: "Every command, every click, every action. Fully logged and reviewable. You always know exactly what your agent did and why. No black boxes.",
   },
   {
-    icon: Clock,
-    title: "Schedule Tasks Like a Human",
-    description: "Set it and forget it. Schedule recurring tasks and your agent runs them on autopilot — browsing, clicking, typing, just like a person sitting at the computer.",
+    icon: CalendarCheck,
+    title: "Your AI Calendar Assistant",
+    description: "Hand off your scheduling chaos. Your agent manages meetings, books appointments, sends follow-ups, and keeps your calendar organized — like a personal assistant who never forgets.",
   },
   {
     icon: Monitor,
@@ -169,30 +169,6 @@ const pricingPlans = [
     limitations: [],
     cta: "Get Pro",
     highlighted: false,
-  },
-]
-
-const testimonials = [
-  {
-    name: "Alex Chen",
-    role: "Senior Developer",
-    company: "Stripe",
-    content: "Perfect for quick tasks! I can spin up a VM, complete a 30-minute coding task, and move on. No setup headaches, just pure productivity.",
-    rating: 5,
-  },
-  {
-    name: "Sarah Johnson",
-    role: "Product Manager",
-    company: "Shopify",
-    content: "Finally, an AI that can handle those small but time-consuming tasks. Data analysis that took me hours now gets done in minutes. So easy to use!",
-    rating: 5,
-  },
-  {
-    name: "Mike Rodriguez",
-    role: "ML Engineer",
-    company: "Netflix",
-    content: "I use it for quick automation scripts and one-off tasks. The 1-hour limit is actually perfect - it keeps me focused and the AI works incredibly fast.",
-    rating: 5,
   },
 ]
 
@@ -323,6 +299,8 @@ export function LandingPage() {
   const [showPageContent, setShowPageContent] = useState(false)
   const [subtitleTypingDone, setSubtitleTypingDone] = useState(false)
   const [demoPlaying, setDemoPlaying] = useState(false)
+  const [demoLoaded, setDemoLoaded] = useState(false)
+  const [comparisonPlan, setComparisonPlan] = useState(2) // default to Plus (index 2)
   const { theme } = useTheme()
   const prefersReducedMotion = useReducedMotion()
   const searchParams = useSearchParams()
@@ -539,7 +517,7 @@ export function LandingPage() {
           )}
 
           {/* Soft radial glow behind content */}
-          <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-primary/[0.04] blur-3xl dark:bg-primary/[0.06]" />
+          <div className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[700px] rounded-full bg-primary/[0.03] blur-3xl dark:bg-primary/[0.05]" />
 
           <motion.div
             variants={containerVariants}
@@ -549,8 +527,8 @@ export function LandingPage() {
             className="relative z-10 w-full max-w-5xl"
           >
             {/* Badge */}
-            <motion.div variants={itemVariants} className="flex justify-center mb-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 backdrop-blur-sm px-4 py-1.5 shadow-sm">
+            <motion.div variants={itemVariants} className="flex justify-center mb-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-background/80 backdrop-blur-sm px-4 py-1.5">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
@@ -562,28 +540,37 @@ export function LandingPage() {
             </motion.div>
 
             {/* Headline */}
-            <motion.div variants={itemVariants} className="text-center mb-6">
+            <motion.div variants={itemVariants} className="text-center mb-5">
               <h1 className={cn(
-                "font-bold tracking-tight leading-[1.1]",
-                isMobile ? "text-4xl" : "text-5xl sm:text-6xl lg:text-7xl"
+                "tracking-tight leading-[1.15]",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl lg:text-6xl"
               )}>
-                <span className="text-foreground">Computer-Using AI Agents</span>
-                <br />
-                <span className="text-foreground">That </span>
-                {/* Fixed-width container: invisible longest text reserves space, animated text is layered on top */}
+                <span className="block text-foreground font-normal">Human-level work on a computer.</span>
+                <span className="block font-bold text-primary">1/50th the cost.</span>
+                <span className="block font-bold text-foreground">Fully secure.</span>
+              </h1>
+            </motion.div>
+
+            {/* Subheadline */}
+            <motion.div variants={itemVariants} className="text-center mb-8">
+              <p className={cn(
+                "text-muted-foreground mx-auto leading-relaxed",
+                isMobile ? "text-sm max-w-xs" : "text-base sm:text-lg max-w-xl"
+              )}>
+                Delegate real work to an AI employee that{" "}
                 <span className="relative inline-block align-bottom">
                   <span className={cn("invisible whitespace-nowrap", handwriting.className)} aria-hidden="true">
-                    analyze spreadsheets
+                    analyzes spreadsheets
                   </span>
                   <AnimatePresence mode="wait">
                     <motion.span
                       key={useCaseIndex}
-                      initial={{ y: 16, opacity: 0, filter: "blur(4px)" }}
+                      initial={{ y: 12, opacity: 0, filter: "blur(4px)" }}
                       animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                      exit={{ y: -16, opacity: 0, filter: "blur(4px)" }}
+                      exit={{ y: -12, opacity: 0, filter: "blur(4px)" }}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className={cn(
-                        "absolute inset-0 flex items-center justify-start whitespace-nowrap text-foreground",
+                        "absolute inset-0 flex items-center justify-start whitespace-nowrap text-primary font-semibold",
                         handwriting.className
                       )}
                     >
@@ -591,53 +578,56 @@ export function LandingPage() {
                     </motion.span>
                   </AnimatePresence>
                 </span>
-              </h1>
-            </motion.div>
-
-            {/* Subheadline */}
-            <motion.div variants={itemVariants} className="text-center mb-10">
-              <p className={cn(
-                "text-muted-foreground mx-auto leading-relaxed",
-                isMobile ? "text-base max-w-sm" : "text-lg max-w-2xl"
-              )}>
-                AI agents that control real computers. They browse, code, and
-                complete tasks end-to-end. Just describe what you need done.
               </p>
             </motion.div>
 
             {/* CTA Buttons */}
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
               <RainbowButton size="lg" className="w-full sm:w-auto" asChild>
                 <Link href="/auth">
-                  Start Automating for Free
+                  Get Started Free
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </RainbowButton>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto rounded-3xl" asChild>
-                <Link
-                  href="https://github.com/coasty-ai/open-computer-use"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Github className="mr-2 h-4 w-4" />
-                  We are Open Source
-                </Link>
-              </Button>
             </motion.div>
 
-            {/* Desktop app pill */}
-            <motion.div variants={itemVariants} className="flex justify-center mb-16">
+            {/* Cost comparison pill */}
+            <motion.div variants={itemVariants} className="flex justify-center mb-5">
+              <div className={cn(
+                "inline-flex items-center gap-2.5 rounded-full border border-border/50 bg-muted/30 backdrop-blur-sm",
+                isMobile ? "px-3.5 py-1.5" : "px-5 py-2"
+              )}>
+                <span className={cn("text-muted-foreground", isMobile ? "text-[11px]" : "text-xs sm:text-sm")}>
+                  Avg. hire <span className="font-semibold text-foreground">$3,000/mo</span>
+                </span>
+                <span className="h-3 w-px bg-border/60" />
+                <span className={cn("text-muted-foreground", isMobile ? "text-[11px]" : "text-xs sm:text-sm")}>
+                  Coasty <span className="font-semibold text-primary">$0/mo</span>
+                </span>
+                <span className="h-3 w-px bg-border/60" />
+                <span className={cn("text-muted-foreground", isMobile ? "text-[11px]" : "text-xs sm:text-sm")}>
+                  Save <span className="font-semibold text-emerald-500">$4,900/mo</span>
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Trust signals row */}
+            <motion.div variants={itemVariants} className="flex items-center justify-center gap-4 mb-14">
               <Link
                 href="/download"
-                className="group inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 backdrop-blur-sm px-4 py-2 shadow-sm hover:border-primary/30 transition-all"
+                className="group inline-flex items-center gap-2 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                <span className="text-xs sm:text-sm text-muted-foreground">Also available as a desktop app</span>
-                <span className="flex items-center gap-1.5 text-muted-foreground/60">
-                  <WindowsIcon className="h-3.5 w-3.5" />
-                  <AppleIcon className="h-3.5 w-3.5" />
+                <span className="flex items-center gap-1 text-muted-foreground/50">
+                  <WindowsIcon className="h-3 w-3" />
+                  <AppleIcon className="h-3 w-3" />
                 </span>
-                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                Desktop app
+                <ArrowRight className="h-3 w-3 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
               </Link>
+              <span className="h-3 w-px bg-border" />
+              <span className="text-xs sm:text-sm text-muted-foreground">No credit card required</span>
+              <span className="h-3 w-px bg-border" />
+              <span className="text-xs sm:text-sm text-muted-foreground">Open source</span>
             </motion.div>
 
             {/* Hero demo: iframe replay on desktop, GIF on mobile */}
@@ -654,52 +644,101 @@ export function LandingPage() {
                 />
               </motion.div>
             ) : (
-              <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/40" style={{ aspectRatio: "16 / 9" }}>
-                {demoPlaying ? (
+              <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/30 shadow-2xl shadow-primary/5" style={{ aspectRatio: "16 / 9" }}>
+                {/* Poster / play button — always rendered, hidden once iframe loads */}
+                <div
+                  className={cn(
+                    "absolute inset-0 z-10 flex items-center justify-center cursor-pointer bg-card/80 group transition-opacity duration-500",
+                    demoPlaying && demoLoaded ? "opacity-0 pointer-events-none" : "opacity-100"
+                  )}
+                  style={{
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                  }}
+                  onClick={() => setDemoPlaying(true)}
+                >
+                  <Image
+                    src="/Pi7_Gif.gif"
+                    alt=""
+                    fill
+                    className="object-cover opacity-30"
+                    unoptimized
+                  />
+                  <div className="relative z-10 flex flex-col items-center gap-3">
+                    {demoPlaying && !demoLoaded ? (
+                      <>
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-background/90 shadow-lg">
+                          <div className="h-5 w-5 border-2 border-muted-foreground/40 border-t-foreground rounded-full animate-spin" />
+                        </div>
+                        <span className="text-xs text-muted-foreground font-medium tracking-wide uppercase">Loading demo…</span>
+                      </>
+                    ) : !demoPlaying ? (
+                      <>
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-background/90 group-hover:bg-background group-hover:scale-105 transition-all duration-200 shadow-lg">
+                          <Play className="h-6 w-6 text-foreground/70 ml-0.5 group-hover:text-foreground transition-colors" />
+                        </div>
+                        <span className="text-xs text-muted-foreground font-medium tracking-wide uppercase">Watch demo</span>
+                      </>
+                    ) : null}
+                  </div>
+                </div>
+
+                {/* Iframe — mounted once user clicks play, stays mounted */}
+                {demoPlaying && (
                   <iframe
                     src="/share/60a0722b-fb98-43d6-a4e7-951d80a22363?embed=true&autoplay=true"
                     title="AI Agent sending an email — live session replay"
                     className="absolute inset-0 w-full h-full border-0"
                     allow="autoplay"
+                    loading="lazy"
+                    onLoad={() => setDemoLoaded(true)}
                   />
-                ) : (
-                  <div
-                    className="absolute inset-0 flex items-center justify-center cursor-pointer bg-card/80 group"
-                    style={{
-                      backdropFilter: 'blur(8px)',
-                      WebkitBackdropFilter: 'blur(8px)',
-                    }}
-                    onClick={() => setDemoPlaying(true)}
-                  >
-                    {/* Background GIF preview at low opacity */}
-                    <Image
-                      src="/Pi7_Gif.gif"
-                      alt=""
-                      fill
-                      className="object-cover opacity-30"
-                      unoptimized
-                    />
-                    {/* Play button */}
-                    <div className="relative z-10 flex flex-col items-center gap-4">
-                      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border/60 bg-card/70 group-hover:bg-card group-hover:scale-105 transition-all duration-200">
-                        <Play className="h-7 w-7 text-foreground/80 ml-0.5 group-hover:text-foreground transition-colors" />
-                      </div>
-                      <span className="text-sm text-muted-foreground font-medium">Watch the demo</span>
-                    </div>
-                  </div>
                 )}
               </motion.div>
             )}
-
-            {/* One-liner */}
-            <motion.p variants={itemVariants} className="mt-10 text-center text-sm text-muted-foreground">
-              No time limits. No rate limits. It runs until the job is done.
-            </motion.p>
           </motion.div>
         </section>
 
-        {/* OSWorld Benchmark Section */}
+
+        {/* Social Proof Bar */}
         <section className={cn(
+          "py-10",
+          isMobile ? "px-4" : "px-6"
+        )}>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className={cn(
+              "grid text-center",
+              isMobile ? "grid-cols-2 gap-6" : "grid-cols-4 gap-8"
+            )}>
+              {[
+                { value: "82%", label: "OSWorld Score", sublabel: "#1 Benchmark" },
+                { value: "50x", label: "Cheaper", sublabel: "Than hiring" },
+                { value: "24/7", label: "Uptime", sublabel: "Always on" },
+                { value: "<1 min", label: "Setup Time", sublabel: "Start instantly" },
+              ].map((stat) => (
+                <div key={stat.label}>
+                  <div className={cn(
+                    "font-bold tracking-tight text-foreground",
+                    isMobile ? "text-2xl" : "text-3xl"
+                  )}>
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+                  <div className="text-xs text-muted-foreground/60 mt-0.5">{stat.sublabel}</div>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* How It Works Section */}
+        <section id="how-it-works" className={cn(
           "py-20",
           isMobile ? "px-4" : "px-6"
         )}>
@@ -708,9 +747,497 @@ export function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-3xl mx-auto"
+            className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-10">
+            <motion.div variants={itemVariants} className="text-center mb-14">
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+              )}>
+                How It Works
+              </h2>
+              <p className={cn(
+                "text-muted-foreground mt-3",
+                isMobile ? "text-sm" : "text-base"
+              )}>
+                Three steps. No setup. No training.
+              </p>
+            </motion.div>
+
+            <div className={cn(
+              "grid gap-8",
+              isMobile ? "grid-cols-1" : "grid-cols-3"
+            )}>
+              {[
+                {
+                  step: "1",
+                  icon: MessageSquare,
+                  title: "Tell it what to do",
+                  description: "Describe the task in plain English. \"Research competitors and put the results in a spreadsheet.\" \"Fill out this form.\" \"Debug this code.\""
+                },
+                {
+                  step: "2",
+                  icon: Monitor,
+                  title: "It works on a real computer",
+                  description: "Your AI employee opens a browser, clicks, types, and navigates — just like a person sitting at a desk. You can watch it work in real time."
+                },
+                {
+                  step: "3",
+                  icon: Check,
+                  title: "Review the results",
+                  description: "When it's done, review the output. Download files, check the spreadsheet, verify the form. Full audit trail of every action taken."
+                }
+              ].map((item, i) => (
+                <motion.div
+                  key={item.step}
+                  variants={itemVariants}
+                  className="relative"
+                >
+                  {/* Connector line — desktop only, not on last item */}
+                  {!isMobile && i < 2 && (
+                    <div className="absolute top-10 left-[calc(50%+2rem)] right-[calc(-50%+2rem)] h-px border-t border-dashed border-border/60" />
+                  )}
+                  <div className="flex flex-col items-center text-center gap-4">
+                    <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-border/60 bg-card/80 shadow-sm">
+                      <item.icon className="h-8 w-8 text-foreground/70" />
+                      <span className="absolute -top-2.5 -right-2.5 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
+                        {item.step}
+                      </span>
+                    </div>
+                    <h3 className={cn(
+                      "font-semibold tracking-tight",
+                      isMobile ? "text-lg" : "text-xl"
+                    )}>
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+                      {item.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
+
+        {/* Cost Comparison */}
+        <section id="cost" className={cn(
+          "py-24",
+          isMobile ? "px-4" : "px-6"
+        )}>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-16">
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+              )}>
+                Why Pay More for Less?
+              </h2>
+              <p className={cn(
+                "text-muted-foreground mt-4 mx-auto leading-relaxed",
+                isMobile ? "text-sm max-w-xs" : "text-base max-w-lg"
+              )}>
+                The average virtual assistant costs $3,000/mo and works 8 hours a day. Coasty works around the clock for a fraction of the price.
+              </p>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <div className={cn(
+                "grid",
+                isMobile ? "grid-cols-1 gap-4" : "grid-cols-2 gap-5"
+              )}>
+                {/* Hiring column */}
+                <div className="relative rounded-2xl border border-border/30 bg-card/20 overflow-hidden">
+                  <div className={cn("border-b border-border/20", isMobile ? "px-5 pt-5 pb-4" : "px-8 pt-8 pb-6")}>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted/50">
+                        <Users className="h-5 w-5 text-muted-foreground/60" />
+                      </div>
+                      <div>
+                        <h3 className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Hiring a Human</h3>
+                        <p className="text-xs text-muted-foreground/50 mt-0.5">Virtual assistant or employee</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={cn(isMobile ? "px-5 py-4" : "px-8 py-6")}>
+                    {[
+                      { label: "Monthly cost", value: "$3,000 – $5,000", negative: true },
+                      { label: "Availability", value: "8 hrs/day, weekdays", negative: true },
+                      { label: "Ramp-up time", value: "2–4 weeks", negative: true },
+                      { label: "Sick days & PTO", value: "15–25 days/year", negative: true },
+                      { label: "Scaling", value: "Hire more people", negative: true },
+                      { label: "Audit trail", value: "None", negative: true },
+                    ].map((row) => (
+                      <div key={row.label} className={cn(
+                        "flex items-center justify-between py-3",
+                        "border-b border-border/10 last:border-0"
+                      )}>
+                        <span className={cn("text-muted-foreground/70", isMobile ? "text-xs" : "text-sm")}>{row.label}</span>
+                        <div className="flex items-center gap-2">
+                          <span className={cn("font-medium text-foreground/50", isMobile ? "text-xs" : "text-sm")}>{row.value}</span>
+                          {row.negative && <X className="h-3.5 w-3.5 text-destructive/40" />}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Coasty column */}
+                <div className="relative rounded-2xl border border-primary/25 overflow-hidden shadow-lg shadow-primary/5">
+                  {/* Subtle gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.06] via-primary/[0.02] to-transparent" />
+                  {/* Top accent line */}
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+
+                  <div className={cn("relative border-b border-primary/15", isMobile ? "px-5 pt-5 pb-4" : "px-8 pt-8 pb-6")}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/15">
+                          {mounted && (
+                            <Image
+                              src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                              alt="Coasty"
+                              width={22}
+                              height={22}
+                              className="h-[22px] w-[22px] object-contain"
+                            />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Coasty AI Employee</h3>
+                          <p className="text-xs text-muted-foreground/50 mt-0.5">AI-powered computer agent</p>
+                        </div>
+                      </div>
+                      <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-1 text-[10px] font-semibold text-primary uppercase tracking-wider">Recommended</span>
+                    </div>
+                  </div>
+                  <div className={cn("relative", isMobile ? "px-5 py-4" : "px-8 py-6")}>
+                    {[
+                      { label: "Monthly cost", value: "From $0/mo" },
+                      { label: "Availability", value: "24/7, no breaks" },
+                      { label: "Ramp-up time", value: "30 seconds" },
+                      { label: "Sick days & PTO", value: "Never" },
+                      { label: "Scaling", value: "Instant" },
+                      { label: "Audit trail", value: "Every action logged" },
+                    ].map((row) => (
+                      <div key={row.label} className={cn(
+                        "flex items-center justify-between py-3",
+                        "border-b border-primary/8 last:border-0"
+                      )}>
+                        <span className={cn("text-muted-foreground/70", isMobile ? "text-xs" : "text-sm")}>{row.label}</span>
+                        <div className="flex items-center gap-2">
+                          <span className={cn("font-semibold text-primary", isMobile ? "text-xs" : "text-sm")}>{row.value}</span>
+                          <Check className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="flex justify-center mt-12">
+              <div className={cn(
+                "inline-flex items-center gap-4 rounded-full border border-border/40 bg-muted/20 backdrop-blur-sm",
+                isMobile ? "px-4 py-2.5" : "px-6 py-3"
+              )}>
+                <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
+                  Save up to <span className="font-bold text-foreground">$4,900/mo</span>
+                </span>
+                <span className="h-4 w-px bg-border/50" />
+                <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
+                  <span className="font-bold text-primary">50x</span> cheaper
+                </span>
+              </div>
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* Use Cases by Persona */}
+        <section id="use-cases" className={cn(
+          "py-24 relative",
+          isMobile ? "px-4" : "px-6"
+        )}>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-16">
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+              )}>
+                Built for How <span className="text-primary">You</span> Work
+              </h2>
+              <p className={cn(
+                "text-muted-foreground mt-4 mx-auto leading-relaxed",
+                isMobile ? "text-sm max-w-xs" : "text-base max-w-lg"
+              )}>
+                Whatever your role, Coasty takes the busywork off your plate.
+              </p>
+            </motion.div>
+
+            <div className={cn(
+              "grid gap-4",
+              isMobile ? "grid-cols-1" : "grid-cols-2"
+            )}>
+              {[
+                {
+                  persona: "Startup Founder",
+                  pain: "I can't afford to hire, but I need things done.",
+                  tasks: ["Competitor research & market analysis", "Lead list building & outreach prep", "Financial model data entry", "Vendor comparisons & procurement"],
+                  icon: Rocket,
+                },
+                {
+                  persona: "Ops Manager",
+                  pain: "50 repetitive tasks are eating my team's time.",
+                  tasks: ["Automated report generation every Monday", "Invoice processing & data extraction", "Employee onboarding form filling", "Cross-system data syncing"],
+                  icon: RefreshCw,
+                },
+                {
+                  persona: "Solopreneur",
+                  pain: "I'm drowning in admin work.",
+                  tasks: ["Scheduling meetings & calendar management", "Email drafts & follow-ups", "Bookkeeping data entry", "Social media research & posting"],
+                  icon: Users,
+                },
+                {
+                  persona: "Agency Owner",
+                  pain: "I need to scale without scaling headcount.",
+                  tasks: ["Client reporting at scale", "Multi-account social management", "Bulk content research & briefs", "QA testing across client sites"],
+                  icon: Cpu,
+                },
+              ].map((item) => (
+                <motion.div
+                  key={item.persona}
+                  variants={itemVariants}
+                  className={cn(
+                    "group relative rounded-2xl border border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden",
+                    "transition-all duration-500 ease-out",
+                    "hover:border-foreground/20 hover:bg-card/60 hover:shadow-xl hover:shadow-black/5",
+                    "hover:-translate-y-0.5",
+                    isMobile ? "p-5" : "p-7"
+                  )}
+                >
+                  {/* Subtle top gradient accent */}
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-foreground/20 via-foreground/10 to-foreground/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="flex items-center gap-3.5 mb-5">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-foreground/5 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+                      <item.icon className="h-4.5 w-4.5 text-foreground/60" />
+                    </div>
+                    <div>
+                      <h3 className={cn(
+                        "font-semibold tracking-tight text-foreground leading-none",
+                        isMobile ? "text-sm" : "text-[15px]"
+                      )}>
+                        {item.persona}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <p className={cn(
+                    "text-muted-foreground/80 leading-relaxed mb-5 pl-0.5",
+                    isMobile ? "text-xs" : "text-sm"
+                  )}>
+                    &ldquo;{item.pain}&rdquo;
+                  </p>
+
+                  <div className="space-y-2.5 pl-0.5">
+                    {item.tasks.map((task) => (
+                      <div key={task} className="flex items-center gap-2.5">
+                        <div className="h-1 w-1 rounded-full flex-shrink-0 bg-foreground/30" />
+                        <span className={cn(
+                          "text-muted-foreground/70 leading-snug",
+                          isMobile ? "text-xs" : "text-[13px]"
+                        )}>{task}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div variants={itemVariants} className="flex justify-center mt-12">
+              <RainbowButton size="lg" asChild>
+                <Link href="/auth">
+                  Start Delegating Work
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </RainbowButton>
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* Demo Section */}
+        <section id="demo" className={cn(
+          "py-20 relative",
+          isMobile ? "px-4" : "px-6"
+        )}>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-12">
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+              )}>
+                See It in Action
+              </h2>
+              <p className={cn(
+                "text-muted-foreground",
+                isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
+              )}>
+                Real sessions. No scripts. No edits.
+              </p>
+            </motion.div>
+
+            <motion.div
+              variants={itemVariants}
+              className={cn(
+                "grid gap-4",
+                isMobile ? "grid-cols-1" : "grid-cols-2"
+              )}
+            >
+              {demoChatSessions.map((demo) => (
+                <Link
+                  key={demo.chatId}
+                  href={`/share/${demo.chatId}`}
+                  target="_blank"
+                  className="group relative"
+                >
+                  <div className={cn(
+                    "relative h-full rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden",
+                    "transition-all duration-300",
+                    "hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5",
+                    "hover:-translate-y-1",
+                    isMobile ? "p-5" : "p-6"
+                  )}>
+                    {/* Subtle gradient bg */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                    <div className="relative h-full flex flex-col gap-4">
+                      {/* Tag */}
+                      <div className="flex items-center justify-between">
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-muted-foreground/70">
+                          <span className="h-1 w-1 rounded-full bg-emerald-500" />
+                          {demo.tag}
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
+                      </div>
+
+                      {/* Title */}
+                      <h3 className={cn(
+                        "font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors duration-200",
+                        isMobile ? "text-lg" : "text-xl"
+                      )}>
+                        {demo.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                        {demo.description}
+                      </p>
+
+                      {/* Footer */}
+                      <div className="flex items-center gap-2 pt-2">
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60">
+                          <Play className="h-3 w-3" />
+                          <span>Watch session</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* Features Section */}
+        <section id="features" className={cn(
+          "py-20",
+          isMobile ? "px-4" : "px-6"
+        )}>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-12">
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+              )}>
+                Your Full-Stack AI Employee
+              </h2>
+              <p className={cn(
+                "text-muted-foreground",
+                isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
+              )}>
+                Every capability a remote worker would have — and more
+              </p>
+            </motion.div>
+            
+            <BentoGrid className={cn(
+              "w-full",
+              isMobile
+                ? "grid-cols-1 auto-rows-[18rem]"
+                : "grid-cols-1 sm:grid-cols-2 auto-rows-[20rem]"
+            )}>
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  variants={itemVariants}
+                  className={cn(index === 0 && !isMobile && "col-span-2")}
+                >
+                  <BentoCard
+                    name={feature.title}
+                    className="h-full col-span-1"
+                    background={
+                      <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                        <feature.icon className="h-32 w-32" />
+                      </div>
+                    }
+                    Icon={feature.icon}
+                    description={feature.description}
+                    href="/auth"
+                    cta="Get started"
+                  />
+                </motion.div>
+              ))}
+            </BentoGrid>
+          </motion.div>
+        </section>
+
+        {/* OSWorld Benchmark Section */}
+        <section className={cn(
+          "py-14",
+          isMobile ? "px-4" : "px-6"
+        )}>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-6">
               <h2 className={cn(
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
@@ -887,153 +1414,6 @@ export function LandingPage() {
           </motion.div>
         </section>
 
-        {/* Features Section */}
-        <section id="features" className={cn(
-          "py-20",
-          isMobile ? "px-4" : "px-6"
-        )}>
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-            className="max-w-7xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className="text-center mb-12">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
-              )}>
-                Everything You Need for AI Productivity
-              </h2>
-              <p className={cn(
-                "text-muted-foreground",
-                isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
-              )}>
-                Powerful features that make AI work for you
-              </p>
-            </motion.div>
-            
-            <BentoGrid className={cn(
-              "w-full",
-              isMobile
-                ? "grid-cols-1 auto-rows-[18rem]"
-                : "grid-cols-1 sm:grid-cols-2 auto-rows-[20rem]"
-            )}>
-              {features.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  variants={itemVariants}
-                  className={cn(index === 0 && !isMobile && "col-span-2")}
-                >
-                  <BentoCard
-                    name={feature.title}
-                    className="h-full col-span-1"
-                    background={
-                      <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                        <feature.icon className="h-32 w-32" />
-                      </div>
-                    }
-                    Icon={feature.icon}
-                    description={feature.description}
-                    href="/auth"
-                    cta="Get started"
-                  />
-                </motion.div>
-              ))}
-            </BentoGrid>
-          </motion.div>
-        </section>
-
-        {/* Demo Section */}
-        <section id="demo" className={cn(
-          "py-20 relative",
-          isMobile ? "px-4" : "px-6"
-        )}>
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-            className="max-w-4xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className="text-center mb-12">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
-              )}>
-                See It in Action
-              </h2>
-              <p className={cn(
-                "text-muted-foreground",
-                isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
-              )}>
-                Real sessions. No scripts. No edits.
-              </p>
-            </motion.div>
-
-            <motion.div
-              variants={itemVariants}
-              className={cn(
-                "grid gap-4",
-                isMobile ? "grid-cols-1" : "grid-cols-2"
-              )}
-            >
-              {demoChatSessions.map((demo) => (
-                <Link
-                  key={demo.chatId}
-                  href={`/share/${demo.chatId}`}
-                  target="_blank"
-                  className="group relative"
-                >
-                  <div className={cn(
-                    "relative h-full rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden",
-                    "transition-all duration-300",
-                    "hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5",
-                    "hover:-translate-y-1",
-                    isMobile ? "p-5" : "p-6"
-                  )}>
-                    {/* Subtle gradient bg */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                    <div className="relative h-full flex flex-col gap-4">
-                      {/* Tag */}
-                      <div className="flex items-center justify-between">
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-muted-foreground/70">
-                          <span className="h-1 w-1 rounded-full bg-emerald-500" />
-                          {demo.tag}
-                        </span>
-                        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
-                      </div>
-
-                      {/* Title */}
-                      <h3 className={cn(
-                        "font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors duration-200",
-                        isMobile ? "text-lg" : "text-xl"
-                      )}>
-                        {demo.title}
-                      </h3>
-
-                      {/* Description */}
-                      <p className="text-sm text-muted-foreground leading-relaxed flex-1">
-                        {demo.description}
-                      </p>
-
-                      {/* Footer */}
-                      <div className="flex items-center gap-2 pt-2">
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60">
-                          <Play className="h-3 w-3" />
-                          <span>Watch session</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </motion.div>
-          </motion.div>
-        </section>
-
         {/* Pricing Section */}
         <section id="pricing" className={cn(
           "py-20",
@@ -1061,149 +1441,283 @@ export function LandingPage() {
               </p>
             </motion.div>
 
+            {/* Plan pills with prices */}
             <div className={cn(
-              "grid gap-4",
-              isMobile
-                ? "grid-cols-1"
-                : "grid-cols-1 md:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto items-start"
+              "flex items-center justify-center gap-2 mb-10 flex-wrap",
+              isMobile ? "gap-1.5" : "gap-2"
             )}>
-              {pricingPlans.map((plan, index) => (
-                <motion.div
+              {pricingPlans.map((plan, i) => (
+                <button
                   key={plan.name}
-                  variants={itemVariants}
-                  className="h-full"
+                  onClick={() => setComparisonPlan(i)}
+                  className={cn(
+                    "relative rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5",
+                    isMobile ? "px-3 py-2" : "px-4 py-2.5",
+                    comparisonPlan === i
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
                 >
-                  <div className={cn(
-                    "relative h-full rounded-xl border p-6 transition-shadow duration-200",
-                    plan.highlighted
-                      ? "border-primary bg-primary/[0.03] shadow-sm shadow-primary/10"
-                      : "border-border"
+                  {plan.name}
+                  <span className={cn(
+                    "text-xs font-normal",
+                    comparisonPlan === i ? "text-primary-foreground/70" : "text-muted-foreground/60"
                   )}>
-                    {plan.badge && (
-                      <div className="absolute -top-2.5 left-4">
-                        <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-medium text-primary-foreground">
-                          {plan.badge}
-                        </span>
-                      </div>
-                    )}
+                    {plan.price}
+                  </span>
+                  {plan.badge && comparisonPlan !== i && (
+                    <span className="absolute -top-1.5 -right-1.5 flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                    </span>
+                  )}
+                </button>
+              ))}
+              <Link
+                href="mailto:founders@coasty.ai"
+                className={cn(
+                  "rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5 bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground",
+                  isMobile ? "px-3 py-2" : "px-4 py-2.5"
+                )}
+              >
+                <span className="leading-none">Enterprise</span>
+                <span className="text-xs font-normal text-muted-foreground/60 leading-none">Custom</span>
+              </Link>
+            </div>
 
-                    <div className="mb-5">
-                      <h3 className="text-sm font-medium text-muted-foreground">{plan.name}</h3>
-                      <div className="mt-2 flex items-baseline gap-1">
-                        <span className="text-4xl font-semibold tracking-tight">{plan.price}</span>
-                        <span className="text-sm text-muted-foreground">/{plan.period}</span>
-                      </div>
-                      <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{plan.description}</p>
-                    </div>
+            {/* Selected plan detail + comparison */}
+            {(() => {
+              const plan = pricingPlans[comparisonPlan]
+              // Tier-appropriate human equivalent costs
+              const humanCost = plan.price === "$0" ? "$800" : plan.price === "$19" ? "$1,500" : plan.price === "$50" ? "$3,000" : "$5,000"
+              const humanCostNum = plan.price === "$0" ? 800 : plan.price === "$19" ? 1500 : plan.price === "$50" ? 3000 : 5000
+              const coastyCostNum = plan.price === "$0" ? 0 : plan.price === "$19" ? 19 : plan.price === "$50" ? 50 : 100
+              const savings = (humanCostNum - coastyCostNum).toLocaleString()
 
-                    <div className="mb-5 flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2">
-                      <CoastyIcon className="h-4 w-4 text-primary flex-shrink-0" />
-                      <span className="text-sm font-medium">
-                        {typeof plan.agentMinutes === 'string'
-                          ? plan.agentMinutes
-                          : <>
-                              {`${(plan.agentMinutes * 10).toLocaleString()} credits`}
-                              <span className="text-muted-foreground font-normal">/month</span>
-                            </>
-                        }
+              const rows: { label: string; coasty: string | boolean; human: string | boolean }[] = [
+                { label: "Monthly cost", coasty: `${plan.price}/mo`, human: `${humanCost}/mo` },
+                { label: "You save", coasty: `$${savings}/mo`, human: "$0" },
+                { label: "Available", coasty: "24/7, no breaks", human: plan.price === "$0" ? "~4 hrs/week" : plan.price === "$19" ? "~5 hrs/day" : plan.price === "$50" ? "~8 hrs/day" : "~8 hrs/day" },
+                { label: "Start working in", coasty: "30 seconds", human: plan.price === "$0" ? "1-2 weeks" : plan.price === "$19" ? "1-2 weeks" : "2-4 weeks" },
+                { label: "Sick days & PTO", coasty: "Never", human: plan.price === "$0" ? "N/A (freelancer)" : "15-25 days/yr" },
+                { label: "Full audit trail", coasty: true, human: false },
+                { label: "Scale up instantly", coasty: true, human: false },
+                { label: "No HR or overhead", coasty: true, human: plan.price === "$0" },
+                { label: "Cancel anytime", coasty: true, human: plan.price === "$0" },
+              ]
+
+              const timeSaved = plan.price === "$0" ? "30 min" : plan.price === "$19" ? "6-12 hrs" : plan.price === "$50" ? "18-24 hrs" : "24-36 hrs"
+              const multiplier = plan.price === "$0" ? "Free" : plan.price === "$19" ? "79x" : plan.price === "$50" ? "60x" : "50x"
+
+              return (
+                <>
+                  {/* Savings highlight pill */}
+                  <motion.div
+                    key={`pill-${plan.name}`}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex justify-center mb-8"
+                  >
+                    <div className="inline-flex items-center gap-3 rounded-full border border-border bg-muted/40 px-5 py-2.5 shadow-sm">
+                      <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
+                        Save <span className="font-semibold text-foreground">${savings}/mo</span>
+                      </span>
+                      <span className="h-3.5 w-px bg-border" />
+                      <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
+                        <span className="font-semibold text-foreground">{timeSaved}</span> saved monthly
+                      </span>
+                      <span className="h-3.5 w-px bg-border" />
+                      <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
+                        <span className="font-semibold text-foreground">{multiplier}</span> cheaper
                       </span>
                     </div>
+                  </motion.div>
 
-                    <Button
+                  <div className={cn(
+                    "grid gap-6",
+                    isMobile ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
+                  )}>
+                    {/* Left column — Coasty plan details */}
+                    <motion.div
+                      key={plan.name}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.25 }}
                       className={cn(
-                        "w-full mb-6",
-                        plan.highlighted
-                          ? ""
-                          : "hover:bg-primary hover:text-primary-foreground"
+                        "relative rounded-xl border p-6",
+                        "border-primary/30 bg-gradient-to-b from-primary/[0.06] to-primary/[0.02] shadow-sm shadow-primary/10"
                       )}
-                      variant={plan.highlighted ? "default" : "outline"}
-                      size="sm"
-                      asChild
                     >
-                      <Link href="/auth">
-                        {plan.cta}
-                        <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                      </Link>
-                    </Button>
-
-                    <div className="space-y-2.5">
-                      {plan.features.map((feature) => (
-                        <div key={feature} className="flex items-start gap-2">
-                          <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                          <span className="text-sm text-muted-foreground">{feature}</span>
+                      {plan.badge && (
+                        <div className="absolute -top-2.5 left-4">
+                          <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-medium text-primary-foreground">
+                            {plan.badge}
+                          </span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </section>
+                      )}
 
-        {/* Testimonials Section */}
-        <section id="testimonials" className={cn(
-          "py-20",
-          isMobile ? "px-4" : "px-6"
-        )}>
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-            className="max-w-7xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className="text-center mb-12">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
-              )}>
-                Loved by Teams Worldwide
-              </h2>
-              <p className={cn(
-                "text-muted-foreground",
-                isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
-              )}>
-                See what our users are saying
-              </p>
-            </motion.div>
-            
-            <div className={cn(
-              "grid gap-8",
-              isMobile 
-                ? "grid-cols-1" 
-                : "grid-cols-1 lg:grid-cols-3"
-            )}>
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={testimonial.name}
-                  variants={itemVariants}
-                  {...(!isMobile && { whileHover: { scale: 1.02 } })}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Card className="border-muted/50 hover:border-primary/50 transition-all hover:shadow-lg">
-                    <CardHeader>
-                      <div className="flex gap-1 mb-4">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 fill-primary text-primary" />
+                      <div className="mb-5">
+                        <div className="flex items-center gap-2">
+                          <CoastyIcon className="h-5 w-5 text-primary" />
+                          <h3 className="text-sm font-semibold text-primary">Coasty {plan.name}</h3>
+                        </div>
+                        <div className="mt-3 flex items-baseline gap-1">
+                          <span className="text-4xl font-semibold tracking-tight text-foreground">{plan.price}</span>
+                          <span className="text-sm text-muted-foreground">/{plan.period}</span>
+                        </div>
+                        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{plan.description}</p>
+                      </div>
+
+                      <div className="mb-5 flex items-center gap-2 rounded-lg bg-primary/[0.08] border border-primary/10 px-3 py-2">
+                        <Zap className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                        <span className="text-sm font-medium text-foreground">
+                          {typeof plan.agentMinutes === 'string'
+                            ? plan.agentMinutes
+                            : <>
+                                {`${(plan.agentMinutes * 10).toLocaleString()} credits`}
+                                <span className="text-muted-foreground font-normal">/month</span>
+                              </>
+                          }
+                        </span>
+                      </div>
+
+                      <Button
+                        className={cn(
+                          "w-full mb-6",
+                          plan.highlighted
+                            ? ""
+                            : "hover:bg-primary hover:text-primary-foreground"
+                        )}
+                        variant={plan.highlighted ? "default" : "outline"}
+                        size="sm"
+                        asChild
+                      >
+                        <Link href="/auth">
+                          {plan.cta}
+                          <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                        </Link>
+                      </Button>
+
+                      <div className="space-y-2.5">
+                        {plan.features.map((feature) => (
+                          <div key={feature} className="flex items-start gap-2">
+                            <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-muted-foreground">{feature}</span>
+                          </div>
                         ))}
                       </div>
-                      <CardDescription className="text-base">
-                        "{testimonial.content}"
-                      </CardDescription>
-                    </CardHeader>
-                    <CardFooter>
-                      <div>
-                        <p className="font-semibold">{testimonial.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {testimonial.role} at {testimonial.company}
-                        </p>
+                    </motion.div>
+
+                    {/* Right column — Comparison table */}
+                    <motion.div
+                      key={`compare-${plan.name}`}
+                      initial={{ opacity: 0, x: 12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.25, delay: 0.05 }}
+                      className="flex flex-col"
+                    >
+                      <div className="rounded-xl border border-border overflow-hidden flex-1">
+                        {/* Table header */}
+                        <div className="grid grid-cols-3 border-b border-border bg-muted/30">
+                          <div className="p-4" />
+                          <div className="p-4 text-center border-l border-primary/20 bg-primary/[0.04]">
+                            <div className={cn("font-semibold text-primary", isMobile ? "text-xs" : "text-sm")}>
+                              Coasty {plan.name}
+                            </div>
+                            <div className={cn("font-bold text-primary mt-1", isMobile ? "text-lg" : "text-xl")}>
+                              {plan.price}<span className="text-xs font-normal text-primary/60">/mo</span>
+                            </div>
+                          </div>
+                          <div className="p-4 text-center border-l border-border">
+                            <div className={cn("font-semibold text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
+                              Human Equivalent
+                            </div>
+                            <div className={cn("font-bold text-muted-foreground mt-1 line-through decoration-destructive/50", isMobile ? "text-lg" : "text-xl")}>
+                              {humanCost}<span className="text-xs font-normal no-underline">/mo</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Table rows */}
+                        {rows.map((row, i) => (
+                          <div
+                            key={row.label}
+                            className={cn(
+                              "grid grid-cols-3",
+                              i < rows.length - 1 && "border-b border-border",
+                              i % 2 === 1 && "bg-muted/20"
+                            )}
+                          >
+                            <div className={cn("p-3 flex items-center", isMobile ? "text-xs px-2.5" : "text-sm")}>
+                              <span className="font-medium text-foreground">{row.label}</span>
+                            </div>
+                            <div className={cn(
+                              "p-3 flex items-center justify-center border-l",
+                              "border-primary/20 bg-primary/[0.02]"
+                            )}>
+                              {typeof row.coasty === "boolean" ? (
+                                row.coasty
+                                  ? <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary/10"><Check className="h-3.5 w-3.5 text-primary" /></div>
+                                  : <X className="h-4 w-4 text-muted-foreground/40" />
+                              ) : (
+                                <span className={cn(
+                                  "font-semibold text-primary",
+                                  isMobile ? "text-xs" : "text-sm"
+                                )}>
+                                  {row.coasty}
+                                </span>
+                              )}
+                            </div>
+                            <div className="p-3 flex items-center justify-center border-l border-border">
+                              {typeof row.human === "boolean" ? (
+                                row.human
+                                  ? <Check className="h-4 w-4 text-muted-foreground/60" />
+                                  : <X className="h-4 w-4 text-destructive/40" />
+                              ) : (
+                                <span className={cn(
+                                  "font-medium text-muted-foreground",
+                                  isMobile ? "text-xs" : "text-sm"
+                                )}>
+                                  {row.human}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </CardFooter>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
+                    </motion.div>
+                  </div>
+                </>
+              )
+            })()}
+
+            {/* Enterprise pill */}
+            <motion.div variants={itemVariants} className={cn(
+              "mt-12 rounded-2xl border border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden",
+              isMobile ? "p-5" : "p-8"
+            )}>
+              <div className={cn(
+                "flex items-center justify-between gap-6",
+                isMobile && "flex-col text-center"
+              )}>
+                <div className={cn("flex-1", isMobile ? "space-y-2" : "space-y-1")}>
+                  <div className="flex items-center gap-2.5" style={isMobile ? { justifyContent: "center" } : undefined}>
+                    <h3 className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>Enterprise</h3>
+                    <span className="rounded-full bg-foreground/5 border border-border/50 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Custom</span>
+                  </div>
+                  <p className={cn("text-muted-foreground leading-relaxed", isMobile ? "text-xs" : "text-sm")}>
+                    Custom credits, dedicated VMs, SLA guarantees, SSO, priority support, and tailored onboarding for your team.
+                  </p>
+                </div>
+                <Button variant="outline" className="flex-shrink-0 gap-2" asChild>
+                  <Link href="mailto:founders@coasty.ai">
+                    Contact Us
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </Button>
+              </div>
+            </motion.div>
           </motion.div>
         </section>
 
@@ -1217,7 +1731,7 @@ export function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-4xl mx-auto"
+            className="max-w-5xl mx-auto"
           >
             <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className={cn(
@@ -1284,7 +1798,7 @@ export function LandingPage() {
         <footer className="py-12">
           <div className={cn(
             "mx-auto",
-            isMobile ? "px-4 max-w-xl" : "px-6 max-w-7xl"
+            isMobile ? "px-4 max-w-xl" : "px-6 max-w-5xl"
           )}>
             <div className={cn(
               "flex justify-between items-center",
