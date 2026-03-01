@@ -134,12 +134,13 @@ class TaskScheduler:
                     if chat_id in self.running_tasks:
                         running_task = self.running_tasks[chat_id]
                         if not running_task.done():
-                            # Cancel tasks stuck longer than 30 minutes
+                            # Cancel tasks stuck longer than max timeout
                             start_time = getattr(running_task, '_start_time', None)
-                            if start_time and (now - start_time).total_seconds() > 1800:
+                            max_timeout = settings.SCHEDULED_TASK_MAX_TIMEOUT
+                            if start_time and (now - start_time).total_seconds() > max_timeout:
                                 logger.warning(
                                     f"Cancelling stuck task for chat {chat_id} "
-                                    f"(running for >30min)"
+                                    f"(running for >{max_timeout // 60}min)"
                                 )
                                 running_task.cancel()
                                 del self.running_tasks[chat_id]
@@ -246,7 +247,8 @@ class TaskScheduler:
                 )
                 return
 
-            # Execute with a 30-minute timeout to prevent indefinite hanging
+            # Execute with configurable max timeout as safety net
+            max_timeout = settings.SCHEDULED_TASK_MAX_TIMEOUT
             try:
                 result = await asyncio.wait_for(
                     execute_scheduled_chat(
@@ -256,15 +258,16 @@ class TaskScheduler:
                         model=schedule.get("model"),
                         task_prompt_override=schedule.get("task_prompt"),
                     ),
-                    timeout=1800,  # 30 minutes max
+                    timeout=max_timeout,
                 )
             except asyncio.TimeoutError:
+                max_min = max_timeout // 60
                 logger.warning(
-                    f"Scheduled task {chat_id} timed out after 30 minutes"
+                    f"Scheduled task {chat_id} timed out after {max_min} minutes"
                 )
                 await self._finalize_execution(
                     chat_id, user_id, "failed",
-                    error="Execution timed out (30 min limit)",
+                    error=f"Execution timed out ({max_min} min limit)",
                     success=False, trigger=trigger,
                 )
                 return

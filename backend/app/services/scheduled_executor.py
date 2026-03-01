@@ -27,6 +27,18 @@ db_service = DatabaseService()
 provider_factory = ProviderFactory()
 
 
+async def _iter_with_idle_timeout(aiter, idle_timeout_sec: int):
+    """Wrap an async iterator to raise TimeoutError if no item arrives within idle_timeout_sec."""
+    ait = aiter.__aiter__()
+    while True:
+        try:
+            chunk = await asyncio.wait_for(ait.__anext__(), timeout=idle_timeout_sec)
+            yield chunk
+        except StopAsyncIteration:
+            return
+        # asyncio.TimeoutError propagates up naturally
+
+
 def _build_message_parts(tool_invocations: List[Dict]) -> List[Dict]:
     """Transform tool invocations into the parts format expected by the DB."""
     parts = []
@@ -350,104 +362,119 @@ async def execute_scheduled_chat(
         all_tool_invocations: List[Dict] = []
         assistant_message_id: Optional[str] = None
         message_group_id = str(uuid.uuid4())
+        idle_timeout = settings.SCHEDULED_TASK_IDLE_TIMEOUT
 
-        async for chunk in executor.stream_execution(task_prompt, None, None):
-            # Check if another request force-stopped this execution
-            if vm_control_service.get_cancellation_event(machine_id).is_set():
-                logger.info(f"Scheduled execution on {machine_id} force-stopped")
-                all_content += "\n[Execution stopped: machine taken over by another task]\n"
-                completion_status = "cancelled"
-                break
+        try:
+            async for chunk in _iter_with_idle_timeout(
+                executor.stream_execution(task_prompt, None, None),
+                idle_timeout,
+            ):
+                # Check if another request force-stopped this execution
+                if vm_control_service.get_cancellation_event(machine_id).is_set():
+                    logger.info(f"Scheduled execution on {machine_id} force-stopped")
+                    all_content += "\n[Execution stopped: machine taken over by another task]\n"
+                    completion_status = "cancelled"
+                    break
 
-            chunk_type = chunk.get("type")
+                chunk_type = chunk.get("type")
 
-            if chunk_type == "text":
-                content = chunk.get("content", "")
-                if content:
-                    all_content += content
+                if chunk_type == "text":
+                    content = chunk.get("content", "")
+                    if content:
+                        all_content += content
 
-            elif chunk_type == "tool_call":
-                tool_call = {
-                    "toolCallId": chunk.get("toolCallId")
-                    or chunk.get("id", str(uuid.uuid4())),
-                    "toolName": chunk.get("toolName")
-                    or chunk.get("tool")
-                    or chunk.get("name", ""),
-                    "args": chunk.get("args") or {},
-                }
-                all_tool_invocations.append(tool_call)
+                elif chunk_type == "tool_call":
+                    tool_call = {
+                        "toolCallId": chunk.get("toolCallId")
+                        or chunk.get("id", str(uuid.uuid4())),
+                        "toolName": chunk.get("toolName")
+                        or chunk.get("tool")
+                        or chunk.get("name", ""),
+                        "args": chunk.get("args") or {},
+                    }
+                    all_tool_invocations.append(tool_call)
 
-            elif chunk_type == "tool_result":
-                tool_call_id = chunk.get("toolCallId") or chunk.get("id", "")
-                result = chunk.get("result")
-                for inv in all_tool_invocations:
-                    if inv.get("toolCallId") == tool_call_id:
-                        inv["result"] = result
-                        break
+                elif chunk_type == "tool_result":
+                    tool_call_id = chunk.get("toolCallId") or chunk.get("id", "")
+                    result = chunk.get("result")
+                    for inv in all_tool_invocations:
+                        if inv.get("toolCallId") == tool_call_id:
+                            inv["result"] = result
+                            break
 
-            elif chunk_type == "step_complete":
-                step_num = chunk.get("step", 0)
-                step_content = chunk.get("content", all_content)
-                step_tools = chunk.get("tool_invocations", all_tool_invocations)
+                elif chunk_type == "step_complete":
+                    step_num = chunk.get("step", 0)
+                    step_content = chunk.get("content", all_content)
+                    step_tools = chunk.get("tool_invocations", all_tool_invocations)
 
-                # Bill this step
-                try:
-                    billing_info = await agent_billing_service.charge_step(
-                        billing_session_id, step_num
-                    )
-                    if billing_info.get("charged", 0) > 0:
-                        credits_charged += billing_info["charged"]
-                    if billing_info.get("should_stop"):
-                        logger.warning(
-                            f"Scheduled task {chat_id} stopped: out of credits"
+                    # Bill this step
+                    try:
+                        billing_info = await agent_billing_service.charge_step(
+                            billing_session_id, step_num
                         )
-                        all_content += "\n[Scheduled run ended: insufficient credits]\n"
-                        completion_status = "cancelled"
-                        break
-                except Exception as e:
-                    logger.error(f"Step billing error: {e}")
+                        if billing_info.get("charged", 0) > 0:
+                            credits_charged += billing_info["charged"]
+                        if billing_info.get("should_stop"):
+                            logger.warning(
+                                f"Scheduled task {chat_id} stopped: out of credits"
+                            )
+                            all_content += "\n[Scheduled run ended: insufficient credits]\n"
+                            completion_status = "cancelled"
+                            break
+                    except Exception as e:
+                        logger.error(f"Step billing error: {e}")
 
-                # Incremental DB save
-                try:
-                    if assistant_message_id is None:
-                        save_result = await _store_message(
+                    # Incremental DB save
+                    try:
+                        if assistant_message_id is None:
+                            save_result = await _store_message(
+                                chat_id=chat_id,
+                                content=step_content,
+                                tool_invocations=step_tools,
+                                model=bedrock_model,
+                                message_group_id=message_group_id,
+                            )
+                            if save_result:
+                                assistant_message_id = save_result.get("id")
+                        else:
+                            await _update_message(
+                                assistant_message_id, step_content, step_tools
+                            )
+                    except Exception as e:
+                        logger.error(f"Step DB save error: {e}")
+
+                elif chunk_type == "error":
+                    error_content = chunk.get("content", "Unknown error")
+                    all_content += f"\n{error_content}\n"
+                    error_message = str(error_content)
+
+                elif chunk_type == "finish":
+                    completion_status = "completed"
+                    final_content = chunk.get("content", "") or all_content
+                    final_tools = chunk.get("tool_invocations", all_tool_invocations)
+
+                    if assistant_message_id:
+                        await _update_message(
+                            assistant_message_id, final_content, final_tools
+                        )
+                    else:
+                        await _store_message(
                             chat_id=chat_id,
-                            content=step_content,
-                            tool_invocations=step_tools,
+                            content=final_content,
+                            tool_invocations=final_tools,
                             model=bedrock_model,
                             message_group_id=message_group_id,
                         )
-                        if save_result:
-                            assistant_message_id = save_result.get("id")
-                    else:
-                        await _update_message(
-                            assistant_message_id, step_content, step_tools
-                        )
-                except Exception as e:
-                    logger.error(f"Step DB save error: {e}")
 
-            elif chunk_type == "error":
-                error_content = chunk.get("content", "Unknown error")
-                all_content += f"\n{error_content}\n"
-                error_message = str(error_content)
-
-            elif chunk_type == "finish":
-                completion_status = "completed"
-                final_content = chunk.get("content", "") or all_content
-                final_tools = chunk.get("tool_invocations", all_tool_invocations)
-
-                if assistant_message_id:
-                    await _update_message(
-                        assistant_message_id, final_content, final_tools
-                    )
-                else:
-                    await _store_message(
-                        chat_id=chat_id,
-                        content=final_content,
-                        tool_invocations=final_tools,
-                        model=bedrock_model,
-                        message_group_id=message_group_id,
-                    )
+        except asyncio.TimeoutError:
+            idle_min = idle_timeout // 60
+            logger.warning(
+                f"Scheduled task {chat_id} idle timeout: "
+                f"no activity for {idle_min} minutes on machine {machine_id}"
+            )
+            all_content += f"\n[Execution timed out: no activity for {idle_min} minutes]\n"
+            completion_status = "failed"
+            error_message = f"No activity for {idle_min} minutes"
 
         # If no finish event was received, save whatever we have
         if completion_status == "failed" and all_content:

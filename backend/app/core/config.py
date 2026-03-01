@@ -101,6 +101,8 @@ class Settings(BaseSettings):
     SCHEDULER_POLL_INTERVAL: int = Field(default=60)  # seconds
     MAX_CONSECUTIVE_FAILURES: int = Field(default=5)
     SCHEDULE_LIMITS: str = Field(default="free:3,basic:3,pro:10,enterprise:50")
+    SCHEDULED_TASK_IDLE_TIMEOUT: int = Field(default=300)  # 5 min — no chunk = stuck
+    SCHEDULED_TASK_MAX_TIMEOUT: int = Field(default=5400)  # 90 min — absolute wall-clock cap
     
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
