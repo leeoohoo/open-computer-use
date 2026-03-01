@@ -64,9 +64,9 @@ const features = [
     description: "Every command, every click, every action. Fully logged and reviewable. You always know exactly what your agent did and why. No black boxes.",
   },
   {
-    icon: Check,
-    title: "SOC 2 Compliant",
-    description: "Enterprise-grade security and compliance built in. Your data is handled with the highest standards of trust, privacy, and operational integrity.",
+    icon: Clock,
+    title: "Schedule Tasks Like a Human",
+    description: "Set it and forget it. Schedule recurring tasks and your agent runs them on autopilot — browsing, clicking, typing, just like a person sitting at the computer.",
   },
   {
     icon: Monitor,
