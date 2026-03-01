@@ -29,6 +29,9 @@ class VMControlService:
         self.session_data: Dict[str, Dict] = {}
         self.connection_locks: Dict[str, asyncio.Lock] = {}
         self.command_locks: Dict[str, asyncio.Lock] = {}  # Prevents concurrent recv on same WS
+        self.execution_locks: Dict[str, asyncio.Lock] = {}  # Per-machine session-level lock
+        self.execution_owners: Dict[str, str] = {}  # machine_id -> chat_id (diagnostics)
+        self.cancellation_events: Dict[str, asyncio.Event] = {}  # Per-machine force-stop signals
         self.heartbeat_tasks: Dict[str, asyncio.Task] = {}
         self.reconnect_attempts: Dict[str, int] = {}
         self.max_reconnect_attempts = 7  # Reasonable retry attempts
@@ -377,6 +380,37 @@ class VMControlService:
         if machine_id not in self.command_locks:
             self.command_locks[machine_id] = asyncio.Lock()
         return self.command_locks[machine_id]
+
+    def get_execution_lock(self, machine_id: str) -> asyncio.Lock:
+        """Get or create a per-machine execution lock for session-level mutual exclusion."""
+        if machine_id not in self.execution_locks:
+            self.execution_locks[machine_id] = asyncio.Lock()
+        return self.execution_locks[machine_id]
+
+    def is_machine_busy(self, machine_id: str) -> tuple:
+        """Check if a machine is currently executing a task. Returns (busy, owner_chat_id)."""
+        lock = self.execution_locks.get(machine_id)
+        if lock and lock.locked():
+            return True, self.execution_owners.get(machine_id)
+        return False, None
+
+    def get_cancellation_event(self, machine_id: str) -> asyncio.Event:
+        """Get or create a per-machine cancellation event."""
+        if machine_id not in self.cancellation_events:
+            self.cancellation_events[machine_id] = asyncio.Event()
+        return self.cancellation_events[machine_id]
+
+    def request_cancellation(self, machine_id: str) -> tuple:
+        """Signal running execution to stop. Returns (was_busy, owner_chat_id)."""
+        busy, owner = self.is_machine_busy(machine_id)
+        if busy:
+            self.get_cancellation_event(machine_id).set()
+        return busy, owner
+
+    def reset_cancellation(self, machine_id: str):
+        """Clear stale cancellation signal (called when new execution starts)."""
+        if machine_id in self.cancellation_events:
+            self.cancellation_events[machine_id].clear()
 
     async def execute_command(
         self,

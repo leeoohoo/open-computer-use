@@ -205,6 +205,7 @@ async def execute_scheduled_chat(
     user_id: str,
     machine_id: str,
     model: Optional[str] = None,
+    task_prompt_override: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Execute a scheduled chat task headlessly.
@@ -217,10 +218,30 @@ async def execute_scheduled_chat(
     completion_status = "failed"
     credits_charged = 0
     error_message = None
+    execution_lock = None
+
+    # Acquire per-machine execution lock to prevent concurrent use
+    execution_lock = vm_control_service.get_execution_lock(machine_id)
+    try:
+        await asyncio.wait_for(execution_lock.acquire(), timeout=10.0)
+    except asyncio.TimeoutError:
+        busy, owner_chat = vm_control_service.is_machine_busy(machine_id)
+        logger.warning(
+            f"Machine {machine_id} busy (owner: {owner_chat}), "
+            f"skipping scheduled chat {chat_id}"
+        )
+        return {
+            "status": "skipped",
+            "error": f"Machine busy with another task (chat: {owner_chat})",
+            "duration_seconds": 0,
+            "credits_charged": 0,
+        }
+    vm_control_service.execution_owners[machine_id] = chat_id
+    vm_control_service.reset_cancellation(machine_id)
 
     try:
-        # 1. Get task prompt
-        task_prompt = await _get_task_prompt(chat_id)
+        # 1. Get task prompt (prefer override from schedule config, fall back to first user message)
+        task_prompt = task_prompt_override or await _get_task_prompt(chat_id)
         if not task_prompt:
             return {
                 "status": "failed",
@@ -331,6 +352,13 @@ async def execute_scheduled_chat(
         message_group_id = str(uuid.uuid4())
 
         async for chunk in executor.stream_execution(task_prompt, None, None):
+            # Check if another request force-stopped this execution
+            if vm_control_service.get_cancellation_event(machine_id).is_set():
+                logger.info(f"Scheduled execution on {machine_id} force-stopped")
+                all_content += "\n[Execution stopped: machine taken over by another task]\n"
+                completion_status = "cancelled"
+                break
+
             chunk_type = chunk.get("type")
 
             if chunk_type == "text":
@@ -443,6 +471,11 @@ async def execute_scheduled_chat(
         )
 
     finally:
+        # Release per-machine execution lock
+        if execution_lock is not None and execution_lock.locked():
+            vm_control_service.execution_owners.pop(machine_id, None)
+            execution_lock.release()
+
         # End billing session
         if billing_session_id:
             try:

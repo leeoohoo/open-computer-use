@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import {
   createSchedule,
   deleteSchedule,
@@ -27,6 +28,8 @@ import {
   type ScheduleResponse,
 } from "@/lib/services/schedules-api"
 import type { UserMachine } from "@/types/machines.types"
+import { useSubscription } from "@/lib/hooks/use-subscription"
+import { WarningCircle } from "@phosphor-icons/react"
 
 interface ScheduleDialogProps {
   open: boolean
@@ -56,10 +59,17 @@ export function ScheduleDialog({
   const [dayOfWeek, setDayOfWeek] = useState(1)
   const [dayOfMonth, setDayOfMonth] = useState(1)
   const [customCron, setCustomCron] = useState("")
+  const [taskPrompt, setTaskPrompt] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [existingSchedule, setExistingSchedule] = useState<ScheduleResponse | null>(null)
   const [loadingExisting, setLoadingExisting] = useState(false)
+  const { isActiveSubscriber, loading: subLoading } = useSubscription()
+
+  // Check if the selected machine is a cloud machine (will be auto-deleted for free users)
+  const selectedMachine = machines.find((m) => m.id === machineId)
+  const isCloudMachine = selectedMachine && !selectedMachine.settings?.isLocal && selectedMachine.settings?.provider !== "electron"
+  const showFreeTierWarning = !subLoading && !isActiveSubscriber && isCloudMachine
 
   // Detect user timezone
   useEffect(() => {
@@ -84,6 +94,7 @@ export function ScheduleDialog({
             setFrequency(schedule.frequency || "daily")
             setMachineId(schedule.machine_id || defaultMachineId || "")
             setTimezone(schedule.timezone || timezone)
+            setTaskPrompt(schedule.task_prompt || "")
           } else {
             // No existing schedule — reset to defaults
             setFrequency("daily")
@@ -91,6 +102,7 @@ export function ScheduleDialog({
             setDayOfWeek(1)
             setDayOfMonth(1)
             setCustomCron("")
+            setTaskPrompt("")
             if (defaultMachineId) {
               setMachineId(defaultMachineId)
             }
@@ -143,6 +155,9 @@ export function ScheduleDialog({
       if (showDayOfMonth) {
         config.dayOfMonth = dayOfMonth
       }
+      if (taskPrompt.trim()) {
+        config.taskPrompt = taskPrompt.trim()
+      }
 
       const schedule = await createSchedule(chatId, config)
       onScheduleCreated?.(schedule)
@@ -194,13 +209,22 @@ export function ScheduleDialog({
           </div>
         ) : (
           <div className="space-y-4 py-2">
-            {/* Task info */}
-            {chatTitle && (
-              <div className="rounded-md bg-muted/50 px-3 py-2 text-sm">
-                <span className="text-muted-foreground">Task: </span>
-                <span className="font-medium">{chatTitle}</span>
-              </div>
-            )}
+            {/* Task prompt */}
+            <div className="space-y-2">
+              <Label>Task</Label>
+              <Textarea
+                placeholder={chatTitle || "Describe what this task should do..."}
+                value={taskPrompt}
+                onChange={(e) => setTaskPrompt(e.target.value)}
+                rows={3}
+                className="resize-none"
+              />
+              <p className="text-xs text-muted-foreground">
+                {taskPrompt.trim()
+                  ? "This prompt will be used each time the task runs."
+                  : "Leave empty to use the original chat message as the task prompt."}
+              </p>
+            </div>
 
             {/* Frequency */}
             <div className="space-y-2">
@@ -334,6 +358,25 @@ export function ScheduleDialog({
                 Make sure the machine has all necessary logins, credentials, and setup so the task can run unattended.
               </p>
             </div>
+
+            {/* Free tier warning */}
+            {showFreeTierWarning && (
+              <div className="flex gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
+                <WarningCircle className="size-5 shrink-0 text-amber-500 mt-0.5" weight="fill" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                    Free plan — machine will be deleted
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Cloud machines on the free plan are automatically deleted after 2 hours of inactivity, along with all their data. Your scheduled task will fail if the machine no longer exists.{" "}
+                    <a href="/billing" className="font-medium text-amber-600 dark:text-amber-400 underline underline-offset-2 hover:text-amber-700 dark:hover:text-amber-300">
+                      Upgrade your plan
+                    </a>{" "}
+                    to keep machines running, or use your local computer instead.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Timezone */}
             <div className="space-y-2">

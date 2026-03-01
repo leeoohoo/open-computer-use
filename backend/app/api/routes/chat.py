@@ -412,9 +412,25 @@ async def chat_endpoint(
             completion_status = "failed"  # Default to failed, update on success
             error_message = None
             was_cancelled = False
+            execution_lock = None
 
             # Track the DB message ID so we INSERT once then UPDATE on each step
             assistant_message_id: Optional[str] = None
+
+            # Acquire per-machine execution lock to prevent concurrent use
+            machine_id = chat_request.machine_id
+            chat_id = chat_request.chat_id
+            execution_lock = vm_control_service.get_execution_lock(machine_id)
+            try:
+                await asyncio.wait_for(execution_lock.acquire(), timeout=5.0)
+            except asyncio.TimeoutError:
+                busy, owner_chat = vm_control_service.is_machine_busy(machine_id)
+                logger.warning(f"Machine {machine_id} is busy (owner: {owner_chat}), rejecting chat {chat_id}")
+                yield f'3:{json.dumps("This machine is currently busy with another task. Please wait or use a different machine.")}\n\n'
+                yield f'd:{json.dumps({"finishReason": "error"})}\n\n'
+                return
+            vm_control_service.execution_owners[machine_id] = chat_id
+            vm_control_service.reset_cancellation(machine_id)
 
             try:
                 all_content = ""
@@ -429,6 +445,12 @@ async def chat_endpoint(
                     if request and await request.is_disconnected():
                         stream_cancelled = True
                         logger.info("Client disconnected during multi-agent execution, stopping stream")
+                        break
+
+                    # Check if another request force-stopped this execution
+                    if vm_control_service.get_cancellation_event(machine_id).is_set():
+                        stream_cancelled = True
+                        logger.info(f"Execution on {machine_id} force-stopped by another request")
                         break
 
                     chunk_count += 1
@@ -691,6 +713,11 @@ async def chat_endpoint(
                 except Exception as billing_error:
                     logger.error(f"Failed to end billing session: {billing_error}")
 
+                # Release per-machine execution lock
+                if execution_lock is not None and execution_lock.locked():
+                    vm_control_service.execution_owners.pop(machine_id, None)
+                    execution_lock.release()
+
                 if was_cancelled:
                     logger.debug("Re-raising CancelledError after cleanup")
                     raise asyncio.CancelledError()
@@ -727,3 +754,46 @@ async def chat_feedback(
     except Exception as e:
         logger.error(f"Feedback error: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to save feedback")
+
+
+@router.get("/machine-status/{machine_id}")
+async def get_machine_execution_status(
+    machine_id: str,
+    user_id: str = Depends(get_verified_user_id),
+):
+    """Check if a machine is currently busy executing a task."""
+    busy, owner_chat_id = vm_control_service.is_machine_busy(machine_id)
+    return {"busy": busy, "ownerChatId": owner_chat_id}
+
+
+@router.post("/stop-machine/{machine_id}")
+async def stop_machine_execution(
+    machine_id: str,
+    user_id: str = Depends(get_verified_user_id),
+):
+    """Force-stop the current execution on a machine.
+
+    Sets a cancellation event that the running stream checks on each iteration.
+    The active execution will break, save partial progress, end billing, and release the lock.
+    """
+    busy, owner_chat_id = vm_control_service.is_machine_busy(machine_id)
+
+    if not busy:
+        return {"stopped": False, "reason": "Machine is not busy", "ownerChatId": None}
+
+    vm_control_service.request_cancellation(machine_id)
+
+    # Wait for the lock to actually release (up to 5s)
+    lock = vm_control_service.get_execution_lock(machine_id)
+    released = False
+    for _ in range(50):
+        if not lock.locked():
+            released = True
+            break
+        await asyncio.sleep(0.1)
+
+    return {
+        "stopped": True,
+        "released": released,
+        "ownerChatId": owner_chat_id,
+    }

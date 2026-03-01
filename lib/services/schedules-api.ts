@@ -12,6 +12,7 @@ export interface ScheduleConfig {
   time?: string
   dayOfWeek?: number
   dayOfMonth?: number
+  taskPrompt?: string
 }
 
 export interface ScheduleResponse {
@@ -28,6 +29,7 @@ export interface ScheduleResponse {
   paused_reason: string | null
   run_count: number
   created_at: string | null
+  task_prompt: string | null
 }
 
 export interface ScheduleHistoryEntry {

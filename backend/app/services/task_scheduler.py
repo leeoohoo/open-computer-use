@@ -8,8 +8,9 @@ that checks every 60 seconds for chats with enabled schedules whose next_run_at 
 import asyncio
 import json
 import logging
+from collections import deque
 from datetime import datetime, timezone
-from typing import Dict, Optional, Any, List
+from typing import Dict, Optional, Any, Deque, List
 
 from croniter import croniter
 import pytz
@@ -28,6 +29,7 @@ class TaskScheduler:
     def __init__(self):
         self.db_service = DatabaseService()
         self.running_tasks: Dict[str, asyncio.Task] = {}  # chat_id -> asyncio.Task
+        self.missed_runs: Dict[str, Deque[dict]] = {}  # chat_id -> queued re-run contexts (max 2)
         self.lock = asyncio.Lock()
         self._parse_schedule_limits()
 
@@ -142,10 +144,25 @@ class TaskScheduler:
                                 running_task.cancel()
                                 del self.running_tasks[chat_id]
                             else:
-                                logger.info(
-                                    f"Skipping scheduled run for chat {chat_id}: "
-                                    f"previous run still in progress"
-                                )
+                                q = self.missed_runs.get(chat_id)
+                                if q is None:
+                                    q = deque(maxlen=2)
+                                    self.missed_runs[chat_id] = q
+                                if len(q) < q.maxlen:
+                                    q.append({
+                                        "user_id": user_id,
+                                        "room_settings": room_settings,
+                                        "schedule": schedule,
+                                    })
+                                    logger.info(
+                                        f"Queued missed run for chat {chat_id} "
+                                        f"({len(q)}/{q.maxlen}): previous run still in progress"
+                                    )
+                                else:
+                                    logger.info(
+                                        f"Missed-run queue full for chat {chat_id} "
+                                        f"({len(q)}/{q.maxlen}), skipping additional overlap"
+                                    )
                                 continue
 
                     # Advance next_run_at BEFORE firing so the schedule
@@ -237,6 +254,7 @@ class TaskScheduler:
                         user_id=user_id,
                         machine_id=machine_id,
                         model=schedule.get("model"),
+                        task_prompt_override=schedule.get("task_prompt"),
                     ),
                     timeout=1800,  # 30 minutes max
                 )
@@ -279,6 +297,10 @@ class TaskScheduler:
                 error=str(e),
                 success=False, trigger=trigger,
             )
+
+        finally:
+            # Drain any queued missed run for this chat
+            await self._drain_missed_run(chat_id)
 
     async def _check_machine_available(
         self, machine_id: str, user_id: str
@@ -524,11 +546,59 @@ class TaskScheduler:
         for chat_id in done_ids:
             del self.running_tasks[chat_id]
 
+        # Defensive: remove stale missed_runs for chats no longer running
+        stale_missed = [
+            cid for cid in self.missed_runs
+            if cid not in self.running_tasks
+        ]
+        for cid in stale_missed:
+            del self.missed_runs[cid]
+
+    async def _drain_missed_run(self, chat_id: str):
+        """If a cron trigger fired while this chat was running, execute the next queued one."""
+        q = self.missed_runs.get(chat_id)
+        if not q:
+            self.missed_runs.pop(chat_id, None)
+            return
+
+        missed = q.popleft()
+        if not q:
+            del self.missed_runs[chat_id]
+
+        logger.info(f"Draining queued missed run for chat {chat_id} ({len(q) if chat_id in self.missed_runs else 0} remaining)")
+        now = datetime.now(timezone.utc)
+
+        # Advance next_run_at before firing (same pattern as the main loop)
+        schedule = missed["schedule"]
+        next_next_run = self._calculate_next_run(
+            schedule.get("cron", "0 * * * *"),
+            schedule.get("timezone", "UTC"),
+        )
+        if next_next_run:
+            schedule["next_run_at"] = next_next_run.isoformat()
+            missed["room_settings"]["schedule"] = schedule
+            await self._update_schedule(chat_id, missed["room_settings"])
+
+        task = asyncio.create_task(
+            self._execute_with_error_handling(
+                chat_id,
+                missed["user_id"],
+                missed["room_settings"],
+                schedule,
+                trigger="cron_queued",
+            )
+        )
+        task._start_time = now
+        self.running_tasks[chat_id] = task
+
     async def trigger_immediate(self, chat_id: str, user_id: str) -> bool:
         """Trigger an immediate execution of a scheduled task (manual run-now)."""
         if chat_id in self.running_tasks and not self.running_tasks[chat_id].done():
             logger.warning(f"Cannot trigger {chat_id}: previous run still active")
             return False
+
+        # Clear any queued missed run — manual trigger supersedes it
+        self.missed_runs.pop(chat_id, None)
 
         chat = await self.db_service.get_chat(chat_id)
         if not chat:

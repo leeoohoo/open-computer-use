@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { VMSelector } from "@/components/common/vm-selector/vm-selector"
-import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Desktop, Monitor } from "@phosphor-icons/react"
+import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Desktop, Monitor, ArrowsClockwise } from "@phosphor-icons/react"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { useCallback, useMemo, useState, useEffect } from "react"
 import { PromptSystem } from "../suggestions/prompt-system"
@@ -341,10 +341,14 @@ export function ChatInput({
   const [showVMStatusBar, setShowVMStatusBar] = useState(false)
   const [currentMachine, setCurrentMachine] = useState<UserMachine | null>(null)
   const [agentReady, setAgentReady] = useState(false)
+  const [isMachineBusy, setIsMachineBusy] = useState(false)
+  const [isStoppingMachine, setIsStoppingMachine] = useState(false)
 
-  // Reset agentReady whenever VM selection changes
+  // Reset agentReady and busy state whenever VM selection changes
   useEffect(() => {
     setAgentReady(false)
+    setIsMachineBusy(false)
+    setIsStoppingMachine(false)
   }, [selectedVMId])
 
   // Fetch machine status when VM is selected
@@ -518,13 +522,58 @@ export function ChatInput({
   // Typing participants removed - no longer collaborative
   const typingParticipants = []
 
+  const checkMachineBusy = useCallback(async (): Promise<boolean> => {
+    if (!selectedVMId || selectedVMId === "none") return false
+    try {
+      const res = await fetch(`/api/chat/machine-status/${selectedVMId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setIsMachineBusy(data.busy)
+        return data.busy
+      }
+    } catch (error) {
+      console.error("Failed to check machine busy status:", error)
+    }
+    return false
+  }, [selectedVMId])
+
+  const forceStopAndSend = useCallback(async () => {
+    if (isStoppingMachine || !selectedVMId || selectedVMId === "none") return
+    setIsStoppingMachine(true)
+    try {
+      const stopRes = await fetch(`/api/chat/stop-machine/${selectedVMId}`, {
+        method: "POST",
+      })
+      if (stopRes.ok) {
+        const data = await stopRes.json()
+        if (data.stopped && data.released) {
+          setIsMachineBusy(false)
+          onSend()
+        } else if (data.stopped && !data.released) {
+          // Lock didn't release in time — retry send after a brief wait
+          await new Promise(r => setTimeout(r, 500))
+          setIsMachineBusy(false)
+          onSend()
+        } else {
+          // Machine wasn't actually busy — just send normally
+          setIsMachineBusy(false)
+          onSend()
+        }
+      }
+    } catch (error) {
+      console.error("Failed to stop machine:", error)
+    } finally {
+      setIsStoppingMachine(false)
+    }
+  }, [isStoppingMachine, selectedVMId, onSend])
+
   const handleSend = useCallback(async () => {
     // Allow stopping even if isSubmitting is true
     if (status === "streaming") {
       stop()
       return
     }
-    
+
     if (isSubmitting) {
       return
     }
@@ -534,17 +583,24 @@ export function ChatInput({
       onAuthRequired()
       return
     }
-    
+
     // Start VM if needed and validate
     const canProceed = await startVMIfNeeded()
     if (!canProceed) {
       return
     }
 
+    // Check if machine is busy with another task
+    const busy = await checkMachineBusy()
+    if (busy) {
+      // Don't send — UI will re-render with the "Stop & Start" button
+      return
+    }
+
     // Send message - VM ID is already being sent through use-chat-core
     onSend()
 
-  }, [isSubmitting, onSend, status, stop, isUserAuthenticated, onAuthRequired, selectedVMId, machineStatus, agentReady, startVMIfNeeded])
+  }, [isSubmitting, onSend, status, stop, isUserAuthenticated, onAuthRequired, selectedVMId, machineStatus, agentReady, startVMIfNeeded, checkMachineBusy])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -577,16 +633,23 @@ export function ChatInput({
         if (!selectedVMId || selectedVMId === "none") {
           return
         }
+
+        // If machine is busy, trigger force-stop-and-send
+        if (isMachineBusy) {
+          forceStopAndSend()
+          return
+        }
+
         const machineReady = machineStatus === "running" && agentReady
         if (!machineReady) {
           return
         }
-        
+
         // Handle send with async function
         handleSend()
       }
     },
-    [isSubmitting, status, value, isUserAuthenticated, onAuthRequired, handleSend, stop, selectedVMId, machineStatus, agentReady]
+    [isSubmitting, status, value, isUserAuthenticated, onAuthRequired, handleSend, stop, selectedVMId, machineStatus, agentReady, isMachineBusy, forceStopAndSend]
   )
 
   const handlePaste = useCallback(
@@ -715,6 +778,7 @@ export function ChatInput({
             <PromptInputAction
               tooltip={
                 status === "streaming" ? "Stop" :
+                isMachineBusy ? "Another task is running — click to stop it and run yours" :
                 (!selectedVMId || selectedVMId === "none") ? "Select a computer to send messages" :
                 (machineStatus === "creating") ? "Please wait for VM to be created" :
                 (machineStatus === "starting" || machineStatus === "stopped") ? "Please wait for VM to start" :
@@ -723,20 +787,40 @@ export function ChatInput({
                 "Send"
               }
             >
-              <Button
-                size="sm"
-                className="size-9 rounded-full transition-all duration-300 ease-out"
-                disabled={status === "streaming" ? false : (!!(!value || isSubmitting || isOnlyWhitespace(value) || !selectedVMId || selectedVMId === "none" || machineStatus !== "running" || !agentReady))}
-                type="button"
-                onClick={handleSend}
-                aria-label={status === "streaming" ? "Stop" : "Send message"}
-              >
-                {status === "streaming" ? (
-                  <StopIcon className="size-4" />
-                ) : (
-                  <ArrowUpIcon className="size-4" />
-                )}
-              </Button>
+              {isMachineBusy && value && !isOnlyWhitespace(value) && status !== "streaming" ? (
+                <Button
+                  size="sm"
+                  className="h-9 rounded-full transition-all duration-300 ease-out px-2.5 sm:px-3 gap-1.5 bg-amber-600 hover:bg-amber-700 text-white border-0"
+                  disabled={isStoppingMachine}
+                  type="button"
+                  onClick={forceStopAndSend}
+                  aria-label="Stop running task and start this one"
+                >
+                  {isStoppingMachine ? (
+                    <CircleNotch className="size-4 shrink-0 animate-spin" />
+                  ) : (
+                    <ArrowsClockwise className="size-4 shrink-0" />
+                  )}
+                  <span className="text-xs font-medium hidden sm:inline whitespace-nowrap">
+                    {isStoppingMachine ? "Switching..." : "Override & Run"}
+                  </span>
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  className="size-9 rounded-full transition-all duration-300 ease-out"
+                  disabled={status === "streaming" ? false : (!!(!value || isSubmitting || isOnlyWhitespace(value) || !selectedVMId || selectedVMId === "none" || machineStatus !== "running" || !agentReady))}
+                  type="button"
+                  onClick={handleSend}
+                  aria-label={status === "streaming" ? "Stop" : "Send message"}
+                >
+                  {status === "streaming" ? (
+                    <StopIcon className="size-4" />
+                  ) : (
+                    <ArrowUpIcon className="size-4" />
+                  )}
+                </Button>
+              )}
             </PromptInputAction>
           </PromptInputActions>
         </PromptInput>

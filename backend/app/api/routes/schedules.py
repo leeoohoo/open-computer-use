@@ -58,6 +58,11 @@ class CreateScheduleRequest(BaseModel):
         alias="dayOfMonth",
         description="Day of month for monthly (1-28)",
     )
+    task_prompt: Optional[str] = Field(
+        default=None,
+        alias="taskPrompt",
+        description="Custom task prompt to use instead of the first chat message",
+    )
 
     class Config:
         populate_by_name = True
@@ -77,6 +82,7 @@ class ScheduleResponse(BaseModel):
     paused_reason: Optional[str]
     run_count: int
     created_at: Optional[str]
+    task_prompt: Optional[str] = None
 
 
 class ScheduleHistoryEntry(BaseModel):
@@ -288,6 +294,7 @@ async def list_schedules(
                         paused_reason=schedule.get("paused_reason"),
                         run_count=schedule.get("run_count", 0),
                         created_at=schedule.get("created_at"),
+                        task_prompt=schedule.get("task_prompt"),
                     ).model_dump()
                 )
 
@@ -402,6 +409,9 @@ async def create_or_update_schedule(
     room_settings = _parse_room_settings(chat.get("room_settings"))
     existing_schedule = room_settings.get("schedule", {})
 
+    # Resolve task_prompt: use provided value, or preserve existing
+    task_prompt = req.task_prompt if req.task_prompt is not None else existing_schedule.get("task_prompt")
+
     schedule = {
         "enabled": True,
         "frequency": req.frequency,
@@ -417,6 +427,7 @@ async def create_or_update_schedule(
         "created_at": existing_schedule.get("created_at", datetime.now(timezone.utc).isoformat()),
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "history": existing_schedule.get("history", []),
+        "task_prompt": task_prompt,
     }
 
     room_settings["schedule"] = schedule
@@ -461,6 +472,7 @@ async def create_or_update_schedule(
             paused_reason=None,
             run_count=schedule["run_count"],
             created_at=schedule["created_at"],
+            task_prompt=task_prompt,
         ).model_dump()
     }
 
@@ -493,6 +505,7 @@ async def get_schedule(
             paused_reason=schedule.get("paused_reason"),
             run_count=schedule.get("run_count", 0),
             created_at=schedule.get("created_at"),
+            task_prompt=schedule.get("task_prompt"),
         ).model_dump()
     }
 
