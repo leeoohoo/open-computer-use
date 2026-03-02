@@ -2,6 +2,7 @@ import { Message as MessageType } from "@ai-sdk/react"
 import React, { useState } from "react"
 import { MessageAssistant } from "./message-assistant"
 import { MessageUser } from "./message-user"
+import { ScheduledRunIndicator, isScheduledRunMarker } from "./scheduled-run-indicator"
 
 type MessageProps = {
   variant: MessageType["role"]
@@ -54,6 +55,10 @@ export function Message({
     navigator.clipboard.writeText(children)
     setCopied(true)
     setTimeout(() => setCopied(false), 500)
+  }
+
+  if (variant === "user" && isScheduledRunMarker(children)) {
+    return <ScheduledRunIndicator raw={children} />
   }
 
   if (variant === "user") {
