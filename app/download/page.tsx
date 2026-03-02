@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { trackDesktopAppDownloaded } from "@/lib/posthog/analytics"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
 import { LandingHeader } from "@/app/components/landing/landing-header"
@@ -157,7 +158,7 @@ export default function DownloadPage() {
     if (data) {
       return variant === "hero" ? (
         <RainbowButton size="lg" className="w-full sm:w-auto" asChild>
-          <a href={data.downloadUrl}>
+          <a href={data.downloadUrl} onClick={() => trackDesktopAppDownloaded(platform)}>
             <Download className="mr-2 h-4 w-4" />
             Download for {meta.label}
           </a>
@@ -169,7 +170,7 @@ export default function DownloadPage() {
           className="w-full"
           asChild
         >
-          <a href={data.downloadUrl}>
+          <a href={data.downloadUrl} onClick={() => trackDesktopAppDownloaded(platform)}>
             <Download className="mr-1.5 h-3.5 w-3.5" />
             Download
           </a>

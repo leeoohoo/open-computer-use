@@ -17,6 +17,7 @@ import { CoastyIcon } from "@/components/icons/coasty"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { trackScheduleTriggered } from "@/lib/posthog/analytics"
 import { ScheduleCalendar, getTasksForDate, type DayTask } from "./schedule-calendar"
 import { ScheduleHistory } from "./schedule-history"
 import { ScheduleDialog } from "./schedule-dialog"
@@ -50,7 +51,7 @@ function DayTaskItem({
 
   async function run() {
     setLoading("run")
-    try { await triggerScheduleNow(s.chat_id); onUpdate() }
+    try { trackScheduleTriggered(s.chat_id); await triggerScheduleNow(s.chat_id); onUpdate() }
     catch { /* */ }
     finally { setLoading(null) }
   }

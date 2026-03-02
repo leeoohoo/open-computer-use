@@ -44,6 +44,9 @@ cachetools==5.5.0
 # Scheduling
 croniter==3.0.3
 
+# Analytics
+posthog==3.7.0
+
 #CUA Executor dependencies
 aiohappyeyeballs==2.6.1
 aiohttp==3.13.3

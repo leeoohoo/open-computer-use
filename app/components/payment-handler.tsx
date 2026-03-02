@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { useCredits } from "@/lib/hooks/use-credits"
+import { trackPaymentCompleted, trackPaymentCanceled } from "@/lib/posthog/analytics"
 
 export function PaymentHandler() {
   const searchParams = useSearchParams()
@@ -15,6 +16,7 @@ export function PaymentHandler() {
 
     if (success === "true") {
       // Payment successful
+      trackPaymentCompleted("unknown", 0, "credits")
       toast.success("Payment successful! Your credits have been added.", {
         duration: 5000,
       })
@@ -32,6 +34,7 @@ export function PaymentHandler() {
       
     } else if (canceled === "true") {
       // Payment canceled
+      trackPaymentCanceled()
       toast.error("Payment was canceled. No charges were made.", {
         duration: 5000,
       })

@@ -13,10 +13,10 @@ import { Tree, Folder, File, type TreeViewElement } from "@/components/magicui/f
 import { RainbowButton } from "@/components/magicui/rainbow-button"
 import { GridPattern } from "@/components/magicui/grid-pattern"
 import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download, CalendarCheck, RefreshCw } from "lucide-react"
-import { WindowsIcon, AppleIcon } from "@/components/icons/platform-icons"
 import { CoastyIcon } from "@/components/icons/coasty"
 import Link from "next/link"
 import { useState, useEffect, useCallback } from "react"
+import { captureUtmParams } from "@/lib/posthog/analytics"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
 import { useSearchParams } from "next/navigation"
@@ -305,7 +305,7 @@ export function LandingPage() {
   const prefersReducedMotion = useReducedMotion()
   const searchParams = useSearchParams()
 
-  // Capture referral code from URL
+  // Capture referral code and UTM params from URL
   useEffect(() => {
     const ref = searchParams.get("ref")
     if (ref) {
@@ -314,6 +314,7 @@ export function LandingPage() {
       url.searchParams.delete("ref")
       window.history.replaceState({}, "", url.toString())
     }
+    captureUtmParams()
   }, [searchParams])
 
   // Detect mobile — single mount effect that batches all initial state
@@ -592,7 +593,7 @@ export function LandingPage() {
             </motion.div>
 
             {/* Cost comparison pill */}
-            <motion.div variants={itemVariants} className="flex justify-center mb-5">
+            <motion.div variants={itemVariants} className="flex justify-center mb-12">
               <div className={cn(
                 "inline-flex items-center gap-2.5 rounded-full border border-border/50 bg-muted/30 backdrop-blur-sm",
                 isMobile ? "px-3.5 py-1.5" : "px-5 py-2"
@@ -602,32 +603,13 @@ export function LandingPage() {
                 </span>
                 <span className="h-3 w-px bg-border/60" />
                 <span className={cn("text-muted-foreground", isMobile ? "text-[11px]" : "text-xs sm:text-sm")}>
-                  Coasty <span className="font-semibold text-primary">$0/mo</span>
+                  Coasty <span className="font-semibold text-primary">$50/mo</span>
                 </span>
                 <span className="h-3 w-px bg-border/60" />
                 <span className={cn("text-muted-foreground", isMobile ? "text-[11px]" : "text-xs sm:text-sm")}>
-                  Save <span className="font-semibold text-emerald-500">$4,900/mo</span>
+                  Save <span className="font-semibold text-emerald-500">$2,950/mo</span>
                 </span>
               </div>
-            </motion.div>
-
-            {/* Trust signals row */}
-            <motion.div variants={itemVariants} className="flex items-center justify-center gap-4 mb-14">
-              <Link
-                href="/download"
-                className="group inline-flex items-center gap-2 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <span className="flex items-center gap-1 text-muted-foreground/50">
-                  <WindowsIcon className="h-3 w-3" />
-                  <AppleIcon className="h-3 w-3" />
-                </span>
-                Desktop app
-                <ArrowRight className="h-3 w-3 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-              </Link>
-              <span className="h-3 w-px bg-border" />
-              <span className="text-xs sm:text-sm text-muted-foreground">No credit card required</span>
-              <span className="h-3 w-px bg-border" />
-              <span className="text-xs sm:text-sm text-muted-foreground">Open source</span>
             </motion.div>
 
             {/* Hero demo: iframe replay on desktop, GIF on mobile */}
@@ -1339,7 +1321,7 @@ export function LandingPage() {
                         className={cn(
                           "absolute inset-y-0 left-0 rounded-md overflow-hidden",
                           entry.highlight
-                            ? "bg-[#0f2557]"
+                            ? "bg-[#0c2d3e]"
                             : entry.type === "framework"
                               ? "bg-sky-500/25"
                               : "bg-muted-foreground/20"
@@ -1350,7 +1332,7 @@ export function LandingPage() {
                           <div
                             className="absolute inset-0"
                             style={{
-                              background: "linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4)",
+                              background: "linear-gradient(90deg, #2563eb, #0891b2, #0d9488)",
                             }}
                           />
                         )}
@@ -1364,7 +1346,7 @@ export function LandingPage() {
                         className={cn(
                           "absolute inset-y-0 left-0 rounded-md overflow-hidden",
                           entry.highlight
-                            ? "bg-[#0f2557]"
+                            ? "bg-[#0c2d3e]"
                             : entry.type === "framework"
                               ? "bg-sky-500/25"
                               : "bg-muted-foreground/20"
@@ -1376,21 +1358,21 @@ export function LandingPage() {
                             <div
                               className="absolute inset-[-40%]"
                               style={{
-                                background: "radial-gradient(circle 120px at 20% 50%, #60a5fa, transparent), radial-gradient(circle 100px at 80% 50%, #22d3ee, transparent)",
+                                background: "radial-gradient(circle 120px at 20% 50%, #2563eb, transparent), radial-gradient(circle 100px at 80% 50%, #0891b2, transparent)",
                                 animation: "coasty-smoke-1 4s ease-in-out infinite alternate",
                               }}
                             />
                             <div
                               className="absolute inset-[-40%]"
                               style={{
-                                background: "radial-gradient(circle 90px at 55% 30%, #f472b6, transparent), radial-gradient(circle 110px at 35% 70%, #818cf8, transparent)",
+                                background: "radial-gradient(circle 90px at 55% 30%, #0d9488, transparent), radial-gradient(circle 110px at 35% 70%, #1d4ed8, transparent)",
                                 animation: "coasty-smoke-2 5s ease-in-out infinite alternate",
                               }}
                             />
                             <div
                               className="absolute inset-[-40%]"
                               style={{
-                                background: "radial-gradient(circle 100px at 70% 60%, #34d399, transparent), radial-gradient(circle 80px at 10% 40%, #38bdf8, transparent)",
+                                background: "radial-gradient(circle 100px at 70% 60%, #0e7490, transparent), radial-gradient(circle 80px at 10% 40%, #3b82f6, transparent)",
                                 animation: "coasty-smoke-3 3.5s ease-in-out infinite alternate",
                               }}
                             />

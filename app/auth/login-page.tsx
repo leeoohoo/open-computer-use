@@ -15,6 +15,7 @@ import { createClient } from "@/lib/supabase/client"
 import { SparklesCore } from "@/components/ui/sparkles"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { captureUtmParams, trackSignIn, trackSignUp } from "@/lib/posthog/analytics"
 import { useTheme } from "next-themes"
 import { HeaderGoBack } from "../components/header-go-back"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -34,12 +35,13 @@ export default function LoginPage() {
   const searchParams = useSearchParams()
   const { theme } = useTheme()
 
-  // Capture referral code from URL
+  // Capture referral code and UTM params from URL
   useEffect(() => {
     const ref = searchParams.get("ref")
     if (ref) {
       localStorage.setItem("coasty_referral_code", ref)
     }
+    captureUtmParams()
   }, [searchParams])
 
   function switchView(view: AuthView) {
@@ -62,6 +64,7 @@ export default function LoginPage() {
       const data = await signInWithGoogle(supabase)
 
       if (data?.url) {
+        trackSignIn("google")
         window.location.href = data.url
       }
     } catch (err: unknown) {
@@ -89,6 +92,7 @@ export default function LoginPage() {
       const data = await signInAnonymously(supabase)
 
       if (data?.user) {
+        trackSignUp("anonymous")
         router.push("/")
       }
     } catch (err: unknown) {
@@ -123,6 +127,7 @@ export default function LoginPage() {
       const data = await signInWithEmail(supabase, email, password)
 
       if (data?.user) {
+        trackSignIn("email")
         router.push("/")
       }
     } catch (err: unknown) {
@@ -175,6 +180,7 @@ export default function LoginPage() {
         return
       }
 
+      trackSignUp("email")
       setSuccess("Check your email to confirm your account before signing in.")
       setEmail("")
       setPassword("")
@@ -205,6 +211,7 @@ export default function LoginPage() {
       setSuccess(null)
 
       await signInWithMagicLink(supabase, email)
+      trackSignIn("magic_link")
       setSuccess("Check your email for the magic link to sign in.")
     } catch (err: unknown) {
       const message = (err as Error).message

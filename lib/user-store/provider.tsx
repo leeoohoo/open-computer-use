@@ -8,6 +8,7 @@ import {
   updateUserProfile,
 } from "@/lib/user-store/api"
 import type { UserProfile } from "@/lib/user/types"
+import { identifyUser, resetUser, trackSignOut } from "@/lib/posthog/analytics"
 import { createContext, useContext, useEffect, useState } from "react"
 
 type UserContextType = {
@@ -60,11 +61,28 @@ export function UserProvider({
     setIsLoading(true)
     try {
       const success = await signOutUser()
-      if (success) setUser(null)
+      if (success) {
+        trackSignOut()
+        resetUser()
+        setUser(null)
+      }
     } finally {
       setIsLoading(false)
     }
   }
+
+  // Identify user with PostHog when authenticated
+  useEffect(() => {
+    if (!user?.id) return
+
+    identifyUser(user.id, {
+      email: user.email,
+      display_name: user.display_name,
+      profile_image: user.profile_image,
+      created_at: user.created_at ?? undefined,
+      is_anonymous: user.anonymous ?? undefined,
+    })
+  }, [user?.id, user?.email, user?.display_name, user?.profile_image, user?.created_at, user?.anonymous])
 
   // Set up realtime subscription for user data changes
   useEffect(() => {

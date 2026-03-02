@@ -27,6 +27,7 @@ import {
   type ScheduleConfig,
   type ScheduleResponse,
 } from "@/lib/services/schedules-api"
+import { trackScheduleCreated } from "@/lib/posthog/analytics"
 import type { UserMachine } from "@/types/machines.types"
 import { useSubscription } from "@/lib/hooks/use-subscription"
 import { WarningCircle } from "@phosphor-icons/react"
@@ -160,6 +161,7 @@ export function ScheduleDialog({
       }
 
       const schedule = await createSchedule(chatId, config)
+      trackScheduleCreated(chatId, frequency)
       onScheduleCreated?.(schedule)
       onOpenChange(false)
     } catch (err: unknown) {

@@ -11,6 +11,7 @@ from typing import Dict, Optional, Any
 import uuid
 
 from app.services.database import DatabaseService
+from app.services import analytics
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
@@ -93,6 +94,7 @@ class AgentBillingService:
             )
             
             logger.info(f"Started billing session {session_id} for user {user_id} (balance: {balance} credits)")
+            analytics.track_agent_session_started(user_id, session_id, machine_id, ai_model or "unknown", ai_objective or "")
             return session_id
             
         except Exception as e:
@@ -270,6 +272,7 @@ class AgentBillingService:
                 }
                 
                 logger.info(f"Ended session {session_id}: {duration_minutes} min, {total_credits} credits charged")
+                analytics.track_agent_session_ended(session["user_id"], session_id, duration_minutes, total_credits, completion_status)
                 return billing_summary
                 
         except Exception as e:

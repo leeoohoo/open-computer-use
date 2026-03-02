@@ -43,6 +43,7 @@ async def lifespan(app: FastAPI):
     from app.services.screenshot_storage import screenshot_storage
     from app.services.agent_billing import agent_billing_service
     from app.services.task_scheduler import task_scheduler
+    from app.services import analytics
     import asyncio
 
     await cache_service.initialize()
@@ -84,6 +85,7 @@ async def lifespan(app: FastAPI):
         except asyncio.CancelledError:
             pass
     await cache_service.close()
+    analytics.flush()
 
 
 # Create FastAPI app

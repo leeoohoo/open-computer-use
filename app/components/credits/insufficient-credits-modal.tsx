@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { Crown, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useCredits } from "@/lib/hooks/use-credits"
+import { trackPricingViewed } from "@/lib/posthog/analytics"
 import { CoastyIcon } from "@/components/icons/coasty"
 
 interface InsufficientCreditsModalProps {
@@ -83,6 +84,7 @@ export function InsufficientCreditsModal({
     }
     
     if (isOpen) {
+      trackPricingViewed("insufficient_credits")
       checkSubscription()
     }
   }, [isOpen])

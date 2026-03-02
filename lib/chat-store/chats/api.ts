@@ -32,7 +32,7 @@ export async function getChatsForUserInDb(userId: string): Promise<Chats[]> {
         .eq("role", "assistant")
         .order("created_at", { ascending: false })
         .limit(1)
-        .single()
+        .maybeSingle()
 
       // Add preview to chat object
       if (lastMessage?.content) {

@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { trackVmCreated } from "@/lib/posthog/analytics";
 import { NoiseBackground } from "@/components/ui/noise-background";
 import { useSubscription } from "@/hooks/use-subscription";
 import type { UserMachine } from "@/types/machines.types";
@@ -177,6 +178,7 @@ export function CreateMachineDialog({
         } else {
           // Machine created successfully - list will auto-update via polling
           const data = await response.json();
+          trackVmCreated(data.machine.id, "azure");
           console.log("Machine created successfully:", data.machine.id);
         }
       }).catch((error) => {

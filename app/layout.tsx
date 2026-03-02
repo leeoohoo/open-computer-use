@@ -14,6 +14,8 @@ import { getUserProfile } from "@/lib/user/api"
 import { ThemeProvider } from "next-themes"
 import Script from "next/script"
 import { LayoutClient } from "./layout-client"
+import { PostHogProvider } from "@/lib/posthog/provider"
+import { PostHogPageView } from "@/lib/posthog/page-view"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -120,15 +122,6 @@ export default async function RootLayout({
             src="https://analytics.umami.is/script.js"
             data-website-id="42e5b68c-5478-41a6-bc68-088d029cee52"
           />
-          {process.env.NEXT_PUBLIC_CLARITY_ID && (
-            <Script
-              id="microsoft-clarity"
-              strategy="afterInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${process.env.NEXT_PUBLIC_CLARITY_ID}");`,
-              }}
-            />
-          )}
         </>
       ) : null}
       {/* Structured Data for SEO */}
@@ -217,35 +210,38 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <TanstackQueryProvider>
-          <LayoutClient />
-          <UserProvider initialUser={userProfile}>
-            <ModelProvider>
-              <ChatsProvider userId={userProfile?.id}>
-                <ChatSessionProvider>
-                  <UserPreferencesProvider
-                    userId={userProfile?.id}
-                    initialPreferences={userProfile?.preferences}
-                  >
-                    <TooltipProvider
-                      delayDuration={200}
-                      skipDelayDuration={500}
+        <PostHogProvider>
+          <PostHogPageView />
+          <TanstackQueryProvider>
+            <LayoutClient />
+            <UserProvider initialUser={userProfile}>
+              <ModelProvider>
+                <ChatsProvider userId={userProfile?.id}>
+                  <ChatSessionProvider>
+                    <UserPreferencesProvider
+                      userId={userProfile?.id}
+                      initialPreferences={userProfile?.preferences}
                     >
-                      <ThemeProvider
-                        attribute="class"
-                        defaultTheme="dark"
-                        enableSystem={false}
-                        disableTransitionOnChange
+                      <TooltipProvider
+                        delayDuration={200}
+                        skipDelayDuration={500}
                       >
-                        {children}
-                      </ThemeProvider>
-                    </TooltipProvider>
-                  </UserPreferencesProvider>
-                </ChatSessionProvider>
-              </ChatsProvider>
-            </ModelProvider>
-          </UserProvider>
-        </TanstackQueryProvider>
+                        <ThemeProvider
+                          attribute="class"
+                          defaultTheme="dark"
+                          enableSystem={false}
+                          disableTransitionOnChange
+                        >
+                          {children}
+                        </ThemeProvider>
+                      </TooltipProvider>
+                    </UserPreferencesProvider>
+                  </ChatSessionProvider>
+                </ChatsProvider>
+              </ModelProvider>
+            </UserProvider>
+          </TanstackQueryProvider>
+        </PostHogProvider>
       </body>
     </html>
   )
