@@ -758,7 +758,7 @@ export function ChatInput({
                       aria-label="Connect to desktop"
                     >
                       <Monitor className="size-4 flex-shrink-0" weight="duotone" />
-                      <span className="hidden sm:inline text-xs ml-1.5">Desktop</span>
+                      <span className="hidden sm:inline text-xs ml-1.5">{machineName ? `${machineName}'s screen` : "Desktop"}</span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[200px] text-center">
