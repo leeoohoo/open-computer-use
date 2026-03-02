@@ -12,6 +12,7 @@ import {
   Brain,
   Lightning,
   Terminal,
+  MagnifyingGlass,
 } from "@phosphor-icons/react"
 import { AnimatePresence, motion } from "framer-motion"
 import { memo, useMemo, useState } from "react"
@@ -30,6 +31,7 @@ type SectionType =
   | "code-agent-done"
   | "action-result"
   | "status"
+  | "search-results"
 
 interface ParsedSection {
   type: SectionType
@@ -52,6 +54,7 @@ type TopLevelItem =
   | { kind: "code-agent-result"; content: string; step: string }
   | { kind: "code-agent-done"; content: string; step: string }
   | { kind: "code-agent-summary"; content: string }
+  | { kind: "search-results"; query: string; content: string }
   | { kind: "text"; content: string }
 
 // ── Parser ──
@@ -166,6 +169,9 @@ function buildTopLevel(sections: ParsedSection[]): TopLevelItem[] {
     } else if (s.type === "code-agent-summary") {
       flushStep()
       items.push({ kind: "code-agent-summary", content: s.content })
+    } else if (s.type === "search-results") {
+      flushStep()
+      items.push({ kind: "search-results", query: s.attrs.query || "", content: s.content })
     }
 
     i++
@@ -367,6 +373,17 @@ function ItemRenderer({ item, index }: { item: TopLevelItem; index: number }) {
           </DetailRow>
         </div>
       )
+
+    case "search-results": {
+      const label = item.query ? `Search: ${item.query}` : "Web search"
+      return (
+        <div className="pl-6">
+          <DetailRow icon={MagnifyingGlass} label={label} defaultOpen>
+            <Markdown>{item.content}</Markdown>
+          </DetailRow>
+        </div>
+      )
+    }
 
     case "text": {
       const cleaned = stripAgentCode(item.content)

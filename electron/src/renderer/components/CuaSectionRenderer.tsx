@@ -72,6 +72,15 @@ function IconTerminal({ className }: { className?: string }) {
   )
 }
 
+function IconMagnifyingGlass({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  )
+}
+
 // ── Types ──
 
 type SectionType =
@@ -86,6 +95,7 @@ type SectionType =
   | 'code-agent-done'
   | 'action-result'
   | 'status'
+  | 'search-results'
 
 interface ParsedSection {
   type: SectionType
@@ -108,6 +118,7 @@ type TopLevelItem =
   | { kind: 'code-agent-result'; content: string; step: string }
   | { kind: 'code-agent-done'; content: string; step: string }
   | { kind: 'code-agent-summary'; content: string }
+  | { kind: 'search-results'; query: string; content: string }
   | { kind: 'text'; content: string }
 
 // ── Parser ──
@@ -222,6 +233,9 @@ function buildTopLevel(sections: ParsedSection[]): TopLevelItem[] {
     } else if (s.type === 'code-agent-summary') {
       flushStep()
       items.push({ kind: 'code-agent-summary', content: s.content })
+    } else if (s.type === 'search-results') {
+      flushStep()
+      items.push({ kind: 'search-results', query: s.attrs.query || '', content: s.content })
     }
 
     i++
@@ -417,6 +431,17 @@ function ItemRenderer({ item }: { item: TopLevelItem }) {
           </DetailRow>
         </div>
       )
+
+    case 'search-results': {
+      const label = item.query ? `Search: ${item.query}` : 'Web search'
+      return (
+        <div className="pl-6">
+          <DetailRow icon={IconMagnifyingGlass} label={label} defaultOpen>
+            <Markdown>{item.content}</Markdown>
+          </DetailRow>
+        </div>
+      )
+    }
 
     case 'text': {
       const cleaned = stripAgentCode(item.content)

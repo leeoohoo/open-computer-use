@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Monitor, Cpu, HardDrive, MemoryStick, MonitorCog, ArrowRight, Download } from "lucide-react";
+import { Plus, Monitor, MonitorCog, ArrowRight, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 
@@ -252,7 +252,14 @@ export function MachinesContent() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Virtual Machines</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold tracking-tight">Virtual Machines</h1>
+              {limits.max_machines > 0 && (
+                <span className="inline-flex items-center rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+                  {usage.machines_count} / {limits.max_machines}
+                </span>
+              )}
+            </div>
             <p className="text-muted-foreground mt-1">
               Manage your AI-controlled desktop environments
             </p>
@@ -293,61 +300,6 @@ export function MachinesContent() {
             <Download className="h-3 w-3" />
             Get the app
           </Link>
-        </div>
-
-        {/* Usage Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-          {[
-            { label: "Machines", used: usage.machines_count, max: limits.max_machines, icon: Monitor },
-            { label: "CPU Cores", used: usage.total_cpu_cores, max: limits.max_cpu_cores, icon: Cpu },
-            { label: "Memory", used: usage.total_memory_gb, max: limits.max_memory_gb, unit: "GB", icon: MemoryStick },
-            { label: "Storage", used: usage.total_storage_gb, max: limits.max_storage_gb, unit: "GB", icon: HardDrive },
-          ].map((stat) => {
-            const pct = stat.max > 0 ? Math.min((stat.used / stat.max) * 100, 100) : 0;
-            const r = 20;
-            const circ = 2 * Math.PI * r;
-            const offset = circ - (pct / 100) * circ;
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.label}
-                className="group relative flex items-center gap-3 rounded-xl border bg-card p-3.5 overflow-hidden transition-colors hover:border-foreground/15"
-              >
-                {/* Subtle usage fill */}
-                <div
-                  className="absolute inset-y-0 left-0 bg-foreground/[0.03] transition-all duration-700 ease-out"
-                  style={{ width: `${pct}%` }}
-                />
-                {/* Ring */}
-                <div className="relative h-11 w-11 flex-shrink-0">
-                  <svg className="h-11 w-11 -rotate-90" viewBox="0 0 44 44">
-                    <circle
-                      cx="22" cy="22" r={r}
-                      fill="none" strokeWidth="2.5"
-                      className="stroke-muted"
-                    />
-                    <circle
-                      cx="22" cy="22" r={r}
-                      fill="none" strokeWidth="2.5" strokeLinecap="round"
-                      className="stroke-foreground/70 transition-all duration-700 ease-out"
-                      style={{ strokeDasharray: circ, strokeDashoffset: offset }}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Icon className="h-3.5 w-3.5 text-muted-foreground" />
-                  </div>
-                </div>
-                {/* Text */}
-                <div className="relative min-w-0">
-                  <p className="text-sm font-semibold tabular-nums leading-none">
-                    {stat.used}
-                    <span className="text-muted-foreground font-normal text-xs ml-0.5">/ {stat.max}{stat.unit ? ` ${stat.unit}` : ""}</span>
-                  </p>
-                  <p className="text-[11px] text-muted-foreground mt-1 truncate">{stat.label}</p>
-                </div>
-              </div>
-            );
-          })}
         </div>
 
         {/* Status Filters */}

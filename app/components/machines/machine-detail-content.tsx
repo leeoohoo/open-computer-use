@@ -13,9 +13,6 @@ import {
   Square,
   RefreshCw,
   Trash2,
-  Cpu,
-  MemoryStick,
-  HardDrive,
   Network,
   ExternalLink,
   FolderOpen,
@@ -277,41 +274,9 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
                 <p>This is your local computer connected via the Coasty Desktop App. It does not consume any cloud resources.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                {/* Resource Cards */}
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Cpu className="h-4 w-4" />
-                    <span>CPU</span>
-                  </div>
-                  <p className="text-xl sm:text-2xl font-bold">{machine.cpuCores} vCPU</p>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MemoryStick className="h-4 w-4" />
-                    <span>Memory</span>
-                  </div>
-                  <p className="text-xl sm:text-2xl font-bold">{machine.memoryGb} GB</p>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <HardDrive className="h-4 w-4" />
-                    <span>Storage</span>
-                  </div>
-                  <p className="text-xl sm:text-2xl font-bold">{machine.storageGb} GB</p>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Network className="h-4 w-4" />
-                    <span>IP Address</span>
-                  </div>
-                  <p className="text-xs sm:text-sm font-mono break-all">
-                    {machine.publicIpAddress || "Not assigned"}
-                  </p>
-                </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Network className="h-4 w-4" />
+                <span className="font-mono">{machine.publicIpAddress || "IP not yet assigned"}</span>
               </div>
             )}
 

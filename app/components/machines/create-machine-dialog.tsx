@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, HardDrive, Info, AlertCircle, Clock, Monitor, ArrowRight, History, Plus } from "lucide-react";
+import { Loader2, Clock, Monitor, ArrowRight, History, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,10 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { trackVmCreated } from "@/lib/posthog/analytics";
 import { NoiseBackground } from "@/components/ui/noise-background";
@@ -163,10 +159,10 @@ export function CreateMachineDialog({
       const restoring = snapshotAvailable && restoreFromSnapshot;
       toast.success(restoring ? "Restoring machine from snapshot!" : "Machine creation started!", {
         description: restoring
-          ? "Your previous desktop state is being restored. Ready in 1-3 minutes."
+          ? "Your previous desktop state is being restored. Ready in ~30 seconds."
           : desktopEnabled
-            ? "Your desktop machine is being launched. Desktop will be ready in 1-3 minutes."
-            : "Your cloud machine is being launched. SSH key will be available once ready.",
+            ? "Your desktop is launching. Ready in ~30 seconds."
+            : "Your cloud machine is launching. SSH key will be available once ready.",
         duration: 5000,
       });
 
@@ -219,21 +215,18 @@ export function CreateMachineDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="create-machine-dialog max-w-[95vw] sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create Virtual Machine</DialogTitle>
+          <div className="flex items-center justify-between gap-3">
+            <DialogTitle>New Machine</DialogTitle>
+            {limits && (
+              <span className="inline-flex items-center rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground mr-6">
+                {usage?.machines_count ?? 0} / {limits.max_machines}
+              </span>
+            )}
+          </div>
           <DialogDescription>
-            Spin up a cloud Linux machine with SSH access
+            Launch a cloud desktop — ready in ~30 seconds
           </DialogDescription>
         </DialogHeader>
-
-        {/* Subscription Tier Display */}
-        {subscriptionTier && (
-          <div className="flex items-center gap-2 -mt-2 mb-2">
-            <span className="text-xs text-muted-foreground">Subscription:</span>
-            <Badge variant={subscriptionTier === 'enterprise' ? 'default' : subscriptionTier === 'professional' ? 'secondary' : 'outline'}>
-              {subscriptionTier.charAt(0).toUpperCase() + subscriptionTier.slice(1)}
-            </Badge>
-          </div>
-        )}
 
         {/* Free Tier Notice */}
         {!subscriptionLoading && isFreeTier && (
@@ -262,99 +255,14 @@ export function CreateMachineDialog({
           </NoiseBackground>
         )}
 
-        {/* Usage and Limits Display */}
-        {loadingLimits ? (
-          <div className="flex items-center justify-center py-4">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            <span className="ml-2 text-sm text-muted-foreground">Loading limits...</span>
-          </div>
-        ) : limits && usage ? (
-          <div className="space-y-3 py-2">
-            {/* Current Usage Alert */}
-            <Alert className={wouldExceedLimit() ? "border-destructive" : ""}>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                <div className="space-y-2">
-                  <div className="font-medium">Your Current Usage</div>
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <div className="text-muted-foreground">Machines</div>
-                      <div className="flex items-center gap-2">
-                        <Progress 
-                          value={(usage.machines_count / limits.max_machines) * 100} 
-                          className="h-2 flex-1"
-                        />
-                        <span className="font-mono">
-                          {usage.machines_count}/{limits.max_machines}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground">CPU Cores</div>
-                      <div className="flex items-center gap-2">
-                        <Progress 
-                          value={(usage.total_cpu_cores / limits.max_cpu_cores) * 100} 
-                          className="h-2 flex-1"
-                        />
-                        <span className="font-mono">
-                          {usage.total_cpu_cores}/{limits.max_cpu_cores}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground">Memory (GB)</div>
-                      <div className="flex items-center gap-2">
-                        <Progress 
-                          value={(usage.total_memory_gb / limits.max_memory_gb) * 100} 
-                          className="h-2 flex-1"
-                        />
-                        <span className="font-mono">
-                          {usage.total_memory_gb}/{limits.max_memory_gb}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground">Storage (GB)</div>
-                      <div className="flex items-center gap-2">
-                        <Progress 
-                          value={(usage.total_storage_gb / limits.max_storage_gb) * 100} 
-                          className="h-2 flex-1"
-                        />
-                        <span className="font-mono">
-                          {usage.total_storage_gb}/{limits.max_storage_gb}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </AlertDescription>
-            </Alert>
-
-            {/* Warning if would exceed limits */}
-            {wouldExceedLimit() && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  This configuration would exceed your limits. Please reduce resources or stop existing machines.
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Show what resources would be after creation */}
-            {!wouldExceedLimit() && getRemainingResources() && (
-              <div className="text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Info className="h-3 w-3" />
-                  After creation, you'll have remaining: {getRemainingResources()!.cpu} vCPU, 
-                  {' '}{getRemainingResources()!.memory}GB RAM, {getRemainingResources()!.storage}GB storage
-                </span>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="text-sm text-muted-foreground py-4">
-            No limits data available. You may not have an active subscription.
-          </div>
+        {/* Limit reached notice */}
+        {!loadingLimits && wouldExceedLimit() && (
+          <p className="text-sm text-muted-foreground rounded-lg border border-border bg-muted/40 px-4 py-3">
+            You've reached your machine limit. Stop or delete an existing machine to create a new one.{" "}
+            <a href="/account?section=billing" className="font-medium text-foreground hover:opacity-80 transition-opacity">
+              Upgrade for more →
+            </a>
+          </p>
         )}
 
         <div className="space-y-6 py-4">
@@ -377,13 +285,9 @@ export function CreateMachineDialog({
           </div>
 
           {/* Machine Info */}
-          <div className="flex items-start gap-3 rounded-lg border p-3 bg-muted/30">
-            <Monitor className="h-4 w-4 mt-0.5 text-muted-foreground" />
-            <div className="text-xs text-muted-foreground space-y-0.5">
-              <p className="font-medium text-foreground">Ubuntu Desktop (2 vCPU, 2 GB RAM)</p>
-              <p>Full desktop with VNC access via browser</p>
-              <p>Desktop takes 1-3 min to initialize after machine starts</p>
-            </div>
+          <div className="flex items-center gap-3 rounded-lg border p-3 bg-muted/30">
+            <Monitor className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">Ubuntu desktop, accessible via browser. Ready in ~30 seconds.</p>
           </div>
 
           {/* Snapshot restore choice */}
@@ -431,27 +335,6 @@ export function CreateMachineDialog({
               </div>
             </div>
           )}
-
-          {/* Machine Configuration */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label className="flex items-center gap-2">
-                  <HardDrive className="h-4 w-4" />
-                  Storage
-                </Label>
-                <span className="text-sm font-medium">{storageGb} GB</span>
-              </div>
-              <Slider
-                value={[storageGb]}
-                onValueChange={([value]) => setStorageGb(value)}
-                min={16}
-                max={30}
-                step={1}
-                disabled={creating}
-              />
-            </div>
-          </div>
 
         </div>
 

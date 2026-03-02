@@ -8,8 +8,6 @@ import {
   Square,
   Trash2,
   MoreVertical,
-  Cpu,
-  HardDrive,
   Clock,
   AlertCircle,
   CheckCircle,
@@ -393,26 +391,11 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
             </div>
           )}
 
-          {/* Resources */}
-          {isElectron ? (
+          {/* Machine type hint */}
+          {isElectron && (
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Your local computer connected via the Desktop App. No cloud resources used.
+              Running on your local computer via the Desktop App.
             </p>
-          ) : (
-            <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
-              <div className="flex items-center gap-1.5">
-                <Cpu className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
-                <span className="truncate">{machine.cpuCores} vCPU</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <HardDrive className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
-                <span className="truncate">{machine.storageGb} GB</span>
-              </div>
-              <div className="flex items-center gap-1.5 col-span-2">
-                <Monitor className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
-                <span className="truncate">{machine.memoryGb} GB RAM</span>
-              </div>
-            </div>
           )}
 
           {/* Auto-deletion notice for free tier users */}

@@ -533,10 +533,14 @@ export function Chat() {
   const showOnboarding = !effectiveChatId && redirectCheckMessages.length === 0
 
   // Quick start guide for first-time users
-  const [quickStartDismissed, setQuickStartDismissed] = useState(() => {
-    if (typeof window === "undefined") return false
-    return localStorage.getItem("coasty-quickstart-dismissed") === "true"
-  })
+  // Start as false on both server and client to avoid hydration mismatch,
+  // then sync from localStorage after mount.
+  const [quickStartDismissed, setQuickStartDismissed] = useState(false)
+  useEffect(() => {
+    if (localStorage.getItem("coasty-quickstart-dismissed") === "true") {
+      setQuickStartDismissed(true)
+    }
+  }, [])
   const showQuickStart =
     showOnboarding &&
     !!user &&
