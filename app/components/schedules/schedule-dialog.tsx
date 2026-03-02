@@ -198,7 +198,7 @@ export function ScheduleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[480px]">
         <DialogHeader>
           <DialogTitle>
             {existingSchedule ? "Edit Schedule" : "Schedule Task"}
@@ -400,13 +400,13 @@ export function ScheduleDialog({
           </div>
         )}
 
-        <DialogFooter className="flex gap-2">
+        <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row">
           {existingSchedule && (
             <Button
               variant="destructive"
               onClick={handleDelete}
               disabled={loading}
-              className="mr-auto"
+              className="w-full sm:w-auto sm:mr-auto"
             >
               Remove Schedule
             </Button>
@@ -415,10 +415,11 @@ export function ScheduleDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={loading}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={loading || !machineId}>
+          <Button onClick={handleSave} disabled={loading || !machineId} className="w-full sm:w-auto">
             {loading
               ? "Saving..."
               : existingSchedule

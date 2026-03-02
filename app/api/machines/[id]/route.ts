@@ -331,6 +331,35 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           const instanceId = settings?.awsInstanceId;
           const keyPairName = settings?.awsKeyPairName;
           if (instanceId) {
+            // Snapshot before termination so user can restore later
+            try {
+              const snapshot = await awsService.createMachineImage(
+                instanceId,
+                userId,
+                machine.display_name
+              );
+              console.log(`Created pre-delete snapshot: ${snapshot.amiId}`);
+
+              await supabase.from("machine_snapshots").insert({
+                machine_id: machineId,
+                user_id: userId,
+                snapshot_name: snapshot.name,
+                snapshot_type: "pre_shutdown",
+                storage_location: snapshot.amiId,
+                size_gb: settings?.storageGb || 16,
+                os_state: {
+                  provider: "aws",
+                  region: settings?.awsRegion || process.env.AWS_REGION || "us-east-1",
+                  source_instance: instanceId,
+                  desktop_enabled: settings?.desktopEnabled,
+                },
+              });
+
+              await awsService.cleanupOldSnapshots(userId, 2);
+            } catch (snapErr: any) {
+              console.warn(`Failed to snapshot before delete:`, snapErr.message);
+            }
+
             await awsService.terminateInstance(instanceId, keyPairName);
           }
         } else {
@@ -344,6 +373,52 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           .eq("id", machineId);
 
         return NextResponse.json({ message: "Machine deleted" });
+
+      case "snapshot":
+        if (!isAws) {
+          return NextResponse.json(
+            { error: "Snapshots are only supported for AWS machines" },
+            { status: 400 }
+          );
+        }
+        {
+          const awsService = getAwsEc2Service();
+          const instanceId = settings?.awsInstanceId;
+          if (!instanceId) {
+            return NextResponse.json(
+              { error: "No AWS instance found for this machine" },
+              { status: 400 }
+            );
+          }
+
+          const snapshot = await awsService.createMachineImage(
+            instanceId,
+            userId,
+            machine.display_name
+          );
+
+          await supabase.from("machine_snapshots").insert({
+            machine_id: machineId,
+            user_id: userId,
+            snapshot_name: snapshot.name,
+            snapshot_type: "manual",
+            storage_location: snapshot.amiId,
+            size_gb: settings?.storageGb || 16,
+            os_state: {
+              provider: "aws",
+              region: settings?.awsRegion || process.env.AWS_REGION || "us-east-1",
+              source_instance: instanceId,
+              desktop_enabled: settings?.desktopEnabled,
+            },
+          });
+
+          await awsService.cleanupOldSnapshots(userId, 2);
+
+          return NextResponse.json({
+            message: "Snapshot created successfully",
+            snapshot: { amiId: snapshot.amiId, name: snapshot.name },
+          });
+        }
 
       default:
         return NextResponse.json(

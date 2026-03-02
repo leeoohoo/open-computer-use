@@ -16,7 +16,9 @@ import {
   Loader2,
   ArrowRight,
   Terminal,
-  Server
+  Server,
+  Save,
+  History
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -96,9 +98,9 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
     return () => clearInterval(interval);
   }, [isFreeTier, subscriptionLoading, machine.createdAt, isLocal]);
 
-  const handleAction = async (action: "start" | "stop" | "restart" | "delete") => {
+  const handleAction = async (action: "start" | "stop" | "restart" | "delete" | "snapshot") => {
     setLoading(action);
-    
+
     try {
       const response = await fetch(`/api/machines/${machine.id}`, {
         method: "POST",
@@ -113,16 +115,21 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
 
       const data = await response.json();
 
+      if (action === "snapshot") {
+        toast.success("Snapshot created successfully", { duration: 5000 });
+        return;
+      }
+
       // Handle password update if container was recreated
       if ((action === "start" || action === "restart") && data.recreated && data.vncPassword) {
         toast.success(
           `Machine ${action === "restart" ? "restarted" : "recreated"} with new password. Please use the new password to connect.`,
           { duration: 8000 }
         );
-        
+
         // Update machine with new password
-        const updatedMachine = { 
-          ...machine, 
+        const updatedMachine = {
+          ...machine,
           vncPassword: data.vncPassword,
           status: "starting" as "starting"
         };
@@ -132,7 +139,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
                         action === "stop" ? "Machine stopping..." :
                         action === "restart" ? "Machine restarting..." :
                         "Machine deleted";
-        
+
         toast.success(message);
 
         if (action === "delete") {
@@ -146,7 +153,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
           onUpdate({ ...machine, status: newStatus as any });
         }
       }
-      
+
       // Poll for status updates
       if (action !== "delete") {
         pollMachineStatus(machine.id);
@@ -330,6 +337,15 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
                 {!isElectron && (
                   <>
                     <DropdownMenuSeparator />
+                    {isAws && (
+                      <DropdownMenuItem
+                        onClick={() => handleAction("snapshot")}
+                        disabled={machine.status !== "running" || loading !== null || isTemporary}
+                      >
+                        <Save className="mr-2 h-4 w-4" />
+                        {loading === "snapshot" ? "Saving..." : "Create Snapshot"}
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem
                       onClick={() => handleAction("restart")}
                       disabled={machine.status !== "running" || loading !== null || isTemporary}
@@ -368,6 +384,14 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
               </span>
             )}
           </div>
+
+          {/* Restored from snapshot indicator */}
+          {machine.settings?.restoredFromSnapshot && (
+            <div className="flex items-center gap-1.5 text-xs text-blue-500">
+              <History className="h-3 w-3" />
+              <span>Restored from snapshot</span>
+            </div>
+          )}
 
           {/* Resources */}
           {isElectron ? (

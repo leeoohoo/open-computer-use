@@ -223,7 +223,7 @@ export function ScheduleCard({
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-3 gap-3 text-sm">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 text-sm">
           <div className="space-y-0.5">
             <p className="text-[11px] text-muted-foreground uppercase tracking-wider">
               Next Run
@@ -284,21 +284,21 @@ export function ScheduleCard({
       </div>
 
       {/* Actions — pinned to bottom */}
-      <div className="border-t px-4 py-3 flex items-center gap-2">
+      <div className="border-t px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
         <Button
           size="sm"
           variant="outline"
-          className="h-8 gap-1.5"
+          className="h-7 sm:h-8 gap-1 sm:gap-1.5 text-xs sm:text-sm"
           onClick={handleRunNow}
           disabled={!!actionLoading}
         >
           <CoastyIcon className="h-3 w-3" />
-          {actionLoading === "run" ? "Running..." : "Run Now"}
+          {actionLoading === "run" ? "..." : "Run"}
         </Button>
         <Button
           size="sm"
           variant="outline"
-          className="h-8 gap-1.5"
+          className="h-7 sm:h-8 gap-1 sm:gap-1.5 text-xs sm:text-sm"
           onClick={handleTogglePause}
           disabled={!!actionLoading}
         >
@@ -316,27 +316,27 @@ export function ScheduleCard({
         <Button
           size="sm"
           variant="ghost"
-          className="h-8 gap-1.5"
+          className="h-7 sm:h-8 gap-1 sm:gap-1.5 text-xs sm:text-sm"
           onClick={() => onViewHistory(schedule.chat_id)}
         >
           <History className="h-3 w-3" />
-          History
+          <span className="hidden sm:inline">History</span>
         </Button>
         {onEdit && (
           <Button
             size="sm"
             variant="ghost"
-            className="h-8 gap-1.5"
+            className="h-7 sm:h-8 gap-1 sm:gap-1.5 text-xs sm:text-sm"
             onClick={() => onEdit(schedule.chat_id)}
           >
             <Pencil className="h-3 w-3" />
-            Edit
+            <span className="hidden sm:inline">Edit</span>
           </Button>
         )}
         <Button
           size="sm"
           variant="ghost"
-          className="h-8 text-red-500 hover:text-red-600 ml-auto"
+          className="h-7 sm:h-8 text-red-500 hover:text-red-600 ml-auto"
           onClick={handleDelete}
           disabled={!!actionLoading}
         >

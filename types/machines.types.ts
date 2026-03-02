@@ -69,6 +69,9 @@ export interface MachineSettings {
   awsInstanceType?: string;
   desktopEnabled?: boolean;
   desktopInitStatus?: 'installing' | 'ready' | 'failed';
+  // Snapshot restore
+  restoredFromSnapshot?: string;
+  restoredAt?: string;
 }
 
 export interface MachineSession {
@@ -179,6 +182,7 @@ export interface CreateMachineRequest {
   memoryGb?: number;
   storageGb?: number;
   desktopEnabled?: boolean;
+  restoreFromSnapshot?: boolean;
 }
 
 export interface CreateMachineResponse {
@@ -195,7 +199,7 @@ export interface CreateMachineResponse {
 }
 
 export interface MachineActionRequest {
-  action: "start" | "stop" | "restart" | "delete";
+  action: "start" | "stop" | "restart" | "delete" | "snapshot";
 }
 
 export interface StartSessionRequest {

@@ -109,33 +109,35 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
       {history.map((entry) => (
         <div
           key={entry.id}
-          className="flex items-center justify-between px-4 py-3 text-sm hover:bg-accent/50 transition-colors"
+          className="px-3 sm:px-4 py-2.5 sm:py-3 text-sm hover:bg-accent/50 transition-colors space-y-1"
         >
-          <div className="flex items-center gap-3 min-w-0">
-            <StatusBadge status={entry.status} />
-            <span className="text-muted-foreground truncate">
-              {new Date(entry.executed_at).toLocaleString(undefined, {
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
-            {entry.trigger === "manual" && (
-              <span className="text-xs text-muted-foreground">(manual)</span>
-            )}
-          </div>
-          <div className="flex items-center gap-3 text-muted-foreground shrink-0">
-            {entry.duration_seconds != null && (
-              <span className="text-xs">{entry.duration_seconds}s</span>
-            )}
-            {entry.credits_charged != null && entry.credits_charged > 0 && (
-              <span className="text-xs">{entry.credits_charged} credits</span>
-            )}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <StatusBadge status={entry.status} />
+              <span className="text-muted-foreground truncate text-xs sm:text-sm">
+                {new Date(entry.executed_at).toLocaleString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+              {entry.trigger === "manual" && (
+                <span className="text-xs text-muted-foreground hidden sm:inline">(manual)</span>
+              )}
+            </div>
+            <div className="flex items-center gap-2 sm:gap-3 text-muted-foreground shrink-0">
+              {entry.duration_seconds != null && (
+                <span className="text-xs">{entry.duration_seconds}s</span>
+              )}
+              {entry.credits_charged != null && entry.credits_charged > 0 && (
+                <span className="text-xs">{entry.credits_charged} <span className="hidden sm:inline">credits</span><span className="sm:hidden">cr</span></span>
+              )}
+            </div>
           </div>
           {entry.error && (
             <p
-              className="text-xs text-red-500 mt-1 truncate"
+              className="text-xs text-red-500 truncate"
               title={entry.error}
             >
               {entry.error}

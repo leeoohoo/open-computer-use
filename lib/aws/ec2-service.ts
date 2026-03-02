@@ -12,6 +12,10 @@ import {
   AuthorizeSecurityGroupIngressCommand,
   DescribeSecurityGroupsCommand,
   DescribeImagesCommand,
+  CreateImageCommand,
+  DeregisterImageCommand,
+  DescribeSnapshotsCommand,
+  DeleteSnapshotCommand,
   type Instance,
   type _InstanceType,
   type RunInstancesCommandInput,
@@ -24,6 +28,8 @@ export interface EC2InstanceConfig {
   storageGb?: number;
   desktopEnabled?: boolean;
   vncPassword?: string;
+  /** AMI ID from a previous machine snapshot — restores full machine state */
+  snapshotAmiId?: string;
 }
 
 export interface EC2InstanceStatus {
@@ -132,8 +138,10 @@ export class AwsEc2Service {
       throw new Error("Failed to generate SSH key pair: no key material returned");
     }
 
-    // Resolve AMI
-    const amiId = config.amiId || process.env.AWS_EC2_AMI_ID || (await this.resolveUbuntuAmi());
+    // Resolve AMI — snapshot AMI (user's saved state) > golden AMI > stock Ubuntu
+    const goldenAmiId = process.env.AWS_EC2_GOLDEN_AMI_ID;
+    const snapshotAmiId = config.snapshotAmiId;
+    const amiId = snapshotAmiId || goldenAmiId || config.amiId || process.env.AWS_EC2_AMI_ID || (await this.resolveUbuntuAmi());
 
     // Build instance name tag
     const instanceName = config.name || `llmhub-${userId.substring(0, 8)}-${shortId}`;
@@ -170,8 +178,13 @@ export class AwsEc2Service {
     };
 
     // Add cloud-init UserData for desktop mode
+    // Snapshot/golden AMI already has packages installed — use slim UserData that only
+    // injects VNC password, deploys agent code, and starts services (~15-30s vs 4-6min)
     if (config.desktopEnabled && config.vncPassword) {
-      runInput.UserData = this.generateDesktopUserData(config.vncPassword);
+      const useSlimUserData = snapshotAmiId || goldenAmiId;
+      runInput.UserData = useSlimUserData
+        ? this.generateGoldenAmiUserData(config.vncPassword)
+        : this.generateDesktopUserData(config.vncPassword);
     }
 
     // Launch instance
@@ -252,6 +265,143 @@ export class AwsEc2Service {
       } catch (error) {
         console.error("Failed to delete key pair:", error);
       }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Machine Snapshots (AMI-based)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Create an AMI from a running or stopped instance.
+   * This captures the full machine state including all files, browser data, etc.
+   */
+  async createMachineImage(
+    instanceId: string,
+    userId: string,
+    machineName?: string
+  ): Promise<{ amiId: string; name: string }> {
+    const ts = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 15);
+    const name = `coasty-snapshot-${userId.substring(0, 8)}-${ts}`;
+
+    const result = await this.client.send(
+      new CreateImageCommand({
+        InstanceId: instanceId,
+        Name: name,
+        Description: `Snapshot of ${machineName || instanceId} for user ${userId.substring(0, 8)}`,
+        NoReboot: true, // don't interrupt the running instance
+        TagSpecifications: [
+          {
+            ResourceType: "image",
+            Tags: [
+              { Key: "Name", Value: name },
+              { Key: "UserId", Value: userId },
+              { Key: "ManagedBy", Value: "coasty-snapshot" },
+              { Key: "SourceInstance", Value: instanceId },
+            ],
+          },
+        ],
+      })
+    );
+
+    const amiId = result.ImageId;
+    if (!amiId) {
+      throw new Error("CreateImage returned no image ID");
+    }
+
+    console.log(`Created snapshot AMI ${amiId} (${name}) from instance ${instanceId}`);
+    return { amiId, name };
+  }
+
+  /**
+   * Find the latest snapshot AMI for a user.
+   */
+  async findLatestUserSnapshot(userId: string): Promise<string | null> {
+    const info = await this.findLatestUserSnapshotInfo(userId);
+    return info?.amiId ?? null;
+  }
+
+  async findLatestUserSnapshotInfo(userId: string): Promise<{ amiId: string; createdAt: string } | null> {
+    try {
+      const result = await this.client.send(
+        new DescribeImagesCommand({
+          Owners: ["self"],
+          Filters: [
+            { Name: "tag:UserId", Values: [userId] },
+            { Name: "tag:ManagedBy", Values: ["coasty-snapshot"] },
+            { Name: "state", Values: ["available"] },
+          ],
+        })
+      );
+
+      const images = result.Images || [];
+      if (images.length === 0) return null;
+
+      // Sort by creation date descending, pick latest
+      images.sort((a, b) =>
+        (b.CreationDate || "").localeCompare(a.CreationDate || "")
+      );
+
+      const latestAmi = images[0].ImageId!;
+      const createdAt = images[0].CreationDate || new Date().toISOString();
+      console.log(`Found snapshot AMI ${latestAmi} for user ${userId.substring(0, 8)}`);
+      return { amiId: latestAmi, createdAt };
+    } catch (error) {
+      console.error("Failed to find user snapshots:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Clean up old snapshot AMIs for a user, keeping only the latest `keepCount`.
+   */
+  async cleanupOldSnapshots(userId: string, keepCount: number = 2): Promise<void> {
+    try {
+      const result = await this.client.send(
+        new DescribeImagesCommand({
+          Owners: ["self"],
+          Filters: [
+            { Name: "tag:UserId", Values: [userId] },
+            { Name: "tag:ManagedBy", Values: ["coasty-snapshot"] },
+          ],
+        })
+      );
+
+      const images = result.Images || [];
+      if (images.length <= keepCount) return;
+
+      // Sort by creation date descending, delete everything after keepCount
+      images.sort((a, b) =>
+        (b.CreationDate || "").localeCompare(a.CreationDate || "")
+      );
+
+      const toDelete = images.slice(keepCount);
+      for (const img of toDelete) {
+        try {
+          // Get associated EBS snapshots before deregistering the AMI
+          const snapshotIds = (img.BlockDeviceMappings || [])
+            .map((b) => b.Ebs?.SnapshotId)
+            .filter(Boolean) as string[];
+
+          // Deregister the AMI
+          await this.client.send(
+            new DeregisterImageCommand({ ImageId: img.ImageId! })
+          );
+
+          // Delete the underlying EBS snapshots
+          for (const snapId of snapshotIds) {
+            await this.client.send(
+              new DeleteSnapshotCommand({ SnapshotId: snapId })
+            ).catch(() => {});
+          }
+
+          console.log(`Deleted old snapshot AMI ${img.ImageId} (${img.Name})`);
+        } catch (err) {
+          console.warn(`Failed to delete snapshot AMI ${img.ImageId}:`, err);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to cleanup snapshots:", error);
     }
   }
 
@@ -353,10 +503,11 @@ export class AwsEc2Service {
     return groupId;
   }
 
-  private generateDesktopUserData(vncPassword: string): string {
-    // Python agent source — extracted so we can gzip it to stay within the
-    // 25,600 byte AWS UserData base64 limit.
-    const agentPy = `#!/usr/bin/env python3
+  /**
+   * Returns the Python AI agent source code, shared by both full and golden AMI UserData.
+   */
+  private getAgentSource(): string {
+    return `#!/usr/bin/env python3
 import asyncio,base64,io,json,os,subprocess,tempfile,time
 from typing import Any,Dict
 try:
@@ -611,6 +762,10 @@ async def main():
   await asyncio.Future()
 if __name__=="__main__":asyncio.run(main())
 `;
+  }
+
+  private generateDesktopUserData(vncPassword: string): string {
+    const agentPy = this.getAgentSource();
 
     // Gzip-compress the Python agent to fit within AWS UserData 25,600 byte base64 limit
     const agentGz = zlib.gzipSync(Buffer.from(agentPy), { level: 9 });
@@ -1016,20 +1171,136 @@ ExecStartPre=/bin/bash -c 'for i in $(seq 1 60); do xdpyinfo -display :1 >/dev/n
 ExecStart=/usr/bin/python3 /opt/ai-agent/server.py
 Restart=on-failure
 RestartSec=5
+MemoryMax=512M
+MemoryHigh=384M
+OOMPolicy=restart
 
 [Install]
 WantedBy=multi-user.target
 AGENT_SVC_EOF
 
+# Swap space (2GB) - prevents OOM kills on t4g.small
+fallocate -l 2G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo '/swapfile none swap sw 0 0' >> /etc/fstab
+echo 'vm.swappiness=10' >> /etc/sysctl.d/99-swap.conf
+sysctl -p /etc/sysctl.d/99-swap.conf
+
+# Memory watchdog - kills excess browser processes before OOM
+cat > /usr/local/bin/memory-watchdog.sh << 'WATCHDOG_EOF'
+#!/bin/bash
+THRESHOLD_WARN=80
+THRESHOLD_KILL=88
+get_mem_pct() { free | awk '/^Mem:/ { printf "%.0f", ($3/$2)*100 }'; }
+cleanup_browser_cache() {
+    rm -rf /home/ubuntu/.cache/mozilla/firefox/*/cache2/* 2>/dev/null || true
+    sync && echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+}
+kill_excess_browser_procs() {
+    local pids=$(ps aux | grep -i "[I]solated Web" | sort -k6 -rn | tail -n +3 | awk '{print $2}')
+    for pid in $pids; do kill -9 "$pid" 2>/dev/null && logger -t memory-watchdog "Killed excess browser process $pid"; done
+    local zombies=$(ps aux | grep -i "[d]efunct" | awk '{print $2}')
+    for pid in $zombies; do kill -9 "$pid" 2>/dev/null; done
+}
+while true; do
+    MEM_PCT=$(get_mem_pct)
+    if [ "$MEM_PCT" -ge "$THRESHOLD_KILL" ]; then
+        logger -t memory-watchdog "CRITICAL: Memory at \${MEM_PCT}% - killing excess browser procs"
+        kill_excess_browser_procs; cleanup_browser_cache
+    elif [ "$MEM_PCT" -ge "$THRESHOLD_WARN" ]; then
+        logger -t memory-watchdog "WARNING: Memory at \${MEM_PCT}% - clearing caches"
+        cleanup_browser_cache
+    fi
+    sleep 30
+done
+WATCHDOG_EOF
+chmod 755 /usr/local/bin/memory-watchdog.sh
+
+cat > /etc/systemd/system/memory-watchdog.service << 'WATCHDOG_SVC_EOF'
+[Unit]
+Description=Memory Watchdog Service
+After=multi-user.target
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/memory-watchdog.sh
+Restart=always
+RestartSec=10
+[Install]
+WantedBy=multi-user.target
+WATCHDOG_SVC_EOF
+
 systemctl daemon-reload
-systemctl enable ai-agent.service
+systemctl enable ai-agent.service memory-watchdog.service
 systemctl start ai-agent.service
+systemctl start memory-watchdog.service
 
 echo "DESKTOP_INIT_STATUS=ready" > /var/run/desktop-init-status
 echo "Desktop setup complete at $(date)"
 `;
 
     // Gzip the entire script — cloud-init auto-detects gzip magic bytes
+    const scriptGz = zlib.gzipSync(Buffer.from(script), { level: 9 });
+    return scriptGz.toString("base64");
+  }
+
+  /**
+   * Slim UserData for golden AMI instances.
+   * The golden AMI already has all packages, services, and config baked in.
+   * This only injects the VNC password, deploys the Python agent, and starts services.
+   */
+  private generateGoldenAmiUserData(vncPassword: string): string {
+    const agentPy = this.getAgentSource();
+
+    const agentGz = zlib.gzipSync(Buffer.from(agentPy), { level: 9 });
+    const agentB64 = agentGz.toString("base64").match(/.{1,76}/g)?.join("\n") ?? "";
+
+    const script = `#!/bin/bash
+set -e
+exec > /var/log/desktop-setup.log 2>&1
+
+echo "DESKTOP_INIT_STATUS=starting" > /var/run/desktop-init-status
+echo "Golden AMI boot started at $(date)"
+
+# 1. Stop any services that may already be running (snapshot restore case)
+systemctl stop ai-agent.service vncserver@:1.service novnc.service keep-screen-alive.service memory-watchdog.service 2>/dev/null || true
+
+# 2. Set VNC password
+USER_HOME=/home/ubuntu
+mkdir -p $USER_HOME/.vnc
+echo "${vncPassword}" | vncpasswd -f > $USER_HOME/.vnc/passwd
+chmod 600 $USER_HOME/.vnc/passwd
+chown ubuntu:ubuntu $USER_HOME/.vnc/passwd
+
+# 3. Deploy AI agent
+mkdir -p /opt/ai-agent
+printf 'VNC_PASSWORD=%s\\n' "${vncPassword}" > /opt/ai-agent/.env
+chmod 600 /opt/ai-agent/.env && chown ubuntu:ubuntu /opt/ai-agent/.env
+
+base64 -d << 'AGENT_B64_EOF' | gunzip > /opt/ai-agent/server.py
+${agentB64}
+AGENT_B64_EOF
+chown ubuntu:ubuntu /opt/ai-agent/server.py
+
+# 4. Enable swap (pre-created in golden AMI)
+swapon /swapfile 2>/dev/null || true
+sysctl -p /etc/sysctl.d/99-swap.conf 2>/dev/null || true
+
+# 5. Start all services (restart to pick up new password)
+systemctl daemon-reload
+systemctl enable vncserver@:1.service novnc.service keep-screen-alive.service ai-agent.service memory-watchdog.service
+systemctl restart vncserver@:1.service
+sleep 3
+systemctl restart novnc.service
+systemctl restart keep-screen-alive.service
+systemctl restart ai-agent.service
+systemctl restart memory-watchdog.service
+
+echo "DESKTOP_INIT_STATUS=ready" > /var/run/desktop-init-status
+echo "Golden AMI boot complete at $(date)"
+`;
+
     const scriptGz = zlib.gzipSync(Buffer.from(script), { level: 9 });
     return scriptGz.toString("base64");
   }

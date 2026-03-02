@@ -18,7 +18,8 @@ import {
   HardDrive,
   Network,
   ExternalLink,
-  FolderOpen
+  FolderOpen,
+  Save
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -87,18 +88,18 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
     }
   };
 
-  const handleAction = async (action: "start" | "stop" | "restart" | "delete") => {
+  const handleAction = async (action: "start" | "stop" | "restart" | "delete" | "snapshot") => {
     if (!machine) return;
-    
+
     // Confirm deletion
     if (action === "delete") {
       if (!confirm("Are you sure you want to delete this machine? This action cannot be undone.")) {
         return;
       }
     }
-    
+
     setActionLoading(action);
-    
+
     try {
       const response = await fetch(`/api/machines/${machineId}`, {
         method: "POST",
@@ -119,15 +120,17 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
           "Machine recreated with new password. Please use the new password to connect.",
           { duration: 8000 }
         );
-        
+
         // Update machine with new password
         setMachine(prev => prev ? { ...prev, vncPassword: data.vncPassword } : null);
+      } else if (action === "snapshot") {
+        toast.success(`Snapshot created successfully (${data.amiId})`, { duration: 5000 });
       } else {
         const message = action === "start" ? "Machine starting..." :
                         action === "stop" ? "Machine stopping..." :
                         action === "restart" ? "Machine restarting..." :
                         "Machine deleted";
-        
+
         toast.success(message);
       }
 
@@ -231,6 +234,23 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
                       </>
                     )}
                   </Button>
+                  {machine.settings?.provider === 'aws' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleAction("snapshot")}
+                      disabled={actionLoading !== null || machine.status !== "running"}
+                    >
+                      {actionLoading === "snapshot" ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Save className="h-4 w-4 mr-2" />
+                          Snapshot
+                        </>
+                      )}
+                    </Button>
+                  )}
                   <Button
                     variant="destructive"
                     size="sm"

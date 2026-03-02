@@ -257,7 +257,7 @@ export function SchedulesContent() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Scheduled Tasks</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Scheduled Tasks</h1>
             <p className="text-muted-foreground mt-1">
               Set it and forget it. Coasty handles the rest, just like a human
             </p>
@@ -265,12 +265,12 @@ export function SchedulesContent() {
         </div>
 
         {/* Banner */}
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex items-center gap-1.5 text-muted-foreground/60">
-              <Timer className="h-3.5 w-3.5" />
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-border bg-card px-3 sm:px-4 py-3">
+          <div className="flex items-start sm:items-center gap-2 sm:gap-3 min-w-0">
+            <div className="flex items-center gap-1.5 text-muted-foreground/60 mt-0.5 sm:mt-0">
+              <Timer className="h-3.5 w-3.5 shrink-0" />
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Open any chat and click the{" "}
               <span className="inline-flex items-center gap-1 font-bold text-foreground">
                 <Timer className="h-3 w-3" />
@@ -298,14 +298,14 @@ export function SchedulesContent() {
                 key={f.id}
                 onClick={() => setStatusFilter(f.id)}
                 className={`
-                  px-4 py-2 rounded-lg transition-all duration-300
+                  px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-all duration-300 text-sm sm:text-base
                   ${statusFilter === f.id
                     ? "bg-foreground text-background font-medium"
                     : "bg-secondary hover:bg-secondary/80 text-foreground"
                   }
                 `}
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-1.5 sm:gap-2">
                   {f.label}
                   {f.count > 0 && (
                     <span
@@ -327,17 +327,17 @@ export function SchedulesContent() {
         {/* ═══ Main area: Calendar + Day panel ═══ */}
         {schedules.length === 0 ? (
           <Card className="border-0">
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <CalendarClock className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No scheduled tasks yet</h3>
-              <p className="text-muted-foreground text-center mb-4">
+            <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12 px-4">
+              <CalendarClock className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mb-3 sm:mb-4" />
+              <h3 className="text-base sm:text-lg font-semibold mb-2">No scheduled tasks yet</h3>
+              <p className="text-sm sm:text-base text-muted-foreground text-center mb-4">
                 Open a chat, run a task on a machine, then click the schedule
                 button to automate it.
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] xl:grid-cols-[1fr_380px] gap-4 sm:gap-6">
             {/* Left: Calendar */}
             <ScheduleCalendar
               schedules={filteredSchedules}

@@ -123,6 +123,42 @@ export async function deleteMachine(machine: any): Promise<CleanupResult> {
         // Dynamic import to avoid pulling Node.js modules (zlib) into Edge Runtime
         const { getAwsEc2Service } = await import("@/lib/aws/ec2-service");
         const awsService = getAwsEc2Service();
+
+        // Snapshot the instance before termination so user can restore later
+        try {
+          const snapshot = await awsService.createMachineImage(
+            settings.awsInstanceId,
+            machine.user_id,
+            machine.display_name
+          );
+          console.log(`Created pre-termination snapshot: ${snapshot.amiId}`);
+
+          // Store snapshot reference in database
+          const supabaseForSnapshot = await createClient();
+          if (supabaseForSnapshot) {
+            await supabaseForSnapshot.from("machine_snapshots").insert({
+              machine_id: machine.id,
+              user_id: machine.user_id,
+              snapshot_name: snapshot.name,
+              snapshot_type: "pre_shutdown",
+              storage_location: snapshot.amiId,
+              size_gb: settings.storageGb || 16,
+              os_state: {
+                provider: "aws",
+                region: settings.awsRegion || process.env.AWS_REGION || "us-east-1",
+                source_instance: settings.awsInstanceId,
+                desktop_enabled: settings.desktopEnabled,
+              },
+            });
+          }
+
+          // Clean up old snapshots (keep latest 2)
+          await awsService.cleanupOldSnapshots(machine.user_id, 2);
+        } catch (snapError: any) {
+          console.warn(`Failed to snapshot instance ${settings.awsInstanceId}:`, snapError.message);
+          // Continue with termination — snapshot failure shouldn't block cleanup
+        }
+
         await awsService.terminateInstance(settings.awsInstanceId, settings.awsKeyPairName);
         console.log(`Terminated EC2 instance: ${settings.awsInstanceId}`);
       } catch (awsError: any) {

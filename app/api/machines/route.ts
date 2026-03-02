@@ -239,6 +239,21 @@ export async function GET(request: NextRequest) {
     const totalMemoryGb = cloudMachines.reduce((sum: number, m: any) => sum + (m?.memoryGb || 0), 0);
     const totalStorageGb = cloudMachines.reduce((sum: number, m: any) => sum + (m?.storageGb || 0), 0);
 
+    // Check if user has a snapshot AMI available for restore
+    // Query AWS directly — same source of truth used during actual restore
+    let hasSnapshot = false;
+    let snapshotDate: string | null = null;
+    try {
+      const awsService = getAwsEc2Service();
+      const snapshotInfo = await awsService.findLatestUserSnapshotInfo(userId);
+      if (snapshotInfo) {
+        hasSnapshot = true;
+        snapshotDate = snapshotInfo.createdAt;
+      }
+    } catch {
+      // Non-critical — skip snapshot check
+    }
+
     return NextResponse.json({
       machines: machines || [],
       limits: effectiveLimits,
@@ -249,6 +264,7 @@ export async function GET(request: NextRequest) {
         total_memory_gb: totalMemoryGb,
         total_storage_gb: totalStorageGb,
       },
+      snapshot: hasSnapshot ? { available: true, date: snapshotDate } : null,
     });
   } catch (error) {
     // Error in GET /api/machines
@@ -481,13 +497,31 @@ export async function POST(request: NextRequest) {
 
       (async () => {
         try {
-          console.log(`Creating AWS EC2 instance (${awsInstanceType}) with ${requestedStorage}GB storage${isDesktop ? ' + desktop' : ''}`);
+          // Check if user has a previous machine snapshot to restore from
+          // Only restore if user explicitly opted in (restoreFromSnapshot !== false)
+          let snapshotAmiId: string | undefined;
+          if (body.restoreFromSnapshot !== false) {
+            try {
+              const latestSnapshot = await awsService.findLatestUserSnapshot(userId);
+              if (latestSnapshot) {
+                console.log(`Found snapshot AMI ${latestSnapshot} for user — restoring previous state`);
+                snapshotAmiId = latestSnapshot;
+              }
+            } catch (snapErr: any) {
+              console.warn("Failed to check for snapshots:", snapErr.message);
+            }
+          } else {
+            console.log("User chose to start fresh — skipping snapshot restore");
+          }
+
+          console.log(`Creating AWS EC2 instance (${awsInstanceType}) with ${requestedStorage}GB storage${isDesktop ? ' + desktop' : ''}${snapshotAmiId ? ' [from snapshot]' : ''}`);
 
           const result = await awsService.createInstance(userId, {
             name: containerName,
             storageGb: requestedStorage,
             desktopEnabled: isDesktop,
             vncPassword: isDesktop ? vncPassword : undefined,
+            snapshotAmiId,
           });
 
           console.log(`AWS EC2 instance created: ${result.instanceId}`);
@@ -507,6 +541,10 @@ export async function POST(request: NextRequest) {
                 desktopEnabled: isDesktop,
                 desktopInitStatus: isDesktop ? 'installing' as const : undefined,
                 agent_port: isDesktop ? 8080 : undefined,
+                ...(snapshotAmiId && {
+                  restoredFromSnapshot: snapshotAmiId,
+                  restoredAt: new Date().toISOString(),
+                }),
               },
               ssh_port: 22,
             })

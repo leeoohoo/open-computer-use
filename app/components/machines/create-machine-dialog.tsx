@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, HardDrive, Info, AlertCircle, Clock, Monitor, ArrowRight } from "lucide-react";
+import { Loader2, HardDrive, Info, AlertCircle, Clock, Monitor, ArrowRight, History, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -41,6 +41,7 @@ interface MachineApiResponse {
   limits: MachineLimits;
   subscriptionTier?: string | null;
   usage: MachineUsage;
+  snapshot?: { available: boolean; date: string } | null;
 }
 
 interface MachineUsage {
@@ -64,6 +65,9 @@ export function CreateMachineDialog({
   const [usage, setUsage] = useState<MachineUsage | null>(null);
   const [subscriptionTier, setSubscriptionTier] = useState<string | null>(null);
   const [loadingLimits, setLoadingLimits] = useState(false);
+  const [snapshotAvailable, setSnapshotAvailable] = useState(false);
+  const [snapshotDate, setSnapshotDate] = useState<string | null>(null);
+  const [restoreFromSnapshot, setRestoreFromSnapshot] = useState(true);
 
   useEffect(() => {
     if (open) {
@@ -77,10 +81,18 @@ export function CreateMachineDialog({
       const response = await fetch("/api/machines");
       if (response.ok) {
         const data: MachineApiResponse = await response.json();
-        console.log("Fetched machine data:", data); // Debug log
         setLimits(data.limits);
         setUsage(data.usage);
         setSubscriptionTier(data.subscriptionTier || null);
+        if (data.snapshot?.available) {
+          setSnapshotAvailable(true);
+          setSnapshotDate(data.snapshot.date);
+          setRestoreFromSnapshot(true);
+        } else {
+          setSnapshotAvailable(false);
+          setSnapshotDate(null);
+          setRestoreFromSnapshot(false);
+        }
       } else {
         console.error("Failed to fetch limits, status:", response.status);
         const errorText = await response.text();
@@ -136,6 +148,7 @@ export function CreateMachineDialog({
       provider: 'aws' as const,
       storageGb,
       desktopEnabled,
+      restoreFromSnapshot: snapshotAvailable ? restoreFromSnapshot : false,
     };
 
     try {
@@ -147,10 +160,13 @@ export function CreateMachineDialog({
       });
 
       // Show immediate success and close dialog
-      toast.success("Machine creation started!", {
-        description: desktopEnabled
-          ? "Your desktop machine is being launched. Desktop will be ready in 1-3 minutes."
-          : "Your cloud machine is being launched. SSH key will be available once ready.",
+      const restoring = snapshotAvailable && restoreFromSnapshot;
+      toast.success(restoring ? "Restoring machine from snapshot!" : "Machine creation started!", {
+        description: restoring
+          ? "Your previous desktop state is being restored. Ready in 1-3 minutes."
+          : desktopEnabled
+            ? "Your desktop machine is being launched. Desktop will be ready in 1-3 minutes."
+            : "Your cloud machine is being launched. SSH key will be available once ready.",
         duration: 5000,
       });
 
@@ -369,6 +385,52 @@ export function CreateMachineDialog({
               <p>Desktop takes 1-3 min to initialize after machine starts</p>
             </div>
           </div>
+
+          {/* Snapshot restore choice */}
+          {snapshotAvailable && (
+            <div className="space-y-2">
+              <Label>Machine State</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRestoreFromSnapshot(true)}
+                  className={`flex items-start gap-2.5 rounded-lg border p-3 text-left transition-colors ${
+                    restoreFromSnapshot
+                      ? "border-blue-500 bg-blue-500/10"
+                      : "border-border bg-muted/30 hover:bg-muted/50"
+                  }`}
+                >
+                  <History className={`h-4 w-4 mt-0.5 shrink-0 ${restoreFromSnapshot ? "text-blue-500" : "text-muted-foreground"}`} />
+                  <div className="text-xs space-y-0.5">
+                    <p className="font-medium text-foreground">Restore Previous</p>
+                    <p className="text-muted-foreground">
+                      Resume from last snapshot
+                      {snapshotDate && (
+                        <span className="block text-[10px]">
+                          {new Date(snapshotDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRestoreFromSnapshot(false)}
+                  className={`flex items-start gap-2.5 rounded-lg border p-3 text-left transition-colors ${
+                    !restoreFromSnapshot
+                      ? "border-blue-500 bg-blue-500/10"
+                      : "border-border bg-muted/30 hover:bg-muted/50"
+                  }`}
+                >
+                  <Plus className={`h-4 w-4 mt-0.5 shrink-0 ${!restoreFromSnapshot ? "text-blue-500" : "text-muted-foreground"}`} />
+                  <div className="text-xs space-y-0.5">
+                    <p className="font-medium text-foreground">Start Fresh</p>
+                    <p className="text-muted-foreground">Clean desktop environment</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Machine Configuration */}
           <div className="space-y-4">
