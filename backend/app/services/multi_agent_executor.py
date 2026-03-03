@@ -3,19 +3,99 @@ Multi-Agent Task Execution System
 Decomposes complex user requests into subtasks and assigns them to specialized agents
 """
 
+import base64
 import json
 import logging
 import asyncio
+import os
 from typing import Dict, List, Optional, Any, Tuple, AsyncGenerator
 from datetime import datetime
 from enum import Enum
 import uuid
+from urllib.parse import urlparse
 
 from app.api.routes.chat_vm_tools import create_comprehensive_vm_tools
 from app.services.vm_control import vm_control_service
 from app.services.search_tool import create_search_tool
 
 logger = logging.getLogger(__name__)
+
+
+def _extract_domain(service: str) -> str:
+    s = service.strip()
+    if not s.startswith("http"):
+        s = "https://" + s
+    try:
+        hostname = urlparse(s).hostname or service
+        return hostname.lower().removeprefix("www.")
+    except Exception:
+        return service.lower()
+
+
+def _score_credential(cred: Dict, query_service: str, query_context: str = "") -> int:
+    domain = _extract_domain(query_service)
+    cred_service = cred.get("service", "").lower()
+    score = 0
+    if cred_service == domain:
+        score += 10
+    elif domain in cred_service or cred_service in domain:
+        score += 5
+    if query_context:
+        context_words = set(query_context.lower().split())
+        name_words = set(cred.get("name", "").lower().split())
+        score += len(context_words & name_words) * 2
+    return score
+
+
+def _decrypt_credential_json(encrypted_key: str, iv_hex: str) -> Dict:
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM  # noqa: PLC0415
+    from app.core.config import settings as _settings  # noqa: PLC0415
+    enc_key_str = os.environ.get("ENCRYPTION_KEY") or getattr(_settings, "ENCRYPTION_KEY", None)
+    if not enc_key_str:
+        raise ValueError("ENCRYPTION_KEY is not set in backend environment — add it to backend/.env")
+    raw_key = base64.b64decode(enc_key_str)
+    iv = bytes.fromhex(iv_hex)
+    parts = encrypted_key.split(":")
+    ciphertext_with_tag = bytes.fromhex(parts[0]) + bytes.fromhex(parts[1])
+    aesgcm = AESGCM(raw_key)
+    return json.loads(aesgcm.decrypt(iv, ciphertext_with_tag, None).decode())
+
+
+async def _fetch_credential_for_machine(machine_id: str, service: str, context: str = "") -> Optional[Dict]:
+    try:
+        from supabase import create_client  # noqa: PLC0415
+        from app.core.config import settings  # noqa: PLC0415
+        if not settings.SUPABASE_URL or not settings.SUPABASE_SERVICE_ROLE:
+            return None
+        client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_ROLE)
+        machine_res = (
+            client.table("user_machines").select("user_id").eq("id", machine_id).maybe_single().execute()
+        )
+        user_id = (machine_res.data or {}).get("user_id")
+        if not user_id:
+            return None
+        creds_res = (
+            client.table("user_keys")
+            .select("encrypted_key, iv")
+            .eq("user_id", user_id)
+            .like("provider", "credential:%")
+            .execute()
+        )
+        best: Optional[Dict] = None
+        best_score = 0
+        for row in (creds_res.data or []):
+            try:
+                cred = _decrypt_credential_json(row["encrypted_key"], row["iv"])
+                score = _score_credential(cred, service, context)
+                if score > best_score:
+                    best_score = score
+                    best = cred
+            except Exception as e:
+                logger.warning(f"Failed to decrypt credential: {e}")
+        return best if best_score > 0 else None
+    except Exception as e:
+        logger.error(f"Error fetching credentials: {e}")
+        return None
 
 # Token limits for safety
 MAX_TOOL_RESPONSE_CHARS = 5000  # Limit tool responses
@@ -167,6 +247,13 @@ class MultiAgentExecutor:
         
         # Add Google search tool for browser agent
         self.search_tool = create_search_tool("moderate")  # Using moderate research depth as default
+
+        # Server-side credential cache — values never returned to LLM
+        self._credential_cache: Dict[str, Dict] = {}
+
+        # Credential tools for all agents
+        self.credential_tool = self._create_credential_tool()
+        self.type_credential_tool = self._create_type_credential_tool()
         
         # Agent system prompts
         self.agent_prompts = {
@@ -183,6 +270,117 @@ class MultiAgentExecutor:
             AgentType.DESKTOP: self._get_desktop_tools()
         }
     
+    def _create_credential_tool(self):
+        """Create the lookup_credential tool.
+
+        Credentials are cached server-side — actual values are NEVER returned
+        to the LLM. The agent uses type_credential to fill fields securely.
+        """
+        machine_id = self.machine_id
+        cache = self._credential_cache
+
+        async def execute_lookup(service: str, context: str = "") -> Dict:
+            cred = await _fetch_credential_for_machine(machine_id, service, context)
+            if cred:
+                # Store with both original and domain-normalized keys
+                domain = _extract_domain(service)
+                cache[service] = cred
+                cache[domain] = cred
+                return {
+                    "found": True,
+                    "credential_name": cred.get("name", domain),
+                    "message": (
+                        f"Credentials for '{cred.get('name', domain)}' are cached. "
+                        f"Click the username field, then call type_credential(service='{domain}', field='username'). "
+                        f"Click the password field, then call type_credential(service='{domain}', field='password'). "
+                        "Do NOT ask the user for credentials — use type_credential to fill the fields."
+                    ),
+                }
+            return {"found": False, "message": f"No stored credentials found for {service}. Ask the user to add them in Settings > Saved Credentials."}
+
+        return {
+            "name": "lookup_credential",
+            "description": (
+                "Look up stored login credentials for a service. Credentials are cached securely. "
+                "After calling this, use type_credential to fill the username and password fields. "
+                "The actual values are never shown — use this BEFORE any login form."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "service": {
+                        "type": "string",
+                        "description": "The service domain or URL, e.g. 'gmail.com' or 'https://github.com/login'",
+                    },
+                    "context": {
+                        "type": "string",
+                        "description": "Optional hint if multiple accounts exist, e.g. 'work' or 'personal'",
+                    },
+                },
+                "required": ["service"],
+            },
+            "execute": execute_lookup,
+        }
+
+    def _create_type_credential_tool(self):
+        """Create the type_credential tool.
+
+        Reads from the server-side cache and types into the VM directly.
+        The actual credential value is NEVER returned to the LLM.
+        """
+        machine_id = self.machine_id
+        cache = self._credential_cache
+
+        async def execute_type(service: str, field: str) -> Dict:
+            domain = _extract_domain(service)
+            cached = cache.get(service) or cache.get(domain)
+            if not cached:
+                return {"success": False, "result": f"No cached credentials for {service} — call lookup_credential first"}
+            field = field.lower()
+            if field not in ("username", "password"):
+                return {"success": False, "result": "field must be 'username' or 'password'"}
+            actual_value = cached.get(field, "")
+            if not actual_value:
+                return {"success": False, "result": f"Credential field '{field}' is empty"}
+            # Type directly to VM — value never returned to LLM
+            try:
+                type_tool = self.vm_tools.get("type")
+                if type_tool and "execute" in type_tool:
+                    await type_tool["execute"](text=actual_value)
+                else:
+                    # Fallback: use browser_type if available
+                    browser_type_tool = self.vm_tools.get("browser_type")
+                    if browser_type_tool and "execute" in browser_type_tool:
+                        await browser_type_tool["execute"](text=actual_value)
+            except Exception as e:
+                return {"success": False, "result": f"Failed to type credential: {e}"}
+            return {"success": True, "result": f"✓ Typed {field} field for {service}"}
+
+        return {
+            "name": "type_credential",
+            "description": (
+                "Type a stored credential field (username or password) into the currently focused input. "
+                "Click the input field first, then call this. "
+                "The actual value is typed securely and never shown in the conversation."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "service": {
+                        "type": "string",
+                        "description": "Same service used in lookup_credential, e.g. 'gmail.com'",
+                    },
+                    "field": {
+                        "type": "string",
+                        "enum": ["username", "password"],
+                        "description": "Which field to type: 'username' or 'password'",
+                    },
+                },
+                "required": ["service", "field"],
+            },
+            "execute": execute_type,
+        }
+
     def _wrap_tools_with_truncation(self, tools: Dict) -> Dict:
         """Wrap tools to truncate their responses"""
         wrapped_tools = {}
@@ -993,24 +1191,31 @@ CRITICAL: Return ONLY JSON. No text before/after."""
             "shortcut"  # Key combinations for shortcuts
         ]
         tools = {name: self.vm_tools[name] for name in browser_tool_names if name in self.vm_tools}
-        
+
         # Add Google search tool for web research
         # tools["googleSearch"] = self.search_tool
-        
+
+        # Add credential tools — lookup caches, type_credential fills without exposing values
+        tools["lookup_credential"] = self.credential_tool
+        tools["type_credential"] = self.type_credential_tool
+
         return tools
-    
+
     def _get_terminal_tools(self) -> Dict:
         """Get tools available to terminal agent"""
         terminal_tool_names = [
             "terminal_connect", "terminal_execute",
             "terminal_read", "terminal_clear", "terminal_close",
-            "file_read", "file_write", "file_edit", 
+            "file_read", "file_write", "file_edit",
             "file_append", "file_delete", "file_exists",
             "directory_list", "directory_delete",
-            "shortcut", "screenshot", 
+            "shortcut", "screenshot",
         ]
-        return {name: self.vm_tools[name] for name in terminal_tool_names if name in self.vm_tools}
-    
+        tools = {name: self.vm_tools[name] for name in terminal_tool_names if name in self.vm_tools}
+        tools["lookup_credential"] = self.credential_tool
+        tools["type_credential"] = self.type_credential_tool
+        return tools
+
     def _get_desktop_tools(self) -> Dict:
         """Get tools available to desktop agent"""
         desktop_tool_names = [
@@ -1019,7 +1224,10 @@ CRITICAL: Return ONLY JSON. No text before/after."""
             "switch_window", "arrange_windows", "window_operation",
             "move_window",
         ]
-        return {name: self.vm_tools[name] for name in desktop_tool_names if name in self.vm_tools}
+        tools = {name: self.vm_tools[name] for name in desktop_tool_names if name in self.vm_tools}
+        tools["lookup_credential"] = self.credential_tool
+        tools["type_credential"] = self.type_credential_tool
+        return tools
     
     async def plan_tasks(self, user_request: str, context: Optional[str] = None) -> TaskPlan:
         """Create a task plan from user request with retry mechanism"""

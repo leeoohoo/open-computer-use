@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Monitor, MonitorCog, ArrowRight, Download } from "lucide-react";
+import { Plus, Monitor, MonitorCog, ArrowRight, Download, Globe, Terminal, MousePointer2, ScanLine, Cpu, MoreHorizontal, Zap, RefreshCw, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 
@@ -338,19 +338,70 @@ export function MachinesContent() {
 
         {/* Machines Grid */}
         {machines.length === 0 ? (
-          <Card className="border-0">
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <MonitorCog className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No machines yet</h3>
-              <p className="text-muted-foreground text-center mb-4">
-                Create your first virtual machine to get started with AI-controlled desktops
+          <div className="relative rounded-2xl border border-border/40 bg-card overflow-hidden">
+            {/* Smoke blobs */}
+            <div className="pointer-events-none absolute -top-16 -left-16 h-64 w-64 rounded-full bg-foreground/[0.04] blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-foreground/[0.03] blur-3xl" />
+            <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-48 w-48 rounded-full bg-foreground/[0.02] blur-2xl" />
+
+            <div className="relative flex flex-col items-center px-6 py-14 text-center">
+              {/* Capability icon row */}
+              <div className="mb-8 flex items-center gap-3">
+                {[Globe, Terminal, MousePointer2, ScanLine, Cpu].map((Icon, i) => (
+                  <div
+                    key={i}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm"
+                  >
+                    <Icon className="h-5 w-5" />
+                  </div>
+                ))}
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm">
+                  <MoreHorizontal className="h-4 w-4" />
+                </div>
+              </div>
+
+              {/* Headline */}
+              <h2 className="text-2xl font-semibold tracking-tight mb-2">True AI Employee with full computer access</h2>
+              <p className="text-sm text-muted-foreground max-w-sm mb-10">
+                Spin up an isolated virtual machine and let AI agents browse the web, run terminals, and control the desktop — hands-free.
               </p>
-              <Button onClick={() => setShowCreateDialog(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Machine
+
+              {/* Feature cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl mb-10">
+                {[
+                  {
+                    icon: MousePointer2,
+                    title: "Full desktop control",
+                    desc: "AI moves the mouse, types, clicks, and navigates like a real user.",
+                  },
+                  {
+                    icon: Zap,
+                    title: "Any task automated",
+                    desc: "Browser, terminal, and UI — all agents work together in one VM.",
+                  },
+                  {
+                    icon: ShieldCheck,
+                    title: "Isolated & safe",
+                    desc: "Each machine runs in its own container — your local system stays untouched.",
+                  },
+                ].map(({ icon: Icon, title, desc }) => (
+                  <div key={title} className="rounded-xl border border-border/50 bg-background/40 px-4 py-4 text-left">
+                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/5">
+                      <Icon className="h-4 w-4 text-foreground/70" />
+                    </div>
+                    <p className="text-sm font-medium mb-0.5">{title}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA */}
+              <Button onClick={() => setShowCreateDialog(true)} size="lg" className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create your first machine
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ) : filteredMachines.length === 0 ? (
           <Card className="border-0">
             <CardContent className="flex flex-col items-center justify-center py-12">

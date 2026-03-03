@@ -241,11 +241,11 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
 
       {/* Grid */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="grid grid-cols-7 border-b border-border bg-foreground/[0.02]">
+        <div className="grid grid-cols-7 border-b border-border bg-foreground/[0.015]">
           {DAYS.map((d) => (
             <div
               key={d}
-              className="py-2 text-center text-[11px] font-medium text-muted-foreground uppercase tracking-wider"
+              className="py-2.5 text-center text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-widest"
             >
               {d}
             </div>
@@ -268,23 +268,23 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
                 onClick={() => c.cur && onSelectDate(new Date(year, month, c.day))}
                 disabled={!c.cur}
                 className={`
-                  relative min-h-[68px] sm:min-h-[78px] p-1.5
-                  flex flex-col items-start text-left transition-all duration-100
+                  relative min-h-[80px] sm:min-h-[96px] p-1.5 sm:p-2
+                  flex flex-col items-start text-left transition-all duration-150
                   ${!lastRow ? "border-b border-border/30" : ""}
                   ${!lastCol ? "border-r border-border/30" : ""}
                   ${c.cur ? "hover:bg-foreground/[0.04] cursor-pointer" : "cursor-default"}
-                  ${!c.cur ? "bg-foreground/[0.015]" : ""}
-                  ${sel ? "bg-foreground/[0.07] ring-1 ring-inset ring-foreground/20 z-10" : ""}
+                  ${!c.cur ? "bg-foreground/[0.01]" : ""}
+                  ${sel ? "bg-foreground/[0.07] ring-1 ring-inset ring-foreground/15 z-10" : ""}
                 `}
               >
                 <span
                   className={`
-                    text-xs leading-none
-                    ${!c.cur ? "text-muted-foreground/25" : ""}
+                    leading-none
+                    ${!c.cur ? "text-muted-foreground/20 text-[11px]" : "text-xs"}
                     ${c.isToday
-                      ? "bg-foreground text-background font-bold rounded-full w-5.5 h-5.5 sm:w-6 sm:h-6 flex items-center justify-center text-[10px] sm:text-[11px]"
+                      ? "bg-foreground text-background font-bold rounded-full w-6 h-6 flex items-center justify-center text-[11px]"
                       : ""}
-                    ${sel && !c.isToday ? "font-semibold" : ""}
+                    ${sel && !c.isToday ? "font-bold text-foreground" : ""}
                   `}
                 >
                   {c.day}
@@ -292,16 +292,16 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
 
                 {/* Mobile: dots */}
                 {c.tasks.length > 0 && c.cur && (
-                  <div className="flex flex-wrap gap-0.5 mt-auto sm:hidden">
-                    {c.tasks.slice(0, 4).map((t) => (
+                  <div className="flex flex-wrap gap-1 mt-auto sm:hidden pt-1">
+                    {c.tasks.slice(0, 3).map((t) => (
                       <div
                         key={t.schedule.chat_id}
                         className={`w-1.5 h-1.5 rounded-full ${dot(t.schedule)}`}
                       />
                     ))}
-                    {c.tasks.length > 4 && (
+                    {c.tasks.length > 3 && (
                       <span className="text-[8px] text-muted-foreground/40 leading-none">
-                        +{c.tasks.length - 4}
+                        +{c.tasks.length - 3}
                       </span>
                     )}
                   </div>
@@ -309,23 +309,21 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
 
                 {/* Desktop: strips */}
                 {c.tasks.length > 0 && c.cur && (
-                  <div className="hidden sm:flex flex-col gap-px mt-auto w-full pt-0.5">
+                  <div className="hidden sm:flex flex-col gap-0.5 mt-auto w-full pt-1">
                     {c.tasks.slice(0, 2).map((t) => (
                       <div
                         key={t.schedule.chat_id}
-                        className={`flex items-center gap-0.5 rounded-[3px] pl-0.5 pr-1 py-px ${strip(t.schedule)}`}
+                        className={`flex items-center gap-1 rounded-sm pl-1 pr-1 py-0.5 ${strip(t.schedule)}`}
                       >
-                        <div
-                          className={`w-[3px] h-2.5 rounded-full shrink-0 ${dot(t.schedule)}`}
-                        />
-                        <span className="text-[9px] leading-tight truncate text-foreground/60">
+                        <div className={`w-1 h-1 rounded-full shrink-0 ${dot(t.schedule)}`} />
+                        <span className="text-[10px] leading-tight truncate text-foreground/70 font-medium">
                           {t.schedule.title || "Untitled"}
                         </span>
                       </div>
                     ))}
                     {c.tasks.length > 2 && (
-                      <span className="text-[9px] text-muted-foreground/40 pl-0.5">
-                        +{c.tasks.length - 2}
+                      <span className="text-[10px] text-muted-foreground/50 pl-1">
+                        +{c.tasks.length - 2} more
                       </span>
                     )}
                   </div>
@@ -337,15 +335,18 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
+      <div className="flex items-center gap-4 text-[11px] text-muted-foreground/70">
         <div className="flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-green-500" /> Active
+          <div className="w-2 h-2 rounded-full bg-green-500" />
+          <span>Active</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-yellow-500" /> Paused
+          <div className="w-2 h-2 rounded-full bg-yellow-500" />
+          <span>Paused</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Failed
+          <div className="w-2 h-2 rounded-full bg-red-500" />
+          <span>Failed</span>
         </div>
       </div>
     </div>

@@ -262,6 +262,8 @@ class VMControlService:
                         "last_heartbeat": time.time(),
                         "status": "unhealthy"
                     }
+                except websockets.exceptions.ConnectionClosed:
+                    raise  # Let outer handler break the loop cleanly
                 except Exception as e:
                     consecutive_failures += 1
                     logger.warning(f"Heartbeat error for {machine_id}: {e}")

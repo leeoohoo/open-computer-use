@@ -27,6 +27,7 @@ import {
   CaretLeft,
   Gift,
   Timer,
+  Key,
 } from "@phosphor-icons/react"
 import { useParams, useRouter } from "next/navigation"
 import { useMemo, useState, useEffect } from "react"
@@ -324,6 +325,38 @@ export function AppSidebar() {
                   >
                     <Timer size={16} className="shrink-0" />
                     <span className="truncate text-sm">Scheduled Tasks</span>
+                  </button>
+                )}
+
+                {/* Secrets Button */}
+                {shouldShowCollapsed ? (
+                  <button
+                    id="sidebar-secrets-link-collapsed"
+                    className={cn(
+                      "group flex w-full h-8 items-center justify-center rounded-md transition-all duration-200",
+                      "hover:bg-accent hover:text-accent-foreground",
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    )}
+                    type="button"
+                    onClick={() => handleNavigation(() => router.push("/secrets"))}
+                    title="Saved Credentials"
+                  >
+                    <Key size={16} className="shrink-0" />
+                  </button>
+                ) : (
+                  <button
+                    id="sidebar-secrets-link"
+                    className={cn(
+                      "group flex w-full items-center gap-2 rounded-md text-sm transition-all duration-200",
+                      "hover:bg-accent hover:text-accent-foreground",
+                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                      "px-2.5 py-1.5"
+                    )}
+                    type="button"
+                    onClick={() => handleNavigation(() => router.push("/secrets"))}
+                  >
+                    <Key size={16} className="shrink-0" />
+                    <span className="truncate text-sm">Saved Credentials</span>
                   </button>
                 )}
               </div>

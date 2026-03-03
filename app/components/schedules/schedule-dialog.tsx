@@ -31,6 +31,8 @@ import { trackScheduleCreated } from "@/lib/posthog/analytics"
 import type { UserMachine } from "@/types/machines.types"
 import { useSubscription } from "@/lib/hooks/use-subscription"
 import { WarningCircle } from "@phosphor-icons/react"
+import { KeyRound, ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 interface ScheduleDialogProps {
   open: boolean
@@ -198,19 +200,19 @@ export function ScheduleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[480px]">
-        <DialogHeader>
+      <DialogContent className="flex flex-col max-w-[calc(100vw-2rem)] sm:max-w-[480px] max-h-[90dvh] p-0 gap-0">
+        <DialogHeader className="px-5 pt-5 pb-3 shrink-0">
           <DialogTitle>
             {existingSchedule ? "Edit Schedule" : "Schedule Task"}
           </DialogTitle>
         </DialogHeader>
 
         {loadingExisting ? (
-          <div className="flex items-center justify-center py-8 text-muted-foreground">
+          <div className="flex items-center justify-center py-8 text-muted-foreground flex-1">
             Loading...
           </div>
         ) : (
-          <div className="space-y-4 py-2">
+          <div className="flex-1 min-h-0 overflow-y-auto px-5 pb-4 pt-1 space-y-4">
             {/* Task prompt */}
             <div className="space-y-2">
               <Label>Task</Label>
@@ -393,6 +395,26 @@ export function ScheduleDialog({
               </p>
             </div>
 
+            {/* Credentials hint */}
+            <div className="flex items-start gap-3 rounded-lg border border-border bg-foreground/[0.02] px-3 py-3">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.06]">
+                <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium mb-0.5">Add credentials for auto-login</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  If this task logs into any websites, save your credentials so the AI can sign in automatically — no interruptions.
+                </p>
+                <Link
+                  href="/secrets"
+                  className="inline-flex items-center gap-1 mt-2 text-[11px] font-medium text-foreground hover:text-foreground/70 transition-colors"
+                >
+                  Add credentials
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+            </div>
+
             {/* Error display */}
             {error && (
               <p className="text-sm text-red-500">{error}</p>
@@ -400,7 +422,7 @@ export function ScheduleDialog({
           </div>
         )}
 
-        <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row">
+        <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row px-5 py-4 shrink-0">
           {existingSchedule && (
             <Button
               variant="destructive"

@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Badge } from "@/components/ui/badge"
-import { History } from "lucide-react"
+import { History, CheckCircle2, XCircle, SkipForward, Clock, Zap } from "lucide-react"
 import {
   getScheduleHistory,
   type ScheduleHistoryEntry,
@@ -13,60 +12,46 @@ interface ScheduleHistoryProps {
   limit?: number
 }
 
-function StatusBadge({ status }: { status: string }) {
+function statusConfig(status: string) {
   switch (status) {
     case "completed":
-      return (
-        <Badge
-          variant="outline"
-          className="border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400 text-xs"
-        >
-          Completed
-        </Badge>
-      )
+      return { icon: CheckCircle2, color: "text-green-500", bg: "bg-green-500/10", border: "border-green-500/20", label: "Completed" }
     case "failed":
-      return (
-        <Badge
-          variant="outline"
-          className="border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400 text-xs"
-        >
-          Failed
-        </Badge>
-      )
+      return { icon: XCircle, color: "text-red-500", bg: "bg-red-500/10", border: "border-red-500/20", label: "Failed" }
     case "skipped":
-      return (
-        <Badge
-          variant="outline"
-          className="border-yellow-500/30 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-xs"
-        >
-          Skipped
-        </Badge>
-      )
+      return { icon: SkipForward, color: "text-yellow-500", bg: "bg-yellow-500/10", border: "border-yellow-500/20", label: "Skipped" }
     case "cancelled":
-      return (
-        <Badge
-          variant="outline"
-          className="border-orange-500/30 bg-orange-500/10 text-orange-600 dark:text-orange-400 text-xs"
-        >
-          Cancelled
-        </Badge>
-      )
+      return { icon: XCircle, color: "text-orange-500", bg: "bg-orange-500/10", border: "border-orange-500/20", label: "Cancelled" }
     case "triggered":
-      return (
-        <Badge
-          variant="outline"
-          className="border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs"
-        >
-          Triggered
-        </Badge>
-      )
+      return { icon: Zap, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", label: "Triggered" }
     default:
-      return (
-        <Badge variant="outline" className="text-xs">
-          {status}
-        </Badge>
-      )
+      return { icon: Clock, color: "text-muted-foreground", bg: "bg-muted/50", border: "border-border", label: status }
   }
+}
+
+function formatDate(iso: string) {
+  const d = new Date(iso)
+  const now = new Date()
+  const diffMs = now.getTime() - d.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHrs = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+
+  if (diffMins < 1) return "just now"
+  if (diffMins < 60) return `${diffMins}m ago`
+  if (diffHrs < 24) return `${diffHrs}h ago`
+  if (diffDays === 1) return "yesterday"
+  if (diffDays < 7) return `${diffDays}d ago`
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+}
+
+function formatExactDate(iso: string) {
+  return new Date(iso).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
 }
 
 export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
@@ -83,13 +68,10 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="flex flex-col items-center gap-3">
-          <div className="relative h-8 w-8">
-            <div className="absolute inset-0 rounded-full border-2 border-muted" />
-            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-foreground animate-spin" />
-          </div>
-          <span className="text-sm text-muted-foreground">Loading history...</span>
+      <div className="flex items-center justify-center py-10">
+        <div className="relative h-8 w-8">
+          <div className="absolute inset-0 rounded-full border-2 border-muted" />
+          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-foreground animate-spin" />
         </div>
       </div>
     )
@@ -97,54 +79,72 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
 
   if (history.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-8 text-center">
-        <History className="h-8 w-8 text-muted-foreground mb-2" />
-        <p className="text-sm text-muted-foreground">No execution history yet</p>
+      <div className="flex flex-col items-center justify-center py-10 text-center rounded-xl border border-border bg-card">
+        <History className="h-8 w-8 text-muted-foreground/30 mb-2" />
+        <p className="text-sm font-medium text-muted-foreground">No executions yet</p>
+        <p className="text-xs text-muted-foreground/60 mt-0.5">History will appear here once tasks start running</p>
       </div>
     )
   }
 
   return (
-    <div className="rounded-xl border bg-card overflow-hidden divide-y">
-      {history.map((entry) => (
-        <div
-          key={entry.id}
-          className="px-3 sm:px-4 py-2.5 sm:py-3 text-sm hover:bg-accent/50 transition-colors space-y-1"
-        >
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <StatusBadge status={entry.status} />
-              <span className="text-muted-foreground truncate text-xs sm:text-sm">
-                {new Date(entry.executed_at).toLocaleString(undefined, {
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-              {entry.trigger === "manual" && (
-                <span className="text-xs text-muted-foreground hidden sm:inline">(manual)</span>
-              )}
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3 text-muted-foreground shrink-0">
-              {entry.duration_seconds != null && (
-                <span className="text-xs">{entry.duration_seconds}s</span>
-              )}
-              {entry.credits_charged != null && entry.credits_charged > 0 && (
-                <span className="text-xs">{entry.credits_charged} <span className="hidden sm:inline">credits</span><span className="sm:hidden">cr</span></span>
-              )}
-            </div>
-          </div>
-          {entry.error && (
-            <p
-              className="text-xs text-red-500 truncate"
-              title={entry.error}
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="divide-y divide-border/50">
+        {history.map((entry, idx) => {
+          const cfg = statusConfig(entry.status)
+          const Icon = cfg.icon
+          return (
+            <div
+              key={entry.id}
+              className="flex items-start gap-3 px-4 py-3 hover:bg-foreground/[0.02] transition-colors group"
             >
-              {entry.error}
-            </p>
-          )}
-        </div>
-      ))}
+              {/* Status icon */}
+              <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${cfg.bg} ${cfg.border}`}>
+                <Icon className={`h-3.5 w-3.5 ${cfg.color}`} />
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
+                  <span
+                    className="text-[11px] text-muted-foreground/60 shrink-0 tabular-nums"
+                    title={formatExactDate(entry.executed_at)}
+                  >
+                    {formatDate(entry.executed_at)}
+                  </span>
+                </div>
+
+                {/* Error message */}
+                {entry.error && (
+                  <p className="text-[11px] text-red-500/80 mt-0.5 truncate" title={entry.error}>
+                    {entry.error}
+                  </p>
+                )}
+
+                {/* Meta chips */}
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  {entry.trigger === "manual" && (
+                    <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/60 bg-foreground/[0.04] px-1.5 py-0.5 rounded-md">
+                      Manual
+                    </span>
+                  )}
+                  {entry.duration_seconds != null && (
+                    <span className="text-[10px] text-muted-foreground/60 tabular-nums">
+                      {entry.duration_seconds}s
+                    </span>
+                  )}
+                  {entry.credits_charged != null && entry.credits_charged > 0 && (
+                    <span className="text-[10px] text-muted-foreground/60 tabular-nums">
+                      {entry.credits_charged} credits
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
