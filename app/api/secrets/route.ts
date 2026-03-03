@@ -28,7 +28,7 @@ export async function GET() {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    const secrets = (rows || []).flatMap((row) => {
+    const secrets = (rows || []).flatMap((row: { provider: string; encrypted_key: string; iv: string; created_at: string; updated_at: string }) => {
       try {
         const id = row.provider.slice(CREDENTIAL_PREFIX.length)
         const json = decryptKey(row.encrypted_key, row.iv)

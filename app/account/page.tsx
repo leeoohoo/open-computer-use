@@ -194,7 +194,7 @@ function AccountContent() {
         </div>
       )
     }
-    if (ActiveComponent) {
+    if (typeof ActiveComponent === "function") {
       return (
         <div className={cls}>
           <ActiveComponent />
@@ -337,7 +337,7 @@ function AccountContent() {
             </div>
           ) : activeConfig?.component === "social" ? (
             <div className="space-y-1.5">{renderSectionContent(false)}</div>
-          ) : ActiveComponent ? (
+          ) : typeof ActiveComponent === "function" ? (
             <ActiveComponent />
           ) : (
             <ComingSoonPlaceholder icon={activeConfig!.icon} label={activeConfig!.label} />
