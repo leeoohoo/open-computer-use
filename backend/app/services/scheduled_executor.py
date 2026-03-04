@@ -51,6 +51,8 @@ def _build_message_parts(tool_invocations: List[Dict]) -> List[Dict]:
         }
         if "result" in tool_inv:
             tool_invocation_data["result"] = tool_inv["result"]
+        if "frontendScreenshot" in tool_inv:
+            tool_invocation_data["frontendScreenshot"] = tool_inv["frontendScreenshot"]
         parts.append({"type": "tool-invocation", "toolInvocation": tool_invocation_data})
     return parts
 
@@ -397,9 +399,12 @@ async def execute_scheduled_chat(
                 elif chunk_type == "tool_result":
                     tool_call_id = chunk.get("toolCallId") or chunk.get("id", "")
                     result = chunk.get("result")
+                    screenshot = chunk.get("frontendScreenshot")
                     for inv in all_tool_invocations:
                         if inv.get("toolCallId") == tool_call_id:
                             inv["result"] = result
+                            if screenshot:
+                                inv["frontendScreenshot"] = screenshot
                             break
 
                 elif chunk_type == "step_complete":
