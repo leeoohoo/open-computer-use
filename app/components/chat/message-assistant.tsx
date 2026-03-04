@@ -19,6 +19,7 @@ import { useChatSession } from "@/lib/chat-store/session/provider"
 import { TaskPlanFormatter } from "./task-plan-formatter"
 import { MessageStatusIndicator } from "./message-status-indicator"
 import { CuaSectionRenderer, hasCuaSections } from "./cua-section-renderer"
+import { MessageStopBanner, detectStopReason, stripStopTags } from "./message-stop-banner"
 
 type MessageAssistantProps = {
   children: string
@@ -61,14 +62,18 @@ export function MessageAssistant({
   const isProject = currentChat?.collaborative === true
 
   const reasoningParts = parts?.find((part) => part.type === "reasoning")
-  const contentNullOrEmpty = children === null || children === ""
   const isLastStreaming = status === "streaming" && isLast
-  
+
+  // Detect stop/cancellation tags and strip them from display content
+  const stopReason = children ? detectStopReason(children) : null
+  const displayContent = stopReason ? stripStopTags(children) : children
+  const contentNullOrEmpty = displayContent === null || displayContent === ""
+
   // Check if content contains task plan or report markers
-  const hasTaskPlan = children?.includes?.('[TASK_PLAN_START]')
-  const hasCoastyReport = children?.includes?.('[Coasty_REPORT_START]')
+  const hasTaskPlan = displayContent?.includes?.('[TASK_PLAN_START]')
+  const hasCoastyReport = displayContent?.includes?.('[Coasty_REPORT_START]')
   const hasTaskMarkers = hasTaskPlan || hasCoastyReport
-  const hasCuaTags = children ? hasCuaSections(children) : false
+  const hasCuaTags = displayContent ? hasCuaSections(displayContent) : false
   const searchImageResults =
     parts
       ?.filter(
@@ -122,11 +127,11 @@ export function MessageAssistant({
 
         {contentNullOrEmpty ? null : hasTaskMarkers ? (
           // Use TaskPlanFormatter for messages with task plans or reports
-          <TaskPlanFormatter content={children} isStreaming={status === "streaming"} />
+          <TaskPlanFormatter content={displayContent} isStreaming={status === "streaming"} />
         ) : hasCuaTags ? (
           // CUA agent sections with structured rendering
           <div className="bg-muted rounded-3xl px-5 py-3 max-w-none">
-            <CuaSectionRenderer content={children} />
+            <CuaSectionRenderer content={displayContent} />
           </div>
         ) : (
           // Regular markdown content
@@ -137,8 +142,16 @@ export function MessageAssistant({
             )}
             markdown={true}
           >
-            {children}
+            {displayContent}
           </MessageContent>
+        )}
+
+        {stopReason && (
+          <MessageStopBanner
+            config={stopReason}
+            onRetry={onReload}
+            className="mt-2"
+          />
         )}
 
         {sources && sources.length > 0 && <SourcesList sources={sources} />}
