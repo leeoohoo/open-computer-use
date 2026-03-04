@@ -413,6 +413,7 @@ async def chat_endpoint(
             error_message = None
             was_cancelled = False
             execution_lock = None
+            llm_usage = None  # Populated from CUA executor finish metadata
 
             # Track the DB message ID so we INSERT once then UPDATE on each step
             assistant_message_id: Optional[str] = None
@@ -576,6 +577,10 @@ async def chat_endpoint(
                     elif chunk_type == "finish":
                         completion_status = "completed"
 
+                        # Capture LLM usage from executor metadata
+                        finish_metadata = chunk.get("metadata", {})
+                        llm_usage = finish_metadata.get("llm_usage")
+
                         chunk_content = chunk.get("content", "")
                         final_content = chunk_content if chunk_content else all_content
                         final_tool_invocations = chunk.get("tool_invocations", all_tool_invocations)
@@ -712,6 +717,27 @@ async def chat_endpoint(
 
                 except Exception as billing_error:
                     logger.error(f"Failed to end billing session: {billing_error}")
+
+                # Persist LLM usage to database for analytics.
+                # If stream was interrupted before the finish chunk, collect
+                # usage directly from the executor's engine instances.
+                if not llm_usage and use_cua and hasattr(executor, "collect_usage"):
+                    try:
+                        llm_usage = executor.collect_usage()
+                    except Exception as collect_err:
+                        logger.error(f"Failed to collect LLM usage from executor: {collect_err}")
+
+                if llm_usage and llm_usage.get("total_calls", 0) > 0:
+                    try:
+                        await db_service.save_llm_usage(
+                            user_id=user_id,
+                            chat_id=chat_request.chat_id,
+                            session_id=billing_session_id,
+                            model=chat_request.model,
+                            llm_usage=llm_usage,
+                        )
+                    except Exception as usage_err:
+                        logger.error(f"Failed to save LLM usage: {usage_err}")
 
                 # Release per-machine execution lock
                 if execution_lock is not None and execution_lock.locked():

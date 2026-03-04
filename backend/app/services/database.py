@@ -489,6 +489,47 @@ class DatabaseService:
             logger.error(f"Failed to increment usage: {str(e)}")
             return True  # Don't block requests due to tracking failures
     
+    async def save_llm_usage(
+        self,
+        user_id: str,
+        chat_id: str,
+        session_id: str,
+        model: str,
+        llm_usage: Dict[str, Any],
+    ) -> bool:
+        """Persist LLM token usage for analytics.
+
+        Inserts one row per session into the ``llm_usage`` table with
+        aggregated totals and per-caller breakdown.
+        """
+        if not self.client:
+            return False
+
+        try:
+            row = {
+                "user_id": user_id,
+                "chat_id": chat_id,
+                "session_id": session_id,
+                "model": model,
+                "total_input_tokens": llm_usage.get("total_input_tokens", 0),
+                "total_output_tokens": llm_usage.get("total_output_tokens", 0),
+                "total_cache_creation_tokens": llm_usage.get("total_cache_creation_tokens", 0),
+                "total_cache_read_tokens": llm_usage.get("total_cache_read_tokens", 0),
+                "total_calls": llm_usage.get("total_calls", 0),
+                "by_caller": llm_usage.get("by_caller", {}),
+                "created_at": datetime.utcnow().isoformat(),
+            }
+            self.client.table("llm_usage").insert(row).execute()
+            logger.info(
+                f"Saved LLM usage for user={user_id} chat={chat_id}: "
+                f"input={row['total_input_tokens']} output={row['total_output_tokens']} "
+                f"calls={row['total_calls']}"
+            )
+            return True
+        except Exception as e:
+            logger.error(f"Failed to save LLM usage: {e}")
+            return False
+
     async def save_feedback(self, feedback: Dict[str, Any]) -> bool:
         """Save user feedback"""
         if not self.client:
