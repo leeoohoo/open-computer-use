@@ -298,8 +298,6 @@ export function LandingPage() {
   const [showBrandIntro, setShowBrandIntro] = useState(false)
   const [showPageContent, setShowPageContent] = useState(false)
   const [subtitleTypingDone, setSubtitleTypingDone] = useState(false)
-  const [demoPlaying, setDemoPlaying] = useState(false)
-  const [demoLoaded, setDemoLoaded] = useState(false)
   const [comparisonPlan, setComparisonPlan] = useState(2) // default to Plus (index 2)
   const { theme } = useTheme()
   const prefersReducedMotion = useReducedMotion()
@@ -612,72 +610,18 @@ export function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Hero demo: iframe replay on desktop, GIF on mobile */}
-            {isMobile ? (
-              <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden shadow-2xl">
-                <Image
-                  src="/Pi7_Gif.gif"
-                  alt="AI Agent Demo"
-                  width={1200}
-                  height={675}
-                  className="w-full h-auto"
-                  unoptimized
-                  priority
-                />
-              </motion.div>
-            ) : (
-              <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/30 shadow-2xl shadow-primary/5" style={{ aspectRatio: "16 / 9" }}>
-                {/* Poster / play button — always rendered, hidden once iframe loads */}
-                <div
-                  className={cn(
-                    "absolute inset-0 z-10 flex items-center justify-center cursor-pointer bg-card/80 group transition-opacity duration-500",
-                    demoPlaying && demoLoaded ? "opacity-0 pointer-events-none" : "opacity-100"
-                  )}
-                  style={{
-                    backdropFilter: 'blur(8px)',
-                    WebkitBackdropFilter: 'blur(8px)',
-                  }}
-                  onClick={() => setDemoPlaying(true)}
-                >
-                  <Image
-                    src="/Pi7_Gif.gif"
-                    alt=""
-                    fill
-                    className="object-cover opacity-30"
-                    unoptimized
-                  />
-                  <div className="relative z-10 flex flex-col items-center gap-3">
-                    {demoPlaying && !demoLoaded ? (
-                      <>
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-background/90 shadow-lg">
-                          <div className="h-5 w-5 border-2 border-muted-foreground/40 border-t-foreground rounded-full animate-spin" />
-                        </div>
-                        <span className="text-xs text-muted-foreground font-medium tracking-wide uppercase">Loading demo…</span>
-                      </>
-                    ) : !demoPlaying ? (
-                      <>
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-background/90 group-hover:bg-background group-hover:scale-105 transition-all duration-200 shadow-lg">
-                          <Play className="h-6 w-6 text-foreground/70 ml-0.5 group-hover:text-foreground transition-colors" />
-                        </div>
-                        <span className="text-xs text-muted-foreground font-medium tracking-wide uppercase">Watch demo</span>
-                      </>
-                    ) : null}
-                  </div>
-                </div>
-
-                {/* Iframe — mounted once user clicks play, stays mounted */}
-                {demoPlaying && (
-                  <iframe
-                    src="/share/60a0722b-fb98-43d6-a4e7-951d80a22363?embed=true&autoplay=true"
-                    title="AI Agent sending an email — live session replay"
-                    className="absolute inset-0 w-full h-full border-0"
-                    allow="autoplay"
-                    loading="lazy"
-                    onLoad={() => setDemoLoaded(true)}
-                  />
-                )}
-              </motion.div>
-            )}
+            {/* Hero demo: GIF on all devices */}
+            <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/30 shadow-2xl shadow-primary/5">
+              <Image
+                src="/Pi7_Gif.gif"
+                alt="AI Agent Demo"
+                width={1200}
+                height={675}
+                className="w-full h-auto"
+                unoptimized
+                priority
+              />
+            </motion.div>
           </motion.div>
         </section>
 
