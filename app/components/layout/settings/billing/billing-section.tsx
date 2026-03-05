@@ -10,7 +10,7 @@ import { useCredits } from "@/lib/hooks/use-credits"
 import { useUser } from "@/lib/user-store/provider"
 import { ShoppingCart, ArrowUp, CheckCircle, XCircle, Spinner, CreditCard, Receipt, Coins } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
-import { Check, Zap, ArrowRight, Clock } from "lucide-react"
+import { Check, Zap, ArrowRight, Clock, HardDrive } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
 
 const subscriptionPlans = [
@@ -23,7 +23,7 @@ const subscriptionPlans = [
     agentMinutes: 20,
     description: "Saves ~6-12 hrs of manual work",
     features: [
-      "1 virtual machine, persistent",
+      "1 persistent machine, no limits",
       "2x more credits than Free",
       "Advanced web search & data extraction",
       "Standard support (real humans, not bots)",
@@ -39,7 +39,7 @@ const subscriptionPlans = [
     agentMinutes: 60,
     description: "Saves ~18-24 hrs of manual work",
     features: [
-      "1 virtual machine, persistent",
+      "2 persistent machines, no limits",
       "3x more credits than Starter",
       "Advanced web search & data extraction",
       "Full API access (coming soon)",
@@ -57,7 +57,7 @@ const subscriptionPlans = [
     agentMinutes: 150,
     description: "Saves ~24-36 hrs of manual work",
     features: [
-      "1 virtual machine, persistent",
+      "3 persistent machines, no limits",
       "2.5x more credits than Plus",
       "Advanced web search & data extraction",
       "Full API access (coming soon)",
@@ -74,28 +74,28 @@ const additionalCreditPackages = [
   {
     id: "boost-small",
     name: "Small Boost",
-    credits: 500,
-    price: 5,
-    agentMinutes: 50,
+    credits: 100,
+    price: 9,
+    agentMinutes: 10,
     description: "Quick top-up",
   },
   {
     id: "boost-medium",
     name: "Medium Boost",
-    credits: 2000,
-    price: 18,
-    agentMinutes: 200,
+    credits: 300,
+    price: 25,
+    agentMinutes: 30,
     description: "Standard refill",
-    savings: "10% savings",
+    savings: "8% savings",
   },
   {
     id: "boost-large",
     name: "Large Boost",
-    credits: 5000,
-    price: 40,
-    agentMinutes: 500,
+    credits: 600,
+    price: 45,
+    agentMinutes: 60,
     description: "Bulk purchase",
-    savings: "20% savings",
+    savings: "17% savings",
   },
 ]
 
@@ -480,10 +480,19 @@ export function BillingSection() {
               </div>
             </div>
 
-            <div className="mb-5 flex items-center gap-2 rounded-lg bg-primary/[0.08] border border-primary/10 px-3 py-2">
+            <div className="mb-3 flex items-center gap-2 rounded-lg bg-primary/[0.08] border border-primary/10 px-3 py-2">
               <Zap className="h-3.5 w-3.5 text-primary flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">
                 {plan.monthlyCredits.toLocaleString()} credits<span className="text-muted-foreground font-normal">/month</span>
+              </span>
+            </div>
+
+            {/* Persistent machines highlight */}
+            <div className="mb-5 flex items-center gap-2 rounded-lg bg-violet-500/[0.08] border border-violet-500/15 px-3 py-2">
+              <HardDrive className="h-3.5 w-3.5 text-violet-500 flex-shrink-0" />
+              <span className="text-sm font-medium text-foreground">
+                {plan.name === "Starter" ? "1" : plan.name === "Plus" ? "2" : "3"} persistent machine{plan.name !== "Starter" ? "s" : ""}
+                <span className="text-muted-foreground font-normal">, no limits</span>
               </span>
             </div>
 

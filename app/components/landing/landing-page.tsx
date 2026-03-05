@@ -107,7 +107,7 @@ const pricingPlans = [
     description: "Saves ~6-12 hrs of manual work",
     agentMinutes: "200 credits/month",
     features: [
-      "1 virtual machine, persistent",
+      "1 persistent machine, no limits",
       "SOTA OSWorld Agent 82%",
       "Full AI computer-use agent",
       "One-click remote connection",
@@ -128,7 +128,7 @@ const pricingPlans = [
     description: "Saves ~18-24 hrs of manual work",
     agentMinutes: "600 credits/month",
     features: [
-      "1 virtual machine, persistent",
+      "2 persistent machines, no limits",
       "SOTA OSWorld Agent 82%",
       "Full AI computer-use agent",
       "One-click remote connection",
@@ -152,7 +152,7 @@ const pricingPlans = [
     description: "Saves ~24-36 hrs of manual work",
     agentMinutes: "1500 credits/month",
     features: [
-      "1 virtual machine, persistent",
+      "3 persistent machines, no limits",
       "SOTA OSWorld Agent 82%",
       "Full AI computer-use agent",
       "One-click remote connection",
@@ -610,17 +610,19 @@ export function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Hero demo: GIF on all devices */}
-            <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/30 shadow-2xl shadow-primary/5">
-              <Image
-                src="/Pi7_Gif.gif"
-                alt="AI Agent Demo"
-                width={1200}
-                height={675}
-                className="w-full h-auto"
-                unoptimized
-                priority
-              />
+            {/* Hero demo: YouTube video embed */}
+            <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/30 shadow-2xl shadow-primary/5 bg-black">
+              <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+                <iframe
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.youtube-nocookie.com/embed/kmPNPja0j-Y?rel=0&modestbranding=1&showinfo=0"
+                  title="Coasty AI Agent Demo"
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  style={{ border: "none" }}
+                />
+              </div>
             </motion.div>
           </motion.div>
         </section>
@@ -1495,7 +1497,7 @@ export function LandingPage() {
                         <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{plan.description}</p>
                       </div>
 
-                      <div className="mb-5 flex items-center gap-2 rounded-lg bg-primary/[0.08] border border-primary/10 px-3 py-2">
+                      <div className="mb-3 flex items-center gap-2 rounded-lg bg-primary/[0.08] border border-primary/10 px-3 py-2">
                         <Zap className="h-3.5 w-3.5 text-primary flex-shrink-0" />
                         <span className="text-sm font-medium text-foreground">
                           {typeof plan.agentMinutes === 'string'
@@ -1507,6 +1509,17 @@ export function LandingPage() {
                           }
                         </span>
                       </div>
+
+                      {/* Persistent machines highlight */}
+                      {plan.name !== "Free" && (
+                        <div className="mb-5 flex items-center gap-2 rounded-lg bg-violet-500/[0.08] border border-violet-500/15 px-3 py-2">
+                          <HardDrive className="h-3.5 w-3.5 text-violet-500 flex-shrink-0" />
+                          <span className="text-sm font-medium text-foreground">
+                            {plan.name === "Starter" ? "1" : plan.name === "Plus" ? "2" : "3"} persistent machine{plan.name !== "Starter" ? "s" : ""}
+                            <span className="text-muted-foreground font-normal">, no limits</span>
+                          </span>
+                        </div>
+                      )}
 
                       <Button
                         className={cn(

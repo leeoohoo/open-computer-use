@@ -11,7 +11,7 @@ interface QuickStartExampleTasksProps {
 
 const exampleTasks = [
   "Build a Bloomberg terminal with live market data",
-  "Browse Wikipedia and answer a question",
+  "Build a playable Snake game in the browser",
 ]
 
 export function QuickStartExampleTasks({

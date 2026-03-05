@@ -502,6 +502,24 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
       onToggle()
     }
   }, [toolInvocations.length, isOpen, onToggle, disableAutoOpen])
+
+  // Auto-open panel when a screenshot becomes available (always, even if disableAutoOpen)
+  const hasScreenshotRef = useRef(false)
+  // Reset when chat changes so it triggers again for new conversations
+  useEffect(() => { hasScreenshotRef.current = false }, [chatId])
+  useEffect(() => {
+    if (isOpen || hasScreenshotRef.current) return
+    const hasScreenshot = toolInvocations.some(inv => {
+      if (inv.frontendScreenshot) return true
+      if (inv.result && typeof inv.result === 'object' && 'frontendScreenshot' in inv.result) return true
+      return false
+    })
+    if (hasScreenshot) {
+      hasScreenshotRef.current = true
+      console.log('[ProjectNavigator] Auto-opening panel — screenshot detected')
+      onToggle()
+    }
+  }, [toolInvocations, isOpen, onToggle])
   
   // Track new invocations for animation
   const [newInvocationIds, setNewInvocationIds] = useState<Set<string>>(new Set())
