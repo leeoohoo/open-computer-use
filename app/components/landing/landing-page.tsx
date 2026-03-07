@@ -25,22 +25,14 @@ import { HeroUseCaseCarousel } from "./hero-use-case-carousel"
 // MockChatDemo moved out of hero — still available for other sections
 // import { MockChatDemo } from "./mock-chat-demo"
 // import { MockVMDisplay } from "./mock-vm-display"
-import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
-import { Caveat, Cormorant_Garamond } from "next/font/google"
+import { Caveat } from "next/font/google"
 
 const handwriting = Caveat({
   subsets: ["latin"],
   weight: ["600"],
 })
-
-const brandSubtitle = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  style: ["italic"],
-})
-
-const BRAND_SUBTITLE_TEXT = "I am designed to emulate you."
 
 const features = [
   {
@@ -297,12 +289,9 @@ export function LandingPage() {
   const [selectedFaq, setSelectedFaq] = useState<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const [showBrandIntro, setShowBrandIntro] = useState(false)
-  const [showPageContent, setShowPageContent] = useState(false)
-  const [subtitleTypingDone, setSubtitleTypingDone] = useState(false)
   const [comparisonPlan, setComparisonPlan] = useState(2) // default to Plus (index 2)
   const { theme } = useTheme()
-  const prefersReducedMotion = useReducedMotion()
+
   const searchParams = useSearchParams()
 
   // Capture referral code and UTM params from URL
@@ -328,35 +317,6 @@ export function LandingPage() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Intro timeline — skip entirely on mobile (no brand intro, instant content)
-  useEffect(() => {
-    if (!mounted) return
-
-    const isSmallDevice = window.innerWidth < 768
-
-    if (prefersReducedMotion || isSmallDevice) {
-      // Batch all state in one tick — no cascading re-renders
-      setShowBrandIntro(false)
-      setShowPageContent(true)
-      setSubtitleTypingDone(true)
-      return
-    }
-
-    setShowPageContent(false)
-    setShowBrandIntro(true)
-    setSubtitleTypingDone(false)
-
-    const typingDone = window.setTimeout(() => setSubtitleTypingDone(true), 1800)
-    const exitIntro = window.setTimeout(() => setShowBrandIntro(false), 2100)
-    const revealPage = window.setTimeout(() => setShowPageContent(true), 2450)
-
-    return () => {
-      window.clearTimeout(typingDone)
-      window.clearTimeout(exitIntro)
-      window.clearTimeout(revealPage)
-    }
-  }, [mounted, prefersReducedMotion])
-
   // Animation variants — no motion on mobile (instant reveal)
   const sectionViewport = { once: true, amount: isMobile ? 0.05 : 0.1 }
 
@@ -381,119 +341,15 @@ export function LandingPage() {
         }
       }
 
-  // Animated use-case cycling for hero
-  const contentVisible = mounted && (isMobile || showPageContent)
-  const headerVisible = mounted && (isMobile || !showBrandIntro)
-
   return (
-    <LayoutGroup id="landing-brand-transition">
-      {/* CSS keyframes for the typing reveal — runs on compositor, zero JS overhead */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes brand-typing-reveal {
-          from { max-width: 0; }
-          to   { max-width: 20em; }
-        }
-        @keyframes brand-cursor-blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        .brand-typing-text {
-          display: inline-block;
-          overflow: hidden;
-          white-space: nowrap;
-          max-width: 0;
-          vertical-align: bottom;
-          animation: brand-typing-reveal 1.8s steps(28, end) forwards;
-        }
-        .brand-cursor {
-          animation: brand-cursor-blink 0.7s step-end infinite;
-        }
-      ` }} />
-
+    <>
       <div className="min-h-screen bg-background relative">
 
-      <AnimatePresence>
-        {mounted && showBrandIntro && (
-          <motion.div
-            className="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center"
-            style={{ willChange: "opacity" }}
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            <div className="flex flex-col items-center gap-3 px-6">
-              <div className="flex items-center gap-3">
-                <motion.div
-                  layoutId="landing-brand-logo"
-                  transition={{ type: "spring", stiffness: 250, damping: 28 }}
-                  className="relative h-14 w-14 sm:h-16 sm:w-16"
-                  style={{ willChange: "transform" }}
-                >
-                  {mounted && (
-                    <Image
-                      src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
-                      alt="Coasty Logo"
-                      width={64}
-                      height={64}
-                      className="h-full w-full object-contain"
-                      priority
-                    />
-                  )}
-                </motion.div>
-                <motion.span
-                  layoutId="landing-brand-text"
-                  transition={{ type: "spring", stiffness: 250, damping: 28 }}
-                  className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-3xl font-semibold text-transparent sm:text-4xl leading-normal pb-0.5"
-                  style={{ willChange: "transform" }}
-                >
-                  Coasty
-                </motion.span>
-              </div>
-              <motion.p
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.25, ease: "easeOut", delay: 0.1 }}
-                className={cn(
-                  "min-h-[1.75rem] text-center text-lg text-foreground/75 sm:min-h-[2rem] sm:text-xl",
-                  brandSubtitle.className
-                )}
-              >
-                <span className="brand-typing-text">
-                  {BRAND_SUBTITLE_TEXT}
-                  {!subtitleTypingDone && (
-                    <span aria-hidden="true" className="brand-cursor ml-0.5">|</span>
-                  )}
-                </span>
-              </motion.p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Fixed header */}
-      <div
-        className={cn(
-          isMobile
-            ? (mounted ? "opacity-100" : "opacity-0")
-            : "transition-opacity duration-500",
-          !isMobile && (headerVisible ? "opacity-100" : "opacity-0 pointer-events-none")
-        )}
-      >
-        <LandingHeader animateBrandFromIntro={!isMobile} />
-      </div>
+      <LandingHeader />
 
       {/* Main content */}
-      <main
-        className={cn(
-          "relative",
-          isMobile ? "pt-16" : "pt-20 transition-opacity duration-500",
-          isMobile
-            ? (mounted ? "opacity-100" : "opacity-0")
-            : (contentVisible ? "opacity-100" : "opacity-0 pointer-events-none")
-        )}
-      >
+      <main className={cn("relative", isMobile ? "pt-16" : "pt-20")}>
         {/* Hero Section */}
         <section id="hero" className={cn(
           "relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-hidden",
@@ -1657,6 +1513,6 @@ export function LandingPage() {
         </footer>
       </main>
       </div>
-    </LayoutGroup>
+    </>
   )
 }
