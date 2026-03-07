@@ -1,4 +1,5 @@
-import React, { memo, useMemo, useState } from 'react'
+import React, { memo, useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from '../lib/utils'
 import { Markdown } from './Markdown'
 
@@ -80,6 +81,7 @@ function IconMagnifyingGlass({ className }: { className?: string }) {
     </svg>
   )
 }
+
 
 // ── Types ──
 
@@ -245,6 +247,87 @@ function buildTopLevel(sections: ParsedSection[]): TopLevelItem[] {
   return items
 }
 
+// ── Screenshot Lightbox ──
+
+function ScreenshotLightbox({
+  src,
+  onClose,
+}: {
+  src: string
+  onClose: () => void
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-zoom-out"
+      onClick={onClose}
+      style={{ animation: 'cua-fade-in 0.15s ease' }}
+    >
+      <img
+        src={src}
+        alt="Screenshot"
+        className="max-w-[90vw] max-h-[90vh] rounded-lg object-contain"
+        onClick={(e) => e.stopPropagation()}
+        style={{ animation: 'cua-bounce-in 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}
+      />
+      <style>{`
+        @keyframes cua-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes cua-bounce-in { from { transform: scale(0.92); } to { transform: scale(1); } }
+      `}</style>
+    </div>,
+    document.body
+  )
+}
+
+// ── Screenshot Thumbnail (replaces timeline dot) ──
+
+function ScreenshotDot({ src }: { src: string }) {
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+
+  return (
+    <>
+      <div
+        className="absolute -left-[11px] top-[4px] z-[2] cursor-pointer cua-thumb"
+        onClick={() => setLightboxOpen(true)}
+      >
+        <div className="w-[28px] h-[28px] rounded-[6px] overflow-hidden ring-1 ring-neutral-700/40">
+          <img src={src} alt="" className="w-full h-full object-cover" draggable={false} />
+        </div>
+        <style>{`
+          .cua-thumb { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+          .cua-thumb:hover { transform: scale(1.18); }
+          .cua-thumb:active { transform: scale(0.95); }
+        `}</style>
+      </div>
+
+      {lightboxOpen && (
+        <ScreenshotLightbox src={src} onClose={() => setLightboxOpen(false)} />
+      )}
+    </>
+  )
+}
+
+// ── Plain Timeline Dot (no screenshot) ──
+
+function PlainDot({ status }: { status: 'success' | 'error' | 'pending' }) {
+  return (
+    <div className="absolute left-0 top-[10px] flex items-center justify-center">
+      {status === 'error' ? (
+        <span className="w-2 h-2 rounded-full bg-red-500/60 ring-2 ring-red-500/10" />
+      ) : status === 'success' ? (
+        <span className="w-2 h-2 rounded-full bg-emerald-500/60 ring-2 ring-emerald-500/10" />
+      ) : (
+        <span className="w-2 h-2 rounded-full bg-neutral-500/25 ring-2 ring-neutral-500/5" />
+      )}
+    </div>
+  )
+}
+
 // ── Primitives ──
 
 function DetailRow({
@@ -298,24 +381,34 @@ function StatusDot({ status }: { status: string }) {
 
 // ── Step ──
 
-function StepCard({ step }: { step: StepGroup }) {
+function StepCard({
+  step,
+  screenshot,
+}: {
+  step: StepGroup
+  screenshot?: string | null
+}) {
   const actionText = step.action ? stripAgentCode(step.action) : ''
   const hasDetails = step.observation || step.code || step.results.length > 0
 
   if (!actionText && !hasDetails) return null
 
+  const hasError = step.results.some((r) => r.status === 'error')
+  const isDone = step.results.length > 0
+  const status: 'success' | 'error' | 'pending' = hasError
+    ? 'error'
+    : isDone
+      ? 'success'
+      : 'pending'
+  const hasScreenshot = !!screenshot
+
   return (
-    <div className="group/step relative pl-6 pb-1">
-      {/* Timeline dot */}
-      <div className="absolute left-0 top-[10px] flex items-center justify-center">
-        {step.results.some((r) => r.status === 'error') ? (
-          <span className="w-2 h-2 rounded-full bg-red-500/60 ring-2 ring-red-500/10" />
-        ) : step.results.length > 0 ? (
-          <span className="w-2 h-2 rounded-full bg-emerald-500/60 ring-2 ring-emerald-500/10" />
-        ) : (
-          <span className="w-2 h-2 rounded-full bg-neutral-500/25 ring-2 ring-neutral-500/5" />
-        )}
-      </div>
+    <div className={cn('group/step relative pb-1', hasScreenshot ? 'pl-8' : 'pl-6')}>
+      {hasScreenshot ? (
+        <ScreenshotDot src={screenshot!} />
+      ) : (
+        <PlainDot status={status} />
+      )}
 
       {/* Action — the natural language line */}
       {actionText && (
@@ -365,10 +458,16 @@ function StepCard({ step }: { step: StepGroup }) {
 
 // ── Item Renderer ──
 
-function ItemRenderer({ item }: { item: TopLevelItem }) {
+function ItemRenderer({
+  item,
+  screenshot,
+}: {
+  item: TopLevelItem
+  screenshot?: string | null
+}) {
   switch (item.kind) {
     case 'step':
-      return <StepCard step={item} />
+      return <StepCard step={item} screenshot={screenshot} />
 
     case 'status': {
       const done = item.status === 'completed'
@@ -467,14 +566,30 @@ export function hasCuaSections(content: string): boolean {
 export const CuaSectionRenderer = memo(function CuaSectionRenderer({
   content,
   className,
+  screenshots,
 }: {
   content: string
   className?: string
+  screenshots?: string[]
 }) {
   const items = useMemo(() => {
     const sections = parseSections(content)
     return buildTopLevel(sections)
   }, [content])
+
+  // Map screenshots to step items only
+  const stepScreenshotMap = useMemo(() => {
+    if (!screenshots || screenshots.length === 0) return new Map<number, string>()
+    const map = new Map<number, string>()
+    let screenshotIdx = 0
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].kind === 'step' && screenshotIdx < screenshots.length) {
+        map.set(i, screenshots[screenshotIdx])
+        screenshotIdx++
+      }
+    }
+    return map
+  }, [items, screenshots])
 
   return (
     <div className={cn('flex flex-col gap-0.5', className)}>
@@ -483,7 +598,11 @@ export const CuaSectionRenderer = memo(function CuaSectionRenderer({
         <div className="absolute left-[3.5px] top-2 bottom-2 w-px bg-neutral-700/30" />
         <div className="relative flex flex-col">
           {items.map((item, i) => (
-            <ItemRenderer key={i} item={item} />
+            <ItemRenderer
+              key={i}
+              item={item}
+              screenshot={stepScreenshotMap.get(i)}
+            />
           ))}
         </div>
       </div>

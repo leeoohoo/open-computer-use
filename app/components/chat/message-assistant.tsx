@@ -7,6 +7,7 @@ import {
 import { useUserPreferences } from "@/lib/user-preference-store/provider"
 import { cn } from "@/lib/utils"
 import type { Message as MessageAISDK } from "@ai-sdk/react"
+import { useMemo } from "react"
 import { ArrowClockwise, Check, Copy } from "@phosphor-icons/react"
 import { getSources } from "./get-sources"
 import { Reasoning } from "./reasoning"
@@ -18,7 +19,7 @@ import { useChats } from "@/lib/chat-store/chats/provider"
 import { useChatSession } from "@/lib/chat-store/session/provider"
 import { TaskPlanFormatter } from "./task-plan-formatter"
 import { MessageStatusIndicator } from "./message-status-indicator"
-import { CuaSectionRenderer, hasCuaSections } from "./cua-section-renderer"
+import { CuaSectionRenderer, hasCuaSections, extractScreenshots } from "./cua-section-renderer"
 import { MessageStopBanner, detectStopReason, stripStopTags } from "./message-stop-banner"
 
 type MessageAssistantProps = {
@@ -74,6 +75,10 @@ export function MessageAssistant({
   const hasCoastyReport = displayContent?.includes?.('[Coasty_REPORT_START]')
   const hasTaskMarkers = hasTaskPlan || hasCoastyReport
   const hasCuaTags = displayContent ? hasCuaSections(displayContent) : false
+  const cuaScreenshots = useMemo(
+    () => (hasCuaTags ? extractScreenshots(parts as any) : []),
+    [hasCuaTags, parts]
+  )
   const searchImageResults =
     parts
       ?.filter(
@@ -131,7 +136,10 @@ export function MessageAssistant({
         ) : hasCuaTags ? (
           // CUA agent sections with structured rendering
           <div className="bg-muted rounded-3xl px-5 py-3 max-w-none">
-            <CuaSectionRenderer content={displayContent} />
+            <CuaSectionRenderer
+              content={displayContent}
+              screenshots={cuaScreenshots}
+            />
           </div>
         ) : (
           // Regular markdown content

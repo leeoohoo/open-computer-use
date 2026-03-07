@@ -6,7 +6,6 @@ import {
   CheckCircle,
   XCircle,
   CaretRight,
-  CircleNotch,
   Eye,
   Code,
   Brain,
@@ -15,7 +14,8 @@ import {
   MagnifyingGlass,
 } from "@phosphor-icons/react"
 import { AnimatePresence, motion } from "framer-motion"
-import { memo, useMemo, useState } from "react"
+import { memo, useEffect, useMemo, useState } from "react"
+import { createPortal } from "react-dom"
 
 // ── Types ──
 
@@ -181,6 +181,89 @@ function buildTopLevel(sections: ParsedSection[]): TopLevelItem[] {
   return items
 }
 
+// ── Screenshot Lightbox ──
+
+function ScreenshotLightbox({
+  src,
+  onClose,
+}: {
+  src: string
+  onClose: () => void
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose() }
+    document.addEventListener("keydown", onKey)
+    return () => document.removeEventListener("keydown", onKey)
+  }, [onClose])
+
+  return createPortal(
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-zoom-out"
+      onClick={onClose}
+    >
+      <motion.img
+        src={src}
+        alt="Screenshot"
+        initial={{ scale: 0.92 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.95 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        className="max-w-[90vw] max-h-[90vh] rounded-lg object-contain"
+        onClick={(e) => e.stopPropagation()}
+      />
+    </motion.div>,
+    document.body
+  )
+}
+
+// ── Screenshot Thumbnail (replaces timeline dot) ──
+
+function ScreenshotDot({ src }: { src: string }) {
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+
+  return (
+    <>
+      <motion.div
+        className="absolute -left-[11px] top-[4px] z-[2] cursor-pointer"
+        whileHover={{ scale: 1.18 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ type: "spring", stiffness: 500, damping: 15 }}
+        onClick={() => setLightboxOpen(true)}
+      >
+        <div className="size-[28px] rounded-[6px] overflow-hidden ring-1 ring-border/40">
+          <img src={src} alt="" className="size-full object-cover" draggable={false} />
+        </div>
+      </motion.div>
+
+      <AnimatePresence>
+        {lightboxOpen && (
+          <ScreenshotLightbox src={src} onClose={() => setLightboxOpen(false)} />
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
+
+// ── Plain Timeline Dot (no screenshot) ──
+
+function PlainDot({ status }: { status: "success" | "error" | "pending" }) {
+  return (
+    <div className="absolute left-0 top-[10px] flex items-center justify-center">
+      {status === "error" ? (
+        <span className="size-2 rounded-full bg-red-500/60 ring-2 ring-red-500/10" />
+      ) : status === "success" ? (
+        <span className="size-2 rounded-full bg-emerald-500/60 ring-2 ring-emerald-500/10" />
+      ) : (
+        <span className="size-2 rounded-full bg-muted-foreground/25 ring-2 ring-muted-foreground/5" />
+      )}
+    </div>
+  )
+}
+
 // ── Primitives ──
 
 function DetailRow({
@@ -240,24 +323,34 @@ function StatusDot({ status }: { status: string }) {
 
 // ── Step ──
 
-function StepCard({ step, index }: { step: StepGroup; index: number }) {
+function StepCard({
+  step,
+  screenshot,
+}: {
+  step: StepGroup
+  screenshot?: string | null
+}) {
   const actionText = step.action ? stripAgentCode(step.action) : ""
   const hasDetails = step.observation || step.code || step.results.length > 0
 
   if (!actionText && !hasDetails) return null
 
+  const hasError = step.results.some(r => r.status === "error")
+  const isDone = step.results.length > 0
+  const status: "success" | "error" | "pending" = hasError
+    ? "error"
+    : isDone
+      ? "success"
+      : "pending"
+  const hasScreenshot = !!screenshot
+
   return (
-    <div className="group/step relative pl-6 pb-1">
-      {/* Timeline dot */}
-      <div className="absolute left-0 top-[10px] flex items-center justify-center">
-        {step.results.some(r => r.status === "error") ? (
-          <span className="size-2 rounded-full bg-red-500/60 ring-2 ring-red-500/10" />
-        ) : step.results.length > 0 ? (
-          <span className="size-2 rounded-full bg-emerald-500/60 ring-2 ring-emerald-500/10" />
-        ) : (
-          <span className="size-2 rounded-full bg-muted-foreground/25 ring-2 ring-muted-foreground/5" />
-        )}
-      </div>
+    <div className={cn("group/step relative pb-1", hasScreenshot ? "pl-8" : "pl-6")}>
+      {hasScreenshot ? (
+        <ScreenshotDot src={screenshot!} />
+      ) : (
+        <PlainDot status={status} />
+      )}
 
       {/* Action — the natural language line */}
       {actionText && (
@@ -307,10 +400,16 @@ function StepCard({ step, index }: { step: StepGroup; index: number }) {
 
 // ── Item Renderer ──
 
-function ItemRenderer({ item, index }: { item: TopLevelItem; index: number }) {
+function ItemRenderer({
+  item,
+  screenshot,
+}: {
+  item: TopLevelItem
+  screenshot?: string | null
+}) {
   switch (item.kind) {
     case "step":
-      return <StepCard step={item} index={index} />
+      return <StepCard step={item} screenshot={screenshot} />
 
     case "status": {
       const done = item.status === "completed"
@@ -400,6 +499,55 @@ function ItemRenderer({ item, index }: { item: TopLevelItem; index: number }) {
   }
 }
 
+// ── Screenshot extraction helper ──
+
+function toDataUri(raw: string): string | null {
+  const clean = raw.trim()
+  if (!clean) return null
+  if (clean.startsWith("data:image/")) return clean
+  if (clean.startsWith("/9j/")) return `data:image/jpeg;base64,${clean}`
+  if (clean.startsWith("iVBOR")) return `data:image/png;base64,${clean}`
+  return `data:image/jpeg;base64,${clean}`
+}
+
+/** Extract all screenshots from message parts in order */
+export function extractScreenshots(
+  parts?: Array<{ type: string; toolInvocation?: any }>
+): string[] {
+  if (!parts) return []
+  const screenshots: string[] = []
+
+  for (const part of parts) {
+    if (part.type !== "tool-invocation" || !part.toolInvocation) continue
+    const inv = part.toolInvocation as any
+
+    // DB-persisted format
+    if (inv.frontendScreenshot && typeof inv.frontendScreenshot === "string") {
+      const uri = toDataUri(inv.frontendScreenshot)
+      if (uri) {
+        screenshots.push(uri)
+        continue
+      }
+    }
+
+    // Streaming format
+    if (
+      inv.state === "result" &&
+      inv.result &&
+      typeof inv.result === "object" &&
+      "frontendScreenshot" in inv.result
+    ) {
+      const uri = toDataUri(inv.result.frontendScreenshot)
+      if (uri) {
+        screenshots.push(uri)
+        continue
+      }
+    }
+  }
+
+  return screenshots
+}
+
 // ── Exported ──
 
 export function hasCuaSections(content: string): boolean {
@@ -409,23 +557,42 @@ export function hasCuaSections(content: string): boolean {
 export const CuaSectionRenderer = memo(function CuaSectionRenderer({
   content,
   className,
+  screenshots,
 }: {
   content: string
   className?: string
+  screenshots?: string[]
 }) {
   const items = useMemo(() => {
     const sections = parseSections(content)
     return buildTopLevel(sections)
   }, [content])
 
+  // Map screenshots to step items only (skip non-step items)
+  const stepScreenshotMap = useMemo(() => {
+    if (!screenshots || screenshots.length === 0) return new Map<number, string>()
+    const map = new Map<number, string>()
+    let screenshotIdx = 0
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].kind === "step" && screenshotIdx < screenshots.length) {
+        map.set(i, screenshots[screenshotIdx])
+        screenshotIdx++
+      }
+    }
+    return map
+  }, [items, screenshots])
+
   return (
     <div className={cn("flex flex-col gap-0.5", className)}>
-      {/* Thin timeline line behind dots */}
       <div className="relative">
         <div className="absolute left-[3.5px] top-2 bottom-2 w-px bg-border/30" />
         <div className="relative flex flex-col">
           {items.map((item, i) => (
-            <ItemRenderer key={i} item={item} index={i} />
+            <ItemRenderer
+              key={i}
+              item={item}
+              screenshot={stepScreenshotMap.get(i)}
+            />
           ))}
         </div>
       </div>

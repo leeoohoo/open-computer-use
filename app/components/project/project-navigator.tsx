@@ -2,9 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { cn } from "@/lib/utils"
-import { themeConfig } from "@/lib/theme-config"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   ArrowsIn,
   CaretRight,
@@ -37,7 +34,7 @@ import {
   Timer,
   Command,
 } from "@phosphor-icons/react"
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ArrowUpRight, MousePointer, Loader2, Mouse } from "lucide-react"
+import { ChevronDown, ChevronUp, ArrowUpRight, MousePointer, Loader2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useChatSession } from "@/lib/chat-store/session/provider"
 import { useChats } from "@/lib/chat-store/chats/provider"
@@ -218,7 +215,10 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
   const [lastBrowserScreenshot, setLastBrowserScreenshot] = useState<string | null>(null)
   const [lastTerminalOutput, setLastTerminalOutput] = useState<{ command?: string; output?: string; error?: string } | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  
+  const [isResizing, setIsResizing] = useState(false)
+  const [resizeHandleHover, setResizeHandleHover] = useState(false)
+
+
   // State for task plan tracking
   const [taskPlan, setTaskPlan] = useState<TaskPlan | null>(null)
   const [currentExecutingTaskId, setCurrentExecutingTaskId] = useState<string | null>(null)
@@ -693,30 +693,43 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
     }
   }
 
-  // Resize handlers
+  // Resize handlers with magnetic snap
+  const SNAP_POINTS = [33, 40, 50]
+  const SNAP_THRESHOLD = 1.5 // percentage proximity to snap
+
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     isDraggingRef.current = true
     startXRef.current = e.clientX
     startWidthRef.current = width
+    setIsResizing(true)
     document.body.style.cursor = 'col-resize'
     document.body.style.userSelect = 'none'
   }, [width])
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDraggingRef.current) return
-    
+
     const windowWidth = window.innerWidth
     const deltaX = startXRef.current - e.clientX
     const deltaPercent = (deltaX / windowWidth) * 100
-    const newWidth = Math.max(30, Math.min(50, startWidthRef.current + deltaPercent))
-    
+    let newWidth = Math.max(30, Math.min(50, startWidthRef.current + deltaPercent))
+
+    // Magnetic snap to breakpoints
+    for (const snap of SNAP_POINTS) {
+      if (Math.abs(newWidth - snap) < SNAP_THRESHOLD) {
+        newWidth = snap
+        break
+      }
+    }
+
     setWidth(newWidth)
   }, [setWidth])
 
   const handleMouseUp = useCallback(() => {
     isDraggingRef.current = false
+    setIsResizing(false)
     document.body.style.cursor = ''
     document.body.style.userSelect = ''
   }, [])
@@ -1130,7 +1143,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
         
         return (
           <div className="w-full">
-            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '200px', maxHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
               {/* Terminal-style Header with "File" */}
               <div className="flex items-center justify-between px-4 py-2.5 bg-black border-b border-zinc-800">
                 <div className="flex items-center gap-3">
@@ -1193,7 +1206,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
         
         return (
           <div className="w-full">
-            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '200px', maxHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
               {/* Terminal-style Header with "File" */}
               <div className="flex items-center justify-between px-4 py-2.5 bg-black border-b border-zinc-800">
                 <div className="flex items-center gap-3">
@@ -1242,7 +1255,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
       if (toolName === 'file_delete') {
         return (
           <div className="w-full">
-            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '200px', maxHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
               {/* Terminal-style Header with "File" */}
               <div className="flex items-center justify-between px-4 py-2.5 bg-black border-b border-zinc-800">
                 <div className="flex items-center gap-3">
@@ -1293,7 +1306,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
         
         return (
           <div className="w-full">
-            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '200px', maxHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
               {/* Terminal-style Header */}
               <div className="flex items-center justify-between px-4 py-2.5 bg-black border-b border-zinc-800">
                 <div className="flex items-center gap-3">
@@ -1355,7 +1368,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
         
         return (
           <div className="w-full">
-            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '200px', maxHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
               {/* Terminal Header */}
               <div className="flex items-center justify-between px-4 py-2.5 bg-black border-b border-zinc-800">
                 <div className="flex items-center gap-3">
@@ -1431,7 +1444,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
         // Error state
         return (
           <div className="w-full">
-            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="relative rounded-xl overflow-hidden bg-black border border-zinc-800" style={{ minHeight: '200px', maxHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
               <div className="flex items-center justify-between px-4 py-2.5 bg-black border-b border-zinc-800">
                 <div className="flex items-center gap-3">
                   <div className="flex gap-1.5 items-center">
@@ -1466,7 +1479,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
 
         return (
           <div className="w-full">
-            <div className="relative rounded-xl overflow-hidden bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800" style={{ minHeight: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="relative rounded-xl overflow-hidden bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800" style={{ minHeight: '200px', maxHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
               {/* Terminal Header */}
               <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-100 dark:bg-black border-b border-zinc-200 dark:border-zinc-800">
                 <div className="flex items-center gap-3">
@@ -1560,7 +1573,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
       if (toolName === 'terminal_connect') {
         return (
           <div className="w-full">
-            <div className="relative rounded-xl overflow-hidden bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800" style={{ minHeight: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="relative rounded-xl overflow-hidden bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800" style={{ minHeight: '200px', maxHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
               <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-100 dark:bg-black border-b border-zinc-200 dark:border-zinc-800">
                 <div className="flex items-center gap-3">
                   <div className="flex gap-1.5 items-center">
@@ -1591,7 +1604,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
       if (toolName === 'terminal_clear') {
         return (
           <div className="w-full">
-            <div className="relative rounded-xl overflow-hidden bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800" style={{ minHeight: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="relative rounded-xl overflow-hidden bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800" style={{ minHeight: '200px', maxHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
               <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-100 dark:bg-black border-b border-zinc-200 dark:border-zinc-800">
                 <div className="flex items-center gap-3">
                   <div className="flex gap-1.5 items-center">
@@ -1617,7 +1630,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
       if (toolName === 'terminal_close') {
         return (
           <div className="w-full">
-            <div className="relative rounded-xl overflow-hidden bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800" style={{ minHeight: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="relative rounded-xl overflow-hidden bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800" style={{ minHeight: '200px', maxHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
               <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-100 dark:bg-black border-b border-zinc-200 dark:border-zinc-800">
                 <div className="flex items-center gap-3">
                   <div className="flex gap-1.5 items-center">
@@ -1649,7 +1662,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
       if (searchResults.length > 0) {
         return (
           <div className="w-full h-full flex flex-col">
-            <div className="relative rounded-2xl overflow-hidden bg-gradient-to-b from-zinc-100/95 to-white/95 dark:from-zinc-900/95 dark:to-black/95 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 flex-1 flex flex-col" style={{ minHeight: '600px' }}>
+            <div className="relative rounded-2xl overflow-hidden bg-gradient-to-b from-zinc-100/95 to-white/95 dark:from-zinc-900/95 dark:to-black/95 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 flex-1 flex flex-col" style={{ minHeight: '200px' }}>
               {/* Modern Header */}
               <div className="flex items-center justify-between px-5 py-3.5 bg-gradient-to-r from-zinc-100/50 via-zinc-200/30 to-zinc-100/50 dark:from-zinc-900/50 dark:via-zinc-800/30 dark:to-zinc-900/50 border-b border-zinc-200/30 dark:border-zinc-800/30">
                 <div className="flex items-center gap-3">
@@ -2028,7 +2041,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
       if (imageResults.length > 0) {
         return (
           <div className="w-full h-full flex flex-col">
-            <div className="relative rounded-2xl overflow-hidden bg-gradient-to-b from-zinc-900/95 to-black/95 backdrop-blur-xl border border-zinc-800/50 flex-1 flex flex-col" style={{ minHeight: '600px' }}>
+            <div className="relative rounded-2xl overflow-hidden bg-gradient-to-b from-zinc-900/95 to-black/95 backdrop-blur-xl border border-zinc-800/50 flex-1 flex flex-col" style={{ minHeight: '200px' }}>
               {/* Modern Header */}
               <div className="flex items-center justify-between px-5 py-3.5 bg-gradient-to-r from-zinc-900/50 via-zinc-800/30 to-zinc-900/50 border-b border-zinc-800/30">
                 <div className="flex items-center gap-3">
@@ -2208,128 +2221,117 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
           <motion.div
             key="project-navigator-panel"
             ref={containerRef}
-            initial={{ 
-              opacity: 0,
-              scale: 0.5,
-              x: isMobile ? 0 : "-50%",
-              y: "50%"
-            }}
-            animate={{ 
-              opacity: 1,
-              scale: 1,
-              x: 0,
-              y: 0
-            }}
-            exit={{ 
-              opacity: 0,
-              scale: 0.5,
-              x: isMobile ? 0 : "-50%",
-              y: "50%"
-            }}
-            transition={{ 
-              duration: 0.11, 
-              ease: "easeOut"
-            }}
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 24 }}
+            transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
             className={cn(
             "fixed z-50",
-            "top-[var(--spacing-app-header,56px)] sm:top-[calc(var(--spacing-app-header,56px)+1rem)]",
-            "bottom-0 sm:bottom-4",
+            "top-[var(--spacing-app-header,56px)] sm:top-[calc(var(--spacing-app-header,56px)+0.5rem)]",
+            "bottom-0 sm:bottom-2",
             isMobile ? "right-0 w-full" : ""
           )}
           style={{
-              transformOrigin: "center bottom",
             ...(isMobile ? {} : {
               width: `${width}%`,
-              right: '1rem'
+              right: '0.5rem'
             })
           }}
         >
-          {/* Resize handle — floating tab that sticks out from the left edge */}
+          {/* Resize handle */}
           <div
             className="absolute -left-3 top-0 bottom-0 w-6 cursor-col-resize group hidden sm:flex items-center justify-center z-10"
             onMouseDown={handleMouseDown}
+            onMouseEnter={() => setResizeHandleHover(true)}
+            onMouseLeave={() => setResizeHandleHover(false)}
           >
-            {/* Floating pill handle — always visible, sticks out to the left */}
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-10 rounded-l-lg bg-neutral-200/80 dark:bg-neutral-700/80 group-hover:bg-neutral-300 dark:group-hover:bg-neutral-600 border border-r-0 border-border/50 shadow-sm group-hover:shadow-md transition-all duration-200">
-              <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
-            </div>
+            <div className={cn(
+              "w-[3px] rounded-full transition-all duration-200",
+              isResizing
+                ? "h-16 bg-neutral-400 dark:bg-neutral-500"
+                : resizeHandleHover
+                  ? "h-12 bg-neutral-400/60 dark:bg-neutral-500/60"
+                  : "h-8 bg-neutral-300/40 dark:bg-neutral-600/40"
+            )} />
           </div>
-          {/* Panel body with background, shadow, and overflow clipping */}
-          <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-800 shadow-xl rounded-t-xl sm:rounded-xl overflow-hidden flex flex-col">
+          {/* Panel body */}
+          <div className="absolute inset-0 bg-white dark:bg-neutral-900 shadow-2xl shadow-black/8 dark:shadow-black/25 rounded-t-2xl sm:rounded-2xl overflow-hidden flex flex-col border border-neutral-200/60 dark:border-neutral-700/40">
           <div className="relative flex-1 flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 sm:px-4 sm:py-3 border-b border-border/40">
-              {/* Content */}
-              <div className="flex items-center gap-3">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 flex-shrink-0">
-                  <CoastyIcon className="h-4 w-4" />
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <h3 className="font-medium text-sm tracking-tight">Coasty's personal machine</h3>
-                  {activeTab === 'activity' && !taskPlan && (
-                    <div className="flex items-center gap-1.5">
-                      <Badge variant="secondary" className="text-[10px] font-medium px-1.5 py-0 h-5 rounded-md" title="Total number of tasks performed">
-                        {toolInvocations.length} {toolInvocations.length === 1 ? 'action' : 'actions'}
-                      </Badge>
-                      {activeTools > 0 && (
-                        <Badge variant="default" className="text-[10px] font-medium px-1.5 py-0 h-5 rounded-md bg-orange-500">
-                          {activeTools} active
-                        </Badge>
-                      )}
-                    </div>
+            <div className="flex items-center justify-between h-11 px-3.5 border-b border-neutral-100 dark:border-neutral-800/50 flex-shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="relative">
+                  <div className="w-6 h-6 rounded-lg bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center flex-shrink-0">
+                    <CoastyIcon className="h-3.5 w-3.5" />
+                  </div>
+                  {activeTools > 0 && (
+                    <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-[1.5px] ring-white dark:ring-neutral-900" />
                   )}
                 </div>
+                <span className="text-[13px] font-semibold tracking-[-0.01em] text-neutral-800 dark:text-neutral-200">Machine</span>
+                {activeTab === 'activity' && !taskPlan && toolInvocations.length > 0 && (
+                  <span className="text-[11px] tabular-nums text-neutral-400 dark:text-neutral-500 font-medium">
+                    {toolInvocations.length} {toolInvocations.length === 1 ? 'step' : 'steps'}
+                  </span>
+                )}
               </div>
-              <div className="relative flex items-center gap-1">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="h-7 w-7 rounded-lg hover:bg-muted/80 transition-colors"
-                  onClick={onToggle}
-                  title="Minimize panel"
-                >
-                  <ArrowsIn className="h-3.5 w-3.5 text-muted-foreground" weight="bold" />
-                </Button>
-              </div>
+              <button
+                onClick={onToggle}
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                title="Minimize panel"
+              >
+                <ArrowsIn className="h-3.5 w-3.5" weight="bold" />
+              </button>
             </div>
 
-            {/* Task Checklist - Minimal display under header - Hide on mobile */}
+            {/* Task Checklist */}
             {taskPlan && !isMobile && (
-              <div className="px-4 py-2">
-                <TaskChecklist 
+              <div className="px-3.5 py-2 border-b border-neutral-100 dark:border-neutral-800/50">
+                <TaskChecklist
                   taskPlan={taskPlan}
                   currentTaskId={currentExecutingTaskId || undefined}
                 />
               </div>
             )}
 
-            {/* Minimalist Tab Switcher - Only show for owner */}
+            {/* Tab Switcher */}
             {isOwner ? (
-              <div className="flex items-center gap-1 px-4 py-2">
-                <button
-                  onClick={() => setActiveTab('activity')}
-                  className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all",
-                    activeTab === 'activity'
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                  )}
-                >
-                  <Desktop className="h-3.5 w-3.5" weight="duotone" />
-                  Activity
-                </button>
-                <button
-                  onClick={() => setActiveTab('files')}
-                  className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all",
-                    activeTab === 'files'
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                  )}
-                >
-                  <FolderOpen className="h-3.5 w-3.5" />
-                  Files
-                </button>
+              <div className="px-3.5 pt-2 pb-1 flex-shrink-0">
+                <div className="relative flex bg-neutral-100 dark:bg-neutral-800/50 rounded-lg p-[2px]">
+                  <motion.div
+                    className="absolute top-[2px] bottom-[2px] rounded-md bg-white dark:bg-neutral-700 shadow-sm"
+                    layout
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                    style={{
+                      left: activeTab === 'activity' ? '2px' : 'calc(50%)',
+                      width: 'calc(50% - 2px)',
+                    }}
+                  />
+                  <button
+                    onClick={() => setActiveTab('activity')}
+                    className={cn(
+                      "relative z-10 flex-1 flex items-center justify-center gap-1.5 py-1.5 text-[12px] font-medium rounded-md transition-colors duration-150",
+                      activeTab === 'activity'
+                        ? "text-neutral-900 dark:text-neutral-100"
+                        : "text-neutral-400 dark:text-neutral-500 hover:text-neutral-500 dark:hover:text-neutral-400"
+                    )}
+                  >
+                    <Desktop className="h-3 w-3" weight="duotone" />
+                    Activity
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('files')}
+                    className={cn(
+                      "relative z-10 flex-1 flex items-center justify-center gap-1.5 py-1.5 text-[12px] font-medium rounded-md transition-colors duration-150",
+                      activeTab === 'files'
+                        ? "text-neutral-900 dark:text-neutral-100"
+                        : "text-neutral-400 dark:text-neutral-500 hover:text-neutral-500 dark:hover:text-neutral-400"
+                    )}
+                  >
+                    <FolderOpen className="h-3 w-3" />
+                    Files
+                  </button>
+                </div>
               </div>
             ) : null}
             
@@ -2339,43 +2341,34 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                 {!isOwner || activeTab === 'activity' ? (
                   <motion.div
                     key="activity"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{
-                      duration: 0.3,
-                      ease: [0.4, 0.0, 0.2, 1]
-                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
                     className={cn(
-                      "p-3 sm:p-3 flex-1 overflow-y-auto scrollbar-invisible absolute top-0 left-0 right-0",
-                      toolInvocations.length > 0 ? "bottom-[152px]" : "bottom-0"
+                      "flex-1 overflow-y-auto scrollbar-invisible absolute top-0 left-0 right-0",
+                      toolInvocations.length > 0 ? "bottom-[140px]" : "bottom-0"
                     )}
                   >
                     {toolInvocations.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="relative mb-4">
-                      <div className="w-14 h-14 rounded-2xl bg-primary/8 flex items-center justify-center animate-scale-bounce">
-                        <CoastyIcon className="h-7 w-7" />
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500/90 border-2 border-neutral-100 dark:border-neutral-800" />
+                  <div className="flex flex-col items-center justify-center h-full text-center px-6">
+                    <div className="w-11 h-11 rounded-xl bg-neutral-50 dark:bg-neutral-800/60 flex items-center justify-center mb-3">
+                      <CoastyIcon className="h-5 w-5 text-neutral-400 dark:text-neutral-500" />
                     </div>
-                    <p className="text-sm font-medium text-foreground tracking-tight">Machine ready</p>
-                    <p className="text-xs text-muted-foreground mt-1.5 max-w-[220px] leading-relaxed">
-                      Web search, code execution, and more — tasks appear here in real-time
+                    <p className="text-[13px] font-semibold text-neutral-600 dark:text-neutral-300 tracking-[-0.01em]">Ready</p>
+                    <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mt-1 leading-relaxed max-w-[200px]">
+                      Actions will appear here as they execute
                     </p>
                   </div>
                   ) : (
-                    <div className="relative w-full h-full bg-black/5 dark:bg-black/20 rounded-lg overflow-hidden">
+                    <div className="relative w-full h-full p-2">
                     <AnimatePresence mode="wait">
                       {(() => {
-                        // Find the screenshot for the current step
                         const currentInv = currentTaskTools[0]
                         let screenshot = currentInv?.frontendScreenshot
-                        // Also check inside result
                         if (!screenshot && currentInv?.result && typeof currentInv.result === 'object' && 'frontendScreenshot' in currentInv.result) {
                           screenshot = (currentInv.result as any).frontendScreenshot
                         }
-                        // Fallback: scan backwards from current step for latest screenshot
                         if (!screenshot) {
                           for (let i = Math.min(currentTask, toolInvocations.length - 1); i >= 0; i--) {
                             const inv = toolInvocations[i]
@@ -2383,7 +2376,6 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                             if (s) { screenshot = s; break }
                           }
                         }
-                        // Update lastBrowserScreenshot state for other usages
                         if (screenshot && screenshot !== lastBrowserScreenshot) {
                           setTimeout(() => setLastBrowserScreenshot(screenshot!), 50)
                         }
@@ -2393,67 +2385,51 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                           return (
                             <motion.div
                               key={`screenshot-${currentTask}`}
-                              className="absolute inset-0 flex items-center justify-center"
+                              className="w-full h-full"
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               exit={{ opacity: 0 }}
-                              transition={{ duration: 0.15, ease: "easeOut" }}
+                              transition={{ duration: 0.2, ease: "easeOut" }}
                             >
-                              <div className="relative w-full h-full flex items-center justify-center">
+                              <div className="w-full h-full overflow-auto scrollbar-invisible rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
                                 <img
                                   src={displayScreenshot}
                                   alt="VM Screenshot"
-                                  className="max-w-full max-h-full object-contain"
+                                  className="w-full h-auto block"
                                 />
-                                {/* Processing overlay when current step has no screenshot yet */}
-                                {!screenshot && lastBrowserScreenshot && (
-                                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                                    <div className="bg-black/80 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
-                                      <div className="flex gap-1">
-                                        {[0, 1, 2].map((i) => (
-                                          <motion.div
-                                            key={i}
-                                            className="w-1 h-1 bg-white/60 rounded-full"
-                                            animate={{ opacity: [0.3, 1, 0.3] }}
-                                            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.5 }}
-                                          />
-                                        ))}
-                                      </div>
-                                      <span className="text-[11px] text-white/80 font-light tracking-wider uppercase">Processing</span>
-                                    </div>
-                                  </div>
-                                )}
                               </div>
+                              {!screenshot && lastBrowserScreenshot && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+                                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-white/10">
+                                    <Loader2 className="h-3 w-3 text-white/60 animate-spin" />
+                                    <span className="text-[11px] text-white/60 font-medium">Processing</span>
+                                  </div>
+                                </div>
+                              )}
                             </motion.div>
                           )
                         }
 
-                        // No screenshot at all — show placeholder
                         return (
                           <motion.div
                             key="placeholder"
-                            className="absolute inset-0 flex items-center justify-center"
+                            className="w-full h-full flex items-center justify-center"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
+                            transition={{ duration: 0.15 }}
                           >
                             <div className="text-center">
-                              <motion.div
-                                animate={{ scale: [1, 1.05, 1] }}
-                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                              >
-                                <Desktop className="w-10 h-10 text-zinc-600/50 mx-auto mb-3" />
-                              </motion.div>
-                              <div className="flex items-center justify-center gap-2">
-                                <span className="text-[11px] text-zinc-500/80 font-light tracking-wider uppercase">Working</span>
+                              <Desktop className="w-7 h-7 text-neutral-300 dark:text-neutral-600 mx-auto mb-2" />
+                              <div className="flex items-center gap-1">
+                                <span className="text-[11px] text-neutral-400 dark:text-neutral-500 font-medium">Working</span>
                                 <div className="flex gap-0.5">
                                   {[0, 1, 2].map((i) => (
                                     <motion.span
                                       key={i}
-                                      className="text-[11px] text-zinc-400/60"
+                                      className="text-[11px] text-neutral-300 dark:text-neutral-600"
                                       animate={{ opacity: [0, 1, 0] }}
-                                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.5 }}
+                                      transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.4 }}
                                     >
                                       .
                                     </motion.span>
@@ -2471,13 +2447,10 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                 ) : isOwner && activeTab === 'files' ? (
                   <motion.div
                     key="files"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{
-                      duration: 0.3,
-                      ease: [0.4, 0.0, 0.2, 1]
-                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
                     className="absolute inset-0 flex flex-col p-3"
                   >
                     <FileExplorer
@@ -2492,7 +2465,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
             
             {/* Keyboard/Mouse Visualization + Player Controls */}
             {activeTab === 'activity' && toolInvocations.length > 0 && (
-              <div className="absolute bottom-0 left-0 right-0 bg-muted/80 dark:bg-neutral-800/90 backdrop-blur-sm rounded-b-xl border-t border-border/40 shadow-lg">
+              <div className="absolute bottom-0 left-0 right-0 bg-white/90 dark:bg-neutral-900/95 backdrop-blur-md rounded-b-2xl border-t border-neutral-100 dark:border-neutral-800/50">
                 {/* Keyboard + Mouse Action Visualizer */}
                 {(() => {
                   const currentInv = currentTaskTools[0] || toolInvocations[currentTask]
@@ -2501,14 +2474,17 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                   const toolName = currentInv?.toolName || ''
                   const isCUA = toolName.startsWith('cua_')
 
-                  // Compute active keys
+                  // Compute active keys — only keys used in this step
                   const activeKeys = new Set<string>()
                   if (toolName === 'cua_type_text') {
-                    const text = (parsedArgs.text || '').toLowerCase()
-                    const chars = Array.from(new Set<string>(text.slice(-8).split('').filter((c: string) => c !== ' ')))
-                    chars.forEach((c) => activeKeys.add(c))
-                    if (text.includes(' ')) activeKeys.add('space')
-                    if (/[A-Z]/.test(parsedArgs.text || '')) activeKeys.add('shift')
+                    const text = (parsedArgs.text || '') as string
+                    const unique = new Set(text.toLowerCase().split(''))
+                    unique.forEach((c) => {
+                      if (c === ' ') activeKeys.add('space')
+                      else if (c === '\n' || c === '\r' || c === '\t') { /* skip non-printable */ }
+                      else activeKeys.add(c)
+                    })
+                    if (/[A-Z]/.test(text)) activeKeys.add('shift')
                   } else if (toolName === 'cua_key_press') {
                     (parsedArgs.keys || []).forEach((k: string) => activeKeys.add(normalizeKeyId(k)))
                   } else if (toolName === 'cua_key_combo') {
@@ -2534,90 +2510,81 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                             /* Keyboard + Mouse for CUA actions */
                             <div className="flex items-stretch gap-2.5">
                               {/* Keyboard */}
-                              <div className="flex-1 flex flex-col gap-[2px] min-w-0">
+                              <div className="flex-1 flex flex-col gap-[1.5px] min-w-0">
                                 {KEYBOARD_LAYOUT.map((row, rowIdx) => (
-                                  <div key={rowIdx} className="flex gap-[2px]">
+                                  <div key={rowIdx} className="flex gap-[1.5px]">
                                     {row.map((key) => {
                                       const active = isKeyActive(key.id, activeKeys)
                                       return (
-                                        <motion.div
+                                        <div
                                           key={key.id}
                                           className={cn(
-                                            "h-[15px] rounded-[3px] flex items-center justify-center select-none",
-                                            "text-[7px] leading-none font-medium",
-                                            "border transition-colors duration-100",
+                                            "h-[14px] rounded-[2.5px] flex items-center justify-center select-none",
+                                            "text-[6.5px] leading-none font-medium tracking-wide transition-colors duration-100",
                                             active
-                                              ? "bg-primary text-primary-foreground border-primary shadow-[0_0_6px_rgba(var(--primary),0.4)] z-10"
-                                              : "bg-neutral-200/80 dark:bg-neutral-700/80 text-neutral-500 dark:text-neutral-400 border-neutral-300/60 dark:border-neutral-600/60"
+                                              ? "bg-neutral-800 dark:bg-neutral-200 text-white dark:text-neutral-900"
+                                              : "bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500"
                                           )}
                                           style={{ flex: key.w }}
-                                          animate={active ? { scale: [1, 1.12, 1] } : { scale: 1 }}
-                                          transition={{ duration: 0.2 }}
                                         >
                                           {key.label}
-                                        </motion.div>
+                                        </div>
                                       )
                                     })}
                                   </div>
                                 ))}
                               </div>
                               {/* Mouse */}
-                              <div className="flex flex-col items-center justify-center w-[42px] flex-shrink-0">
-                                <div className="relative w-[34px] h-[58px] rounded-[14px] border-2 border-neutral-300 dark:border-neutral-600 bg-neutral-200/60 dark:bg-neutral-700/60 overflow-hidden flex flex-col">
-                                  {/* Buttons */}
-                                  <div className="flex h-[22px] border-b border-neutral-300/80 dark:border-neutral-600/80">
-                                    {/* Left button */}
+                              <div className="flex flex-col items-center justify-center w-[38px] flex-shrink-0">
+                                <div className="relative w-[30px] h-[50px] rounded-[12px] border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 overflow-hidden flex flex-col">
+                                  <div className="flex h-[18px] border-b border-neutral-200/80 dark:border-neutral-700/80">
                                     <motion.div
+                                      key={`ml-${currentTask}`}
                                       className={cn(
-                                        "flex-1 rounded-tl-[12px] border-r border-neutral-300/80 dark:border-neutral-600/80 transition-colors duration-100",
-                                        mouseLeft ? "bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" : "bg-transparent"
+                                        "flex-1 rounded-tl-[11px] border-r border-neutral-200/80 dark:border-neutral-700/80",
+                                        mouseLeft ? "bg-neutral-800 dark:bg-neutral-200" : "bg-transparent"
                                       )}
-                                      animate={mouseLeft ? { scale: [1, 0.92, 1] } : { scale: 1 }}
-                                      transition={{ duration: 0.15 }}
+                                      animate={mouseLeft ? { opacity: [0.4, 1, 0.8, 1] } : { opacity: 1 }}
+                                      transition={mouseLeft ? { duration: 0.4, ease: "easeOut" } : {}}
                                     />
-                                    {/* Right button */}
                                     <motion.div
+                                      key={`mr-${currentTask}`}
                                       className={cn(
-                                        "flex-1 rounded-tr-[12px] transition-colors duration-100",
-                                        mouseRight ? "bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" : "bg-transparent"
+                                        "flex-1 rounded-tr-[11px]",
+                                        mouseRight ? "bg-neutral-800 dark:bg-neutral-200" : "bg-transparent"
                                       )}
-                                      animate={mouseRight ? { scale: [1, 0.92, 1] } : { scale: 1 }}
-                                      transition={{ duration: 0.15 }}
+                                      animate={mouseRight ? { opacity: [0.4, 1, 0.8, 1] } : { opacity: 1 }}
+                                      transition={mouseRight ? { duration: 0.4, ease: "easeOut" } : {}}
                                     />
                                   </div>
-                                  {/* Scroll wheel */}
                                   <div className="flex items-start justify-center pt-1.5">
                                     <motion.div
+                                      key={`sw-${currentTask}`}
                                       className={cn(
-                                        "w-[6px] h-[10px] rounded-full border",
-                                        scrollDir
-                                          ? "bg-emerald-500 border-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.5)]"
-                                          : "bg-neutral-400 dark:bg-neutral-500 border-neutral-300 dark:border-neutral-600"
+                                        "w-[5px] h-[8px] rounded-full",
+                                        scrollDir ? "bg-neutral-700 dark:bg-neutral-300" : "bg-neutral-300 dark:bg-neutral-600"
                                       )}
                                       animate={scrollDir === 'up' ? { y: [0, -2, 0] } : scrollDir === 'down' ? { y: [0, 2, 0] } : { y: 0 }}
-                                      transition={{ duration: 0.4, repeat: scrollDir ? Infinity : 0 }}
+                                      transition={{ duration: 0.35, repeat: scrollDir ? 3 : 0, ease: "easeInOut" }}
                                     />
                                   </div>
-                                  {/* Body */}
                                   <div className="flex-1" />
                                 </div>
-                                {/* Action label under mouse */}
                                 {action && (
-                                  <span className="text-[8px] text-muted-foreground mt-1 truncate max-w-[42px] text-center">{action.label}</span>
+                                  <span className="text-[7px] text-neutral-400 dark:text-neutral-500 mt-1 truncate max-w-[38px] text-center font-medium">{action.label}</span>
                                 )}
                               </div>
                             </div>
                           ) : (
-                            /* Non-CUA fallback: idle keyboard + mouse placeholder */
-                            <div className="flex items-stretch gap-2.5">
-                              {/* Idle Keyboard */}
-                              <div className="flex-1 flex flex-col gap-[2px] min-w-0 opacity-30">
+                            /* Non-CUA: idle keyboard + mouse */
+                            <div className="flex items-stretch gap-2 opacity-25">
+                              <div className="flex-1 flex flex-col gap-[1.5px] min-w-0">
                                 {KEYBOARD_LAYOUT.map((row, rowIdx) => (
-                                  <div key={rowIdx} className="flex gap-[2px]">
+                                  <div key={rowIdx} className="flex gap-[1.5px]">
                                     {row.map((key) => (
                                       <div
                                         key={key.id}
-                                        className="h-[15px] rounded-[3px] flex items-center justify-center select-none text-[7px] leading-none font-medium border bg-neutral-200/80 dark:bg-neutral-700/80 text-neutral-500 dark:text-neutral-400 border-neutral-300/60 dark:border-neutral-600/60"
+                                        className="h-[14px] rounded-[2.5px] flex items-center justify-center select-none text-[6.5px] leading-none font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500"
                                         style={{ flex: key.w }}
                                       >
                                         {key.label}
@@ -2626,20 +2593,19 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                                   </div>
                                 ))}
                               </div>
-                              {/* Idle Mouse */}
-                              <div className="flex flex-col items-center justify-center w-[42px] flex-shrink-0 opacity-30">
-                                <div className="relative w-[34px] h-[58px] rounded-[14px] border-2 border-neutral-300 dark:border-neutral-600 bg-neutral-200/60 dark:bg-neutral-700/60 overflow-hidden flex flex-col">
-                                  <div className="flex h-[22px] border-b border-neutral-300/80 dark:border-neutral-600/80">
-                                    <div className="flex-1 rounded-tl-[12px] border-r border-neutral-300/80 dark:border-neutral-600/80 bg-transparent" />
-                                    <div className="flex-1 rounded-tr-[12px] bg-transparent" />
+                              <div className="flex flex-col items-center justify-center w-[38px] flex-shrink-0">
+                                <div className="relative w-[30px] h-[50px] rounded-[12px] border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 overflow-hidden flex flex-col">
+                                  <div className="flex h-[18px] border-b border-neutral-200/80 dark:border-neutral-700/80">
+                                    <div className="flex-1 rounded-tl-[11px] border-r border-neutral-200/80 dark:border-neutral-700/80 bg-transparent" />
+                                    <div className="flex-1 rounded-tr-[11px] bg-transparent" />
                                   </div>
                                   <div className="flex items-start justify-center pt-1.5">
-                                    <div className="w-[6px] h-[10px] rounded-full border bg-neutral-400 dark:bg-neutral-500 border-neutral-300 dark:border-neutral-600" />
+                                    <div className="w-[5px] h-[8px] rounded-full bg-neutral-300 dark:bg-neutral-600" />
                                   </div>
                                   <div className="flex-1" />
                                 </div>
                                 {action && (
-                                  <span className="text-[8px] text-muted-foreground mt-1 truncate max-w-[42px] text-center">{action.label}</span>
+                                  <span className="text-[7px] text-neutral-400 dark:text-neutral-500 mt-1 truncate max-w-[38px] text-center font-medium">{action.label}</span>
                                 )}
                               </div>
                             </div>
@@ -2650,66 +2616,56 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                   )
                 })()}
                 {/* Player controls */}
-                <div className="px-3 pb-2.5 pt-1">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    {/* Play Controls */}
-                    <div className="flex items-center gap-1 sm:gap-1.5">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 sm:h-9 sm:w-9 rounded-md"
-                        onClick={() => {
-                          setHasUserNavigated(true)
-                          setNavigationDirection('backward')
-                          const newTask = Math.max(0, currentTask - 1)
-                          setCurrentTask(newTask)
-                          setCurrentStep(newTask)
-                          setIsPlaying(false)
-                        }}
-                        disabled={currentTask === 0}
-                      >
-                        <SkipBack className="h-4 w-4" />
-                      </Button>
-                      
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-9 w-9 sm:h-10 sm:w-10 rounded-md bg-primary/10 hover:bg-primary/20"
-                        onClick={() => {
-                          setIsPlaying(!isPlaying)
-                        }}
-                      >
-                        {isPlaying ? (
-                          <Pause className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
-                        ) : (
-                          <Play className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
-                        )}
-                      </Button>
-
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 sm:h-9 sm:w-9 rounded-md"
-                        onClick={() => {
-                          setHasUserNavigated(true)
-                          setNavigationDirection('forward')
-                          const newTask = Math.min(totalTasks - 1, currentTask + 1)
-                          setCurrentTask(newTask)
-                          setCurrentStep(newTask)
-                          setIsPlaying(false)
-                        }}
-                        disabled={currentTask >= totalTasks - 1}
-                      >
-                        <SkipForward className="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    {/* Interactive Timeline */}
-                    <div
-                      className="flex-1 relative h-8 sm:h-8 flex items-center min-w-0"
+                <div className="px-3 pb-2 pt-1">
+                  <div className="flex items-center gap-1.5">
+                    {/* Skip back */}
+                    <button
+                      className="h-7 w-7 rounded-md flex items-center justify-center text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                      onClick={() => {
+                        setHasUserNavigated(true)
+                        setNavigationDirection('backward')
+                        const newTask = Math.max(0, currentTask - 1)
+                        setCurrentTask(newTask)
+                        setCurrentStep(newTask)
+                        setIsPlaying(false)
+                      }}
+                      disabled={currentTask === 0}
                     >
+                      <SkipBack className="h-3.5 w-3.5" />
+                    </button>
+
+                    {/* Play/Pause */}
+                    <button
+                      className="h-8 w-8 rounded-lg flex items-center justify-center bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
+                      onClick={() => setIsPlaying(!isPlaying)}
+                    >
+                      {isPlaying ? (
+                        <Pause className="h-3.5 w-3.5" />
+                      ) : (
+                        <Play className="h-3.5 w-3.5 ml-0.5" />
+                      )}
+                    </button>
+
+                    {/* Skip forward */}
+                    <button
+                      className="h-7 w-7 rounded-md flex items-center justify-center text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                      onClick={() => {
+                        setHasUserNavigated(true)
+                        setNavigationDirection('forward')
+                        const newTask = Math.min(totalTasks - 1, currentTask + 1)
+                        setCurrentTask(newTask)
+                        setCurrentStep(newTask)
+                        setIsPlaying(false)
+                      }}
+                      disabled={currentTask >= totalTasks - 1}
+                    >
+                      <SkipForward className="h-3.5 w-3.5" />
+                    </button>
+
+                    {/* Timeline */}
+                    <div className="flex-1 relative h-7 flex items-center min-w-0 group">
                       <div
-                        className="absolute inset-0 flex items-center cursor-pointer"
+                        className="w-full cursor-pointer"
                         onClick={(e) => {
                           const rect = e.currentTarget.getBoundingClientRect()
                           const x = e.clientX - rect.left
@@ -2722,9 +2678,9 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                           setIsPlaying(false)
                         }}
                       >
-                        <div className="relative w-full h-2 bg-neutral-300 dark:bg-neutral-700 rounded-full overflow-hidden hover:h-3 transition-all">
+                        <div className="relative w-full h-1 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden group-hover:h-1.5 transition-all">
                           <div
-                            className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary to-primary/90 rounded-full transition-all duration-300 ease-out shadow-sm"
+                            className="absolute left-0 top-0 h-full bg-neutral-800 dark:bg-neutral-300 rounded-full transition-all duration-200 ease-out"
                             style={{
                               width: `${(currentStep / Math.max(toolInvocations.length - 1, 1)) * 100}%`
                             }}
@@ -2733,15 +2689,18 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                       </div>
                     </div>
 
-                    {/* Live Button */}
-                    <Button
-                      size="sm"
-                      variant={currentTask === totalTasks - 1 ? "default" : "ghost"}
+                    {/* Step counter */}
+                    <span className="text-[10px] tabular-nums text-neutral-400 dark:text-neutral-500 font-medium min-w-[32px] text-center">
+                      {currentTask + 1}/{totalTasks}
+                    </span>
+
+                    {/* LIVE button */}
+                    <button
                       className={cn(
-                        "h-9 px-3 text-xs font-medium rounded-md whitespace-nowrap",
+                        "h-7 px-2.5 text-[11px] font-semibold rounded-md whitespace-nowrap transition-colors",
                         currentTask === totalTasks - 1
-                          ? "bg-red-500 hover:bg-red-600 text-white min-w-[60px]"
-                          : "min-w-[80px]"
+                          ? "bg-red-500 text-white"
+                          : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                       )}
                       onClick={() => {
                         setHasUserNavigated(false)
@@ -2754,46 +2713,36 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                       disabled={currentTask === totalTasks - 1}
                     >
                       {currentTask === totalTasks - 1 ? (
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
                           LIVE
-                        </div>
+                        </span>
                       ) : (
-                        "Go to Live"
+                        "LIVE"
                       )}
-                    </Button>
+                    </button>
 
-                    {/* Connect to Desktop Button - Only show when VM is selected */}
+                    {/* Connect to Desktop */}
                     {selectedVMId && (
-                      <>
-                        <div className="h-6 w-px bg-gray-300 dark:bg-zinc-700 mx-1" />
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-9 px-3 text-xs font-medium rounded-md whitespace-nowrap border-primary/20 hover:bg-primary/10"
-                          onClick={openVNCConnection}
-                          disabled={connectingToVM}
-                        >
-                          {connectingToVM ? (
-                            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                          ) : (
-                            <MousePointer className="h-3.5 w-3.5 mr-1.5" />
-                          )}
-                          <span className="hidden sm:inline">
-                            {connectingToVM ? "Connecting..." : "Connect to Desktop"}
-                          </span>
-                          <span className="sm:hidden">
-                            {connectingToVM ? "..." : "Connect"}
-                          </span>
-                        </Button>
-                      </>
+                      <button
+                        className="h-7 px-2 text-[11px] font-medium rounded-md whitespace-nowrap border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                        onClick={openVNCConnection}
+                        disabled={connectingToVM}
+                      >
+                        {connectingToVM ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <MousePointer className="h-3 w-3" />
+                        )}
+                        <span className="hidden sm:inline">Desktop</span>
+                      </button>
                     )}
                   </div>
                 </div>
               </div>
             )}
           </div>
-          </div>{/* close panel body */}
+          </div>{/* panel body */}
         </motion.div>
       )}
       </AnimatePresence>

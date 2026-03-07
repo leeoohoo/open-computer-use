@@ -783,20 +783,26 @@ export function FileExplorer({ machineId, userId, className }: FileExplorerProps
               </p>
             </div>
           ) : viewMode === 'list' ? (
-            // List View
+            // List View — Origami unfold
             <div className="p-2 space-y-1">
               {filteredFiles.map((node, index) => (
                 <motion.div
                   key={node.path}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.02 }}
+                  initial={{ opacity: 0, x: -12, scaleY: 0.85 }}
+                  animate={{ opacity: 1, x: 0, scaleY: 1 }}
+                  transition={{
+                    delay: index * 0.03,
+                    duration: 0.35,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
                   className={cn(
-                    "group flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-colors",
-                    "hover:bg-gray-100 dark:hover:bg-zinc-800/50",
+                    "group flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer",
+                    "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-zinc-800/50 hover:translate-x-0.5",
                     selectedFiles.has(node.path) && "bg-gray-100 dark:bg-zinc-800",
                     (copiedFiles.has(node.path) || cutFiles.has(node.path)) && "opacity-50"
                   )}
+                  style={{ transformOrigin: 'left center' }}
+                  whileHover={{ x: 2 }}
                   onClick={(e) => handleItemClick(node, e)}
                   onDoubleClick={() => handleItemDoubleClick(node)}
                   onContextMenu={(e) => {
@@ -888,20 +894,28 @@ export function FileExplorer({ machineId, userId, className }: FileExplorerProps
               ))}
             </div>
           ) : (
-            // Grid View
+            // Grid View — Origami cascade
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 p-3">
               {filteredFiles.map((node, index) => (
                 <motion.div
                   key={node.path}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.02 }}
+                  initial={{ opacity: 0, scale: 0.8, y: 16 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{
+                    delay: index * 0.03,
+                    duration: 0.4,
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 24,
+                  }}
                   className={cn(
-                    "group flex flex-col items-center gap-2 p-3 rounded-lg cursor-pointer transition-colors",
-                    "hover:bg-gray-100 dark:hover:bg-zinc-800/50",
+                    "group flex flex-col items-center gap-2 p-3 rounded-lg cursor-pointer",
+                    "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-zinc-800/50",
                     selectedFiles.has(node.path) && "bg-gray-100 dark:bg-zinc-800",
                     (copiedFiles.has(node.path) || cutFiles.has(node.path)) && "opacity-50"
                   )}
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={(e) => handleItemClick(node, e)}
                   onDoubleClick={() => handleItemDoubleClick(node)}
                   onContextMenu={(e) => {
