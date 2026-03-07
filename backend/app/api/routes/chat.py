@@ -34,6 +34,33 @@ usage_tracker = UsageTracker()
 provider_factory = ProviderFactory()
 
 
+def _merge_screenshots(
+    tool_invocations: List[Dict],
+    screenshot_store: Dict[str, str],
+) -> List[Dict]:
+    """Create a copy of tool_invocations with screenshots merged in from the
+    separate store.  Used right before DB saves so the persisted message has
+    all screenshots while the in-memory list stays lightweight.
+
+    Tool invocations that already carry a ``frontendScreenshot`` key (e.g.
+    from the multi-agent executor which doesn't use the separate store) are
+    left untouched.
+    """
+    if not screenshot_store:
+        return tool_invocations  # Nothing to merge — avoid copy
+
+    merged = []
+    for inv in tool_invocations:
+        tool_id = inv.get("toolCallId")
+        if tool_id and tool_id in screenshot_store and "frontendScreenshot" not in inv:
+            copy = dict(inv)
+            copy["frontendScreenshot"] = screenshot_store[tool_id]
+            merged.append(copy)
+        else:
+            merged.append(inv)
+    return merged
+
+
 def _build_message_parts(tool_invocations: List[Dict]) -> List[Dict]:
     """Transform tool invocations into the parts format expected by the frontend/DB."""
     parts = []
@@ -436,6 +463,7 @@ async def chat_endpoint(
             try:
                 all_content = ""
                 all_tool_invocations = []
+                screenshot_store: Dict[str, str] = {}  # toolCallId → base64, from CUA executor
                 chunk_count = 0
                 stream_cancelled = False
 
@@ -459,7 +487,11 @@ async def chat_endpoint(
                     logger.debug(f"Streaming chunk {chunk_count} of type: {chunk_type}")
 
                     # Format chunks for SSE based on type
-                    if chunk_type == "text":
+                    if chunk_type == "keepalive":
+                        # Emit SSE comment to keep connection alive without data
+                        yield ":\n\n"
+
+                    elif chunk_type == "text":
                         content = chunk.get("content", "")
                         if content:
                             all_content += content
@@ -492,9 +524,12 @@ async def chat_endpoint(
                         for tool_inv in all_tool_invocations:
                             if tool_inv.get("toolCallId") == tool_call_id:
                                 tool_inv["result"] = result
-                                if screenshot:
-                                    tool_inv["frontendScreenshot"] = screenshot
                                 break
+
+                        # Store screenshot separately — merged into invocations
+                        # only at DB save time to keep in-memory list lightweight
+                        if screenshot:
+                            screenshot_store[tool_call_id] = screenshot
 
                         # Embed screenshot INSIDE result so Vercel AI SDK
                         # carries it through to toolInvocation.result on the frontend
@@ -528,6 +563,11 @@ async def chat_endpoint(
                         step_content = chunk.get("content", all_content)
                         step_tools = chunk.get("tool_invocations", all_tool_invocations)
 
+                        # Pick up the screenshot store from executor (if CUA)
+                        chunk_ss_store = chunk.get("screenshot_store")
+                        if chunk_ss_store:
+                            screenshot_store.update(chunk_ss_store)
+
                         try:
                             billing_info = await agent_billing_service.charge_step(
                                 billing_session_id, step_num
@@ -543,19 +583,23 @@ async def chat_endpoint(
                                 stop_text = "\n[Session ended: insufficient credits]\n"
                                 all_content += stop_text
                                 yield f"0:{json.dumps(stop_text)}\n\n"
+                                # Signal the executor to stop via cancellation event
+                                vm_control_service.get_cancellation_event(machine_id).set()
                                 stream_cancelled = True
                                 break
                         except Exception as billing_err:
                             logger.error(f"Step billing error: {billing_err}")
 
                         # ── Incremental DB save ──
+                        # Merge screenshots into a copy for persistence only
+                        save_tools = _merge_screenshots(step_tools, screenshot_store)
                         try:
                             if assistant_message_id is None:
                                 # First step — INSERT the message
                                 save_result = await store_assistant_message(
                                     chat_id=chat_request.chat_id,
                                     content=step_content,
-                                    tool_invocations=step_tools,
+                                    tool_invocations=save_tools,
                                     model=chat_request.model,
                                     message_group_id=chat_request.message_group_id,
                                 )
@@ -569,7 +613,7 @@ async def chat_endpoint(
                                 await update_assistant_message(
                                     assistant_message_id,
                                     step_content,
-                                    step_tools,
+                                    save_tools,
                                 )
                         except Exception as save_err:
                             logger.error(f"Step DB save error: {save_err}")
@@ -581,6 +625,11 @@ async def chat_endpoint(
                         finish_metadata = chunk.get("metadata", {})
                         llm_usage = finish_metadata.get("llm_usage")
 
+                        # Pick up any final screenshot store updates
+                        chunk_ss_store = chunk.get("screenshot_store")
+                        if chunk_ss_store:
+                            screenshot_store.update(chunk_ss_store)
+
                         chunk_content = chunk.get("content", "")
                         final_content = chunk_content if chunk_content else all_content
                         final_tool_invocations = chunk.get("tool_invocations", all_tool_invocations)
@@ -590,26 +639,30 @@ async def chat_endpoint(
                             f"tools: {len(final_tool_invocations)}"
                         )
 
+                        # Merge screenshots for DB persistence
+                        save_tools = _merge_screenshots(final_tool_invocations, screenshot_store)
+
                         # Final DB save (update if already created, insert if not)
                         if assistant_message_id:
                             await update_assistant_message(
                                 assistant_message_id,
                                 final_content,
-                                final_tool_invocations,
+                                save_tools,
                             )
                         else:
                             await store_assistant_message(
                                 chat_id=chat_request.chat_id,
                                 content=final_content,
-                                tool_invocations=final_tool_invocations,
+                                tool_invocations=save_tools,
                                 model=chat_request.model,
                                 message_group_id=chat_request.message_group_id,
                             )
 
+                        # Send merged version to frontend finish event too
                         finish_data = {
                             "finishReason": "stop",
                             "content": final_content,
-                            "toolInvocations": final_tool_invocations or [],
+                            "toolInvocations": save_tools or [],
                         }
                         yield f"d:{json.dumps(finish_data)}\n\n"
 
@@ -622,18 +675,21 @@ async def chat_endpoint(
                         else "[Response stopped by user]"
                     )
 
+                    # Merge screenshots for DB persistence
+                    save_tools = _merge_screenshots(all_tool_invocations, screenshot_store)
+
                     try:
                         if assistant_message_id:
                             await update_assistant_message(
                                 assistant_message_id,
                                 cancelled_content,
-                                all_tool_invocations,
+                                save_tools,
                             )
                         else:
                             await store_assistant_message(
                                 chat_id=chat_request.chat_id,
                                 content=cancelled_content,
-                                tool_invocations=all_tool_invocations,
+                                tool_invocations=save_tools,
                                 model=chat_request.model,
                                 message_group_id=chat_request.message_group_id,
                             )
@@ -641,7 +697,7 @@ async def chat_endpoint(
                         finish_data = {
                             "finishReason": "cancelled",
                             "content": cancelled_content,
-                            "toolInvocations": all_tool_invocations or [],
+                            "toolInvocations": save_tools or [],
                         }
                         yield f"d:{json.dumps(finish_data)}\n\n"
                     except Exception as save_error:
@@ -663,18 +719,21 @@ async def chat_endpoint(
                     else "[Response stopped by user]"
                 )
 
+                # Merge screenshots for DB persistence
+                save_tools = _merge_screenshots(all_tool_invocations, screenshot_store)
+
                 try:
                     if assistant_message_id:
                         await update_assistant_message(
                             assistant_message_id,
                             cancelled_content,
-                            all_tool_invocations,
+                            save_tools,
                         )
                     else:
                         await store_assistant_message(
                             chat_id=chat_request.chat_id,
                             content=cancelled_content,
-                            tool_invocations=all_tool_invocations,
+                            tool_invocations=save_tools,
                             model=chat_request.model,
                             message_group_id=chat_request.message_group_id,
                         )
@@ -683,7 +742,7 @@ async def chat_endpoint(
                         finish_data = {
                             "finishReason": "cancelled",
                             "content": cancelled_content,
-                            "toolInvocations": all_tool_invocations or [],
+                            "toolInvocations": save_tools or [],
                         }
                         yield f"d:{json.dumps(finish_data)}\n\n"
                     except Exception:

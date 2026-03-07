@@ -39,6 +39,25 @@ async def _iter_with_idle_timeout(aiter, idle_timeout_sec: int):
         # asyncio.TimeoutError propagates up naturally
 
 
+def _merge_screenshots(
+    tool_invocations: List[Dict],
+    screenshot_store: Dict[str, str],
+) -> List[Dict]:
+    """Create a copy of tool_invocations with screenshots merged in."""
+    if not screenshot_store:
+        return tool_invocations
+    merged = []
+    for inv in tool_invocations:
+        tool_id = inv.get("toolCallId")
+        if tool_id and tool_id in screenshot_store and "frontendScreenshot" not in inv:
+            copy = dict(inv)
+            copy["frontendScreenshot"] = screenshot_store[tool_id]
+            merged.append(copy)
+        else:
+            merged.append(inv)
+    return merged
+
+
 def _build_message_parts(tool_invocations: List[Dict]) -> List[Dict]:
     """Transform tool invocations into the parts format expected by the DB."""
     parts = []
@@ -362,6 +381,7 @@ async def execute_scheduled_chat(
         # 7. Consume the stream internally (no SSE)
         all_content = ""
         all_tool_invocations: List[Dict] = []
+        screenshot_store: Dict[str, str] = {}  # toolCallId → base64, from CUA executor
         assistant_message_id: Optional[str] = None
         message_group_id = str(uuid.uuid4())
         idle_timeout = settings.SCHEDULED_TASK_IDLE_TIMEOUT
@@ -380,7 +400,10 @@ async def execute_scheduled_chat(
 
                 chunk_type = chunk.get("type")
 
-                if chunk_type == "text":
+                if chunk_type == "keepalive":
+                    continue  # Keep iterating to prevent generator stall
+
+                elif chunk_type == "text":
                     content = chunk.get("content", "")
                     if content:
                         all_content += content
@@ -403,14 +426,20 @@ async def execute_scheduled_chat(
                     for inv in all_tool_invocations:
                         if inv.get("toolCallId") == tool_call_id:
                             inv["result"] = result
-                            if screenshot:
-                                inv["frontendScreenshot"] = screenshot
                             break
+                    # Store screenshot separately for lightweight in-memory list
+                    if screenshot:
+                        screenshot_store[tool_call_id] = screenshot
 
                 elif chunk_type == "step_complete":
                     step_num = chunk.get("step", 0)
                     step_content = chunk.get("content", all_content)
                     step_tools = chunk.get("tool_invocations", all_tool_invocations)
+
+                    # Pick up the screenshot store from executor (if CUA)
+                    chunk_ss_store = chunk.get("screenshot_store")
+                    if chunk_ss_store:
+                        screenshot_store.update(chunk_ss_store)
 
                     # Bill this step
                     try:
@@ -424,10 +453,15 @@ async def execute_scheduled_chat(
                                 f"Scheduled task {chat_id} stopped: out of credits"
                             )
                             all_content += "\n[Scheduled run ended: insufficient credits]\n"
+                            # Signal executor to stop
+                            vm_control_service.get_cancellation_event(machine_id).set()
                             completion_status = "cancelled"
                             break
                     except Exception as e:
                         logger.error(f"Step billing error: {e}")
+
+                    # Merge screenshots for DB persistence
+                    save_tools = _merge_screenshots(step_tools, screenshot_store)
 
                     # Incremental DB save
                     try:
@@ -435,7 +469,7 @@ async def execute_scheduled_chat(
                             save_result = await _store_message(
                                 chat_id=chat_id,
                                 content=step_content,
-                                tool_invocations=step_tools,
+                                tool_invocations=save_tools,
                                 model=bedrock_model,
                                 message_group_id=message_group_id,
                             )
@@ -443,7 +477,7 @@ async def execute_scheduled_chat(
                                 assistant_message_id = save_result.get("id")
                         else:
                             await _update_message(
-                                assistant_message_id, step_content, step_tools
+                                assistant_message_id, step_content, save_tools
                             )
                     except Exception as e:
                         logger.error(f"Step DB save error: {e}")
@@ -458,15 +492,23 @@ async def execute_scheduled_chat(
                     final_content = chunk.get("content", "") or all_content
                     final_tools = chunk.get("tool_invocations", all_tool_invocations)
 
+                    # Pick up final screenshot store
+                    chunk_ss_store = chunk.get("screenshot_store")
+                    if chunk_ss_store:
+                        screenshot_store.update(chunk_ss_store)
+
+                    # Merge screenshots for DB persistence
+                    save_tools = _merge_screenshots(final_tools, screenshot_store)
+
                     if assistant_message_id:
                         await _update_message(
-                            assistant_message_id, final_content, final_tools
+                            assistant_message_id, final_content, save_tools
                         )
                     else:
                         await _store_message(
                             chat_id=chat_id,
                             content=final_content,
-                            tool_invocations=final_tools,
+                            tool_invocations=save_tools,
                             model=bedrock_model,
                             message_group_id=message_group_id,
                         )
@@ -482,16 +524,17 @@ async def execute_scheduled_chat(
             error_message = f"No activity for {idle_min} minutes"
 
         # If no finish event was received, save whatever we have
-        if completion_status == "failed" and all_content:
+        if completion_status in ("failed", "cancelled") and all_content:
+            save_tools = _merge_screenshots(all_tool_invocations, screenshot_store)
             if assistant_message_id:
                 await _update_message(
-                    assistant_message_id, all_content, all_tool_invocations
+                    assistant_message_id, all_content, save_tools
                 )
             else:
                 await _store_message(
                     chat_id=chat_id,
                     content=all_content,
-                    tool_invocations=all_tool_invocations,
+                    tool_invocations=save_tools,
                     model=bedrock_model,
                     message_group_id=message_group_id,
                 )

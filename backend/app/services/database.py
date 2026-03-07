@@ -270,6 +270,10 @@ class DatabaseService:
 
             return None
 
+        except Exception as e:
+            logger.error(f"Error processing update data: {str(e)}")
+            return None
+
     async def get_chat_messages(
         self,
         chat_id: str,

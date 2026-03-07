@@ -1,664 +1,365 @@
 <div align="center">
 
-# 💻 Open Computer Use - Autonomous Computer Using Agents at Scale
+<img src="assets/coasty.png" alt="Coasty" width="120"/>
 
+<br />
 
+# Open Computer Use
 
-![Landing Page](assets/landing.png)
+**AI agents that control computers like humans do.**
 
-### Your AI Agent That Actually Uses Computers Like Humans Do
+Browser automation · Terminal access · Desktop control · Multi-agent orchestration
 
-**Open Computer Use** is an open-source platform that gives AI agents real computer control through browser automation, terminal access, and desktop interaction. Built for developers who want to create truly autonomous AI workflows.
+<br />
 
-[**Website**](https://coasty.ai) • [**Discord**](https://discord.gg/gppEfsVt) • [**X**](https://x.com/llmhub_dev)
+[Website](https://coasty.ai) · [Discord](https://discord.gg/gppEfsVt) · [Twitter](https://x.com/llmhub_dev)
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)](https://www.docker.com/)
+<br />
+
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-
 </div>
 
-## Preview
-
-<p align="center">
-  <img src="assets/landing.gif" alt="Main Agent Animation" width="800"/>
-</p>
+<br />
 
 ---
 
-## ✨ What Makes This Special?
+<br />
 
-Unlike traditional AI assistants that only **talk** about tasks, Open Computer Use enables AI agents to **actually perform** them by:
-
-- 🌐 **Browsing the web** like a human (search, click, fill forms, extract data)
-- 💻 **Running terminal commands** and managing files
-- 🖱️ **Controlling desktop applications** with full UI automation
-- 🤖 **Multi-agent orchestration** that breaks down complex tasks
-- 🔄 **Streaming execution** with real-time feedback
-- 🎯 **100% open-source** and self-hostable
-
-> **"Computer use" capabilities similar to Anthropic's Claude Computer Use, but fully open-source and extensible.**
-
----
-
-## 🎬 See It In Action
-
-<div align="center">
-
-### Browser Automation
-*AI agent searching, navigating, and interacting with websites autonomously*
-
-[![Browser Automation Demo](https://img.shields.io/badge/🎮_Play_Demo-Browser_Automation-blue?style=for-the-badge)](https://coasty.ai/share/2c27ad52-47e0-4ed4-9998-701cebc1c409)
-
-[**▶️ Watch: AI Agent Browsing and Playing**](https://coasty.ai/share/2c27ad52-47e0-4ed4-9998-701cebc1c409)
-
-### Terminal Operations & Development
-*Executing commands, managing files, and running complex workflows*
-
-[![Terminal Operations Demo](https://img.shields.io/badge/🎮_Play_Demo-Terminal_Operations-green?style=for-the-badge)](https://coasty.ai/share/6f24c719-868d-4308-9e54-8ab00914761d)
-
-[**▶️ Watch: Quant Trading & Research on QuantConnect**](https://coasty.ai/share/6f24c719-868d-4308-9e54-8ab00914761d)
-
-### Multi-Agent Orchestration
-*Complex tasks broken down and executed by specialized agents*
-
-[![Multi-Agent Demo](https://img.shields.io/badge/🎮_Play_Demo-Multi_Agent_System-purple?style=for-the-badge)](https://coasty.ai/share/fb94d739-978b-42f8-81f3-5acaaeb3420f)
-
-[**▶️ Watch: Building Nvidia Options Dashboard**](https://coasty.ai/share/fb94d739-978b-42f8-81f3-5acaaeb3420f)
-
-### Advanced Features
-*Human-in-the-loop control and intelligent collaboration*
-
-[![Human Control Demo](https://img.shields.io/badge/🎮_Play_Demo-Human_Control-orange?style=for-the-badge)](https://coasty.ai/share/977166f6-4d5f-4977-904b-603931bd8a8d)
-
-[**▶️ Watch: AI Agent with Human Intervention**](https://coasty.ai/share/977166f6-4d5f-4977-904b-603931bd8a8d)
-
-</div>
-
----
-
-## 🎯 Core Capabilities
+## See it in action
 
 <table>
 <tr>
-<td width="50%">
-
-### 🌐 Browser Agent
-
-- **Search-first strategy** using Google Search API
-- **Smart web navigation** with automatic form filling
-- **Element detection** and intelligent clicking
-- **Multi-tab management** for parallel workflows
-- **Page context extraction** for AI understanding
-- **Screenshot capture** for visual verification
-
+<td align="center" width="50%">
+<a href="https://www.youtube.com/watch?v=icxgLDephHE">
+<img src="https://img.youtube.com/vi/icxgLDephHE/maxresdefault.jpg" alt="Marketing on Reddit" width="100%"/>
+</a>
+<br />
+<strong>Marketing</strong> — Market your product on Reddit autonomously
+<br />
+<a href="https://coasty.ai/share/373c1f67-afec-4bd6-adda-3809ecdbdd75"><sub>View chat session</sub></a>
 </td>
-<td width="50%">
-
-### 💻 Terminal Agent
-
-- **Command execution** in isolated environments
-- **File operations** (read, write, edit, delete)
-- **Directory management** with full control
-- **Script execution** (Python, Node.js, bash)
-- **Package installation** and environment setup
-- **Output streaming** with real-time feedback
-
+<td align="center" width="50%">
+<a href="https://www.youtube.com/watch?v=qTvmGfg3HVw">
+<img src="https://img.youtube.com/vi/qTvmGfg3HVw/maxresdefault.jpg" alt="Go-to-Market Outreach" width="100%"/>
+</a>
+<br />
+<strong>Go-to-Market</strong> — Find prospects and send personalized emails
+<br />
+<a href="https://coasty.ai/share/425d3c49-3a06-41e5-9859-aa00c5b12f3d"><sub>View chat session</sub></a>
 </td>
 </tr>
 <tr>
-<td width="50%">
-
-### 🖱️ Desktop Agent
-
-- **UI element detection** using computer vision
-- **Mouse and keyboard control** for any application
-- **Window management** (focus, resize, arrange)
-- **Screenshot analysis** for context awareness
-- **OCR capabilities** for text extraction
-- **Cross-platform support** (Linux desktop)
-
+<td align="center">
+<a href="https://www.youtube.com/watch?v=Wbo2o74hVIo">
+<img src="https://img.youtube.com/vi/Wbo2o74hVIo/maxresdefault.jpg" alt="QA Testing" width="100%"/>
+</a>
+<br />
+<strong>QA Testing</strong> — Test every checkout flow and report bugs
+<br />
+<a href="https://coasty.ai/share/7ee3e942-c5dd-4e49-93b6-353bb5273b7e"><sub>View chat session</sub></a>
 </td>
-<td width="50%">
-
-### 🤖 Multi-Agent System
-
-- **Task decomposition** by AI planner
-- **Sequential execution** with context passing
-- **Specialized agents** for different capabilities
-- **Error handling** with automatic retries
-- **User interaction** when clarification needed
-- **Execution reports** with detailed summaries
-
+<td align="center">
+<a href="https://www.youtube.com/watch?v=mH-csaCa508">
+<img src="https://img.youtube.com/vi/mH-csaCa508/maxresdefault.jpg" alt="Job Application" width="100%"/>
+</a>
+<br />
+<strong>Job Application</strong> — Find roles, tailor your resume, and apply
+<br />
+<a href="https://coasty.ai/share/4ac6f3d2-c273-4a07-bf98-b986d1cbfb88"><sub>View chat session</sub></a>
+</td>
+</tr>
+<tr>
+<td align="center">
+<a href="https://www.youtube.com/watch?v=AnHJuRMLCnE">
+<img src="https://img.youtube.com/vi/AnHJuRMLCnE/maxresdefault.jpg" alt="Form Filling" width="100%"/>
+</a>
+<br />
+<strong>Form Filling</strong> — Fill out the YC S26 application for you
+<br />
+<a href="https://coasty.ai/share/60a0722b-fb98-43d6-a4e7-951d80a22363"><sub>View chat session</sub></a>
+</td>
+<td align="center">
+<a href="https://www.youtube.com/watch?v=A_OvNh51Npg">
+<img src="https://img.youtube.com/vi/A_OvNh51Npg/maxresdefault.jpg" alt="Social Media" width="100%"/>
+</a>
+<br />
+<strong>Social Media</strong> — Post on Hacker News and engage with comments
+<br />
+<a href="https://coasty.ai/share/d181de46-b41d-4b87-9648-0374b2b7ec1c"><sub>View chat session</sub></a>
 </td>
 </tr>
 </table>
 
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         Frontend (Next.js 15)                   │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐           │
-│  │  Chat UI     │  │  Model       │  │  VM          │           │
-│  │  Components  │  │  Selection   │  │  Management  │           │
-│  └──────────────┘  └──────────────┘  └──────────────┘           │
-└─────────────────────────────────────────────────────────────────┘
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      Backend API (FastAPI)                      │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │           Multi-Agent Executor Service                   │   │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐       │   │
-│  │  │   Planner   │→ │   Browser   │→ │   Terminal  │       │   │
-│  │  │    Agent    │  │    Agent    │  │    Agent    │       │   │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘       │   │
-│  └──────────────────────────────────────────────────────────┘   │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐           │
-│  │   WebSocket  │  │   Database   │  │   Billing    │           │
-│  │   VM Control │  │   Service    │  │   Service    │           │
-│  └──────────────┘  └──────────────┘  └──────────────┘           │
-└─────────────────────────────────────────────────────────────────┘
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│               Docker VM (Ubuntu 22.04 + XFCE)                   │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  Chrome Browser  │  Terminal  │  Desktop Apps  │  Tools  │   │
-│  └──────────────────────────────────────────────────────────┘   │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │         WebSocket Agent Server (Port 8080)               │   │
-│  │         VNC Server (Port 5900)                           │   │
-│  └──────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-```
+<br />
 
 ---
 
-## 🚀 Quick Start
+<br />
+
+## What is this?
+
+Open Computer Use is an open-source platform that gives AI agents real computer control. Unlike chatbots that only *talk* about tasks, agents here **actually perform them** — browsing the web, running commands, clicking through UIs, and orchestrating multi-step workflows in isolated containers.
+
+> Computer use capabilities similar to Anthropic's Claude Computer Use, but fully open-source and extensible.
+
+<br />
+
+---
+
+<br />
+
+## Agents
+
+**Browser** — Search-first web navigation, form filling, element interaction, multi-tab management, screenshot capture.
+
+**Terminal** — Command execution, file operations, script running, package management, output streaming.
+
+**Desktop** — Mouse & keyboard control, window management, screenshot analysis, UI element detection via computer vision.
+
+**Planner** — Decomposes complex requests into subtasks, assigns to specialized agents, passes context between steps.
+
+<br />
+
+---
+
+<br />
+
+## Architecture
+
+```
+Frontend (Next.js 15)         Backend (FastAPI)              VM (Docker)
+┌──────────────────┐     ┌─────────────────────────┐     ┌──────────────────┐
+│  Chat UI         │────▶│  Multi-Agent Executor    │────▶│  Chrome Browser  │
+│  Model Selector  │ SSE │  ├─ Planner Agent        │ WS  │  Terminal        │
+│  VM Management   │◀────│  ├─ Browser Agent        │◀────│  Desktop (XFCE)  │
+│  Zustand Stores  │     │  ├─ Terminal Agent       │     │  Agent Server    │
+└──────────────────┘     │  └─ Desktop Agent        │     │  VNC :5900       │
+                         │  WebSocket · DB · Billing│     └──────────────────┘
+                         └─────────────────────────┘
+```
+
+<br />
+
+---
+
+<br />
+
+## Quick Start
 
 ### Prerequisites
 
-- **Node.js 20+** and **npm**
-- **Python 3.10+** and **pip**
-- **Docker** and **Docker Compose**
-- **Supabase** account (free tier works)
-- API keys for AI providers (OpenAI, Anthropic, etc.)
+Node.js 20+ · Python 3.10+ · Docker · [Supabase](https://supabase.com) account · AI provider API key
 
-### 1. Clone the Repository
+### 1. Clone & install
 
 ```bash
-git clone https://github.com/coasty-ai/open-computer-use.git
+git clone https://github.com/nicepkg/open-computer-use.git
 cd open-computer-use
-```
 
-### 2. Set Up Supabase Database
-
-#### Create Supabase Project
-1. Go to [Supabase](https://supabase.com) and create a new project
-2. Wait for the project to finish setting up
-3. Go to Project Settings → API to get your keys
-
-#### Run Database Schema
-Execute the schema to create all required tables:
-
-```bash
-# Option A: Using Supabase Dashboard
-# 1. Go to SQL Editor in your Supabase dashboard
-# 2. Copy contents of supabase/schema.sql
-# 3. Paste and run the SQL
-
-# Option B: Using Supabase CLI (recommended)
-npm install -g supabase
-supabase login
-supabase link --project-ref your-project-ref
-supabase db push
-```
-
-Or manually run the schema file:
-```bash
-psql -h db.your-project.supabase.co -U postgres -d postgres -f supabase/schema.sql
-```
-
-This creates all necessary tables:
-- 👤 **Users & Auth**: users, user_preferences, user_keys
-- 💬 **Chat System**: chats, messages, chat_participants, chat_attachments
-- 🤖 **AI Agents**: machine_sessions, machine_usage, machine_ai_actions
-- 💳 **Billing**: user_credits, credit_transactions, stripe_customers, subscription_plans
-- 📊 **Projects**: projects, user_machines, machine_snapshots
-
-### 3. Set Up Environment Variables
-
-```bash
-# Frontend
-cp .env.example .env
-# Edit .env with your configuration
-
-# Backend
-cp backend/.env.example backend/.env
-# Edit backend/.env with your configuration
-```
-
-#### Required Variables
-
-**Supabase (Required)**
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-from-supabase-dashboard
-SUPABASE_SERVICE_ROLE=your-service-role-key-from-supabase-dashboard
-```
-
-**Security Keys (Required)**
-```env
-# Generate with: openssl rand -hex 32
-ENCRYPTION_KEY=your-generated-32-byte-hex-string
-CSRF_SECRET=your-generated-32-byte-hex-string
-```
-
-**Google Search API (Required for web search)**
-```env
-GOOGLE_SEARCH_KEY=your-google-api-key
-GOOGLE_SEARCH_CX=your-custom-search-engine-id
-```
-Get these from [Google Cloud Console](https://console.cloud.google.com/):
-1. Enable Custom Search API
-2. Create API key
-3. Create Custom Search Engine at [programmablesearchengine.google.com](https://programmablesearchengine.google.com/)
-
-**AI Provider Keys (Choose at least one)**
-```env
-# OpenAI
-OPENAI_API_KEY=sk-...
-
-# Anthropic
-ANTHROPIC_API_KEY=sk-ant-...
-
-# Azure OpenAI (Optional)
-AZURE_OPENAI_ENDPOINT=https://your-endpoint.openai.azure.com/
-AZURE_OPENAI_API_KEY=your-key
-AZURE_OPENAI_DEPLOYMENT=your-deployment-name
-AZURE_OPENAI_API_VERSION=2024-02-15-preview
-```
-
-**Azure Container Instances (Optional - for cloud VM deployment)**
-```env
-AZURE_SUBSCRIPTION_ID=your-subscription-id
-AZURE_RESOURCE_GROUP=your-resource-group
-AZURE_TENANT_ID=your-tenant-id
-AZURE_CLIENT_ID=your-client-id
-AZURE_CLIENT_SECRET=your-client-secret
-AZURE_CONTAINER_REGISTRY=your-registry.azurecr.io
-AZURE_DESKTOP_IMAGE=your-registry.azurecr.io/ai-desktop:latest
-```
-
-**Stripe (Optional - for billing)**
-```env
-STRIPE_API_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-```
-
-### 4. Install Dependencies
-
-```bash
 # Frontend
 npm install
 
 # Backend
 cd backend
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 cd ..
 ```
 
-### 5. Start Development Servers
-
-**Option A: Using Docker (Recommended)**
+### 2. Configure environment
 
 ```bash
-# Start all services
-docker-compose up --build
-
-# Access the application
-# Frontend: http://localhost:3000
-# Backend: http://localhost:8001
+cp .env.example .env
+cp backend/.env.example backend/.env
 ```
 
-**Option B: Manual Start**
+Set these in both `.env` files:
+
+```env
+# Supabase (required)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE=your-service-role-key
+
+# Security (required — generate with: openssl rand -hex 32)
+ENCRYPTION_KEY=...
+CSRF_SECRET=...
+
+# AI provider (at least one)
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+
+# Google Search (required for web search)
+GOOGLE_SEARCH_KEY=...
+GOOGLE_SEARCH_CX=...
+```
+
+### 3. Set up database
 
 ```bash
-# Terminal 1: Frontend
+# Via Supabase CLI
+npm install -g supabase
+supabase login
+supabase link --project-ref your-project-ref
+supabase db push
+
+# Or paste supabase/schema.sql into the Supabase SQL Editor
+```
+
+### 4. Run
+
+**Docker (recommended):**
+
+```bash
+docker-compose up --build
+```
+
+**Manual:**
+
+```bash
+# Terminal 1 — Frontend
 npm run dev
 
-# Terminal 2: Backend
-cd backend
-python main.py
+# Terminal 2 — Backend
+cd backend && python main.py
 
-# Terminal 3: AI Desktop (if needed)
+# Terminal 3 — AI Desktop VM (optional)
 docker-compose -f docker-compose.ai-desktop.yml up --build
 ```
 
-### 6. Create Your First Agent Session
+Open **http://localhost:3000**, sign in, start a chat, and give your agent a task.
 
-1. Open http://localhost:3000
-2. Sign up / Log in with Supabase Auth
-3. Start a new chat
-4. Try a command: *"Search for the latest AI news and summarize the top 3 articles"*
-5. Watch your AI agent work! 🎉
+<br />
 
 ---
 
-## 🎨 Features
+<br />
 
-### Multi-Provider AI Support
+## Tech Stack
 
-Connect your own API keys and switch between providers mid-conversation:
+| Layer | Technologies |
+| --- | --- |
+| **Frontend** | Next.js 15, React 19, TypeScript, Tailwind CSS, Radix UI, Zustand, Vercel AI SDK |
+| **Backend** | FastAPI, Python 3.10+, WebSockets, asyncio, uvicorn |
+| **AI Providers** | OpenAI, Anthropic, Google, Azure, xAI, Mistral, Perplexity, OpenRouter |
+| **Infrastructure** | Docker, Ubuntu 22.04 + XFCE, Chrome, Selenium, Supabase, Stripe |
+| **Desktop App** | Electron 40, Puppeteer-core, platform-native automation (Win32 / CoreGraphics / xdotool) |
 
-- ✅ **OpenAI** (GPT-4, GPT-4 Turbo, GPT-3.5)
-- ✅ **Anthropic** (Claude 3.5 Sonnet, Claude 3 Opus)
-- ✅ **Google** (Gemini Pro, Gemini 1.5)
-- ✅ **Azure OpenAI** (Enterprise deployments)
-- ✅ **xAI** (Grok models)
-- ✅ **Mistral AI** (Mistral Large, Mixtral)
-- ✅ **Perplexity** (Online models)
-- ✅ **OpenRouter** (Access to 100+ models)
-
-### Bring Your Own Keys (BYOK)
-
-All API keys are encrypted and stored securely. You maintain full control over your AI costs and usage.
-
-### Real-Time Streaming
-
-Watch your agents work in real-time with:
-- 📊 **Task progress indicators**
-- 🛠️ **Tool call visualization**
-- 📸 **Live screenshots** from VM
-- 💬 **Streaming responses**
-- 📋 **Detailed execution logs**
-
-### Advanced Task Planning
-
-The AI automatically:
-1. **Analyzes** your request
-2. **Breaks down** into subtasks
-3. **Assigns** to specialized agents
-4. **Executes** with full context
-5. **Reports** detailed results
-
-### Secure VM Isolation
-
-Each agent session runs in an isolated Docker container:
-- 🔒 **Sandboxed execution** environment
-- 🔄 **Ephemeral containers** (no data persistence)
-- 🌐 **Network isolation** options
-- 📊 **Resource limits** and monitoring
+<br />
 
 ---
 
-## 📚 Use Cases
+<br />
 
-<table>
-<tr>
-<td>
+## Electron Desktop App
 
-### 🔍 Research & Data Gathering
+A lightweight overlay that runs AI agent commands directly on your local machine instead of a remote VM.
 
-- Web scraping and data extraction
-- Competitive analysis
-- Market research automation
-- Academic paper collection
+- Floating always-on-top pill UI with expanded chat panel
+- Platform-native automation (PowerShell/Win32 on Windows, CoreGraphics/osascript on macOS, xdotool on Linux)
+- Browser control via Puppeteer-core, shell execution, file operations
+- WebSocket bridge to backend with auto-reconnect
 
-</td>
-<td>
+```bash
+cd electron
+npm install
+npm run dev        # Development with hot reload
+npm run package    # Build for current platform
+```
 
-### 🧪 Testing & QA
-
-- Automated UI testing
-- Cross-browser testing
-- E2E test generation
-- Regression testing
-
-</td>
-</tr>
-<tr>
-<td>
-
-### 📝 Content Creation
-
-- Screenshot and documentation
-- Tutorial generation
-- Workflow recording
-- Demo creation
-
-</td>
-<td>
-
-### 🔧 DevOps & Automation
-
-- Server configuration
-- Deployment automation
-- Log analysis
-- System monitoring
-
-</td>
-</tr>
-<tr>
-<td>
-
-### 🛒 E-commerce Operations
-
-- Price monitoring
-- Product research
-- Order management
-- Inventory tracking
-
-</td>
-<td>
-
-### 📊 Business Intelligence
-
-- Report generation
-- Dashboard monitoring
-- Data analysis workflows
-- KPI tracking
-
-</td>
-</tr>
-</table>
+<br />
 
 ---
 
-## 🛠️ Technology Stack
+<br />
 
-### Frontend
-- **Framework**: Next.js 15 (App Router, React 19)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS 4
-- **UI Components**: Radix UI, shadcn/ui
-- **State Management**: Zustand
-- **AI SDK**: Vercel AI SDK
-- **Database**: Supabase (Auth + Postgres)
-- **Payments**: Stripe
+## Project Structure
 
-### Backend
-- **Framework**: FastAPI (Python 3.10+)
-- **Async Runtime**: asyncio, uvicorn
-- **WebSocket**: websockets library
-- **AI Providers**: openai, anthropic, google-generativeai
-- **Search**: Google Custom Search API
-- **Caching**: Redis (optional)
-- **Image Processing**: Pillow, ImageMagick
+```
+├── app/                    # Next.js routes & pages
+├── components/             # React components (UI, chat, prompts)
+├── lib/                    # Stores, providers, services, utilities
+├── backend/
+│   └── app/
+│       ├── api/routes/     # FastAPI endpoints
+│       ├── services/       # Multi-agent executor, VM control, billing
+│       ├── providers/      # AI provider integrations
+│       └── core/           # Config, middleware, logging
+├── electron/
+│   └── src/
+│       ├── main/           # App lifecycle, IPC, automation modules
+│       ├── preload/        # Context bridge API
+│       └── renderer/       # React UI, stores, components
+├── docker/ai-desktop/      # Ubuntu VM container
+└── supabase/               # Database schema
+```
 
-### Infrastructure
-- **Containerization**: Docker, Docker Compose
-- **VM Environment**: Ubuntu 22.04 LTS + XFCE
-- **Browser**: Google Chrome (with remote debugging)
-- **Automation**: Selenium, Playwright, PyAutoGUI
-- **Cloud**: Azure Container Instances (optional)
+<br />
 
 ---
 
-## 🤝 Contributing
+<br />
 
-We love contributions! Here's how you can help:
+## Contributing
 
-### 🐛 Found a Bug?
+1. Fork the repo
+2. Create a branch: `git checkout -b feature/your-feature`
+3. Commit your changes
+4. Open a pull request
 
-Open an [issue](https://github.com/coasty-ai/open-computer-use/issues) with:
-- Clear description of the bug
-- Steps to reproduce
-- Expected vs actual behavior
-- Screenshots or logs
+Bug reports and feature requests welcome in [Issues](https://github.com/nicepkg/open-computer-use/issues).
 
-### 💡 Have a Feature Idea?
-
-1. Check if it's already [requested](https://github.com/coasty-ai/open-computer-use/issues)
-2. Open a new issue with the `enhancement` label
-3. Describe your use case and proposed solution
-
-### 🔧 Want to Contribute Code?
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Make your changes
-4. Write tests if applicable
-5. Commit: `git commit -m 'Add amazing feature'`
-6. Push: `git push origin feature/amazing-feature`
-7. Open a Pull Request
-
-**Please read our [Contributing Guide](CONTRIBUTING.md) for detailed guidelines.**
+<br />
 
 ---
 
-## 📖 Documentation
+<br />
 
-- 💬 [**Discord Community**](https://discord.gg/GvdmvpJy)
+## Roadmap
 
----
-
-## 🗺️ Roadmap
-
-### Q1 2026
-- [ ] Multi-VM orchestration (parallel agents)
-- [ ] Advanced workflow builder (visual programming)
-- [ ] Marketplace for custom agents
-- [ ] Windows and macOS VM support
-- [ ] Mobile app (iOS/Android)
-
-### Q2 2026
+- [ ] Multi-VM parallel orchestration
+- [ ] Visual workflow builder
+- [ ] Agent marketplace & templates
+- [ ] Windows / macOS VM support
 - [ ] Plugin system for custom tools
-- [ ] Collaborative agent sessions
-- [ ] Advanced analytics dashboard
-- [ ] Enterprise SSO support
-- [ ] Self-hosted cloud deployment guides
+- [ ] Collaborative sessions
+- [ ] Voice control & video understanding
 
-### Future
-- [ ] Voice control integration
-- [ ] Video understanding capabilities
-- [ ] Agent memory and learning
-- [ ] Multi-modal agent interactions
-- [ ] Community agent templates
-
-**Vote on features**: [Feature Requests](https://github.com/coasty-ai/open-computer-use/discussions)
+<br />
 
 ---
 
-## 📊 Performance & Benchmarks
+<br />
 
-| Metric | Value |
-|--------|-------|
-| **Average Task Completion** | ~45 seconds |
-| **Concurrent Sessions** | 50+ (per server) |
-| **Browser Navigation** | ~2s per page |
-| **Tool Call Latency** | <500ms |
-| **VM Startup Time** | ~15 seconds |
-| **Memory per Session** | ~2GB |
+## Responsible Use
 
-*Benchmarks measured on: 4 CPU cores, 8GB RAM, SSD storage*
+This platform gives AI agents significant autonomy. Use it to automate repetitive tasks, testing, research, and content creation — not to violate terms of service, spam, or scrape without permission. Always use isolated environments, respect `robots.txt`, and follow data protection laws.
+
+<br />
 
 ---
 
-## ⚠️ Responsible AI Use
+<br />
 
-Open Computer Use gives AI agents significant autonomy. Please use responsibly:
+## License
 
-- ✅ **Do**: Automate repetitive tasks, research, testing, content creation
-- ❌ **Don't**: Violate terms of service, spam, scrape without permission
-- 🔒 **Security**: Never share credentials, use isolated environments
-- 📋 **Compliance**: Follow data protection laws (GDPR, CCPA, etc.)
-- 🤝 **Ethics**: Respect website robots.txt and rate limits
+[Apache License 2.0](LICENSE) — Copyright (c) 2025 Open Computer Use Contributors
 
-**Read our [Responsible Use Guidelines](RESPONSIBLE_USE.md) for more details.**
+<br />
 
 ---
 
-## 📄 License
-
-This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
-
-```
-Apache License 2.0
-
-Copyright (c) 2025 Open Computer Use Contributors
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
-
----
-
-## 🙏 Acknowledgments
-
-Built with amazing open-source projects:
-
-- [Next.js](https://nextjs.org/) - The React Framework
-- [FastAPI](https://fastapi.tiangolo.com/) - Modern Python web framework
-- [Supabase](https://supabase.com/) - Open source Firebase alternative
-- [Vercel AI SDK](https://sdk.vercel.ai/) - AI toolkit for TypeScript
-- [Radix UI](https://www.radix-ui.com/) - Unstyled, accessible components
-- [Anthropic](https://www.anthropic.com/) - Inspiration from Claude Computer Use
-- [Docker](https://www.docker.com/) - Containerization platform
-
-Special thanks to all our [contributors](https://github.com/coasty-ai/open-computer-use/graphs/contributors)! 💙
-
----
-
-## 🌟 Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=coasty-ai/open-computer-use&type=Date)](https://star-history.com/#coasty-ai/open-computer-use&Date)
-
----
-
-## 💬 Community & Support
-
-- 💬 **Discord**: Join our [community server](https://discord.gg/GvdmvpJy)
-- 🐦 **Twitter**: Follow [@llmhub_dev](https://x.com/llmhub_dev)
-- 📧 **Email**: prateek@coasty.ai
-- 🐛 **Issues**: [GitHub Issues](https://github.com/coasty-ai/open-computer-use/issues)
-- 💡 **Discussions**: [GitHub Discussions](https://github.com/coasty-ai/open-computer-use/discussions)
-
----
+<br />
 
 <div align="center">
 
-### ⭐ Star us on GitHub if you find this useful!
+**[Star on GitHub](https://github.com/nicepkg/open-computer-use)** · **[Join Discord](https://discord.gg/gppEfsVt)** · **[Follow on X](https://x.com/llmhub_dev)**
 
-Made with ❤️ by the Open Computer Use community
+<br />
 
-[**Star on GitHub**](https://github.com/coasty-ai/open-computer-use) • [**Join Discord**](https://discord.gg/GvdmvpJy)
+[![Star History](https://api.star-history.com/svg?repos=nicepkg/open-computer-use&type=Date)](https://star-history.com/#nicepkg/open-computer-use&Date)
 
 </div>

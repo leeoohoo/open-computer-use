@@ -94,7 +94,7 @@ class Settings(BaseSettings):
     # Request Configuration
     MAX_REQUEST_SIZE: int = Field(default=10 * 1024 * 1024)  # 10MB
     REQUEST_TIMEOUT: int = Field(default=60)  # seconds
-    STREAM_TIMEOUT: int = Field(default=120)  # seconds
+    STREAM_TIMEOUT: int = Field(default=300)  # seconds — raised for long-running tasks
 
     # Task Scheduler
     SCHEDULER_ENABLED: bool = Field(default=True)
@@ -102,7 +102,7 @@ class Settings(BaseSettings):
     MAX_CONSECUTIVE_FAILURES: int = Field(default=5)
     SCHEDULE_LIMITS: str = Field(default="free:3,basic:3,pro:10,enterprise:50")
     SCHEDULED_TASK_IDLE_TIMEOUT: int = Field(default=300)  # 5 min — no chunk = stuck
-    SCHEDULED_TASK_MAX_TIMEOUT: int = Field(default=5400)  # 90 min — absolute wall-clock cap
+    SCHEDULED_TASK_MAX_TIMEOUT: int = Field(default=21600)  # 6 hours — absolute wall-clock cap
     
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod

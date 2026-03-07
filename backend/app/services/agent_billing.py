@@ -25,7 +25,7 @@ class AgentBillingService:
     MIN_BALANCE_WARNING = 50  # Warn when balance drops below this
     MIN_BALANCE_REQUIRED = 20  # Minimum credits to start session
     CHECK_INTERVAL_SECONDS = 30  # Check credits every 30 seconds
-    MAX_SESSION_DURATION = 3600  # Maximum 1 hour per session
+    MAX_SESSION_DURATION = 21600  # Maximum 6 hours per session
     
     def __init__(self):
         self.db_service = DatabaseService()
