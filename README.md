@@ -155,7 +155,7 @@ Node.js 20+ · Python 3.10+ · Docker · [Supabase](https://supabase.com) accoun
 ### 1. Clone & install
 
 ```bash
-git clone https://github.com/nicepkg/open-computer-use.git
+git clone https://github.com/coasty-ai/open-computer-use.git
 cd open-computer-use
 
 # Frontend
@@ -310,7 +310,7 @@ npm run package    # Build for current platform
 3. Commit your changes
 4. Open a pull request
 
-Bug reports and feature requests welcome in [Issues](https://github.com/nicepkg/open-computer-use/issues).
+Bug reports and feature requests welcome in [Issues](https://github.com/coasty-ai/open-computer-use/issues).
 
 <br />
 
@@ -356,10 +356,10 @@ This platform gives AI agents significant autonomy. Use it to automate repetitiv
 
 <div align="center">
 
-**[Star on GitHub](https://github.com/nicepkg/open-computer-use)** · **[Join Discord](https://discord.gg/gppEfsVt)** · **[Follow on X](https://x.com/llmhub_dev)**
+**[Star on GitHub](https://github.com/coasty-ai/open-computer-use)** · **[Join Discord](https://discord.gg/gppEfsVt)** · **[Follow on X](https://x.com/llmhub_dev)**
 
 <br />
 
-[![Star History](https://api.star-history.com/svg?repos=nicepkg/open-computer-use&type=Date)](https://star-history.com/#nicepkg/open-computer-use&Date)
+[![Star History](https://api.star-history.com/svg?repos=coasty-ai/open-computer-use&type=Date)](https://star-history.com/#coasty-ai/open-computer-use&Date)
 
 </div>
