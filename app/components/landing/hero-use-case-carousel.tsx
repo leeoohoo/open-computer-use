@@ -159,15 +159,6 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               <ArrowRight className="h-4 w-4" />
             </motion.button>
           </Link>
-          <div className="flex items-center gap-3 text-[13px] text-muted-foreground/60 font-medium tracking-wide">
-            <span>No API</span>
-            <span className="h-3 w-px bg-muted-foreground/20" />
-            <span>No integration</span>
-            <span className="h-3 w-px bg-muted-foreground/20" />
-            <span>No bullsh*t</span>
-            <span className="h-3 w-px bg-muted-foreground/20" />
-            <span>Just works</span>
-          </div>
         </div>
       </div>
 
