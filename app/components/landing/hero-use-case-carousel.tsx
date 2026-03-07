@@ -92,10 +92,10 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
         {/* Headline */}
         <h1 className={cn(
           "font-bold tracking-tight leading-[1.1] mb-4",
-          isMobile ? "text-3xl" : "text-4xl sm:text-5xl lg:text-[3.5rem]"
+          isMobile ? "text-2xl" : "text-3xl sm:text-4xl lg:text-[2.75rem]"
         )}>
-          <span className="text-foreground">AI Employee that </span>
-          <span className="inline-block relative">
+          <span className="text-foreground">Computer-using AI Employee that </span>
+          <span className="inline-block relative pb-1">
             <AnimatePresence mode="wait">
               <motion.span
                 key={index}
@@ -103,7 +103,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: -12, filter: "blur(6px)" }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className={cn("inline-block bg-gradient-to-r from-violet-400 via-fuchsia-300 to-amber-300 bg-clip-text text-transparent", !isMobile && "whitespace-nowrap")}
+                className={cn("inline-block bg-gradient-to-r from-violet-400 via-fuchsia-300 to-amber-300 bg-clip-text text-transparent leading-normal", !isMobile && "whitespace-nowrap")}
               >
                 {current.headline}
               </motion.span>
@@ -139,12 +139,6 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               </motion.span>
             </AnimatePresence>
           </div>
-          <p className={cn(
-            "text-muted-foreground/40 mt-2",
-            isMobile ? "text-xs" : "text-sm"
-          )}>
-            Get real results you can review, save, and share — not just promises.
-          </p>
         </div>
 
         {/* CTA + cost */}
@@ -165,6 +159,15 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               <ArrowRight className="h-4 w-4" />
             </motion.button>
           </Link>
+          <div className="flex items-center gap-3 text-[13px] text-muted-foreground/60 font-medium tracking-wide">
+            <span>No API</span>
+            <span className="h-3 w-px bg-muted-foreground/20" />
+            <span>No integration</span>
+            <span className="h-3 w-px bg-muted-foreground/20" />
+            <span>No bullsh*t</span>
+            <span className="h-3 w-px bg-muted-foreground/20" />
+            <span>Just works</span>
+          </div>
         </div>
       </div>
 

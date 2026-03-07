@@ -58,7 +58,10 @@ def setup_exception_handlers(app: FastAPI):
     
     @app.exception_handler(HTTPException)
     async def http_exception_handler(request: Request, exc: HTTPException):
-        logger.error(f"HTTP error {exc.status_code}: {exc.detail}")
+        if exc.status_code >= 500:
+            logger.error(f"HTTP error {exc.status_code}: {exc.detail}")
+        else:
+            logger.warning(f"HTTP error {exc.status_code}: {exc.detail}")
         return JSONResponse(
             status_code=exc.status_code,
             content={"error": exc.detail}

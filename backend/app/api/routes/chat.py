@@ -301,7 +301,7 @@ async def chat_endpoint(
         )
 
         if not connection_info:
-            raise HTTPException(status_code=404, detail=f"Machine {chat_request.machine_id} not found or not running")
+            raise HTTPException(status_code=404, detail=f"Machine {chat_request.machine_id} not found or not running. It may have been stopped or terminated.")
 
         # Start billing session
         billing_session_id = await agent_billing_service.start_session(

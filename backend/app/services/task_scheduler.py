@@ -342,51 +342,82 @@ class TaskScheduler:
             logger.warning("Scheduler: DB client is None, cannot query schedules")
             return []
 
-        try:
-            # Use JSONB contains (cs) operator so Postgres filters server-side,
-            # avoiding the default 1000-row limit for non-scheduled chats.
-            filter_json = json.dumps({"schedule": {"enabled": True}})
+        max_retries = 3
+        retry_delay = 2
 
-            loop = asyncio.get_event_loop()
-            response = await asyncio.wait_for(
-                loop.run_in_executor(
-                    None,
-                    lambda: self.db_service.client.table("chats")
-                    .select("id, user_id, title, room_settings")
-                    .contains("room_settings", filter_json)
-                    .execute(),
-                ),
-                timeout=15,
-            )
+        for attempt in range(max_retries):
+            try:
+                # Use JSONB contains (cs) operator so Postgres filters server-side,
+                # avoiding the default 1000-row limit for non-scheduled chats.
+                filter_json = json.dumps({"schedule": {"enabled": True}})
 
-            if not response or not response.data:
-                logger.info("Scheduler: no enabled schedules found in DB")
-                return []
-
-            logger.info(
-                f"Scheduler: found {len(response.data)} chat(s) with enabled schedules"
-            )
-
-            # Verify each result (belt-and-suspenders)
-            results = []
-            for chat in response.data:
-                rs = self._parse_room_settings(chat.get("room_settings"))
-                schedule = rs.get("schedule", {})
-                logger.info(
-                    f"  Chat {chat['id'][:8]}... schedule: "
-                    f"enabled={schedule.get('enabled')}, "
-                    f"paused={schedule.get('paused_reason')}, "
-                    f"freq={schedule.get('frequency')}, "
-                    f"next_run={schedule.get('next_run_at')}"
+                loop = asyncio.get_event_loop()
+                response = await asyncio.wait_for(
+                    loop.run_in_executor(
+                        None,
+                        lambda: self.db_service.client.table("chats")
+                        .select("id, user_id, title, room_settings")
+                        .contains("room_settings", filter_json)
+                        .execute(),
+                    ),
+                    timeout=15,
                 )
-                if schedule.get("enabled"):
-                    results.append(chat)
 
-            return results
+                if not response or not response.data:
+                    logger.info("Scheduler: no enabled schedules found in DB")
+                    return []
 
-        except Exception as e:
-            logger.error(f"Failed to fetch enabled schedules: {e}", exc_info=True)
-            return []
+                logger.info(
+                    f"Scheduler: found {len(response.data)} chat(s) with enabled schedules"
+                )
+
+                # Verify each result (belt-and-suspenders)
+                results = []
+                for chat in response.data:
+                    rs = self._parse_room_settings(chat.get("room_settings"))
+                    schedule = rs.get("schedule", {})
+                    logger.info(
+                        f"  Chat {chat['id'][:8]}... schedule: "
+                        f"enabled={schedule.get('enabled')}, "
+                        f"paused={schedule.get('paused_reason')}, "
+                        f"freq={schedule.get('frequency')}, "
+                        f"next_run={schedule.get('next_run_at')}"
+                    )
+                    if schedule.get("enabled"):
+                        results.append(chat)
+
+                return results
+
+            except asyncio.TimeoutError:
+                if attempt < max_retries - 1:
+                    logger.warning(f"Scheduler: timeout fetching schedules (attempt {attempt + 1}/{max_retries}), retrying...")
+                    await asyncio.sleep(retry_delay)
+                    retry_delay *= 2
+                else:
+                    logger.error("Scheduler: all retry attempts timed out fetching schedules")
+                    return []
+
+            except Exception as e:
+                error_str = str(e)
+                is_transient = (
+                    "520" in error_str
+                    or "521" in error_str
+                    or "502" in error_str
+                    or "503" in error_str
+                    or "504" in error_str
+                    or "web server" in error_str.lower()
+                    or "connection" in error_str.lower() and "error" in error_str.lower()
+                )
+
+                if is_transient and attempt < max_retries - 1:
+                    logger.warning(f"Scheduler: transient error fetching schedules (attempt {attempt + 1}/{max_retries}): {error_str[:200]}")
+                    await asyncio.sleep(retry_delay)
+                    retry_delay *= 2
+                else:
+                    logger.error(f"Failed to fetch enabled schedules: {error_str[:200]}", exc_info=True)
+                    return []
+
+        return []
 
     def _parse_room_settings(self, room_settings) -> dict:
         """Parse room_settings which may be a JSON string or dict."""
@@ -419,20 +450,33 @@ class TaskScheduler:
         if not self.db_service.client:
             return
 
-        try:
-            loop = asyncio.get_event_loop()
-            await asyncio.wait_for(
-                loop.run_in_executor(
-                    None,
-                    lambda: self.db_service.client.table("chats")
-                    .update({"room_settings": room_settings})
-                    .eq("id", chat_id)
-                    .execute(),
-                ),
-                timeout=15,
-            )
-        except Exception as e:
-            logger.error(f"Failed to update schedule for chat {chat_id}: {e}")
+        max_retries = 3
+        retry_delay = 2
+
+        for attempt in range(max_retries):
+            try:
+                loop = asyncio.get_event_loop()
+                await asyncio.wait_for(
+                    loop.run_in_executor(
+                        None,
+                        lambda: self.db_service.client.table("chats")
+                        .update({"room_settings": room_settings})
+                        .eq("id", chat_id)
+                        .execute(),
+                    ),
+                    timeout=15,
+                )
+                return
+            except Exception as e:
+                error_str = str(e)
+                is_transient = any(code in error_str for code in ("520", "521", "502", "503", "504")) or "web server" in error_str.lower()
+                if is_transient and attempt < max_retries - 1:
+                    logger.warning(f"Transient error updating schedule for chat {chat_id} (attempt {attempt + 1}/{max_retries}): {error_str[:200]}")
+                    await asyncio.sleep(retry_delay)
+                    retry_delay *= 2
+                else:
+                    logger.error(f"Failed to update schedule for chat {chat_id}: {error_str[:200]}")
+                    return
 
     async def _pause_schedule(
         self, chat_id: str, room_settings: dict, reason: str
@@ -518,26 +562,42 @@ class TaskScheduler:
             if next_run:
                 schedule["next_run_at"] = next_run.isoformat()
 
-            # 6. Single atomic write
+            # 6. Single atomic write with retry for transient errors
             room_settings["schedule"] = schedule
 
-            loop = asyncio.get_event_loop()
-            await asyncio.wait_for(
-                loop.run_in_executor(
-                    None,
-                    lambda: self.db_service.client.table("chats")
-                    .update({"room_settings": room_settings})
-                    .eq("id", chat_id)
-                    .execute(),
-                ),
-                timeout=15,
-            )
-            logger.info(
-                f"Finalized execution for chat {chat_id}: "
-                f"status={status}, success={success}, next_run={schedule.get('next_run_at')}"
-            )
+            max_retries = 3
+            retry_delay = 2
+            for attempt in range(max_retries):
+                try:
+                    loop = asyncio.get_event_loop()
+                    await asyncio.wait_for(
+                        loop.run_in_executor(
+                            None,
+                            lambda: self.db_service.client.table("chats")
+                            .update({"room_settings": room_settings})
+                            .eq("id", chat_id)
+                            .execute(),
+                        ),
+                        timeout=15,
+                    )
+                    logger.info(
+                        f"Finalized execution for chat {chat_id}: "
+                        f"status={status}, success={success}, next_run={schedule.get('next_run_at')}"
+                    )
+                    break
+                except Exception as inner_e:
+                    error_str = str(inner_e)
+                    is_transient = any(code in error_str for code in ("520", "521", "502", "503", "504")) or "web server" in error_str.lower()
+                    if is_transient and attempt < max_retries - 1:
+                        logger.warning(f"Transient error finalizing chat {chat_id} (attempt {attempt + 1}/{max_retries}): {error_str[:200]}")
+                        await asyncio.sleep(retry_delay)
+                        retry_delay *= 2
+                    else:
+                        logger.error(f"Failed to finalize execution for chat {chat_id}: {error_str[:200]}")
+                        break
+
         except Exception as e:
-            logger.error(f"Failed to finalize execution for chat {chat_id}: {e}")
+            logger.error(f"Failed to finalize execution for chat {chat_id}: {str(e)[:200]}")
 
     def _cleanup_completed_tasks(self):
         """Remove completed asyncio tasks from the tracking dict."""

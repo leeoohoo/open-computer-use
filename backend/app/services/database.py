@@ -159,17 +159,22 @@ class DatabaseService:
                         return None
                             
                 except Exception as e:
-                    logger.error(f"Database error on attempt {attempt + 1}: {str(e)}")
-                    if "statement timeout" in str(e).lower():
-                        # Specific handling for statement timeout
-                        if attempt < max_retries - 1:
-                            await asyncio.sleep(retry_delay)
-                            retry_delay *= 2
-                        else:
-                            logger.error("Statement timeout persists after all retries")
-                            return None
+                    error_str = str(e)
+                    is_transient = (
+                        "statement timeout" in error_str.lower()
+                        or "520" in error_str
+                        or "502" in error_str
+                        or "503" in error_str
+                        or "504" in error_str
+                        or "web server is returning an unknown error" in error_str.lower()
+                        or "connection" in error_str.lower() and "error" in error_str.lower()
+                    )
+                    if is_transient and attempt < max_retries - 1:
+                        logger.warning(f"Transient database error on attempt {attempt + 1}: {error_str[:200]}")
+                        await asyncio.sleep(retry_delay)
+                        retry_delay *= 2
                     else:
-                        # For other errors, don't retry
+                        logger.error(f"Database error on attempt {attempt + 1}: {error_str[:200]}")
                         return None
             
             return None
@@ -212,28 +217,57 @@ class DatabaseService:
             total_size = content_size + parts_size
             timeout_seconds = min(60.0 + (total_size / 1_000_000) * 20, 300.0)
 
-            loop = asyncio.get_event_loop()
-            response = await asyncio.wait_for(
-                loop.run_in_executor(
-                    None,
-                    lambda: self.client.table("messages")
-                        .update(data)
-                        .eq("id", message_id)
-                        .execute(),
-                ),
-                timeout=timeout_seconds,
-            )
+            max_retries = 3
+            retry_delay = 1
 
-            if response and response.data:
-                logger.debug(f"Updated message {message_id} ({total_size:,} bytes)")
-                return response.data[0]
-            return None
+            for attempt in range(max_retries):
+                try:
+                    loop = asyncio.get_event_loop()
+                    response = await asyncio.wait_for(
+                        loop.run_in_executor(
+                            None,
+                            lambda: self.client.table("messages")
+                                .update(data)
+                                .eq("id", message_id)
+                                .execute(),
+                        ),
+                        timeout=timeout_seconds,
+                    )
 
-        except asyncio.TimeoutError:
-            logger.error(f"Timeout updating message {message_id}")
-            return None
-        except Exception as e:
-            logger.error(f"Error updating message {message_id}: {e}")
+                    if response and response.data:
+                        logger.debug(f"Updated message {message_id} ({total_size:,} bytes)")
+                        return response.data[0]
+                    return None
+
+                except asyncio.TimeoutError:
+                    logger.warning(f"Timeout updating message {message_id} (attempt {attempt + 1}/{max_retries})")
+                    if attempt < max_retries - 1:
+                        await asyncio.sleep(retry_delay)
+                        retry_delay *= 2
+                    else:
+                        logger.error(f"All retry attempts failed for updating message {message_id} due to timeout")
+                        return None
+
+                except Exception as e:
+                    error_str = str(e)
+                    is_transient = (
+                        "statement timeout" in error_str.lower()
+                        or "520" in error_str
+                        or "502" in error_str
+                        or "503" in error_str
+                        or "504" in error_str
+                        or "web server is returning an unknown error" in error_str.lower()
+                        or "connection" in error_str.lower() and "error" in error_str.lower()
+                    )
+
+                    if is_transient and attempt < max_retries - 1:
+                        logger.warning(f"Transient error updating message {message_id} (attempt {attempt + 1}/{max_retries}): {error_str[:200]}")
+                        await asyncio.sleep(retry_delay)
+                        retry_delay *= 2
+                    else:
+                        logger.error(f"Error updating message {message_id} (attempt {attempt + 1}/{max_retries}): {error_str[:200]}")
+                        return None
+
             return None
 
     async def get_chat_messages(
