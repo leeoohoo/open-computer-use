@@ -13,7 +13,7 @@ import { useTheme } from "next-themes"
 const navItems = [
   { href: "/#hero", label: "Home" },
   { href: "/#features", label: "Features" },
-  { href: "/#demo", label: "Demo" },
+  { href: "/results", label: "Case Studies", external: true },
   { href: "/#pricing", label: "Pricing" },
   { href: "/download", label: "Download", external: true },
   { href: "/blog", label: "Blog", external: true }

@@ -29,6 +29,8 @@ import { useChatStreaming } from "@/lib/chat-streaming-store/provider"
 import { themeConfig } from "@/lib/theme-config"
 import { Switch } from "@/components/ui/switch"
 import { QuickStartGuide } from "./quick-start-guide"
+import Link from "next/link"
+import { ShieldCheck } from "lucide-react"
 
 const handwriting = Caveat({
   subsets: ["latin"],
@@ -541,6 +543,16 @@ export function Chat() {
       setQuickStartDismissed(true)
     }
   }, [])
+  // Check if user has saved credentials (for nudge in greeting)
+  const [hasCredentials, setHasCredentials] = useState<boolean | null>(null)
+  useEffect(() => {
+    if (!isAuthenticated) return
+    fetch("/api/secrets")
+      .then((r) => r.json())
+      .then((data) => setHasCredentials((data.secrets ?? []).length > 0))
+      .catch(() => {})
+  }, [isAuthenticated])
+
   const showQuickStart =
     showOnboarding &&
     !!user &&
@@ -708,14 +720,15 @@ export function Chat() {
                       }
                     </p>
                   </motion.div>
+
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Guide toggle — persistent across both views */}
+            {/* Guide toggle + credential nudge */}
             {user && (
               <motion.div
-                className="flex justify-center mt-4 sm:mt-6 mb-2"
+                className="flex items-center justify-center gap-3 mt-4 sm:mt-6 mb-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.4 }}
@@ -735,6 +748,20 @@ export function Chat() {
                     }}
                   />
                 </label>
+                {hasCredentials === false && (
+                  <>
+                    <span className="text-muted-foreground/20 text-xs select-none">&middot;</span>
+                    <Link
+                      href="/secrets"
+                      className="group inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 dark:bg-blue-500/15 px-3 py-1 text-[11px] text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 transition-colors"
+                    >
+                      <ShieldCheck className="h-3 w-3 shrink-0" />
+                      <span className="underline underline-offset-2 decoration-blue-400/30 group-hover:decoration-blue-400/60">Save logins for auto-fill</span>
+                      <span className="hidden sm:inline text-blue-500/50">&middot; encrypted, never seen by AI</span>
+                      <span className="text-[10px] group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                    </Link>
+                  </>
+                )}
               </motion.div>
             )}
           </motion.div>

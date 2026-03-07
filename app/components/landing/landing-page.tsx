@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
 import { useSearchParams } from "next/navigation"
 import { LandingHeader } from "./landing-header"
+import { HeroUseCaseCarousel } from "./hero-use-case-carousel"
 // MockChatDemo moved out of hero — still available for other sections
 // import { MockChatDemo } from "./mock-chat-demo"
 // import { MockVMDisplay } from "./mock-vm-display"
@@ -39,44 +40,33 @@ const brandSubtitle = Cormorant_Garamond({
   style: ["italic"],
 })
 
-const heroUseCases = [
-  "browses the web",
-  "writes & debugs code",
-  "analyzes spreadsheets",
-  "fills out forms",
-  "researches markets",
-  "automates workflows",
-  "manages files",
-  "tests applications",
-]
-
 const BRAND_SUBTITLE_TEXT = "I am designed to emulate you."
 
 const features = [
   {
     icon: Zap,
-    title: "Self-Correcting Agent",
-    description: "Made a wrong click? Took a wrong turn? The agent detects mistakes, adapts on the fly, and keeps moving toward the goal. No hand-holding required.",
+    title: "It Fixes Its Own Mistakes",
+    description: "Wrong click? Dead end? The agent catches errors, course-corrects, and keeps going. You assign the task and walk away — it handles the rest.",
   },
   {
     icon: Shield,
-    title: "Complete Audit Logging",
-    description: "Every command, every click, every action. Fully logged and reviewable. You always know exactly what your agent did and why. No black boxes.",
+    title: "You See Everything It Does",
+    description: "Full audit trail of every action. Every click, every keystroke, every decision — logged and reviewable. Complete transparency, zero guesswork.",
   },
   {
     icon: CalendarCheck,
-    title: "Your AI Calendar Assistant",
-    description: "Hand off your scheduling chaos. Your agent manages meetings, books appointments, sends follow-ups, and keeps your calendar organized — like a personal assistant who never forgets.",
+    title: "Never Miss a Meeting Again",
+    description: "Hand off your calendar chaos. Coasty books appointments, sends follow-ups, and keeps your schedule tight — like a PA who never sleeps and never forgets.",
   },
   {
     icon: Monitor,
-    title: "Isolated Virtual Machines",
-    description: "Each session runs in its own sandboxed VM. Your data stays safe, your machine stays untouched, and nothing leaks between sessions.",
+    title: "Your Data Stays Yours",
+    description: "Every task runs in an isolated sandbox. Your files stay safe, your computer stays untouched, and nothing leaks between sessions. Enterprise-grade security by default.",
   },
   {
     icon: Star,
-    title: "State-of-the-Art Performance",
-    description: "Ranked #1 on the OSWorld benchmark. When you deploy an agent, you know the work is actually getting done, not just attempted.",
+    title: "Work That Actually Gets Done",
+    description: "#1 on the OSWorld benchmark. This isn’t a chatbot that tries — it’s an agent that delivers. Real tasks, completed end-to-end.",
   },
 ]
 
@@ -221,28 +211,40 @@ const fileTreeElements: TreeViewElement[] = [
 
 const demoChatSessions = [
   {
-    title: "Proving It's Not a Robot... Or Is It?",
-    chatId: "1cd404ae-3fcb-4d7f-b9d4-dac7aa26fc6d",
-    description: "An AI agent faces the ultimate identity crisis, autonomously solving an \"I'm not a robot\" CAPTCHA in real time.",
-    tag: "Vision + Interaction",
+    title: "Coasty on Reddit",
+    chatId: "373c1f67-afec-4bd6-adda-3809ecdbdd75",
+    description: "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
+    tag: "Marketing",
   },
   {
-    title: "The Perfect Circle Challenge",
-    chatId: "fb72177b-6b03-4bac-9784-df694fab268a",
-    description: "Can a machine draw a perfect circle? Watch an AI agent analyze the canvas, steady the cursor, and go for a flawless score.",
-    tag: "Precision Control",
+    title: "Finding Prospective Customers",
+    chatId: "425d3c49-3a06-41e5-9859-aa00c5b12f3d",
+    description: "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+    tag: "Go-to-Market",
   },
   {
-    title: "Filling Out a Spreadsheet, Hands-Free",
-    chatId: "02b88be4-7643-4a85-89c5-3a9deba5032c",
-    description: "Watch an AI agent open Excel, navigate cells, and fill in structured data — all without a single keystroke from you.",
-    tag: "Office Automation",
+    title: "QA Testing Itself",
+    chatId: "7ee3e942-c5dd-4e49-93b6-353bb5273b7e",
+    description: "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
+    tag: "QA Testing",
   },
   {
     title: "Sending an Email on Your Behalf",
     chatId: "60a0722b-fb98-43d6-a4e7-951d80a22363",
     description: "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
     tag: "Communication",
+  },
+  {
+    title: "Applying to a Job",
+    chatId: "4ac6f3d2-c273-4a07-bf98-b986d1cbfb88",
+    description: "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
+    tag: "Job Application",
+  },
+  {
+    title: "Posting on Hacker News",
+    chatId: "d181de46-b41d-4b87-9648-0374b2b7ec1c",
+    description: "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
+    tag: "Social Media",
   },
 ]
 
@@ -380,15 +382,6 @@ export function LandingPage() {
       }
 
   // Animated use-case cycling for hero
-  const [useCaseIndex, setUseCaseIndex] = useState(0)
-  useEffect(() => {
-    if (!mounted) return
-    const interval = setInterval(() => {
-      setUseCaseIndex((prev) => (prev + 1) % heroUseCases.length)
-    }, 2400)
-    return () => clearInterval(interval)
-  }, [mounted])
-
   const contentVisible = mounted && (isMobile || showPageContent)
   const headerVisible = mounted && (isMobile || !showBrandIntro)
 
@@ -515,114 +508,15 @@ export function LandingPage() {
             />
           )}
 
-          {/* Soft radial glow behind content */}
-          <div className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[700px] rounded-full bg-primary/[0.03] blur-3xl dark:bg-primary/[0.05]" />
-
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="relative z-10 w-full max-w-5xl"
+            className="relative z-10 w-full"
           >
-            {/* Badge */}
-            <motion.div variants={itemVariants} className="flex justify-center mb-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-background/80 backdrop-blur-sm px-4 py-1.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                </span>
-                <span className="text-xs sm:text-sm font-medium text-muted-foreground">
-                  #1 on OSWorld Benchmark · <span className="text-foreground font-semibold">82%</span>
-                </span>
-              </div>
-            </motion.div>
-
-            {/* Headline */}
-            <motion.div variants={itemVariants} className="text-center mb-5">
-              <h1 className={cn(
-                "tracking-tight leading-[1.15]",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl lg:text-6xl"
-              )}>
-                <span className="block text-foreground font-normal">Human-level work on a computer.</span>
-                <span className="block font-bold text-primary">1/50th the cost.</span>
-                <span className="block font-bold text-foreground">Fully secure.</span>
-              </h1>
-            </motion.div>
-
-            {/* Subheadline */}
-            <motion.div variants={itemVariants} className="text-center mb-8">
-              <p className={cn(
-                "text-muted-foreground mx-auto leading-relaxed",
-                isMobile ? "text-sm max-w-xs" : "text-base sm:text-lg max-w-xl"
-              )}>
-                Delegate real work to an AI employee that{" "}
-                <span className="relative inline-block align-bottom">
-                  <span className={cn("invisible whitespace-nowrap", handwriting.className)} aria-hidden="true">
-                    analyzes spreadsheets
-                  </span>
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={useCaseIndex}
-                      initial={{ y: 12, opacity: 0, filter: "blur(4px)" }}
-                      animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                      exit={{ y: -12, opacity: 0, filter: "blur(4px)" }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className={cn(
-                        "absolute inset-0 flex items-center justify-start whitespace-nowrap text-primary font-semibold",
-                        handwriting.className
-                      )}
-                    >
-                      {heroUseCases[useCaseIndex]}
-                    </motion.span>
-                  </AnimatePresence>
-                </span>
-              </p>
-            </motion.div>
-
-            {/* CTA Buttons */}
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
-              <RainbowButton size="lg" className="w-full sm:w-auto" asChild>
-                <Link href="/auth">
-                  Get Started Free
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </RainbowButton>
-            </motion.div>
-
-            {/* Cost comparison pill */}
-            <motion.div variants={itemVariants} className="flex justify-center mb-12">
-              <div className={cn(
-                "inline-flex items-center gap-2.5 rounded-full border border-border/50 bg-muted/30 backdrop-blur-sm",
-                isMobile ? "px-3.5 py-1.5" : "px-5 py-2"
-              )}>
-                <span className={cn("text-muted-foreground", isMobile ? "text-[11px]" : "text-xs sm:text-sm")}>
-                  Avg. hire <span className="font-semibold text-foreground">$3,000/mo</span>
-                </span>
-                <span className="h-3 w-px bg-border/60" />
-                <span className={cn("text-muted-foreground", isMobile ? "text-[11px]" : "text-xs sm:text-sm")}>
-                  Coasty <span className="font-semibold text-primary">$50/mo</span>
-                </span>
-                <span className="h-3 w-px bg-border/60" />
-                <span className={cn("text-muted-foreground", isMobile ? "text-[11px]" : "text-xs sm:text-sm")}>
-                  Save <span className="font-semibold text-emerald-500">$2,950/mo</span>
-                </span>
-              </div>
-            </motion.div>
-
-            {/* Hero demo: YouTube video embed */}
-            <motion.div variants={itemVariants} className="relative rounded-xl overflow-hidden border border-border/30 shadow-2xl shadow-primary/5 bg-black">
-              <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-                <iframe
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full"
-                  src="https://www.youtube-nocookie.com/embed/kmPNPja0j-Y?rel=0&modestbranding=1&showinfo=0"
-                  title="Coasty AI Agent Demo"
-                  allowFullScreen
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  style={{ border: "none" }}
-                />
-              </div>
+            <motion.div variants={itemVariants}>
+              <HeroUseCaseCarousel isMobile={isMobile} />
             </motion.div>
           </motion.div>
         </section>
@@ -645,10 +539,10 @@ export function LandingPage() {
               isMobile ? "grid-cols-2 gap-6" : "grid-cols-4 gap-8"
             )}>
               {[
-                { value: "82%", label: "OSWorld Score", sublabel: "#1 Benchmark" },
+                { value: "82%", label: "Task Success Rate", sublabel: "#1 in the world" },
                 { value: "50x", label: "Cheaper", sublabel: "Than hiring" },
                 { value: "24/7", label: "Uptime", sublabel: "Always on" },
-                { value: "<1 min", label: "Setup Time", sublabel: "Start instantly" },
+                { value: "<1 min", label: "To First Task", sublabel: "No setup needed" },
               ].map((stat) => (
                 <div key={stat.label}>
                   <div className={cn(
@@ -664,6 +558,119 @@ export function LandingPage() {
             </motion.div>
           </motion.div>
         </section>
+
+        {/* Use Cases by Persona */}
+        <section id="use-cases" className={cn(
+          "py-24 relative",
+          isMobile ? "px-4" : "px-6"
+        )}>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-14">
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+              )}>
+                One agent, every role.
+              </h2>
+              <p className={cn(
+                "text-muted-foreground mt-3",
+                isMobile ? "text-sm" : "text-base"
+              )}>
+                Whatever your role, Coasty takes the busywork off your plate.
+              </p>
+            </motion.div>
+
+            <div className={cn(
+              "grid gap-px bg-border/30 rounded-2xl overflow-hidden border border-border/30",
+              isMobile ? "grid-cols-1" : "grid-cols-2"
+            )}>
+              {[
+                {
+                  persona: "Startup Founder",
+                  pain: "I can't afford to hire, but I need things done.",
+                  tasks: ["Competitor research & market analysis", "Lead list building & outreach prep", "Financial model data entry", "Vendor comparisons & procurement"],
+                  icon: Rocket,
+                },
+                {
+                  persona: "Ops Manager",
+                  pain: "50 repetitive tasks are eating my team's time.",
+                  tasks: ["Automated report generation every Monday", "Invoice processing & data extraction", "Employee onboarding form filling", "Cross-system data syncing"],
+                  icon: RefreshCw,
+                },
+                {
+                  persona: "Solopreneur",
+                  pain: "I'm drowning in admin work.",
+                  tasks: ["Scheduling meetings & calendar management", "Email drafts & follow-ups", "Bookkeeping data entry", "Social media research & posting"],
+                  icon: Users,
+                },
+                {
+                  persona: "Agency Owner",
+                  pain: "I need to scale without scaling headcount.",
+                  tasks: ["Client reporting at scale", "Multi-account social management", "Bulk content research & briefs", "QA testing across client sites"],
+                  icon: Cpu,
+                },
+              ].map((item) => (
+                <motion.div
+                  key={item.persona}
+                  variants={itemVariants}
+                  className={cn(
+                    "group relative bg-background transition-colors duration-300 hover:bg-foreground/[0.02]",
+                    isMobile ? "p-5" : "p-8"
+                  )}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <item.icon className="h-4 w-4 text-foreground/30 transition-colors duration-300 group-hover:text-foreground/50" />
+                    <h3 className={cn(
+                      "font-medium text-foreground/80 tracking-tight",
+                      isMobile ? "text-sm" : "text-[15px]"
+                    )}>
+                      {item.persona}
+                    </h3>
+                  </div>
+
+                  <p className={cn(
+                    "text-muted-foreground/50 italic leading-relaxed mb-5",
+                    isMobile ? "text-xs" : "text-[13px]"
+                  )}>
+                    &ldquo;{item.pain}&rdquo;
+                  </p>
+
+                  <div className="space-y-2">
+                    {item.tasks.map((task) => (
+                      <div key={task} className="flex items-start gap-2.5">
+                        <div className="h-px w-3 flex-shrink-0 bg-foreground/15 mt-[9px]" />
+                        <span className={cn(
+                          "text-muted-foreground/60 leading-snug",
+                          isMobile ? "text-xs" : "text-[13px]"
+                        )}>{task}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div variants={itemVariants} className="flex justify-center mt-10">
+              <Link
+                href="/auth"
+                className={cn(
+                  "inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors duration-300",
+                  isMobile ? "text-sm" : "text-[15px]"
+                )}
+              >
+                <span className="font-medium">Start delegating</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </motion.div>
+          </motion.div>
+        </section>
+
 
         {/* How It Works Section */}
         <section id="how-it-works" className={cn(
@@ -688,7 +695,7 @@ export function LandingPage() {
                 "text-muted-foreground mt-3",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Three steps. No setup. No training.
+                From task to done in three simple steps.
               </p>
             </motion.div>
 
@@ -888,124 +895,6 @@ export function LandingPage() {
           </motion.div>
         </section>
 
-        {/* Use Cases by Persona */}
-        <section id="use-cases" className={cn(
-          "py-24 relative",
-          isMobile ? "px-4" : "px-6"
-        )}>
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-            className="max-w-5xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className="text-center mb-16">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
-              )}>
-                Built for How <span className="text-primary">You</span> Work
-              </h2>
-              <p className={cn(
-                "text-muted-foreground mt-4 mx-auto leading-relaxed",
-                isMobile ? "text-sm max-w-xs" : "text-base max-w-lg"
-              )}>
-                Whatever your role, Coasty takes the busywork off your plate.
-              </p>
-            </motion.div>
-
-            <div className={cn(
-              "grid gap-4",
-              isMobile ? "grid-cols-1" : "grid-cols-2"
-            )}>
-              {[
-                {
-                  persona: "Startup Founder",
-                  pain: "I can't afford to hire, but I need things done.",
-                  tasks: ["Competitor research & market analysis", "Lead list building & outreach prep", "Financial model data entry", "Vendor comparisons & procurement"],
-                  icon: Rocket,
-                },
-                {
-                  persona: "Ops Manager",
-                  pain: "50 repetitive tasks are eating my team's time.",
-                  tasks: ["Automated report generation every Monday", "Invoice processing & data extraction", "Employee onboarding form filling", "Cross-system data syncing"],
-                  icon: RefreshCw,
-                },
-                {
-                  persona: "Solopreneur",
-                  pain: "I'm drowning in admin work.",
-                  tasks: ["Scheduling meetings & calendar management", "Email drafts & follow-ups", "Bookkeeping data entry", "Social media research & posting"],
-                  icon: Users,
-                },
-                {
-                  persona: "Agency Owner",
-                  pain: "I need to scale without scaling headcount.",
-                  tasks: ["Client reporting at scale", "Multi-account social management", "Bulk content research & briefs", "QA testing across client sites"],
-                  icon: Cpu,
-                },
-              ].map((item) => (
-                <motion.div
-                  key={item.persona}
-                  variants={itemVariants}
-                  className={cn(
-                    "group relative rounded-2xl border border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden",
-                    "transition-all duration-500 ease-out",
-                    "hover:border-foreground/20 hover:bg-card/60 hover:shadow-xl hover:shadow-black/5",
-                    "hover:-translate-y-0.5",
-                    isMobile ? "p-5" : "p-7"
-                  )}
-                >
-                  {/* Subtle top gradient accent */}
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-foreground/20 via-foreground/10 to-foreground/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="flex items-center gap-3.5 mb-5">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-foreground/5 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
-                      <item.icon className="h-4.5 w-4.5 text-foreground/60" />
-                    </div>
-                    <div>
-                      <h3 className={cn(
-                        "font-semibold tracking-tight text-foreground leading-none",
-                        isMobile ? "text-sm" : "text-[15px]"
-                      )}>
-                        {item.persona}
-                      </h3>
-                    </div>
-                  </div>
-
-                  <p className={cn(
-                    "text-muted-foreground/80 leading-relaxed mb-5 pl-0.5",
-                    isMobile ? "text-xs" : "text-sm"
-                  )}>
-                    &ldquo;{item.pain}&rdquo;
-                  </p>
-
-                  <div className="space-y-2.5 pl-0.5">
-                    {item.tasks.map((task) => (
-                      <div key={task} className="flex items-center gap-2.5">
-                        <div className="h-1 w-1 rounded-full flex-shrink-0 bg-foreground/30" />
-                        <span className={cn(
-                          "text-muted-foreground/70 leading-snug",
-                          isMobile ? "text-xs" : "text-[13px]"
-                        )}>{task}</span>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div variants={itemVariants} className="flex justify-center mt-12">
-              <RainbowButton size="lg" asChild>
-                <Link href="/auth">
-                  Start Delegating Work
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </RainbowButton>
-            </motion.div>
-          </motion.div>
-        </section>
-
         {/* Demo Section */}
         <section id="demo" className={cn(
           "py-20 relative",
@@ -1112,13 +1001,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Your Full-Stack AI Employee
+                Why Teams Trust Coasty
               </h2>
               <p className={cn(
                 "text-muted-foreground",
                 isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
               )}>
-                Every capability a remote worker would have — and more
+                Built to deliver real results, not just demos
               </p>
             </motion.div>
             
@@ -1170,13 +1059,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                State of the Art Computer-Using Performance
+                Don’t Take Our Word for It
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-3",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                OSWorld benchmark measures real-world computer task completion across browsers, office apps, and system operations.
+                Independent benchmarks prove Coasty outperforms every other AI agent at real computer tasks.
               </p>
             </motion.div>
 
