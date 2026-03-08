@@ -37,28 +37,28 @@ const handwriting = Caveat({
 const features = [
   {
     icon: Zap,
-    title: "It Fixes Its Own Mistakes",
-    description: "Wrong click? Dead end? The agent catches errors, course-corrects, and keeps going. You assign the task and walk away — it handles the rest.",
+    title: "Self-Correcting Execution",
+    description: "Wrong click? Dead end? Your AI workforce catches errors, course-corrects, and keeps going. Assign the operation and walk away — it delivers results.",
   },
   {
     icon: Shield,
-    title: "You See Everything It Does",
-    description: "Full audit trail of every action. Every click, every keystroke, every decision — logged and reviewable. Complete transparency, zero guesswork.",
+    title: "Full Operational Visibility",
+    description: "Every action logged. Every click, every keystroke, every decision — a complete audit trail your team can review. The transparency of 10 employees with the overhead of zero.",
   },
   {
     icon: CalendarCheck,
-    title: "Never Miss a Meeting Again",
-    description: "Hand off your calendar chaos. Coasty books appointments, sends follow-ups, and keeps your schedule tight — like a PA who never sleeps and never forgets.",
+    title: "Runs While You Sleep",
+    description: "Operations don’t stop at 5pm. Coasty processes tickets, sends follow-ups, generates reports, and manages workflows around the clock — 365 days a year.",
   },
   {
     icon: Monitor,
-    title: "Your Data Stays Yours",
-    description: "Every task runs in an isolated sandbox. Your files stay safe, your computer stays untouched, and nothing leaks between sessions. Enterprise-grade security by default.",
+    title: "Isolated & Secure",
+    description: "Every operation runs in an isolated sandbox. Your data stays safe, nothing leaks between sessions. Enterprise-grade security built for running real business operations.",
   },
   {
     icon: Star,
-    title: "Work That Actually Gets Done",
-    description: "#1 on the OSWorld benchmark. This isn’t a chatbot that tries — it’s an agent that delivers. Real tasks, completed end-to-end.",
+    title: "82% Success Rate — #1 in the World",
+    description: "#1 on the OSWorld benchmark. This isn’t a chatbot that tries — it’s an autonomous workforce that executes. Real operations, completed end-to-end.",
   },
 ]
 
@@ -67,7 +67,7 @@ const pricingPlans = [
     name: "Free",
     price: "$0",
     period: "month",
-    description: "Save 30 min (go touch grass)",
+    description: "Test drive your AI workforce",
     agentMinutes: "100 credits/month",
     features: [
       "1 virtual machine, 2 hours",
@@ -86,7 +86,7 @@ const pricingPlans = [
     name: "Starter",
     price: "$19",
     period: "month",
-    description: "Saves ~6-12 hrs of manual work",
+    description: "Run one department autonomously",
     agentMinutes: "200 credits/month",
     features: [
       "1 persistent machine, no limits",
@@ -107,7 +107,7 @@ const pricingPlans = [
     name: "Plus",
     price: "$50",
     period: "month",
-    description: "Saves ~18-24 hrs of manual work",
+    description: "Run multiple departments at scale",
     agentMinutes: "600 credits/month",
     features: [
       "2 persistent machines, no limits",
@@ -131,7 +131,7 @@ const pricingPlans = [
     name: "Pro",
     price: "$100",
     period: "month",
-    description: "Saves ~24-36 hrs of manual work",
+    description: "Full company operations coverage",
     agentMinutes: "1500 credits/month",
     features: [
       "3 persistent machines, no limits",
@@ -242,28 +242,28 @@ const demoChatSessions = [
 
 const faqs = [
   {
-    question: "What is Coasty and how does it work?",
-    answer: "Coasty is an AI-powered computer-use platform that gives you a virtual machine controlled by an intelligent agent. You describe what you need done, and the agent handles it autonomously — browsing the web, running commands, managing files, and more. Think of it as a digital employee that works inside its own computer."
+    question: "What is Coasty?",
+    answer: "Coasty is an autonomous AI workforce platform. You assign business operations — marketing campaigns, lead generation, support tickets, data processing, QA testing — and Coasty executes them end-to-end on real computers. It browses the web, fills forms, sends emails, extracts data, and manages workflows, just like a team of employees would."
+  },
+  {
+    question: "How is this different from ChatGPT or other AI assistants?",
+    answer: "AI assistants generate text. Coasty executes operations. It doesn't just tell you what to do — it opens a browser, navigates to websites, clicks buttons, fills forms, sends emails, and delivers completed work. Think of it as hiring an operations team, not chatting with a bot."
+  },
+  {
+    question: "What operations can Coasty run?",
+    answer: "Anything a human can do on a computer. Lead generation and outreach, marketing campaigns, support ticket resolution, data extraction and reporting, QA testing, form filling, social media management, competitive research, invoice processing, recruiting — if it involves a browser or desktop application, Coasty can run it."
   },
   {
     question: "What are credits and how are they used?",
-    answer: "Credits are the currency that powers your AI agent sessions. Each task you assign consumes credits based on its complexity and duration. The Free plan includes 100 credits per month, and paid plans offer significantly more. You can also purchase additional credit packs anytime if you need a top-up."
+    answer: "Credits power your AI workforce. Each operation consumes credits based on complexity and duration. The Free plan includes 100 credits per month, and paid plans offer significantly more. You can also purchase additional credit packs anytime to scale up operations."
   },
   {
-    question: "What's the difference between the plans?",
-    answer: "We offer four plans to fit your needs. Free ($0/mo) gives you 100 credits and a 2-hour VM to try things out. Starter ($19/mo) provides 200 credits with a persistent VM and human support. Plus ($50/mo) includes 600 credits, API access, and priority support. Pro ($100/mo) offers 1,500 credits, early access to new features, SLA guarantees, and premium support."
+    question: "Can Coasty run on my own computer?",
+    answer: "Yes. Our desktop app runs as a lightweight overlay on your machine, executing operations directly on your local browser and applications. Alternatively, operations run on isolated cloud machines — your choice."
   },
   {
-    question: "What is a persistent virtual machine?",
-    answer: "Paid plans include a persistent virtual machine that retains your files, installed software, and configuration across sessions. Unlike the Free plan's VM (which resets after 2 hours), a persistent VM lets you pick up exactly where you left off — no re-setup required."
-  },
-  {
-    question: "Can I purchase additional credits?",
-    answer: "Yes. All subscribers can purchase additional credit packs at any time from the billing section of their account. Packs are available in multiple sizes with bulk discounts of up to 20%, so you never have to worry about running out mid-project."
-  },
-  {
-    question: "What can the AI agent actually do?",
-    answer: "The agent can browse websites, fill out forms, extract data, run terminal commands, manage files, automate desktop applications, and much more. It operates inside a full Ubuntu desktop environment with Chrome, development tools, and office software pre-installed. You can also connect your own desktop via our Electron app for local automation."
+    question: "Is my data safe?",
+    answer: "Every operation runs in an isolated sandbox environment. Nothing leaks between sessions. Your files stay safe, your credentials stay private, and every action is logged in a full audit trail. Enterprise-grade security by default."
   },
 ]
 
@@ -396,10 +396,10 @@ export function LandingPage() {
               isMobile ? "grid-cols-2 gap-6" : "grid-cols-4 gap-0"
             )}>
               {[
-                { value: "82%", label: "Task success rate", sublabel: "#1 in the world" },
-                { value: "50x", label: "Cheaper than hiring", sublabel: "Same output, fraction of cost" },
-                { value: "24/7", label: "Always available", sublabel: "No breaks, no sick days" },
-                { value: "<1 min", label: "To first task", sublabel: "No setup needed" },
+                { value: "82%", label: "Task success rate", sublabel: "#1 globally on OSWorld" },
+                { value: "10+", label: "Departments covered", sublabel: "Marketing to finance" },
+                { value: "24/7", label: "Always running", sublabel: "No shifts, no downtime" },
+                { value: "$0", label: "Headcount added", sublabel: "Zero employees needed" },
               ].map((stat, i) => (
                 <div key={stat.label} className={cn(
                   !isMobile && i > 0 && "border-l border-border/30"
@@ -435,41 +435,41 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                One agent, every role
+                Every department. Zero headcount.
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Whatever your role, Coasty takes the busywork off your plate
+                Other companies hire 20 people. You deploy Coasty.
               </p>
             </motion.div>
 
             {(() => {
               const personas = [
                 {
-                  persona: "Startup Founder",
-                  pain: "I can't afford to hire, but I need things done.",
-                  result: "Save $4,000+/mo on virtual assistants",
-                  tasks: ["Competitor research & market analysis", "Lead list building & outreach prep", "Financial model data entry", "Vendor comparisons & procurement"],
+                  persona: "2-Person Startup",
+                  pain: "We need a 20-person team but can only afford two.",
+                  result: "Run marketing, sales, and ops with zero hires",
+                  tasks: ["Run weekly competitor research across 10 markets", "Build and maintain a 500-lead pipeline", "Process vendor proposals and compare pricing", "Generate investor update reports every Friday"],
                 },
                 {
-                  persona: "Ops Manager",
-                  pain: "50 repetitive tasks are eating my team's time.",
-                  result: "Reclaim 20+ hours per week for your team",
-                  tasks: ["Automated report generation every Monday", "Invoice processing & data extraction", "Employee onboarding form filling", "Cross-system data syncing"],
+                  persona: "Scaling Agency",
+                  pain: "We landed 3x more clients but can't hire fast enough.",
+                  result: "Service 30 clients with a team of 5",
+                  tasks: ["Generate weekly performance reports per client", "Run QA across every client's staging site", "Manage social calendars for 15 accounts", "Research and brief 20 content pieces per week"],
                 },
                 {
-                  persona: "Solopreneur",
-                  pain: "I'm drowning in admin work.",
-                  result: "Get back to the work that actually grows your business",
-                  tasks: ["Scheduling meetings & calendar management", "Email drafts & follow-ups", "Bookkeeping data entry", "Social media research & posting"],
+                  persona: "E-commerce Brand",
+                  pain: "Support, returns, and inventory are drowning us.",
+                  result: "Handle 500+ tickets/week without a support team",
+                  tasks: ["Resolve support tickets by pulling order data", "Monitor competitor pricing and update catalogs", "Process returns and generate refund reports", "Run daily social media engagement campaigns"],
                 },
                 {
-                  persona: "Agency Owner",
-                  pain: "I need to scale without scaling headcount.",
-                  result: "Handle 3x more clients with the same team",
-                  tasks: ["Client reporting at scale", "Multi-account social management", "Bulk content research & briefs", "QA testing across client sites"],
+                  persona: "Solo Operator",
+                  pain: "I run the whole company alone.",
+                  result: "Operate like a 10-person company, solo",
+                  tasks: ["Prospect, qualify, and send outreach sequences", "Schedule meetings, send agendas, and follow up", "Reconcile invoices and update financial trackers", "Post across 4 channels and engage with replies"],
                 },
               ]
               const active = personas[activePersona]
@@ -582,13 +582,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Three steps. That's it.
+                Deploy in 60 seconds
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Describe the task, watch it work, review the results
+                No hiring, no onboarding, no management overhead
               </p>
             </motion.div>
 
@@ -600,20 +600,20 @@ export function LandingPage() {
                 {
                   step: "1",
                   icon: MessageSquare,
-                  title: "Tell it what to do",
-                  description: "Describe the task in plain English. \"Research competitors and put the results in a spreadsheet.\" \"Fill out this form.\" \"Debug this code.\""
+                  title: "Assign the operation",
+                  description: "\"Run outreach to 100 leads and log responses in the CRM.\" \"Process this week's invoices.\" \"QA the checkout flow on staging.\""
                 },
                 {
                   step: "2",
                   icon: Monitor,
-                  title: "It works on a real computer",
-                  description: "Your AI employee opens a browser, clicks, types, and navigates — just like a person sitting at a desk. You can watch it work in real time."
+                  title: "It runs autonomously",
+                  description: "Your AI workforce opens browsers, navigates apps, fills forms, extracts data — operating real software exactly like a human employee would."
                 },
                 {
                   step: "3",
                   icon: Check,
-                  title: "Review the results",
-                  description: "When it's done, review the output. Download files, check the spreadsheet, verify the form. Full audit trail of every action taken."
+                  title: "Operations complete",
+                  description: "Reports generated. Emails sent. Data extracted. Every action logged with a full audit trail. Review outputs and deploy the next operation."
                 }
               ].map((item, i) => (
                 <motion.div
@@ -666,13 +666,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Why pay more for less?
+                The cost of a team vs. Coasty
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                A virtual assistant costs $3,000/mo and works 8 hours a day. Coasty works around the clock for a fraction of the price.
+                A 3-person operations team costs $12,000+/mo. Coasty runs the same workload 24/7.
               </p>
             </motion.div>
 
@@ -689,18 +689,18 @@ export function LandingPage() {
                         <Users className="h-5 w-5 text-muted-foreground/60" />
                       </div>
                       <div>
-                        <h3 className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Hiring a Human</h3>
-                        <p className="text-xs text-muted-foreground/50 mt-0.5">Virtual assistant or employee</p>
+                        <h3 className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Hiring a Team</h3>
+                        <p className="text-xs text-muted-foreground/50 mt-0.5">VAs, contractors, or employees</p>
                       </div>
                     </div>
                   </div>
                   <div className={cn(isMobile ? "px-5 py-4" : "px-8 py-6")}>
                     {[
-                      { label: "Monthly cost", value: "$3,000 – $5,000", negative: true },
+                      { label: "Monthly cost", value: "$8,000 – $15,000+", negative: true },
                       { label: "Availability", value: "8 hrs/day, weekdays", negative: true },
-                      { label: "Ramp-up time", value: "2–4 weeks", negative: true },
-                      { label: "Sick days & PTO", value: "15–25 days/year", negative: true },
-                      { label: "Scaling", value: "Hire more people", negative: true },
+                      { label: "Ramp-up time", value: "2–6 weeks per hire", negative: true },
+                      { label: "Turnover risk", value: "30% annual avg", negative: true },
+                      { label: "Scaling", value: "Hire, train, manage", negative: true },
                       { label: "Audit trail", value: "None", negative: true },
                     ].map((row) => (
                       <div key={row.label} className={cn(
@@ -739,8 +739,8 @@ export function LandingPage() {
                           )}
                         </div>
                         <div>
-                          <h3 className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Coasty AI Employee</h3>
-                          <p className="text-xs text-muted-foreground/50 mt-0.5">AI-powered computer agent</p>
+                          <h3 className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Coasty AI Workforce</h3>
+                          <p className="text-xs text-muted-foreground/50 mt-0.5">Autonomous operations platform</p>
                         </div>
                       </div>
                       <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-1 text-[10px] font-semibold text-primary uppercase tracking-wider">Recommended</span>
@@ -749,10 +749,10 @@ export function LandingPage() {
                   <div className={cn("relative", isMobile ? "px-5 py-4" : "px-8 py-6")}>
                     {[
                       { label: "Monthly cost", value: "From $0/mo" },
-                      { label: "Availability", value: "24/7, no breaks" },
-                      { label: "Ramp-up time", value: "30 seconds" },
-                      { label: "Sick days & PTO", value: "Never" },
-                      { label: "Scaling", value: "Instant" },
+                      { label: "Availability", value: "24/7, every day" },
+                      { label: "Ramp-up time", value: "60 seconds" },
+                      { label: "Turnover risk", value: "Zero" },
+                      { label: "Scaling", value: "Instant, no hiring" },
                       { label: "Audit trail", value: "Every action logged" },
                     ].map((row) => (
                       <div key={row.label} className={cn(
@@ -777,11 +777,11 @@ export function LandingPage() {
                 isMobile ? "px-4 py-2.5" : "px-6 py-3"
               )}>
                 <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
-                  Save up to <span className="font-bold text-foreground">$4,900/mo</span>
+                  Replace a <span className="font-bold text-foreground">$12k/mo team</span>
                 </span>
                 <span className="h-4 w-px bg-border/50" />
                 <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
-                  <span className="font-bold text-primary">50x</span> cheaper
+                  <span className="font-bold text-primary">100x</span> cheaper
                 </span>
               </div>
             </motion.div>
@@ -805,13 +805,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                See it in action
+                Watch it run operations
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Real sessions. No scripts. No edits.
+                Real operations. Unscripted. Every click recorded.
               </p>
             </motion.div>
 
@@ -894,13 +894,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Why teams trust Coasty
+                Built for real operations
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Built to deliver real results, not just demos
+                Not a chatbot. An autonomous workforce that runs your business.
               </p>
             </motion.div>
             
@@ -1199,25 +1199,25 @@ export function LandingPage() {
             {(() => {
               const plan = pricingPlans[comparisonPlan]
               // Tier-appropriate human equivalent costs
-              const humanCost = plan.price === "$0" ? "$800" : plan.price === "$19" ? "$1,500" : plan.price === "$50" ? "$3,000" : "$5,000"
-              const humanCostNum = plan.price === "$0" ? 800 : plan.price === "$19" ? 1500 : plan.price === "$50" ? 3000 : 5000
+              const humanCost = plan.price === "$0" ? "$2,000" : plan.price === "$19" ? "$4,000" : plan.price === "$50" ? "$8,000" : "$12,000"
+              const humanCostNum = plan.price === "$0" ? 2000 : plan.price === "$19" ? 4000 : plan.price === "$50" ? 8000 : 12000
               const coastyCostNum = plan.price === "$0" ? 0 : plan.price === "$19" ? 19 : plan.price === "$50" ? 50 : 100
               const savings = (humanCostNum - coastyCostNum).toLocaleString()
 
               const rows: { label: string; coasty: string | boolean; human: string | boolean }[] = [
                 { label: "Monthly cost", coasty: `${plan.price}/mo`, human: `${humanCost}/mo` },
                 { label: "You save", coasty: `$${savings}/mo`, human: "$0" },
-                { label: "Available", coasty: "24/7, no breaks", human: plan.price === "$0" ? "~4 hrs/week" : plan.price === "$19" ? "~5 hrs/day" : plan.price === "$50" ? "~8 hrs/day" : "~8 hrs/day" },
-                { label: "Start working in", coasty: "30 seconds", human: plan.price === "$0" ? "1-2 weeks" : plan.price === "$19" ? "1-2 weeks" : "2-4 weeks" },
-                { label: "Sick days & PTO", coasty: "Never", human: plan.price === "$0" ? "N/A (freelancer)" : "15-25 days/yr" },
+                { label: "Availability", coasty: "24/7, every day", human: "Business hours only" },
+                { label: "Deploy time", coasty: "60 seconds", human: "2-6 weeks to hire" },
+                { label: "Turnover risk", coasty: "Zero", human: "30% annual avg" },
                 { label: "Full audit trail", coasty: true, human: false },
-                { label: "Scale up instantly", coasty: true, human: false },
-                { label: "No HR or overhead", coasty: true, human: plan.price === "$0" },
-                { label: "Cancel anytime", coasty: true, human: plan.price === "$0" },
+                { label: "Scale instantly", coasty: true, human: false },
+                { label: "No HR overhead", coasty: true, human: false },
+                { label: "Cancel anytime", coasty: true, human: false },
               ]
 
-              const timeSaved = plan.price === "$0" ? "30 min" : plan.price === "$19" ? "6-12 hrs" : plan.price === "$50" ? "18-24 hrs" : "24-36 hrs"
-              const multiplier = plan.price === "$0" ? "Free" : plan.price === "$19" ? "79x" : plan.price === "$50" ? "60x" : "50x"
+              const deptsCovered = plan.price === "$0" ? "1 dept" : plan.price === "$19" ? "1-2 depts" : plan.price === "$50" ? "3-5 depts" : "Full ops"
+              const multiplier = plan.price === "$0" ? "Free" : plan.price === "$19" ? "210x" : plan.price === "$50" ? "160x" : "120x"
 
               return (
                 <>
@@ -1235,7 +1235,7 @@ export function LandingPage() {
                       </span>
                       <span className="h-3.5 w-px bg-border" />
                       <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
-                        <span className="font-semibold text-foreground">{timeSaved}</span> saved monthly
+                        Covers <span className="font-semibold text-foreground">{deptsCovered}</span>
                       </span>
                       <span className="h-3.5 w-px bg-border" />
                       <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
@@ -1352,7 +1352,7 @@ export function LandingPage() {
                           </div>
                           <div className="p-4 text-center border-l border-border">
                             <div className={cn("font-semibold text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
-                              Human Equivalent
+                              Hiring a Team
                             </div>
                             <div className={cn("font-bold text-muted-foreground mt-1 line-through decoration-destructive/50", isMobile ? "text-lg" : "text-xl")}>
                               {humanCost}<span className="text-xs font-normal no-underline">/mo</span>

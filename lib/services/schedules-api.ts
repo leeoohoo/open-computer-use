@@ -1,5 +1,5 @@
 /**
- * Frontend API client for scheduled tasks.
+ * Frontend API client for employee scheduling.
  *
  * Calls the Next.js proxy routes which forward to the Python backend.
  */
@@ -141,7 +141,7 @@ export function formatFrequency(frequency: string): string {
 }
 
 export function formatNextRun(nextRunAt: string | null): string {
-  if (!nextRunAt) return 'Not scheduled'
+  if (!nextRunAt) return 'Not assigned'
   const d = new Date(nextRunAt)
   const now = new Date()
   const diffMs = d.getTime() - now.getTime()

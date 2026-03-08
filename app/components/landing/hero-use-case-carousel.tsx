@@ -19,16 +19,16 @@ interface UseCase {
 }
 
 const USE_CASES: UseCase[] = [
-  { label: "Marketing", headline: "delivers results.", task: "Market your product on Reddit autonomously", videoId: "icxgLDephHE" },
-  { label: "Go-to-Market", headline: "saves you hours.", task: "Find prospects and send them a personalized email", videoId: "qTvmGfg3HVw" },
-  { label: "QA Testing", headline: "reports back.", task: "Test every checkout flow and report bugs", videoId: "Wbo2o74hVIo" },
-  { label: "Lead Gen", headline: "delivers leads.", task: "Find prospects and reach out via email", videoId: "icxgLDephHE" },
-  { label: "Sales", headline: "closes deals.", task: "Research each lead and send a follow-up email", videoId: "qTvmGfg3HVw" },
-  { label: "Job Application", headline: "lands interviews.", task: "Find roles, tailor your resume, and apply", videoId: "mH-csaCa508" },
-  { label: "Support", headline: "resolves tickets.", task: "Resolve tickets by looking up accounts and replying", videoId: "A_OvNh51Npg" },
-  { label: "Form Filling", headline: "submits forms.", task: "Fill out the YC S26 application for you", videoId: "AnHJuRMLCnE" },
-  { label: "Social Media", headline: "grows your reach.", task: "Post on Hacker News and engage with comments", videoId: "A_OvNh51Npg" },
-  { label: "Recruiting", headline: "finds candidates.", task: "Source candidates on LinkedIn and schedule calls", videoId: "AnHJuRMLCnE" },
+  { label: "Marketing", headline: "runs your marketing.", task: "Run a Reddit campaign — research, post, engage, and report back", videoId: "icxgLDephHE" },
+  { label: "Sales", headline: "works your pipeline.", task: "Research 50 leads, personalize outreach, and send follow-ups", videoId: "qTvmGfg3HVw" },
+  { label: "QA", headline: "tests your product.", task: "Run every checkout flow, catch bugs, and file detailed reports", videoId: "Wbo2o74hVIo" },
+  { label: "Lead Gen", headline: "fills your pipeline.", task: "Build prospect lists and launch outreach sequences at scale", videoId: "icxgLDephHE" },
+  { label: "Recruiting", headline: "hires your team.", task: "Source candidates on LinkedIn, screen profiles, and schedule calls", videoId: "AnHJuRMLCnE" },
+  { label: "HR & Admin", headline: "handles the paperwork.", task: "Process applications, fill onboarding forms, and manage documents", videoId: "mH-csaCa508" },
+  { label: "Support", headline: "runs your helpdesk.", task: "Resolve tickets 24/7 — look up accounts, draft replies, close issues", videoId: "A_OvNh51Npg" },
+  { label: "Finance", headline: "processes your books.", task: "Extract invoice data, reconcile entries, and update spreadsheets", videoId: "AnHJuRMLCnE" },
+  { label: "Growth", headline: "grows your channels.", task: "Post across Hacker News, Reddit, and social — engage with every reply", videoId: "A_OvNh51Npg" },
+  { label: "Operations", headline: "runs your ops.", task: "Generate weekly reports, sync data across systems, and schedule follow-ups", videoId: "qTvmGfg3HVw" },
 ]
 
 const CYCLE_MS = 4000
@@ -96,39 +96,30 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           </div>
         </div>
 
-        {/* Headline */}
+        {/* Headline — the positioning statement */}
         <h1 className={cn(
-          "font-bold tracking-tight leading-[1.1] mb-4",
-          isMobile ? "text-2xl" : "text-3xl sm:text-4xl lg:text-[2.75rem]"
+          "font-bold tracking-tight leading-[1.08]",
+          isMobile ? "text-3xl mb-3" : "text-4xl sm:text-5xl lg:text-[3.25rem] mb-4"
         )}>
-          <span className="text-foreground">Computer-using AI Employee that </span>
-          <span className="inline-block relative pb-1">
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={index}
-                initial={{ opacity: 0, y: 12, filter: "blur(6px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -12, filter: "blur(6px)" }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-                className={cn("inline-block bg-gradient-to-r from-violet-400 via-fuchsia-300 to-amber-300 bg-clip-text text-transparent leading-normal", !isMobile && "whitespace-nowrap")}
-              >
-                {current.headline}
-              </motion.span>
-            </AnimatePresence>
-          </span>
+          <span className="text-foreground">Run your entire company.</span>
+          <br />
+          <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, #f97316, #ec4899, #a855f7, #3b82f6, #06b6d4)' }}>Zero employees.</span>
         </h1>
 
-        {/* Rotating task */}
+        {/* Rotating department line */}
         <div className={cn(
           "mx-auto",
-          isMobile ? "max-w-sm" : "max-w-xl"
+          isMobile ? "max-w-sm" : "max-w-2xl"
         )}>
-          <div className={cn("flex items-center justify-center gap-1.5", isMobile ? "min-h-[2.5rem]" : "h-8 whitespace-nowrap")}>
+          <div className={cn(
+            "flex items-center justify-center gap-2",
+            isMobile ? "min-h-[2rem]" : "h-8"
+          )}>
             <span className={cn(
-              "text-muted-foreground/50 shrink-0",
+              "text-muted-foreground/60 shrink-0",
               isMobile ? "text-sm" : "text-base sm:text-lg"
             )}>
-              e.g.
+              AI that
             </span>
             <AnimatePresence mode="wait">
               <motion.span
@@ -138,11 +129,34 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                 exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
                 transition={{ duration: 0.3 }}
                 className={cn(
-                  "text-muted-foreground",
-                  isMobile ? "text-sm" : "text-base sm:text-lg"
+                  "text-foreground font-medium",
+                  isMobile ? "text-sm" : "text-base sm:text-lg",
+                  !isMobile && "whitespace-nowrap"
                 )}
               >
-                &ldquo;{current.task}&rdquo;
+                {current.headline}
+              </motion.span>
+            </AnimatePresence>
+          </div>
+
+          {/* Task example */}
+          <div className={cn(
+            "flex items-center justify-center gap-1.5 mt-1",
+            isMobile ? "min-h-[2rem]" : "h-7"
+          )}>
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={index}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className={cn(
+                  "text-muted-foreground/50",
+                  isMobile ? "text-xs" : "text-sm"
+                )}
+              >
+                {current.task}
               </motion.span>
             </AnimatePresence>
           </div>
@@ -162,7 +176,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
             >
-              Try It Free
+              Deploy Your Workforce
               <ArrowRight className="h-4 w-4" />
             </motion.button>
           </Link>

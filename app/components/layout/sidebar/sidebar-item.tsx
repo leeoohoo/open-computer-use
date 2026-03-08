@@ -28,8 +28,8 @@ import {
   MagnifyingGlass,
   Cpu,
   Package,
-  Timer,
 } from "@phosphor-icons/react"
+import { AgentIconFilled } from "@/components/icons/agent"
 import Link from "next/link"
 import { useCallback, useMemo, useRef, useState } from "react"
 import { SidebarItemMenu } from "./sidebar-item-menu"
@@ -394,9 +394,9 @@ export function SidebarItem({ chat, currentChatId, isCollaborative }: SidebarIte
                   {hasSchedule && (
                     <span
                       className="inline-flex shrink-0 items-center rounded bg-emerald-500/15 px-1 py-0.5 text-[9px] font-medium text-emerald-400"
-                      title="Scheduled"
+                      title="Employee Active"
                     >
-                      <Timer size={10} weight="fill" />
+                      <AgentIconFilled className="h-2.5 w-2.5" />
                     </span>
                   )}
                 </div>

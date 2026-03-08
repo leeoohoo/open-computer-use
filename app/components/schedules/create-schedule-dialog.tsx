@@ -1,35 +1,31 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {
   createSchedule,
-  FREQUENCY_OPTIONS,
   type ScheduleConfig,
   type ScheduleResponse,
 } from "@/lib/services/schedules-api"
 import { trackScheduleCreated } from "@/lib/posthog/analytics"
 import type { UserMachine } from "@/types/machines.types"
 import { createClient } from "@/lib/supabase/client"
-import { KeyRound, ArrowRight } from "lucide-react"
+import { KeyRound, ArrowRight, PenLine, AlertCircle } from "lucide-react"
+import { AgentIcon } from "@/components/icons/agent"
 import Link from "next/link"
+import {
+  ScheduleConfigBlock,
+  type ScheduleConfigState,
+} from "./schedule-config-block"
+import { cn } from "@/lib/utils"
 
 interface CreateScheduleDialogProps {
   open: boolean
@@ -38,16 +34,6 @@ interface CreateScheduleDialogProps {
   onScheduleCreated?: (schedule: ScheduleResponse) => void
 }
 
-const DAYS_OF_WEEK = [
-  { value: 0, label: "Monday" },
-  { value: 1, label: "Tuesday" },
-  { value: 2, label: "Wednesday" },
-  { value: 3, label: "Thursday" },
-  { value: 4, label: "Friday" },
-  { value: 5, label: "Saturday" },
-  { value: 6, label: "Sunday" },
-]
-
 export function CreateScheduleDialog({
   open,
   onOpenChange,
@@ -55,59 +41,67 @@ export function CreateScheduleDialog({
   onScheduleCreated,
 }: CreateScheduleDialogProps) {
   const [taskDescription, setTaskDescription] = useState("")
-  const [frequency, setFrequency] = useState("daily")
-  const [machineId, setMachineId] = useState("")
-  const [timezone, setTimezone] = useState("")
-  const [time, setTime] = useState("09:00")
-  const [dayOfWeek, setDayOfWeek] = useState(1)
-  const [dayOfMonth, setDayOfMonth] = useState(1)
-  const [customCron, setCustomCron] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [config, setConfig] = useState<ScheduleConfigState>({
+    frequency: "daily",
+    time: "09:00",
+    dayOfWeek: 1,
+    dayOfMonth: 1,
+    customCron: "",
+    timezone: "",
+    machineId: "",
+  })
 
-  // Detect timezone once
   useEffect(() => {
     try {
-      setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+      setConfig((prev) => ({
+        ...prev,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      }))
     } catch {
-      setTimezone("UTC")
+      setConfig((prev) => ({ ...prev, timezone: "UTC" }))
     }
   }, [])
 
-  // Reset state when dialog opens; auto-select a running machine
   useEffect(() => {
     if (open) {
       setTaskDescription("")
-      setFrequency("daily")
-      setTime("09:00")
-      setDayOfWeek(1)
-      setDayOfMonth(1)
-      setCustomCron("")
       setError(null)
       const firstRunning = machines.find((m) => m.status === "running")
-      setMachineId(firstRunning?.id ?? machines[0]?.id ?? "")
+      setConfig((prev) => ({
+        ...prev,
+        frequency: "daily",
+        time: "09:00",
+        dayOfWeek: 1,
+        dayOfMonth: 1,
+        customCron: "",
+        machineId: firstRunning?.id ?? machines[0]?.id ?? "",
+      }))
     }
   }, [open, machines])
 
-  const selectableMachines = machines.filter(
-    (m) => m.status !== "deleting" && m.status !== "error"
+  const handleConfigChange = useCallback(
+    (updates: Partial<ScheduleConfigState>) => {
+      setConfig((prev) => ({ ...prev, ...updates }))
+    },
+    []
   )
 
-  const showTimePicker = ["daily", "weekly", "monthly"].includes(frequency)
-  const showDayOfWeek = frequency === "weekly"
-  const showDayOfMonth = frequency === "monthly"
-  const showCustomCron = frequency === "custom"
+  const showTimePicker = ["daily", "weekly", "monthly"].includes(config.frequency)
+  const showDayOfWeek = config.frequency === "weekly"
+  const showDayOfMonth = config.frequency === "monthly"
 
   async function handleSave() {
     if (!taskDescription.trim()) {
-      setError("Please describe what the task should do")
+      setError("Please describe what the employee should do")
       return
     }
-    if (!machineId) {
-      setError("Please select a target machine")
+    if (!config.machineId) {
+      setError("Please select a workstation")
       return
     }
-    if (frequency === "custom" && !customCron) {
+    if (config.frequency === "custom" && !config.customCron) {
       setError("Please enter a cron expression")
       return
     }
@@ -116,14 +110,12 @@ export function CreateScheduleDialog({
     setError(null)
 
     try {
-      // 1. Get current user
       const supabase = createClient()
       const {
         data: { user },
       } = await supabase.auth.getUser()
       if (!user) throw new Error("Not authenticated")
 
-      // 2. Create a new chat with the task description as its title
       const chatRes = await fetch("/api/create-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -136,236 +128,183 @@ export function CreateScheduleDialog({
       })
       const chatData = await chatRes.json()
       if (!chatRes.ok || !chatData.chat) {
-        throw new Error(chatData.error || "Failed to create task")
+        throw new Error(chatData.error || "Failed to hire employee")
       }
 
-      // 3. Create the schedule on the new chat
-      const config: ScheduleConfig = {
-        frequency,
-        timezone,
-        machineId,
+      const scheduleConfig: ScheduleConfig = {
+        frequency: config.frequency,
+        timezone: config.timezone,
+        machineId: config.machineId,
         taskPrompt: taskDescription.trim(),
       }
-      if (frequency === "custom") config.cron = customCron
-      if (showTimePicker) config.time = time
-      if (showDayOfWeek) config.dayOfWeek = dayOfWeek
-      if (showDayOfMonth) config.dayOfMonth = dayOfMonth
+      if (config.frequency === "custom") scheduleConfig.cron = config.customCron
+      if (showTimePicker) scheduleConfig.time = config.time
+      if (showDayOfWeek) scheduleConfig.dayOfWeek = config.dayOfWeek
+      if (showDayOfMonth) scheduleConfig.dayOfMonth = config.dayOfMonth
 
-      const schedule = await createSchedule(chatData.chat.id, config)
-      trackScheduleCreated(chatData.chat.id, frequency)
+      const schedule = await createSchedule(chatData.chat.id, scheduleConfig)
+      trackScheduleCreated(chatData.chat.id, config.frequency)
       onScheduleCreated?.(schedule)
       onOpenChange(false)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create schedule")
+      setError(err instanceof Error ? err.message : "Failed to hire employee")
     } finally {
       setLoading(false)
     }
   }
 
+  const canSubmit = taskDescription.trim() && config.machineId && (config.frequency !== "custom" || config.customCron)
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex flex-col max-w-[calc(100vw-2rem)] sm:max-w-[480px] max-h-[90dvh] p-0 gap-0">
-        <DialogHeader className="px-5 pt-5 pb-3 shrink-0">
-          <DialogTitle>New Scheduled Task</DialogTitle>
-        </DialogHeader>
+      <DialogContent
+        className={cn(
+          "flex flex-col max-w-[calc(100vw-2rem)] sm:max-w-[540px] max-h-[90dvh] p-0 gap-0 overflow-hidden",
+          "bg-background text-foreground",
+          "border-foreground/[0.08]",
+          "shadow-[0_8px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_60px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.06)_inset,0_-20px_60px_-20px_rgba(255,255,255,0.02)_inset]",
+        )}
+      >
+        {/* Premium header with gradient */}
+        <div className="relative shrink-0 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-foreground/[0.04] via-foreground/[0.02] to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.1] to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.15] to-transparent" />
 
-        <div className="flex-1 min-h-0 overflow-y-auto px-5 pb-4 pt-1 space-y-4">
-          {/* Task description */}
-          <div className="space-y-2">
-            <Label>What should this task do?</Label>
+          <div className="relative px-6 pt-6 pb-5">
+            <DialogHeader>
+              <div className="flex items-center gap-3.5">
+                <div className={cn(
+                  "relative flex h-11 w-11 items-center justify-center rounded-2xl",
+                  "bg-gradient-to-br from-foreground/15 to-foreground/[0.06]",
+                  "ring-1 ring-foreground/[0.12]",
+                  "dark:shadow-[0_2px_12px_rgba(255,255,255,0.06)]",
+                )}>
+                  <AgentIcon className="h-5 w-5 text-foreground/80" />
+                  <div className="absolute inset-0 rounded-2xl bg-foreground/[0.04] animate-pulse" />
+                </div>
+                <div>
+                  <DialogTitle className="text-[17px] font-bold tracking-tight">
+                    Hire New Employee
+                  </DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                    Set up an AI employee to handle recurring tasks automatically
+                  </DialogDescription>
+                </div>
+              </div>
+            </DialogHeader>
+          </div>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="flex-1 min-h-0 overflow-y-auto px-6 pb-5 pt-5 space-y-6 scrollbar-invisible">
+          {/* Instructions */}
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-2">
+              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-foreground/[0.08]">
+                <PenLine className="h-3 w-3 text-foreground/50" />
+              </div>
+              <label className="text-[13px] font-semibold text-foreground/80 tracking-wide uppercase text-[11px]">
+                Instructions
+              </label>
+            </div>
             <Textarea
-              placeholder="e.g. Check my emails and summarise unread messages, then send a daily digest"
+              placeholder="e.g. Check my emails and summarise unread messages, then send a daily digest to #team-updates on Slack"
               value={taskDescription}
               onChange={(e) => setTaskDescription(e.target.value)}
               rows={3}
-              className="resize-none"
+              className={cn(
+                "resize-none text-sm leading-relaxed rounded-xl",
+                "!bg-foreground/[0.04] text-foreground",
+                "border-foreground/[0.08] hover:border-foreground/[0.14] focus-visible:border-foreground/[0.2]",
+                "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.3)]",
+                "placeholder:text-muted-foreground",
+                "transition-all duration-200",
+              )}
               autoFocus
             />
-            <p className="text-xs text-muted-foreground">
-              This becomes the task prompt used every time it runs.
+            <p className="text-[10px] text-muted-foreground pl-0.5">
+              These instructions are used every time the employee runs.
             </p>
           </div>
 
-          {/* Frequency */}
-          <div className="space-y-2">
-            <Label>Frequency</Label>
-            <Select value={frequency} onValueChange={setFrequency}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select frequency" />
-              </SelectTrigger>
-              <SelectContent>
-                {FREQUENCY_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Custom cron */}
-          {showCustomCron && (
-            <div className="space-y-2">
-              <Label>Cron Expression</Label>
-              <Input
-                placeholder="*/15 * * * *"
-                value={customCron}
-                onChange={(e) => setCustomCron(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                Standard 5-field cron (minute hour day month weekday)
-              </p>
-            </div>
-          )}
-
-          {/* Time picker */}
-          {showTimePicker && (
-            <div className="space-y-2">
-              <Label>Time</Label>
-              <Input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-              />
-            </div>
-          )}
-
-          {/* Day of week */}
-          {showDayOfWeek && (
-            <div className="space-y-2">
-              <Label>Day of Week</Label>
-              <Select
-                value={String(dayOfWeek)}
-                onValueChange={(v) => setDayOfWeek(Number(v))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {DAYS_OF_WEEK.map((d) => (
-                    <SelectItem key={d.value} value={String(d.value)}>
-                      {d.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {/* Day of month */}
-          {showDayOfMonth && (
-            <div className="space-y-2">
-              <Label>Day of Month</Label>
-              <Select
-                value={String(dayOfMonth)}
-                onValueChange={(v) => setDayOfMonth(Number(v))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from({ length: 28 }, (_, i) => i + 1).map((d) => (
-                    <SelectItem key={d} value={String(d)}>
-                      {d}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {/* Machine selector */}
-          <div className="space-y-2">
-            <Label>Target Machine</Label>
-            {selectableMachines.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No machines available. Create a machine first from My Computers.
-              </p>
-            ) : (
-              <Select value={machineId} onValueChange={setMachineId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a machine" />
-                </SelectTrigger>
-                <SelectContent>
-                  {selectableMachines.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>
-                      <span className="flex items-center gap-2">
-                        <span
-                          className={`h-2 w-2 rounded-full ${
-                            m.status === "running"
-                              ? "bg-green-500"
-                              : m.status === "stopped"
-                              ? "bg-gray-400"
-                              : "bg-yellow-500"
-                          }`}
-                        />
-                        {m.displayName}
-                        <span className="text-xs text-muted-foreground">
-                          {m.status}
-                        </span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-            <p className="text-xs text-muted-foreground">
-              Make sure the machine has all necessary logins and credentials so
-              the task can run unattended.
-            </p>
-          </div>
-
-          {/* Timezone */}
-          <div className="space-y-2">
-            <Label>Timezone</Label>
-            <Input
-              value={timezone}
-              onChange={(e) => setTimezone(e.target.value)}
-              placeholder="America/New_York"
-            />
-            <p className="text-xs text-muted-foreground">
-              Auto-detected. Change if needed.
-            </p>
-          </div>
+          <ScheduleConfigBlock
+            config={config}
+            onChange={handleConfigChange}
+            machines={machines}
+          />
 
           {/* Credentials hint */}
-          <div className="flex items-start gap-3 rounded-lg border border-border bg-foreground/[0.02] px-3 py-3">
+          <div className={cn(
+            "flex items-center gap-3 rounded-xl px-4 py-3",
+            "bg-foreground/[0.03]",
+            "border border-foreground/[0.06]",
+          )}>
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.06]">
-              <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
+              <KeyRound className="h-3.5 w-3.5 text-foreground/40" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium mb-0.5">Add credentials for auto-login</p>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                If this task logs into any websites, save your credentials so the AI can sign in automatically — no interruptions.
-              </p>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Need auto-login?{" "}
               <Link
                 href="/secrets"
-                className="inline-flex items-center gap-1 mt-2 text-[11px] font-medium text-foreground hover:text-foreground/70 transition-colors"
+                className="inline-flex items-center gap-0.5 font-semibold text-foreground/70 hover:text-foreground transition-colors"
               >
                 Add credentials
-                <ArrowRight className="h-3 w-3" />
+                <ArrowRight className="h-2.5 w-2.5" />
               </Link>
-            </div>
+            </p>
           </div>
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && (
+            <div className={cn(
+              "flex items-center gap-2.5 rounded-xl px-4 py-3",
+              "bg-foreground/[0.03]",
+              "border border-foreground/[0.08]",
+            )}>
+              <AlertCircle className="h-4 w-4 text-muted-foreground shrink-0" />
+              <p className="text-xs text-foreground/80 font-medium">{error}</p>
+            </div>
+          )}
         </div>
 
-        <DialogFooter className="px-5 py-4 shrink-0">
+        {/* Premium footer */}
+        <div className={cn(
+          "shrink-0 px-6 py-4 flex items-center justify-end gap-2.5",
+          "border-t border-foreground/[0.06]",
+        )}>
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={loading}
+            className="h-10 px-5 text-sm rounded-xl text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06]"
           >
             Cancel
           </Button>
-          <Button
+          <button
             onClick={handleSave}
-            disabled={loading || !machineId || !taskDescription.trim()}
+            disabled={loading || !canSubmit}
+            className={cn(
+              "relative h-10 px-6 rounded-xl text-sm font-semibold transition-all duration-300",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "disabled:opacity-40 disabled:cursor-not-allowed",
+              canSubmit && !loading
+                ? [
+                  "text-background",
+                  "bg-gradient-to-b from-foreground to-foreground/80",
+                  "hover:from-foreground hover:to-foreground/90",
+                  "shadow-[0_1px_3px_rgba(0,0,0,0.15)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.8)_inset,0_4px_16px_rgba(255,255,255,0.08)]",
+                  "hover:shadow-[0_1px_3px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.9)_inset,0_6px_24px_rgba(255,255,255,0.12)]",
+                  "hover:scale-[1.02] active:scale-[0.98]",
+                ]
+                : "text-muted-foreground bg-foreground/[0.06]"
+            )}
           >
-            {loading ? "Creating…" : "Create Schedule"}
-          </Button>
-        </DialogFooter>
+            <span className="flex items-center gap-2">
+              <AgentIcon className="h-4 w-4" />
+              {loading ? "Hiring..." : "Hire Employee"}
+            </span>
+          </button>
+        </div>
       </DialogContent>
     </Dialog>
   )

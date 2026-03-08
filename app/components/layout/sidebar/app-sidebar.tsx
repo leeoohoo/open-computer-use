@@ -26,12 +26,12 @@ import {
   CaretRight,
   CaretLeft,
   Gift,
-  Timer,
   Key,
 } from "@phosphor-icons/react"
 import { useParams, useRouter } from "next/navigation"
 import { useMemo, useState, useEffect } from "react"
 import { DialogCollaborativeAuth } from "../../collaborative/dialog-collaborative-auth"
+import { AgentIcon } from "@/components/icons/agent"
 import { SidebarList } from "./sidebar-list"
 import { getChatIcon } from "./sidebar-item"
 import { CoastyIcon } from "@/components/icons/coasty"
@@ -296,7 +296,7 @@ export function AppSidebar() {
                   </button>
                 )}
 
-                {/* Scheduled Tasks Button */}
+                {/* Employees Button */}
                 {shouldShowCollapsed ? (
                   <button
                     id="sidebar-schedules-link-collapsed"
@@ -307,9 +307,9 @@ export function AppSidebar() {
                     )}
                     type="button"
                     onClick={() => handleNavigation(() => router.push("/schedules"))}
-                    title="Scheduled Tasks"
+                    title="Employees"
                   >
-                    <Timer size={16} className="shrink-0" />
+                    <AgentIcon className="h-4 w-4 shrink-0" />
                   </button>
                 ) : (
                   <button
@@ -323,8 +323,8 @@ export function AppSidebar() {
                     type="button"
                     onClick={() => handleNavigation(() => router.push("/schedules"))}
                   >
-                    <Timer size={16} className="shrink-0" />
-                    <span className="truncate text-sm">Scheduled Tasks</span>
+                    <AgentIcon className="h-4 w-4 shrink-0" />
+                    <span className="truncate text-sm">Employees</span>
                   </button>
                 )}
 

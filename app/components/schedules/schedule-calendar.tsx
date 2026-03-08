@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { type ScheduleResponse } from "@/lib/services/schedules-api"
+import { cn } from "@/lib/utils"
 
 /* ═══════════════════════════════════════════════════════════════
    Cron helpers
@@ -103,19 +104,19 @@ export function getTasksForDate(
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Style helpers
+   Style helpers (monochrome)
    ═══════════════════════════════════════════════════════════════ */
 
 function dot(s: ScheduleResponse) {
-  if (s.enabled && !s.paused_reason) return "bg-green-500"
-  if (s.paused_reason === "too_many_failures") return "bg-red-500"
-  return "bg-yellow-500"
+  if (s.enabled && !s.paused_reason) return "bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.4)]"
+  if (s.paused_reason === "too_many_failures") return "bg-amber-500"
+  return "bg-zinc-500 dark:bg-zinc-600"
 }
 
 function strip(s: ScheduleResponse) {
-  if (s.enabled && !s.paused_reason) return "bg-green-500/10"
-  if (s.paused_reason === "too_many_failures") return "bg-red-500/10"
-  return "bg-yellow-500/10"
+  if (s.enabled && !s.paused_reason) return "bg-emerald-500/10"
+  if (s.paused_reason === "too_many_failures") return "bg-amber-500/10"
+  return "bg-foreground/[0.03]"
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -204,7 +205,7 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <h2 className="text-lg font-semibold tracking-tight">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             {new Date(year, month).toLocaleDateString(undefined, {
               month: "long",
               year: "numeric",
@@ -217,7 +218,7 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
                 setYear(today.getFullYear())
                 onSelectDate(today)
               }}
-              className="text-[11px] px-2 py-0.5 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground transition-colors"
+              className="text-[11px] px-2 py-0.5 rounded-md bg-foreground/[0.06] hover:bg-foreground/[0.1] text-muted-foreground hover:text-foreground transition-all"
             >
               Today
             </button>
@@ -226,13 +227,13 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
         <div className="flex items-center gap-0.5">
           <button
             onClick={() => nav(-1)}
-            className="p-1.5 rounded-lg hover:bg-foreground/5 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded-lg hover:bg-foreground/[0.06] text-muted-foreground hover:text-foreground transition-all"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
           <button
             onClick={() => nav(1)}
-            className="p-1.5 rounded-lg hover:bg-foreground/5 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded-lg hover:bg-foreground/[0.06] text-muted-foreground hover:text-foreground transition-all"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -240,18 +241,26 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
       </div>
 
       {/* Grid */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="grid grid-cols-7 border-b border-border bg-foreground/[0.015]">
+      <div className={cn(
+        "rounded-xl overflow-hidden",
+        "bg-foreground/[0.02] border border-foreground/[0.06]",
+      )}>
+        {/* Day headers */}
+        <div className={cn(
+          "grid grid-cols-7 border-b border-foreground/[0.06]",
+          "bg-foreground/[0.03]",
+        )}>
           {DAYS.map((d) => (
             <div
               key={d}
-              className="py-2.5 text-center text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-widest"
+              className="py-2.5 text-center text-[11px] font-semibold text-muted-foreground uppercase tracking-widest"
             >
               {d}
             </div>
           ))}
         </div>
 
+        {/* Calendar cells */}
         <div className="grid grid-cols-7">
           {cells.map((c, i) => {
             const sel =
@@ -267,25 +276,23 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
                 key={i}
                 onClick={() => c.cur && onSelectDate(new Date(year, month, c.day))}
                 disabled={!c.cur}
-                className={`
-                  relative min-h-[80px] sm:min-h-[96px] p-1.5 sm:p-2
-                  flex flex-col items-start text-left transition-all duration-150
-                  ${!lastRow ? "border-b border-border/30" : ""}
-                  ${!lastCol ? "border-r border-border/30" : ""}
-                  ${c.cur ? "hover:bg-foreground/[0.04] cursor-pointer" : "cursor-default"}
-                  ${!c.cur ? "bg-foreground/[0.01]" : ""}
-                  ${sel ? "bg-foreground/[0.07] ring-1 ring-inset ring-foreground/15 z-10" : ""}
-                `}
+                className={cn(
+                  "relative min-h-[80px] sm:min-h-[96px] p-1.5 sm:p-2",
+                  "flex flex-col items-start text-left transition-all duration-150",
+                  !lastRow && "border-b border-foreground/[0.04]",
+                  !lastCol && "border-r border-foreground/[0.04]",
+                  c.cur ? "hover:bg-foreground/[0.04] cursor-pointer" : "cursor-default",
+                  !c.cur && "bg-foreground/[0.01]",
+                  sel && "bg-foreground/[0.08] ring-1 ring-inset ring-foreground/[0.15] z-10",
+                )}
               >
                 <span
-                  className={`
-                    leading-none
-                    ${!c.cur ? "text-muted-foreground/20 text-[11px]" : "text-xs"}
-                    ${c.isToday
-                      ? "bg-foreground text-background font-bold rounded-full w-6 h-6 flex items-center justify-center text-[11px]"
-                      : ""}
-                    ${sel && !c.isToday ? "font-bold text-foreground" : ""}
-                  `}
+                  className={cn(
+                    "leading-none",
+                    !c.cur ? "text-muted-foreground/40 text-[11px]" : "text-xs text-foreground/80",
+                    c.isToday && "bg-foreground text-background font-bold rounded-full w-6 h-6 flex items-center justify-center text-[11px]",
+                    sel && !c.isToday && "font-bold text-foreground",
+                  )}
                 >
                   {c.day}
                 </span>
@@ -296,11 +303,11 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
                     {c.tasks.slice(0, 3).map((t) => (
                       <div
                         key={t.schedule.chat_id}
-                        className={`w-1.5 h-1.5 rounded-full ${dot(t.schedule)}`}
+                        className={cn("w-1.5 h-1.5 rounded-full", dot(t.schedule))}
                       />
                     ))}
                     {c.tasks.length > 3 && (
-                      <span className="text-[8px] text-muted-foreground/40 leading-none">
+                      <span className="text-[8px] text-muted-foreground/60 leading-none">
                         +{c.tasks.length - 3}
                       </span>
                     )}
@@ -313,16 +320,19 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
                     {c.tasks.slice(0, 2).map((t) => (
                       <div
                         key={t.schedule.chat_id}
-                        className={`flex items-center gap-1 rounded-sm pl-1 pr-1 py-0.5 ${strip(t.schedule)}`}
+                        className={cn(
+                          "flex items-center gap-1 rounded-sm pl-1 pr-1 py-0.5",
+                          strip(t.schedule),
+                        )}
                       >
-                        <div className={`w-1 h-1 rounded-full shrink-0 ${dot(t.schedule)}`} />
-                        <span className="text-[10px] leading-tight truncate text-foreground/70 font-medium">
+                        <div className={cn("w-1 h-1 rounded-full shrink-0", dot(t.schedule))} />
+                        <span className="text-[10px] leading-tight truncate text-foreground/60 font-medium">
                           {t.schedule.title || "Untitled"}
                         </span>
                       </div>
                     ))}
                     {c.tasks.length > 2 && (
-                      <span className="text-[10px] text-muted-foreground/50 pl-1">
+                      <span className="text-[10px] text-muted-foreground/60 pl-1">
                         +{c.tasks.length - 2} more
                       </span>
                     )}
@@ -335,18 +345,18 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 text-[11px] text-muted-foreground/70">
+      <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-green-500" />
-          <span>Active</span>
+          <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(52,211,153,0.4)]" />
+          <span>On Duty</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-yellow-500" />
-          <span>Paused</span>
+          <div className="w-2 h-2 rounded-full bg-zinc-500 dark:bg-zinc-600" />
+          <span>Standby</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-red-500" />
-          <span>Failed</span>
+          <div className="w-2 h-2 rounded-full bg-amber-500" />
+          <span>Needs Attention</span>
         </div>
       </div>
     </div>

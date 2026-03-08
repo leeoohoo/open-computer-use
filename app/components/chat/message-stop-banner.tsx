@@ -78,8 +78,8 @@ const STOP_REASONS: StopReasonConfig[] = [
     tag: "[Scheduled run ended: insufficient credits]",
     reason: "scheduled_insufficient_credits",
     icon: CoinVertical,
-    title: "Scheduled run stopped",
-    description: "This scheduled run ended because your credit balance ran out.",
+    title: "Employee run stopped",
+    description: "This employee run ended because your credit balance ran out.",
     color: {
       bg: "bg-amber-500/5 dark:bg-amber-400/5",
       border: "border-amber-200/60 dark:border-amber-700/40",
@@ -94,7 +94,7 @@ const STOP_REASONS: StopReasonConfig[] = [
         href: "/account?section=billing",
       },
       {
-        label: "View schedule",
+        label: "View employees",
         icon: CalendarCheck,
         href: "/schedules",
       },

@@ -12,7 +12,8 @@ import { useUser } from "@/lib/user-store/provider"
 import { useChats } from "@/lib/chat-store/chats/provider"
 import { useChatSession } from "@/lib/chat-store/session/provider"
 import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
-import { Info, Users, Copy, Link as LinkIcon, UserPlus, SidebarSimple, Globe, Desktop, Timer } from "@phosphor-icons/react"
+import { Info, Users, Copy, Link as LinkIcon, UserPlus, SidebarSimple, Globe, Desktop } from "@phosphor-icons/react"
+import { AgentIcon } from "@/components/icons/agent"
 import Link from "next/link"
 import { HeaderSidebarTrigger } from "./header-sidebar-trigger"
 import { toast } from "sonner"
@@ -153,7 +154,7 @@ export function Header({ hasSidebar }: HeaderProps) {
                 />
               )}
 
-              {/* Schedule button - show for active chats */}
+              {/* Assign Employee button - show for active chats */}
               {chatId && (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -163,11 +164,11 @@ export function Header({ hasSidebar }: HeaderProps) {
                       className={mobileHeaderButtonClass}
                       onClick={openScheduleDialog}
                     >
-                      <Timer className="size-4 mr-0 sm:mr-2" />
-                      <span className="hidden sm:inline text-sm font-medium">Schedule</span>
+                      <AgentIcon className="size-4 mr-0 sm:mr-2" />
+                      <span className="hidden sm:inline text-sm font-medium">Assign Employee</span>
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Automate this task on a schedule</TooltipContent>
+                  <TooltipContent>Assign an employee to run this task automatically</TooltipContent>
                 </Tooltip>
               )}
 
@@ -205,7 +206,7 @@ export function Header({ hasSidebar }: HeaderProps) {
       </div>
       </header>
 
-      {/* Schedule Dialog */}
+      {/* Employee Assignment Dialog */}
       {chatId && (
         <ScheduleDialog
           open={scheduleOpen}
@@ -215,11 +216,11 @@ export function Header({ hasSidebar }: HeaderProps) {
           machines={scheduleMachines}
           defaultMachineId={selectedVMId}
           onScheduleCreated={() => {
-            toast.success("Schedule created!")
+            toast.success("Employee hired!")
             refresh()
           }}
           onScheduleDeleted={() => {
-            toast.success("Schedule removed")
+            toast.success("Employee removed")
             refresh()
           }}
         />

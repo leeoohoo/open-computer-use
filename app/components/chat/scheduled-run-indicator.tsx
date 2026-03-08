@@ -1,4 +1,4 @@
-import { Timer } from "@phosphor-icons/react"
+import { AgentIcon } from "@/components/icons/agent"
 
 type ScheduledRunIndicatorProps = {
   raw: string
@@ -21,9 +21,9 @@ export function ScheduledRunIndicator({ raw }: ScheduledRunIndicatorProps) {
       <div className="h-px flex-1 bg-border/60" />
       <div className="flex flex-col items-center gap-1 shrink-0">
         <div className="flex items-center gap-1.5 text-muted-foreground/70">
-          <Timer className="size-3.5 shrink-0" weight="duotone" />
+          <AgentIcon className="size-3.5 shrink-0" />
           <span className="text-xs font-medium tracking-wide">
-            Scheduled run
+            Employee run
             {datetime && (
               <span className="font-normal text-muted-foreground/50">
                 {" · "}

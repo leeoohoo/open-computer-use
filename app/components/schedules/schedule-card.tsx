@@ -2,8 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   Play,
   Pause,
@@ -12,6 +10,7 @@ import {
   Clock,
   AlertTriangle,
   Pencil,
+  Check,
 } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
 import {
@@ -22,6 +21,7 @@ import {
   deleteSchedule,
   type ScheduleResponse,
 } from "@/lib/services/schedules-api"
+import { cn } from "@/lib/utils"
 
 interface ScheduleCardProps {
   schedule: ScheduleResponse
@@ -33,57 +33,45 @@ interface ScheduleCardProps {
 function StatusBadge({ schedule }: { schedule: ScheduleResponse }) {
   if (schedule.enabled && !schedule.paused_reason) {
     return (
-      <Badge
-        variant="outline"
-        className="border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400"
-      >
-        Active
-      </Badge>
+      <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(52,211,153,0.5)]" />
+        On Duty
+      </span>
     )
   }
 
   if (schedule.paused_reason === "insufficient_credits") {
     return (
-      <Badge
-        variant="outline"
-        className="border-yellow-500/30 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400"
-        title="Paused due to insufficient credits"
-      >
+      <span className="inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-1 rounded-full border border-orange-500/20 bg-orange-500/10 text-orange-700 dark:text-orange-400">
+        <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
         No Credits
-      </Badge>
+      </span>
     )
   }
 
   if (schedule.paused_reason === "too_many_failures") {
     return (
-      <Badge
-        variant="outline"
-        className="border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400"
-        title={`${schedule.consecutive_failures} consecutive failures`}
-      >
-        Failed
-      </Badge>
+      <span className="inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-1 rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400">
+        <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+        Needs Attention
+      </span>
     )
   }
 
   if (schedule.paused_reason === "machine_unavailable") {
     return (
-      <Badge
-        variant="outline"
-        className="border-orange-500/30 bg-orange-500/10 text-orange-600 dark:text-orange-400"
-      >
-        Machine Unavailable
-      </Badge>
+      <span className="inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-1 rounded-full border border-slate-500/20 bg-slate-500/10 text-slate-600 dark:text-slate-400">
+        <div className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+        Offline
+      </span>
     )
   }
 
   return (
-    <Badge
-      variant="outline"
-      className="border-gray-500/30 bg-gray-500/10 text-gray-600 dark:text-gray-400"
-    >
-      Paused
-    </Badge>
+    <span className="inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-1 rounded-full border border-foreground/[0.06] bg-foreground/[0.03] text-muted-foreground">
+      <div className="w-1.5 h-1.5 rounded-full bg-zinc-500 dark:bg-zinc-600" />
+      Standby
+    </span>
   )
 }
 
@@ -138,48 +126,48 @@ export function ScheduleCard({
 
   return (
     <div
-      className={`
-        group relative flex flex-col rounded-xl bg-card overflow-hidden
-        transition-all duration-300 hover:shadow-lg h-full
-        ${showBeam ? "border-0" : "border"}
-        ${isActive ? "" : "opacity-80"}
-      `}
+      className={cn(
+        "group relative flex flex-col rounded-xl overflow-hidden transition-all duration-300 h-full",
+        showBeam ? "border border-foreground/[0.1] dark:border-0" : "border border-foreground/[0.06]",
+        !isActive && "opacity-80",
+        "bg-foreground/[0.03]",
+      )}
     >
-      {/* Rotating beam border effect (matching machine-card) */}
+      {/* Monochrome rotating beam border — dark mode only */}
       {showBeam && (
         <>
-          <div className="absolute -inset-[2px] rounded-xl overflow-hidden">
+          <div className="hidden dark:block absolute -inset-[2px] rounded-xl overflow-hidden">
             <div
-              className="absolute w-full h-full animate-rotate-beam dark:brightness-150"
+              className="absolute w-full h-full animate-rotate-beam"
               style={{
-                filter: "drop-shadow(0 0 6px rgba(0, 0, 0, 0.2)) drop-shadow(0 0 12px currentColor)",
+                filter: "drop-shadow(0 0 6px rgba(255, 255, 255, 0.1))",
                 background: isActive
                   ? `conic-gradient(from var(--beam-angle) at 50% 50%,
                       transparent 0deg,
-                      rgba(34, 197, 94, 0.2) 5deg,
-                      rgba(34, 197, 94, 0.5) 10deg,
-                      rgba(34, 197, 94, 0.8) 20deg,
-                      rgba(255, 255, 255, 1) 30deg,
-                      rgba(34, 197, 94, 0.8) 40deg,
-                      rgba(34, 197, 94, 0.5) 50deg,
-                      rgba(34, 197, 94, 0.2) 55deg,
+                      rgba(255, 255, 255, 0.06) 5deg,
+                      rgba(255, 255, 255, 0.12) 10deg,
+                      rgba(255, 255, 255, 0.2) 20deg,
+                      rgba(255, 255, 255, 0.5) 30deg,
+                      rgba(255, 255, 255, 0.2) 40deg,
+                      rgba(255, 255, 255, 0.12) 50deg,
+                      rgba(255, 255, 255, 0.06) 55deg,
                       transparent 60deg,
                       transparent 360deg)`
                   : `conic-gradient(from var(--beam-angle) at 50% 50%,
                       transparent 0deg,
-                      rgba(239, 68, 68, 0.2) 5deg,
-                      rgba(239, 68, 68, 0.5) 10deg,
-                      rgba(239, 68, 68, 0.8) 20deg,
-                      rgba(255, 255, 255, 1) 30deg,
-                      rgba(239, 68, 68, 0.8) 40deg,
-                      rgba(239, 68, 68, 0.5) 50deg,
-                      rgba(239, 68, 68, 0.2) 55deg,
+                      rgba(161, 161, 170, 0.06) 5deg,
+                      rgba(161, 161, 170, 0.12) 10deg,
+                      rgba(161, 161, 170, 0.2) 20deg,
+                      rgba(255, 255, 255, 0.35) 30deg,
+                      rgba(161, 161, 170, 0.2) 40deg,
+                      rgba(161, 161, 170, 0.12) 50deg,
+                      rgba(161, 161, 170, 0.06) 55deg,
                       transparent 60deg,
                       transparent 360deg)`,
               }}
             />
           </div>
-          <div className="absolute inset-[2px] bg-background rounded-xl z-[1]" />
+          <div className="hidden dark:block absolute inset-[2px] bg-background rounded-xl z-[1]" />
           <style jsx>{`
             @property --beam-angle {
               syntax: '<angle>';
@@ -197,25 +185,24 @@ export function ScheduleCard({
         </>
       )}
 
-      {/* Content container with higher z-index */}
+      {/* Content */}
       <div className="relative z-[2] flex flex-col h-full">
-      {/* Card Content */}
       <div className="p-4 space-y-3 flex-1">
         {/* Header: Title + Status */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <h3
-              className="font-medium truncate cursor-pointer hover:underline"
+              className="font-semibold truncate cursor-pointer text-foreground/90 hover:text-foreground transition-colors"
               onClick={() => router.push(`/c/${schedule.chat_id}`)}
-              title={schedule.title || "Untitled Task"}
+              title={schedule.title || "Untitled Employee"}
             >
-              {schedule.title || "Untitled Task"}
+              {schedule.title || "Untitled Employee"}
             </h3>
             <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1.5">
               <Clock className="h-3 w-3" />
               {formatFrequency(schedule.frequency)}
               {schedule.timezone !== "UTC" && (
-                <span className="text-xs">({schedule.timezone})</span>
+                <span className="text-xs text-muted-foreground/60">({schedule.timezone})</span>
               )}
             </p>
           </div>
@@ -225,28 +212,26 @@ export function ScheduleCard({
         {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-2 sm:gap-3 text-sm">
           <div className="space-y-0.5">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wider">
-              Next Run
+            <p className="text-[11px] text-muted-foreground/60 uppercase tracking-wider font-medium">
+              Next Shift
             </p>
-            <p className="font-medium text-xs">
+            <p className="font-medium text-xs text-foreground/80">
               {formatNextRun(schedule.next_run_at)}
             </p>
           </div>
           <div className="space-y-0.5">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wider">
-              Total Runs
+            <p className="text-[11px] text-muted-foreground/60 uppercase tracking-wider font-medium">
+              Executions
             </p>
-            <p className="font-medium text-xs">{schedule.run_count}</p>
+            <p className="font-medium text-xs text-foreground/80">{schedule.run_count}</p>
           </div>
           <div className="space-y-0.5">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wider">
+            <p className="text-[11px] text-muted-foreground/60 uppercase tracking-wider font-medium">
               Failures
             </p>
-            <p
-              className={`font-medium text-xs ${
-                schedule.consecutive_failures > 0 ? "text-red-500" : ""
-              }`}
-            >
+            <p className={cn(
+              "font-medium text-xs text-foreground/80",
+            )}>
               {schedule.consecutive_failures}
             </p>
           </div>
@@ -255,7 +240,7 @@ export function ScheduleCard({
         {/* Last run */}
         {schedule.last_run_at && (
           <p className="text-xs text-muted-foreground">
-            Last run:{" "}
+            Last active:{" "}
             {new Date(schedule.last_run_at).toLocaleString(undefined, {
               month: "short",
               day: "numeric",
@@ -268,37 +253,46 @@ export function ScheduleCard({
         {/* Paused reason alert */}
         {schedule.paused_reason &&
           schedule.paused_reason !== "deleted" && (
-            <div className="flex items-center gap-2 rounded-md bg-yellow-500/5 border border-yellow-500/20 px-2.5 py-1.5 text-xs text-yellow-600 dark:text-yellow-400">
-              <AlertTriangle className="h-3 w-3 shrink-0" />
+            <div className={cn(
+              "flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs",
+              "bg-foreground/[0.03] border border-foreground/[0.06] text-muted-foreground",
+            )}>
+              <AlertTriangle className="h-3 w-3 shrink-0 text-muted-foreground" />
               <span className="truncate">
                 {schedule.paused_reason === "insufficient_credits"
-                  ? "Paused: insufficient credits"
+                  ? "Standby: insufficient credits"
                   : schedule.paused_reason === "too_many_failures"
-                  ? `Paused: ${schedule.consecutive_failures} consecutive failures`
+                  ? `Needs attention: ${schedule.consecutive_failures} consecutive failures`
                   : schedule.paused_reason === "machine_unavailable"
-                  ? "Paused: target machine unavailable"
-                  : `Paused: ${schedule.paused_reason}`}
+                  ? "Standby: workstation unavailable"
+                  : `Standby: ${schedule.paused_reason}`}
               </span>
             </div>
           )}
       </div>
 
       {/* Actions — pinned to bottom */}
-      <div className="border-t px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-7 sm:h-8 gap-1 sm:gap-1.5 text-xs sm:text-sm"
+      <div className="border-t border-foreground/[0.06] px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <button
+          className={cn(
+            "inline-flex items-center gap-1 sm:gap-1.5 h-7 sm:h-8 px-2.5 rounded-lg text-xs font-medium transition-all",
+            "border border-foreground/[0.08] bg-foreground/[0.04] text-foreground/70",
+            "hover:bg-foreground/[0.08] hover:text-foreground hover:border-foreground/[0.12]",
+            "disabled:opacity-40 disabled:cursor-not-allowed",
+          )}
           onClick={handleRunNow}
           disabled={!!actionLoading}
         >
           <CoastyIcon className="h-3 w-3" />
           {actionLoading === "run" ? "..." : "Run"}
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-7 sm:h-8 gap-1 sm:gap-1.5 text-xs sm:text-sm"
+        </button>
+        <button
+          className={cn(
+            "inline-flex items-center gap-1 sm:gap-1.5 h-7 sm:h-8 px-2.5 rounded-lg text-xs transition-all",
+            "border border-foreground/[0.06] text-muted-foreground",
+            "hover:bg-foreground/[0.06] hover:text-foreground hover:border-foreground/[0.1]",
+            "disabled:opacity-40 disabled:cursor-not-allowed",
+          )}
           onClick={handleTogglePause}
           disabled={!!actionLoading}
         >
@@ -312,36 +306,34 @@ export function ScheduleCard({
             : schedule.enabled
             ? "Pause"
             : "Resume"}
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-7 sm:h-8 gap-1 sm:gap-1.5 text-xs sm:text-sm"
+        </button>
+        <button
+          className="inline-flex items-center gap-1 sm:gap-1.5 h-7 sm:h-8 px-2 rounded-lg text-xs text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground transition-all"
           onClick={() => onViewHistory(schedule.chat_id)}
         >
           <History className="h-3 w-3" />
-          <span className="hidden sm:inline">History</span>
-        </Button>
+          <span className="hidden sm:inline">Work Log</span>
+        </button>
         {onEdit && (
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-7 sm:h-8 gap-1 sm:gap-1.5 text-xs sm:text-sm"
+          <button
+            className="inline-flex items-center gap-1 sm:gap-1.5 h-7 sm:h-8 px-2 rounded-lg text-xs text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground transition-all"
             onClick={() => onEdit(schedule.chat_id)}
           >
             <Pencil className="h-3 w-3" />
             <span className="hidden sm:inline">Edit</span>
-          </Button>
+          </button>
         )}
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-7 sm:h-8 text-red-500 hover:text-red-600 ml-auto"
+        <button
+          className={cn(
+            "h-7 sm:h-8 px-2 rounded-lg ml-auto transition-all",
+            "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/[0.06]",
+            "disabled:opacity-40 disabled:cursor-not-allowed",
+          )}
           onClick={handleDelete}
           disabled={!!actionLoading}
         >
           <Trash2 className="h-3 w-3" />
-        </Button>
+        </button>
       </div>
       </div>{/* end z-[2] wrapper */}
     </div>

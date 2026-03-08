@@ -6,6 +6,7 @@ import {
   getScheduleHistory,
   type ScheduleHistoryEntry,
 } from "@/lib/services/schedules-api"
+import { cn } from "@/lib/utils"
 
 interface ScheduleHistoryProps {
   chatId?: string
@@ -15,17 +16,17 @@ interface ScheduleHistoryProps {
 function statusConfig(status: string) {
   switch (status) {
     case "completed":
-      return { icon: CheckCircle2, color: "text-green-500", bg: "bg-green-500/10", border: "border-green-500/20", label: "Completed" }
+      return { icon: CheckCircle2, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20", label: "Completed" }
     case "failed":
-      return { icon: XCircle, color: "text-red-500", bg: "bg-red-500/10", border: "border-red-500/20", label: "Failed" }
+      return { icon: XCircle, color: "text-rose-600 dark:text-rose-400", bg: "bg-rose-500/10", border: "border-rose-500/20", label: "Failed" }
     case "skipped":
-      return { icon: SkipForward, color: "text-yellow-500", bg: "bg-yellow-500/10", border: "border-yellow-500/20", label: "Skipped" }
+      return { icon: SkipForward, color: "text-muted-foreground", bg: "bg-foreground/[0.03]", border: "border-foreground/[0.05]", label: "Skipped" }
     case "cancelled":
-      return { icon: XCircle, color: "text-orange-500", bg: "bg-orange-500/10", border: "border-orange-500/20", label: "Cancelled" }
+      return { icon: XCircle, color: "text-muted-foreground", bg: "bg-foreground/[0.03]", border: "border-foreground/[0.05]", label: "Cancelled" }
     case "triggered":
-      return { icon: Zap, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", label: "Triggered" }
+      return { icon: Zap, color: "text-sky-600 dark:text-sky-400", bg: "bg-sky-500/10", border: "border-sky-500/20", label: "Triggered" }
     default:
-      return { icon: Clock, color: "text-muted-foreground", bg: "bg-muted/50", border: "border-border", label: status }
+      return { icon: Clock, color: "text-muted-foreground", bg: "bg-foreground/[0.03]", border: "border-foreground/[0.05]", label: status }
   }
 }
 
@@ -79,34 +80,43 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
 
   if (history.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-10 text-center rounded-xl border border-border bg-card">
+      <div className={cn(
+        "flex flex-col items-center justify-center py-10 text-center rounded-xl",
+        "bg-foreground/[0.03] border border-foreground/[0.06]",
+      )}>
         <History className="h-8 w-8 text-muted-foreground/30 mb-2" />
-        <p className="text-sm font-medium text-muted-foreground">No executions yet</p>
-        <p className="text-xs text-muted-foreground/60 mt-0.5">History will appear here once tasks start running</p>
+        <p className="text-sm font-medium text-muted-foreground">No activity yet</p>
+        <p className="text-xs text-muted-foreground/60 mt-0.5">Activity logs will appear here once your employees start working</p>
       </div>
     )
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
-      <div className="divide-y divide-border/50">
-        {history.map((entry, idx) => {
+    <div className={cn(
+      "rounded-xl overflow-hidden",
+      "bg-foreground/[0.03] border border-foreground/[0.06]",
+    )}>
+      <div className="divide-y divide-foreground/[0.04]">
+        {history.map((entry) => {
           const cfg = statusConfig(entry.status)
           const Icon = cfg.icon
           return (
             <div
               key={entry.id}
-              className="flex items-start gap-3 px-4 py-3 hover:bg-foreground/[0.02] transition-colors group"
+              className="flex items-start gap-3 px-4 py-3 hover:bg-foreground/[0.03] transition-all group"
             >
               {/* Status icon */}
-              <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${cfg.bg} ${cfg.border}`}>
-                <Icon className={`h-3.5 w-3.5 ${cfg.color}`} />
+              <div className={cn(
+                "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border",
+                cfg.bg, cfg.border,
+              )}>
+                <Icon className={cn("h-3.5 w-3.5", cfg.color)} />
               </div>
 
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
-                  <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
+                  <span className={cn("text-xs font-semibold", cfg.color)}>{cfg.label}</span>
                   <span
                     className="text-[11px] text-muted-foreground/60 shrink-0 tabular-nums"
                     title={formatExactDate(entry.executed_at)}
@@ -117,7 +127,7 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
 
                 {/* Error message */}
                 {entry.error && (
-                  <p className="text-[11px] text-red-500/80 mt-0.5 truncate" title={entry.error}>
+                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate" title={entry.error}>
                     {entry.error}
                   </p>
                 )}
@@ -125,7 +135,7 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
                 {/* Meta chips */}
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
                   {entry.trigger === "manual" && (
-                    <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/60 bg-foreground/[0.04] px-1.5 py-0.5 rounded-md">
+                    <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-foreground/[0.04] px-1.5 py-0.5 rounded-md">
                       Manual
                     </span>
                   )}
