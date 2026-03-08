@@ -290,6 +290,7 @@ export function LandingPage() {
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [comparisonPlan, setComparisonPlan] = useState(2) // default to Plus (index 2)
+  const [activePersona, setActivePersona] = useState(0)
   const { theme } = useTheme()
 
   const searchParams = useSearchParams()
@@ -380,7 +381,7 @@ export function LandingPage() {
 
         {/* Social Proof Bar */}
         <section className={cn(
-          "py-10",
+          "py-16",
           isMobile ? "px-4" : "px-6"
         )}>
           <motion.div
@@ -392,15 +393,17 @@ export function LandingPage() {
           >
             <motion.div variants={itemVariants} className={cn(
               "grid text-center",
-              isMobile ? "grid-cols-2 gap-6" : "grid-cols-4 gap-8"
+              isMobile ? "grid-cols-2 gap-6" : "grid-cols-4 gap-0"
             )}>
               {[
-                { value: "82%", label: "Task Success Rate", sublabel: "#1 in the world" },
-                { value: "50x", label: "Cheaper", sublabel: "Than hiring" },
-                { value: "24/7", label: "Uptime", sublabel: "Always on" },
-                { value: "<1 min", label: "To First Task", sublabel: "No setup needed" },
-              ].map((stat) => (
-                <div key={stat.label}>
+                { value: "82%", label: "Task success rate", sublabel: "#1 in the world" },
+                { value: "50x", label: "Cheaper than hiring", sublabel: "Same output, fraction of cost" },
+                { value: "24/7", label: "Always available", sublabel: "No breaks, no sick days" },
+                { value: "<1 min", label: "To first task", sublabel: "No setup needed" },
+              ].map((stat, i) => (
+                <div key={stat.label} className={cn(
+                  !isMobile && i > 0 && "border-l border-border/30"
+                )}>
                   <div className={cn(
                     "font-bold tracking-tight text-foreground",
                     isMobile ? "text-2xl" : "text-3xl"
@@ -408,7 +411,7 @@ export function LandingPage() {
                     {stat.value}
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-                  <div className="text-xs text-muted-foreground/60 mt-0.5">{stat.sublabel}</div>
+                  <div className="text-xs text-muted-foreground/50 mt-0.5">{stat.sublabel}</div>
                 </div>
               ))}
             </motion.div>
@@ -417,7 +420,7 @@ export function LandingPage() {
 
         {/* Use Cases by Persona */}
         <section id="use-cases" className={cn(
-          "py-24 relative",
+          "py-20 relative",
           isMobile ? "px-4" : "px-6"
         )}>
           <motion.div
@@ -427,103 +430,137 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-14">
+            <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className={cn(
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                One agent, every role.
+                One agent, every role
               </h2>
               <p className={cn(
-                "text-muted-foreground mt-3",
+                "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Whatever your role, Coasty takes the busywork off your plate.
+                Whatever your role, Coasty takes the busywork off your plate
               </p>
             </motion.div>
 
-            <div className={cn(
-              "grid gap-px bg-border/30 rounded-2xl overflow-hidden border border-border/30",
-              isMobile ? "grid-cols-1" : "grid-cols-2"
-            )}>
-              {[
+            {(() => {
+              const personas = [
                 {
                   persona: "Startup Founder",
                   pain: "I can't afford to hire, but I need things done.",
+                  result: "Save $4,000+/mo on virtual assistants",
                   tasks: ["Competitor research & market analysis", "Lead list building & outreach prep", "Financial model data entry", "Vendor comparisons & procurement"],
-                  icon: Rocket,
                 },
                 {
                   persona: "Ops Manager",
                   pain: "50 repetitive tasks are eating my team's time.",
+                  result: "Reclaim 20+ hours per week for your team",
                   tasks: ["Automated report generation every Monday", "Invoice processing & data extraction", "Employee onboarding form filling", "Cross-system data syncing"],
-                  icon: RefreshCw,
                 },
                 {
                   persona: "Solopreneur",
                   pain: "I'm drowning in admin work.",
+                  result: "Get back to the work that actually grows your business",
                   tasks: ["Scheduling meetings & calendar management", "Email drafts & follow-ups", "Bookkeeping data entry", "Social media research & posting"],
-                  icon: Users,
                 },
                 {
                   persona: "Agency Owner",
                   pain: "I need to scale without scaling headcount.",
+                  result: "Handle 3x more clients with the same team",
                   tasks: ["Client reporting at scale", "Multi-account social management", "Bulk content research & briefs", "QA testing across client sites"],
-                  icon: Cpu,
                 },
-              ].map((item) => (
-                <motion.div
-                  key={item.persona}
-                  variants={itemVariants}
-                  className={cn(
-                    "group relative bg-background transition-colors duration-300 hover:bg-foreground/[0.02]",
-                    isMobile ? "p-5" : "p-8"
-                  )}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <item.icon className="h-4 w-4 text-foreground/30 transition-colors duration-300 group-hover:text-foreground/50" />
-                    <h3 className={cn(
-                      "font-medium text-foreground/80 tracking-tight",
-                      isMobile ? "text-sm" : "text-[15px]"
-                    )}>
-                      {item.persona}
-                    </h3>
-                  </div>
+              ]
+              const active = personas[activePersona]
 
-                  <p className={cn(
-                    "text-muted-foreground/50 italic leading-relaxed mb-5",
-                    isMobile ? "text-xs" : "text-[13px]"
+              return (
+                <motion.div variants={itemVariants}>
+                  {/* Tabs — just text, no decoration */}
+                  <div className={cn(
+                    "flex justify-center",
+                    isMobile ? "gap-0 mb-8 border-b border-border/30" : "gap-0 mb-10 border-b border-border/30"
                   )}>
-                    &ldquo;{item.pain}&rdquo;
-                  </p>
-
-                  <div className="space-y-2">
-                    {item.tasks.map((task) => (
-                      <div key={task} className="flex items-start gap-2.5">
-                        <div className="h-px w-3 flex-shrink-0 bg-foreground/15 mt-[9px]" />
-                        <span className={cn(
-                          "text-muted-foreground/60 leading-snug",
-                          isMobile ? "text-xs" : "text-[13px]"
-                        )}>{task}</span>
-                      </div>
-                    ))}
+                    {personas.map((p, i) => {
+                      const isActive = i === activePersona
+                      return (
+                        <button
+                          key={p.persona}
+                          onClick={() => setActivePersona(i)}
+                          className={cn(
+                            "relative cursor-pointer transition-colors duration-200 -mb-px",
+                            isMobile ? "px-3 pb-3 text-xs" : "px-5 pb-3.5 text-sm",
+                            isActive
+                              ? "text-foreground font-medium"
+                              : "text-muted-foreground/40 hover:text-muted-foreground/70"
+                          )}
+                        >
+                          {p.persona}
+                          {isActive && (
+                            <motion.div
+                              layoutId="persona-underline"
+                              className="absolute bottom-0 left-0 right-0 h-px bg-foreground"
+                              transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                            />
+                          )}
+                        </button>
+                      )
+                    })}
                   </div>
-                </motion.div>
-              ))}
-            </div>
 
-            <motion.div variants={itemVariants} className="flex justify-center mt-10">
-              <Link
-                href="/auth"
-                className={cn(
-                  "inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors duration-300",
-                  isMobile ? "text-sm" : "text-[15px]"
-                )}
-              >
-                <span className="font-medium">Start delegating</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </motion.div>
+                  {/* Content */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activePersona}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className={cn(
+                        isMobile ? "space-y-6" : "grid grid-cols-2 gap-16 max-w-3xl mx-auto"
+                      )}
+                    >
+                      {/* Left — quote + result */}
+                      <div>
+                        <p className={cn(
+                          "text-foreground/50 leading-relaxed",
+                          isMobile ? "text-base" : "text-lg"
+                        )}>
+                          &ldquo;{active.pain}&rdquo;
+                        </p>
+                        <p className={cn(
+                          "text-foreground font-medium mt-5",
+                          isMobile ? "text-sm" : "text-base"
+                        )}>
+                          {active.result}
+                        </p>
+                      </div>
+
+                      {/* Right — task list */}
+                      <div className={cn(isMobile ? "border-t border-border/20 pt-5" : "")}>
+                        <ul className={cn(isMobile ? "space-y-2" : "space-y-2.5")}>
+                          {active.tasks.map((task, ti) => (
+                            <motion.li
+                              key={task}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: ti * 0.04, duration: 0.15 }}
+                              className={cn(
+                                "flex items-start gap-2.5",
+                                isMobile ? "text-sm" : "text-[15px]"
+                              )}
+                            >
+                              <span className="text-muted-foreground/30 select-none shrink-0 leading-snug">&mdash;</span>
+                              <span className="text-muted-foreground leading-snug">{task}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </motion.div>
+              )
+            })()}
           </motion.div>
         </section>
 
@@ -540,18 +577,18 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-14">
+            <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className={cn(
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                How It Works
+                Three steps. That's it.
               </h2>
               <p className={cn(
-                "text-muted-foreground mt-3",
+                "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                From task to done in three simple steps.
+                Describe the task, watch it work, review the results
               </p>
             </motion.div>
 
@@ -614,7 +651,7 @@ export function LandingPage() {
 
         {/* Cost Comparison */}
         <section id="cost" className={cn(
-          "py-24",
+          "py-20",
           isMobile ? "px-4" : "px-6"
         )}>
           <motion.div
@@ -624,18 +661,18 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-16">
+            <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className={cn(
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Why Pay More for Less?
+                Why pay more for less?
               </h2>
               <p className={cn(
-                "text-muted-foreground mt-4 mx-auto leading-relaxed",
-                isMobile ? "text-sm max-w-xs" : "text-base max-w-lg"
+                "text-muted-foreground mt-4 max-w-lg mx-auto",
+                isMobile ? "text-sm" : "text-base"
               )}>
-                The average virtual assistant costs $3,000/mo and works 8 hours a day. Coasty works around the clock for a fraction of the price.
+                A virtual assistant costs $3,000/mo and works 8 hours a day. Coasty works around the clock for a fraction of the price.
               </p>
             </motion.div>
 
@@ -753,7 +790,7 @@ export function LandingPage() {
 
         {/* Demo Section */}
         <section id="demo" className={cn(
-          "py-20 relative",
+          "py-20",
           isMobile ? "px-4" : "px-6"
         )}>
           <motion.div
@@ -768,11 +805,11 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                See It in Action
+                See it in action
               </h2>
               <p className={cn(
-                "text-muted-foreground",
-                isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
+                "text-muted-foreground mt-4 max-w-lg mx-auto",
+                isMobile ? "text-sm" : "text-base"
               )}>
                 Real sessions. No scripts. No edits.
               </p>
@@ -857,11 +894,11 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Why Teams Trust Coasty
+                Why teams trust Coasty
               </h2>
               <p className={cn(
-                "text-muted-foreground",
-                isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
+                "text-muted-foreground mt-4 max-w-lg mx-auto",
+                isMobile ? "text-sm" : "text-base"
               )}>
                 Built to deliver real results, not just demos
               </p>
@@ -900,7 +937,7 @@ export function LandingPage() {
 
         {/* OSWorld Benchmark Section */}
         <section className={cn(
-          "py-14",
+          "py-20",
           isMobile ? "px-4" : "px-6"
         )}>
           <motion.div
@@ -910,18 +947,18 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-6">
+            <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className={cn(
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Don’t Take Our Word for It
+                Benchmarked #1 worldwide
               </h2>
               <p className={cn(
-                "text-muted-foreground mt-3",
+                "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Independent benchmarks prove Coasty outperforms every other AI agent at real computer tasks.
+                Independent benchmarks prove Coasty outperforms every other AI agent at real computer tasks
               </p>
             </motion.div>
 
@@ -1099,7 +1136,7 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-14">
+            <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className={cn(
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
@@ -1107,7 +1144,7 @@ export function LandingPage() {
                 Simple, transparent pricing
               </h2>
               <p className={cn(
-                "text-muted-foreground mt-3",
+                "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
                 Start free. Upgrade when you need more.
@@ -1301,7 +1338,7 @@ export function LandingPage() {
                       transition={{ duration: 0.25, delay: 0.05 }}
                       className="flex flex-col"
                     >
-                      <div className="rounded-xl border border-border overflow-hidden flex-1">
+                      <div className="rounded-xl border border-border overflow-hidden">
                         {/* Table header */}
                         <div className="grid grid-cols-3 border-b border-border bg-muted/30">
                           <div className="p-4" />
@@ -1422,13 +1459,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Frequently Asked Questions
+                Frequently asked questions
               </h2>
               <p className={cn(
-                "text-muted-foreground",
-                isMobile ? "mt-4 text-base" : "mt-6 text-lg sm:text-xl"
+                "text-muted-foreground mt-4 max-w-lg mx-auto",
+                isMobile ? "text-sm" : "text-base"
               )}>
-                Got questions? We've got answers
+                Everything you need to know before getting started
               </p>
             </motion.div>
             
@@ -1446,7 +1483,7 @@ export function LandingPage() {
                   >
                     <CardHeader>
                       <div className="flex justify-between items-center">
-                        <CardTitle className="text-lg pr-4">
+                        <CardTitle className={cn("pr-4", isMobile ? "text-base" : "text-lg")}>
                           {faq.question}
                         </CardTitle>
                         <motion.div
@@ -1479,34 +1516,36 @@ export function LandingPage() {
         </section>
 
         {/* Footer */}
-        <footer className="py-12">
+        <footer className="border-t border-border/40">
           <div className={cn(
-            "mx-auto",
+            "mx-auto py-10",
             isMobile ? "px-4 max-w-xl" : "px-6 max-w-5xl"
           )}>
             <div className={cn(
               "flex justify-between items-center",
-              isMobile && "flex-col gap-6"
+              isMobile && "flex-col gap-5"
             )}>
-              <p className="text-sm text-muted-foreground">
-                © {new Date().getFullYear()} Coasty. All rights reserved.
-              </p>
-              <div className="flex gap-6">
-                <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Privacy
-                </Link>
-                <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Terms
-                </Link>
-                <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Blog
-                </Link>
-                <Link href="/download" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Download
-                </Link>
-                <Link href="mailto:founders@coasty.ai" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
-                </Link>
+              <div className={cn("flex items-center gap-4", isMobile && "flex-col gap-3")}>
+                <p className="text-sm text-muted-foreground/70">
+                  © {new Date().getFullYear()} Coasty
+                </p>
+              </div>
+              <div className={cn("flex items-center gap-5", isMobile && "flex-wrap justify-center")}>
+                {[
+                  { href: "/privacy", label: "Privacy" },
+                  { href: "/terms", label: "Terms" },
+                  { href: "/blog", label: "Blog" },
+                  { href: "/download", label: "Download" },
+                  { href: "mailto:founders@coasty.ai", label: "Contact" },
+                ].map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-sm text-muted-foreground/60 hover:text-foreground transition-colors duration-200"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>

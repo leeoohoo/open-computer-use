@@ -41,6 +41,7 @@ const nextConfig: NextConfig = withBundleAnalyzer({
     ],
     domains: [
       'www.google.com',
+      'img.youtube.com',
     ],
   },
   eslint: {

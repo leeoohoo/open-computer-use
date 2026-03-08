@@ -1,9 +1,11 @@
 "use client"
 
+import { useState, useCallback } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { LandingHeader } from "@/app/components/landing/landing-header"
-import { ArrowRight, ArrowUpRight } from "lucide-react"
+import { ArrowRight, ArrowUpRight, Play } from "lucide-react"
 import { motion } from "framer-motion"
 
 const videos = [
@@ -63,6 +65,156 @@ const fade = {
   }),
 }
 
+function VideoPlayer({
+  videoId,
+  label,
+  task,
+  featured = false,
+}: {
+  videoId: string
+  label: string
+  task: string
+  featured?: boolean
+}) {
+  const [playing, setPlaying] = useState(false)
+
+  const handlePlay = useCallback(() => setPlaying(true), [])
+
+  return (
+    <div className={cn(
+      "rounded-xl overflow-hidden border bg-card flex flex-col h-full",
+      featured
+        ? "sm:rounded-2xl border-border/40 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08),0_12px_48px_-8px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.3),0_12px_48px_-8px_rgba(0,0,0,0.4)] ring-1 ring-white/[0.05] dark:ring-white/[0.03]"
+        : "border-border/30 hover:border-border/50 transition-colors duration-300"
+    )}>
+      {/* Browser chrome — featured only */}
+      {featured && (
+        <div className="flex items-center px-4 py-2 bg-muted/30 dark:bg-white/[0.03] border-b border-border/20">
+          <div className="flex items-center gap-[6px]">
+            <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />
+            <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />
+            <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />
+          </div>
+          <div className="flex-1 flex justify-center">
+            <div className="rounded-md bg-foreground/[0.04] dark:bg-white/[0.04] flex items-center justify-center gap-1.5 px-4 py-[3px] max-w-[300px]">
+              <svg width="10" height="10" viewBox="0 0 16 16" fill="none" className="text-muted-foreground/30 shrink-0">
+                <path d="M11.5 7V5a3.5 3.5 0 10-7 0v2M4 7h8a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span className="text-[11px] text-muted-foreground/35 truncate select-none font-mono">
+                coasty.ai/{label.toLowerCase().replace(/[\s-]+/g, "-")}
+              </span>
+            </div>
+          </div>
+          <div className="w-[54px]" />
+        </div>
+      )}
+
+      {/* Video area */}
+      <div className="relative w-full bg-neutral-950" style={{ paddingTop: "56.25%" }}>
+        {playing ? (
+          <div className="absolute inset-0">
+            <iframe
+              className="w-full h-full"
+              src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&autoplay=1`}
+              title={`Coasty ${label} Demo`}
+              allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              style={{ border: "none" }}
+            />
+          </div>
+        ) : (
+          <div
+            className="absolute inset-0 cursor-pointer group"
+            onClick={handlePlay}
+          >
+            <Image
+              src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+              alt={`${label} demo`}
+              fill
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.015]"
+              sizes={featured ? "(max-width: 768px) 100vw, 960px" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
+            />
+
+            {/* Gradient overlay */}
+            <div className={cn(
+              "absolute inset-0 transition-colors duration-500",
+              featured
+                ? "bg-gradient-to-t from-black/40 via-black/10 to-black/5 group-hover:from-black/50"
+                : "bg-gradient-to-t from-black/35 via-black/5 to-transparent group-hover:from-black/45"
+            )} />
+
+            {/* Play button */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div
+                className={cn(
+                  "flex items-center justify-center rounded-full",
+                  "bg-white/[0.15] backdrop-blur-md border border-white/20",
+                  "group-hover:bg-white/[0.22] group-hover:border-white/30 transition-all duration-300",
+                  featured ? "h-[72px] w-[72px]" : "h-12 w-12"
+                )}
+                whileHover={{ scale: 1.06 }}
+                whileTap={{ scale: 0.94 }}
+              >
+                <Play
+                  className={cn(
+                    "text-white fill-white ml-[2px] drop-shadow-sm",
+                    featured ? "h-6 w-6" : "h-4 w-4"
+                  )}
+                />
+              </motion.div>
+            </div>
+
+            {/* Label badge — bottom left */}
+            <div className={cn("absolute left-0 bottom-0", featured ? "p-4" : "p-2.5")}>
+              <span className={cn(
+                "inline-flex items-center gap-1.5 text-white/80 font-medium backdrop-blur-sm bg-white/[0.08] rounded-md border border-white/[0.08]",
+                featured ? "text-xs px-2.5 py-1" : "text-[10px] px-2 py-0.5"
+              )}>
+                <span className="h-1 w-1 rounded-full bg-white/50" />
+                {label}
+              </span>
+            </div>
+
+            {/* Watch text — bottom right, featured only */}
+            {featured && (
+              <div className="absolute right-0 bottom-0 p-4">
+                <span className="text-xs text-white/40 group-hover:text-white/60 transition-colors duration-300">
+                  Watch demo &rarr;
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Caption */}
+      <div className={cn(
+        "flex items-center justify-between",
+        featured ? "px-5 py-4 sm:px-6 sm:py-5" : "px-4 py-3"
+      )}>
+        <div className="min-w-0">
+          {!featured && (
+            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40">
+              {label}
+            </span>
+          )}
+          <p className={cn(
+            "text-foreground leading-snug",
+            featured ? "font-medium" : "text-sm text-foreground/80 mt-0.5 line-clamp-2"
+          )}>
+            {task}
+          </p>
+        </div>
+        {featured && (
+          <span className="hidden sm:block text-[11px] text-muted-foreground/30 font-medium shrink-0 ml-4">
+            Featured
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function ResultsPage() {
   const [featured, ...rest] = videos
 
@@ -107,30 +259,12 @@ export default function ResultsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
           >
-            <div className="rounded-2xl overflow-hidden border border-border/40 bg-card shadow-sm">
-              <div className="relative w-full bg-black" style={{ paddingTop: "56.25%" }}>
-                <iframe
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full"
-                  src={`https://www.youtube-nocookie.com/embed/${featured.videoId}?rel=0&modestbranding=1&showinfo=0`}
-                  title={`Coasty ${featured.label} Demo`}
-                  allowFullScreen
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  style={{ border: "none" }}
-                />
-              </div>
-              <div className="flex items-center justify-between px-5 py-4 sm:px-6 sm:py-5">
-                <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40">
-                    {featured.label}
-                  </span>
-                  <p className="text-foreground font-medium mt-0.5">{featured.task}</p>
-                </div>
-                <span className="hidden sm:block text-[11px] text-muted-foreground/30 font-medium">
-                  Featured
-                </span>
-              </div>
-            </div>
+            <VideoPlayer
+              videoId={featured.videoId}
+              label={featured.label}
+              task={featured.task}
+              featured
+            />
           </motion.div>
         </div>
 
@@ -145,25 +279,11 @@ export default function ResultsPage() {
                 animate="show"
                 variants={fade}
               >
-                <div className="h-full rounded-xl overflow-hidden border border-border/30 bg-card hover:border-border/60 transition-colors duration-300 flex flex-col">
-                  <div className="relative w-full bg-black" style={{ paddingTop: "56.25%" }}>
-                    <iframe
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full"
-                      src={`https://www.youtube-nocookie.com/embed/${v.videoId}?rel=0&modestbranding=1&showinfo=0`}
-                      title={`Coasty ${v.label} Demo`}
-                      allowFullScreen
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      style={{ border: "none" }}
-                    />
-                  </div>
-                  <div className="px-4 py-3 flex-1 flex flex-col justify-center">
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40">
-                      {v.label}
-                    </span>
-                    <p className="text-sm text-foreground/80 mt-0.5 line-clamp-2">{v.task}</p>
-                  </div>
-                </div>
+                <VideoPlayer
+                  videoId={v.videoId}
+                  label={v.label}
+                  task={v.task}
+                />
               </motion.div>
             ))}
           </div>
