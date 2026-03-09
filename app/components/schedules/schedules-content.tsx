@@ -104,6 +104,9 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
   const [editing, setEditing] = useState(false)
   const [editName, setEditName] = useState(team.name)
   const [editInstructions, setEditInstructions] = useState(team.instructions || "")
+  const [showAddMenu, setShowAddMenu] = useState(false)
+
+  const availableEmployees = schedules.filter((s) => !team.members.some((m) => m.chat_id === s.chat_id))
 
   useEffect(() => {
     if (!memLoaded) { getTeamSharedMemory(team.hub_id).then(setMemory).catch(() => setMemory([])); setMemLoaded(true) }
@@ -114,6 +117,11 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
     const id = e.dataTransfer.getData("application/x-employee-id")
     if (!id || team.members.some((m) => m.chat_id === id)) return
     setBusy(`add-${id}`); try { await addTeamMember(team.hub_id, id); onRefresh() } catch {} setBusy(null)
+  }
+
+  async function addMemberById(id: string) {
+    setBusy(`add-${id}`); try { await addTeamMember(team.hub_id, id); onRefresh() } catch {} setBusy(null)
+    setShowAddMenu(false)
   }
 
   async function removeMember(id: string) {
@@ -151,7 +159,8 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
       onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOver(false) }}
       onDrop={drop}
       className={cn(
-        "rounded-2xl transition-all duration-200 overflow-hidden",
+        "rounded-2xl transition-all duration-200",
+        showAddMenu ? "overflow-visible" : "overflow-hidden",
         dragOver
           ? "bg-foreground/[0.1] ring-2 ring-foreground/25 shadow-[0_0_30px_rgba(255,255,255,0.06)]"
           : "bg-foreground/[0.06] ring-1 ring-foreground/[0.12] hover:ring-foreground/[0.18]",
@@ -228,23 +237,95 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
                 <button
                   onClick={() => removeMember(m.chat_id)}
                   disabled={!!busy}
-                  className="h-5 w-5 flex items-center justify-center rounded-full opacity-0 group-hover/pill:opacity-100 hover:bg-foreground/[0.1] text-muted-foreground/50 hover:text-foreground transition-all"
+                  className="h-5 w-5 flex items-center justify-center rounded-full lg:opacity-0 lg:group-hover/pill:opacity-100 hover:bg-foreground/[0.1] text-muted-foreground/50 hover:text-foreground transition-all"
                 >
                   <X className="h-2.5 w-2.5" />
                 </button>
               </div>
             ))}
+            {/* Add member button (always visible, primary interaction on mobile) */}
+            <div className="relative">
+              <button
+                onClick={() => setShowAddMenu(!showAddMenu)}
+                disabled={availableEmployees.length === 0}
+                className={cn(
+                  "flex items-center gap-1.5 h-8 px-3 rounded-full transition-all text-xs font-medium",
+                  availableEmployees.length === 0
+                    ? "bg-foreground/[0.04] text-muted-foreground/30 cursor-not-allowed"
+                    : "bg-foreground/[0.06] hover:bg-foreground/[0.12] text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <Plus className="h-3 w-3" />
+                <span className="hidden sm:inline">Add</span>
+              </button>
+              {showAddMenu && availableEmployees.length > 0 && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowAddMenu(false)} />
+                  <div className="absolute top-full left-0 mt-1.5 z-50 w-56 max-h-48 overflow-y-auto rounded-xl bg-background ring-1 ring-foreground/[0.12] shadow-lg py-1 scrollbar-invisible">
+                    {availableEmployees.map((s) => (
+                      <button
+                        key={s.chat_id}
+                        onClick={() => addMemberById(s.chat_id)}
+                        disabled={busy === `add-${s.chat_id}`}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-foreground/[0.06] transition-colors disabled:opacity-40"
+                      >
+                        <div className={cn("h-5 w-5 rounded-full flex items-center justify-center shrink-0", s.enabled && !s.paused_reason ? "bg-emerald-500/15" : "bg-foreground/[0.1]")}>
+                          <AgentIcon className={cn("h-2.5 w-2.5", s.enabled && !s.paused_reason ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/60")} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[13px] font-medium text-foreground truncate">{s.title || "Untitled Employee"}</p>
+                          <p className="text-[10px] text-muted-foreground/60">{formatFrequency(s.frequency)}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         ) : (
-          <div className={cn(
-            "rounded-xl py-5 text-center transition-all",
-            dragOver
-              ? "bg-foreground/[0.08]"
-              : "border border-dashed border-foreground/[0.12]",
-          )}>
-            <p className="text-xs text-muted-foreground/60">
-              {dragOver ? "Drop to add" : "Drag employees here to add them"}
-            </p>
+          <div className="space-y-2.5">
+            <div className={cn(
+              "rounded-xl py-5 text-center transition-all",
+              dragOver
+                ? "bg-foreground/[0.08]"
+                : "border border-dashed border-foreground/[0.12]",
+            )}>
+              <p className="text-xs text-muted-foreground/60">
+                {dragOver ? "Drop to add" : "No members yet"}
+              </p>
+            </div>
+            {!dragOver && availableEmployees.length > 0 && (
+              <button
+                onClick={() => setShowAddMenu(!showAddMenu)}
+                className="w-full flex items-center justify-center gap-1.5 h-8 rounded-lg bg-foreground/[0.06] hover:bg-foreground/[0.1] text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
+              >
+                <Plus className="h-3 w-3" />Add Employee
+              </button>
+            )}
+            {showAddMenu && availableEmployees.length > 0 && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowAddMenu(false)} />
+                <div className="relative z-50 w-full max-h-48 overflow-y-auto rounded-xl bg-background ring-1 ring-foreground/[0.12] shadow-lg py-1 scrollbar-invisible">
+                  {availableEmployees.map((s) => (
+                    <button
+                      key={s.chat_id}
+                      onClick={() => addMemberById(s.chat_id)}
+                      disabled={busy === `add-${s.chat_id}`}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-foreground/[0.06] transition-colors disabled:opacity-40"
+                    >
+                      <div className={cn("h-5 w-5 rounded-full flex items-center justify-center shrink-0", s.enabled && !s.paused_reason ? "bg-emerald-500/15" : "bg-foreground/[0.1]")}>
+                        <AgentIcon className={cn("h-2.5 w-2.5", s.enabled && !s.paused_reason ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/60")} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-medium text-foreground truncate">{s.title || "Untitled Employee"}</p>
+                        <p className="text-[10px] text-muted-foreground/60">{formatFrequency(s.frequency)}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -305,7 +386,7 @@ function EmployeePill({ schedule }: { schedule: ScheduleResponse }) {
         "h-6 w-6 rounded-full flex items-center justify-center shrink-0",
         isActive ? "bg-emerald-500/15" : "bg-foreground/[0.1]",
       )}>
-        <AgentIcon className={cn("h-2.5 w-2.5", isActive ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/60")} />
+        <CoastyIcon className={cn("h-3 w-3", isActive ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/60")} />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-[13px] font-medium text-foreground truncate leading-tight">{schedule.title || "Untitled Employee"}</p>
@@ -435,21 +516,25 @@ export function SchedulesContent() {
 
         {/* Tabs */}
         {schedules.length > 0 && (
-          <div className="flex items-center gap-1 border-b border-foreground/[0.06]">
+          <div className="inline-flex items-center rounded-xl bg-zinc-100 dark:bg-zinc-800/80 p-1 ring-1 ring-zinc-200/80 dark:ring-zinc-700/50">
             {tabs.map((tab) => {
               const Icon = tab.icon
               const active = activeTab === tab.id
               return (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={cn(
-                  "relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all rounded-t-lg",
-                  active ? "text-foreground" : "text-muted-foreground hover:text-foreground/80",
+                  "relative flex items-center gap-2 px-4 py-2 text-[13px] font-medium transition-all duration-200 rounded-lg",
+                  active
+                    ? "bg-white dark:bg-zinc-900 text-foreground shadow-sm ring-1 ring-zinc-200/60 dark:ring-zinc-700/40"
+                    : "text-muted-foreground hover:text-foreground/80",
                 )}>
-                  <Icon className="h-4 w-4" />
+                  <Icon className={cn("h-3.5 w-3.5", active ? "text-foreground/70" : "text-muted-foreground/50")} />
                   <span>{tab.label}</span>
                   {tab.count !== undefined && tab.count > 0 && (
-                    <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full tabular-nums", active ? "bg-foreground/[0.1] text-foreground/70" : "bg-foreground/[0.06] text-muted-foreground/70")}>{tab.count}</span>
+                    <span className={cn(
+                      "text-[10px] min-w-[18px] text-center px-1.5 py-px rounded-md tabular-nums font-semibold",
+                      active ? "bg-zinc-100 dark:bg-zinc-800 text-foreground/60" : "text-muted-foreground/40",
+                    )}>{tab.count}</span>
                   )}
-                  {active && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-foreground rounded-full" />}
                 </button>
               )
             })}
@@ -508,7 +593,7 @@ export function SchedulesContent() {
             {/* Teams explainer */}
             <div className="rounded-xl px-4 py-3 bg-foreground/[0.08] ring-1 ring-foreground/[0.1]">
               <p className="text-[12px] text-muted-foreground leading-relaxed">
-                <span className="font-semibold text-foreground/70">Teams</span> let employees share context and memory across runs — one employee&apos;s output becomes another&apos;s input, automatically. Drag employees from the sidebar into a team to get started.
+                <span className="font-semibold text-foreground/70">Teams</span> let employees share context and memory across runs — one employee&apos;s output becomes another&apos;s input, automatically. Use the <span className="font-medium text-foreground/70">Add</span> button on each team or <span className="hidden lg:inline">drag employees from the sidebar</span><span className="lg:hidden">tap to add members</span>.
               </p>
             </div>
 
@@ -521,7 +606,7 @@ export function SchedulesContent() {
                   <Users className="h-8 w-8 text-muted-foreground/20 mx-auto mb-3" />
                   <p className="text-sm font-medium text-foreground/70 mb-1">No teams yet</p>
                   <p className="text-xs text-muted-foreground/50 max-w-xs mx-auto mb-5">
-                    Teams let employees share context and memory. Create one, then drag employees from the sidebar.
+                    Teams let employees share context and memory. Create one, then add employees to it.
                   </p>
                   <button onClick={() => setShowCreateTeam(true)} className={cn("inline-flex items-center gap-2 h-9 px-5 rounded-xl text-sm font-medium transition-all text-background bg-foreground hover:bg-foreground/90")}>
                     <Plus className="h-3.5 w-3.5" />New Team
@@ -564,7 +649,7 @@ export function SchedulesContent() {
                 <>
                   {!showCreateTeam && (
                     <div className="flex items-center justify-between">
-                      <p className="text-[13px] text-muted-foreground/60">Drag employees from the right to add them</p>
+                      <p className="text-[13px] text-muted-foreground/60"><span className="hidden lg:inline">Drag employees from the right or use</span><span className="lg:hidden">Use</span> the Add button to add members</p>
                       <button onClick={() => setShowCreateTeam(true)} className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
                         <Plus className="h-3 w-3" />New Team
                       </button>
@@ -579,8 +664,8 @@ export function SchedulesContent() {
               )}
             </div>
 
-            {/* Right: Employee sidebar */}
-            <div className="lg:sticky lg:top-6 lg:self-start">
+            {/* Right: Employee sidebar (hidden on mobile — use Add button instead) */}
+            <div className="hidden lg:block lg:sticky lg:top-6 lg:self-start">
               <div className="rounded-2xl ring-1 ring-foreground/[0.12] bg-foreground/[0.04] overflow-hidden">
                 <div className="px-4 py-3 border-b border-foreground/[0.08]">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Employees</p>
