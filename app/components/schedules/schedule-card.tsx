@@ -10,9 +10,9 @@ import {
   Clock,
   AlertTriangle,
   Pencil,
-  Check,
 } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
+import { AgentIcon } from "@/components/icons/agent"
 import {
   formatFrequency,
   formatNextRun,
@@ -30,51 +30,6 @@ interface ScheduleCardProps {
   onEdit?: (chatId: string) => void
 }
 
-function StatusBadge({ schedule }: { schedule: ScheduleResponse }) {
-  if (schedule.enabled && !schedule.paused_reason) {
-    return (
-      <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
-        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(52,211,153,0.5)]" />
-        On Duty
-      </span>
-    )
-  }
-
-  if (schedule.paused_reason === "insufficient_credits") {
-    return (
-      <span className="inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-1 rounded-full border border-orange-500/20 bg-orange-500/10 text-orange-700 dark:text-orange-400">
-        <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-        No Credits
-      </span>
-    )
-  }
-
-  if (schedule.paused_reason === "too_many_failures") {
-    return (
-      <span className="inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-1 rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400">
-        <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-        Needs Attention
-      </span>
-    )
-  }
-
-  if (schedule.paused_reason === "machine_unavailable") {
-    return (
-      <span className="inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-1 rounded-full border border-slate-500/20 bg-slate-500/10 text-slate-600 dark:text-slate-400">
-        <div className="w-1.5 h-1.5 rounded-full bg-slate-500" />
-        Offline
-      </span>
-    )
-  }
-
-  return (
-    <span className="inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-1 rounded-full border border-foreground/[0.06] bg-foreground/[0.03] text-muted-foreground">
-      <div className="w-1.5 h-1.5 rounded-full bg-zinc-500 dark:bg-zinc-600" />
-      Standby
-    </span>
-  )
-}
-
 export function ScheduleCard({
   schedule,
   onUpdate,
@@ -86,256 +41,179 @@ export function ScheduleCard({
 
   async function handleRunNow() {
     setActionLoading("run")
-    try {
-      await triggerScheduleNow(schedule.chat_id)
-      onUpdate()
-    } catch {
-      // handled by parent
-    } finally {
-      setActionLoading(null)
-    }
+    try { await triggerScheduleNow(schedule.chat_id); onUpdate() } catch {} finally { setActionLoading(null) }
   }
 
   async function handleTogglePause() {
     setActionLoading("pause")
-    try {
-      await pauseSchedule(schedule.chat_id)
-      onUpdate()
-    } catch {
-      // handled by parent
-    } finally {
-      setActionLoading(null)
-    }
+    try { await pauseSchedule(schedule.chat_id); onUpdate() } catch {} finally { setActionLoading(null) }
   }
 
   async function handleDelete() {
     setActionLoading("delete")
-    try {
-      await deleteSchedule(schedule.chat_id)
-      onUpdate()
-    } catch {
-      // handled by parent
-    } finally {
-      setActionLoading(null)
-    }
+    try { await deleteSchedule(schedule.chat_id); onUpdate() } catch {} finally { setActionLoading(null) }
   }
 
   const isActive = schedule.enabled && !schedule.paused_reason
   const isFailed = schedule.paused_reason === "too_many_failures"
-  const showBeam = isActive || isFailed
+
+  const statusLabel = isActive
+    ? "On Duty"
+    : schedule.paused_reason === "too_many_failures"
+      ? "Needs Attention"
+      : schedule.paused_reason === "insufficient_credits"
+        ? "No Credits"
+        : schedule.paused_reason === "machine_unavailable"
+          ? "Offline"
+          : "Standby"
 
   return (
-    <div
-      className={cn(
-        "group relative flex flex-col rounded-xl overflow-hidden transition-all duration-300 h-full",
-        showBeam ? "border border-foreground/[0.1] dark:border-0" : "border border-foreground/[0.06]",
-        !isActive && "opacity-80",
-        "bg-foreground/[0.03]",
-      )}
-    >
-      {/* Monochrome rotating beam border — dark mode only */}
-      {showBeam && (
-        <>
-          <div className="hidden dark:block absolute -inset-[2px] rounded-xl overflow-hidden">
-            <div
-              className="absolute w-full h-full animate-rotate-beam"
-              style={{
-                filter: "drop-shadow(0 0 6px rgba(255, 255, 255, 0.1))",
-                background: isActive
-                  ? `conic-gradient(from var(--beam-angle) at 50% 50%,
-                      transparent 0deg,
-                      rgba(255, 255, 255, 0.06) 5deg,
-                      rgba(255, 255, 255, 0.12) 10deg,
-                      rgba(255, 255, 255, 0.2) 20deg,
-                      rgba(255, 255, 255, 0.5) 30deg,
-                      rgba(255, 255, 255, 0.2) 40deg,
-                      rgba(255, 255, 255, 0.12) 50deg,
-                      rgba(255, 255, 255, 0.06) 55deg,
-                      transparent 60deg,
-                      transparent 360deg)`
-                  : `conic-gradient(from var(--beam-angle) at 50% 50%,
-                      transparent 0deg,
-                      rgba(161, 161, 170, 0.06) 5deg,
-                      rgba(161, 161, 170, 0.12) 10deg,
-                      rgba(161, 161, 170, 0.2) 20deg,
-                      rgba(255, 255, 255, 0.35) 30deg,
-                      rgba(161, 161, 170, 0.2) 40deg,
-                      rgba(161, 161, 170, 0.12) 50deg,
-                      rgba(161, 161, 170, 0.06) 55deg,
-                      transparent 60deg,
-                      transparent 360deg)`,
-              }}
-            />
+    <div className={cn(
+      "group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-200 h-full",
+      "bg-foreground/[0.02] hover:bg-foreground/[0.04]",
+      "ring-1 ring-foreground/[0.08] hover:ring-foreground/[0.14]",
+      !isActive && !isFailed && "opacity-85 hover:opacity-100",
+    )}>
+      <div className="p-5 flex-1 space-y-4">
+        {/* Identity */}
+        <div className="flex items-start gap-3.5">
+          <div className={cn(
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors",
+            isActive
+              ? "bg-emerald-500/10 ring-1 ring-emerald-500/20"
+              : isFailed
+                ? "bg-amber-500/10 ring-1 ring-amber-500/20"
+                : "bg-foreground/[0.06] ring-1 ring-foreground/[0.08]",
+          )}>
+            <AgentIcon className={cn(
+              "h-4 w-4",
+              isActive ? "text-emerald-600 dark:text-emerald-400"
+                : isFailed ? "text-amber-600 dark:text-amber-400"
+                : "text-foreground/50",
+            )} />
           </div>
-          <div className="hidden dark:block absolute inset-[2px] bg-background rounded-xl z-[1]" />
-          <style jsx>{`
-            @property --beam-angle {
-              syntax: '<angle>';
-              inherits: false;
-              initial-value: 0deg;
-            }
-            @keyframes rotate-beam {
-              from { --beam-angle: 0deg; }
-              to { --beam-angle: 360deg; }
-            }
-            .animate-rotate-beam {
-              animation: rotate-beam 3s linear infinite;
-            }
-          `}</style>
-        </>
-      )}
-
-      {/* Content */}
-      <div className="relative z-[2] flex flex-col h-full">
-      <div className="p-4 space-y-3 flex-1">
-        {/* Header: Title + Status */}
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0 flex-1">
+          <div className="flex-1 min-w-0">
             <h3
-              className="font-semibold truncate cursor-pointer text-foreground/90 hover:text-foreground transition-colors"
+              className="text-[15px] font-semibold text-foreground truncate cursor-pointer hover:text-foreground/70 transition-colors leading-tight"
               onClick={() => router.push(`/c/${schedule.chat_id}`)}
-              title={schedule.title || "Untitled Employee"}
             >
               {schedule.title || "Untitled Employee"}
             </h3>
-            <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1.5">
-              <Clock className="h-3 w-3" />
-              {formatFrequency(schedule.frequency)}
-              {schedule.timezone !== "UTC" && (
-                <span className="text-xs text-muted-foreground/60">({schedule.timezone})</span>
-              )}
-            </p>
-          </div>
-          <StatusBadge schedule={schedule} />
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 text-sm">
-          <div className="space-y-0.5">
-            <p className="text-[11px] text-muted-foreground/60 uppercase tracking-wider font-medium">
-              Next Shift
-            </p>
-            <p className="font-medium text-xs text-foreground/80">
-              {formatNextRun(schedule.next_run_at)}
-            </p>
-          </div>
-          <div className="space-y-0.5">
-            <p className="text-[11px] text-muted-foreground/60 uppercase tracking-wider font-medium">
-              Executions
-            </p>
-            <p className="font-medium text-xs text-foreground/80">{schedule.run_count}</p>
-          </div>
-          <div className="space-y-0.5">
-            <p className="text-[11px] text-muted-foreground/60 uppercase tracking-wider font-medium">
-              Failures
-            </p>
-            <p className={cn(
-              "font-medium text-xs text-foreground/80",
-            )}>
-              {schedule.consecutive_failures}
-            </p>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className={cn(
+                "w-1.5 h-1.5 rounded-full shrink-0",
+                isActive ? "bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.5)]"
+                  : isFailed ? "bg-amber-500"
+                  : "bg-zinc-400 dark:bg-zinc-600",
+              )} />
+              <span className={cn(
+                "text-[11px] font-medium",
+                isActive ? "text-emerald-700 dark:text-emerald-400"
+                  : isFailed ? "text-amber-700 dark:text-amber-400"
+                  : "text-muted-foreground/70",
+              )}>
+                {statusLabel}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Last run */}
-        {schedule.last_run_at && (
-          <p className="text-xs text-muted-foreground">
-            Last active:{" "}
-            {new Date(schedule.last_run_at).toLocaleString(undefined, {
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
-        )}
+        {/* Meta row */}
+        <div className="flex items-center gap-2.5 text-[11px] text-muted-foreground/70 flex-wrap">
+          <span className="flex items-center gap-1.5">
+            <Clock className="h-3 w-3 text-muted-foreground/40" />
+            {formatFrequency(schedule.frequency)}
+          </span>
+          <span className="text-foreground/[0.1]">&middot;</span>
+          <span>{schedule.run_count} runs</span>
+          {schedule.consecutive_failures > 0 && (
+            <>
+              <span className="text-foreground/[0.1]">&middot;</span>
+              <span className="text-amber-600/70 dark:text-amber-400/70">{schedule.consecutive_failures} failed</span>
+            </>
+          )}
+        </div>
 
-        {/* Paused reason alert */}
-        {schedule.paused_reason &&
-          schedule.paused_reason !== "deleted" && (
-            <div className={cn(
-              "flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs",
-              "bg-foreground/[0.03] border border-foreground/[0.06] text-muted-foreground",
-            )}>
-              <AlertTriangle className="h-3 w-3 shrink-0 text-muted-foreground" />
-              <span className="truncate">
-                {schedule.paused_reason === "insufficient_credits"
-                  ? "Standby: insufficient credits"
-                  : schedule.paused_reason === "too_many_failures"
-                  ? `Needs attention: ${schedule.consecutive_failures} consecutive failures`
-                  : schedule.paused_reason === "machine_unavailable"
-                  ? "Standby: workstation unavailable"
-                  : `Standby: ${schedule.paused_reason}`}
+        {/* Key-value rows */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-muted-foreground/50">Next shift</span>
+            <span className="text-[11px] text-foreground/70 font-medium">{formatNextRun(schedule.next_run_at)}</span>
+          </div>
+          {schedule.last_run_at && (
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted-foreground/50">Last active</span>
+              <span className="text-[11px] text-muted-foreground">
+                {new Date(schedule.last_run_at).toLocaleString(undefined, {
+                  month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+                })}
               </span>
             </div>
           )}
+        </div>
+
+        {/* Alert */}
+        {schedule.paused_reason && schedule.paused_reason !== "deleted" && (
+          <div className="flex items-center gap-2 rounded-lg px-3 py-2 bg-foreground/[0.04] ring-1 ring-foreground/[0.06]">
+            <AlertTriangle className="h-3 w-3 shrink-0 text-muted-foreground/60" />
+            <span className="text-[11px] text-muted-foreground truncate">
+              {schedule.paused_reason === "insufficient_credits" ? "Insufficient credits"
+                : schedule.paused_reason === "too_many_failures" ? `${schedule.consecutive_failures} consecutive failures`
+                : schedule.paused_reason === "machine_unavailable" ? "Workstation unavailable"
+                : schedule.paused_reason}
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Actions — pinned to bottom */}
-      <div className="border-t border-foreground/[0.06] px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
+      {/* Actions */}
+      <div className="px-4 py-3 flex items-center gap-1.5 border-t border-foreground/[0.06]">
         <button
-          className={cn(
-            "inline-flex items-center gap-1 sm:gap-1.5 h-7 sm:h-8 px-2.5 rounded-lg text-xs font-medium transition-all",
-            "border border-foreground/[0.08] bg-foreground/[0.04] text-foreground/70",
-            "hover:bg-foreground/[0.08] hover:text-foreground hover:border-foreground/[0.12]",
-            "disabled:opacity-40 disabled:cursor-not-allowed",
-          )}
           onClick={handleRunNow}
           disabled={!!actionLoading}
+          className={cn(
+            "h-8 px-3 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-all",
+            "bg-foreground/[0.06] hover:bg-foreground/[0.1] text-foreground/70 hover:text-foreground",
+            "disabled:opacity-40",
+          )}
         >
           <CoastyIcon className="h-3 w-3" />
-          {actionLoading === "run" ? "..." : "Run"}
+          {actionLoading === "run" ? "\u2026" : "Run"}
         </button>
         <button
-          className={cn(
-            "inline-flex items-center gap-1 sm:gap-1.5 h-7 sm:h-8 px-2.5 rounded-lg text-xs transition-all",
-            "border border-foreground/[0.06] text-muted-foreground",
-            "hover:bg-foreground/[0.06] hover:text-foreground hover:border-foreground/[0.1]",
-            "disabled:opacity-40 disabled:cursor-not-allowed",
-          )}
           onClick={handleTogglePause}
           disabled={!!actionLoading}
+          className="h-8 px-2.5 rounded-lg text-[11px] flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] transition-all disabled:opacity-40"
         >
-          {schedule.enabled ? (
-            <Pause className="h-3 w-3" />
-          ) : (
-            <Play className="h-3 w-3" />
-          )}
-          {actionLoading === "pause"
-            ? "..."
-            : schedule.enabled
-            ? "Pause"
-            : "Resume"}
+          {schedule.enabled ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+          {actionLoading === "pause" ? "\u2026" : schedule.enabled ? "Pause" : "Resume"}
         </button>
+        <div className="flex-1" />
         <button
-          className="inline-flex items-center gap-1 sm:gap-1.5 h-7 sm:h-8 px-2 rounded-lg text-xs text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground transition-all"
           onClick={() => onViewHistory(schedule.chat_id)}
+          className="h-7 w-7 rounded-lg flex items-center justify-center text-muted-foreground/30 hover:text-muted-foreground hover:bg-foreground/[0.06] transition-all"
+          title="Work Log"
         >
-          <History className="h-3 w-3" />
-          <span className="hidden sm:inline">Work Log</span>
+          <History className="h-3.5 w-3.5" />
         </button>
         {onEdit && (
           <button
-            className="inline-flex items-center gap-1 sm:gap-1.5 h-7 sm:h-8 px-2 rounded-lg text-xs text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground transition-all"
             onClick={() => onEdit(schedule.chat_id)}
+            className="h-7 w-7 rounded-lg flex items-center justify-center text-muted-foreground/30 hover:text-muted-foreground hover:bg-foreground/[0.06] transition-all"
+            title="Edit"
           >
-            <Pencil className="h-3 w-3" />
-            <span className="hidden sm:inline">Edit</span>
+            <Pencil className="h-3.5 w-3.5" />
           </button>
         )}
         <button
-          className={cn(
-            "h-7 sm:h-8 px-2 rounded-lg ml-auto transition-all",
-            "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/[0.06]",
-            "disabled:opacity-40 disabled:cursor-not-allowed",
-          )}
           onClick={handleDelete}
           disabled={!!actionLoading}
+          className="h-7 w-7 rounded-lg flex items-center justify-center text-muted-foreground/30 hover:text-muted-foreground hover:bg-foreground/[0.06] transition-all disabled:opacity-40"
+          title="Delete"
         >
-          <Trash2 className="h-3 w-3" />
+          <Trash2 className="h-3.5 w-3.5" />
         </button>
       </div>
-      </div>{/* end z-[2] wrapper */}
     </div>
   )
 }

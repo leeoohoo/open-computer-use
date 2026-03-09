@@ -3,10 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import {
-  CalendarDays,
   Clock,
-  Play,
-  Pause,
   Trash2,
   Pencil,
   Briefcase,
@@ -18,7 +15,6 @@ import {
   MoreHorizontal,
   Cpu,
   Activity,
-  ChevronRight,
   UserPlus,
   Users,
   Plus,
@@ -48,10 +44,7 @@ import {
   getTeamSharedMemory,
   updateTeam,
   formatFrequency,
-  formatNextRun,
   triggerScheduleNow,
-  pauseSchedule,
-  deleteSchedule,
   type ScheduleResponse,
   type TeamResponse,
   type SharedMemoryEntry,
@@ -59,10 +52,10 @@ import {
 import { cn } from "@/lib/utils"
 
 /* ─── types ─── */
-type Tab = "teams" | "employees" | "calendar"
+type Tab = "teams" | "employees"
 
-/* ─── Day task card (Calendar tab) ─── */
-function DayTaskItem({ task, onUpdate, onEdit }: { task: DayTask; onUpdate: () => void; onEdit?: (id: string) => void }) {
+/* ─── Day task row (compact) ─── */
+function DayTaskItem({ task, onUpdate }: { task: DayTask; onUpdate: () => void }) {
   const router = useRouter()
   const s = task.schedule
   const [loading, setLoading] = useState<string | null>(null)
@@ -71,49 +64,33 @@ function DayTaskItem({ task, onUpdate, onEdit }: { task: DayTask; onUpdate: () =
   async function run() {
     setLoading("run"); try { trackScheduleTriggered(s.chat_id); await triggerScheduleNow(s.chat_id); onUpdate() } catch {} finally { setLoading(null) }
   }
-  async function toggle() {
-    setLoading("pause"); try { await pauseSchedule(s.chat_id); onUpdate() } catch {} finally { setLoading(null) }
-  }
-  async function remove() {
-    setLoading("del"); try { await deleteSchedule(s.chat_id); onUpdate() } catch {} finally { setLoading(null) }
-  }
 
   return (
-    <div className={cn(
-      "border-l-2 rounded-r-xl transition-all bg-foreground/[0.02] hover:bg-foreground/[0.04]",
-      isActive ? "border-l-emerald-500/50" : s.paused_reason === "too_many_failures" ? "border-l-amber-500/50" : "border-l-muted-foreground/20",
-    )}>
-      <div className="px-3 pt-3 pb-2.5 space-y-2">
-        <div className="flex items-start justify-between gap-2">
-          <p className="text-[13px] font-medium leading-snug cursor-pointer text-foreground/90 hover:text-foreground transition-colors line-clamp-2" onClick={() => router.push(`/c/${s.chat_id}`)}>
-            {s.title || "Untitled Employee"}
-          </p>
-          <span className={cn(
-            "text-[10px] shrink-0 leading-none py-0.5 px-2 rounded-full border font-medium",
-            isActive ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20"
-              : s.paused_reason === "too_many_failures" ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20"
-              : "bg-foreground/[0.04] text-muted-foreground border-foreground/[0.06]",
-          )}>
-            {isActive ? "On Duty" : s.paused_reason === "too_many_failures" ? "Needs Attention" : s.paused_reason === "insufficient_credits" ? "No Credits" : s.paused_reason === "machine_unavailable" ? "Offline" : "Standby"}
-          </span>
-        </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground flex-wrap">
-          <Clock className="h-2.5 w-2.5 shrink-0" />
-          <span>{task.runsPerDay > 6 ? `${task.runsPerDay}\u00d7 daily` : task.times.length > 0 ? task.times.join(", ") : formatFrequency(s.frequency)}</span>
-          <span className="opacity-30">&middot;</span>
-          <span>{s.run_count} executions</span>
-        </div>
-        <div className="flex items-center gap-1 pt-0.5">
-          <button className={cn("inline-flex items-center gap-1 h-6 px-2 rounded-md text-[11px] font-medium transition-all border border-foreground/[0.08] bg-foreground/[0.04] text-foreground/70 hover:bg-foreground/[0.08] disabled:opacity-40")} onClick={run} disabled={!!loading}>
-            <CoastyIcon className="h-2.5 w-2.5" />{loading === "run" ? "\u2026" : "Run now"}
-          </button>
-          <button className={cn("inline-flex items-center gap-1 h-6 px-2 rounded-md text-[11px] transition-all border border-foreground/[0.06] text-muted-foreground hover:bg-foreground/[0.06] disabled:opacity-40")} onClick={toggle} disabled={!!loading}>
-            {s.enabled ? <Pause className="h-2.5 w-2.5" /> : <Play className="h-2.5 w-2.5" />}{loading === "pause" ? "\u2026" : s.enabled ? "Pause" : "Resume"}
-          </button>
-          {onEdit && <button className="inline-flex items-center gap-1 h-6 px-2 rounded-md text-[11px] text-muted-foreground hover:bg-foreground/[0.06] transition-all" onClick={() => onEdit(s.chat_id)}><Pencil className="h-2.5 w-2.5" />Edit</button>}
-          <button className={cn("ml-auto h-6 w-6 inline-flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-foreground/[0.06] disabled:opacity-40")} onClick={remove} disabled={!!loading}><Trash2 className="h-3 w-3" /></button>
-        </div>
+    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-foreground/[0.04] transition-all group">
+      <div className={cn(
+        "w-2 h-2 rounded-full shrink-0",
+        isActive ? "bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.5)]"
+          : s.paused_reason === "too_many_failures" ? "bg-amber-500"
+          : "bg-zinc-400 dark:bg-zinc-600",
+      )} />
+      <div className="flex-1 min-w-0">
+        <p
+          className="text-[13px] font-medium text-foreground/80 truncate cursor-pointer hover:text-foreground transition-colors"
+          onClick={() => router.push(`/c/${s.chat_id}`)}
+        >
+          {s.title || "Untitled Employee"}
+        </p>
       </div>
+      <span className="text-[11px] text-muted-foreground/50 tabular-nums shrink-0">
+        {task.runsPerDay > 6 ? `${task.runsPerDay}\u00d7 daily` : task.times.length > 0 ? task.times[0] : formatFrequency(s.frequency)}
+      </span>
+      <button
+        onClick={run}
+        disabled={!!loading}
+        className="h-6 px-2 rounded-md text-[10px] font-medium bg-foreground/[0.05] hover:bg-foreground/[0.1] text-foreground/60 hover:text-foreground opacity-0 group-hover:opacity-100 transition-all disabled:opacity-40"
+      >
+        {loading === "run" ? "\u2026" : "Run"}
+      </button>
     </div>
   )
 }
@@ -387,7 +364,6 @@ export function SchedulesContent() {
   const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }>; count?: number }[] = [
     { id: "teams", label: "Teams", icon: Users, count: teams.length },
     { id: "employees", label: "Employees", icon: AgentIcon, count: schedules.length },
-    { id: "calendar", label: "Calendar", icon: CalendarDays },
   ]
 
   async function handleCreateTeam() {
@@ -528,7 +504,15 @@ export function SchedulesContent() {
 
         {/* ═══ TEAMS TAB ═══ */}
         {schedules.length > 0 && activeTab === "teams" && (
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] gap-6">
+          <div className="space-y-5">
+            {/* Teams explainer */}
+            <div className="rounded-xl px-4 py-3 bg-foreground/[0.08] ring-1 ring-foreground/[0.1]">
+              <p className="text-[12px] text-muted-foreground leading-relaxed">
+                <span className="font-semibold text-foreground/70">Teams</span> let employees share context and memory across runs — one employee&apos;s output becomes another&apos;s input, automatically. Drag employees from the sidebar into a team to get started.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] gap-6">
             {/* Left: Teams */}
             <div className="space-y-4 min-w-0">
               {/* No teams yet — simple prompt */}
@@ -601,7 +585,7 @@ export function SchedulesContent() {
                 <div className="px-4 py-3 border-b border-foreground/[0.08]">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Employees</p>
                 </div>
-                <div className="divide-y divide-foreground/[0.06] max-h-[calc(100vh-240px)] overflow-y-auto scrollbar-invisible">
+                <div className="p-2 space-y-1 max-h-[calc(100vh-300px)] overflow-y-auto scrollbar-invisible">
                   {schedules.map((s) => (
                     <EmployeePill key={s.chat_id} schedule={s} />
                   ))}
@@ -609,87 +593,107 @@ export function SchedulesContent() {
               </div>
             </div>
           </div>
+          </div>
         )}
 
         {/* ═══ EMPLOYEES TAB ═══ */}
         {schedules.length > 0 && activeTab === "employees" && (
           <div className="space-y-6">
-            <div className="flex flex-wrap gap-2">
+            {/* Filter pills */}
+            <div className="flex flex-wrap gap-1.5">
               {[
                 { id: "all", label: "All", count: schedules.length },
                 { id: "active", label: "On Duty", count: activeCount },
                 { id: "paused", label: "Standby", count: pausedCount },
               ].map((f) => (
                 <button key={f.id} onClick={() => setStatusFilter(f.id)} className={cn(
-                  "px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all duration-300 text-sm",
+                  "h-8 px-3.5 rounded-lg transition-all text-[13px] font-medium",
                   statusFilter === f.id
-                    ? "bg-foreground text-background font-semibold shadow-sm"
-                    : "bg-foreground/[0.04] text-muted-foreground hover:bg-foreground/[0.08] hover:text-foreground border border-foreground/[0.06]",
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06]",
                 )}>
-                  <span className="flex items-center gap-1.5 sm:gap-2">{f.label}
-                    {f.count > 0 && <span className={cn("text-xs px-1.5 py-0.5 rounded-full", statusFilter === f.id ? "bg-background/20 text-background/70" : "bg-foreground/[0.06] text-muted-foreground")}>{f.count}</span>}
+                  <span className="flex items-center gap-1.5">
+                    {f.label}
+                    {f.count > 0 && (
+                      <span className={cn(
+                        "text-[10px] tabular-nums px-1.5 py-px rounded-full font-medium",
+                        statusFilter === f.id ? "bg-background/20 text-background/80" : "bg-foreground/[0.06]",
+                      )}>
+                        {f.count}
+                      </span>
+                    )}
                   </span>
                 </button>
               ))}
             </div>
+
+            {/* Employee grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {filteredSchedules.map((s) => (
                 <ScheduleCard key={s.chat_id} schedule={s} onUpdate={loadSchedules} onViewHistory={(id) => { setHistoryChat(id); setShowHistory(true) }} onEdit={setEditChatId} />
               ))}
             </div>
-            {filteredSchedules.length === 0 && schedules.length > 0 && (
-              <div className="text-center py-10"><AgentIcon className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" /><p className="text-sm text-muted-foreground">No employees match this filter</p></div>
-            )}
-            <div className="space-y-3">
-              <div className="flex items-center gap-3"><h2 className="text-sm font-semibold text-foreground/80">Activity Log</h2><div className="flex-1 h-px bg-gradient-to-r from-foreground/[0.08] to-transparent" /></div>
-              <ScheduleHistory chatId={showHistory ? historyChat : undefined} limit={10} />
-            </div>
-          </div>
-        )}
 
-        {/* ═══ CALENDAR TAB ═══ */}
-        {schedules.length > 0 && activeTab === "calendar" && (
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] xl:grid-cols-[1fr_380px] gap-4 sm:gap-6">
-            <ScheduleCalendar schedules={filteredSchedules} selectedDate={selectedDate} onSelectDate={setSelectedDate} />
-            <div className="lg:sticky lg:top-6 lg:self-start space-y-4">
-              <div className={cn("rounded-xl overflow-hidden bg-foreground/[0.03] border border-foreground/[0.06]")}>
-                <div className={cn("relative px-4 py-3.5 border-b border-foreground/[0.06] bg-foreground/[0.02]")}>
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold text-foreground">{selectedDate.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}</h3>
-                        {isToday && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-foreground text-background font-semibold">Today</span>}
+            {/* Empty filter state */}
+            {filteredSchedules.length === 0 && schedules.length > 0 && (
+              <div className="flex flex-col items-center py-14">
+                <AgentIcon className="h-8 w-8 text-muted-foreground/20 mb-3" />
+                <p className="text-sm text-muted-foreground/60">No employees match this filter</p>
+              </div>
+            )}
+
+            {/* Schedule calendar */}
+            <div className="space-y-2 pt-2">
+              <div className="flex items-center gap-3 px-1">
+                <h2 className="text-[13px] font-semibold text-foreground/60 uppercase tracking-wider">Schedule</h2>
+                <div className="flex-1 h-px bg-foreground/[0.06]" />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] xl:grid-cols-[1fr_320px] gap-4">
+                <ScheduleCalendar schedules={filteredSchedules} selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+                <div className="lg:sticky lg:top-6 lg:self-start">
+                  <div className="rounded-xl overflow-hidden bg-foreground/[0.02] ring-1 ring-foreground/[0.06]">
+                    <div className="px-4 py-3 border-b border-foreground/[0.06]">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-[13px] font-semibold text-foreground">
+                            {selectedDate.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+                          </h3>
+                          <p className="text-[11px] text-muted-foreground/60 mt-0.5">
+                            {dayTasks.length === 0 ? "No employees scheduled" : `${dayTasks.length} employee${dayTasks.length !== 1 ? "s" : ""}`}
+                          </p>
+                        </div>
+                        {isToday && (
+                          <span className="text-[9px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-foreground text-background">
+                            Today
+                          </span>
+                        )}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">{dayTasks.length === 0 ? "No employees scheduled" : `${dayTasks.length} employee${dayTasks.length !== 1 ? "s" : ""} on this day`}</p>
                     </div>
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-foreground/[0.06] shrink-0"><CalendarDays className="h-4 w-4 text-muted-foreground" /></div>
+                    {dayTasks.length > 0 ? (
+                      <div className="p-2 space-y-0.5">
+                        {dayTasks.map((t) => (
+                          <DayTaskItem key={t.schedule.chat_id} task={t} onUpdate={loadSchedules} />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-10 text-center">
+                        <AgentIcon className="h-6 w-6 text-muted-foreground/20 mx-auto mb-2" />
+                        <p className="text-[11px] text-muted-foreground/40">No employees on this day</p>
+                      </div>
+                    )}
                   </div>
                 </div>
-                {dayTasks.length > 0 ? (
-                  <div className="p-3 space-y-2">{dayTasks.map((t) => <DayTaskItem key={t.schedule.chat_id} task={t} onUpdate={loadSchedules} onEdit={setEditChatId} />)}</div>
-                ) : (
-                  <div className="py-10 text-center"><AgentIcon className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" /><p className="text-xs text-muted-foreground/60">No employees on this day</p></div>
-                )}
               </div>
-              <div className={cn("rounded-xl overflow-hidden bg-foreground/[0.03] border border-foreground/[0.06]")}>
-                <div className={cn("relative px-4 py-3 border-b border-foreground/[0.06] flex items-center justify-between bg-foreground/[0.02]")}>
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent" />
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Your Employees</h3>
-                  <span className="text-xs tabular-nums text-muted-foreground">{filteredSchedules.length}</span>
-                </div>
-                <div className="divide-y divide-foreground/[0.04] max-h-[300px] overflow-y-auto scrollbar-invisible">
-                  {filteredSchedules.map((s) => {
-                    const active = s.enabled && !s.paused_reason
-                    return (
-                      <Link key={s.chat_id} href={`/c/${s.chat_id}`} className="flex items-center gap-3 px-4 py-2.5 hover:bg-foreground/[0.04] transition-all group">
-                        <div className={cn("w-2 h-2 rounded-full shrink-0", active ? "bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.4)]" : s.paused_reason === "too_many_failures" ? "bg-amber-500" : "bg-zinc-500 dark:bg-zinc-600")} />
-                        <div className="flex-1 min-w-0"><p className="text-[12px] font-medium truncate text-foreground/80">{s.title || "Untitled Employee"}</p><p className="text-[10px] text-muted-foreground">{formatFrequency(s.frequency)}</p></div>
-                        <ChevronRight className="h-3.5 w-3.5 text-transparent group-hover:text-muted-foreground transition-colors shrink-0" />
-                      </Link>
-                    )
-                  })}
-                </div>
+            </div>
+
+            {/* Activity log */}
+            <div className="space-y-2 pt-2">
+              <div className="flex items-center gap-3 px-1">
+                <h2 className="text-[13px] font-semibold text-foreground/60 uppercase tracking-wider">Recent Activity</h2>
+                <div className="flex-1 h-px bg-foreground/[0.06]" />
+              </div>
+              <div className="rounded-xl bg-foreground/[0.02] ring-1 ring-foreground/[0.06] overflow-hidden">
+                <ScheduleHistory chatId={showHistory ? historyChat : undefined} limit={10} />
               </div>
             </div>
           </div>

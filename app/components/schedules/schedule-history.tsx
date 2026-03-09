@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { History, CheckCircle2, XCircle, SkipForward, Clock, Zap } from "lucide-react"
+import { CheckCircle2, XCircle, SkipForward, Clock, Zap, History } from "lucide-react"
+import { AgentIcon } from "@/components/icons/agent"
 import {
   getScheduleHistory,
   type ScheduleHistoryEntry,
@@ -16,17 +17,17 @@ interface ScheduleHistoryProps {
 function statusConfig(status: string) {
   switch (status) {
     case "completed":
-      return { icon: CheckCircle2, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20", label: "Completed" }
+      return { icon: CheckCircle2, dotColor: "bg-emerald-500", label: "Completed", labelColor: "text-emerald-700 dark:text-emerald-400" }
     case "failed":
-      return { icon: XCircle, color: "text-rose-600 dark:text-rose-400", bg: "bg-rose-500/10", border: "border-rose-500/20", label: "Failed" }
+      return { icon: XCircle, dotColor: "bg-rose-500", label: "Failed", labelColor: "text-rose-700 dark:text-rose-400" }
     case "skipped":
-      return { icon: SkipForward, color: "text-muted-foreground", bg: "bg-foreground/[0.03]", border: "border-foreground/[0.05]", label: "Skipped" }
+      return { icon: SkipForward, dotColor: "bg-zinc-400 dark:bg-zinc-600", label: "Skipped", labelColor: "text-muted-foreground" }
     case "cancelled":
-      return { icon: XCircle, color: "text-muted-foreground", bg: "bg-foreground/[0.03]", border: "border-foreground/[0.05]", label: "Cancelled" }
+      return { icon: XCircle, dotColor: "bg-zinc-400 dark:bg-zinc-600", label: "Cancelled", labelColor: "text-muted-foreground" }
     case "triggered":
-      return { icon: Zap, color: "text-sky-600 dark:text-sky-400", bg: "bg-sky-500/10", border: "border-sky-500/20", label: "Triggered" }
+      return { icon: Zap, dotColor: "bg-sky-500", label: "Triggered", labelColor: "text-sky-700 dark:text-sky-400" }
     default:
-      return { icon: Clock, color: "text-muted-foreground", bg: "bg-foreground/[0.03]", border: "border-foreground/[0.05]", label: status }
+      return { icon: Clock, dotColor: "bg-zinc-400 dark:bg-zinc-600", label: status, labelColor: "text-muted-foreground" }
   }
 }
 
@@ -69,10 +70,10 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-10">
+      <div className="flex items-center justify-center py-12">
         <div className="relative h-8 w-8">
-          <div className="absolute inset-0 rounded-full border-2 border-muted" />
-          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-foreground animate-spin" />
+          <div className="absolute inset-0 rounded-full border-2 border-foreground/[0.06]" />
+          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-foreground/50 animate-spin" />
         </div>
       </div>
     )
@@ -80,81 +81,78 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
 
   if (history.length === 0) {
     return (
-      <div className={cn(
-        "flex flex-col items-center justify-center py-10 text-center rounded-xl",
-        "bg-foreground/[0.03] border border-foreground/[0.06]",
-      )}>
-        <History className="h-8 w-8 text-muted-foreground/30 mb-2" />
-        <p className="text-sm font-medium text-muted-foreground">No activity yet</p>
-        <p className="text-xs text-muted-foreground/60 mt-0.5">Activity logs will appear here once your employees start working</p>
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-foreground/[0.04] ring-1 ring-foreground/[0.06] mb-3">
+          <History className="h-5 w-5 text-muted-foreground/30" />
+        </div>
+        <p className="text-sm font-medium text-muted-foreground/70">No activity yet</p>
+        <p className="text-xs text-muted-foreground/40 mt-1 max-w-[240px]">
+          Logs will appear here once your employees start working
+        </p>
       </div>
     )
   }
 
   return (
-    <div className={cn(
-      "rounded-xl overflow-hidden",
-      "bg-foreground/[0.03] border border-foreground/[0.06]",
-    )}>
-      <div className="divide-y divide-foreground/[0.04]">
-        {history.map((entry) => {
-          const cfg = statusConfig(entry.status)
-          const Icon = cfg.icon
-          return (
-            <div
-              key={entry.id}
-              className="flex items-start gap-3 px-4 py-3 hover:bg-foreground/[0.03] transition-all group"
-            >
-              {/* Status icon */}
-              <div className={cn(
-                "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border",
-                cfg.bg, cfg.border,
-              )}>
-                <Icon className={cn("h-3.5 w-3.5", cfg.color)} />
-              </div>
+    <div className="space-y-1">
+      {history.map((entry, idx) => {
+        const cfg = statusConfig(entry.status)
+        return (
+          <div
+            key={entry.id}
+            className="group flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl hover:bg-foreground/[0.03] transition-all"
+          >
+            {/* Timeline dot */}
+            <div className="relative flex flex-col items-center shrink-0">
+              <div className={cn("w-2 h-2 rounded-full", cfg.dotColor)} />
+              {idx < history.length - 1 && (
+                <div className="absolute top-3 w-px h-6 bg-foreground/[0.06]" />
+              )}
+            </div>
 
-              {/* Content */}
+            {/* Content */}
+            <div className="flex-1 min-w-0 flex items-center gap-3">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <span className={cn("text-xs font-semibold", cfg.color)}>{cfg.label}</span>
-                  <span
-                    className="text-[11px] text-muted-foreground/60 shrink-0 tabular-nums"
-                    title={formatExactDate(entry.executed_at)}
-                  >
-                    {formatDate(entry.executed_at)}
+                <div className="flex items-center gap-2">
+                  <span className={cn("text-xs font-semibold", cfg.labelColor)}>
+                    {cfg.label}
                   </span>
+                  {entry.trigger === "manual" && (
+                    <span className="text-[9px] uppercase tracking-wider font-medium text-muted-foreground/40 bg-foreground/[0.04] px-1.5 py-px rounded">
+                      manual
+                    </span>
+                  )}
                 </div>
-
-                {/* Error message */}
                 {entry.error && (
-                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate" title={entry.error}>
+                  <p className="text-[11px] text-muted-foreground/50 truncate mt-0.5" title={entry.error}>
                     {entry.error}
                   </p>
                 )}
+              </div>
 
-                {/* Meta chips */}
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  {entry.trigger === "manual" && (
-                    <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-foreground/[0.04] px-1.5 py-0.5 rounded-md">
-                      Manual
-                    </span>
-                  )}
-                  {entry.duration_seconds != null && (
-                    <span className="text-[10px] text-muted-foreground/60 tabular-nums">
-                      {entry.duration_seconds}s
-                    </span>
-                  )}
-                  {entry.credits_charged != null && entry.credits_charged > 0 && (
-                    <span className="text-[10px] text-muted-foreground/60 tabular-nums">
-                      {entry.credits_charged} credits
-                    </span>
-                  )}
-                </div>
+              {/* Meta */}
+              <div className="flex items-center gap-2.5 shrink-0">
+                {entry.duration_seconds != null && (
+                  <span className="text-[10px] text-muted-foreground/40 tabular-nums font-medium">
+                    {entry.duration_seconds}s
+                  </span>
+                )}
+                {entry.credits_charged != null && entry.credits_charged > 0 && (
+                  <span className="text-[10px] text-muted-foreground/40 tabular-nums">
+                    {entry.credits_charged} cr
+                  </span>
+                )}
+                <span
+                  className="text-[10px] text-muted-foreground/40 tabular-nums min-w-[52px] text-right"
+                  title={formatExactDate(entry.executed_at)}
+                >
+                  {formatDate(entry.executed_at)}
+                </span>
               </div>
             </div>
-          )
-        })}
-      </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
