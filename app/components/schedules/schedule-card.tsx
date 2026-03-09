@@ -12,7 +12,6 @@ import {
   Pencil,
 } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
-import { AgentIcon } from "@/components/icons/agent"
 import {
   formatFrequency,
   formatNextRun,
@@ -70,8 +69,8 @@ export function ScheduleCard({
   return (
     <div className={cn(
       "group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-200 h-full",
-      "bg-foreground/[0.02] hover:bg-foreground/[0.04]",
-      "ring-1 ring-foreground/[0.08] hover:ring-foreground/[0.14]",
+      "bg-foreground/[0.06] hover:bg-foreground/[0.08]",
+      "ring-1 ring-foreground/[0.1] hover:ring-foreground/[0.16]",
       !isActive && !isFailed && "opacity-85 hover:opacity-100",
     )}>
       <div className="p-5 flex-1 space-y-4">
@@ -83,9 +82,9 @@ export function ScheduleCard({
               ? "bg-emerald-500/10 ring-1 ring-emerald-500/20"
               : isFailed
                 ? "bg-amber-500/10 ring-1 ring-amber-500/20"
-                : "bg-foreground/[0.06] ring-1 ring-foreground/[0.08]",
+                : "bg-foreground/[0.08] ring-1 ring-foreground/[0.1]",
           )}>
-            <AgentIcon className={cn(
+            <CoastyIcon className={cn(
               "h-4 w-4",
               isActive ? "text-emerald-600 dark:text-emerald-400"
                 : isFailed ? "text-amber-600 dark:text-amber-400"

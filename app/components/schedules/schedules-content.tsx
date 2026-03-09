@@ -648,10 +648,11 @@ export function SchedulesContent() {
                 <h2 className="text-[13px] font-semibold text-foreground/60 uppercase tracking-wider">Schedule</h2>
                 <div className="flex-1 h-px bg-foreground/[0.06]" />
               </div>
+              <div className="rounded-2xl bg-foreground/[0.05] ring-1 ring-foreground/[0.08] p-4 sm:p-5">
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] xl:grid-cols-[1fr_320px] gap-4">
                 <ScheduleCalendar schedules={filteredSchedules} selectedDate={selectedDate} onSelectDate={setSelectedDate} />
                 <div className="lg:sticky lg:top-6 lg:self-start">
-                  <div className="rounded-xl overflow-hidden bg-foreground/[0.02] ring-1 ring-foreground/[0.06]">
+                  <div className="rounded-xl overflow-hidden bg-background/60 ring-1 ring-foreground/[0.08]">
                     <div className="px-4 py-3 border-b border-foreground/[0.06]">
                       <div className="flex items-center justify-between">
                         <div>
@@ -684,6 +685,7 @@ export function SchedulesContent() {
                   </div>
                 </div>
               </div>
+            </div>
             </div>
 
             {/* Activity log */}
