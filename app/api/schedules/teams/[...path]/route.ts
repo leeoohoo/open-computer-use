@@ -1,11 +1,15 @@
 /**
- * Next.js proxy for per-chat schedule CRUD and actions.
+ * Catch-all proxy for team hub endpoints.
  *
- * POST   /api/schedules/:chatId          → Create/update schedule
- * GET    /api/schedules/:chatId          → Get schedule
- * DELETE /api/schedules/:chatId          → Delete schedule
- * POST   /api/schedules/:chatId?action=run-now  → Trigger immediate run
- * PATCH  /api/schedules/:chatId?action=pause    → Pause/resume
+ * Routes:
+ * POST   /api/schedules/teams/create           → Create team
+ * GET    /api/schedules/teams/list              → List teams
+ * GET    /api/schedules/teams/:hubId            → Get team
+ * PATCH  /api/schedules/teams/:hubId            → Update team
+ * DELETE /api/schedules/teams/:hubId            → Delete team
+ * POST   /api/schedules/teams/:hubId/members    → Add member
+ * DELETE /api/schedules/teams/:hubId/members    → Remove member
+ * GET    /api/schedules/teams/:hubId/memory     → View shared memory
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -34,9 +38,15 @@ function buildHeaders(userId: string): Record<string, string> {
   return headers
 }
 
+function buildBackendUrl(path: string[], searchParams: URLSearchParams): string {
+  const backendPath = `/api/schedules/teams/${path.join('/')}`
+  const qs = searchParams.toString()
+  return `${PYTHON_BACKEND_URL}${backendPath}${qs ? `?${qs}` : ''}`
+}
+
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ chatId: string }> }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
     const userId = await getAuthUserId()
@@ -44,23 +54,24 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { chatId } = await params
-    const response = await fetch(
-      `${PYTHON_BACKEND_URL}/api/schedules/${chatId}`,
-      { method: 'GET', headers: buildHeaders(userId) }
-    )
+    const { path } = await params
+    const { searchParams } = new URL(req.url)
+    const response = await fetch(buildBackendUrl(path, searchParams), {
+      method: 'GET',
+      headers: buildHeaders(userId),
+    })
 
     const data = await response.json()
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Get schedule error:', error)
+    console.error('Teams proxy GET error:', error)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ chatId: string }> }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
     const userId = await getAuthUserId()
@@ -68,21 +79,17 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { chatId } = await params
+    const { path } = await params
     const { searchParams } = new URL(req.url)
-    const action = searchParams.get('action')
 
-    let backendUrl: string
     let body: string | undefined
-
-    if (action === 'run-now') {
-      backendUrl = `${PYTHON_BACKEND_URL}/api/schedules/${chatId}/run-now`
-    } else {
-      backendUrl = `${PYTHON_BACKEND_URL}/api/schedules/${chatId}`
+    try {
       body = JSON.stringify(await req.json())
+    } catch {
+      // no body (e.g. add member uses query params)
     }
 
-    const response = await fetch(backendUrl, {
+    const response = await fetch(buildBackendUrl(path, searchParams), {
       method: 'POST',
       headers: buildHeaders(userId),
       body,
@@ -91,38 +98,14 @@ export async function POST(
     const data = await response.json()
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Create schedule error:', error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
-  }
-}
-
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ chatId: string }> }
-) {
-  try {
-    const userId = await getAuthUserId()
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { chatId } = await params
-    const response = await fetch(
-      `${PYTHON_BACKEND_URL}/api/schedules/${chatId}`,
-      { method: 'DELETE', headers: buildHeaders(userId) }
-    )
-
-    const data = await response.json()
-    return NextResponse.json(data, { status: response.status })
-  } catch (error) {
-    console.error('Delete schedule error:', error)
+    console.error('Teams proxy POST error:', error)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ chatId: string }> }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
     const userId = await getAuthUserId()
@@ -130,23 +113,32 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { chatId } = await params
-    const response = await fetch(
-      `${PYTHON_BACKEND_URL}/api/schedules/${chatId}/pause`,
-      { method: 'PATCH', headers: buildHeaders(userId) }
-    )
+    const { path } = await params
+
+    let body: string | undefined
+    try {
+      body = JSON.stringify(await req.json())
+    } catch {
+      // no body
+    }
+
+    const response = await fetch(buildBackendUrl(path, new URLSearchParams()), {
+      method: 'PATCH',
+      headers: buildHeaders(userId),
+      body,
+    })
 
     const data = await response.json()
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Toggle pause error:', error)
+    console.error('Teams proxy PATCH error:', error)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
 
-export async function PUT(
+export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ chatId: string }> }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
     const userId = await getAuthUserId()
@@ -154,18 +146,17 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { chatId } = await params
-    const body = JSON.stringify(await req.json())
-
-    const response = await fetch(
-      `${PYTHON_BACKEND_URL}/api/schedules/${chatId}/triggers`,
-      { method: 'PUT', headers: buildHeaders(userId), body }
-    )
+    const { path } = await params
+    const { searchParams } = new URL(req.url)
+    const response = await fetch(buildBackendUrl(path, searchParams), {
+      method: 'DELETE',
+      headers: buildHeaders(userId),
+    })
 
     const data = await response.json()
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Update triggers error:', error)
+    console.error('Teams proxy DELETE error:', error)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }

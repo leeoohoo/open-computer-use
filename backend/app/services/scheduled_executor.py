@@ -233,18 +233,88 @@ async def _get_machine_connection_info(
         return None
 
 
+async def _build_team_context(
+    chat_id: str, user_id: str, schedule: dict
+) -> Optional[str]:
+    """Build context from team hub and teammates' recent activity."""
+    hub_id = schedule.get("team_hub_id")
+    if not hub_id:
+        return None
+
+    try:
+        hub_chat = await db_service.get_chat(hub_id)
+        if not hub_chat:
+            return None
+
+        hub_settings = hub_chat.get("room_settings", {})
+        if isinstance(hub_settings, str):
+            hub_settings = json.loads(hub_settings)
+        team_hub = hub_settings.get("team_hub", {})
+
+        parts: List[str] = []
+        team_name = hub_chat.get("title") or team_hub.get("name", "Unnamed Team")
+        parts.append(f"## You are part of team: {team_name}")
+
+        if team_hub.get("instructions"):
+            parts.append(f"Team guidelines: {team_hub['instructions']}")
+
+        # Gather teammate summaries
+        members = team_hub.get("members", [])
+        teammate_lines: List[str] = []
+        for member_id in members:
+            if member_id == chat_id:
+                continue
+            try:
+                member_chat = await db_service.get_chat(member_id)
+                if not member_chat:
+                    continue
+                ms = member_chat.get("room_settings", {})
+                if isinstance(ms, str):
+                    ms = json.loads(ms)
+                member_sched = ms.get("schedule", {})
+                summary = member_sched.get("last_output_summary")
+                if summary:
+                    title = member_chat.get("title") or "Unnamed Agent"
+                    teammate_lines.append(f"- **{title}**: {summary[:300]}")
+            except Exception:
+                continue
+
+        if teammate_lines:
+            parts.append("\n### Recent teammate activity:")
+            parts.extend(teammate_lines)
+
+        # Include shared memory
+        shared_mem = team_hub.get("shared_memory", {})
+        if shared_mem:
+            parts.append("\n### Shared memory:")
+            for key, entry in list(shared_mem.items())[:20]:
+                val = str(entry.get("value", ""))[:300]
+                parts.append(f"- `{key}`: {val}")
+
+        return "\n".join(parts)
+
+    except Exception as e:
+        logger.warning(f"Failed to build team context for {chat_id}: {e}")
+        return None
+
+
 async def execute_scheduled_chat(
     chat_id: str,
     user_id: str,
     machine_id: str,
     model: Optional[str] = None,
     task_prompt_override: Optional[str] = None,
+    triggered_context: Optional[Dict] = None,
 ) -> Dict[str, Any]:
     """
     Execute a scheduled chat task headlessly.
 
     Reuses CUAExecutor but consumes the async generator internally.
     Returns execution summary dict.
+
+    Args:
+        triggered_context: Optional dict with keys source_chat_id, source_title,
+            summary, trigger_depth — injected when this run was triggered by another agent.
     """
     start_time = datetime.now(timezone.utc)
     billing_session_id = None
@@ -283,9 +353,37 @@ async def execute_scheduled_chat(
                 "credits_charged": 0,
             }
 
+        # 1b. Inject triggered context (from a source agent trigger)
+        if triggered_context:
+            source_title = triggered_context.get("source_title", "Another Agent")
+            source_summary = triggered_context.get("summary", "")
+            if source_summary:
+                task_prompt = (
+                    f"[CONTEXT FROM PREVIOUS AGENT: {source_title}]\n"
+                    f"{source_summary}\n\n"
+                    f"[YOUR TASK]\n{task_prompt}"
+                )
+
+        # 1c. Inject team context (shared memory + teammate summaries)
+        try:
+            chat_data = await db_service.get_chat(chat_id)
+            if chat_data:
+                rs = chat_data.get("room_settings", {})
+                if isinstance(rs, str):
+                    rs = json.loads(rs)
+                sched = rs.get("schedule", {})
+                team_ctx = await _build_team_context(chat_id, user_id, sched)
+                if team_ctx:
+                    task_prompt = f"{team_ctx}\n\n---\n\n{task_prompt}"
+        except Exception as e:
+            logger.warning(f"Failed to inject team context: {e}")
+
         # 2. Store a system message indicating scheduled execution
+        trigger_label = ""
+        if triggered_context:
+            trigger_label = f" (triggered by {triggered_context.get('source_title', 'another agent')})"
         scheduled_marker = (
-            f"[Scheduled execution at {start_time.strftime('%Y-%m-%d %H:%M UTC')}]\n"
+            f"[Scheduled execution at {start_time.strftime('%Y-%m-%d %H:%M UTC')}{trigger_label}]\n"
             f"Re-running task: {task_prompt[:200]}"
         )
         await db_service.save_message({
@@ -353,6 +451,14 @@ async def execute_scheduled_chat(
         provider = provider_factory.get_provider(bedrock_model)
         provider.initialize()
 
+        # Get chat title for shared memory tools
+        _chat_title = ""
+        try:
+            if chat_data:
+                _chat_title = chat_data.get("title") or ""
+        except Exception:
+            pass
+
         use_cua = os.environ.get("USE_CUA_EXECUTOR", "true").lower() == "true"
 
         if use_cua:
@@ -365,6 +471,8 @@ async def execute_scheduled_chat(
                 model=bedrock_model,
                 temperature=1.0,
                 max_tokens=None,
+                chat_id=chat_id,
+                chat_title=_chat_title,
             )
         else:
             from app.services.multi_agent_executor import MultiAgentExecutor
@@ -376,6 +484,8 @@ async def execute_scheduled_chat(
                 model=bedrock_model,
                 temperature=1.0,
                 max_tokens=None,
+                chat_id=chat_id,
+                chat_title=_chat_title,
             )
 
         # 7. Consume the stream internally (no SSE)

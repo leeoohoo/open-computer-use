@@ -103,7 +103,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
         )}>
           <span className="text-foreground">Run your entire company.</span>
           <br />
-          <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, #f97316, #ec4899, #a855f7, #3b82f6, #06b6d4)' }}>Zero employees.</span>
+          <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, #eab308 0%, #f27a2e 18%, #ef4444 36%, #f43f5e 52%, #ec4899 66%, #14b8a6 83%, #10b981 100%)' }}>Zero employees.</span>
         </h1>
 
         {/* Rotating department line */}

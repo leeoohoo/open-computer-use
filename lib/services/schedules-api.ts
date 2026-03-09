@@ -15,6 +15,14 @@ export interface ScheduleConfig {
   taskPrompt?: string
 }
 
+export interface TriggerConfig {
+  id?: string
+  target_chat_id: string
+  event: 'on_complete' | 'on_failure' | 'on_any'
+  pass_output: boolean
+  enabled: boolean
+}
+
 export interface ScheduleResponse {
   chat_id: string
   title: string | null
@@ -30,6 +38,31 @@ export interface ScheduleResponse {
   run_count: number
   created_at: string | null
   task_prompt: string | null
+  triggers: TriggerConfig[] | null
+  team_hub_id: string | null
+  last_output_summary: string | null
+}
+
+export interface TeamMember {
+  chat_id: string
+  title: string
+  added_at: string
+}
+
+export interface TeamResponse {
+  hub_id: string
+  name: string
+  instructions: string | null
+  members: TeamMember[]
+  shared_memory_keys: string[]
+  created_at: string
+}
+
+export interface SharedMemoryEntry {
+  key: string
+  value: string
+  written_by: string
+  updated_at: string
 }
 
 export interface ScheduleHistoryEntry {
@@ -156,4 +189,91 @@ export function formatNextRun(nextRunAt: string | null): string {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+// ─── Triggers ───
+
+export async function updateTriggers(
+  chatId: string,
+  triggers: TriggerConfig[]
+): Promise<TriggerConfig[]> {
+  const res = await fetchWithAuth(`/api/schedules/${chatId}`, {
+    method: 'PUT',
+    body: JSON.stringify({ triggers }),
+  })
+  const data = await res.json()
+  return data.triggers ?? []
+}
+
+// ─── Teams ───
+
+export async function createTeam(
+  name: string,
+  instructions?: string,
+  memberChatIds?: string[]
+): Promise<TeamResponse> {
+  const res = await fetchWithAuth('/api/schedules/teams/create', {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      instructions: instructions || '',
+      member_chat_ids: memberChatIds || [],
+    }),
+  })
+  const data = await res.json()
+  return data.team
+}
+
+export async function listTeams(): Promise<TeamResponse[]> {
+  const res = await fetchWithAuth('/api/schedules/teams/list')
+  const data = await res.json()
+  return data.teams ?? []
+}
+
+export async function getTeam(hubId: string): Promise<TeamResponse> {
+  const res = await fetchWithAuth(`/api/schedules/teams/${hubId}`)
+  const data = await res.json()
+  return data.team
+}
+
+export async function updateTeam(
+  hubId: string,
+  updates: { name?: string; instructions?: string }
+): Promise<void> {
+  await fetchWithAuth(`/api/schedules/teams/${hubId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(updates),
+  })
+}
+
+export async function deleteTeam(hubId: string): Promise<void> {
+  await fetchWithAuth(`/api/schedules/teams/${hubId}`, { method: 'DELETE' })
+}
+
+export async function addTeamMember(
+  hubId: string,
+  chatId: string
+): Promise<void> {
+  await fetchWithAuth(
+    `/api/schedules/teams/${hubId}/members?chat_id=${chatId}`,
+    { method: 'POST' }
+  )
+}
+
+export async function removeTeamMember(
+  hubId: string,
+  chatId: string
+): Promise<void> {
+  await fetchWithAuth(
+    `/api/schedules/teams/${hubId}/members?chat_id=${chatId}`,
+    { method: 'DELETE' }
+  )
+}
+
+export async function getTeamSharedMemory(
+  hubId: string
+): Promise<SharedMemoryEntry[]> {
+  const res = await fetchWithAuth(`/api/schedules/teams/${hubId}/memory`)
+  const data = await res.json()
+  return data.memory ?? []
 }

@@ -3,6 +3,9 @@ Task Scheduler Service - Polls for due scheduled tasks and fires execution.
 
 Uses a simple asyncio polling loop (matching the periodic_cleanup pattern in main.py)
 that checks every 60 seconds for chats with enabled schedules whose next_run_at has passed.
+
+Supports agent-to-agent triggers: when a schedule completes/fails, it can automatically
+trigger other schedules with context from the source agent's output.
 """
 
 import asyncio
@@ -21,6 +24,9 @@ from app.services.agent_billing import agent_billing_service
 from app.services.vm_control import vm_control_service
 
 logger = logging.getLogger(__name__)
+
+# Maximum trigger chain depth to prevent infinite loops (A→B→A→B...)
+MAX_TRIGGER_DEPTH = 5
 
 
 class TaskScheduler:
@@ -200,6 +206,8 @@ class TaskScheduler:
         room_settings: dict,
         schedule: dict,
         trigger: str = "cron",
+        triggered_context: Optional[Dict] = None,
+        trigger_depth: int = 0,
     ):
         """Wrapper that handles execution result and updates schedule metadata."""
         try:
@@ -212,6 +220,7 @@ class TaskScheduler:
                     chat_id, user_id, "failed",
                     error="No target machine configured",
                     success=False, trigger=trigger,
+                    trigger_depth=trigger_depth,
                 )
                 return
 
@@ -227,6 +236,7 @@ class TaskScheduler:
                     error=f"Machine unavailable: {reason}",
                     success=False, trigger=trigger,
                     pause_reason="machine_unavailable" if reason == "machine_not_found" else None,
+                    trigger_depth=trigger_depth,
                 )
                 return
 
@@ -244,6 +254,7 @@ class TaskScheduler:
                     error="Insufficient credits",
                     success=False, trigger=trigger,
                     pause_reason="insufficient_credits",
+                    trigger_depth=trigger_depth,
                 )
                 return
 
@@ -257,6 +268,7 @@ class TaskScheduler:
                         machine_id=machine_id,
                         model=schedule.get("model"),
                         task_prompt_override=schedule.get("task_prompt"),
+                        triggered_context=triggered_context,
                     ),
                     timeout=max_timeout,
                 )
@@ -269,6 +281,7 @@ class TaskScheduler:
                     chat_id, user_id, "failed",
                     error=f"Execution timed out ({max_min} min limit)",
                     success=False, trigger=trigger,
+                    trigger_depth=trigger_depth,
                 )
                 return
 
@@ -280,6 +293,7 @@ class TaskScheduler:
                 error=result.get("error"),
                 success=status in ("completed", "cancelled"),
                 trigger=trigger,
+                trigger_depth=trigger_depth,
             )
 
         except asyncio.CancelledError:
@@ -288,6 +302,7 @@ class TaskScheduler:
                 chat_id, user_id, "failed",
                 error="Task cancelled (stuck too long)",
                 success=False, trigger=trigger,
+                trigger_depth=trigger_depth,
             )
 
         except Exception as e:
@@ -299,6 +314,7 @@ class TaskScheduler:
                 chat_id, user_id, "failed",
                 error=str(e),
                 success=False, trigger=trigger,
+                trigger_depth=trigger_depth,
             )
 
         finally:
@@ -500,11 +516,12 @@ class TaskScheduler:
         trigger: str = "cron",
         success: bool = False,
         pause_reason: Optional[str] = None,
+        trigger_depth: int = 0,
     ):
         """
         Atomic finalization: records history entry, updates schedule metadata,
-        and advances next_run_at — all in a single read-modify-write to prevent
-        race conditions between separate _record_execution / _record_success calls.
+        generates output summary, advances next_run_at, and processes triggers
+        — all in a single read-modify-write to prevent race conditions.
         """
         if not self.db_service.client:
             return
@@ -554,7 +571,14 @@ class TaskScheduler:
                 schedule["paused_reason"] = pause_reason
                 logger.info(f"Paused schedule for chat {chat_id}: {pause_reason}")
 
-            # 5. Calculate next run (always, so the schedule advances)
+            # 5. Generate output summary for inter-agent context
+            output_summary = await self._generate_output_summary(
+                chat_id, status, error
+            )
+            if output_summary:
+                schedule["last_output_summary"] = output_summary
+
+            # 6. Calculate next run (always, so the schedule advances)
             next_run = self._calculate_next_run(
                 schedule.get("cron", "0 * * * *"),
                 schedule.get("timezone", "UTC"),
@@ -562,7 +586,7 @@ class TaskScheduler:
             if next_run:
                 schedule["next_run_at"] = next_run.isoformat()
 
-            # 6. Single atomic write with retry for transient errors
+            # 7. Single atomic write with retry for transient errors
             room_settings["schedule"] = schedule
 
             max_retries = 3
@@ -596,8 +620,122 @@ class TaskScheduler:
                         logger.error(f"Failed to finalize execution for chat {chat_id}: {error_str[:200]}")
                         break
 
+            # 8. Process triggers (fire-and-forget, after DB write is committed)
+            await self._process_triggers(
+                chat_id, user_id, status, schedule, trigger_depth
+            )
+
         except Exception as e:
             logger.error(f"Failed to finalize execution for chat {chat_id}: {str(e)[:200]}")
+
+    async def _generate_output_summary(
+        self, chat_id: str, status: str, error: Optional[str]
+    ) -> Optional[str]:
+        """Generate a brief output summary from the agent's last message for inter-agent context."""
+        if status == "failed":
+            return f"Failed: {error or 'unknown error'}"
+        if status == "skipped":
+            return f"Skipped: {error or 'unknown reason'}"
+
+        try:
+            # Get the most recent assistant message from this chat
+            loop = asyncio.get_event_loop()
+            response = await asyncio.wait_for(
+                loop.run_in_executor(
+                    None,
+                    lambda: self.db_service.client.table("chats_messages")
+                    .select("content")
+                    .eq("chat_id", chat_id)
+                    .eq("role", "assistant")
+                    .order("created_at", desc=True)
+                    .limit(1)
+                    .execute(),
+                ),
+                timeout=10,
+            )
+
+            if not response or not response.data:
+                return f"Completed (no output captured)"
+
+            content = response.data[0].get("content", "")
+            if not content:
+                return "Completed successfully"
+
+            # Truncate to reasonable summary length
+            if len(content) > 500:
+                return content[:500] + "..."
+            return content
+
+        except Exception as e:
+            logger.warning(f"Failed to generate output summary for {chat_id}: {e}")
+            return f"Completed (summary unavailable)"
+
+    async def _process_triggers(
+        self,
+        source_chat_id: str,
+        user_id: str,
+        status: str,
+        schedule: dict,
+        trigger_depth: int,
+    ):
+        """Process triggers after a schedule execution completes."""
+        triggers = schedule.get("triggers", [])
+        if not triggers:
+            return
+
+        if trigger_depth >= MAX_TRIGGER_DEPTH:
+            logger.warning(
+                f"Trigger depth limit ({MAX_TRIGGER_DEPTH}) reached for "
+                f"chat {source_chat_id}, skipping {len(triggers)} trigger(s)"
+            )
+            return
+
+        source_title = None  # lazy-load if needed
+
+        for trig in triggers:
+            if not trig.get("enabled", True):
+                continue
+
+            event = trig.get("event", "on_complete")
+            # Check if this trigger should fire
+            if event == "on_complete" and status != "completed":
+                continue
+            if event == "on_failure" and status not in ("failed",):
+                continue
+            # "on_any" fires on any status
+
+            target_chat_id = trig.get("target_chat_id")
+            if not target_chat_id:
+                continue
+
+            # Build triggered context
+            triggered_context = None
+            if trig.get("pass_output", True):
+                if source_title is None:
+                    try:
+                        chat = await self.db_service.get_chat(source_chat_id)
+                        source_title = chat.get("title", "Unknown Agent") if chat else "Unknown Agent"
+                    except Exception:
+                        source_title = "Unknown Agent"
+
+                triggered_context = {
+                    "source_chat_id": source_chat_id,
+                    "source_title": source_title,
+                    "summary": schedule.get("last_output_summary", ""),
+                    "trigger_depth": trigger_depth + 1,
+                }
+
+            logger.info(
+                f"Trigger: {source_chat_id} ({event}) → {target_chat_id} "
+                f"(depth={trigger_depth + 1})"
+            )
+
+            await self.trigger_immediate(
+                target_chat_id,
+                user_id,
+                triggered_context=triggered_context,
+                trigger_depth=trigger_depth + 1,
+            )
 
     def _cleanup_completed_tasks(self):
         """Remove completed asyncio tasks from the tracking dict."""
@@ -654,8 +792,21 @@ class TaskScheduler:
         task._start_time = now
         self.running_tasks[chat_id] = task
 
-    async def trigger_immediate(self, chat_id: str, user_id: str) -> bool:
-        """Trigger an immediate execution of a scheduled task (manual run-now)."""
+    async def trigger_immediate(
+        self,
+        chat_id: str,
+        user_id: str,
+        triggered_context: Optional[Dict] = None,
+        trigger_depth: int = 0,
+    ) -> bool:
+        """Trigger an immediate execution of a scheduled task.
+
+        Args:
+            chat_id: The chat to execute.
+            user_id: Owner of the chat.
+            triggered_context: Optional context dict from a source agent trigger.
+            trigger_depth: Current depth in a trigger chain (for loop prevention).
+        """
         if chat_id in self.running_tasks and not self.running_tasks[chat_id].done():
             logger.warning(f"Cannot trigger {chat_id}: previous run still active")
             return False
@@ -673,9 +824,13 @@ class TaskScheduler:
         if not schedule.get("target_machine_id"):
             return False
 
+        trigger_label = "triggered" if triggered_context else "manual"
         task = asyncio.create_task(
             self._execute_with_error_handling(
-                chat_id, user_id, room_settings, schedule, trigger="manual"
+                chat_id, user_id, room_settings, schedule,
+                trigger=trigger_label,
+                triggered_context=triggered_context,
+                trigger_depth=trigger_depth,
             )
         )
         self.running_tasks[chat_id] = task

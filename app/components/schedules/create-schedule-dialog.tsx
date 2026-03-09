@@ -18,7 +18,7 @@ import {
 import { trackScheduleCreated } from "@/lib/posthog/analytics"
 import type { UserMachine } from "@/types/machines.types"
 import { createClient } from "@/lib/supabase/client"
-import { KeyRound, ArrowRight, PenLine, AlertCircle } from "lucide-react"
+import { KeyRound, ArrowRight, PenLine, AlertCircle, Sparkles, User } from "lucide-react"
 import { AgentIcon } from "@/components/icons/agent"
 import Link from "next/link"
 import {
@@ -26,6 +26,17 @@ import {
   type ScheduleConfigState,
 } from "./schedule-config-block"
 import { cn } from "@/lib/utils"
+
+const EMPLOYEE_NAMES = [
+  "Atlas", "Echo", "Nova", "Sage", "Onyx", "Cleo", "Milo", "Aria",
+  "Dash", "Flux", "Iris", "Juno", "Koda", "Luna", "Neon", "Orion",
+  "Pixel", "Quinn", "Rune", "Scout", "Taro", "Vale", "Wren", "Zara",
+  "Blaze", "Coral", "Dune", "Ember", "Frost", "Haze", "Ivy", "Kit",
+]
+
+function randomEmployeeName() {
+  return EMPLOYEE_NAMES[Math.floor(Math.random() * EMPLOYEE_NAMES.length)]
+}
 
 interface CreateScheduleDialogProps {
   open: boolean
@@ -40,6 +51,7 @@ export function CreateScheduleDialog({
   machines,
   onScheduleCreated,
 }: CreateScheduleDialogProps) {
+  const [employeeName, setEmployeeName] = useState(randomEmployeeName)
   const [taskDescription, setTaskDescription] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -66,6 +78,7 @@ export function CreateScheduleDialog({
 
   useEffect(() => {
     if (open) {
+      setEmployeeName(randomEmployeeName())
       setTaskDescription("")
       setError(null)
       const firstRunning = machines.find((m) => m.status === "running")
@@ -121,7 +134,7 @@ export function CreateScheduleDialog({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: user.id,
-          title: taskDescription.trim(),
+          title: employeeName.trim() || randomEmployeeName(),
           model: null,
           isAuthenticated: true,
         }),
@@ -198,6 +211,48 @@ export function CreateScheduleDialog({
 
         {/* Scrollable content */}
         <div className="flex-1 min-h-0 overflow-y-auto px-6 pb-5 pt-5 space-y-6 scrollbar-invisible">
+          {/* Employee Name */}
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-2">
+              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-foreground/[0.08]">
+                <User className="h-3 w-3 text-foreground/50" />
+              </div>
+              <label className="text-[13px] font-semibold text-foreground/80 tracking-wide uppercase text-[11px]">
+                Name
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={employeeName}
+                onChange={(e) => setEmployeeName(e.target.value)}
+                placeholder="Employee name"
+                autoFocus
+                className={cn(
+                  "flex-1 h-10 rounded-xl px-4 text-sm font-medium",
+                  "bg-foreground/[0.04] text-foreground",
+                  "border border-foreground/[0.08] hover:border-foreground/[0.14] focus-visible:border-foreground/[0.2]",
+                  "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.3)]",
+                  "placeholder:text-muted-foreground",
+                  "focus:outline-none transition-all duration-200",
+                )}
+              />
+              <button
+                type="button"
+                onClick={() => setEmployeeName(randomEmployeeName())}
+                className={cn(
+                  "shrink-0 h-10 w-10 flex items-center justify-center rounded-xl",
+                  "bg-foreground/[0.04] border border-foreground/[0.08]",
+                  "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.08]",
+                  "transition-all duration-200",
+                )}
+                title="Randomize name"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+
           {/* Instructions */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-2">
@@ -221,7 +276,6 @@ export function CreateScheduleDialog({
                 "placeholder:text-muted-foreground",
                 "transition-all duration-200",
               )}
-              autoFocus
             />
             <p className="text-[10px] text-muted-foreground pl-0.5">
               These instructions are used every time the employee runs.

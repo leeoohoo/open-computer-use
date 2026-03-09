@@ -220,7 +220,7 @@ class TaskPlan:
 
 class MultiAgentExecutor:
     """Orchestrates multi-agent task execution"""
-    
+
     def __init__(
         self,
         machine_id: str,
@@ -228,7 +228,9 @@ class MultiAgentExecutor:
         provider: Any,  # Changed from ai_service to provider
         model: str = "gpt-4o",
         temperature: float = 1.0,
-        max_tokens: Optional[int] = None
+        max_tokens: Optional[int] = None,
+        chat_id: Optional[str] = None,
+        chat_title: Optional[str] = None,
     ):
         self.machine_id = machine_id
         self.connection_info = connection_info
@@ -236,6 +238,8 @@ class MultiAgentExecutor:
         self.model = model  # Use the same model as the chat request
         self.temperature = temperature  # Use the same temperature
         self.max_tokens = max_tokens  # Use the same max_tokens if specified
+        self.chat_id = chat_id or ""
+        self.chat_title = chat_title or ""
 
         # Extract system info for dynamic prompt generation
         self.system_info = connection_info.get("system_info", {})
@@ -244,7 +248,7 @@ class MultiAgentExecutor:
         # Create VM tools with response truncation
         raw_tools = create_comprehensive_vm_tools(machine_id, connection_info)
         self.vm_tools = self._wrap_tools_with_truncation(raw_tools)
-        
+
         # Add Google search tool for browser agent
         self.search_tool = create_search_tool("moderate")  # Using moderate research depth as default
 
@@ -254,7 +258,18 @@ class MultiAgentExecutor:
         # Credential tools for all agents
         self.credential_tool = self._create_credential_tool()
         self.type_credential_tool = self._create_type_credential_tool()
-        
+
+        # Shared memory tools (for team collaboration)
+        self.shared_memory_tools: Dict = {}
+        if self.chat_id:
+            try:
+                from app.services.shared_memory import create_shared_memory_tools
+                self.shared_memory_tools = create_shared_memory_tools(
+                    self.chat_id, self.chat_title
+                )
+            except Exception as e:
+                logger.warning(f"Failed to create shared memory tools: {e}")
+
         # Agent system prompts
         self.agent_prompts = {
             AgentType.BROWSER: self._get_browser_agent_prompt(),
@@ -262,7 +277,7 @@ class MultiAgentExecutor:
             AgentType.DESKTOP: self._get_desktop_agent_prompt(),
             AgentType.PLANNER: self._get_planner_prompt()
         }
-        
+
         # Tools available to each agent
         self.agent_tools = {
             AgentType.BROWSER: self._get_browser_tools(),
@@ -1199,6 +1214,9 @@ CRITICAL: Return ONLY JSON. No text before/after."""
         tools["lookup_credential"] = self.credential_tool
         tools["type_credential"] = self.type_credential_tool
 
+        # Add shared memory tools for team collaboration
+        tools.update(self.shared_memory_tools)
+
         return tools
 
     def _get_terminal_tools(self) -> Dict:
@@ -1214,6 +1232,7 @@ CRITICAL: Return ONLY JSON. No text before/after."""
         tools = {name: self.vm_tools[name] for name in terminal_tool_names if name in self.vm_tools}
         tools["lookup_credential"] = self.credential_tool
         tools["type_credential"] = self.type_credential_tool
+        tools.update(self.shared_memory_tools)
         return tools
 
     def _get_desktop_tools(self) -> Dict:
@@ -1227,6 +1246,7 @@ CRITICAL: Return ONLY JSON. No text before/after."""
         tools = {name: self.vm_tools[name] for name in desktop_tool_names if name in self.vm_tools}
         tools["lookup_credential"] = self.credential_tool
         tools["type_credential"] = self.type_credential_tool
+        tools.update(self.shared_memory_tools)
         return tools
     
     async def plan_tasks(self, user_request: str, context: Optional[str] = None) -> TaskPlan:

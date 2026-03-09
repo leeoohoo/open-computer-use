@@ -14,21 +14,36 @@ import {
   createSchedule,
   deleteSchedule,
   getSchedule,
+  listSchedules,
+  updateTriggers,
   type ScheduleConfig,
   type ScheduleResponse,
+  type TriggerConfig,
 } from "@/lib/services/schedules-api"
 import { trackScheduleCreated } from "@/lib/posthog/analytics"
 import type { UserMachine } from "@/types/machines.types"
 import { useSubscription } from "@/lib/hooks/use-subscription"
 import { WarningCircle } from "@phosphor-icons/react"
-import { KeyRound, ArrowRight, PenLine, AlertCircle, Trash2 } from "lucide-react"
+import { KeyRound, ArrowRight, PenLine, AlertCircle, Trash2, Zap, Plus, X, ChevronDown, User, Sparkles } from "lucide-react"
 import { AgentIcon } from "@/components/icons/agent"
+import { updateChatTitleInDb } from "@/lib/chat-store/chats/api"
 import Link from "next/link"
 import {
   ScheduleConfigBlock,
   type ScheduleConfigState,
 } from "./schedule-config-block"
 import { cn } from "@/lib/utils"
+
+const EMPLOYEE_NAMES = [
+  "Atlas", "Echo", "Nova", "Sage", "Onyx", "Cleo", "Milo", "Aria",
+  "Dash", "Flux", "Iris", "Juno", "Koda", "Luna", "Neon", "Orion",
+  "Pixel", "Quinn", "Rune", "Scout", "Taro", "Vale", "Wren", "Zara",
+  "Blaze", "Coral", "Dune", "Ember", "Frost", "Haze", "Ivy", "Kit",
+]
+
+function randomEmployeeName() {
+  return EMPLOYEE_NAMES[Math.floor(Math.random() * EMPLOYEE_NAMES.length)]
+}
 
 interface ScheduleDialogProps {
   open: boolean
@@ -51,12 +66,18 @@ export function ScheduleDialog({
   onScheduleCreated,
   onScheduleDeleted,
 }: ScheduleDialogProps) {
+  const [employeeName, setEmployeeName] = useState(() =>
+    chatTitle && chatTitle.length <= 30 ? chatTitle : randomEmployeeName()
+  )
   const [taskPrompt, setTaskPrompt] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [existingSchedule, setExistingSchedule] = useState<ScheduleResponse | null>(null)
   const [loadingExisting, setLoadingExisting] = useState(false)
   const { isActiveSubscriber, loading: subLoading } = useSubscription()
+  const [triggers, setTriggers] = useState<TriggerConfig[]>([])
+  const [allSchedules, setAllSchedules] = useState<ScheduleResponse[]>([])
+  const [triggersExpanded, setTriggersExpanded] = useState(true)
 
   const [config, setConfig] = useState<ScheduleConfigState>({
     frequency: "daily",
@@ -88,8 +109,17 @@ export function ScheduleDialog({
       setExistingSchedule(null)
       setError(null)
       setLoadingExisting(true)
-      getSchedule(chatId)
-        .then((schedule) => {
+      setTriggers([])
+      setTriggersExpanded(false)
+      setEmployeeName(chatTitle && chatTitle.length <= 30 ? chatTitle : randomEmployeeName())
+
+      // Load schedule + all schedules for trigger targets
+      Promise.all([
+        getSchedule(chatId),
+        listSchedules(),
+      ])
+        .then(([schedule, allScheds]) => {
+          setAllSchedules(allScheds.filter((s) => s.chat_id !== chatId))
           if (schedule) {
             setExistingSchedule(schedule)
             setConfig((prev) => ({
@@ -99,6 +129,10 @@ export function ScheduleDialog({
               timezone: schedule.timezone || prev.timezone,
             }))
             setTaskPrompt(schedule.task_prompt || "")
+            setTriggers(schedule.triggers || [])
+            if (schedule.triggers && schedule.triggers.length > 0) {
+              setTriggersExpanded(true)
+            }
           } else {
             setConfig((prev) => ({
               ...prev,
@@ -154,7 +188,19 @@ export function ScheduleDialog({
       if (showDayOfMonth) scheduleConfig.dayOfMonth = config.dayOfMonth
       if (taskPrompt.trim()) scheduleConfig.taskPrompt = taskPrompt.trim()
 
+      // Update employee name if changed
+      const trimmedName = employeeName.trim()
+      if (trimmedName && trimmedName !== chatTitle) {
+        await updateChatTitleInDb(chatId, trimmedName)
+      }
+
       const schedule = await createSchedule(chatId, scheduleConfig)
+
+      // Save triggers if any were configured
+      if (triggers.length > 0) {
+        await updateTriggers(chatId, triggers)
+      }
+
       trackScheduleCreated(chatId, config.frequency)
       onScheduleCreated?.(schedule)
       onOpenChange(false)
@@ -239,6 +285,47 @@ export function ScheduleDialog({
           </div>
         ) : (
           <div className="flex-1 min-h-0 overflow-y-auto px-6 pb-5 pt-5 space-y-6 scrollbar-invisible">
+            {/* Employee Name */}
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2">
+                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-foreground/[0.08]">
+                  <User className="h-3 w-3 text-foreground/50" />
+                </div>
+                <label className="text-[13px] font-semibold text-foreground/80 tracking-wide uppercase text-[11px]">
+                  Name
+                </label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={employeeName}
+                  onChange={(e) => setEmployeeName(e.target.value)}
+                  placeholder="Employee name"
+                  className={cn(
+                    "flex-1 h-10 rounded-xl px-4 text-sm font-medium",
+                    "bg-foreground/[0.04] text-foreground",
+                    "border border-foreground/[0.08] hover:border-foreground/[0.14] focus-visible:border-foreground/[0.2]",
+                    "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.3)]",
+                    "placeholder:text-muted-foreground",
+                    "focus:outline-none transition-all duration-200",
+                  )}
+                />
+                <button
+                  type="button"
+                  onClick={() => setEmployeeName(randomEmployeeName())}
+                  className={cn(
+                    "shrink-0 h-10 w-10 flex items-center justify-center rounded-xl",
+                    "bg-foreground/[0.04] border border-foreground/[0.08]",
+                    "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.08]",
+                    "transition-all duration-200",
+                  )}
+                  title="Randomize name"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+
             {/* Instructions */}
             <div className="space-y-2.5">
               <div className="flex items-center gap-2">
@@ -276,6 +363,151 @@ export function ScheduleDialog({
               machines={machines}
               defaultMachineId={defaultMachineId}
             />
+
+            {/* Triggers */}
+            <div className="space-y-2.5">
+              <button
+                type="button"
+                onClick={() => setTriggersExpanded(!triggersExpanded)}
+                className="flex items-center gap-2 w-full"
+              >
+                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-foreground/[0.08]">
+                  <Zap className="h-3 w-3 text-foreground/50" />
+                </div>
+                <span className="text-[11px] font-semibold text-foreground/80 tracking-wide uppercase">
+                  Triggers
+                </span>
+                {triggers.length > 0 && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-foreground/[0.08] text-muted-foreground tabular-nums">
+                    {triggers.length}
+                  </span>
+                )}
+                <ChevronDown className={cn(
+                  "h-3 w-3 ml-auto text-muted-foreground transition-transform duration-200",
+                  triggersExpanded && "rotate-180",
+                )} />
+              </button>
+
+              {triggersExpanded && (
+                <div className="space-y-2">
+                  <p className="text-[10px] text-muted-foreground pl-0.5">
+                    When this employee finishes, automatically trigger another employee.
+                  </p>
+
+                  {/* Existing triggers */}
+                  {triggers.map((trig, idx) => {
+                    const target = allSchedules.find((s) => s.chat_id === trig.target_chat_id)
+                    return (
+                      <div
+                        key={trig.id || idx}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl px-3.5 py-3",
+                          "bg-foreground/[0.04] ring-1 ring-foreground/[0.08]",
+                          "transition-all hover:ring-foreground/[0.12]",
+                        )}
+                      >
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.08]">
+                          <Zap className="h-3 w-3 text-foreground/50" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-foreground truncate">
+                            {target?.title || "Unknown Employee"}
+                          </p>
+                          <div className="flex items-center gap-1.5 mt-1">
+                            {(["on_complete", "on_failure", "on_any"] as const).map((ev) => (
+                              <button
+                                key={ev}
+                                type="button"
+                                onClick={() => {
+                                  const updated = [...triggers]
+                                  updated[idx] = { ...updated[idx], event: ev }
+                                  setTriggers(updated)
+                                }}
+                                className={cn(
+                                  "text-[10px] px-2 py-0.5 rounded-full transition-all font-medium",
+                                  trig.event === ev
+                                    ? "bg-foreground text-background"
+                                    : "bg-foreground/[0.06] text-muted-foreground hover:bg-foreground/[0.1] hover:text-foreground",
+                                )}
+                              >
+                                {ev === "on_complete" ? "Success" : ev === "on_failure" ? "Failure" : "Always"}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setTriggers(triggers.filter((_, i) => i !== idx))}
+                          className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground/40 hover:text-foreground hover:bg-foreground/[0.08] transition-all"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )
+                  })}
+
+                  {/* Add trigger — employee picker */}
+                  {(() => {
+                    const available = allSchedules.filter((s) => !triggers.some((t) => t.target_chat_id === s.chat_id))
+                    if (available.length === 0 && allSchedules.length === 0) {
+                      return (
+                        <div className={cn(
+                          "rounded-xl py-4 text-center",
+                          "border border-dashed border-foreground/[0.1]",
+                        )}>
+                          <p className="text-[11px] text-muted-foreground/50">Hire more employees to set up triggers</p>
+                        </div>
+                      )
+                    }
+                    if (available.length === 0) return null
+                    return (
+                      <div className={cn(
+                        "rounded-xl overflow-hidden",
+                        "ring-1 ring-foreground/[0.08]",
+                      )}>
+                        <div className="px-3.5 py-2 border-b border-foreground/[0.06] bg-foreground/[0.03]">
+                          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Add trigger</p>
+                        </div>
+                        <div className="max-h-[140px] overflow-y-auto scrollbar-invisible divide-y divide-foreground/[0.04]">
+                          {available.map((s) => {
+                            const active = s.enabled && !s.paused_reason
+                            return (
+                              <button
+                                key={s.chat_id}
+                                type="button"
+                                onClick={() => {
+                                  setTriggers([...triggers, {
+                                    target_chat_id: s.chat_id,
+                                    event: "on_complete",
+                                    pass_output: true,
+                                    enabled: true,
+                                  }])
+                                }}
+                                className={cn(
+                                  "flex items-center gap-3 w-full px-3.5 py-2.5 text-left",
+                                  "hover:bg-foreground/[0.04] transition-all",
+                                )}
+                              >
+                                <div className={cn(
+                                  "h-6 w-6 rounded-full flex items-center justify-center shrink-0",
+                                  active ? "bg-emerald-500/15" : "bg-foreground/[0.08]",
+                                )}>
+                                  <AgentIcon className={cn("h-2.5 w-2.5", active ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/50")} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs font-medium text-foreground/80 truncate">{s.title || "Untitled Employee"}</p>
+                                </div>
+                                <Plus className="h-3 w-3 text-muted-foreground/40 shrink-0" />
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })()}
+                </div>
+              )}
+            </div>
 
             {/* Free tier warning */}
             {showFreeTierWarning && (
