@@ -547,11 +547,13 @@ export function ChatInput({
       if (stopRes.ok) {
         const data = await stopRes.json()
         if (data.stopped && data.released) {
+          // Lock released — small delay to let cleanup finish before new request
+          await new Promise(r => setTimeout(r, 300))
           setIsMachineBusy(false)
           onSend()
         } else if (data.stopped && !data.released) {
-          // Lock didn't release in time — retry send after a brief wait
-          await new Promise(r => setTimeout(r, 500))
+          // Lock didn't release in time — backend will handle via stale lock replacement
+          await new Promise(r => setTimeout(r, 1000))
           setIsMachineBusy(false)
           onSend()
         } else {

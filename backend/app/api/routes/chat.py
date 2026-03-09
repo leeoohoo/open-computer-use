@@ -452,11 +452,26 @@ async def chat_endpoint(
             try:
                 await asyncio.wait_for(execution_lock.acquire(), timeout=5.0)
             except asyncio.TimeoutError:
-                busy, owner_chat = vm_control_service.is_machine_busy(machine_id)
-                logger.warning(f"Machine {machine_id} is busy (owner: {owner_chat}), rejecting chat {chat_id}")
-                yield f'3:{json.dumps("This machine is currently busy with another task. Please wait or use a different machine.")}\n\n'
-                yield f'd:{json.dumps({"finishReason": "error"})}\n\n'
-                return
+                # If a cancellation was already requested (user force-stopped via
+                # the override button), the previous task is likely stuck in its
+                # cleanup phase (billing / DB saves).  Replace the stale lock so
+                # the new request can proceed immediately.
+                cancel_event = vm_control_service.get_cancellation_event(machine_id)
+                if cancel_event.is_set():
+                    logger.warning(
+                        f"Machine {machine_id} lock stuck after cancellation — "
+                        f"replacing lock for chat {chat_id}"
+                    )
+                    new_lock = asyncio.Lock()
+                    vm_control_service.execution_locks[machine_id] = new_lock
+                    execution_lock = new_lock
+                    await execution_lock.acquire()
+                else:
+                    busy, owner_chat = vm_control_service.is_machine_busy(machine_id)
+                    logger.warning(f"Machine {machine_id} is busy (owner: {owner_chat}), rejecting chat {chat_id}")
+                    yield f'3:{json.dumps("This machine is currently busy with another task. Please wait or use a different machine.")}\n\n'
+                    yield f'd:{json.dumps({"finishReason": "error"})}\n\n'
+                    return
             vm_control_service.execution_owners[machine_id] = chat_id
             vm_control_service.reset_cancellation(machine_id)
 
@@ -488,8 +503,10 @@ async def chat_endpoint(
 
                     # Format chunks for SSE based on type
                     if chunk_type == "keepalive":
-                        # Emit SSE comment to keep connection alive without data
-                        yield ":\n\n"
+                        # Send empty text delta to keep connection alive.
+                        # SSE comments (":\n\n") break the Vercel AI SDK
+                        # stream parser which expects "<code>:<data>" format.
+                        yield f'0:{json.dumps("")}\n\n'
 
                     elif chunk_type == "text":
                         content = chunk.get("content", "")
