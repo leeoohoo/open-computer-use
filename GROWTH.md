@@ -158,7 +158,7 @@ Track via:
 
 - [How to grow open source projects](https://opensource.guide/building-community/)
 - [Reddit marketing for devtools](https://www.reddit.com/r/SideProject/wiki/index)
-- [Gingiris Open Source Launch Playbook](https://github.com/user-attachments/files/gingiris-opensource) — Detailed SOP for GitHub star growth, KOL partnerships, community distribution
+- Gingiris Open Source Launch Playbook — Detailed SOP for GitHub star growth, KOL partnerships, community distribution
 
 ---
 
