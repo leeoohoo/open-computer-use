@@ -20,7 +20,17 @@ export default function robots(): MetadataRoute.Robots {
         crawlDelay: 0,
       },
       {
-        userAgent: ['AhrefsBot', 'SemrushBot', 'MJ12bot', 'DotBot'],
+        userAgent: 'GPTBot',
+        allow: ['/', '/blog/', '/results/', '/compare/'],
+        disallow: ['/api/', '/c/'],
+      },
+      {
+        userAgent: ['ChatGPT-User', 'Google-Extended', 'Anthropic-AI', 'ClaudeBot', 'PerplexityBot', 'Cohere-AI', 'Bytespider', 'YouBot'],
+        allow: '/',
+        disallow: ['/api/', '/c/'],
+      },
+      {
+        userAgent: ['AhrefsBot', 'SemrushBot', 'MJ12bot', 'DotBot', 'PetalBot', 'BLEXBot'],
         disallow: '/',
       },
     ],

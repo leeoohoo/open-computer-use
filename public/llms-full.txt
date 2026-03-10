@@ -1,0 +1,160 @@
+# Coasty — AI Employee Platform (Full Technical Documentation)
+# https://coasty.ai
+# This is the extended version of llms.txt with comprehensive technical details.
+
+> Coasty is the #1 ranked computer-using AI agent platform, scoring 82% on the OSWorld benchmark across 369 real-world automation tasks. It provides autonomous desktop control through sandboxed virtual machines, with browser automation, desktop application control, terminal operations, and multi-agent orchestration. Available as a web application and native desktop app for Mac and Windows.
+
+## Product Overview
+
+Coasty is a full-stack AI employee platform — a computer-using agent that controls a desktop like a human. It opens browsers, clicks, types, navigates apps, fills forms, sends emails, and manages spreadsheets autonomously. Users can watch it work in real time through live screen streaming, and every action is fully logged and auditable.
+
+### What Makes Coasty Different
+- **VM-Level Isolation**: Each session runs in its own sandboxed virtual machine. Data stays safe, machines stay untouched, nothing leaks between sessions. This is true VM-level isolation, not just containers in a shared pool.
+- **OSWorld Benchmark #1**: 82% completion rate across 369 real-world tasks spanning browsers, office applications, and system operations — state of the art for computer-using agents.
+- **CAPTCHA Solving**: Built-in CAPTCHA-solving pipeline prevents blocking that affects competing tools.
+- **Multi-Model AI**: Works with OpenAI, Anthropic, Google, Mistral, xAI, OpenRouter, Perplexity, and more. Routes tasks to the best model.
+- **Desktop App**: Native Electron app for Mac and Windows that controls the user's local machine directly — no VM required for local tasks.
+
+## Detailed Capabilities
+
+### Browser Agent
+- Web navigation and page interaction (clicking, typing, scrolling, hovering)
+- Form filling across any website (job applications, YC applications, government forms, etc.)
+- Data extraction and web scraping
+- Search-first strategy: always researches via Google before opening browser
+- Tab management and multi-page workflows
+- File download and upload handling
+- Cookie and session management
+
+### Desktop Agent
+- Full desktop application control through screenshots and mouse/keyboard
+- Works with any application: spreadsheets, email clients, CRMs, design tools
+- Window management (minimize, maximize, switch between apps)
+- Drag-and-drop operations
+- Platform-specific implementations:
+  - Windows: PowerShell + user32.dll for mouse/keyboard events
+  - macOS: Swift scripts via CoreGraphics + osascript
+  - Linux: xdotool + wmctrl
+
+### Terminal Agent
+- Command execution across any shell (PowerShell, bash, zsh)
+- File system operations (read, write, edit, delete, directory management)
+- Software installation and configuration
+- Git operations and version control
+- Process management
+
+### Multi-Agent Orchestration
+1. Task Planning: LLM decomposes user request into sequential subtasks
+2. Agent Assignment: Each subtask assigned to specialized agent (browser/terminal/desktop)
+3. Sequential Execution: Tasks execute in order with context passing
+4. Context Sharing: Previous task summaries passed to next task
+5. Streaming: All execution streams via Server-Sent Events to frontend
+
+## Use Cases with Examples
+
+### Marketing Automation
+- Ran a full Reddit marketing campaign autonomously: researched competitors, identified subreddits, crafted posts, engaged with comments
+- Posted on Hacker News and engaged with comments in real time
+- Social media content distribution across platforms
+
+### Sales & Outreach
+- Found prospective customers, researched companies, wrote 200+ personalized emails
+- LinkedIn recruiting: sourced candidates, sent connection requests, scheduled calls
+- CRM updates and pipeline management
+
+### QA Testing
+- QA tested its own product: navigated every checkout and onboarding flow, found 14 bugs
+- Automated regression testing across web applications
+- Visual verification and bug report generation
+
+### Job Applications
+- Applied to 50 jobs in one afternoon: found matching roles, tailored resumes, submitted applications
+- Filled out the YC S26 application (30+ fields across multiple pages)
+
+### Customer Support
+- Resolved support tickets end-to-end: looked up accounts, diagnosed issues, wrote replies
+- Email composition matching user's tone and context
+
+### Data Entry & Forms
+- Spreadsheet management and data organization
+- CRM data entry and updates
+- Government and compliance form filling
+
+## Technical Architecture
+
+### Frontend
+- Framework: Next.js 15 with App Router, React 19, TypeScript
+- Styling: Tailwind CSS with Radix UI components
+- State: Zustand stores for chat, models, user, and sessions
+- AI SDK: Vercel AI SDK for streaming LLM responses
+- Auth: Supabase authentication
+- Billing: Stripe subscriptions
+
+### Backend
+- Framework: Python FastAPI with async/await
+- Core Services:
+  - multi_agent_executor.py: Orchestrates multi-agent task execution
+  - vm_control.py: WebSocket-based VM control with persistent connections
+  - database.py: Supabase integration
+  - agent_billing.py: Usage tracking and credits
+- AI Providers: OpenAI, Anthropic, Google, Mistral, xAI, OpenRouter, Perplexity
+
+### Infrastructure
+- GPU-powered VMs on Google Kubernetes Engine (GKE) with L4 GPUs
+- Docker containers running Ubuntu 22.04 with XFCE desktop
+- WebSocket communication on port 8080
+- VNC server for remote desktop access
+- Automatic teardown after session completion
+
+### Desktop App (Electron)
+- Cross-platform: Windows (NSIS installer) and macOS (DMG)
+- Floating overlay UI with compact and expanded modes
+- Local execution: Puppeteer-core for browser, PowerShell/bash for terminal
+- Auto-updates via generic provider
+- Context isolation and sandbox security
+
+## Pricing
+- Free tier: Limited usage to try the platform
+- Starter: $20/month — unlimited agent sessions, all features
+- The average virtual assistant costs $3,000/month and works 8 hours/day
+- Coasty works 24/7 for a fraction of the cost
+
+## Competitive Positioning
+
+| Feature | Coasty | Anthropic CU | OpenAI Operator | UiPath | Human VA |
+|---------|--------|-------------|-----------------|--------|----------|
+| OSWorld Score | 82% | ~15% | ~40% | N/A | N/A |
+| VM Isolation | Yes | No | No | No | N/A |
+| CAPTCHA Solving | Yes | No | No | No | Yes |
+| Desktop Control | Yes | Yes | No | Yes | Yes |
+| Browser Automation | Yes | Yes | Yes | Yes | Yes |
+| Multi-Model | Yes | No | No | N/A | N/A |
+| Desktop App | Yes | No | No | Yes | N/A |
+| Open Source | Yes | No | No | No | N/A |
+| Price/month | $20 | Usage-based | $200 | $420+ | $3,000+ |
+| 24/7 Operation | Yes | Yes | Yes | Yes | No |
+
+## Distribution
+- Live on Product Hunt, Hacker News (Show HN), DEV Community
+- Desktop app for Mac and Windows
+- Open-source framework on GitHub: open-computer-use
+- Blog with 20+ articles on AI agents, benchmarks, and case studies
+- Video case studies on YouTube
+
+## Company
+- Founded: 2025
+- Product: AI employee platform / computer-using agent
+- Mission: Make autonomous computer agents accessible and affordable
+- Twitter/X: @coasty_ai
+- GitHub: github.com/anthropics/open-computer-use
+- Website: https://coasty.ai
+- Support: support@coasty.ai
+
+## Links
+- Homepage: https://coasty.ai
+- Blog: https://coasty.ai/blog
+- Case Studies & Demos: https://coasty.ai/results
+- Download Desktop App: https://coasty.ai/download
+- Competitor Comparisons: https://coasty.ai/compare
+- Terms of Service: https://coasty.ai/terms
+- Privacy Policy: https://coasty.ai/privacy

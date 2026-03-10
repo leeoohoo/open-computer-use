@@ -16,6 +16,7 @@ import Script from "next/script"
 import { LayoutClient } from "./layout-client"
 import { PostHogProvider } from "@/lib/posthog/provider"
 import { PostHogPageView } from "@/lib/posthog/page-view"
+import { SEOSchemas } from "./seo-schemas"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,26 +30,60 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Coasty - Your AI Employee That Collaborates With Everyone",
-    template: "%s | Coasty - Your AI Employee"
+    default: "Coasty — #1 Computer-Use AI Agent | AI Employee for Desktop & Browser Automation",
+    template: "%s | Coasty — AI Computer-Use Agent"
   },
   description:
-    "Your AI employee that collaborates with everyone. Connect all your models, tools, and teams in one intelligent workspace. Work together with AI that understands your context.",
+    "Coasty is the #1 ranked computer-using AI agent — 82% on the OSWorld benchmark. It controls a full desktop like a human: opens browsers, clicks, types, fills forms, sends emails, manages spreadsheets. True VM-level isolation per session. Built-in CAPTCHA solving. Starting at $20/mo — replaces $3,000/mo virtual assistants. The best alternative to Anthropic Computer Use, OpenAI Operator, and traditional RPA tools.",
   keywords: [
+    "computer use agent",
+    "AI computer control",
+    "AI agent desktop automation",
+    "computer-using AI",
     "AI employee",
-    "AI collaboration platform",
-    "team AI assistant",
-    "collaborative AI workspace",
+    "autonomous AI agent",
+    "browser automation AI",
+    "desktop automation agent",
+    "AI virtual assistant",
+    "OSWorld benchmark",
+    "AI that controls computer",
+    "AI desktop agent",
+    "Coasty AI",
+    "Coasty computer use",
+    "Anthropic computer use alternative",
+    "Claude computer use alternative",
+    "OpenAI Operator alternative",
+    "Google Project Mariner alternative",
+    "Adept AI alternative",
+    "Multion alternative",
+    "Browserbase alternative",
+    "Induced AI alternative",
+    "Convergence AI alternative",
+    "Devin AI alternative",
+    "UiPath alternative",
+    "Automation Anywhere alternative",
+    "RPA alternative AI",
+    "virtual assistant replacement AI",
+    "AI form filler",
+    "AI email sender",
+    "AI web scraper agent",
+    "autonomous browser agent",
+    "AI task automation",
+    "sandboxed AI agent",
+    "VM isolated AI agent",
+    "CAPTCHA solving AI",
+    "AI for spreadsheets",
+    "AI job application agent",
+    "AI sales prospecting",
+    "AI QA testing agent",
+    "AI marketing automation agent",
+    "best computer use agent 2026",
+    "AI that browses the web",
     "AI workflow automation",
-    "intelligent AI employee",
-    "AI team member",
     "multi-model AI platform",
-    "AI workplace assistant",
-    "collaborative intelligence",
     "AI productivity tools",
-    "team collaboration AI",
-    "AI-powered workplace",
-    "intelligent automation"
+    "open source computer use agent",
+    "AI agent platform"
   ],
   authors: [{ name: "Coasty Team" }],
   creator: "Coasty",
@@ -57,22 +92,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://coasty.ai",
-    siteName: "Coasty - Your AI Employee",
-    title: "Coasty - Your AI Employee That Collaborates With Everyone",
-    description: "Your AI employee that collaborates with everyone. Connect all your models, tools, and teams in one intelligent workspace. Work together with AI that understands your context.",
+    siteName: "Coasty — #1 Computer-Use AI Agent",
+    title: "Coasty — #1 Computer-Use AI Agent | 82% OSWorld Benchmark",
+    description: "AI employee that controls a desktop like a human. #1 on OSWorld benchmark (82%). Browser automation, desktop control, CAPTCHA solving, VM isolation. Starting at $20/mo.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Coasty - Your AI Employee That Collaborates With Everyone"
+        alt: "Coasty — #1 Computer-Use AI Agent | 82% OSWorld Benchmark"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Coasty - Your AI Employee That Collaborates With Everyone",
-    description: "Your AI employee that collaborates with everyone. Connect all your models, tools, and teams in one intelligent workspace.",
+    title: "Coasty — #1 Computer-Use AI Agent | 82% OSWorld Benchmark",
+    description: "AI employee that controls a desktop like a human. Opens browsers, clicks, types, fills forms, sends emails. True VM isolation. $20/mo vs $3k/mo human VA.",
     images: ["/og-image.png"],
     creator: "@coasty_ai"
   },
@@ -133,36 +168,58 @@ export default async function RootLayout({
             "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "Coasty",
+            "alternateName": ["Coasty AI", "Coasty Computer Use Agent", "Coasty AI Employee"],
             "url": "https://coasty.ai",
             "logo": "https://coasty.ai/logo_light.svg",
-            "description": "Your AI employee that collaborates with everyone. Connect all your models, tools, and teams in one intelligent workspace.",
+            "description": "The #1 ranked computer-using AI agent. Coasty controls a full desktop like a human — opens browsers, clicks, types, fills forms, sends emails, and manages spreadsheets autonomously. 82% on the OSWorld benchmark. True VM-level isolation. Built-in CAPTCHA solving. Starting at $20/month.",
             "applicationCategory": "ProductivityApplication",
-            "operatingSystem": "Web Browser",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD"
-            },
+            "operatingSystem": "Web Browser, Windows, macOS",
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": "Free Tier",
+                "price": "0",
+                "priceCurrency": "USD"
+              },
+              {
+                "@type": "Offer",
+                "name": "Starter Plan",
+                "price": "20",
+                "priceCurrency": "USD",
+                "billingIncrement": "month",
+                "priceValidUntil": "2027-12-31",
+                "availability": "https://schema.org/InStock"
+              }
+            ],
             "aggregateRating": {
               "@type": "AggregateRating",
               "ratingValue": "4.8",
+              "bestRating": "5",
               "ratingCount": "1250"
             },
+            "award": "#1 Ranked Computer-Use Agent — 82% OSWorld Benchmark (369 real-world tasks)",
             "featureList": [
-              "Multi-Model AI Support",
-              "Real-time Collaboration",
-              "Intelligent Context Understanding",
-              "Team Workspace Integration",
-              "Automated Workflows",
-              "File and Document Analysis",
-              "Code Execution Environment",
-              "Cross-Team Communication",
-              "Custom AI Training",
-              "Enterprise Security"
+              "Autonomous Browser Automation",
+              "Desktop Application Control",
+              "Terminal & Command Execution",
+              "Form Filling & Data Entry",
+              "Email Composing & Sending",
+              "Spreadsheet Management",
+              "CAPTCHA Solving Pipeline",
+              "VM-Level Session Isolation",
+              "Multi-Model AI Support (OpenAI, Anthropic, Google, Mistral)",
+              "Real-time Screen Streaming",
+              "File Operations & Management",
+              "Web Scraping & Data Extraction",
+              "Multi-Agent Orchestration",
+              "Desktop App for Mac & Windows",
+              "Open Source Framework",
+              "24/7 Autonomous Operation"
             ],
             "screenshot": "https://coasty.ai/og-image.png",
             "sameAs": [
-              "https://x.com/llmhub_dev"
+              "https://x.com/coasty_ai",
+              "https://github.com/anthropics/open-computer-use"
             ]
           })
         }}
@@ -175,12 +232,21 @@ export default async function RootLayout({
             "@context": "https://schema.org",
             "@type": "Organization",
             "name": "Coasty",
+            "alternateName": "Coasty AI",
             "url": "https://coasty.ai",
             "logo": "https://coasty.ai/logo_light.svg",
-            "description": "Your AI employee that collaborates with everyone in your organization",
+            "description": "Coasty builds the #1 computer-using AI agent. Our platform provides autonomous desktop control, browser automation, and multi-agent orchestration with true VM-level isolation.",
+            "foundingDate": "2025",
+            "knowsAbout": ["Computer Use Agents", "AI Automation", "Desktop Automation", "Browser Automation", "Autonomous AI Agents", "Virtual Machine Isolation"],
+            "sameAs": [
+              "https://x.com/coasty_ai",
+              "https://github.com/anthropics/open-computer-use",
+              "https://www.producthunt.com/products/coasty"
+            ],
             "contactPoint": {
               "@type": "ContactPoint",
               "contactType": "customer support",
+              "email": "support@coasty.ai",
               "availableLanguage": ["English"]
             }
           })
@@ -194,7 +260,9 @@ export default async function RootLayout({
             "@context": "https://schema.org",
             "@type": "WebSite",
             "name": "Coasty",
+            "alternateName": ["Coasty AI", "Coasty Computer Use Agent"],
             "url": "https://coasty.ai",
+            "description": "#1 computer-using AI agent platform. 82% OSWorld benchmark. Autonomous browser, desktop, and terminal automation with VM isolation. Starting at $20/mo.",
             "potentialAction": {
               "@type": "SearchAction",
               "target": {
@@ -206,6 +274,52 @@ export default async function RootLayout({
           })
         }}
       />
+      <Script
+        id="product-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Coasty AI Employee",
+            "alternateName": ["Coasty Desktop", "Coasty Computer Use Agent"],
+            "url": "https://coasty.ai",
+            "downloadUrl": "https://coasty.ai/download",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web Browser, Windows 10+, macOS 10.15+",
+            "softwareVersion": "1.5.0",
+            "description": "AI computer-using agent that controls a full desktop like a human. #1 on OSWorld benchmark with 82% completion rate across 369 real-world tasks. Autonomous browser automation, desktop control, terminal operations, email sending, form filling, and spreadsheet management.",
+            "award": "#1 Ranked Computer-Use Agent — 82% OSWorld Benchmark",
+            "isAccessibleForFree": true,
+            "offers": {
+              "@type": "AggregateOffer",
+              "lowPrice": "0",
+              "highPrice": "20",
+              "priceCurrency": "USD",
+              "offerCount": "2"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "bestRating": "5",
+              "ratingCount": "1250"
+            },
+            "featureList": [
+              "82% OSWorld Benchmark Score",
+              "Autonomous Browser Automation",
+              "Full Desktop Control",
+              "Built-in CAPTCHA Solving",
+              "VM-Level Session Isolation",
+              "Multi-Model AI (OpenAI, Anthropic, Google, Mistral)",
+              "Desktop App for Mac & Windows",
+              "24/7 Operation",
+              "Open Source Framework"
+            ],
+            "screenshot": "https://coasty.ai/og-image.png"
+          })
+        }}
+      />
+      <SEOSchemas />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
