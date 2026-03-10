@@ -116,7 +116,7 @@ function dot(s: ScheduleResponse) {
 function strip(s: ScheduleResponse) {
   if (s.enabled && !s.paused_reason) return "bg-emerald-500/10"
   if (s.paused_reason === "too_many_failures") return "bg-amber-500/10"
-  return "bg-foreground/[0.03]"
+  return "bg-zinc-100/50 dark:bg-zinc-800/30"
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -218,7 +218,7 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
                 setYear(today.getFullYear())
                 onSelectDate(today)
               }}
-              className="text-[11px] px-2 py-0.5 rounded-md bg-foreground/[0.06] hover:bg-foreground/[0.1] text-muted-foreground hover:text-foreground transition-all"
+              className="text-[11px] px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground transition-all"
             >
               Today
             </button>
@@ -227,13 +227,13 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
         <div className="flex items-center gap-0.5">
           <button
             onClick={() => nav(-1)}
-            className="p-1.5 rounded-lg hover:bg-foreground/[0.06] text-muted-foreground hover:text-foreground transition-all"
+            className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-muted-foreground hover:text-foreground transition-all"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
           <button
             onClick={() => nav(1)}
-            className="p-1.5 rounded-lg hover:bg-foreground/[0.06] text-muted-foreground hover:text-foreground transition-all"
+            className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-muted-foreground hover:text-foreground transition-all"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -243,12 +243,12 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
       {/* Grid */}
       <div className={cn(
         "rounded-xl overflow-hidden",
-        "bg-foreground/[0.02] border border-foreground/[0.06]",
+        "bg-white dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-none",
       )}>
         {/* Day headers */}
         <div className={cn(
-          "grid grid-cols-7 border-b border-foreground/[0.06]",
-          "bg-foreground/[0.03]",
+          "grid grid-cols-7 border-b border-zinc-200 dark:border-zinc-800",
+          "bg-zinc-50 dark:bg-zinc-900",
         )}>
           {DAYS.map((d) => (
             <div
@@ -279,11 +279,11 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
                 className={cn(
                   "relative min-h-[80px] sm:min-h-[96px] p-1.5 sm:p-2",
                   "flex flex-col items-start text-left transition-all duration-150",
-                  !lastRow && "border-b border-foreground/[0.04]",
-                  !lastCol && "border-r border-foreground/[0.04]",
-                  c.cur ? "hover:bg-foreground/[0.04] cursor-pointer" : "cursor-default",
-                  !c.cur && "bg-foreground/[0.01]",
-                  sel && "bg-foreground/[0.08] ring-1 ring-inset ring-foreground/[0.15] z-10",
+                  !lastRow && "border-b border-zinc-100 dark:border-zinc-800/60",
+                  !lastCol && "border-r border-zinc-100 dark:border-zinc-800/60",
+                  c.cur ? "hover:bg-zinc-50 dark:hover:bg-zinc-800/40 cursor-pointer" : "cursor-default",
+                  !c.cur && "bg-zinc-50/50 dark:bg-zinc-950/30",
+                  sel && "bg-zinc-100 dark:bg-zinc-800 ring-1 ring-inset ring-zinc-300 dark:ring-zinc-700 z-10",
                 )}
               >
                 <span
@@ -307,7 +307,7 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
                       />
                     ))}
                     {c.tasks.length > 3 && (
-                      <span className="text-[8px] text-muted-foreground/60 leading-none">
+                      <span className="text-[10px] text-muted-foreground/60 leading-none">
                         +{c.tasks.length - 3}
                       </span>
                     )}
@@ -326,13 +326,13 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
                         )}
                       >
                         <div className={cn("w-1 h-1 rounded-full shrink-0", dot(t.schedule))} />
-                        <span className="text-[10px] leading-tight truncate text-foreground/60 font-medium">
+                        <span className="text-[11px] leading-tight truncate text-foreground/60 font-medium">
                           {t.schedule.title || "Untitled"}
                         </span>
                       </div>
                     ))}
                     {c.tasks.length > 2 && (
-                      <span className="text-[10px] text-muted-foreground/60 pl-1">
+                      <span className="text-[11px] text-muted-foreground/60 pl-1">
                         +{c.tasks.length - 2} more
                       </span>
                     )}

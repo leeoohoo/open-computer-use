@@ -236,7 +236,7 @@ export function ScheduleDialog({
         className={cn(
           "flex flex-col max-w-[calc(100vw-2rem)] sm:max-w-[540px] max-h-[90dvh] p-0 gap-0 overflow-hidden",
           "bg-background text-foreground",
-          "border-foreground/[0.08]",
+          "border-zinc-200 dark:border-zinc-700",
           "shadow-[0_8px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_60px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.06)_inset,0_-20px_60px_-20px_rgba(255,255,255,0.02)_inset]",
         )}
       >
@@ -252,11 +252,11 @@ export function ScheduleDialog({
                 <div className={cn(
                   "relative flex h-11 w-11 items-center justify-center rounded-2xl",
                   "bg-gradient-to-br from-foreground/15 to-foreground/[0.06]",
-                  "ring-1 ring-foreground/[0.12]",
+                  "ring-1 ring-zinc-300 dark:ring-zinc-600",
                   "dark:shadow-[0_2px_12px_rgba(255,255,255,0.06)]",
                 )}>
                   <AgentIcon className="h-5 w-5 text-foreground/80" />
-                  <div className="absolute inset-0 rounded-2xl bg-foreground/[0.04] animate-pulse" />
+                  <div className="absolute inset-0 rounded-2xl bg-white dark:bg-zinc-800 animate-pulse" />
                 </div>
                 <div>
                   <DialogTitle className="text-[17px] font-bold tracking-tight">
@@ -277,7 +277,7 @@ export function ScheduleDialog({
           <div className="flex items-center justify-center py-20 flex-1">
             <div className="flex flex-col items-center gap-3">
               <div className="relative h-10 w-10">
-                <div className="absolute inset-0 rounded-full border-2 border-foreground/[0.08]" />
+                <div className="absolute inset-0 rounded-full border-2 border-zinc-200 dark:border-zinc-700" />
                 <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-foreground/60 animate-spin" />
               </div>
               <span className="text-xs text-muted-foreground">Loading configuration...</span>
@@ -288,10 +288,10 @@ export function ScheduleDialog({
             {/* Employee Name */}
             <div className="space-y-2.5">
               <div className="flex items-center gap-2">
-                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-foreground/[0.08]">
+                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800">
                   <User className="h-3 w-3 text-foreground/50" />
                 </div>
-                <label className="text-[13px] font-semibold text-foreground/80 tracking-wide uppercase text-[11px]">
+                <label className="text-[11px] font-semibold text-muted-foreground tracking-widest uppercase">
                   Name
                 </label>
               </div>
@@ -303,8 +303,8 @@ export function ScheduleDialog({
                   placeholder="Employee name"
                   className={cn(
                     "flex-1 h-10 rounded-xl px-4 text-sm font-medium",
-                    "bg-foreground/[0.04] text-foreground",
-                    "border border-foreground/[0.08] hover:border-foreground/[0.14] focus-visible:border-foreground/[0.2]",
+                    "bg-white dark:bg-zinc-800 text-foreground",
+                    "border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:border-zinc-400 dark:focus-visible:border-zinc-500",
                     "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.3)]",
                     "placeholder:text-muted-foreground",
                     "focus:outline-none transition-all duration-200",
@@ -315,8 +315,8 @@ export function ScheduleDialog({
                   onClick={() => setEmployeeName(randomEmployeeName())}
                   className={cn(
                     "shrink-0 h-10 w-10 flex items-center justify-center rounded-xl",
-                    "bg-foreground/[0.04] border border-foreground/[0.08]",
-                    "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.08]",
+                    "bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700",
+                    "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:bg-zinc-800",
                     "transition-all duration-200",
                   )}
                   title="Randomize name"
@@ -329,10 +329,10 @@ export function ScheduleDialog({
             {/* Instructions */}
             <div className="space-y-2.5">
               <div className="flex items-center gap-2">
-                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-foreground/[0.08]">
+                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800">
                   <PenLine className="h-3 w-3 text-foreground/50" />
                 </div>
-                <label className="text-[13px] font-semibold text-foreground/80 tracking-wide uppercase text-[11px]">
+                <label className="text-[11px] font-semibold text-muted-foreground tracking-widest uppercase">
                   Instructions
                 </label>
               </div>
@@ -343,14 +343,14 @@ export function ScheduleDialog({
                 rows={3}
                 className={cn(
                   "resize-none text-sm leading-relaxed rounded-xl",
-                  "!bg-foreground/[0.04] text-foreground",
-                  "border-foreground/[0.08] hover:border-foreground/[0.14] focus-visible:border-foreground/[0.2]",
+                  "!bg-white dark:bg-zinc-800 text-foreground",
+                  "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:border-zinc-400 dark:focus-visible:border-zinc-500",
                   "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.3)]",
                   "placeholder:text-muted-foreground",
                   "transition-all duration-200",
                 )}
               />
-              <p className="text-[10px] text-muted-foreground pl-0.5">
+              <p className="text-[11px] text-muted-foreground pl-0.5">
                 {taskPrompt.trim()
                   ? "These instructions will be used each time the employee runs."
                   : "Leave empty to use the original chat message."}
@@ -371,14 +371,14 @@ export function ScheduleDialog({
                 onClick={() => setTriggersExpanded(!triggersExpanded)}
                 className="flex items-center gap-2 w-full"
               >
-                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-foreground/[0.08]">
+                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800">
                   <Zap className="h-3 w-3 text-foreground/50" />
                 </div>
                 <span className="text-[11px] font-semibold text-foreground/80 tracking-wide uppercase">
                   Triggers
                 </span>
                 {triggers.length > 0 && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-foreground/[0.08] text-muted-foreground tabular-nums">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-muted-foreground tabular-nums">
                     {triggers.length}
                   </span>
                 )}
@@ -390,7 +390,7 @@ export function ScheduleDialog({
 
               {triggersExpanded && (
                 <div className="space-y-2">
-                  <p className="text-[10px] text-muted-foreground pl-0.5">
+                  <p className="text-[11px] text-muted-foreground pl-0.5">
                     When this employee finishes, automatically trigger another employee.
                   </p>
 
@@ -402,11 +402,11 @@ export function ScheduleDialog({
                         key={trig.id || idx}
                         className={cn(
                           "flex items-center gap-3 rounded-xl px-3.5 py-3",
-                          "bg-foreground/[0.04] ring-1 ring-foreground/[0.08]",
-                          "transition-all hover:ring-foreground/[0.12]",
+                          "bg-white dark:bg-zinc-800 ring-1 ring-zinc-200 dark:ring-zinc-700",
+                          "transition-all hover:ring-zinc-300 dark:hover:ring-zinc-600",
                         )}
                       >
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.08]">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
                           <Zap className="h-3 w-3 text-foreground/50" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -424,10 +424,10 @@ export function ScheduleDialog({
                                   setTriggers(updated)
                                 }}
                                 className={cn(
-                                  "text-[10px] px-2 py-0.5 rounded-full transition-all font-medium",
+                                  "text-[11px] px-2 py-0.5 rounded-full transition-all font-medium",
                                   trig.event === ev
                                     ? "bg-foreground text-background"
-                                    : "bg-foreground/[0.06] text-muted-foreground hover:bg-foreground/[0.1] hover:text-foreground",
+                                    : "bg-zinc-100 dark:bg-zinc-800 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-foreground",
                                 )}
                               >
                                 {ev === "on_complete" ? "Success" : ev === "on_failure" ? "Failure" : "Always"}
@@ -438,7 +438,7 @@ export function ScheduleDialog({
                         <button
                           type="button"
                           onClick={() => setTriggers(triggers.filter((_, i) => i !== idx))}
-                          className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground/40 hover:text-foreground hover:bg-foreground/[0.08] transition-all"
+                          className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground/40 hover:text-foreground hover:bg-zinc-100 dark:bg-zinc-800 transition-all"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -453,7 +453,7 @@ export function ScheduleDialog({
                       return (
                         <div className={cn(
                           "rounded-xl py-4 text-center",
-                          "border border-dashed border-foreground/[0.1]",
+                          "border border-dashed border-zinc-300 dark:border-zinc-700",
                         )}>
                           <p className="text-[11px] text-muted-foreground/50">Hire more employees to set up triggers</p>
                         </div>
@@ -463,12 +463,12 @@ export function ScheduleDialog({
                     return (
                       <div className={cn(
                         "rounded-xl overflow-hidden",
-                        "ring-1 ring-foreground/[0.08]",
+                        "ring-1 ring-zinc-200 dark:ring-zinc-700",
                       )}>
-                        <div className="px-3.5 py-2 border-b border-foreground/[0.06] bg-foreground/[0.03]">
-                          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Add trigger</p>
+                        <div className="px-3.5 py-2 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60">
+                          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Add trigger</p>
                         </div>
-                        <div className="max-h-[140px] overflow-y-auto scrollbar-invisible divide-y divide-foreground/[0.04]">
+                        <div className="max-h-[140px] overflow-y-auto scrollbar-invisible divide-y divide-zinc-100 dark:divide-zinc-800">
                           {available.map((s) => {
                             const active = s.enabled && !s.paused_reason
                             return (
@@ -485,12 +485,12 @@ export function ScheduleDialog({
                                 }}
                                 className={cn(
                                   "flex items-center gap-3 w-full px-3.5 py-2.5 text-left",
-                                  "hover:bg-foreground/[0.04] transition-all",
+                                  "hover:bg-white dark:bg-zinc-800 transition-all",
                                 )}
                               >
                                 <div className={cn(
                                   "h-6 w-6 rounded-full flex items-center justify-center shrink-0",
-                                  active ? "bg-emerald-500/15" : "bg-foreground/[0.08]",
+                                  active ? "bg-emerald-500/15" : "bg-zinc-100 dark:bg-zinc-800",
                                 )}>
                                   <AgentIcon className={cn("h-2.5 w-2.5", active ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/50")} />
                                 </div>
@@ -513,8 +513,8 @@ export function ScheduleDialog({
             {showFreeTierWarning && (
               <div className={cn(
                 "flex gap-3 rounded-xl p-4",
-                "bg-foreground/[0.03]",
-                "border border-foreground/[0.08]",
+                "bg-zinc-50 dark:bg-zinc-900/60",
+                "border border-zinc-200 dark:border-zinc-700",
               )}>
                 <WarningCircle className="size-5 shrink-0 text-muted-foreground mt-0.5" weight="fill" />
                 <div className="space-y-1">
@@ -535,10 +535,10 @@ export function ScheduleDialog({
             {/* Credentials hint */}
             <div className={cn(
               "flex items-center gap-3 rounded-xl px-4 py-3",
-              "bg-foreground/[0.03]",
-              "border border-foreground/[0.06]",
+              "bg-zinc-50 dark:bg-zinc-900/60",
+              "border border-zinc-200 dark:border-zinc-800",
             )}>
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.06]">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
                 <KeyRound className="h-3.5 w-3.5 text-foreground/40" />
               </div>
               <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -556,8 +556,8 @@ export function ScheduleDialog({
             {error && (
               <div className={cn(
                 "flex items-center gap-2.5 rounded-xl px-4 py-3",
-                "bg-foreground/[0.03]",
-                "border border-foreground/[0.08]",
+                "bg-zinc-50 dark:bg-zinc-900/60",
+                "border border-zinc-200 dark:border-zinc-700",
               )}>
                 <AlertCircle className="h-4 w-4 text-muted-foreground shrink-0" />
                 <p className="text-xs text-foreground/80 font-medium">{error}</p>
@@ -569,7 +569,7 @@ export function ScheduleDialog({
         {/* Footer */}
         <div className={cn(
           "shrink-0 px-6 py-4 flex items-center gap-2.5",
-          "border-t border-foreground/[0.06]",
+          "border-t border-zinc-200 dark:border-zinc-800",
         )}>
           {isEditing && (
             <button
@@ -578,7 +578,7 @@ export function ScheduleDialog({
               className={cn(
                 "h-10 px-4 rounded-xl text-xs font-semibold mr-auto transition-all duration-200",
                 "text-muted-foreground hover:text-foreground",
-                "hover:bg-foreground/[0.06]",
+                "hover:bg-zinc-100 dark:hover:bg-zinc-800",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
                 "disabled:opacity-40 disabled:cursor-not-allowed",
                 "flex items-center gap-1.5",
@@ -593,7 +593,7 @@ export function ScheduleDialog({
               variant="ghost"
               onClick={() => onOpenChange(false)}
               disabled={loading}
-              className="h-10 px-5 text-sm rounded-xl text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06]"
+              className="h-10 px-5 text-sm rounded-xl text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800"
             >
               Cancel
             </Button>
@@ -613,7 +613,7 @@ export function ScheduleDialog({
                       "hover:shadow-[0_1px_3px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.9)_inset,0_6px_24px_rgba(255,255,255,0.12)]",
                       "hover:scale-[1.02] active:scale-[0.98]",
                     ]
-                  : "text-muted-foreground bg-foreground/[0.06]"
+                  : "text-muted-foreground bg-zinc-100 dark:bg-zinc-800"
               )}
             >
               <span className="flex items-center gap-2">

@@ -142,14 +142,14 @@ function TimezoneCombobox({
           type="button"
           className={cn(
             "group/tz flex h-11 w-full items-center justify-between rounded-xl px-4 text-sm transition-all duration-200",
-            "bg-foreground/[0.04] border border-foreground/[0.08]",
-            "hover:border-foreground/[0.14] hover:shadow-[0_0_0_1px_rgba(0,0,0,0.05),0_2px_8px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_2px_8px_rgba(0,0,0,0.4)]",
+            "bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700",
+            "hover:border-zinc-300 dark:hover:border-zinc-600 hover:shadow-[0_0_0_1px_rgba(0,0,0,0.05),0_2px_8px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_2px_8px_rgba(0,0,0,0.4)]",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             !value && "text-muted-foreground"
           )}
         >
           <span className="flex items-center gap-2.5 truncate">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.08]">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
               <MapPin className="h-3 w-3 text-foreground/50" />
             </div>
             <span className="truncate font-medium text-foreground/90">{selectedLabel}</span>
@@ -157,9 +157,9 @@ function TimezoneCombobox({
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0 ml-2 transition-transform duration-200 group-data-[state=open]/tz:rotate-180" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0 rounded-xl border-foreground/[0.1] bg-background shadow-[0_8px_40px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.6)]" align="start">
+      <PopoverContent className="w-[300px] p-0 rounded-xl border-zinc-200 dark:border-zinc-700 bg-background shadow-lg dark:shadow-[0_8px_40px_rgba(0,0,0,0.6)]" align="start">
         <Command className="bg-transparent">
-          <div className="border-b border-foreground/[0.06]">
+          <div className="border-b border-zinc-200 dark:border-zinc-800">
             <CommandInput placeholder="Search timezones..." className="h-10" />
           </div>
           <CommandList className="max-h-[240px]">
@@ -179,7 +179,7 @@ function TimezoneCombobox({
                     <div className="flex items-center gap-2">
                       <span className="text-sm">{tz.label}</span>
                     </div>
-                    <span className="text-[10px] text-muted-foreground font-mono tracking-wider">
+                    <span className="text-[11px] text-muted-foreground font-mono tracking-wider">
                       {tz.abbr}
                     </span>
                   </div>
@@ -215,18 +215,18 @@ function SectionHeader({
     <div className="flex items-center gap-3">
       <div className={cn(
         "relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
-        "bg-foreground/[0.06]",
-        "ring-1 ring-foreground/[0.08]"
+        "bg-zinc-100 dark:bg-zinc-800",
+        "ring-1 ring-zinc-200 dark:ring-zinc-700"
       )}>
         <Icon className="h-3.5 w-3.5 text-foreground/60" />
         {showStep && step && (
-          <div className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-foreground text-background text-[8px] font-bold ring-2 ring-background">
+          <div className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-bold ring-2 ring-background">
             {step}
           </div>
         )}
       </div>
       <div>
-        <p className="text-[13px] font-semibold text-foreground/85">
+        <p className="text-sm font-semibold text-foreground/85">
           {title}
         </p>
         <p className="text-[11px] text-muted-foreground">{subtitle}</p>
@@ -268,9 +268,9 @@ export function ScheduleConfigBlock({
         {/* Glass card for frequency controls */}
         <div className={cn(
           "relative rounded-2xl overflow-hidden",
-          "bg-foreground/[0.03]",
-          "border border-foreground/[0.07]",
-          "shadow-[0_1px_3px_rgba(0,0,0,0.1)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.04)_inset]",
+          "bg-white dark:bg-zinc-900/80",
+          "border border-zinc-200 dark:border-zinc-800",
+          "shadow-sm dark:shadow-none",
         )}>
           {/* Subtle top shine */}
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.1] to-transparent" />
@@ -293,15 +293,15 @@ export function ScheduleConfigBlock({
                           "text-foreground",
                           "bg-gradient-to-b from-foreground/20 to-foreground/10",
                           "shadow-[0_1px_2px_rgba(0,0,0,0.15)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.15)_inset,0_4px_12px_rgba(0,0,0,0.2)]",
-                          "ring-1 ring-foreground/[0.12]",
+                          "ring-1 ring-zinc-300 dark:ring-zinc-600",
                           "scale-[1.02]",
                         ]
                         : [
                           "text-muted-foreground",
-                          "bg-foreground/[0.03] hover:bg-foreground/[0.07]",
-                          "border border-transparent hover:border-foreground/[0.08]",
+                          "bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800",
+                          "border border-zinc-200/60 dark:border-zinc-700/40 hover:border-zinc-300 dark:hover:border-zinc-600",
                           "hover:text-foreground hover:scale-[1.02]",
-                          "hover:shadow-[0_1px_4px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_1px_4px_rgba(0,0,0,0.3)]",
+                          "hover:shadow-sm",
                         ]
                     )}
                   >
@@ -313,7 +313,7 @@ export function ScheduleConfigBlock({
 
             {/* Time + Day pickers */}
             {(showTimePicker || showCustomCron) && (
-              <div className="pt-1 border-t border-foreground/[0.06]">
+              <div className="pt-1 border-t border-zinc-200 dark:border-zinc-800">
                 <div
                   className={cn(
                     "grid gap-3 pt-3",
@@ -333,8 +333,8 @@ export function ScheduleConfigBlock({
                           onChange={(e) => onChange({ time: e.target.value })}
                           className={cn(
                             "h-11 text-sm font-mono rounded-xl text-foreground",
-                            "!bg-foreground/[0.04]",
-                            "border-foreground/[0.08] hover:border-foreground/[0.14]",
+                            "!bg-white dark:!bg-zinc-800",
+                            "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600",
                             "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.2)]",
                             "transition-all duration-200",
                           )}
@@ -364,12 +364,12 @@ export function ScheduleConfigBlock({
                                   "text-foreground",
                                   "bg-gradient-to-b from-foreground/20 to-foreground/10",
                                   "shadow-[0_1px_2px_rgba(0,0,0,0.15)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.15)_inset]",
-                                  "ring-1 ring-foreground/[0.12]",
+                                  "ring-1 ring-zinc-300 dark:ring-zinc-600",
                                 ]
                                 : [
-                                  "bg-foreground/[0.03] text-muted-foreground",
-                                  "border border-foreground/[0.06]",
-                                  "hover:bg-foreground/[0.07] hover:text-foreground hover:border-foreground/[0.1]",
+                                  "bg-zinc-50 dark:bg-zinc-800/50 text-muted-foreground",
+                                  "border border-zinc-200 dark:border-zinc-700",
+                                  "hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-foreground hover:border-zinc-300 dark:hover:border-zinc-600",
                                 ]
                             )}
                           >
@@ -392,8 +392,8 @@ export function ScheduleConfigBlock({
                       >
                         <SelectTrigger className={cn(
                           "h-11 rounded-xl text-foreground",
-                          "!bg-foreground/[0.04]",
-                          "border-foreground/[0.08] hover:border-foreground/[0.14]",
+                          "!bg-white dark:!bg-zinc-800",
+                          "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600",
                         )}>
                           <SelectValue />
                         </SelectTrigger>
@@ -422,11 +422,11 @@ export function ScheduleConfigBlock({
                       onChange={(e) => onChange({ customCron: e.target.value })}
                       className={cn(
                         "h-11 font-mono text-sm rounded-xl text-foreground",
-                        "!bg-foreground/[0.04]",
-                        "border-foreground/[0.08] hover:border-foreground/[0.14]",
+                        "!bg-white dark:!bg-zinc-800",
+                        "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600",
                       )}
                     />
-                    <p className="text-[10px] text-muted-foreground font-mono tracking-wider">
+                    <p className="text-[11px] text-muted-foreground font-mono tracking-wider">
                       minute &middot; hour &middot; day &middot; month &middot; weekday
                     </p>
                   </div>
@@ -449,8 +449,8 @@ export function ScheduleConfigBlock({
 
         {selectableMachines.length === 0 ? (
           <div className={cn(
-            "rounded-2xl border border-dashed border-foreground/[0.08] p-6 text-center",
-            "bg-foreground/[0.02]",
+            "rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-700 p-6 text-center",
+            "bg-zinc-50 dark:bg-zinc-900/60",
           )}>
             <Monitor className="h-6 w-6 text-muted-foreground/60 mx-auto mb-2" />
             <p className="text-sm text-muted-foreground font-medium">
@@ -485,15 +485,15 @@ export function ScheduleConfigBlock({
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     isSelected
                       ? [
-                        "bg-foreground/[0.06]",
-                        "border border-foreground/[0.12]",
-                        "shadow-[0_0_0_1px_rgba(0,0,0,0.06)_inset,0_2px_8px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06)_inset,0_2px_8px_rgba(0,0,0,0.3)]",
+                        "bg-zinc-100 dark:bg-zinc-800/80",
+                        "border border-zinc-300 dark:border-zinc-600",
+                        "shadow-sm dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)]",
                       ]
                       : [
-                        "bg-foreground/[0.02]",
-                        "border border-foreground/[0.06]",
-                        "hover:border-foreground/[0.1] hover:bg-foreground/[0.04]",
-                        "hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_2px_8px_rgba(0,0,0,0.2)]",
+                        "bg-white dark:bg-zinc-900/60",
+                        "border border-zinc-200 dark:border-zinc-800",
+                        "hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800/60",
+                        "hover:shadow-sm",
                       ]
                   )}
                 >
@@ -503,7 +503,7 @@ export function ScheduleConfigBlock({
                       "h-10 w-10 rounded-xl flex items-center justify-center text-sm font-bold transition-all duration-300",
                       isSelected
                         ? "bg-gradient-to-br from-foreground/25 to-foreground/15 text-foreground shadow-md"
-                        : "bg-foreground/[0.06] text-muted-foreground group-hover/machine:bg-foreground/[0.1]"
+                        : "bg-zinc-100 dark:bg-zinc-800 text-muted-foreground group-hover/machine:bg-zinc-200 dark:group-hover/machine:bg-zinc-700"
                     )}>
                       {m.displayName?.charAt(0)?.toUpperCase() || "M"}
                     </div>
@@ -524,7 +524,7 @@ export function ScheduleConfigBlock({
                     )}>
                       {m.displayName}
                       {m.id === defaultMachineId && (
-                        <span className="ml-1.5 text-[9px] font-medium text-foreground/60 bg-foreground/[0.08] px-1.5 py-0.5 rounded-full">
+                        <span className="ml-1.5 text-[11px] font-medium text-foreground/60 bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5 rounded-full">
                           current
                         </span>
                       )}
@@ -543,7 +543,7 @@ export function ScheduleConfigBlock({
                           "bg-foreground",
                           "shadow-[0_1px_3px_rgba(0,0,0,0.15)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_0_6px_rgba(255,255,255,0.15)]",
                         ]
-                        : "border-2 border-foreground/[0.1] group-hover/machine:border-foreground/[0.2]"
+                        : "border-2 border-zinc-200 dark:border-zinc-700 group-hover/machine:border-zinc-300 dark:group-hover/machine:border-zinc-600"
                     )}
                   >
                     {isSelected && (

@@ -66,7 +66,7 @@ function DayTaskItem({ task, onUpdate }: { task: DayTask; onUpdate: () => void }
   }
 
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-foreground/[0.04] transition-all group">
+    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition-all group">
       <div className={cn(
         "w-2 h-2 rounded-full shrink-0",
         isActive ? "bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.5)]"
@@ -75,19 +75,19 @@ function DayTaskItem({ task, onUpdate }: { task: DayTask; onUpdate: () => void }
       )} />
       <div className="flex-1 min-w-0">
         <p
-          className="text-[13px] font-medium text-foreground/80 truncate cursor-pointer hover:text-foreground transition-colors"
+          className="text-sm font-medium text-foreground/80 truncate cursor-pointer hover:text-foreground transition-colors"
           onClick={() => router.push(`/c/${s.chat_id}`)}
         >
           {s.title || "Untitled Employee"}
         </p>
       </div>
-      <span className="text-[11px] text-muted-foreground/50 tabular-nums shrink-0">
+      <span className="text-xs text-muted-foreground/50 tabular-nums shrink-0">
         {task.runsPerDay > 6 ? `${task.runsPerDay}\u00d7 daily` : task.times.length > 0 ? task.times[0] : formatFrequency(s.frequency)}
       </span>
       <button
         onClick={run}
         disabled={!!loading}
-        className="h-6 px-2 rounded-md text-[10px] font-medium bg-foreground/[0.05] hover:bg-foreground/[0.1] text-foreground/60 hover:text-foreground opacity-0 group-hover:opacity-100 transition-all disabled:opacity-40"
+        className="h-6 px-2 rounded-md text-[11px] font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-foreground/60 hover:text-foreground opacity-0 group-hover:opacity-100 transition-all disabled:opacity-40"
       >
         {loading === "run" ? "\u2026" : "Run"}
       </button>
@@ -162,8 +162,8 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
         "rounded-2xl transition-all duration-200",
         showAddMenu ? "overflow-visible" : "overflow-hidden",
         dragOver
-          ? "bg-foreground/[0.1] ring-2 ring-foreground/25 shadow-[0_0_30px_rgba(255,255,255,0.06)]"
-          : "bg-foreground/[0.06] ring-1 ring-foreground/[0.12] hover:ring-foreground/[0.18]",
+          ? "bg-zinc-100 dark:bg-zinc-800/80 ring-2 ring-zinc-400 dark:ring-zinc-600 shadow-lg"
+          : "bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-sm dark:shadow-none",
       )}
     >
       {/* Header */}
@@ -176,7 +176,7 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
               onChange={(e) => setEditName(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") cancelEdit() }}
               autoFocus
-              className="w-full h-9 rounded-lg px-3 text-[15px] font-semibold bg-foreground/[0.04] border border-foreground/[0.08] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/[0.15] transition-all"
+              className="w-full h-9 rounded-lg px-3 text-sm font-semibold bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-all"
               placeholder="Team name"
             />
             <textarea
@@ -184,11 +184,11 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
               onChange={(e) => setEditInstructions(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Escape") cancelEdit() }}
               rows={2}
-              className="w-full rounded-lg px-3 py-2 text-xs resize-none bg-foreground/[0.04] border border-foreground/[0.08] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/[0.15] transition-all leading-relaxed"
+              className="w-full rounded-lg px-3 py-2 text-xs resize-none bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-all leading-relaxed"
               placeholder="Team guidelines (optional)"
             />
             <div className="flex items-center gap-2">
-              <button onClick={saveEdit} disabled={!editName.trim() || !!busy} className={cn("h-7 px-3.5 rounded-lg text-xs font-semibold transition-all", editName.trim() ? "text-background bg-foreground hover:bg-foreground/90" : "text-muted-foreground bg-foreground/[0.06]", "disabled:opacity-40")}>
+              <button onClick={saveEdit} disabled={!editName.trim() || !!busy} className={cn("h-7 px-3.5 rounded-lg text-xs font-semibold transition-all", editName.trim() ? "text-background bg-foreground hover:bg-foreground/90" : "text-muted-foreground bg-zinc-100 dark:bg-zinc-800", "disabled:opacity-40")}>
                 {busy === "edit" ? "Saving\u2026" : "Save"}
               </button>
               <button onClick={cancelEdit} className="h-7 px-3 rounded-lg text-xs text-muted-foreground hover:text-foreground transition-all">
@@ -199,21 +199,21 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
         ) : (
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h3 className="text-[15px] font-semibold text-foreground tracking-[-0.01em]">{team.name}</h3>
+              <h3 className="text-sm font-semibold text-foreground tracking-[-0.01em]">{team.name}</h3>
               {team.instructions && (
                 <p className="text-xs text-muted-foreground/70 mt-1 line-clamp-2 leading-relaxed">{team.instructions}</p>
               )}
             </div>
             <div className="flex items-center gap-1.5 shrink-0">
               {memory.length > 0 && (
-                <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/50 bg-foreground/[0.04] px-2 py-0.5 rounded-full">
+                <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground/50 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">
                   <Brain className="h-2.5 w-2.5" />{memory.length}
                 </span>
               )}
-              <button onClick={() => setEditing(true)} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-foreground/[0.06] transition-all" title="Edit team">
+              <button onClick={() => setEditing(true)} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" title="Edit team">
                 <Pencil className="h-3 w-3" />
               </button>
-              <button onClick={disband} disabled={!!busy} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-foreground/[0.06] transition-all disabled:opacity-40" title="Disband team">
+              <button onClick={disband} disabled={!!busy} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all disabled:opacity-40" title="Disband team">
                 <Trash2 className="h-3 w-3" />
               </button>
             </div>
@@ -228,16 +228,16 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
             {team.members.map((m) => (
               <div
                 key={m.chat_id}
-                className="group/pill flex items-center gap-1.5 h-8 pl-2.5 pr-1.5 rounded-full bg-foreground/[0.1] hover:bg-foreground/[0.14] transition-all"
+                className="group/pill flex items-center gap-1.5 h-8 pl-2.5 pr-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-all"
               >
-                <div className="h-4 w-4 rounded-full bg-foreground/[0.15] flex items-center justify-center">
+                <div className="h-4 w-4 rounded-full bg-zinc-300 dark:bg-zinc-700 flex items-center justify-center">
                   <AgentIcon className="h-2.5 w-2.5 text-foreground/70" />
                 </div>
-                <span className="text-xs text-foreground/90 font-medium max-w-[120px] truncate">{m.title || "Untitled"}</span>
+                <span className="text-xs font-medium text-foreground/90 max-w-[120px] truncate">{m.title || "Untitled"}</span>
                 <button
                   onClick={() => removeMember(m.chat_id)}
                   disabled={!!busy}
-                  className="h-5 w-5 flex items-center justify-center rounded-full lg:opacity-0 lg:group-hover/pill:opacity-100 hover:bg-foreground/[0.1] text-muted-foreground/50 hover:text-foreground transition-all"
+                  className="h-5 w-5 flex items-center justify-center rounded-full lg:opacity-0 lg:group-hover/pill:opacity-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-muted-foreground/50 hover:text-foreground transition-all"
                 >
                   <X className="h-2.5 w-2.5" />
                 </button>
@@ -251,8 +251,8 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
                 className={cn(
                   "flex items-center gap-1.5 h-8 px-3 rounded-full transition-all text-xs font-medium",
                   availableEmployees.length === 0
-                    ? "bg-foreground/[0.04] text-muted-foreground/30 cursor-not-allowed"
-                    : "bg-foreground/[0.06] hover:bg-foreground/[0.12] text-muted-foreground hover:text-foreground",
+                    ? "bg-zinc-100 dark:bg-zinc-800/50 text-muted-foreground/30 cursor-not-allowed"
+                    : "bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground",
                 )}
               >
                 <Plus className="h-3 w-3" />
@@ -261,20 +261,20 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
               {showAddMenu && availableEmployees.length > 0 && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setShowAddMenu(false)} />
-                  <div className="absolute top-full left-0 mt-1.5 z-50 w-56 max-h-48 overflow-y-auto rounded-xl bg-background ring-1 ring-foreground/[0.12] shadow-lg py-1 scrollbar-invisible">
+                  <div className="absolute top-full left-0 mt-1.5 z-50 w-56 max-h-48 overflow-y-auto rounded-xl bg-background border border-zinc-200 dark:border-zinc-700 shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] py-1 scrollbar-invisible">
                     {availableEmployees.map((s) => (
                       <button
                         key={s.chat_id}
                         onClick={() => addMemberById(s.chat_id)}
                         disabled={busy === `add-${s.chat_id}`}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-foreground/[0.06] transition-colors disabled:opacity-40"
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors disabled:opacity-40"
                       >
-                        <div className={cn("h-5 w-5 rounded-full flex items-center justify-center shrink-0", s.enabled && !s.paused_reason ? "bg-emerald-500/15" : "bg-foreground/[0.1]")}>
-                          <AgentIcon className={cn("h-2.5 w-2.5", s.enabled && !s.paused_reason ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/60")} />
+                        <div className="h-5 w-5 rounded-full flex items-center justify-center shrink-0 bg-muted/60">
+                          <AgentIcon className="h-2.5 w-2.5 text-foreground/60" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[13px] font-medium text-foreground truncate">{s.title || "Untitled Employee"}</p>
-                          <p className="text-[10px] text-muted-foreground/60">{formatFrequency(s.frequency)}</p>
+                          <p className="text-sm font-medium text-foreground truncate">{s.title || "Untitled Employee"}</p>
+                          <p className="text-[11px] text-muted-foreground/60">{formatFrequency(s.frequency)}</p>
                         </div>
                       </button>
                     ))}
@@ -288,8 +288,8 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
             <div className={cn(
               "rounded-xl py-5 text-center transition-all",
               dragOver
-                ? "bg-foreground/[0.08]"
-                : "border border-dashed border-foreground/[0.12]",
+                ? "bg-zinc-100 dark:bg-zinc-800"
+                : "border border-dashed border-zinc-300 dark:border-zinc-700",
             )}>
               <p className="text-xs text-muted-foreground/60">
                 {dragOver ? "Drop to add" : "No members yet"}
@@ -298,7 +298,7 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
             {!dragOver && availableEmployees.length > 0 && (
               <button
                 onClick={() => setShowAddMenu(!showAddMenu)}
-                className="w-full flex items-center justify-center gap-1.5 h-8 rounded-lg bg-foreground/[0.06] hover:bg-foreground/[0.1] text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
+                className="w-full flex items-center justify-center gap-1.5 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
               >
                 <Plus className="h-3 w-3" />Add Employee
               </button>
@@ -306,20 +306,20 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
             {showAddMenu && availableEmployees.length > 0 && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowAddMenu(false)} />
-                <div className="relative z-50 w-full max-h-48 overflow-y-auto rounded-xl bg-background ring-1 ring-foreground/[0.12] shadow-lg py-1 scrollbar-invisible">
+                <div className="relative z-50 w-full max-h-48 overflow-y-auto rounded-xl bg-background border border-zinc-200 dark:border-zinc-700 shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] py-1 scrollbar-invisible">
                   {availableEmployees.map((s) => (
                     <button
                       key={s.chat_id}
                       onClick={() => addMemberById(s.chat_id)}
                       disabled={busy === `add-${s.chat_id}`}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-foreground/[0.06] transition-colors disabled:opacity-40"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors disabled:opacity-40"
                     >
-                      <div className={cn("h-5 w-5 rounded-full flex items-center justify-center shrink-0", s.enabled && !s.paused_reason ? "bg-emerald-500/15" : "bg-foreground/[0.1]")}>
+                      <div className={cn("h-5 w-5 rounded-full flex items-center justify-center shrink-0", s.enabled && !s.paused_reason ? "bg-emerald-500/15" : "bg-zinc-200 dark:bg-zinc-800")}>
                         <AgentIcon className={cn("h-2.5 w-2.5", s.enabled && !s.paused_reason ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/60")} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[13px] font-medium text-foreground truncate">{s.title || "Untitled Employee"}</p>
-                        <p className="text-[10px] text-muted-foreground/60">{formatFrequency(s.frequency)}</p>
+                        <p className="text-sm font-medium text-foreground truncate">{s.title || "Untitled Employee"}</p>
+                        <p className="text-[11px] text-muted-foreground/60">{formatFrequency(s.frequency)}</p>
                       </div>
                     </button>
                   ))}
@@ -336,12 +336,12 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
           <div className="flex items-center gap-4 overflow-x-auto scrollbar-invisible pb-0.5">
             {memory.slice(0, 4).map((entry) => (
               <div key={entry.key} className="shrink-0 max-w-[180px]">
-                <span className="text-[10px] font-mono text-foreground/60">{entry.key}</span>
-                <p className="text-[10px] text-muted-foreground/70 truncate">{entry.value}</p>
+                <span className="text-[11px] font-mono text-foreground/60">{entry.key}</span>
+                <p className="text-[11px] text-muted-foreground/70 truncate">{entry.value}</p>
               </div>
             ))}
             {memory.length > 4 && (
-              <span className="text-[10px] text-muted-foreground/50 shrink-0">+{memory.length - 4} more</span>
+              <span className="text-[11px] text-muted-foreground/50 shrink-0">+{memory.length - 4} more</span>
             )}
           </div>
         </div>
@@ -350,7 +350,7 @@ function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedule
       {/* Drop overlay */}
       {dragOver && team.members.length > 0 && (
         <div className="px-5 pb-4 -mt-1">
-          <div className="rounded-xl bg-foreground/[0.08] py-2.5 text-center">
+          <div className="rounded-xl bg-zinc-100 dark:bg-zinc-800 py-2.5 text-center">
             <p className="text-[11px] text-foreground/60 font-medium">Drop to add to {team.name}</p>
           </div>
         </div>
@@ -378,19 +378,16 @@ function EmployeePill({ schedule }: { schedule: ScheduleResponse }) {
         "flex items-center gap-2.5 rounded-xl px-3 py-2.5 cursor-grab active:cursor-grabbing select-none group transition-all",
         dragging
           ? "opacity-40 scale-95"
-          : "bg-foreground/[0.03] hover:bg-foreground/[0.08]",
+          : "bg-zinc-50 dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-800",
       )}
     >
       <GripVertical className="h-3 w-3 text-muted-foreground/40 group-hover:text-muted-foreground/70 shrink-0 transition-colors" />
-      <div className={cn(
-        "h-6 w-6 rounded-full flex items-center justify-center shrink-0",
-        isActive ? "bg-emerald-500/15" : "bg-foreground/[0.1]",
-      )}>
-        <CoastyIcon className={cn("h-3 w-3", isActive ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/60")} />
+      <div className="h-6 w-6 rounded-full flex items-center justify-center shrink-0 bg-muted/60">
+        <CoastyIcon className="h-3 w-3 text-foreground/60" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-medium text-foreground truncate leading-tight">{schedule.title || "Untitled Employee"}</p>
-        <p className="text-[10px] text-muted-foreground/60 leading-tight">{formatFrequency(schedule.frequency)}</p>
+        <p className="text-sm font-medium text-foreground truncate leading-tight">{schedule.title || "Untitled Employee"}</p>
+        <p className="text-[11px] text-muted-foreground/60 leading-tight">{formatFrequency(schedule.frequency)}</p>
       </div>
     </div>
   )
@@ -479,7 +476,7 @@ export function SchedulesContent() {
               <p className="text-sm text-muted-foreground">Your AI workforce — assign tasks and let them handle the rest</p>
               {schedules.length > 0 && (
                 <>
-                  <span className="h-3.5 w-px bg-foreground/[0.08] hidden sm:block" />
+                  <span className="h-3.5 w-px bg-zinc-200 dark:bg-zinc-800 hidden sm:block" />
                   <div className="flex items-center gap-3 text-xs">
                     <span className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-medium">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.4)]" />{activeCount} on duty
@@ -509,7 +506,7 @@ export function SchedulesContent() {
               Open any chat and click <span className="inline-flex items-center gap-1 font-bold text-foreground"><AgentIcon className="h-3 w-3" />Assign Employee</span> on the <span className="font-bold text-foreground">top right</span> to put it on autopilot
             </p>
           </div>
-          <Link href="/" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all bg-foreground/[0.06] hover:bg-foreground/[0.1] text-foreground/70 hover:text-foreground")}>
+          <Link href="/" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-foreground/70 hover:text-foreground")}>
             <CoastyIcon className="h-3 w-3" />New Chat
           </Link>
         </div>
@@ -522,7 +519,7 @@ export function SchedulesContent() {
               const active = activeTab === tab.id
               return (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={cn(
-                  "relative flex items-center gap-2 px-4 py-2 text-[13px] font-medium transition-all duration-200 rounded-lg",
+                  "relative flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg",
                   active
                     ? "bg-white dark:bg-zinc-900 text-foreground shadow-sm ring-1 ring-zinc-200/60 dark:ring-zinc-700/40"
                     : "text-muted-foreground hover:text-foreground/80",
@@ -531,7 +528,7 @@ export function SchedulesContent() {
                   <span>{tab.label}</span>
                   {tab.count !== undefined && tab.count > 0 && (
                     <span className={cn(
-                      "text-[10px] min-w-[18px] text-center px-1.5 py-px rounded-md tabular-nums font-semibold",
+                      "text-[11px] min-w-[18px] text-center px-1.5 py-px rounded-md tabular-nums font-semibold",
                       active ? "bg-zinc-100 dark:bg-zinc-800 text-foreground/60" : "text-muted-foreground/40",
                     )}>{tab.count}</span>
                   )}
@@ -543,21 +540,21 @@ export function SchedulesContent() {
 
         {/* ═══ Empty state ═══ */}
         {schedules.length === 0 && (
-          <div className={cn("relative rounded-2xl overflow-hidden bg-foreground/[0.02] border border-foreground/[0.06]")}>
+          <div className={cn("relative rounded-2xl overflow-hidden bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800")}>
             <div className="pointer-events-none absolute inset-0">
-              <div className="absolute -top-12 right-1/4 h-56 w-56 rounded-full bg-foreground/[0.03] blur-3xl" />
-              <div className="absolute -bottom-12 left-1/4 h-48 w-48 rounded-full bg-foreground/[0.02] blur-3xl" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-32 w-32 rounded-full bg-foreground/[0.015] blur-2xl" />
+              <div className="absolute -top-12 right-1/4 h-56 w-56 rounded-full bg-zinc-200/50 dark:bg-zinc-800/30 blur-3xl" />
+              <div className="absolute -bottom-12 left-1/4 h-48 w-48 rounded-full bg-zinc-200/30 dark:bg-zinc-800/20 blur-3xl" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-32 w-32 rounded-full bg-zinc-200/20 dark:bg-zinc-800/15 blur-2xl" />
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.1] to-transparent" />
             </div>
             <div className="relative flex flex-col items-center py-14 px-6 text-center">
               <div className="flex items-center gap-2.5 mb-8">
                 {[Briefcase, Mail, Globe, RefreshCw, ShieldCheck, FileText].map((Icon, i) => (
-                  <div key={i} className={cn("flex h-9 w-9 items-center justify-center rounded-xl bg-foreground/[0.04] ring-1 ring-foreground/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)]")}>
+                  <div key={i} className={cn("flex h-9 w-9 items-center justify-center rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-sm")}>
                     <Icon className="h-4 w-4 text-muted-foreground" />
                   </div>
                 ))}
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-foreground/[0.02] ring-1 ring-foreground/[0.05]"><MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground/60" /></div>
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800"><MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground/60" /></div>
               </div>
               <h3 className="text-xl font-bold mb-2 text-foreground">Hire your first employee</h3>
               <p className="text-sm text-muted-foreground max-w-sm mb-10">AI employees work on your behalf — assign a task, set a schedule, and they'll execute it automatically</p>
@@ -567,9 +564,9 @@ export function SchedulesContent() {
                   { icon: Cpu, title: "Full autonomy", desc: "Each employee gets full access to browsing, terminal, and your connected workstations" },
                   { icon: Activity, title: "Activity logs", desc: "Every execution is logged so you can review what your employees accomplished" },
                 ].map(({ icon: Icon, title, desc }) => (
-                  <div key={title} className={cn("relative flex flex-col gap-2 rounded-xl p-4 overflow-hidden bg-foreground/[0.03] ring-1 ring-foreground/[0.06]")}>
+                  <div key={title} className={cn("relative flex flex-col gap-2 rounded-xl p-4 overflow-hidden bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60")}>
                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-foreground/[0.06]"><Icon className="h-3.5 w-3.5 text-muted-foreground" /></div>
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-700"><Icon className="h-3.5 w-3.5 text-muted-foreground" /></div>
                     <p className="text-xs font-semibold text-foreground/80">{title}</p>
                     <p className="text-[11px] text-muted-foreground leading-relaxed">{desc}</p>
                   </div>
@@ -579,7 +576,7 @@ export function SchedulesContent() {
                 <button onClick={() => setShowCreateDialog(true)} className={cn("inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-300 text-background bg-gradient-to-b from-foreground to-foreground/80 hover:from-foreground hover:to-foreground/90 hover:scale-[1.02] active:scale-[0.98]")}>
                   <UserPlus className="h-3.5 w-3.5" />Hire Employee
                 </button>
-                <Link href="/" className={cn("inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all bg-foreground/[0.04] border border-foreground/[0.08] text-foreground/80 hover:bg-foreground/[0.08]")}>
+                <Link href="/" className={cn("inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground/80 hover:bg-zinc-50 dark:hover:bg-zinc-700")}>
                   <CoastyIcon className="h-3.5 w-3.5" />Start from a chat
                 </Link>
               </div>
@@ -591,8 +588,8 @@ export function SchedulesContent() {
         {schedules.length > 0 && activeTab === "teams" && (
           <div className="space-y-5">
             {/* Teams explainer */}
-            <div className="rounded-xl px-4 py-3 bg-foreground/[0.08] ring-1 ring-foreground/[0.1]">
-              <p className="text-[12px] text-muted-foreground leading-relaxed">
+            <div className="rounded-xl px-4 py-3 bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 <span className="font-semibold text-foreground/70">Teams</span> let employees share context and memory across runs — one employee&apos;s output becomes another&apos;s input, automatically. Use the <span className="font-medium text-foreground/70">Add</span> button on each team or <span className="hidden lg:inline">drag employees from the sidebar</span><span className="lg:hidden">tap to add members</span>.
               </p>
             </div>
@@ -602,7 +599,7 @@ export function SchedulesContent() {
             <div className="space-y-4 min-w-0">
               {/* No teams yet — simple prompt */}
               {teams.length === 0 && !showCreateTeam && (
-                <div className="rounded-2xl bg-foreground/[0.02] ring-1 ring-foreground/[0.05] py-14 text-center">
+                <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 py-14 text-center">
                   <Users className="h-8 w-8 text-muted-foreground/20 mx-auto mb-3" />
                   <p className="text-sm font-medium text-foreground/70 mb-1">No teams yet</p>
                   <p className="text-xs text-muted-foreground/50 max-w-xs mx-auto mb-5">
@@ -616,7 +613,7 @@ export function SchedulesContent() {
 
               {/* Create team inline */}
               {showCreateTeam && (
-                <div className="rounded-2xl bg-foreground/[0.03] ring-1 ring-foreground/[0.08] p-5 space-y-3">
+                <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 p-5 space-y-3">
                   <input
                     type="text"
                     placeholder="Team name"
@@ -624,17 +621,17 @@ export function SchedulesContent() {
                     onChange={(e) => setNewTeamName(e.target.value)}
                     autoFocus
                     onKeyDown={(e) => e.key === "Enter" && handleCreateTeam()}
-                    className="w-full h-10 rounded-xl px-4 text-sm bg-foreground/[0.04] border border-foreground/[0.08] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/[0.15] transition-all"
+                    className="w-full h-10 rounded-xl px-4 text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-all"
                   />
                   <textarea
                     placeholder="Team guidelines (optional)"
                     value={newTeamInstructions}
                     onChange={(e) => setNewTeamInstructions(e.target.value)}
                     rows={2}
-                    className="w-full rounded-xl px-4 py-2.5 text-sm resize-none bg-foreground/[0.04] border border-foreground/[0.08] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/[0.15] transition-all"
+                    className="w-full rounded-xl px-4 py-2.5 text-sm resize-none bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-all"
                   />
                   <div className="flex items-center gap-2">
-                    <button onClick={handleCreateTeam} disabled={!newTeamName.trim()} className={cn("h-9 px-5 rounded-xl text-sm font-semibold transition-all", newTeamName.trim() ? "text-background bg-foreground hover:bg-foreground/90" : "text-muted-foreground bg-foreground/[0.06]", "disabled:opacity-40")}>
+                    <button onClick={handleCreateTeam} disabled={!newTeamName.trim()} className={cn("h-9 px-5 rounded-xl text-sm font-semibold transition-all", newTeamName.trim() ? "text-background bg-foreground hover:bg-foreground/90" : "text-muted-foreground bg-zinc-100 dark:bg-zinc-800", "disabled:opacity-40")}>
                       Create
                     </button>
                     <button onClick={() => { setShowCreateTeam(false); setNewTeamName(""); setNewTeamInstructions("") }} className="h-9 px-3 rounded-xl text-sm text-muted-foreground hover:text-foreground transition-all">
@@ -649,7 +646,7 @@ export function SchedulesContent() {
                 <>
                   {!showCreateTeam && (
                     <div className="flex items-center justify-between">
-                      <p className="text-[13px] text-muted-foreground/60"><span className="hidden lg:inline">Drag employees from the right or use</span><span className="lg:hidden">Use</span> the Add button to add members</p>
+                      <p className="text-xs text-muted-foreground/60"><span className="hidden lg:inline">Drag employees from the right or use</span><span className="lg:hidden">Use</span> the Add button to add members</p>
                       <button onClick={() => setShowCreateTeam(true)} className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
                         <Plus className="h-3 w-3" />New Team
                       </button>
@@ -666,9 +663,9 @@ export function SchedulesContent() {
 
             {/* Right: Employee sidebar (hidden on mobile — use Add button instead) */}
             <div className="hidden lg:block lg:sticky lg:top-6 lg:self-start">
-              <div className="rounded-2xl ring-1 ring-foreground/[0.12] bg-foreground/[0.04] overflow-hidden">
-                <div className="px-4 py-3 border-b border-foreground/[0.08]">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Employees</p>
+              <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/80 overflow-hidden shadow-sm dark:shadow-none">
+                <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Employees</p>
                 </div>
                 <div className="p-2 space-y-1 max-h-[calc(100vh-300px)] overflow-y-auto scrollbar-invisible">
                   {schedules.map((s) => (
@@ -692,17 +689,17 @@ export function SchedulesContent() {
                 { id: "paused", label: "Standby", count: pausedCount },
               ].map((f) => (
                 <button key={f.id} onClick={() => setStatusFilter(f.id)} className={cn(
-                  "h-8 px-3.5 rounded-lg transition-all text-[13px] font-medium",
+                  "h-8 px-3.5 rounded-lg transition-all text-sm font-medium",
                   statusFilter === f.id
                     ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06]",
+                    : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800",
                 )}>
                   <span className="flex items-center gap-1.5">
                     {f.label}
                     {f.count > 0 && (
                       <span className={cn(
-                        "text-[10px] tabular-nums px-1.5 py-px rounded-full font-medium",
-                        statusFilter === f.id ? "bg-background/20 text-background/80" : "bg-foreground/[0.06]",
+                        "text-[11px] tabular-nums px-1.5 py-px rounded-full font-medium",
+                        statusFilter === f.id ? "bg-background/20 text-background/80" : "bg-zinc-100 dark:bg-zinc-800",
                       )}>
                         {f.count}
                       </span>
@@ -730,18 +727,18 @@ export function SchedulesContent() {
             {/* Schedule calendar */}
             <div className="space-y-2 pt-2">
               <div className="flex items-center gap-3 px-1">
-                <h2 className="text-[13px] font-semibold text-foreground/60 uppercase tracking-wider">Schedule</h2>
-                <div className="flex-1 h-px bg-foreground/[0.06]" />
+                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Schedule</h2>
+                <div className="flex-1 h-px bg-zinc-100 dark:bg-zinc-800" />
               </div>
-              <div className="rounded-2xl bg-foreground/[0.05] ring-1 ring-foreground/[0.08] p-4 sm:p-5">
+              <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 p-4 sm:p-5 shadow-sm dark:shadow-none">
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] xl:grid-cols-[1fr_320px] gap-4">
                 <ScheduleCalendar schedules={filteredSchedules} selectedDate={selectedDate} onSelectDate={setSelectedDate} />
                 <div className="lg:sticky lg:top-6 lg:self-start">
-                  <div className="rounded-xl overflow-hidden bg-background/60 ring-1 ring-foreground/[0.08]">
-                    <div className="px-4 py-3 border-b border-foreground/[0.06]">
+                  <div className="rounded-xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-none">
+                    <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
                       <div className="flex items-center justify-between">
                         <div>
-                          <h3 className="text-[13px] font-semibold text-foreground">
+                          <h3 className="text-sm font-semibold text-foreground">
                             {selectedDate.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
                           </h3>
                           <p className="text-[11px] text-muted-foreground/60 mt-0.5">
@@ -749,7 +746,7 @@ export function SchedulesContent() {
                           </p>
                         </div>
                         {isToday && (
-                          <span className="text-[9px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-foreground text-background">
+                          <span className="text-[11px] uppercase tracking-widest font-semibold px-2 py-0.5 rounded-full bg-foreground text-background">
                             Today
                           </span>
                         )}
@@ -776,10 +773,10 @@ export function SchedulesContent() {
             {/* Activity log */}
             <div className="space-y-2 pt-2">
               <div className="flex items-center gap-3 px-1">
-                <h2 className="text-[13px] font-semibold text-foreground/60 uppercase tracking-wider">Recent Activity</h2>
-                <div className="flex-1 h-px bg-foreground/[0.06]" />
+                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Recent Activity</h2>
+                <div className="flex-1 h-px bg-zinc-100 dark:bg-zinc-800" />
               </div>
-              <div className="rounded-xl bg-foreground/[0.02] ring-1 ring-foreground/[0.06] overflow-hidden">
+              <div className="rounded-xl bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 overflow-hidden shadow-sm dark:shadow-none">
                 <ScheduleHistory chatId={showHistory ? historyChat : undefined} limit={10} />
               </div>
             </div>

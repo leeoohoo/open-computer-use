@@ -1,9 +1,9 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Plus, KeyRound, Eye, EyeOff, MoreHorizontal, Pencil, Trash2, ShieldCheck, LockKeyhole, Sparkles, Globe, MousePointerClick } from "lucide-react"
+import { useTheme } from "next-themes"
+import { Plus, KeyRound, Eye, EyeOff, MoreHorizontal, Pencil, Trash2, ShieldCheck, LockKeyhole, Globe, MousePointerClick } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,7 +37,9 @@ interface SecretCardProps {
 }
 
 function ServiceAvatar({ domain }: { domain: string }) {
+  const { resolvedTheme } = useTheme()
   const [error, setError] = useState(false)
+  const coastyLogo = resolvedTheme === "light" ? "/logo_dark.svg" : "/logo_light.svg"
   return (
     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-foreground/[0.06] ring-1 ring-foreground/[0.08] overflow-hidden">
       {!error ? (
@@ -48,9 +50,11 @@ function ServiceAvatar({ domain }: { domain: string }) {
           onError={() => setError(true)}
         />
       ) : (
-        <span className="text-xs font-bold text-foreground/40">
-          {domain.charAt(0).toUpperCase()}
-        </span>
+        <img
+          src={coastyLogo}
+          alt=""
+          className="h-5 w-5 object-contain"
+        />
       )}
     </div>
   )
@@ -68,89 +72,125 @@ function getDomain(service: string): string | null {
   }
 }
 
+// Inject @property + keyframes once globally (bypasses styled-jsx compilation)
+function useBeamAnimation() {
+  useEffect(() => {
+    const id = "beam-angle-styles"
+    if (document.getElementById(id)) return
+    const style = document.createElement("style")
+    style.id = id
+    style.textContent = `
+      @property --beam-angle {
+        syntax: '<angle>';
+        inherits: false;
+        initial-value: 0deg;
+      }
+      @keyframes rotate-beam {
+        from { --beam-angle: 0deg; }
+        to { --beam-angle: 360deg; }
+      }
+    `
+    document.head.appendChild(style)
+  }, [])
+}
+
 function SecretCard({ secret, revealedPassword, isRevealing, onReveal, onEdit, onDelete }: SecretCardProps) {
-  const initial = (secret.service || secret.name).charAt(0).toUpperCase()
+  const { resolvedTheme } = useTheme()
   const [faviconError, setFaviconError] = useState(false)
+  useBeamAnimation()
   const domain = getDomain(secret.service)
   const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : null
+  const coastyLogo = resolvedTheme === "light" ? "/logo_dark.svg" : "/logo_light.svg"
 
   return (
-    <div className="group relative rounded-2xl transition-all duration-300 ease-out hover:-translate-y-1 shadow-sm hover:shadow-xl hover:shadow-black/[0.07] dark:hover:shadow-black/30">
-      {/* Gradient border — base fades out, hover fades in (gradients can't tween, opacity can) */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-border/60 via-transparent to-border/40 transition-opacity duration-300 group-hover:opacity-0" />
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-border via-border/15 to-border/80 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+    <div className="group relative overflow-hidden rounded-xl border-0 bg-card shadow-sm hover:shadow-lg transition-all duration-300 h-full">
+      {/* Rotating beam border */}
+      <div className="absolute -inset-[2px] rounded-xl overflow-hidden">
+        <div
+          className="absolute w-full h-full dark:brightness-150"
+          style={{
+            animation: "rotate-beam 4s linear infinite",
+            filter: "drop-shadow(0 0 6px rgba(0, 0, 0, 0.2)) drop-shadow(0 0 12px currentColor)",
+            background: `conic-gradient(from var(--beam-angle) at 50% 50%,
+              transparent 0deg,
+              rgba(139, 92, 246, 0.15) 5deg,
+              rgba(139, 92, 246, 0.4) 10deg,
+              rgba(139, 92, 246, 0.7) 20deg,
+              rgba(255, 255, 255, 0.9) 30deg,
+              rgba(139, 92, 246, 0.7) 40deg,
+              rgba(139, 92, 246, 0.4) 50deg,
+              rgba(139, 92, 246, 0.15) 55deg,
+              transparent 60deg,
+              transparent 360deg)`,
+          }}
+        />
+      </div>
+      <div className="absolute inset-[2px] bg-background rounded-[10px] z-[1]" />
 
-      {/* Card body — m-px exposes the 1px gradient border above */}
-      <div className="relative m-px rounded-[15px] bg-card overflow-hidden">
-        {/* Smoke wisps — expand subtly on hover */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-foreground/[0.05] blur-3xl transition-transform duration-500 ease-out group-hover:scale-125" />
-          <div className="absolute -bottom-10 -left-8 h-28 w-28 rounded-full bg-foreground/[0.035] blur-3xl transition-transform duration-700 ease-out group-hover:scale-125" />
-          <div className="absolute top-1/2 right-1/3 h-16 w-16 rounded-full bg-foreground/[0.02] blur-2xl transition-transform duration-500 ease-out group-hover:scale-150" />
+
+      {/* Card content */}
+      <div className="relative z-[2] flex flex-col h-full">
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 flex justify-between items-start">
+          <div className="space-y-1 min-w-0 flex-1">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted/60 overflow-hidden">
+                {faviconUrl && !faviconError ? (
+                  <img
+                    src={faviconUrl}
+                    alt=""
+                    className="h-4.5 w-4.5 object-contain"
+                    onError={() => setFaviconError(true)}
+                  />
+                ) : (
+                  <img
+                    src={coastyLogo}
+                    alt=""
+                    className="h-4.5 w-4.5 object-contain"
+                  />
+                )}
+              </div>
+              <p className="text-base font-semibold truncate">{secret.name}</p>
+            </div>
+            <p className="text-xs text-muted-foreground truncate pl-[42px]">{secret.service}</p>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={onEdit} className="gap-2">
+                <Pencil className="h-3.5 w-3.5" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onDelete} className="gap-2 text-destructive focus:text-destructive">
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        <div className="relative p-5 flex flex-col gap-4">
-          {/* Header: avatar + name + menu */}
-          <div className="flex items-start gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-foreground/[0.07] ring-1 ring-foreground/[0.1] text-sm font-bold text-foreground/60 select-none overflow-hidden">
-              {faviconUrl && !faviconError ? (
-                <img
-                  src={faviconUrl}
-                  alt=""
-                  className="h-5 w-5 object-contain"
-                  onError={() => setFaviconError(true)}
-                />
-              ) : (
-                initial
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">{secret.name}</p>
-              <p className="text-[11px] text-muted-foreground/70 truncate mt-0.5">{secret.service}</p>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 shrink-0 -mr-1.5 -mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={onEdit} className="gap-2">
-                  <Pencil className="h-3.5 w-3.5" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={onDelete} className="gap-2 text-destructive focus:text-destructive">
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          {/* Credential rows */}
+        {/* Credential fields */}
+        <div className="px-6 pb-5 space-y-3 flex-1">
           <div className="space-y-1.5">
-            <div className="flex items-center gap-3 rounded-xl bg-foreground/[0.03] ring-1 ring-inset ring-foreground/[0.06] px-3 py-2.5">
-              <span className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/40 w-10 shrink-0">
-                User
-              </span>
-              <span className="text-xs font-mono text-foreground/75 truncate flex-1">{secret.username}</span>
+            <span className="text-[11px] font-medium text-muted-foreground">Username</span>
+            <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2">
+              <span className="text-sm font-mono text-foreground truncate flex-1">{secret.username}</span>
             </div>
-
-            <div className="flex items-center gap-3 rounded-xl bg-foreground/[0.03] ring-1 ring-inset ring-foreground/[0.06] px-3 py-2.5">
-              <span className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/40 w-10 shrink-0">
-                Pass
-              </span>
-              <span className="text-xs font-mono text-foreground/75 truncate flex-1">
-                {revealedPassword ?? "•••••••••••"}
+          </div>
+          <div className="space-y-1.5">
+            <span className="text-[11px] font-medium text-muted-foreground">Password</span>
+            <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2">
+              <span className="text-sm font-mono text-foreground truncate flex-1">
+                {revealedPassword ?? "••••••••••••"}
               </span>
               <button
                 onClick={onReveal}
                 disabled={isRevealing}
-                className="text-muted-foreground/30 hover:text-muted-foreground/70 transition-colors shrink-0 disabled:opacity-50"
+                className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 shrink-0 disabled:opacity-40"
                 title={revealedPassword ? "Hide" : "Reveal for 10s"}
               >
                 {revealedPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
@@ -159,16 +199,14 @@ function SecretCard({ secret, revealedPassword, isRevealing, onReveal, onEdit, o
           </div>
 
           {secret.notes && (
-            <p className="text-[11px] text-muted-foreground/40 truncate -mt-1">{secret.notes}</p>
+            <p className="text-xs text-muted-foreground leading-relaxed pt-1">{secret.notes}</p>
           )}
+        </div>
 
-          {/* Footer */}
-          <div className="flex items-center gap-1.5 pt-2 border-t border-border/20">
-            <LockKeyhole className="h-2.5 w-2.5 text-muted-foreground/25 shrink-0" />
-            <span className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/25">
-              End-to-end encrypted
-            </span>
-          </div>
+        {/* Footer */}
+        <div className="border-t border-border/40 px-6 py-3 flex items-center gap-1.5">
+          <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0" />
+          <span className="text-xs text-muted-foreground">Encrypted</span>
         </div>
       </div>
     </div>

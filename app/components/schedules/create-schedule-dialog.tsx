@@ -174,7 +174,7 @@ export function CreateScheduleDialog({
         className={cn(
           "flex flex-col max-w-[calc(100vw-2rem)] sm:max-w-[540px] max-h-[90dvh] p-0 gap-0 overflow-hidden",
           "bg-background text-foreground",
-          "border-foreground/[0.08]",
+          "border-zinc-200 dark:border-zinc-700",
           "shadow-[0_8px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_60px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.06)_inset,0_-20px_60px_-20px_rgba(255,255,255,0.02)_inset]",
         )}
       >
@@ -190,11 +190,11 @@ export function CreateScheduleDialog({
                 <div className={cn(
                   "relative flex h-11 w-11 items-center justify-center rounded-2xl",
                   "bg-gradient-to-br from-foreground/15 to-foreground/[0.06]",
-                  "ring-1 ring-foreground/[0.12]",
+                  "ring-1 ring-zinc-300 dark:ring-zinc-600",
                   "dark:shadow-[0_2px_12px_rgba(255,255,255,0.06)]",
                 )}>
                   <AgentIcon className="h-5 w-5 text-foreground/80" />
-                  <div className="absolute inset-0 rounded-2xl bg-foreground/[0.04] animate-pulse" />
+                  <div className="absolute inset-0 rounded-2xl bg-white dark:bg-zinc-800 animate-pulse" />
                 </div>
                 <div>
                   <DialogTitle className="text-[17px] font-bold tracking-tight">
@@ -214,10 +214,10 @@ export function CreateScheduleDialog({
           {/* Employee Name */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-2">
-              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-foreground/[0.08]">
+              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800">
                 <User className="h-3 w-3 text-foreground/50" />
               </div>
-              <label className="text-[13px] font-semibold text-foreground/80 tracking-wide uppercase text-[11px]">
+              <label className="text-[11px] font-semibold text-muted-foreground tracking-widest uppercase">
                 Name
               </label>
             </div>
@@ -230,8 +230,8 @@ export function CreateScheduleDialog({
                 autoFocus
                 className={cn(
                   "flex-1 h-10 rounded-xl px-4 text-sm font-medium",
-                  "bg-foreground/[0.04] text-foreground",
-                  "border border-foreground/[0.08] hover:border-foreground/[0.14] focus-visible:border-foreground/[0.2]",
+                  "bg-white dark:bg-zinc-800 text-foreground",
+                  "border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:border-zinc-400 dark:focus-visible:border-zinc-500",
                   "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.3)]",
                   "placeholder:text-muted-foreground",
                   "focus:outline-none transition-all duration-200",
@@ -242,8 +242,8 @@ export function CreateScheduleDialog({
                 onClick={() => setEmployeeName(randomEmployeeName())}
                 className={cn(
                   "shrink-0 h-10 w-10 flex items-center justify-center rounded-xl",
-                  "bg-foreground/[0.04] border border-foreground/[0.08]",
-                  "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.08]",
+                  "bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700",
+                  "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:bg-zinc-800",
                   "transition-all duration-200",
                 )}
                 title="Randomize name"
@@ -256,10 +256,10 @@ export function CreateScheduleDialog({
           {/* Instructions */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-2">
-              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-foreground/[0.08]">
+              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800">
                 <PenLine className="h-3 w-3 text-foreground/50" />
               </div>
-              <label className="text-[13px] font-semibold text-foreground/80 tracking-wide uppercase text-[11px]">
+              <label className="text-[11px] font-semibold text-muted-foreground tracking-widest uppercase">
                 Instructions
               </label>
             </div>
@@ -270,14 +270,14 @@ export function CreateScheduleDialog({
               rows={3}
               className={cn(
                 "resize-none text-sm leading-relaxed rounded-xl",
-                "!bg-foreground/[0.04] text-foreground",
-                "border-foreground/[0.08] hover:border-foreground/[0.14] focus-visible:border-foreground/[0.2]",
+                "bg-white dark:!bg-zinc-800 text-foreground",
+                "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:border-zinc-400 dark:focus-visible:border-zinc-500",
                 "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.3)]",
                 "placeholder:text-muted-foreground",
                 "transition-all duration-200",
               )}
             />
-            <p className="text-[10px] text-muted-foreground pl-0.5">
+            <p className="text-[11px] text-muted-foreground pl-0.5">
               These instructions are used every time the employee runs.
             </p>
           </div>
@@ -291,10 +291,10 @@ export function CreateScheduleDialog({
           {/* Credentials hint */}
           <div className={cn(
             "flex items-center gap-3 rounded-xl px-4 py-3",
-            "bg-foreground/[0.03]",
-            "border border-foreground/[0.06]",
+            "bg-zinc-50 dark:bg-zinc-900/60",
+            "border border-zinc-200 dark:border-zinc-800",
           )}>
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.06]">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
               <KeyRound className="h-3.5 w-3.5 text-foreground/40" />
             </div>
             <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -312,8 +312,8 @@ export function CreateScheduleDialog({
           {error && (
             <div className={cn(
               "flex items-center gap-2.5 rounded-xl px-4 py-3",
-              "bg-foreground/[0.03]",
-              "border border-foreground/[0.08]",
+              "bg-zinc-50 dark:bg-zinc-900/60",
+              "border border-zinc-200 dark:border-zinc-700",
             )}>
               <AlertCircle className="h-4 w-4 text-muted-foreground shrink-0" />
               <p className="text-xs text-foreground/80 font-medium">{error}</p>
@@ -324,13 +324,13 @@ export function CreateScheduleDialog({
         {/* Premium footer */}
         <div className={cn(
           "shrink-0 px-6 py-4 flex items-center justify-end gap-2.5",
-          "border-t border-foreground/[0.06]",
+          "border-t border-zinc-200 dark:border-zinc-800",
         )}>
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={loading}
-            className="h-10 px-5 text-sm rounded-xl text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06]"
+            className="h-10 px-5 text-sm rounded-xl text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800"
           >
             Cancel
           </Button>
@@ -350,7 +350,7 @@ export function CreateScheduleDialog({
                   "hover:shadow-[0_1px_3px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.9)_inset,0_6px_24px_rgba(255,255,255,0.12)]",
                   "hover:scale-[1.02] active:scale-[0.98]",
                 ]
-                : "text-muted-foreground bg-foreground/[0.06]"
+                : "text-muted-foreground bg-zinc-100 dark:bg-zinc-800"
             )}
           >
             <span className="flex items-center gap-2">

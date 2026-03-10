@@ -82,7 +82,7 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
   if (history.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-foreground/[0.04] ring-1 ring-foreground/[0.06] mb-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 mb-3">
           <History className="h-5 w-5 text-muted-foreground/30" />
         </div>
         <p className="text-sm font-medium text-muted-foreground/70">No activity yet</p>
@@ -100,13 +100,13 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
         return (
           <div
             key={entry.id}
-            className="group flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl hover:bg-foreground/[0.03] transition-all"
+            className="group flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-all"
           >
             {/* Timeline dot */}
             <div className="relative flex flex-col items-center shrink-0">
               <div className={cn("w-2 h-2 rounded-full", cfg.dotColor)} />
               {idx < history.length - 1 && (
-                <div className="absolute top-3 w-px h-6 bg-foreground/[0.06]" />
+                <div className="absolute top-3 w-px h-6 bg-zinc-200 dark:bg-zinc-800" />
               )}
             </div>
 
@@ -118,7 +118,7 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
                     {cfg.label}
                   </span>
                   {entry.trigger === "manual" && (
-                    <span className="text-[9px] uppercase tracking-wider font-medium text-muted-foreground/40 bg-foreground/[0.04] px-1.5 py-px rounded">
+                    <span className="text-[11px] uppercase tracking-widest font-medium text-muted-foreground/40 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-px rounded">
                       manual
                     </span>
                   )}
@@ -133,17 +133,17 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
               {/* Meta */}
               <div className="flex items-center gap-2.5 shrink-0">
                 {entry.duration_seconds != null && (
-                  <span className="text-[10px] text-muted-foreground/40 tabular-nums font-medium">
+                  <span className="text-[11px] text-muted-foreground/40 tabular-nums font-medium">
                     {entry.duration_seconds}s
                   </span>
                 )}
                 {entry.credits_charged != null && entry.credits_charged > 0 && (
-                  <span className="text-[10px] text-muted-foreground/40 tabular-nums">
+                  <span className="text-[11px] text-muted-foreground/40 tabular-nums">
                     {entry.credits_charged} cr
                   </span>
                 )}
                 <span
-                  className="text-[10px] text-muted-foreground/40 tabular-nums min-w-[52px] text-right"
+                  className="text-[11px] text-muted-foreground/40 tabular-nums min-w-[52px] text-right"
                   title={formatExactDate(entry.executed_at)}
                 >
                   {formatDate(entry.executed_at)}
