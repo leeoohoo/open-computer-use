@@ -277,7 +277,7 @@ export function ScheduleConfigBlock({
 
           <div className="p-3.5 space-y-3.5">
             {/* Frequency pills */}
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1 sm:gap-1.5">
               {FREQUENCY_PILLS.map((pill) => {
                 const isSelected = config.frequency === pill.value
                 return (
@@ -286,7 +286,7 @@ export function ScheduleConfigBlock({
                     type="button"
                     onClick={() => onChange({ frequency: pill.value })}
                     className={cn(
-                      "relative px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-300",
+                      "relative px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-semibold transition-all duration-300",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       isSelected
                         ? [
@@ -481,7 +481,7 @@ export function ScheduleConfigBlock({
                   type="button"
                   onClick={() => onChange({ machineId: m.id })}
                   className={cn(
-                    "group/machine relative flex items-center gap-3.5 rounded-2xl px-4 py-3 text-left transition-all duration-300",
+                    "group/machine relative flex items-center gap-2.5 sm:gap-3.5 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 text-left transition-all duration-300",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     isSelected
                       ? [
@@ -500,7 +500,7 @@ export function ScheduleConfigBlock({
                   {/* Machine avatar */}
                   <div className="relative">
                     <div className={cn(
-                      "h-10 w-10 rounded-xl flex items-center justify-center text-sm font-bold transition-all duration-300",
+                      "h-9 w-9 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl flex items-center justify-center text-[13px] sm:text-sm font-bold transition-all duration-300",
                       isSelected
                         ? "bg-gradient-to-br from-foreground/25 to-foreground/15 text-foreground shadow-md"
                         : "bg-zinc-100 dark:bg-zinc-800 text-muted-foreground group-hover/machine:bg-zinc-200 dark:group-hover/machine:bg-zinc-700"
@@ -519,12 +519,12 @@ export function ScheduleConfigBlock({
                   {/* Machine info */}
                   <div className="flex-1 min-w-0">
                     <p className={cn(
-                      "text-sm font-semibold truncate transition-colors",
+                      "text-[13px] sm:text-sm font-semibold truncate transition-colors",
                       isSelected ? "text-foreground" : "text-foreground/80 group-hover/machine:text-foreground"
                     )}>
                       {m.displayName}
                       {m.id === defaultMachineId && (
-                        <span className="ml-1.5 text-[11px] font-medium text-foreground/60 bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5 rounded-full">
+                        <span className="ml-1.5 text-[10px] sm:text-[11px] font-medium text-foreground/60 bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5 rounded-full">
                           current
                         </span>
                       )}

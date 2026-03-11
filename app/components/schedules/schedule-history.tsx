@@ -100,7 +100,7 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
         return (
           <div
             key={entry.id}
-            className="group flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-all"
+            className="group flex items-center gap-2.5 sm:gap-3.5 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-all"
           >
             {/* Timeline dot */}
             <div className="relative flex flex-col items-center shrink-0">
@@ -111,39 +111,39 @@ export function ScheduleHistory({ chatId, limit = 20 }: ScheduleHistoryProps) {
             </div>
 
             {/* Content */}
-            <div className="flex-1 min-w-0 flex items-center gap-3">
+            <div className="flex-1 min-w-0 flex items-center gap-2 sm:gap-3">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className={cn("text-xs font-semibold", cfg.labelColor)}>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className={cn("text-[11px] sm:text-xs font-semibold", cfg.labelColor)}>
                     {cfg.label}
                   </span>
                   {entry.trigger === "manual" && (
-                    <span className="text-[11px] uppercase tracking-widest font-medium text-muted-foreground/40 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-px rounded">
+                    <span className="text-[10px] sm:text-[11px] uppercase tracking-widest font-medium text-muted-foreground/40 bg-zinc-100 dark:bg-zinc-800 px-1 sm:px-1.5 py-px rounded">
                       manual
                     </span>
                   )}
                 </div>
                 {entry.error && (
-                  <p className="text-[11px] text-muted-foreground/50 truncate mt-0.5" title={entry.error}>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground/50 truncate mt-0.5" title={entry.error}>
                     {entry.error}
                   </p>
                 )}
               </div>
 
               {/* Meta */}
-              <div className="flex items-center gap-2.5 shrink-0">
+              <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                 {entry.duration_seconds != null && (
-                  <span className="text-[11px] text-muted-foreground/40 tabular-nums font-medium">
+                  <span className="hidden sm:inline text-[11px] text-muted-foreground/40 tabular-nums font-medium">
                     {entry.duration_seconds}s
                   </span>
                 )}
                 {entry.credits_charged != null && entry.credits_charged > 0 && (
-                  <span className="text-[11px] text-muted-foreground/40 tabular-nums">
+                  <span className="hidden sm:inline text-[11px] text-muted-foreground/40 tabular-nums">
                     {entry.credits_charged} cr
                   </span>
                 )}
                 <span
-                  className="text-[11px] text-muted-foreground/40 tabular-nums min-w-[52px] text-right"
+                  className="text-[10px] sm:text-[11px] text-muted-foreground/40 tabular-nums min-w-[40px] sm:min-w-[52px] text-right"
                   title={formatExactDate(entry.executed_at)}
                 >
                   {formatDate(entry.executed_at)}

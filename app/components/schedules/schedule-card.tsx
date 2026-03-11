@@ -126,25 +126,25 @@ export function ScheduleCard({
 
       {/* Content */}
       <div className="relative z-[2] flex flex-col h-full">
-        <div className="px-6 pt-6 pb-4 flex-1 space-y-4">
+        <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4 flex-1 space-y-3 sm:space-y-4">
           {/* Identity */}
           <div className="flex items-start justify-between">
             <div className="space-y-1 min-w-0 flex-1">
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2 sm:gap-2.5">
                 <div className={cn(
-                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
+                  "flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
                   "bg-muted/60",
                 )}>
-                  <CoastyIcon className="h-4 w-4 text-foreground/60" />
+                  <CoastyIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground/60" />
                 </div>
                 <h3
-                  className="text-sm font-semibold text-foreground truncate cursor-pointer hover:text-foreground/70 transition-colors"
+                  className="text-[13px] sm:text-sm font-semibold text-foreground truncate cursor-pointer hover:text-foreground/70 transition-colors"
                   onClick={() => router.push(`/c/${schedule.chat_id}`)}
                 >
                   {schedule.title || "Untitled Employee"}
                 </h3>
               </div>
-              <div className="flex items-center gap-2 pl-[42px]">
+              <div className="flex items-center gap-2 pl-9 sm:pl-[42px]">
                 <div className={cn(
                   "w-1.5 h-1.5 rounded-full shrink-0",
                   isActive ? "bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.5)]"
@@ -164,7 +164,7 @@ export function ScheduleCard({
           </div>
 
           {/* Meta row */}
-          <div className="flex items-center gap-2.5 text-xs text-muted-foreground flex-wrap">
+          <div className="flex items-center gap-2 sm:gap-2.5 text-[11px] sm:text-xs text-muted-foreground flex-wrap">
             <span className="flex items-center gap-1.5">
               <Clock className="h-3 w-3 text-muted-foreground/40" />
               {formatFrequency(schedule.frequency)}
@@ -212,7 +212,7 @@ export function ScheduleCard({
         </div>
 
         {/* Actions */}
-        <div className="px-6 py-3 flex items-center gap-1.5 border-t border-border/40">
+        <div className="px-3 sm:px-6 py-2.5 sm:py-3 flex items-center gap-1 sm:gap-1.5 border-t border-border/40">
           <button
             onClick={handleRunNow}
             disabled={!!actionLoading}

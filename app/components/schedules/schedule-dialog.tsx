@@ -261,23 +261,23 @@ export function ScheduleDialog({
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.1] to-transparent" />
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.15] to-transparent" />
 
-          <div className="relative px-6 pt-6 pb-5">
+          <div className="relative px-4 sm:px-6 pt-5 sm:pt-6 pb-4 sm:pb-5">
             <DialogHeader>
-              <div className="flex items-center gap-3.5">
+              <div className="flex items-center gap-3 sm:gap-3.5">
                 <div className={cn(
-                  "relative flex h-11 w-11 items-center justify-center rounded-2xl",
+                  "relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl sm:rounded-2xl",
                   "bg-gradient-to-br from-foreground/15 to-foreground/[0.06]",
                   "ring-1 ring-zinc-300 dark:ring-zinc-600",
                   "dark:shadow-[0_2px_12px_rgba(255,255,255,0.06)]",
                 )}>
-                  <AgentIcon className="h-5 w-5 text-foreground/80" />
-                  <div className="absolute inset-0 rounded-2xl bg-white dark:bg-zinc-800 animate-pulse" />
+                  <AgentIcon className="h-4 w-4 sm:h-5 sm:w-5 text-foreground/80" />
+                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-white dark:bg-zinc-800 animate-pulse" />
                 </div>
                 <div>
-                  <DialogTitle className="text-[17px] font-bold tracking-tight">
+                  <DialogTitle className="text-[15px] sm:text-[17px] font-bold tracking-tight">
                     {isEditing ? "Edit Employee" : "Configure Employee"}
                   </DialogTitle>
-                  <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                  <DialogDescription className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
                     {isEditing
                       ? "Update schedule, workstation, or instructions"
                       : "Set up an AI employee for this chat"}
@@ -299,7 +299,7 @@ export function ScheduleDialog({
             </div>
           </div>
         ) : (
-          <div className="flex-1 min-h-0 overflow-y-auto px-6 pb-5 pt-5 space-y-6 scrollbar-invisible">
+          <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 pb-4 sm:pb-5 pt-4 sm:pt-5 space-y-5 sm:space-y-6 scrollbar-invisible">
             {/* Employee Name */}
             <div className="space-y-2.5">
               <div className="flex items-center gap-2">
@@ -723,7 +723,7 @@ export function ScheduleDialog({
 
         {/* Footer */}
         <div className={cn(
-          "shrink-0 px-6 py-4 flex items-center gap-2.5",
+          "shrink-0 px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-2",
           "border-t border-zinc-200 dark:border-zinc-800",
         )}>
           {isEditing && (
@@ -731,7 +731,7 @@ export function ScheduleDialog({
               onClick={handleDelete}
               disabled={loading}
               className={cn(
-                "h-10 px-4 rounded-xl text-xs font-semibold mr-auto transition-all duration-200",
+                "h-9 sm:h-10 px-3 sm:px-4 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-semibold mr-auto transition-all duration-200",
                 "text-muted-foreground hover:text-foreground",
                 "hover:bg-zinc-100 dark:hover:bg-zinc-800",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
@@ -748,7 +748,7 @@ export function ScheduleDialog({
               variant="ghost"
               onClick={() => onOpenChange(false)}
               disabled={loading}
-              className="h-10 px-5 text-sm rounded-xl text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              className="h-9 sm:h-10 px-4 sm:px-5 text-[13px] sm:text-sm rounded-lg sm:rounded-xl text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800"
             >
               Cancel
             </Button>
@@ -756,7 +756,7 @@ export function ScheduleDialog({
               onClick={handleSave}
               disabled={loading || !canSubmit}
               className={cn(
-                "relative h-10 px-6 rounded-xl text-sm font-semibold transition-all duration-300",
+                "relative h-9 sm:h-10 px-4 sm:px-6 rounded-lg sm:rounded-xl text-[13px] sm:text-sm font-semibold transition-all duration-300",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 "disabled:opacity-40 disabled:cursor-not-allowed",
                 canSubmit && !loading

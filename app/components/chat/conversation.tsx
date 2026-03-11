@@ -4,16 +4,20 @@ import {
 } from "@/components/prompt-kit/chat-container"
 import { Loader } from "@/components/prompt-kit/loader"
 import { Message as MessageType } from "@ai-sdk/react"
-import { useRef, useEffect, useState } from "react"
+import { useRef, useEffect, useState, useCallback, useLayoutEffect } from "react"
 import { Message } from "./message"
 import { motion, AnimatePresence } from "motion/react"
-import { Badge } from "@/components/ui/badge"
-import { CheckCircle, Users, Wifi, WifiOff, Loader2, AlertCircle } from "lucide-react"
+import { ChevronUp } from "lucide-react"
 import { useMessages } from "@/lib/chat-store/messages/provider"
 import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
 import { useChats } from "@/lib/chat-store/chats/provider"
 import { useChatSession } from "@/lib/chat-store/session/provider"
 import { cn } from "@/lib/utils"
+
+/** Number of messages (not turns) to show initially — roughly 2 user+assistant turns */
+const INITIAL_VISIBLE = 4
+/** How many more messages to reveal per "load more" click */
+const LOAD_MORE_STEP = 10
 
 type ConversationProps = {
   messages: MessageType[]
@@ -30,162 +34,69 @@ export function Conversation({
   onEdit,
   onReload,
 }: ConversationProps) {
-  const { isLoading } = useMessages()
+  const { isLoading, syncStatus } = useMessages()
   const initialMessageCount = useRef(messages.length)
-  const [isConnected, setIsConnected] = useState(true)
-  const { lastSyncTime, syncStatus } = useMessages()
-  const { isOpen: isNavigatorOpen, width: navigatorWidth } = useProjectNavigator()
+  const { isOpen: isNavigatorOpen } = useProjectNavigator()
   const { chatId } = useChatSession()
   const { getChatById } = useChats()
-  
+
   const currentChat = chatId ? getChatById(chatId) : null
   const isProject = currentChat?.collaborative === true
 
-  // Monitor connection status
+  // ── Pagination state ──────────────────────────────────────────────
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE)
+  const prevChatIdRef = useRef(chatId)
+  const isLoadingMoreRef = useRef(false)
+  const scrollContainerRef = useRef<HTMLElement | null>(null)
+  const prevScrollHeightRef = useRef(0)
+
+  // Reset pagination when switching chats
   useEffect(() => {
-    const handleOnline = () => setIsConnected(true)
-    const handleOffline = () => setIsConnected(false)
-    
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline)
-    
-    return () => {
-      window.removeEventListener('online', handleOnline)
-      window.removeEventListener('offline', handleOffline)
+    if (chatId !== prevChatIdRef.current) {
+      setVisibleCount(INITIAL_VISIBLE)
+      prevChatIdRef.current = chatId
     }
-  }, [])
+  }, [chatId])
 
-  // Get sync status display with enhanced effects
-  const getSyncStatusDisplay = () => {
-    return null // No longer collaborative
+  // Always show at least up to the current tail — keeps new streaming
+  // messages visible without the user having to "load more"
+  const effectiveVisible = Math.max(visibleCount, Math.min(INITIAL_VISIBLE, messages.length))
+  const totalCount = messages.length
+  const hasMore = totalCount > effectiveVisible
+  const hiddenCount = Math.max(0, totalCount - effectiveVisible)
+  const visibleMessages = hasMore
+    ? messages.slice(totalCount - effectiveVisible)
+    : messages
 
-    // During streaming, show simple "Live" status
-    if (status === 'streaming') {
-      return (
-        <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-400 animate-pulse">
-          <Wifi className="h-3 w-3 mr-1 text-green-600" />
-          Live
-        </Badge>
-      )
+  // Preserve scroll position when loading older messages
+  const handleLoadMore = useCallback(() => {
+    const scrollEl = scrollContainerRef.current ?? document.querySelector('[role="log"]')
+    if (scrollEl) {
+      scrollContainerRef.current = scrollEl as HTMLElement
+      prevScrollHeightRef.current = scrollEl.scrollHeight
+      isLoadingMoreRef.current = true
     }
+    setVisibleCount((prev) => Math.min(prev + LOAD_MORE_STEP, totalCount))
+  }, [totalCount])
 
-    switch (syncStatus) {
-      case 'syncing':
-        return (
-          <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-400">
-            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-            Syncing...
-          </Badge>
-        )
-      case 'completed':
-        return (
-          <Badge variant="secondary" className="text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-400 animate-pulse">
-            <CheckCircle className="h-3 w-3 mr-1" />
-            Synced
-          </Badge>
-        )
-      case 'error':
-        return (
-          <Badge variant="destructive" className="text-xs animate-pulse">
-            <AlertCircle className="h-3 w-3 mr-1" />
-            Sync Error
-          </Badge>
-        )
-      default:
-        return isConnected ? (
-          <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-400">
-            <Wifi className="h-3 w-3 mr-1 text-green-600" />
-            Live
-          </Badge>
-        ) : (
-          <Badge variant="destructive" className="text-xs">
-            <WifiOff className="h-3 w-3 mr-1" />
-            Offline
-          </Badge>
-        )
+  // After DOM updates from "load more", restore scroll so the user's
+  // viewport doesn't jump.
+  useLayoutEffect(() => {
+    if (!isLoadingMoreRef.current) return
+    const scrollEl = scrollContainerRef.current
+    if (scrollEl && prevScrollHeightRef.current > 0) {
+      const diff = scrollEl.scrollHeight - prevScrollHeightRef.current
+      scrollEl.scrollTop += diff
     }
-  }
-
-  // Show skeleton loader during initial load
-  if (false && isLoading && messages.length === 0) {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <div className="flex flex-col items-center gap-2 text-center">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Loading collaborative room...</span>
-        </div>
-      </div>
-    )
-  }
+    prevScrollHeightRef.current = 0
+    isLoadingMoreRef.current = false
+  })
 
   if (!messages || messages.length === 0)
     return <div className="h-full w-full"></div>
 
   return (
     <div className="relative flex h-full w-full flex-col items-center overflow-hidden no-scrollbar scroll-container">
-
-      {/* Project status bar removed - no longer collaborative */}
-      {/* {false && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ 
-            opacity: 1, 
-            y: 0,
-            // Add subtle pulsing effect when syncing
-            scale: syncStatus === 'syncing' ? [1, 1.02, 1] : 1
-          }}
-          transition={{ 
-            duration: 0.3,
-            scale: { repeat: syncStatus === 'syncing' ? Infinity : 0, duration: 1.5 }
-          }}
-          className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-20 border rounded-lg px-3 py-1.5 text-sm flex items-center gap-3 shadow-sm transition-all duration-300 ${
-            syncStatus === 'completed' 
-              ? 'bg-emerald-50 dark:bg-emerald-900 border-emerald-200 dark:border-emerald-800' 
-              : syncStatus === 'syncing'
-              ? 'bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-800'
-              : syncStatus === 'error'
-              ? 'bg-red-50 dark:bg-red-900 border-red-200 dark:border-red-800'
-              : 'bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-800'
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <Users className={`h-4 w-4 transition-colors duration-300 ${
-              syncStatus === 'completed' 
-                ? 'text-emerald-600' 
-                : syncStatus === 'error'
-                ? 'text-red-600'
-                : 'text-blue-600'
-            }`} />
-            <span className={`font-medium transition-colors duration-300 ${
-              syncStatus === 'completed' 
-                ? 'text-emerald-700 dark:text-emerald-300' 
-                : syncStatus === 'error'
-                ? 'text-red-700 dark:text-red-300'
-                : 'text-blue-700 dark:text-blue-300'
-            }`}>Project</span>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            {getSyncStatusDisplay()}
-            
-            {/* Show last sync time for completed status */}
-            {/* {syncStatus === 'completed' && lastSyncTime && (
-              <motion.span 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-xs text-muted-foreground"
-              >
-                {new Date(lastSyncTime).toLocaleTimeString([], { 
-                  hour: '2-digit', 
-                  minute: '2-digit',
-                  second: '2-digit'
-                })}
-              </motion.span>
-            )} */}
-          {/* </div>
-        </motion.div>
-      )} */}
-
       <ChatContainerRoot className="relative w-full h-full">
         <ChatContainerContent
           className="flex w-full flex-col items-center pt-4 pb-4"
@@ -195,10 +106,40 @@ export function Conversation({
             !isProject || !isNavigatorOpen ? "max-w-[46rem]" : "max-w-[49rem]",
             "mx-auto"
           )}>
+            {/* ── Load earlier messages ────────────────────────────── */}
+            {hasMore && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mb-3"
+              >
+                <button
+                  onClick={handleLoadMore}
+                  className={cn(
+                    "group w-full flex items-center justify-center gap-2",
+                    "py-2.5 rounded-xl text-xs font-medium",
+                    "text-muted-foreground/70 hover:text-foreground",
+                    "bg-muted/30 hover:bg-muted/60",
+                    "border border-transparent hover:border-border/40",
+                    "transition-all duration-200 ease-out",
+                    "cursor-pointer select-none"
+                  )}
+                >
+                  <ChevronUp className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5" />
+                  <span>
+                    Load {Math.min(LOAD_MORE_STEP, hiddenCount)} earlier message{Math.min(LOAD_MORE_STEP, hiddenCount) !== 1 ? "s" : ""}
+                  </span>
+                  <span className="text-muted-foreground/40">
+                    · {hiddenCount} more
+                  </span>
+                </button>
+              </motion.div>
+            )}
+
             <AnimatePresence initial={false} mode="popLayout">
-              {messages?.map((message, index) => {
+              {visibleMessages.map((message, index) => {
                 const isLast =
-                  index === messages.length - 1 && status !== "submitted"
+                  index === visibleMessages.length - 1 && status !== "submitted"
                 const hasScrollAnchor =
                   isLast && messages.length > initialMessageCount.current
 
@@ -241,22 +182,16 @@ export function Conversation({
               })}
             </AnimatePresence>
             {(() => {
-              // Show loader only when:
-              // 1. Status is "submitted" 
-              // 2. There are messages
-              // 3. The last message is from user
-              // 4. There's no assistant message being processed after the last user message
-              if (status === "submitted" && messages.length > 0) {
-                const lastUserIndex = messages.findLastIndex(m => m.role === "user")
-                const hasAssistantAfterLastUser = messages.some((msg, idx) => 
+              if (status === "submitted" && visibleMessages.length > 0) {
+                const lastUserIndex = visibleMessages.findLastIndex(m => m.role === "user")
+                const hasAssistantAfterLastUser = visibleMessages.some((msg, idx) =>
                   msg.role === "assistant" && idx > lastUserIndex
                 )
-                
-                // In collaborative rooms, also check if status is actually streaming
-                const shouldShowLoader = lastUserIndex === messages.length - 1 && 
+
+                const shouldShowLoader = lastUserIndex === visibleMessages.length - 1 &&
                                         !hasAssistantAfterLastUser &&
                                         (syncStatus !== 'idle')
-                
+
                 if (shouldShowLoader) {
                   return (
                     <div className="group min-h-scroll-anchor flex w-full flex-col items-start gap-2 pb-2">

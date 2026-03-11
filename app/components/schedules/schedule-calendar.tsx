@@ -205,7 +205,7 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <h2 className="text-lg font-semibold tracking-tight text-foreground">
+          <h2 className="text-base sm:text-lg font-semibold tracking-tight text-foreground">
             {new Date(year, month).toLocaleDateString(undefined, {
               month: "long",
               year: "numeric",
@@ -253,7 +253,7 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
           {DAYS.map((d) => (
             <div
               key={d}
-              className="py-2.5 text-center text-[11px] font-semibold text-muted-foreground uppercase tracking-widest"
+              className="py-2 sm:py-2.5 text-center text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-widest"
             >
               {d}
             </div>
@@ -345,7 +345,7 @@ export function ScheduleCalendar({ schedules, selectedDate, onSelectDate }: Prop
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[10px] sm:text-[11px] text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(52,211,153,0.4)]" />
           <span>On Duty</span>

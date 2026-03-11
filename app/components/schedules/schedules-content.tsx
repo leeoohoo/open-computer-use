@@ -566,20 +566,17 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
       {/* SVG layer for all connectors */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: "visible", zIndex: 1 }}>
         <defs>
-          <marker id="deleg-arrow" markerWidth="8" markerHeight="7" refX="8" refY="3.5" orient="auto">
-            <polygon points="0 0, 8 3.5, 0 7" fill="#f97316" />
+          <marker id="deleg-arrow" markerWidth="7" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0.5, 7 3, 0 5.5" fill="#94a3b8" />
           </marker>
         </defs>
         {/* Tree connectors first (behind) */}
         {connectors.filter(c => c.type === "tree").map((c, i) => (
           <path key={`t${i}`} d={c.d} fill="none" className="stroke-zinc-200 dark:stroke-zinc-700" strokeWidth="1.5" />
         ))}
-        {/* Delegation arrows on top — bold orange with glow */}
+        {/* Delegation arrows on top — subtle dashed lines */}
         {connectors.filter(c => c.type === "delegation").map((c, i) => (
-          <g key={`d${i}`}>
-            <path d={c.d} fill="none" stroke="#f9731640" strokeWidth="6" />
-            <path d={c.d} fill="none" stroke="#f97316" strokeWidth="2" strokeDasharray="6 4" markerEnd="url(#deleg-arrow)" />
-          </g>
+          <path key={`d${i}`} d={c.d} fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" strokeOpacity="0.5" markerEnd="url(#deleg-arrow)" />
         ))}
       </svg>
 
@@ -589,20 +586,20 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
         {/* ─ Company node ─ */}
         <div
           ref={companyRef}
-          className="flex items-center gap-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-5 py-3.5 shadow-sm dark:shadow-none"
+          className="flex items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 sm:px-5 py-2.5 sm:py-3.5 shadow-sm dark:shadow-none"
         >
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-800/60 flex items-center justify-center ring-1 ring-zinc-200/60 dark:ring-zinc-700/40">
-            <CoastyIcon className="h-5 w-5 text-foreground/60" />
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-800/60 flex items-center justify-center ring-1 ring-zinc-200/60 dark:ring-zinc-700/40">
+            <CoastyIcon className="h-4 w-4 sm:h-5 sm:w-5 text-foreground/60" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-foreground tracking-tight">Company</h3>
-            <p className="text-[11px] text-muted-foreground/50">{teams.length} team{teams.length !== 1 ? "s" : ""} &middot; {allMemberIds.size} employee{allMemberIds.size !== 1 ? "s" : ""}</p>
+            <h3 className="text-xs sm:text-sm font-bold text-foreground tracking-tight">Company</h3>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground/50">{teams.length} team{teams.length !== 1 ? "s" : ""} &middot; {allMemberIds.size} employee{allMemberIds.size !== 1 ? "s" : ""}</p>
           </div>
         </div>
 
         {/* ─ Teams row ─ */}
         {teams.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-x-10 gap-y-14 mt-14 w-full">
+          <div className="flex flex-wrap justify-center gap-x-5 sm:gap-x-10 gap-y-10 sm:gap-y-14 mt-8 sm:mt-14 w-full">
             {teams.map(team => {
               const avail = schedules.filter(s => !team.members.some(m => m.chat_id === s.chat_id))
               const isEditing = editingTeam === team.hub_id
@@ -616,19 +613,19 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                     onDragLeave={() => handleDragLeave(team.hub_id)}
                     onDrop={e => handleDrop(team.hub_id, e)}
                     className={cn(
-                      "group relative flex items-center gap-2.5 rounded-xl border px-4 py-3 shadow-sm dark:shadow-none transition-all duration-200",
+                      "group relative flex items-center gap-2 sm:gap-2.5 rounded-lg sm:rounded-xl border px-3 sm:px-4 py-2.5 sm:py-3 shadow-sm dark:shadow-none transition-all duration-200",
                       dragOverTeam === team.hub_id
                         ? "border-emerald-400 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 ring-2 ring-emerald-400/30 dark:ring-emerald-500/20 scale-[1.02]"
                         : "border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-600"
                     )}
                   >
                     <div className={cn(
-                      "h-8 w-8 rounded-lg flex items-center justify-center ring-1 shrink-0 transition-colors duration-200",
+                      "h-7 w-7 sm:h-8 sm:w-8 rounded-md sm:rounded-lg flex items-center justify-center ring-1 shrink-0 transition-colors duration-200",
                       dragOverTeam === team.hub_id
                         ? "bg-emerald-100 dark:bg-emerald-900/40 ring-emerald-300/60 dark:ring-emerald-600/40"
                         : "bg-zinc-100 dark:bg-zinc-800 ring-zinc-200/60 dark:ring-zinc-700/40"
                     )}>
-                      <Users className={cn("h-3.5 w-3.5 transition-colors duration-200", dragOverTeam === team.hub_id ? "text-emerald-500" : "text-foreground/40")} />
+                      <Users className={cn("h-3 w-3 sm:h-3.5 sm:w-3.5 transition-colors duration-200", dragOverTeam === team.hub_id ? "text-emerald-500" : "text-foreground/40")} />
                     </div>
                     {isEditing ? (
                       <div className="space-y-1.5 min-w-[160px]">
@@ -680,21 +677,21 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                         >
                           <div className="relative">
                             <div className={cn(
-                              "h-10 w-10 rounded-full flex items-center justify-center transition-all",
+                              "h-10 w-10 rounded-full flex items-center justify-center transition-all sm:h-10 sm:w-10",
                               isDelegate
-                                ? "bg-orange-50 dark:bg-orange-950/30 ring-2 ring-orange-300/60 dark:ring-orange-600/40 group-hover/emp:ring-orange-400 dark:group-hover/emp:ring-orange-500"
+                                ? "bg-slate-50 dark:bg-slate-900/30 ring-1.5 ring-slate-300/50 dark:ring-slate-600/40 group-hover/emp:ring-slate-400 dark:group-hover/emp:ring-slate-500"
                                 : "bg-zinc-50 dark:bg-zinc-800 ring-1 ring-zinc-200/60 dark:ring-zinc-700/40 group-hover/emp:ring-zinc-300 dark:group-hover/emp:ring-zinc-600",
                             )}>
-                              <CoastyIcon className={cn("h-4 w-4", isDelegate ? "text-orange-400 dark:text-orange-500" : "text-foreground/40")} />
+                              <CoastyIcon className={cn("h-4 w-4", isDelegate ? "text-slate-400" : "text-foreground/40")} />
                             </div>
                             <div className={cn(
                               "absolute -bottom-px -right-px h-2.5 w-2.5 rounded-full border-2 border-white dark:border-zinc-900",
                               isActive ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-600",
                             )} />
                           </div>
-                          <p className="text-[11px] font-semibold text-foreground mt-2 text-center max-w-[100px] truncate leading-tight">{m.title || "Untitled"}</p>
-                          {sched && <p className="text-[9px] text-muted-foreground/40 leading-tight mt-0.5">{formatFrequency(sched.frequency)}</p>}
-                          {isDelegate && <span className="text-[8px] font-medium text-orange-500 dark:text-orange-400 mt-0.5 uppercase tracking-wider">delegate</span>}
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-foreground mt-1.5 sm:mt-2 text-center max-w-[80px] sm:max-w-[100px] truncate leading-tight">{m.title || "Untitled"}</p>
+                          {sched && <p className="text-[8px] sm:text-[9px] text-muted-foreground/40 leading-tight mt-0.5">{formatFrequency(sched.frequency)}</p>}
+                          {isDelegate && <span className="text-[8px] font-medium text-slate-400 dark:text-slate-500 mt-0.5 uppercase tracking-wider">delegate</span>}
                           <button
                             onClick={e => { e.stopPropagation(); removeMember(team.hub_id, m.chat_id) }}
                             disabled={!!busy}
@@ -709,7 +706,7 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                     return (
                       <div className="flex flex-col items-center">
                         {/* Top tier — managers / non-delegates */}
-                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-10 mt-10">
+                        <div className="flex flex-wrap justify-center gap-x-4 sm:gap-x-6 gap-y-6 sm:gap-y-10 mt-6 sm:mt-10">
                           {topTier.map(renderNode)}
                           {/* Add member button */}
                           <div className="relative flex flex-col items-center">
@@ -749,7 +746,7 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                         </div>
                         {/* Bottom tier — delegates (shown lower) */}
                         {bottomTier.length > 0 && (
-                          <div className="flex flex-wrap justify-center gap-x-6 gap-y-10 mt-12">
+                          <div className="flex flex-wrap justify-center gap-x-4 sm:gap-x-6 gap-y-6 sm:gap-y-10 mt-8 sm:mt-12">
                             {bottomTier.map(renderNode)}
                           </div>
                         )}
@@ -764,13 +761,13 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
 
         {/* ─ Unassigned employees ─ */}
         {unassigned.length > 0 && teams.length > 0 && (
-          <div className="mt-14 w-full">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="mt-8 sm:mt-14 w-full">
+            <div className="flex items-center gap-3 mb-3 sm:mb-4">
               <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
-              <span className="text-[10px] font-medium text-muted-foreground/40 uppercase tracking-widest">Unassigned</span>
+              <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground/40 uppercase tracking-widest">Unassigned</span>
               <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
             </div>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
               {unassigned.map(s => {
                 const isActive = s.enabled && !s.paused_reason
                 return (
@@ -781,7 +778,7 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                       e.dataTransfer.setData("application/x-employee-id", s.chat_id)
                       e.dataTransfer.effectAllowed = "copy"
                     }}
-                    className="flex items-center gap-2.5 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-700 px-3 py-2 cursor-grab active:cursor-grabbing hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all select-none"
+                    className="flex items-center gap-2 sm:gap-2.5 rounded-lg sm:rounded-xl border border-dashed border-zinc-200 dark:border-zinc-700 px-2.5 sm:px-3 py-1.5 sm:py-2 cursor-grab active:cursor-grabbing hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all select-none"
                   >
                     <div className="relative shrink-0">
                       <div className="h-7 w-7 rounded-full bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center ring-1 ring-zinc-200/60 dark:ring-zinc-700/40">
@@ -1149,14 +1146,14 @@ export function SchedulesContent() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-32 w-32 rounded-full bg-zinc-200/20 dark:bg-zinc-800/15 blur-2xl" />
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.1] to-transparent" />
             </div>
-            <div className="relative flex flex-col items-center py-14 px-6 text-center">
-              <div className="flex items-center gap-2.5 mb-8">
+            <div className="relative flex flex-col items-center py-10 sm:py-14 px-4 sm:px-6 text-center">
+              <div className="flex items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8 flex-wrap justify-center">
                 {[Briefcase, Mail, Globe, RefreshCw, ShieldCheck, FileText].map((Icon, i) => (
-                  <div key={i} className={cn("flex h-9 w-9 items-center justify-center rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-sm")}>
-                    <Icon className="h-4 w-4 text-muted-foreground" />
+                  <div key={i} className={cn("flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-sm")}>
+                    <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                   </div>
                 ))}
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800"><MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground/60" /></div>
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800"><MoreHorizontal className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground/60" /></div>
               </div>
               <h3 className="text-xl font-bold mb-2 text-foreground">Hire your first employee</h3>
               <p className="text-sm text-muted-foreground max-w-sm mb-10">AI employees work on your behalf — assign a task, set a schedule, and they'll execute it automatically</p>
@@ -1201,16 +1198,16 @@ export function SchedulesContent() {
                 {createStep === "templates" ? (
                   <>
                     {/* ── Template Picker ── */}
-                    <div className="relative px-7 pt-7 pb-4">
+                    <div className="relative px-4 sm:px-7 pt-5 sm:pt-7 pb-3 sm:pb-4">
                       <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.035]"
                         style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h4v4H0zm8 0h4v4H8zm8 0h4v4h-4zM4 4h4v4H4zm8 0h4v4h-4zM0 8h4v4H0zm8 0h4v4H8zm8 0h4v4h-4zM4 12h4v4H4zm8 12h4v4h-4z' fill='currentColor' fill-opacity='1'/%3E%3C/svg%3E\")" }} />
                       <div className="relative">
-                        <h2 className="text-[17px] font-semibold text-foreground tracking-tight">New Team</h2>
-                        <p className="text-[13px] text-muted-foreground/60 mt-1">Pick a template to get started, or create a custom team from scratch.</p>
+                        <h2 className="text-[15px] sm:text-[17px] font-semibold text-foreground tracking-tight">New Team</h2>
+                        <p className="text-[12px] sm:text-[13px] text-muted-foreground/60 mt-1">Pick a template or create from scratch.</p>
                       </div>
                     </div>
 
-                    <div className="px-7 pb-6 max-h-[60vh] overflow-y-auto space-y-6 scrollbar-thin">
+                    <div className="px-4 sm:px-7 pb-5 sm:pb-6 max-h-[60vh] overflow-y-auto space-y-5 sm:space-y-6 scrollbar-thin">
                       {(["starter", "plus", "pro"] as const).map(tier => {
                         const meta = TIER_META[tier]
                         const TierIcon = meta.icon
@@ -1218,42 +1215,47 @@ export function SchedulesContent() {
                         return (
                           <div key={tier}>
                             {/* Tier header */}
-                            <div className="flex items-center gap-2.5 mb-3">
-                              <div className={cn("flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest", meta.color)}>
-                                <TierIcon className="h-3.5 w-3.5" />
+                            <div className="flex items-center gap-2 sm:gap-2.5 mb-2.5 sm:mb-3">
+                              <div className={cn("flex items-center gap-1.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest shrink-0", meta.color)}>
+                                <TierIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                                 {meta.label}
                               </div>
                               <div className="h-px flex-1 bg-zinc-200/60 dark:bg-zinc-800/60" />
-                              <span className="text-[10px] text-muted-foreground/40 font-medium tabular-nums">
+                              <span className="hidden sm:inline text-[10px] text-muted-foreground/40 font-medium tabular-nums shrink-0">
                                 {meta.machines} {meta.machines === 1 ? "machine" : "machines"} &middot; {meta.employees} employees &middot; {meta.price}
+                              </span>
+                              <span className="sm:hidden text-[9px] text-muted-foreground/40 font-medium tabular-nums shrink-0">
+                                {meta.price}
                               </span>
                             </div>
 
                             {/* Template cards */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                               {tierTemplates.map(t => {
                                 const Icon = t.icon
                                 return (
                                   <button
                                     key={t.id}
                                     onClick={() => pickTemplate(t)}
-                                    className="group relative text-left rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/60 p-4 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-md transition-all duration-200 overflow-hidden"
+                                    className="group relative text-left rounded-lg sm:rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/60 p-3 sm:p-4 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-md transition-all duration-200 overflow-hidden"
                                   >
                                     {/* Subtle hover glow */}
                                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-foreground/[0.02] to-transparent" />
-                                    <div className="relative">
-                                      <div className="h-9 w-9 rounded-lg bg-zinc-100 dark:bg-zinc-800/80 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200">
-                                        <Icon className="h-4 w-4 text-foreground/50 group-hover:text-foreground/70 transition-colors" />
+                                    <div className="relative flex sm:block items-center gap-3 sm:gap-0">
+                                      <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-zinc-100 dark:bg-zinc-800/80 flex items-center justify-center sm:mb-3 shrink-0 group-hover:scale-105 transition-transform duration-200">
+                                        <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground/50 group-hover:text-foreground/70 transition-colors" />
                                       </div>
-                                      <h3 className="text-[13px] font-semibold text-foreground/90 mb-0.5 leading-tight">{t.name}</h3>
-                                      <p className="text-[11px] text-muted-foreground/50 leading-relaxed line-clamp-2">{t.tagline}</p>
-                                      <div className="flex items-center gap-1.5 mt-2.5">
-                                        <span className="text-[10px] text-muted-foreground/35 font-medium tabular-nums">{t.employees.length} employees</span>
-                                        <span className="text-muted-foreground/20">&middot;</span>
-                                        <span className="text-[10px] text-muted-foreground/35 font-medium tabular-nums">{t.credentials.length} credentials</span>
+                                      <div className="min-w-0 flex-1 sm:flex-initial">
+                                        <h3 className="text-[12px] sm:text-[13px] font-semibold text-foreground/90 mb-0.5 leading-tight">{t.name}</h3>
+                                        <p className="text-[10px] sm:text-[11px] text-muted-foreground/50 leading-relaxed line-clamp-1 sm:line-clamp-2">{t.tagline}</p>
+                                        <div className="flex items-center gap-1.5 mt-1.5 sm:mt-2.5">
+                                          <span className="text-[9px] sm:text-[10px] text-muted-foreground/35 font-medium tabular-nums">{t.employees.length} employees</span>
+                                          <span className="text-muted-foreground/20">&middot;</span>
+                                          <span className="text-[9px] sm:text-[10px] text-muted-foreground/35 font-medium tabular-nums">{t.credentials.length} creds</span>
+                                        </div>
                                       </div>
                                     </div>
-                                    <ChevronRight className="absolute top-4 right-3 h-3.5 w-3.5 text-muted-foreground/20 group-hover:text-muted-foreground/50 group-hover:translate-x-0.5 transition-all" />
+                                    <ChevronRight className="absolute top-1/2 sm:top-4 -translate-y-1/2 sm:translate-y-0 right-3 h-3.5 w-3.5 text-muted-foreground/20 group-hover:text-muted-foreground/50 group-hover:translate-x-0.5 transition-all" />
                                   </button>
                                 )
                               })}
@@ -1264,13 +1266,13 @@ export function SchedulesContent() {
                     </div>
 
                     {/* Footer — custom option */}
-                    <div className="px-7 py-4 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30">
-                      <button onClick={resetCreateTeam} className="h-9 px-4 rounded-lg text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
+                    <div className="px-4 sm:px-7 py-3 sm:py-4 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30">
+                      <button onClick={resetCreateTeam} className="h-8 sm:h-9 px-3 sm:px-4 rounded-lg text-[12px] sm:text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
                         Cancel
                       </button>
                       <button
                         onClick={() => { setSelectedTemplate(null); setNewTeamName(""); setNewTeamInstructions(""); setCreateStep("form") }}
-                        className="h-9 px-5 rounded-lg text-[13px] font-medium text-foreground/70 hover:text-foreground border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
+                        className="h-8 sm:h-9 px-4 sm:px-5 rounded-lg text-[12px] sm:text-[13px] font-medium text-foreground/70 hover:text-foreground border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
                       >
                         Custom Team
                       </button>
@@ -1279,13 +1281,13 @@ export function SchedulesContent() {
                 ) : (
                   <>
                     {/* ── Form Step (template detail or custom) ── */}
-                    <div className="relative px-7 pt-6 pb-4">
+                    <div className="relative px-4 sm:px-7 pt-5 sm:pt-6 pb-3 sm:pb-4">
                       <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.035]"
                         style={{ backgroundImage: "radial-gradient(circle, currentColor 0.5px, transparent 0.5px)", backgroundSize: "16px 16px" }} />
                       <div className="relative">
                         <button
                           onClick={() => setCreateStep("templates")}
-                          className="inline-flex items-center gap-1 text-[12px] text-muted-foreground/50 hover:text-foreground/70 transition-colors mb-3"
+                          className="inline-flex items-center gap-1 text-[11px] sm:text-[12px] text-muted-foreground/50 hover:text-foreground/70 transition-colors mb-2 sm:mb-3"
                         >
                           <ArrowLeft className="h-3 w-3" />Back to templates
                         </button>
@@ -1319,7 +1321,7 @@ export function SchedulesContent() {
                     </div>
 
                     {/* Form fields */}
-                    <div className="px-7 pb-2 space-y-4 max-h-[50vh] overflow-y-auto">
+                    <div className="px-4 sm:px-7 pb-2 space-y-3 sm:space-y-4 max-h-[50vh] overflow-y-auto">
                       <div className="space-y-1.5">
                         <label className="text-[11px] font-medium text-foreground/40 uppercase tracking-widest">Team Name</label>
                         <input
@@ -1329,7 +1331,7 @@ export function SchedulesContent() {
                           onChange={(e) => setNewTeamName(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && handleCreateTeam()}
                           autoFocus
-                          className="w-full h-11 rounded-xl px-4 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-zinc-300 dark:focus:border-zinc-600 transition-all"
+                          className="w-full h-10 sm:h-11 rounded-lg sm:rounded-xl px-3 sm:px-4 text-[13px] sm:text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-zinc-300 dark:focus:border-zinc-600 transition-all"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -1339,7 +1341,7 @@ export function SchedulesContent() {
                           value={newTeamInstructions}
                           onChange={(e) => setNewTeamInstructions(e.target.value)}
                           rows={3}
-                          className="w-full rounded-xl px-4 py-3 text-sm resize-none bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-zinc-300 dark:focus:border-zinc-600 transition-all"
+                          className="w-full rounded-lg sm:rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-[13px] sm:text-sm resize-none bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-zinc-300 dark:focus:border-zinc-600 transition-all"
                         />
                       </div>
 
@@ -1470,9 +1472,9 @@ export function SchedulesContent() {
 
                     {/* Limit error banner */}
                     {limitError && (
-                      <div className="mx-7 mb-2 rounded-xl border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-950/30 p-4">
-                        <p className="text-[12px] font-medium text-amber-800 dark:text-amber-300 mb-2">{limitError.message}</p>
-                        <div className="flex items-center gap-2">
+                      <div className="mx-4 sm:mx-7 mb-2 rounded-lg sm:rounded-xl border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-950/30 p-3 sm:p-4">
+                        <p className="text-[11px] sm:text-[12px] font-medium text-amber-800 dark:text-amber-300 mb-2">{limitError.message}</p>
+                        <div className="flex flex-wrap items-center gap-2">
                           <Link
                             href="/billing"
                             className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12px] font-semibold bg-amber-600 hover:bg-amber-700 text-white transition-colors"
@@ -1501,7 +1503,7 @@ export function SchedulesContent() {
 
                     {/* Provisioning progress */}
                     {provisioning && (
-                      <div className="mx-7 mb-2 rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-zinc-50 dark:bg-zinc-800/40 p-4">
+                      <div className="mx-4 sm:mx-7 mb-2 rounded-lg sm:rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-zinc-50 dark:bg-zinc-800/40 p-3 sm:p-4">
                         <div className="flex items-center gap-3">
                           <div className="relative h-5 w-5 shrink-0">
                             <div className="absolute inset-0 rounded-full border-2 border-foreground/[0.08]" />
@@ -1513,21 +1515,21 @@ export function SchedulesContent() {
                     )}
 
                     {/* Footer */}
-                    <div className="px-7 py-5 flex items-center justify-end gap-2.5 border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30">
-                      <button onClick={resetCreateTeam} disabled={provisioning} className="h-9 px-4 rounded-lg text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all disabled:opacity-40">
+                    <div className="px-4 sm:px-7 py-4 sm:py-5 flex items-center justify-end gap-2 sm:gap-2.5 border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30">
+                      <button onClick={resetCreateTeam} disabled={provisioning} className="h-8 sm:h-9 px-3 sm:px-4 rounded-lg text-[12px] sm:text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all disabled:opacity-40">
                         Cancel
                       </button>
                       <button
                         onClick={handleCreateTeam}
                         disabled={!newTeamName.trim() || provisioning}
                         className={cn(
-                          "h-9 px-5 rounded-lg text-[13px] font-semibold transition-all",
+                          "h-8 sm:h-9 px-4 sm:px-5 rounded-lg text-[12px] sm:text-[13px] font-semibold transition-all",
                           newTeamName.trim() && !provisioning
                             ? "text-background bg-foreground hover:bg-foreground/90 shadow-sm"
                             : "text-muted-foreground/40 bg-zinc-100 dark:bg-zinc-800 cursor-not-allowed"
                         )}
                       >
-                        {provisioning ? "Setting up..." : selectedTemplate ? `Create Team & ${selectedTemplate.employees.length} Employees` : "Create Team"}
+                        {provisioning ? "Setting up..." : selectedTemplate ? `Create ${selectedTemplate.employees.length} Employees` : "Create Team"}
                       </button>
                     </div>
                   </>
@@ -1558,7 +1560,7 @@ export function SchedulesContent() {
                     <Plus className="h-3 w-3" />New Team
                   </button>
                 </div>
-                <div className="relative rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-10 overflow-x-auto shadow-sm dark:shadow-none">
+                <div className="relative rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-6 md:p-10 overflow-x-auto shadow-sm dark:shadow-none">
                   {/* Dot grid background */}
                   <div
                     className="absolute inset-0 rounded-2xl opacity-[0.35] dark:opacity-[0.15]"
@@ -1571,6 +1573,37 @@ export function SchedulesContent() {
                   <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(ellipse_at_center,transparent_40%,rgb(255_255_255/0.8)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_40%,rgb(9_9_11/0.8)_100%)]" />
                   <div className="relative">
                     <OrgChart teams={teams} schedules={schedules} onRefresh={refreshAll} onEdit={setEditChatId} />
+                  </div>
+
+                  {/* How it works — bottom-left corner (hidden on very small screens) */}
+                  <div className="hidden sm:block absolute bottom-4 left-4 md:bottom-5 md:left-5 z-10 max-w-[190px]">
+                    <div className="space-y-1.5 text-[9px] sm:text-[10px] leading-relaxed text-muted-foreground/35">
+                      <p className="text-[8px] sm:text-[9px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/25 mb-1">How it works</p>
+                      <div className="flex items-start gap-1.5">
+                        <div className="h-3.5 w-3.5 rounded-[4px] bg-zinc-200/50 dark:bg-zinc-700/30 flex items-center justify-center shrink-0 mt-px">
+                          <GripVertical className="h-2 w-2 text-muted-foreground/30" />
+                        </div>
+                        <span>Drag employees onto a team</span>
+                      </div>
+                      <div className="flex items-start gap-1.5">
+                        <div className="h-3.5 w-3.5 rounded-[4px] bg-zinc-200/50 dark:bg-zinc-700/30 flex items-center justify-center shrink-0 mt-px">
+                          <Pencil className="h-2 w-2 text-muted-foreground/30" />
+                        </div>
+                        <span>Click to edit schedule &amp; settings</span>
+                      </div>
+                      <div className="flex items-start gap-1.5">
+                        <div className="h-3.5 w-3.5 rounded-[4px] bg-zinc-200/50 dark:bg-zinc-700/30 flex items-center justify-center shrink-0 mt-px">
+                          <Users className="h-2 w-2 text-muted-foreground/30" />
+                        </div>
+                        <span>Teams share memory &amp; guidelines</span>
+                      </div>
+                      <div className="flex items-start gap-1.5">
+                        <div className="h-3.5 w-3.5 rounded-[4px] bg-zinc-200/50 dark:bg-zinc-700/30 flex items-center justify-center shrink-0 mt-px">
+                          <Activity className="h-2 w-2 text-muted-foreground/30" />
+                        </div>
+                        <span>Dashed lines &mdash; delegation between employees</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </>
