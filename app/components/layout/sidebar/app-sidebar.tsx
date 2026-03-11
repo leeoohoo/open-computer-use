@@ -296,7 +296,7 @@ export function AppSidebar() {
                   </button>
                 )}
 
-                {/* Employees Button */}
+                {/* Workforce Button */}
                 {shouldShowCollapsed ? (
                   <button
                     id="sidebar-schedules-link-collapsed"
@@ -307,9 +307,9 @@ export function AppSidebar() {
                     )}
                     type="button"
                     onClick={() => handleNavigation(() => router.push("/schedules"))}
-                    title="Employees"
+                    title="Workforce"
                   >
-                    <AgentIcon className="h-4 w-4 shrink-0" />
+                    <UsersThree className="h-4 w-4 shrink-0" weight="duotone" />
                   </button>
                 ) : (
                   <button
@@ -323,8 +323,8 @@ export function AppSidebar() {
                     type="button"
                     onClick={() => handleNavigation(() => router.push("/schedules"))}
                   >
-                    <AgentIcon className="h-4 w-4 shrink-0" />
-                    <span className="truncate text-sm">Employees</span>
+                    <UsersThree className="h-4 w-4 shrink-0" weight="duotone" />
+                    <span className="truncate text-sm">Workforce</span>
                   </button>
                 )}
 

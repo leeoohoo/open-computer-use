@@ -37,6 +37,7 @@ import {
   Crown,
   Zap,
   ChevronRight,
+  AlertTriangle,
 } from "lucide-react"
 import Link from "next/link"
 import { CoastyIcon } from "@/components/icons/coasty"
@@ -328,10 +329,10 @@ const TEAM_TEMPLATES: TeamTemplate[] = [
   },
 ]
 
-const TIER_META: Record<string, { label: string; icon: React.ComponentType<{ className?: string }>; color: string; machines: number; employees: string; price: string }> = {
-  starter: { label: "Starter", icon: Zap, color: "text-emerald-500", machines: 1, employees: "up to 3", price: "$19/mo" },
-  plus: { label: "Plus", icon: Sparkles, color: "text-blue-500", machines: 2, employees: "up to 10", price: "$50/mo" },
-  pro: { label: "Pro", icon: Crown, color: "text-amber-500", machines: 3, employees: "up to 50", price: "$100/mo" },
+const TIER_META: Record<string, { label: string; icon: React.ComponentType<{ className?: string }>; color: string; badgeBg: string; accentHex: string; machines: number; employees: string; price: string }> = {
+  starter: { label: "Starter", icon: Zap, color: "text-emerald-500", badgeBg: "bg-emerald-500/10 dark:bg-emerald-500/15", accentHex: "#10b981", machines: 1, employees: "up to 3", price: "$19/mo" },
+  plus: { label: "Plus", icon: Sparkles, color: "text-blue-500", badgeBg: "bg-blue-500/10 dark:bg-blue-500/15", accentHex: "#3b82f6", machines: 2, employees: "up to 10", price: "$50/mo" },
+  pro: { label: "Pro", icon: Crown, color: "text-amber-500", badgeBg: "bg-amber-500/10 dark:bg-amber-500/15", accentHex: "#f59e0b", machines: 3, employees: "up to 50", price: "$100/mo" },
 }
 
 /* ─── types ─── */
@@ -863,7 +864,7 @@ export function SchedulesContent() {
 
   const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }>; count?: number }[] = [
     { id: "teams", label: "Teams", icon: Users, count: teams.length },
-    { id: "employees", label: "Employees", icon: AgentIcon, count: schedules.length },
+    { id: "employees", label: "Workforce", icon: AgentIcon, count: schedules.length },
   ]
 
   function resetCreateTeam() {
@@ -1070,7 +1071,7 @@ export function SchedulesContent() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Employees</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Workforce</h1>
             <div className="flex items-center gap-3 mt-1.5 flex-wrap">
               <p className="text-sm text-muted-foreground">Your AI workforce — assign tasks and let them handle the rest</p>
               {schedules.length > 0 && (
@@ -1198,64 +1199,80 @@ export function SchedulesContent() {
                 {createStep === "templates" ? (
                   <>
                     {/* ── Template Picker ── */}
-                    <div className="relative px-4 sm:px-7 pt-5 sm:pt-7 pb-3 sm:pb-4">
-                      <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.035]"
-                        style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h4v4H0zm8 0h4v4H8zm8 0h4v4h-4zM4 4h4v4H4zm8 0h4v4h-4zM0 8h4v4H0zm8 0h4v4H8zm8 0h4v4h-4zM4 12h4v4H4zm8 12h4v4h-4z' fill='currentColor' fill-opacity='1'/%3E%3C/svg%3E\")" }} />
+                    <div className="relative px-5 sm:px-7 pt-6 sm:pt-7 pb-4">
+                      {/* Subtle dot grid background */}
+                      <div className="absolute inset-0 opacity-[0.3] dark:opacity-[0.12]"
+                        style={{ backgroundImage: "radial-gradient(circle, rgb(161 161 170) 0.5px, transparent 0.5px)", backgroundSize: "20px 20px" }} />
+                      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent" />
                       <div className="relative">
-                        <h2 className="text-[15px] sm:text-[17px] font-semibold text-foreground tracking-tight">New Team</h2>
-                        <p className="text-[12px] sm:text-[13px] text-muted-foreground/60 mt-1">Pick a template or create from scratch.</p>
+                        <div className="flex items-center gap-2.5 mb-1.5">
+                          <div className="h-8 w-8 rounded-xl bg-foreground/[0.06] dark:bg-foreground/[0.08] flex items-center justify-center">
+                            <Users className="h-4 w-4 text-foreground/50" />
+                          </div>
+                          <h2 className="text-[16px] sm:text-[18px] font-bold text-foreground tracking-tight">New Team</h2>
+                        </div>
+                        <p className="text-[12px] sm:text-[13px] text-muted-foreground/50 pl-[42px]">Start with a template or build from scratch</p>
                       </div>
                     </div>
 
-                    <div className="px-4 sm:px-7 pb-5 sm:pb-6 max-h-[60vh] overflow-y-auto space-y-5 sm:space-y-6 scrollbar-thin">
+                    <div className="px-5 sm:px-7 pb-5 sm:pb-6 max-h-[60vh] overflow-y-auto space-y-5 sm:space-y-7 scrollbar-thin">
                       {(["starter", "plus", "pro"] as const).map(tier => {
                         const meta = TIER_META[tier]
                         const TierIcon = meta.icon
                         const tierTemplates = TEAM_TEMPLATES.filter(t => t.tier === tier)
                         return (
                           <div key={tier}>
-                            {/* Tier header */}
-                            <div className="flex items-center gap-2 sm:gap-2.5 mb-2.5 sm:mb-3">
-                              <div className={cn("flex items-center gap-1.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest shrink-0", meta.color)}>
-                                <TierIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                            {/* Tier header — pill badge with details */}
+                            <div className="flex items-center gap-2.5 mb-3">
+                              <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider shrink-0", meta.color, meta.badgeBg)}>
+                                <TierIcon className="h-3 w-3" />
                                 {meta.label}
                               </div>
-                              <div className="h-px flex-1 bg-zinc-200/60 dark:bg-zinc-800/60" />
-                              <span className="hidden sm:inline text-[10px] text-muted-foreground/40 font-medium tabular-nums shrink-0">
-                                {meta.machines} {meta.machines === 1 ? "machine" : "machines"} &middot; {meta.employees} employees &middot; {meta.price}
-                              </span>
-                              <span className="sm:hidden text-[9px] text-muted-foreground/40 font-medium tabular-nums shrink-0">
+                              <div className="h-px flex-1 bg-zinc-200/40 dark:bg-zinc-800/40" />
+                              <div className="hidden sm:flex items-center gap-1.5 text-[10px] text-muted-foreground/40 font-medium tabular-nums shrink-0">
+                                <span className={cn("inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md", meta.badgeBg, meta.color)}>
+                                  {meta.machines} {meta.machines === 1 ? "machine" : "machines"}
+                                </span>
+                                <span>&middot;</span>
+                                <span>{meta.employees}</span>
+                                <span>&middot;</span>
+                                <span className="font-semibold text-foreground/50">{meta.price}</span>
+                              </div>
+                              <span className={cn("sm:hidden text-[10px] font-semibold shrink-0", meta.color)}>
                                 {meta.price}
                               </span>
                             </div>
 
                             {/* Template cards */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                               {tierTemplates.map(t => {
                                 const Icon = t.icon
                                 return (
                                   <button
                                     key={t.id}
                                     onClick={() => pickTemplate(t)}
-                                    className="group relative text-left rounded-lg sm:rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/60 p-3 sm:p-4 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-md transition-all duration-200 overflow-hidden"
+                                    className="group relative text-left rounded-xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-900/60 p-3.5 sm:p-4 overflow-hidden transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
+                                    style={{ "--accent": meta.accentHex } as React.CSSProperties}
                                   >
-                                    {/* Subtle hover glow */}
-                                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-foreground/[0.02] to-transparent" />
+                                    {/* Top accent line on hover */}
+                                    <div className="absolute inset-x-0 top-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `linear-gradient(to right, transparent, ${meta.accentHex}60, transparent)` }} />
+                                    {/* Hover gradient wash */}
+                                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `linear-gradient(to bottom right, ${meta.accentHex}08, transparent)` }} />
+
                                     <div className="relative flex sm:block items-center gap-3 sm:gap-0">
-                                      <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-zinc-100 dark:bg-zinc-800/80 flex items-center justify-center sm:mb-3 shrink-0 group-hover:scale-105 transition-transform duration-200">
-                                        <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground/50 group-hover:text-foreground/70 transition-colors" />
+                                      <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center sm:mb-3 shrink-0 transition-all duration-200 bg-zinc-100 dark:bg-zinc-800/80 group-hover:scale-110" style={{ ['--tw-group-hover-bg' as string]: `${meta.accentHex}15` }}>
+                                        <Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-foreground/40 transition-colors duration-200 group-hover:text-foreground/70" />
                                       </div>
                                       <div className="min-w-0 flex-1 sm:flex-initial">
-                                        <h3 className="text-[12px] sm:text-[13px] font-semibold text-foreground/90 mb-0.5 leading-tight">{t.name}</h3>
-                                        <p className="text-[10px] sm:text-[11px] text-muted-foreground/50 leading-relaxed line-clamp-1 sm:line-clamp-2">{t.tagline}</p>
-                                        <div className="flex items-center gap-1.5 mt-1.5 sm:mt-2.5">
-                                          <span className="text-[9px] sm:text-[10px] text-muted-foreground/35 font-medium tabular-nums">{t.employees.length} employees</span>
-                                          <span className="text-muted-foreground/20">&middot;</span>
-                                          <span className="text-[9px] sm:text-[10px] text-muted-foreground/35 font-medium tabular-nums">{t.credentials.length} creds</span>
+                                        <h3 className="text-[12px] sm:text-[13px] font-bold text-foreground/90 mb-0.5 leading-tight group-hover:text-foreground transition-colors">{t.name}</h3>
+                                        <p className="text-[10px] sm:text-[11px] text-muted-foreground/45 leading-relaxed line-clamp-1 sm:line-clamp-2">{t.tagline}</p>
+                                        <div className="flex items-center gap-1.5 mt-2 sm:mt-3">
+                                          <span className="text-[9px] sm:text-[10px] text-muted-foreground/30 font-semibold tabular-nums bg-zinc-100/80 dark:bg-zinc-800/50 px-1.5 py-0.5 rounded-md">{t.employees.length} employees</span>
+                                          <span className="text-[9px] sm:text-[10px] text-muted-foreground/30 font-semibold tabular-nums bg-zinc-100/80 dark:bg-zinc-800/50 px-1.5 py-0.5 rounded-md">{t.credentials.length} creds</span>
                                         </div>
                                       </div>
                                     </div>
-                                    <ChevronRight className="absolute top-1/2 sm:top-4 -translate-y-1/2 sm:translate-y-0 right-3 h-3.5 w-3.5 text-muted-foreground/20 group-hover:text-muted-foreground/50 group-hover:translate-x-0.5 transition-all" />
+                                    <ChevronRight className="absolute top-1/2 -translate-y-1/2 right-3 h-3.5 w-3.5 text-muted-foreground/15 group-hover:text-muted-foreground/50 group-hover:translate-x-0.5 transition-all" />
                                   </button>
                                 )
                               })}
@@ -1266,7 +1283,7 @@ export function SchedulesContent() {
                     </div>
 
                     {/* Footer — custom option */}
-                    <div className="px-4 sm:px-7 py-3 sm:py-4 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30">
+                    <div className="px-5 sm:px-7 py-3.5 sm:py-4 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30">
                       <button onClick={resetCreateTeam} className="h-8 sm:h-9 px-3 sm:px-4 rounded-lg text-[12px] sm:text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
                         Cancel
                       </button>
@@ -1554,9 +1571,75 @@ export function SchedulesContent() {
             {/* Org chart */}
             {teams.length > 0 && (
               <>
+                {/* Inactive employees warning */}
+                {(() => {
+                  const inactiveInTeams = schedules.filter(s => {
+                    const inTeam = teams.some(t => t.members.some(m => m.chat_id === s.chat_id))
+                    return inTeam && (!s.enabled || s.paused_reason)
+                  })
+                  if (inactiveInTeams.length === 0) return null
+                  const noMachine = inactiveInTeams.filter(s => !s.machine_id || s.paused_reason === "machine_unavailable")
+                  return (
+                    <div className={cn(
+                      "relative overflow-hidden rounded-xl sm:rounded-2xl",
+                      "bg-gradient-to-r from-amber-50 via-amber-50/80 to-orange-50/60",
+                      "dark:from-amber-950/30 dark:via-amber-950/20 dark:to-orange-950/10",
+                      "border border-amber-200/60 dark:border-amber-800/30",
+                      "shadow-[0_1px_3px_rgba(245,158,11,0.08)] dark:shadow-none",
+                    )}>
+                      {/* Subtle top accent line */}
+                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/50 to-transparent" />
+
+                      <div className="relative flex items-center gap-3 sm:gap-3.5 px-3.5 sm:px-5 py-3 sm:py-3.5">
+                        {/* Icon container */}
+                        <div className={cn(
+                          "flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg sm:rounded-xl",
+                          "bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/40 dark:to-amber-900/20",
+                          "ring-1 ring-amber-200/80 dark:ring-amber-700/40",
+                          "shadow-sm dark:shadow-none",
+                        )}>
+                          <AlertTriangle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-500 dark:text-amber-400" />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4">
+                          <div>
+                            <p className="text-[12px] sm:text-[13px] font-semibold text-amber-900 dark:text-amber-200 leading-snug">
+                              {inactiveInTeams.length} employee{inactiveInTeams.length !== 1 ? "s" : ""} inactive
+                            </p>
+                            <p className="text-[10px] sm:text-[11px] text-amber-700/70 dark:text-amber-400/60 mt-0.5 leading-relaxed">
+                              {noMachine.length > 0
+                                ? `${noMachine.length} missing a machine — won't run until activated`
+                                : "Won't run until activated"}
+                            </p>
+                          </div>
+
+                          <button
+                            onClick={() => setActiveTab("employees")}
+                            className={cn(
+                              "inline-flex items-center gap-1.5 shrink-0",
+                              "text-[10px] sm:text-[11px] font-semibold",
+                              "text-amber-700 dark:text-amber-300",
+                              "bg-amber-100/80 dark:bg-amber-800/30",
+                              "hover:bg-amber-200/80 dark:hover:bg-amber-800/50",
+                              "border border-amber-200/60 dark:border-amber-700/40",
+                              "rounded-lg px-2.5 sm:px-3 py-1.5",
+                              "transition-all duration-200",
+                              "shadow-sm dark:shadow-none",
+                            )}
+                          >
+                            Fix in Employees
+                            <ChevronRight className="h-3 w-3" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })()}
+
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground/50">Drag unassigned employees onto teams to add them</p>
-                  <button onClick={() => setShowCreateTeam(true)} className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+                  <p className="text-[11px] sm:text-xs text-muted-foreground/50">Drag unassigned employees onto teams to add them</p>
+                  <button onClick={() => setShowCreateTeam(true)} className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
                     <Plus className="h-3 w-3" />New Team
                   </button>
                 </div>
