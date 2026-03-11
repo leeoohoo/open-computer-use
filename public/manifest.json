@@ -1,0 +1,19 @@
+{
+  "name": "Coasty — #1 Computer-Use AI Agent",
+  "short_name": "Coasty",
+  "description": "AI employee that controls a desktop like a human. #1 on OSWorld benchmark (82%). Browser automation, desktop control, CAPTCHA solving, VM isolation.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "utilities", "business"],
+  "icons": [
+    {
+      "src": "/logo_light.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

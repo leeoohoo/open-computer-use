@@ -76,6 +76,13 @@ export interface ScheduleHistoryEntry {
   executed_at: string
 }
 
+export interface DelegateConfig {
+  chat_id: string
+  title: string
+  role: string
+  added_at?: string
+}
+
 async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
   const res = await fetch(url, {
     ...options,
@@ -203,6 +210,26 @@ export async function updateTriggers(
   })
   const data = await res.json()
   return data.triggers ?? []
+}
+
+// ─── Delegates ───
+
+export async function getDelegates(chatId: string): Promise<DelegateConfig[]> {
+  const res = await fetchWithAuth(`/api/schedules/${chatId}/delegates`)
+  const data = await res.json()
+  return data.delegates ?? []
+}
+
+export async function updateDelegates(
+  chatId: string,
+  delegates: DelegateConfig[]
+): Promise<DelegateConfig[]> {
+  const res = await fetchWithAuth(`/api/schedules/${chatId}/delegates`, {
+    method: 'PUT',
+    body: JSON.stringify({ delegates }),
+  })
+  const data = await res.json()
+  return data.delegates ?? []
 }
 
 // ─── Teams ───

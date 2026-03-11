@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { useRouter } from "next/navigation"
 import {
   Clock,
@@ -19,9 +19,24 @@ import {
   Users,
   Plus,
   X,
-  Brain,
-  ChevronDown,
   GripVertical,
+  Megaphone,
+  ShoppingCart,
+  Code2,
+  HeadphonesIcon,
+  BarChart3,
+  Search,
+  PenTool,
+  Building2,
+  Rocket,
+  Target,
+  TrendingUp,
+  Key,
+  ArrowLeft,
+  Sparkles,
+  Crown,
+  Zap,
+  ChevronRight,
 } from "lucide-react"
 import Link from "next/link"
 import { CoastyIcon } from "@/components/icons/coasty"
@@ -38,18 +53,286 @@ import {
   listSchedules,
   listTeams,
   createTeam,
+  createSchedule,
   deleteTeam,
   addTeamMember,
   removeTeamMember,
-  getTeamSharedMemory,
+  getDelegates,
   updateTeam,
   formatFrequency,
   triggerScheduleNow,
   type ScheduleResponse,
   type TeamResponse,
-  type SharedMemoryEntry,
+  type DelegateConfig,
 } from "@/lib/services/schedules-api"
+import { useUser } from "@/lib/user-store/provider"
+import { toast } from "sonner"
+import { SecretDialog } from "@/app/components/secrets/secret-dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
 import { cn } from "@/lib/utils"
+
+/* ─── Team template types & data ─── */
+interface TeamTemplateEmployee {
+  name: string
+  role: string
+  frequency: string
+}
+
+interface TeamTemplateCredential {
+  service: string
+  why: string
+}
+
+interface TeamTemplate {
+  id: string
+  name: string
+  tier: "starter" | "plus" | "pro"
+  icon: React.ComponentType<{ className?: string }>
+  tagline: string
+  description: string
+  instructions: string
+  employees: TeamTemplateEmployee[]
+  credentials: TeamTemplateCredential[]
+}
+
+const TEAM_TEMPLATES: TeamTemplate[] = [
+  // ── STARTER (1 machine, 3 employees) ──
+  {
+    id: "content-ops",
+    name: "Content Operations",
+    tier: "starter",
+    icon: PenTool,
+    tagline: "Publish consistently without lifting a finger",
+    description: "A lean content engine — writes, optimizes, and distributes content on autopilot.",
+    instructions: "You are part of the Content Operations team. Coordinate with team members via shared memory. Always write in the brand voice. Prioritize quality over quantity. Log every published piece to shared memory with its URL and performance metrics.",
+    employees: [
+      { name: "Atlas", role: "Content Writer — drafts blog posts, newsletters, and social copy", frequency: "daily" },
+      { name: "Echo", role: "SEO Analyst — audits pages, tracks rankings, suggests keyword opportunities", frequency: "weekly" },
+      { name: "Nova", role: "Social Distributor — posts content to platforms and monitors engagement", frequency: "every_12_hours" },
+    ],
+    credentials: [
+      { service: "wordpress.com", why: "Publish and manage blog posts" },
+      { service: "twitter.com", why: "Post tweets and monitor engagement" },
+      { service: "linkedin.com", why: "Publish professional content and articles" },
+      { service: "search.google.com/search-console", why: "Track search performance and indexing" },
+    ],
+  },
+  {
+    id: "customer-support",
+    name: "Customer Support",
+    tier: "starter",
+    icon: HeadphonesIcon,
+    tagline: "24/7 support coverage from 3 employees",
+    description: "Monitors inboxes, resolves common issues, and keeps your knowledge base updated.",
+    instructions: "You are part of the Customer Support team. Be empathetic and solution-oriented. Escalate complex issues by logging them to shared memory with tag [ESCALATION]. Update the FAQ whenever you resolve a new type of issue. Track response times and customer satisfaction signals.",
+    employees: [
+      { name: "Sage", role: "Inbox Monitor — checks support emails, categorizes and responds to common queries", frequency: "every_30_minutes" },
+      { name: "Iris", role: "Knowledge Base Manager — updates help docs and FAQs based on recurring issues", frequency: "weekly" },
+      { name: "Milo", role: "Feedback Analyst — aggregates reviews and support trends into weekly reports", frequency: "daily" },
+    ],
+    credentials: [
+      { service: "gmail.com", why: "Monitor and respond to support emails" },
+      { service: "zendesk.com", why: "Manage support tickets (or your helpdesk)" },
+      { service: "notion.so", why: "Update knowledge base and documentation" },
+    ],
+  },
+  {
+    id: "research-intel",
+    name: "Research & Intel",
+    tier: "starter",
+    icon: Search,
+    tagline: "Stay informed without the manual work",
+    description: "Monitors competitors, tracks industry trends, and compiles actionable research briefs.",
+    instructions: "You are part of the Research & Intelligence team. Focus on actionable insights, not information dumps. Always cite sources with URLs. Use shared memory to maintain a running competitive landscape. Flag urgent competitive moves with [ALERT] tag.",
+    employees: [
+      { name: "Scout", role: "Competitor Monitor — tracks competitor websites, pricing, and feature changes", frequency: "daily" },
+      { name: "Wren", role: "Trend Researcher — scans industry news, publications, and social media for trends", frequency: "daily" },
+      { name: "Quinn", role: "Brief Compiler — synthesizes findings into structured weekly intelligence reports", frequency: "weekly" },
+    ],
+    credentials: [
+      { service: "google.com", why: "Web research and search" },
+      { service: "linkedin.com", why: "Track competitor hiring and announcements" },
+      { service: "notion.so", why: "Publish research briefs and reports" },
+    ],
+  },
+
+  // ── PLUS (2 machines, 10 employees) ──
+  {
+    id: "marketing-agency",
+    name: "Marketing Department",
+    tier: "plus",
+    icon: Megaphone,
+    tagline: "A full marketing team in two machines",
+    description: "Content creation, social media, SEO, competitor tracking, and campaign analytics — two coordinated squads.",
+    instructions: "You are part of the Marketing Department. Content team creates and publishes. Analytics team tracks and optimizes. Share insights via shared memory. Always align content with current campaign themes stored in shared memory under [CAMPAIGN]. Report metrics weekly.",
+    employees: [
+      { name: "Atlas", role: "Content Strategist — plans content calendar, writes long-form pieces", frequency: "daily" },
+      { name: "Nova", role: "Social Media Manager — posts, engages, and grows social channels", frequency: "every_6_hours" },
+      { name: "Echo", role: "SEO Specialist — optimizes pages, builds internal links, tracks keywords", frequency: "daily" },
+      { name: "Pixel", role: "Email Campaign Manager — writes and sends newsletters, tracks opens/clicks", frequency: "daily" },
+      { name: "Scout", role: "Competitor Analyst — monitors competitor marketing moves and reports insights", frequency: "daily" },
+      { name: "Dash", role: "Ad Campaign Monitor — tracks ad spend, ROAS, and optimization opportunities", frequency: "every_12_hours" },
+      { name: "Iris", role: "Analytics Reporter — compiles cross-channel performance dashboards", frequency: "weekly" },
+    ],
+    credentials: [
+      { service: "wordpress.com", why: "Publish blog content" },
+      { service: "twitter.com", why: "Social media management" },
+      { service: "linkedin.com", why: "Professional content distribution" },
+      { service: "mailchimp.com", why: "Email campaigns and newsletters" },
+      { service: "analytics.google.com", why: "Traffic and conversion analytics" },
+      { service: "ads.google.com", why: "Google Ads campaign management" },
+      { service: "business.facebook.com", why: "Meta Ads and social management" },
+    ],
+  },
+  {
+    id: "ecommerce-ops",
+    name: "E-Commerce Operations",
+    tier: "plus",
+    icon: ShoppingCart,
+    tagline: "Run your store while you sleep",
+    description: "Product management, pricing intelligence, inventory tracking, review management, and growth marketing for online stores.",
+    instructions: "You are part of E-Commerce Operations. Storefront team maintains listings and customer experience. Growth team drives traffic and conversions. Log all price changes and inventory alerts to shared memory with [PRICE] and [INVENTORY] tags. Never make pricing changes without logging the before/after.",
+    employees: [
+      { name: "Cleo", role: "Product Lister — creates and updates product descriptions, images, and metadata", frequency: "daily" },
+      { name: "Onyx", role: "Price Monitor — tracks competitor prices and flags opportunities for adjustments", frequency: "every_6_hours" },
+      { name: "Luna", role: "Inventory Tracker — monitors stock levels and alerts on low inventory", frequency: "every_12_hours" },
+      { name: "Sage", role: "Review Manager — responds to customer reviews and aggregates sentiment", frequency: "daily" },
+      { name: "Dash", role: "Ad Campaign Optimizer — manages product ads and shopping campaigns", frequency: "every_12_hours" },
+      { name: "Flux", role: "Email Marketer — sends abandoned cart, promo, and post-purchase sequences", frequency: "daily" },
+      { name: "Wren", role: "Analytics Reporter — tracks revenue, conversion rates, and growth metrics", frequency: "weekly" },
+    ],
+    credentials: [
+      { service: "shopify.com", why: "Store management and product listings" },
+      { service: "amazon.com/seller", why: "Amazon marketplace management" },
+      { service: "ads.google.com", why: "Shopping ads and campaigns" },
+      { service: "mailchimp.com", why: "Customer email sequences" },
+      { service: "analytics.google.com", why: "Conversion and traffic analytics" },
+    ],
+  },
+  {
+    id: "dev-team",
+    name: "Engineering Team",
+    tier: "plus",
+    icon: Code2,
+    tagline: "Automate the boring parts of engineering",
+    description: "Automated code reviews, dependency monitoring, documentation, testing, deploy monitoring, and incident response.",
+    instructions: "You are part of the Engineering Team. Engineering squad handles code quality and documentation. DevOps squad monitors infrastructure. Log all incidents to shared memory with [INCIDENT] tag and severity level. Never auto-merge PRs — only review and comment. Flag security issues with [SECURITY] tag immediately.",
+    employees: [
+      { name: "Rune", role: "Code Reviewer — reviews open PRs, suggests improvements, checks for security issues", frequency: "every_6_hours" },
+      { name: "Koda", role: "Dependency Monitor — tracks outdated packages, security advisories, and breaking changes", frequency: "daily" },
+      { name: "Aria", role: "Doc Writer — keeps API docs, READMEs, and changelogs up to date with latest code", frequency: "daily" },
+      { name: "Blaze", role: "Test Monitor — runs test suites, tracks flaky tests, reports coverage trends", frequency: "every_12_hours" },
+      { name: "Frost", role: "Deploy Monitor — watches CI/CD pipelines, alerts on failures, tracks deploy frequency", frequency: "every_6_hours" },
+      { name: "Neon", role: "Uptime & Log Watcher — monitors services, scans logs for errors, creates incident reports", frequency: "every_30_minutes" },
+    ],
+    credentials: [
+      { service: "github.com", why: "Repository access, PR reviews, issues" },
+      { service: "vercel.com", why: "Deployment monitoring (or your CI/CD)" },
+      { service: "sentry.io", why: "Error tracking and incident alerts" },
+      { service: "npmjs.com", why: "Package registry for dependency checks" },
+    ],
+  },
+
+  // ── PRO (3 machines, 50 employees) ──
+  {
+    id: "full-business",
+    name: "Full Business Operations",
+    tier: "pro",
+    icon: Building2,
+    tagline: "An entire company, fully automated",
+    description: "Sales, marketing, support, and admin — four departments working in concert across three machines with shared intelligence.",
+    instructions: "You are part of Full Business Operations. Sales drives revenue, Marketing builds pipeline, Support retains customers, and Admin keeps everything running. Cross-department updates go to shared memory with department tags: [SALES], [MARKETING], [SUPPORT], [ADMIN]. Weekly all-hands summary compiled every Monday. Escalations tagged [URGENT] get priority across all departments.",
+    employees: [
+      { name: "Atlas", role: "Lead Generator — finds and qualifies potential customers from online sources", frequency: "daily" },
+      { name: "Dash", role: "CRM Manager — updates deals, tracks pipeline, and sends follow-up sequences", frequency: "every_6_hours" },
+      { name: "Scout", role: "Proposal Writer — drafts sales proposals and pitch decks from templates", frequency: "daily" },
+      { name: "Nova", role: "Content Marketer — writes blog posts, case studies, and marketing copy", frequency: "daily" },
+      { name: "Echo", role: "Social Media Manager — posts content and engages with audience", frequency: "every_6_hours" },
+      { name: "Pixel", role: "Email Campaign Manager — runs drip campaigns and newsletter sequences", frequency: "daily" },
+      { name: "Sage", role: "Support Lead — handles customer inquiries and resolves issues", frequency: "every_30_minutes" },
+      { name: "Iris", role: "Knowledge Manager — maintains help docs, FAQs, and internal wiki", frequency: "weekly" },
+      { name: "Milo", role: "Data Analyst — compiles cross-department reports and KPI dashboards", frequency: "daily" },
+      { name: "Wren", role: "Market Researcher — tracks industry trends and competitive intelligence", frequency: "daily" },
+      { name: "Quinn", role: "Operations Coordinator — runs weekly summaries and cross-team syncs", frequency: "weekly" },
+    ],
+    credentials: [
+      { service: "gmail.com", why: "Email communication and support" },
+      { service: "hubspot.com", why: "CRM and sales pipeline (or your CRM)" },
+      { service: "linkedin.com", why: "Lead generation and professional networking" },
+      { service: "mailchimp.com", why: "Email marketing campaigns" },
+      { service: "notion.so", why: "Internal wiki and documentation" },
+      { service: "analytics.google.com", why: "Web analytics and reporting" },
+      { service: "twitter.com", why: "Social media presence" },
+      { service: "zendesk.com", why: "Customer support tickets" },
+    ],
+  },
+  {
+    id: "growth-agency",
+    name: "Growth & Acquisition",
+    tier: "pro",
+    icon: Rocket,
+    tagline: "Aggressive growth on full autopilot",
+    description: "Outbound prospecting, inbound marketing, conversion optimization, and analytics — a dedicated growth engine across three machines.",
+    instructions: "You are part of the Growth & Acquisition team. Outbound finds leads, Inbound captures demand, and Analytics optimizes the funnel. Log all qualified leads to shared memory with [LEAD] tag including source and score. Track conversion rates at every funnel stage. A/B test results logged with [EXPERIMENT] tag. Weekly growth metrics compiled automatically.",
+    employees: [
+      { name: "Blaze", role: "Outbound Prospector — finds decision-makers, researches companies, builds lead lists", frequency: "daily" },
+      { name: "Flux", role: "Email Outreach — sends personalized cold emails, manages follow-up sequences", frequency: "every_6_hours" },
+      { name: "Orion", role: "LinkedIn Outreach — connects with prospects and sends personalized messages", frequency: "daily" },
+      { name: "Coral", role: "Content Creator — produces SEO content, landing page copy, and lead magnets", frequency: "daily" },
+      { name: "Taro", role: "Landing Page Optimizer — monitors conversion rates, suggests and tests improvements", frequency: "daily" },
+      { name: "Vale", role: "Ad Campaign Manager — manages Google and Meta ad campaigns end-to-end", frequency: "every_12_hours" },
+      { name: "Ember", role: "Lead Scorer — qualifies inbound leads and routes to appropriate follow-up", frequency: "every_6_hours" },
+      { name: "Haze", role: "Funnel Analyst — tracks conversion metrics at every stage, identifies bottlenecks", frequency: "daily" },
+      { name: "Dune", role: "Competitor Intel — monitors competitor campaigns, pricing, and positioning changes", frequency: "daily" },
+      { name: "Kit", role: "Growth Reporter — compiles daily/weekly growth metrics and experiment results", frequency: "daily" },
+    ],
+    credentials: [
+      { service: "linkedin.com", why: "Prospecting and outreach" },
+      { service: "gmail.com", why: "Cold email and follow-up sequences" },
+      { service: "hubspot.com", why: "Lead management and CRM" },
+      { service: "ads.google.com", why: "Paid search campaigns" },
+      { service: "business.facebook.com", why: "Meta advertising" },
+      { service: "analytics.google.com", why: "Funnel and conversion analytics" },
+      { service: "ahrefs.com", why: "SEO research and competitor analysis" },
+    ],
+  },
+  {
+    id: "saas-operations",
+    name: "SaaS Operations",
+    tier: "pro",
+    icon: Target,
+    tagline: "Run your SaaS like a well-oiled machine",
+    description: "Customer success, product analytics, churn prevention, feature tracking, and automated reporting for SaaS businesses.",
+    instructions: "You are part of SaaS Operations. Success team ensures retention, Product team tracks usage, and Growth team expands revenue. Log churn risks to shared memory with [CHURN_RISK] tag and risk score. Feature requests tracked with [FEATURE_REQUEST] tag. MRR changes logged with [REVENUE] tag. Health scores updated daily for all accounts.",
+    employees: [
+      { name: "Luna", role: "Customer Success Monitor — tracks user engagement, identifies at-risk accounts", frequency: "daily" },
+      { name: "Sage", role: "Onboarding Assistant — guides new users through setup, monitors activation rates", frequency: "every_6_hours" },
+      { name: "Ivy", role: "Churn Preventer — reaches out to disengaging users with re-activation campaigns", frequency: "daily" },
+      { name: "Rune", role: "Feature Request Tracker — aggregates user feedback and feature requests from all channels", frequency: "daily" },
+      { name: "Koda", role: "Product Analytics — tracks feature adoption, user journeys, and engagement metrics", frequency: "daily" },
+      { name: "Neon", role: "Bug & Issue Monitor — watches error logs, user reports, and status page incidents", frequency: "every_30_minutes" },
+      { name: "Aria", role: "Changelog Writer — documents releases, updates knowledge base and help center", frequency: "weekly" },
+      { name: "Frost", role: "Revenue Analyst — tracks MRR, churn rate, LTV, and expansion revenue", frequency: "daily" },
+      { name: "Zara", role: "Competitor Tracker — monitors competitor features, pricing, and market positioning", frequency: "weekly" },
+    ],
+    credentials: [
+      { service: "stripe.com", why: "Subscription and revenue data" },
+      { service: "intercom.io", why: "Customer messaging and support (or your tool)" },
+      { service: "mixpanel.com", why: "Product analytics and user tracking" },
+      { service: "gmail.com", why: "Customer communication" },
+      { service: "notion.so", why: "Knowledge base and changelog" },
+      { service: "sentry.io", why: "Error monitoring and bug tracking" },
+      { service: "github.com", why: "Issue tracking and feature requests" },
+    ],
+  },
+]
+
+const TIER_META: Record<string, { label: string; icon: React.ComponentType<{ className?: string }>; color: string; machines: number; employees: string; price: string }> = {
+  starter: { label: "Starter", icon: Zap, color: "text-emerald-500", machines: 1, employees: "up to 3", price: "$19/mo" },
+  plus: { label: "Plus", icon: Sparkles, color: "text-blue-500", machines: 2, employees: "up to 10", price: "$50/mo" },
+  pro: { label: "Pro", icon: Crown, color: "text-amber-500", machines: 3, employees: "up to 50", price: "$100/mo" },
+}
 
 /* ─── types ─── */
 type Tab = "teams" | "employees"
@@ -95,299 +378,431 @@ function DayTaskItem({ task, onUpdate }: { task: DayTask; onUpdate: () => void }
   )
 }
 
-/* ═══ Team Card — the core of the Teams tab ═══ */
-function TeamCard({ team, schedules, onRefresh }: { team: TeamResponse; schedules: ScheduleResponse[]; onRefresh: () => void }) {
-  const [dragOver, setDragOver] = useState(false)
-  const [memory, setMemory] = useState<SharedMemoryEntry[]>([])
-  const [memLoaded, setMemLoaded] = useState(false)
+/* ═══ Full Org Chart — Company → Teams → Employees with delegation arrows ═══ */
+function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse[]; schedules: ScheduleResponse[]; onRefresh: () => void; onEdit: (chatId: string) => void }) {
+  const chartRef = useRef<HTMLDivElement>(null)
+  const companyRef = useRef<HTMLDivElement>(null)
+  const teamRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const memberRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const [connectors, setConnectors] = useState<{ d: string; type: "tree" | "delegation" }[]>([])
+  const [delegations, setDelegations] = useState<Map<string, DelegateConfig[]>>(new Map())
   const [busy, setBusy] = useState<string | null>(null)
-  const [editing, setEditing] = useState(false)
-  const [editName, setEditName] = useState(team.name)
-  const [editInstructions, setEditInstructions] = useState(team.instructions || "")
-  const [showAddMenu, setShowAddMenu] = useState(false)
+  const [showAddMenu, setShowAddMenu] = useState<string | null>(null)
+  const [editingTeam, setEditingTeam] = useState<string | null>(null)
+  const [editName, setEditName] = useState("")
+  const [editInstructions, setEditInstructions] = useState("")
+  const [dragOverTeam, setDragOverTeam] = useState<string | null>(null)
+  const dragCounter = useRef<Map<string, number>>(new Map())
 
-  const availableEmployees = schedules.filter((s) => !team.members.some((m) => m.chat_id === s.chat_id))
+  // All employees in any team
+  const allMemberIds = useMemo(() => {
+    const ids = new Set<string>()
+    teams.forEach(t => t.members.forEach(m => ids.add(m.chat_id)))
+    return ids
+  }, [teams])
+
+  // Unassigned employees (not in any team)
+  const unassigned = useMemo(() => schedules.filter(s => !allMemberIds.has(s.chat_id)), [schedules, allMemberIds])
+
+  // Build set of all delegate target IDs (employees that are delegated TO)
+  const delegateTargetIds = useMemo(() => {
+    const targets = new Set<string>()
+    delegations.forEach(dels => dels.forEach(d => targets.add(d.chat_id)))
+    return targets
+  }, [delegations])
+
+  // Load delegations for ALL employees across all teams
+  useEffect(() => {
+    async function load() {
+      const map = new Map<string, DelegateConfig[]>()
+      const allIds = new Set<string>()
+      teams.forEach(t => t.members.forEach(m => allIds.add(m.chat_id)))
+      await Promise.all(Array.from(allIds).map(async (chatId) => {
+        try {
+          const dels = await getDelegates(chatId)
+          // Keep delegates that exist in the org chart
+          const visible = dels.filter(d => allIds.has(d.chat_id))
+          if (visible.length > 0) map.set(chatId, visible)
+        } catch {}
+      }))
+      setDelegations(map)
+    }
+    if (allMemberIds.size > 0) load()
+    else setDelegations(new Map())
+  }, [allMemberIds.size, teams])
+
+  // Calculate all connector lines: tree hierarchy + delegation arrows
+  const recalcConnectors = useCallback(() => {
+    if (!chartRef.current) return
+    const cr = chartRef.current.getBoundingClientRect()
+    const paths: { d: string; type: "tree" | "delegation" }[] = []
+
+    // Company → Team connectors
+    const companyEl = companyRef.current
+    if (companyEl && teams.length > 0) {
+      const cb = companyEl.getBoundingClientRect()
+      const cx = cb.left + cb.width / 2 - cr.left
+      const cy = cb.bottom - cr.top
+
+      teams.forEach(t => {
+        const te = teamRefs.current.get(t.hub_id)
+        if (!te) return
+        const tb = te.getBoundingClientRect()
+        const tx = tb.left + tb.width / 2 - cr.left
+        const ty = tb.top - cr.top
+        const midY = (cy + ty) / 2
+        paths.push({ d: `M ${cx} ${cy} C ${cx} ${midY}, ${tx} ${midY}, ${tx} ${ty}`, type: "tree" })
+      })
+    }
+
+    // Team → top-tier Employee connectors (skip delegates — they connect via delegation arrows)
+    teams.forEach(t => {
+      const te = teamRefs.current.get(t.hub_id)
+      if (!te) return
+      const tb = te.getBoundingClientRect()
+      const tx = tb.left + tb.width / 2 - cr.left
+      const ty = tb.bottom - cr.top
+
+      t.members.forEach(m => {
+        if (delegateTargetIds.has(m.chat_id)) return // skip — connected via delegation arrow
+        const me = memberRefs.current.get(m.chat_id)
+        if (!me) return
+        const mb = me.getBoundingClientRect()
+        const mx = mb.left + mb.width / 2 - cr.left
+        const my = mb.top - cr.top
+        const midY = (ty + my) / 2
+        paths.push({ d: `M ${tx} ${ty} C ${tx} ${midY}, ${mx} ${midY}, ${mx} ${my}`, type: "tree" })
+      })
+    })
+
+    // Delegation arrows (employee → employee)
+    delegations.forEach((dels, fromId) => {
+      const fe = memberRefs.current.get(fromId)
+      if (!fe) return
+      const fr = fe.getBoundingClientRect()
+      for (const d of dels) {
+        const te = memberRefs.current.get(d.chat_id)
+        if (!te) continue
+        const tr = te.getBoundingClientRect()
+        // From bottom-center of source to top-center of target
+        const sx = fr.left + fr.width / 2 - cr.left
+        const sy = fr.bottom - cr.top
+        const ex = tr.left + tr.width / 2 - cr.left
+        const ey = tr.top - cr.top
+        // If same row, use side-to-side
+        if (Math.abs(fr.top - tr.top) < 20) {
+          const fromRight = fr.left < tr.left
+          const sxH = (fromRight ? fr.right : fr.left) - cr.left
+          const syH = fr.top + fr.height / 2 - cr.top
+          const exH = (fromRight ? tr.left : tr.right) - cr.left
+          const eyH = tr.top + tr.height / 2 - cr.top
+          const mx = (sxH + exH) / 2
+          paths.push({ d: `M ${sxH} ${syH} C ${mx} ${syH}, ${mx} ${eyH}, ${exH} ${eyH}`, type: "delegation" })
+        } else {
+          const cp = Math.max(20, Math.abs(ey - sy) * 0.4)
+          paths.push({ d: `M ${sx} ${sy} C ${sx} ${sy + cp}, ${ex} ${ey - cp}, ${ex} ${ey}`, type: "delegation" })
+        }
+      }
+    })
+
+    setConnectors(paths)
+  }, [teams, delegations, delegateTargetIds])
 
   useEffect(() => {
-    if (!memLoaded) { getTeamSharedMemory(team.hub_id).then(setMemory).catch(() => setMemory([])); setMemLoaded(true) }
-  }, [])
+    const raf = requestAnimationFrame(recalcConnectors)
+    const ro = new ResizeObserver(recalcConnectors)
+    if (chartRef.current) ro.observe(chartRef.current)
+    window.addEventListener("resize", recalcConnectors)
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener("resize", recalcConnectors) }
+  }, [recalcConnectors])
 
-  async function drop(e: React.DragEvent) {
-    e.preventDefault(); setDragOver(false)
-    const id = e.dataTransfer.getData("application/x-employee-id")
-    if (!id || team.members.some((m) => m.chat_id === id)) return
-    setBusy(`add-${id}`); try { await addTeamMember(team.hub_id, id); onRefresh() } catch {} setBusy(null)
+  // Team actions
+  async function addMember(teamId: string, chatId: string) {
+    setBusy(`add-${chatId}`); try { await addTeamMember(teamId, chatId); onRefresh() } catch {} setBusy(null)
+    setShowAddMenu(null)
   }
-
-  async function addMemberById(id: string) {
-    setBusy(`add-${id}`); try { await addTeamMember(team.hub_id, id); onRefresh() } catch {} setBusy(null)
-    setShowAddMenu(false)
+  async function removeMember(teamId: string, chatId: string) {
+    setBusy(`rm-${chatId}`); try { await removeTeamMember(teamId, chatId); onRefresh() } catch {} setBusy(null)
   }
-
-  async function removeMember(id: string) {
-    setBusy(`rm-${id}`); try { await removeTeamMember(team.hub_id, id); onRefresh() } catch {} setBusy(null)
+  async function disband(teamId: string) {
+    setBusy(`del-${teamId}`); try { await deleteTeam(teamId); onRefresh() } catch {} setBusy(null)
   }
-
-  async function disband() {
-    setBusy("del"); try { await deleteTeam(team.hub_id); onRefresh() } catch {} setBusy(null)
+  function startEdit(team: TeamResponse) {
+    setEditingTeam(team.hub_id); setEditName(team.name); setEditInstructions(team.instructions || "")
   }
-
-  async function saveEdit() {
-    const trimmedName = editName.trim()
-    if (!trimmedName) return
+  async function saveEdit(teamId: string, origName: string, origInstructions: string) {
+    const n = editName.trim(); if (!n) return
     setBusy("edit")
-    try {
-      await updateTeam(team.hub_id, {
-        name: trimmedName !== team.name ? trimmedName : undefined,
-        instructions: editInstructions.trim() !== (team.instructions || "") ? editInstructions.trim() : undefined,
-      })
-      onRefresh()
-    } catch {}
-    setBusy(null)
-    setEditing(false)
+    try { await updateTeam(teamId, { name: n !== origName ? n : undefined, instructions: editInstructions.trim() !== origInstructions ? editInstructions.trim() : undefined }); onRefresh() } catch {}
+    setBusy(null); setEditingTeam(null)
   }
+  function cancelEdit() { setEditingTeam(null) }
 
-  function cancelEdit() {
-    setEditName(team.name)
-    setEditInstructions(team.instructions || "")
-    setEditing(false)
+  // Drag & drop handlers for team nodes
+  function handleDragEnter(teamId: string, e: React.DragEvent) {
+    e.preventDefault()
+    const count = (dragCounter.current.get(teamId) || 0) + 1
+    dragCounter.current.set(teamId, count)
+    if (count === 1) setDragOverTeam(teamId)
+  }
+  function handleDragLeave(teamId: string) {
+    const count = (dragCounter.current.get(teamId) || 0) - 1
+    dragCounter.current.set(teamId, Math.max(0, count))
+    if (count <= 0) {
+      dragCounter.current.delete(teamId)
+      setDragOverTeam(prev => prev === teamId ? null : prev)
+    }
+  }
+  function handleDrop(teamId: string, e: React.DragEvent) {
+    e.preventDefault()
+    dragCounter.current.delete(teamId)
+    setDragOverTeam(null)
+    const id = e.dataTransfer.getData("application/x-employee-id")
+    if (id) addMember(teamId, id)
   }
 
   return (
-    <div
-      onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; setDragOver(true) }}
-      onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOver(false) }}
-      onDrop={drop}
-      className={cn(
-        "rounded-2xl transition-all duration-200",
-        showAddMenu ? "overflow-visible" : "overflow-hidden",
-        dragOver
-          ? "bg-zinc-100 dark:bg-zinc-800/80 ring-2 ring-zinc-400 dark:ring-zinc-600 shadow-lg"
-          : "bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-sm dark:shadow-none",
-      )}
-    >
-      {/* Header */}
-      <div className="px-5 pt-5 pb-3">
-        {editing ? (
-          <div className="space-y-2.5">
-            <input
-              type="text"
-              value={editName}
-              onChange={(e) => setEditName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") cancelEdit() }}
-              autoFocus
-              className="w-full h-9 rounded-lg px-3 text-sm font-semibold bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-all"
-              placeholder="Team name"
-            />
-            <textarea
-              value={editInstructions}
-              onChange={(e) => setEditInstructions(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Escape") cancelEdit() }}
-              rows={2}
-              className="w-full rounded-lg px-3 py-2 text-xs resize-none bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-all leading-relaxed"
-              placeholder="Team guidelines (optional)"
-            />
-            <div className="flex items-center gap-2">
-              <button onClick={saveEdit} disabled={!editName.trim() || !!busy} className={cn("h-7 px-3.5 rounded-lg text-xs font-semibold transition-all", editName.trim() ? "text-background bg-foreground hover:bg-foreground/90" : "text-muted-foreground bg-zinc-100 dark:bg-zinc-800", "disabled:opacity-40")}>
-                {busy === "edit" ? "Saving\u2026" : "Save"}
-              </button>
-              <button onClick={cancelEdit} className="h-7 px-3 rounded-lg text-xs text-muted-foreground hover:text-foreground transition-all">
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <h3 className="text-sm font-semibold text-foreground tracking-[-0.01em]">{team.name}</h3>
-              {team.instructions && (
-                <p className="text-xs text-muted-foreground/70 mt-1 line-clamp-2 leading-relaxed">{team.instructions}</p>
-              )}
-            </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              {memory.length > 0 && (
-                <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground/50 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">
-                  <Brain className="h-2.5 w-2.5" />{memory.length}
-                </span>
-              )}
-              <button onClick={() => setEditing(true)} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" title="Edit team">
-                <Pencil className="h-3 w-3" />
-              </button>
-              <button onClick={disband} disabled={!!busy} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all disabled:opacity-40" title="Disband team">
-                <Trash2 className="h-3 w-3" />
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+    <div ref={chartRef} className="relative w-full">
+      {/* SVG layer for all connectors */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: "visible", zIndex: 1 }}>
+        <defs>
+          <marker id="deleg-arrow" markerWidth="8" markerHeight="7" refX="8" refY="3.5" orient="auto">
+            <polygon points="0 0, 8 3.5, 0 7" fill="#f97316" />
+          </marker>
+        </defs>
+        {/* Tree connectors first (behind) */}
+        {connectors.filter(c => c.type === "tree").map((c, i) => (
+          <path key={`t${i}`} d={c.d} fill="none" className="stroke-zinc-200 dark:stroke-zinc-700" strokeWidth="1.5" />
+        ))}
+        {/* Delegation arrows on top — bold orange with glow */}
+        {connectors.filter(c => c.type === "delegation").map((c, i) => (
+          <g key={`d${i}`}>
+            <path d={c.d} fill="none" stroke="#f9731640" strokeWidth="6" />
+            <path d={c.d} fill="none" stroke="#f97316" strokeWidth="2" strokeDasharray="6 4" markerEnd="url(#deleg-arrow)" />
+          </g>
+        ))}
+      </svg>
 
-      {/* Members */}
-      <div className="px-5 pb-4">
-        {team.members.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {team.members.map((m) => (
-              <div
-                key={m.chat_id}
-                className="group/pill flex items-center gap-1.5 h-8 pl-2.5 pr-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-all"
-              >
-                <div className="h-4 w-4 rounded-full bg-zinc-300 dark:bg-zinc-700 flex items-center justify-center">
-                  <AgentIcon className="h-2.5 w-2.5 text-foreground/70" />
-                </div>
-                <span className="text-xs font-medium text-foreground/90 max-w-[120px] truncate">{m.title || "Untitled"}</span>
-                <button
-                  onClick={() => removeMember(m.chat_id)}
-                  disabled={!!busy}
-                  className="h-5 w-5 flex items-center justify-center rounded-full lg:opacity-0 lg:group-hover/pill:opacity-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-muted-foreground/50 hover:text-foreground transition-all"
-                >
-                  <X className="h-2.5 w-2.5" />
-                </button>
-              </div>
-            ))}
-            {/* Add member button (always visible, primary interaction on mobile) */}
-            <div className="relative">
-              <button
-                onClick={() => setShowAddMenu(!showAddMenu)}
-                disabled={availableEmployees.length === 0}
-                className={cn(
-                  "flex items-center gap-1.5 h-8 px-3 rounded-full transition-all text-xs font-medium",
-                  availableEmployees.length === 0
-                    ? "bg-zinc-100 dark:bg-zinc-800/50 text-muted-foreground/30 cursor-not-allowed"
-                    : "bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground",
-                )}
-              >
-                <Plus className="h-3 w-3" />
-                <span className="hidden sm:inline">Add</span>
-              </button>
-              {showAddMenu && availableEmployees.length > 0 && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setShowAddMenu(false)} />
-                  <div className="absolute top-full left-0 mt-1.5 z-50 w-56 max-h-48 overflow-y-auto rounded-xl bg-background border border-zinc-200 dark:border-zinc-700 shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] py-1 scrollbar-invisible">
-                    {availableEmployees.map((s) => (
-                      <button
-                        key={s.chat_id}
-                        onClick={() => addMemberById(s.chat_id)}
-                        disabled={busy === `add-${s.chat_id}`}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors disabled:opacity-40"
-                      >
-                        <div className="h-5 w-5 rounded-full flex items-center justify-center shrink-0 bg-muted/60">
-                          <AgentIcon className="h-2.5 w-2.5 text-foreground/60" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{s.title || "Untitled Employee"}</p>
-                          <p className="text-[11px] text-muted-foreground/60">{formatFrequency(s.frequency)}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
+      {/* Tree layout */}
+      <div className="relative flex flex-col items-center" style={{ zIndex: 2 }}>
+
+        {/* ─ Company node ─ */}
+        <div
+          ref={companyRef}
+          className="flex items-center gap-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-5 py-3.5 shadow-sm dark:shadow-none"
+        >
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-800/60 flex items-center justify-center ring-1 ring-zinc-200/60 dark:ring-zinc-700/40">
+            <CoastyIcon className="h-5 w-5 text-foreground/60" />
           </div>
-        ) : (
-          <div className="space-y-2.5">
-            <div className={cn(
-              "rounded-xl py-5 text-center transition-all",
-              dragOver
-                ? "bg-zinc-100 dark:bg-zinc-800"
-                : "border border-dashed border-zinc-300 dark:border-zinc-700",
-            )}>
-              <p className="text-xs text-muted-foreground/60">
-                {dragOver ? "Drop to add" : "No members yet"}
-              </p>
-            </div>
-            {!dragOver && availableEmployees.length > 0 && (
-              <button
-                onClick={() => setShowAddMenu(!showAddMenu)}
-                className="w-full flex items-center justify-center gap-1.5 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
-              >
-                <Plus className="h-3 w-3" />Add Employee
-              </button>
-            )}
-            {showAddMenu && availableEmployees.length > 0 && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowAddMenu(false)} />
-                <div className="relative z-50 w-full max-h-48 overflow-y-auto rounded-xl bg-background border border-zinc-200 dark:border-zinc-700 shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] py-1 scrollbar-invisible">
-                  {availableEmployees.map((s) => (
-                    <button
-                      key={s.chat_id}
-                      onClick={() => addMemberById(s.chat_id)}
-                      disabled={busy === `add-${s.chat_id}`}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors disabled:opacity-40"
-                    >
-                      <div className={cn("h-5 w-5 rounded-full flex items-center justify-center shrink-0", s.enabled && !s.paused_reason ? "bg-emerald-500/15" : "bg-zinc-200 dark:bg-zinc-800")}>
-                        <AgentIcon className={cn("h-2.5 w-2.5", s.enabled && !s.paused_reason ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/60")} />
+          <div>
+            <h3 className="text-sm font-bold text-foreground tracking-tight">Company</h3>
+            <p className="text-[11px] text-muted-foreground/50">{teams.length} team{teams.length !== 1 ? "s" : ""} &middot; {allMemberIds.size} employee{allMemberIds.size !== 1 ? "s" : ""}</p>
+          </div>
+        </div>
+
+        {/* ─ Teams row ─ */}
+        {teams.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-x-10 gap-y-14 mt-14 w-full">
+            {teams.map(team => {
+              const avail = schedules.filter(s => !team.members.some(m => m.chat_id === s.chat_id))
+              const isEditing = editingTeam === team.hub_id
+              return (
+                <div key={team.hub_id} className="flex flex-col items-center">
+                  {/* Team node */}
+                  <div
+                    ref={el => { if (el) teamRefs.current.set(team.hub_id, el); else teamRefs.current.delete(team.hub_id) }}
+                    onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = "copy" }}
+                    onDragEnter={e => handleDragEnter(team.hub_id, e)}
+                    onDragLeave={() => handleDragLeave(team.hub_id)}
+                    onDrop={e => handleDrop(team.hub_id, e)}
+                    className={cn(
+                      "group relative flex items-center gap-2.5 rounded-xl border px-4 py-3 shadow-sm dark:shadow-none transition-all duration-200",
+                      dragOverTeam === team.hub_id
+                        ? "border-emerald-400 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 ring-2 ring-emerald-400/30 dark:ring-emerald-500/20 scale-[1.02]"
+                        : "border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-600"
+                    )}
+                  >
+                    <div className={cn(
+                      "h-8 w-8 rounded-lg flex items-center justify-center ring-1 shrink-0 transition-colors duration-200",
+                      dragOverTeam === team.hub_id
+                        ? "bg-emerald-100 dark:bg-emerald-900/40 ring-emerald-300/60 dark:ring-emerald-600/40"
+                        : "bg-zinc-100 dark:bg-zinc-800 ring-zinc-200/60 dark:ring-zinc-700/40"
+                    )}>
+                      <Users className={cn("h-3.5 w-3.5 transition-colors duration-200", dragOverTeam === team.hub_id ? "text-emerald-500" : "text-foreground/40")} />
+                    </div>
+                    {isEditing ? (
+                      <div className="space-y-1.5 min-w-[160px]">
+                        <input type="text" value={editName} onChange={e => setEditName(e.target.value)}
+                          onKeyDown={e => { if (e.key === "Enter") saveEdit(team.hub_id, team.name, team.instructions || ""); if (e.key === "Escape") cancelEdit() }}
+                          autoFocus
+                          className="w-full h-7 rounded-md px-2 text-xs font-semibold bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground focus:outline-none focus:border-zinc-400 transition-all" />
+                        <textarea value={editInstructions} onChange={e => setEditInstructions(e.target.value)} rows={1}
+                          className="w-full rounded-md px-2 py-1 text-[10px] resize-none bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground focus:outline-none focus:border-zinc-400 transition-all"
+                          placeholder="Guidelines..." />
+                        <div className="flex gap-1.5">
+                          <button onClick={() => saveEdit(team.hub_id, team.name, team.instructions || "")} className="h-6 px-2.5 rounded-md text-[10px] font-semibold text-background bg-foreground hover:bg-foreground/90 transition-all">{busy === "edit" ? "\u2026" : "Save"}</button>
+                          <button onClick={cancelEdit} className="h-6 px-2 rounded-md text-[10px] text-muted-foreground hover:text-foreground transition-all">Cancel</button>
+                        </div>
                       </div>
+                    ) : (
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">{s.title || "Untitled Employee"}</p>
-                        <p className="text-[11px] text-muted-foreground/60">{formatFrequency(s.frequency)}</p>
+                        <p className="text-xs font-bold text-foreground truncate">{team.name}</p>
+                        <p className="text-[10px] text-muted-foreground/40 leading-tight">{team.members.length} member{team.members.length !== 1 ? "s" : ""}</p>
                       </div>
-                    </button>
-                  ))}
+                    )}
+                    {!isEditing && (
+                      <div className="flex items-center gap-0.5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                        <button onClick={() => startEdit(team)} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" title="Edit">
+                          <Pencil className="h-2.5 w-2.5" />
+                        </button>
+                        <button onClick={() => disband(team.hub_id)} disabled={!!busy} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" title="Disband">
+                          <Trash2 className="h-2.5 w-2.5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Employee nodes — split into tiers: managers on top, delegates below */}
+                  {(() => {
+                    const topTier = team.members.filter(m => !delegateTargetIds.has(m.chat_id))
+                    const bottomTier = team.members.filter(m => delegateTargetIds.has(m.chat_id))
+
+                    const renderNode = (m: typeof team.members[0]) => {
+                      const sched = schedules.find(s => s.chat_id === m.chat_id)
+                      const isActive = sched?.enabled && !sched?.paused_reason
+                      const isDelegate = delegateTargetIds.has(m.chat_id)
+                      return (
+                        <div
+                          key={m.chat_id}
+                          ref={el => { if (el) memberRefs.current.set(m.chat_id, el); else memberRefs.current.delete(m.chat_id) }}
+                          className="group/emp relative flex flex-col items-center cursor-pointer"
+                          onClick={() => onEdit(m.chat_id)}
+                        >
+                          <div className="relative">
+                            <div className={cn(
+                              "h-10 w-10 rounded-full flex items-center justify-center transition-all",
+                              isDelegate
+                                ? "bg-orange-50 dark:bg-orange-950/30 ring-2 ring-orange-300/60 dark:ring-orange-600/40 group-hover/emp:ring-orange-400 dark:group-hover/emp:ring-orange-500"
+                                : "bg-zinc-50 dark:bg-zinc-800 ring-1 ring-zinc-200/60 dark:ring-zinc-700/40 group-hover/emp:ring-zinc-300 dark:group-hover/emp:ring-zinc-600",
+                            )}>
+                              <CoastyIcon className={cn("h-4 w-4", isDelegate ? "text-orange-400 dark:text-orange-500" : "text-foreground/40")} />
+                            </div>
+                            <div className={cn(
+                              "absolute -bottom-px -right-px h-2.5 w-2.5 rounded-full border-2 border-white dark:border-zinc-900",
+                              isActive ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-600",
+                            )} />
+                          </div>
+                          <p className="text-[11px] font-semibold text-foreground mt-2 text-center max-w-[100px] truncate leading-tight">{m.title || "Untitled"}</p>
+                          {sched && <p className="text-[9px] text-muted-foreground/40 leading-tight mt-0.5">{formatFrequency(sched.frequency)}</p>}
+                          {isDelegate && <span className="text-[8px] font-medium text-orange-500 dark:text-orange-400 mt-0.5 uppercase tracking-wider">delegate</span>}
+                          <button
+                            onClick={e => { e.stopPropagation(); removeMember(team.hub_id, m.chat_id) }}
+                            disabled={!!busy}
+                            className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 opacity-0 group-hover/emp:opacity-100 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 text-muted-foreground/40 transition-all ring-1 ring-zinc-200 dark:ring-zinc-700"
+                          >
+                            <X className="h-2 w-2" />
+                          </button>
+                        </div>
+                      )
+                    }
+
+                    return (
+                      <div className="flex flex-col items-center">
+                        {/* Top tier — managers / non-delegates */}
+                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-10 mt-10">
+                          {topTier.map(renderNode)}
+                          {/* Add member button */}
+                          <div className="relative flex flex-col items-center">
+                            <button
+                              onClick={() => setShowAddMenu(showAddMenu === team.hub_id ? null : team.hub_id)}
+                              disabled={avail.length === 0}
+                              className={cn(
+                                "h-10 w-10 rounded-full border border-dashed flex items-center justify-center transition-all",
+                                avail.length === 0
+                                  ? "border-zinc-150 dark:border-zinc-800 text-muted-foreground/15 cursor-not-allowed"
+                                  : "border-zinc-300 dark:border-zinc-600 text-muted-foreground/30 hover:text-muted-foreground hover:border-zinc-400 dark:hover:border-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50",
+                              )}
+                            >
+                              <Plus className="h-3.5 w-3.5" />
+                            </button>
+                            <p className="text-[9px] text-muted-foreground/30 mt-2">Add</p>
+                            {showAddMenu === team.hub_id && avail.length > 0 && (
+                              <>
+                                <div className="fixed inset-0 z-40" onClick={() => setShowAddMenu(null)} />
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-52 max-h-48 overflow-y-auto rounded-xl bg-background border border-zinc-200 dark:border-zinc-700 shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] py-1 scrollbar-invisible">
+                                  {avail.map(s => (
+                                    <button key={s.chat_id} onClick={() => addMember(team.hub_id, s.chat_id)} disabled={busy === `add-${s.chat_id}`}
+                                      className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors disabled:opacity-40">
+                                      <div className="h-5 w-5 rounded-full flex items-center justify-center shrink-0 bg-muted/60">
+                                        <CoastyIcon className="h-2.5 w-2.5 text-foreground/60" />
+                                      </div>
+                                      <div className="min-w-0">
+                                        <p className="text-xs font-medium text-foreground truncate">{s.title || "Untitled"}</p>
+                                        <p className="text-[10px] text-muted-foreground/60">{formatFrequency(s.frequency)}</p>
+                                      </div>
+                                    </button>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        {/* Bottom tier — delegates (shown lower) */}
+                        {bottomTier.length > 0 && (
+                          <div className="flex flex-wrap justify-center gap-x-6 gap-y-10 mt-12">
+                            {bottomTier.map(renderNode)}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })()}
                 </div>
-              </>
-            )}
+              )
+            })}
           </div>
         )}
-      </div>
 
-      {/* Shared memory preview */}
-      {memory.length > 0 && (
-        <div className="px-5 pb-4">
-          <div className="flex items-center gap-4 overflow-x-auto scrollbar-invisible pb-0.5">
-            {memory.slice(0, 4).map((entry) => (
-              <div key={entry.key} className="shrink-0 max-w-[180px]">
-                <span className="text-[11px] font-mono text-foreground/60">{entry.key}</span>
-                <p className="text-[11px] text-muted-foreground/70 truncate">{entry.value}</p>
-              </div>
-            ))}
-            {memory.length > 4 && (
-              <span className="text-[11px] text-muted-foreground/50 shrink-0">+{memory.length - 4} more</span>
-            )}
+        {/* ─ Unassigned employees ─ */}
+        {unassigned.length > 0 && teams.length > 0 && (
+          <div className="mt-14 w-full">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+              <span className="text-[10px] font-medium text-muted-foreground/40 uppercase tracking-widest">Unassigned</span>
+              <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+            </div>
+            <div className="flex flex-wrap justify-center gap-4">
+              {unassigned.map(s => {
+                const isActive = s.enabled && !s.paused_reason
+                return (
+                  <div
+                    key={s.chat_id}
+                    draggable
+                    onDragStart={e => {
+                      e.dataTransfer.setData("application/x-employee-id", s.chat_id)
+                      e.dataTransfer.effectAllowed = "copy"
+                    }}
+                    className="flex items-center gap-2.5 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-700 px-3 py-2 cursor-grab active:cursor-grabbing hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all select-none"
+                  >
+                    <div className="relative shrink-0">
+                      <div className="h-7 w-7 rounded-full bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center ring-1 ring-zinc-200/60 dark:ring-zinc-700/40">
+                        <CoastyIcon className="h-3 w-3 text-foreground/30" />
+                      </div>
+                      <div className={cn(
+                        "absolute -bottom-px -right-px h-2 w-2 rounded-full border-[1.5px] border-white dark:border-zinc-900",
+                        isActive ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-600",
+                      )} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-semibold text-foreground truncate leading-tight">{s.title || "Untitled"}</p>
+                      <p className="text-[10px] text-muted-foreground/40 leading-tight">{formatFrequency(s.frequency)}</p>
+                    </div>
+                    <GripVertical className="h-3 w-3 text-muted-foreground/20 shrink-0 ml-1" />
+                  </div>
+                )
+              })}
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* Drop overlay */}
-      {dragOver && team.members.length > 0 && (
-        <div className="px-5 pb-4 -mt-1">
-          <div className="rounded-xl bg-zinc-100 dark:bg-zinc-800 py-2.5 text-center">
-            <p className="text-[11px] text-foreground/60 font-medium">Drop to add to {team.name}</p>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-/* ═══ Draggable employee pill ═══ */
-function EmployeePill({ schedule }: { schedule: ScheduleResponse }) {
-  const [dragging, setDragging] = useState(false)
-  const isActive = schedule.enabled && !schedule.paused_reason
-
-  return (
-    <div
-      draggable
-      onDragStart={(e) => {
-        e.dataTransfer.setData("application/x-employee-id", schedule.chat_id)
-        e.dataTransfer.setData("text/plain", schedule.title || "Untitled Employee")
-        e.dataTransfer.effectAllowed = "copy"
-        setDragging(true)
-      }}
-      onDragEnd={() => setDragging(false)}
-      className={cn(
-        "flex items-center gap-2.5 rounded-xl px-3 py-2.5 cursor-grab active:cursor-grabbing select-none group transition-all",
-        dragging
-          ? "opacity-40 scale-95"
-          : "bg-zinc-50 dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-800",
-      )}
-    >
-      <GripVertical className="h-3 w-3 text-muted-foreground/40 group-hover:text-muted-foreground/70 shrink-0 transition-colors" />
-      <div className="h-6 w-6 rounded-full flex items-center justify-center shrink-0 bg-muted/60">
-        <CoastyIcon className="h-3 w-3 text-foreground/60" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground truncate leading-tight">{schedule.title || "Untitled Employee"}</p>
-        <p className="text-[11px] text-muted-foreground/60 leading-tight">{formatFrequency(schedule.frequency)}</p>
+        )}
       </div>
     </div>
   )
@@ -395,6 +810,7 @@ function EmployeePill({ schedule }: { schedule: ScheduleResponse }) {
 
 /* ═══ Main ═══ */
 export function SchedulesContent() {
+  const { user } = useUser()
   const [schedules, setSchedules] = useState<ScheduleResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<Tab>("teams")
@@ -409,6 +825,15 @@ export function SchedulesContent() {
   const [showCreateTeam, setShowCreateTeam] = useState(false)
   const [newTeamName, setNewTeamName] = useState("")
   const [newTeamInstructions, setNewTeamInstructions] = useState("")
+  const [selectedTemplate, setSelectedTemplate] = useState<TeamTemplate | null>(null)
+  const [createStep, setCreateStep] = useState<"templates" | "form">("templates")
+  const [credDialogOpen, setCredDialogOpen] = useState(false)
+  const [credDialogService, setCredDialogService] = useState("")
+  const [addedCredentials, setAddedCredentials] = useState<Set<string>>(new Set())
+  const [customCredentials, setCustomCredentials] = useState<{ service: string; name: string }[]>([])
+  const [provisioning, setProvisioning] = useState(false)
+  const [provisionStatus, setProvisionStatus] = useState("")
+  const [limitError, setLimitError] = useState<{ message: string; needsMachines?: number; needsSchedules?: number } | null>(null)
 
   const loadSchedules = useCallback(async () => {
     try { setSchedules(await listSchedules()) } catch { setSchedules([]) } finally { setLoading(false) }
@@ -444,10 +869,187 @@ export function SchedulesContent() {
     { id: "employees", label: "Employees", icon: AgentIcon, count: schedules.length },
   ]
 
+  function resetCreateTeam() {
+    setNewTeamName(""); setNewTeamInstructions(""); setSelectedTemplate(null); setCreateStep("templates")
+    setShowCreateTeam(false); setAddedCredentials(new Set()); setCustomCredentials([])
+    setProvisioning(false); setProvisionStatus(""); setLimitError(null)
+  }
+
+  function pickTemplate(t: TeamTemplate) {
+    setSelectedTemplate(t); setNewTeamName(t.name); setNewTeamInstructions(t.instructions); setCreateStep("form")
+  }
+
+  function buildInstructions(): string {
+    let instructions = newTeamInstructions.trim()
+    const allCreds = [
+      ...[...addedCredentials],
+      ...customCredentials.map(c => c.service),
+    ]
+    if (allCreds.length > 0) {
+      const credList = allCreds.map(s => `- ${s}`).join("\n")
+      instructions = (instructions || "") + `\n\n[AVAILABLE CREDENTIALS]\nThe following service credentials have been configured and are available for use:\n${credList}\nUse these credentials when you need to log in to these services to complete your tasks.`
+    }
+    return instructions
+  }
+
   async function handleCreateTeam() {
     if (!newTeamName.trim()) return
-    try { await createTeam(newTeamName.trim(), newTeamInstructions.trim() || undefined) } catch {}
-    setNewTeamName(""); setNewTeamInstructions(""); setShowCreateTeam(false); refreshAll()
+    const instructions = buildInstructions()
+
+    // If no template, just create the team shell
+    if (!selectedTemplate) {
+      try { await createTeam(newTeamName.trim(), instructions || undefined) } catch {}
+      resetCreateTeam(); refreshAll()
+      return
+    }
+
+    // ── Template provisioning flow ──
+    setLimitError(null)
+    setProvisioning(true)
+
+    try {
+      // 1. Check current limits & machines
+      setProvisionStatus("Checking account limits...")
+      const machineRes = await fetch("/api/machines")
+      const machineData = await machineRes.json()
+      const currentMachines: UserMachine[] = machineData.machines ?? []
+      const limits = machineData.limits ?? { max_machines: 1 }
+
+      // Only cloud machines count — exclude electron/local/docker
+      const isCloudMachine = (m: UserMachine) => {
+        const p = m.settings?.provider
+        return p === "aws" || p === "azure"
+      }
+      const cloudMachines = currentMachines.filter(m => isCloudMachine(m) && m.status !== "error" && m.status !== "deleting")
+      const usableCloudMachines = cloudMachines.filter(m => m.status === "running" || m.status === "stopped" || m.status === "creating" || m.status === "starting")
+      const machineSlots = limits.max_machines - cloudMachines.length
+
+      if (usableCloudMachines.length === 0 && machineSlots <= 0) {
+        setProvisioning(false)
+        setLimitError({
+          message: `You need a cloud machine but you've reached your limit of ${limits.max_machines}. Upgrade your plan or delete an unused machine.`,
+          needsMachines: 1,
+        })
+        return
+      }
+
+      // Check schedule limits — current employees + template employees
+      const neededEmployees = selectedTemplate.employees.length
+      const currentScheduleCount = schedules.filter(s => s.enabled && !s.paused_reason).length
+      const tier = machineData.subscriptionTier || "free"
+      const scheduleLimits: Record<string, number> = { free: 3, starter: 3, basic: 3, professional: 10, pro: 10, enterprise: 50 }
+      const maxSchedules = scheduleLimits[tier] ?? 3
+      const availableSlots = maxSchedules - currentScheduleCount
+
+      if (availableSlots < neededEmployees) {
+        setProvisioning(false)
+        setLimitError({
+          message: availableSlots <= 0
+            ? `You've reached your employee limit (${maxSchedules} for ${tier} tier). Upgrade your plan or remove unused employees.`
+            : `This template needs ${neededEmployees} employees but you only have ${availableSlots} slot${availableSlots === 1 ? "" : "s"} left (${maxSchedules} max for ${tier} tier). Upgrade your plan or remove unused employees.`,
+          needsSchedules: neededEmployees - availableSlots,
+        })
+        return
+      }
+
+      // 2. Pick or create a cloud machine
+      let targetMachineId: string
+      const runningCloud = usableCloudMachines.find(m => m.status === "running")
+
+      if (runningCloud) {
+        targetMachineId = runningCloud.id
+        setProvisionStatus(`Using machine "${runningCloud.displayName}"...`)
+      } else if (usableCloudMachines.length > 0) {
+        // There's a cloud machine but it's stopped/creating/starting — use it anyway
+        // The schedule will run once the machine is available
+        targetMachineId = usableCloudMachines[0].id
+        setProvisionStatus(`Assigning to machine "${usableCloudMachines[0].displayName}" (will run when machine is ready)...`)
+      } else {
+        // No cloud machines at all — create one
+        setProvisionStatus("Creating a new machine...")
+        const createRes = await fetch("/api/machines", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            displayName: `${newTeamName.trim()} Machine`,
+            provider: "aws",
+            storageGb: 16,
+            desktopEnabled: true,
+          }),
+        })
+        if (!createRes.ok) {
+          const err = await createRes.json().catch(() => ({ error: "Failed to create machine" }))
+          throw new Error(err.error || "Failed to create machine")
+        }
+        const createData = await createRes.json()
+        targetMachineId = createData.machine?.id
+        if (!targetMachineId) throw new Error("Machine creation returned no ID")
+        setProvisionStatus("Machine provisioning started...")
+      }
+
+      // 3. Create employee chats + schedules
+      const employeeChatIds: string[] = []
+      const failedEmployees: string[] = []
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+
+      for (let i = 0; i < selectedTemplate.employees.length; i++) {
+        const emp = selectedTemplate.employees[i]
+        setProvisionStatus(`Hiring ${emp.name} (${i + 1}/${selectedTemplate.employees.length})...`)
+
+        try {
+          // Create chat
+          const chatRes = await fetch("/api/create-chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user?.id, title: emp.name, model: null, isAuthenticated: true }),
+          })
+          if (!chatRes.ok) {
+            const errData = await chatRes.json().catch(() => ({}))
+            throw new Error(errData.error || `Chat creation failed (${chatRes.status})`)
+          }
+          const chatData = await chatRes.json()
+          const chatId = chatData.chat?.id
+          if (!chatId) throw new Error("Chat creation returned no ID")
+          employeeChatIds.push(chatId)
+
+          // Create schedule — assign to machine
+          const scheduleRes = await createSchedule(chatId, {
+            frequency: emp.frequency,
+            timezone: tz,
+            machineId: targetMachineId,
+            taskPrompt: emp.role,
+          })
+          if (!scheduleRes?.chat_id) {
+            console.warn(`Schedule may not have been created for ${emp.name}`)
+          }
+        } catch (e) {
+          console.error(`Failed to set up ${emp.name}:`, e)
+          failedEmployees.push(emp.name)
+        }
+      }
+
+      if (employeeChatIds.length === 0) {
+        throw new Error("Failed to create any employees. Check your account limits and try again.")
+      }
+
+      // 4. Create team with all members
+      setProvisionStatus("Creating team...")
+      await createTeam(newTeamName.trim(), instructions || undefined, employeeChatIds)
+
+      if (failedEmployees.length > 0) {
+        toast.success(`Team created with ${employeeChatIds.length} employees (${failedEmployees.length} failed: ${failedEmployees.join(", ")})`)
+      } else {
+        toast.success(`${selectedTemplate.name} team created with ${employeeChatIds.length} employees`)
+      }
+      resetCreateTeam()
+      // Refresh machine list too
+      fetch("/api/machines").then(r => r.json()).then(d => setMachines(d.machines ?? [])).catch(() => {})
+      refreshAll()
+    } catch (e) {
+      console.error("Template provisioning failed:", e)
+      toast.error(e instanceof Error ? e.message : "Failed to create team")
+      setProvisioning(false)
+    }
   }
 
   if (loading) {
@@ -587,94 +1189,392 @@ export function SchedulesContent() {
         {/* ═══ TEAMS TAB ═══ */}
         {schedules.length > 0 && activeTab === "teams" && (
           <div className="space-y-5">
-            {/* Teams explainer */}
-            <div className="rounded-xl px-4 py-3 bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                <span className="font-semibold text-foreground/70">Teams</span> let employees share context and memory across runs — one employee&apos;s output becomes another&apos;s input, automatically. Use the <span className="font-medium text-foreground/70">Add</span> button on each team or <span className="hidden lg:inline">drag employees from the sidebar</span><span className="lg:hidden">tap to add members</span>.
-              </p>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] gap-6">
-            {/* Left: Teams */}
-            <div className="space-y-4 min-w-0">
-              {/* No teams yet — simple prompt */}
-              {teams.length === 0 && !showCreateTeam && (
-                <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 py-14 text-center">
-                  <Users className="h-8 w-8 text-muted-foreground/20 mx-auto mb-3" />
-                  <p className="text-sm font-medium text-foreground/70 mb-1">No teams yet</p>
-                  <p className="text-xs text-muted-foreground/50 max-w-xs mx-auto mb-5">
-                    Teams let employees share context and memory. Create one, then add employees to it.
-                  </p>
-                  <button onClick={() => setShowCreateTeam(true)} className={cn("inline-flex items-center gap-2 h-9 px-5 rounded-xl text-sm font-medium transition-all text-background bg-foreground hover:bg-foreground/90")}>
-                    <Plus className="h-3.5 w-3.5" />New Team
-                  </button>
-                </div>
-              )}
+            {/* Create Team Dialog — template picker + form */}
+            <Dialog open={showCreateTeam} onOpenChange={(open) => { if (!open) resetCreateTeam() }}>
+              <DialogContent hasCloseButton={false} className={cn(
+                "p-0 gap-0 overflow-hidden rounded-2xl border-zinc-200 dark:border-zinc-800 shadow-2xl transition-all duration-300",
+                createStep === "templates" ? "sm:max-w-2xl" : "sm:max-w-md"
+              )}>
+                <VisuallyHidden.Root><DialogTitle>Create a new team</DialogTitle></VisuallyHidden.Root>
 
-              {/* Create team inline */}
-              {showCreateTeam && (
-                <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 p-5 space-y-3">
-                  <input
-                    type="text"
-                    placeholder="Team name"
-                    value={newTeamName}
-                    onChange={(e) => setNewTeamName(e.target.value)}
-                    autoFocus
-                    onKeyDown={(e) => e.key === "Enter" && handleCreateTeam()}
-                    className="w-full h-10 rounded-xl px-4 text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-all"
-                  />
-                  <textarea
-                    placeholder="Team guidelines (optional)"
-                    value={newTeamInstructions}
-                    onChange={(e) => setNewTeamInstructions(e.target.value)}
-                    rows={2}
-                    className="w-full rounded-xl px-4 py-2.5 text-sm resize-none bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-all"
-                  />
-                  <div className="flex items-center gap-2">
-                    <button onClick={handleCreateTeam} disabled={!newTeamName.trim()} className={cn("h-9 px-5 rounded-xl text-sm font-semibold transition-all", newTeamName.trim() ? "text-background bg-foreground hover:bg-foreground/90" : "text-muted-foreground bg-zinc-100 dark:bg-zinc-800", "disabled:opacity-40")}>
-                      Create
-                    </button>
-                    <button onClick={() => { setShowCreateTeam(false); setNewTeamName(""); setNewTeamInstructions("") }} className="h-9 px-3 rounded-xl text-sm text-muted-foreground hover:text-foreground transition-all">
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
+                {createStep === "templates" ? (
+                  <>
+                    {/* ── Template Picker ── */}
+                    <div className="relative px-7 pt-7 pb-4">
+                      <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.035]"
+                        style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h4v4H0zm8 0h4v4H8zm8 0h4v4h-4zM4 4h4v4H4zm8 0h4v4h-4zM0 8h4v4H0zm8 0h4v4H8zm8 0h4v4h-4zM4 12h4v4H4zm8 12h4v4h-4z' fill='currentColor' fill-opacity='1'/%3E%3C/svg%3E\")" }} />
+                      <div className="relative">
+                        <h2 className="text-[17px] font-semibold text-foreground tracking-tight">New Team</h2>
+                        <p className="text-[13px] text-muted-foreground/60 mt-1">Pick a template to get started, or create a custom team from scratch.</p>
+                      </div>
+                    </div>
 
-              {/* Teams */}
-              {teams.length > 0 && (
-                <>
-                  {!showCreateTeam && (
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs text-muted-foreground/60"><span className="hidden lg:inline">Drag employees from the right or use</span><span className="lg:hidden">Use</span> the Add button to add members</p>
-                      <button onClick={() => setShowCreateTeam(true)} className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
-                        <Plus className="h-3 w-3" />New Team
+                    <div className="px-7 pb-6 max-h-[60vh] overflow-y-auto space-y-6 scrollbar-thin">
+                      {(["starter", "plus", "pro"] as const).map(tier => {
+                        const meta = TIER_META[tier]
+                        const TierIcon = meta.icon
+                        const tierTemplates = TEAM_TEMPLATES.filter(t => t.tier === tier)
+                        return (
+                          <div key={tier}>
+                            {/* Tier header */}
+                            <div className="flex items-center gap-2.5 mb-3">
+                              <div className={cn("flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest", meta.color)}>
+                                <TierIcon className="h-3.5 w-3.5" />
+                                {meta.label}
+                              </div>
+                              <div className="h-px flex-1 bg-zinc-200/60 dark:bg-zinc-800/60" />
+                              <span className="text-[10px] text-muted-foreground/40 font-medium tabular-nums">
+                                {meta.machines} {meta.machines === 1 ? "machine" : "machines"} &middot; {meta.employees} employees &middot; {meta.price}
+                              </span>
+                            </div>
+
+                            {/* Template cards */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                              {tierTemplates.map(t => {
+                                const Icon = t.icon
+                                return (
+                                  <button
+                                    key={t.id}
+                                    onClick={() => pickTemplate(t)}
+                                    className="group relative text-left rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/60 p-4 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-md transition-all duration-200 overflow-hidden"
+                                  >
+                                    {/* Subtle hover glow */}
+                                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-foreground/[0.02] to-transparent" />
+                                    <div className="relative">
+                                      <div className="h-9 w-9 rounded-lg bg-zinc-100 dark:bg-zinc-800/80 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200">
+                                        <Icon className="h-4 w-4 text-foreground/50 group-hover:text-foreground/70 transition-colors" />
+                                      </div>
+                                      <h3 className="text-[13px] font-semibold text-foreground/90 mb-0.5 leading-tight">{t.name}</h3>
+                                      <p className="text-[11px] text-muted-foreground/50 leading-relaxed line-clamp-2">{t.tagline}</p>
+                                      <div className="flex items-center gap-1.5 mt-2.5">
+                                        <span className="text-[10px] text-muted-foreground/35 font-medium tabular-nums">{t.employees.length} employees</span>
+                                        <span className="text-muted-foreground/20">&middot;</span>
+                                        <span className="text-[10px] text-muted-foreground/35 font-medium tabular-nums">{t.credentials.length} credentials</span>
+                                      </div>
+                                    </div>
+                                    <ChevronRight className="absolute top-4 right-3 h-3.5 w-3.5 text-muted-foreground/20 group-hover:text-muted-foreground/50 group-hover:translate-x-0.5 transition-all" />
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    {/* Footer — custom option */}
+                    <div className="px-7 py-4 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30">
+                      <button onClick={resetCreateTeam} className="h-9 px-4 rounded-lg text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => { setSelectedTemplate(null); setNewTeamName(""); setNewTeamInstructions(""); setCreateStep("form") }}
+                        className="h-9 px-5 rounded-lg text-[13px] font-medium text-foreground/70 hover:text-foreground border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
+                      >
+                        Custom Team
                       </button>
                     </div>
-                  )}
-                  <div className="space-y-3">
-                    {teams.map((team) => (
-                      <TeamCard key={team.hub_id} team={team} schedules={schedules} onRefresh={refreshAll} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
+                  </>
+                ) : (
+                  <>
+                    {/* ── Form Step (template detail or custom) ── */}
+                    <div className="relative px-7 pt-6 pb-4">
+                      <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.035]"
+                        style={{ backgroundImage: "radial-gradient(circle, currentColor 0.5px, transparent 0.5px)", backgroundSize: "16px 16px" }} />
+                      <div className="relative">
+                        <button
+                          onClick={() => setCreateStep("templates")}
+                          className="inline-flex items-center gap-1 text-[12px] text-muted-foreground/50 hover:text-foreground/70 transition-colors mb-3"
+                        >
+                          <ArrowLeft className="h-3 w-3" />Back to templates
+                        </button>
+                        {selectedTemplate ? (
+                          <div className="flex items-start gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-foreground/[0.06] dark:bg-foreground/[0.08] flex items-center justify-center shrink-0">
+                              {(() => { const Icon = selectedTemplate.icon; return <Icon className="h-4.5 w-4.5 text-foreground/60" /> })()}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <h2 className="text-[17px] font-semibold text-foreground tracking-tight">{selectedTemplate.name}</h2>
+                                {(() => { const meta = TIER_META[selectedTemplate.tier]; const TierIcon = meta.icon; return (
+                                  <span className={cn("inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider", meta.color)}>
+                                    <TierIcon className="h-3 w-3" />{meta.label}
+                                  </span>
+                                ) })()}
+                              </div>
+                              <p className="text-[12px] text-muted-foreground/50 mt-0.5">{selectedTemplate.description}</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="h-10 w-10 rounded-xl bg-foreground/[0.06] dark:bg-foreground/[0.08] flex items-center justify-center mb-3">
+                              <Users className="h-4.5 w-4.5 text-foreground/60" />
+                            </div>
+                            <h2 className="text-[17px] font-semibold text-foreground tracking-tight">Custom Team</h2>
+                            <p className="text-[13px] text-muted-foreground/60 mt-1">Create a team with your own configuration.</p>
+                          </>
+                        )}
+                      </div>
+                    </div>
 
-            {/* Right: Employee sidebar (hidden on mobile — use Add button instead) */}
-            <div className="hidden lg:block lg:sticky lg:top-6 lg:self-start">
-              <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/80 overflow-hidden shadow-sm dark:shadow-none">
-                <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Employees</p>
-                </div>
-                <div className="p-2 space-y-1 max-h-[calc(100vh-300px)] overflow-y-auto scrollbar-invisible">
-                  {schedules.map((s) => (
-                    <EmployeePill key={s.chat_id} schedule={s} />
-                  ))}
-                </div>
+                    {/* Form fields */}
+                    <div className="px-7 pb-2 space-y-4 max-h-[50vh] overflow-y-auto">
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-medium text-foreground/40 uppercase tracking-widest">Team Name</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Research, Marketing, Engineering"
+                          value={newTeamName}
+                          onChange={(e) => setNewTeamName(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && handleCreateTeam()}
+                          autoFocus
+                          className="w-full h-11 rounded-xl px-4 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-zinc-300 dark:focus:border-zinc-600 transition-all"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-medium text-foreground/40 uppercase tracking-widest">Guidelines <span className="text-muted-foreground/30 normal-case tracking-normal font-normal">(optional)</span></label>
+                        <textarea
+                          placeholder="Shared instructions all team members will follow..."
+                          value={newTeamInstructions}
+                          onChange={(e) => setNewTeamInstructions(e.target.value)}
+                          rows={3}
+                          className="w-full rounded-xl px-4 py-3 text-sm resize-none bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-zinc-300 dark:focus:border-zinc-600 transition-all"
+                        />
+                      </div>
+
+                      {/* Template details — employees & credentials */}
+                      {selectedTemplate && (
+                        <>
+                          {/* Suggested employees */}
+                          <div className="space-y-2">
+                            <label className="text-[11px] font-medium text-foreground/40 uppercase tracking-widest flex items-center gap-1.5">
+                              <AgentIcon className="h-3 w-3" />Suggested Employees
+                            </label>
+                            <div className="space-y-1">
+                              {selectedTemplate.employees.map((emp, i) => (
+                                <div key={i} className="flex items-start gap-3 rounded-lg bg-zinc-50/80 dark:bg-zinc-800/40 border border-zinc-200/50 dark:border-zinc-700/30 px-3 py-2.5">
+                                  <div className="h-6 w-6 rounded-md bg-foreground/[0.05] flex items-center justify-center shrink-0 mt-0.5">
+                                    <span className="text-[10px] font-bold text-foreground/30">{emp.name.charAt(0)}</span>
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[12px] font-semibold text-foreground/80">{emp.name}</span>
+                                      <span className="text-[10px] text-muted-foreground/35 font-medium bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">{formatFrequency(emp.frequency)}</span>
+                                    </div>
+                                    <p className="text-[11px] text-muted-foreground/45 leading-relaxed mt-0.5">{emp.role}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Required credentials (template) */}
+                          <div className="space-y-2">
+                            <label className="text-[11px] font-medium text-foreground/40 uppercase tracking-widest flex items-center gap-1.5">
+                              <Key className="h-3 w-3" />Suggested Credentials
+                            </label>
+                            <div className="rounded-xl border border-zinc-200/60 dark:border-zinc-700/40 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-800/60">
+                              {selectedTemplate.credentials.map((cred, i) => {
+                                const isAdded = addedCredentials.has(cred.service)
+                                return (
+                                  <div key={i} className="flex items-center gap-3 px-3 py-2.5 bg-white dark:bg-zinc-900/40">
+                                    <div className={cn(
+                                      "h-6 w-6 rounded-md flex items-center justify-center shrink-0 transition-colors",
+                                      isAdded ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-zinc-100 dark:bg-zinc-800"
+                                    )}>
+                                      {isAdded
+                                        ? <ShieldCheck className="h-3 w-3 text-emerald-500" />
+                                        : <Globe className="h-3 w-3 text-muted-foreground/40" />
+                                      }
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <span className={cn("text-[12px] font-medium", isAdded ? "text-foreground/50 line-through decoration-foreground/15" : "text-foreground/70")}>{cred.service}</span>
+                                      <p className="text-[10px] text-muted-foreground/40 leading-snug">{cred.why}</p>
+                                    </div>
+                                    {isAdded ? (
+                                      <span className="text-[10px] font-medium text-emerald-500 shrink-0">Added</span>
+                                    ) : (
+                                      <button
+                                        onClick={() => { setCredDialogService(cred.service); setCredDialogOpen(true) }}
+                                        className="text-[10px] font-semibold text-foreground/50 hover:text-foreground bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 px-2.5 py-1 rounded-md transition-all shrink-0"
+                                      >
+                                        + Add
+                                      </button>
+                                    )}
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Custom credentials — always visible */}
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-medium text-foreground/40 uppercase tracking-widest flex items-center gap-1.5">
+                          <Key className="h-3 w-3" />{selectedTemplate ? "Additional Credentials" : "Credentials"}
+                        </label>
+
+                        {customCredentials.length > 0 && (
+                          <div className="rounded-xl border border-zinc-200/60 dark:border-zinc-700/40 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-800/60">
+                            {customCredentials.map((cred, i) => (
+                              <div key={i} className="flex items-center gap-3 px-3 py-2.5 bg-white dark:bg-zinc-900/40">
+                                <div className="h-6 w-6 rounded-md bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
+                                  <ShieldCheck className="h-3 w-3 text-emerald-500" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <span className="text-[12px] font-medium text-foreground/70">{cred.service}</span>
+                                  <p className="text-[10px] text-muted-foreground/40">{cred.name}</p>
+                                </div>
+                                <button
+                                  onClick={() => setCustomCredentials(prev => prev.filter((_, j) => j !== i))}
+                                  className="text-[10px] font-medium text-muted-foreground/30 hover:text-red-500 transition-colors shrink-0"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        <button
+                          onClick={() => { setCredDialogService(""); setCredDialogOpen(true) }}
+                          className="w-full flex items-center justify-center gap-1.5 h-9 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 text-[12px] font-medium text-muted-foreground/50 hover:text-foreground/70 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all"
+                        >
+                          <Plus className="h-3 w-3" />Add credential
+                        </button>
+
+                        <p className="text-[10px] text-muted-foreground/30 flex items-center gap-1">
+                          <ShieldCheck className="h-3 w-3" />Credentials are encrypted. They&apos;ll be included in team guidelines so employees know what&apos;s available.
+                        </p>
+                      </div>
+
+                      {/* Inline credential dialog */}
+                      <SecretDialog
+                        open={credDialogOpen}
+                        onOpenChange={setCredDialogOpen}
+                        initialService={credDialogService}
+                        onSaved={(info) => {
+                          if (credDialogService) {
+                            // Template credential — mark as added
+                            setAddedCredentials(prev => new Set(prev).add(credDialogService))
+                          } else if (info) {
+                            // Custom credential — track it
+                            setCustomCredentials(prev => [...prev, { service: info.service, name: info.name }])
+                          }
+                          setCredDialogOpen(false)
+                        }}
+                      />
+                    </div>
+
+                    {/* Limit error banner */}
+                    {limitError && (
+                      <div className="mx-7 mb-2 rounded-xl border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-950/30 p-4">
+                        <p className="text-[12px] font-medium text-amber-800 dark:text-amber-300 mb-2">{limitError.message}</p>
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href="/billing"
+                            className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12px] font-semibold bg-amber-600 hover:bg-amber-700 text-white transition-colors"
+                          >
+                            <TrendingUp className="h-3 w-3" />Upgrade Plan
+                          </Link>
+                          {limitError.needsMachines ? (
+                            <Link
+                              href="/machines"
+                              onClick={() => resetCreateTeam()}
+                              className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12px] font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+                            >
+                              <Cpu className="h-3 w-3" />Manage Machines
+                            </Link>
+                          ) : (
+                            <button
+                              onClick={() => { resetCreateTeam(); setActiveTab("employees") }}
+                              className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12px] font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+                            >
+                              <AgentIcon className="h-3 w-3" />Manage Employees
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Provisioning progress */}
+                    {provisioning && (
+                      <div className="mx-7 mb-2 rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-zinc-50 dark:bg-zinc-800/40 p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="relative h-5 w-5 shrink-0">
+                            <div className="absolute inset-0 rounded-full border-2 border-foreground/[0.08]" />
+                            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-foreground/60 animate-spin" />
+                          </div>
+                          <p className="text-[12px] font-medium text-foreground/70">{provisionStatus}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className="px-7 py-5 flex items-center justify-end gap-2.5 border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30">
+                      <button onClick={resetCreateTeam} disabled={provisioning} className="h-9 px-4 rounded-lg text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all disabled:opacity-40">
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleCreateTeam}
+                        disabled={!newTeamName.trim() || provisioning}
+                        className={cn(
+                          "h-9 px-5 rounded-lg text-[13px] font-semibold transition-all",
+                          newTeamName.trim() && !provisioning
+                            ? "text-background bg-foreground hover:bg-foreground/90 shadow-sm"
+                            : "text-muted-foreground/40 bg-zinc-100 dark:bg-zinc-800 cursor-not-allowed"
+                        )}
+                      >
+                        {provisioning ? "Setting up..." : selectedTemplate ? `Create Team & ${selectedTemplate.employees.length} Employees` : "Create Team"}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </DialogContent>
+            </Dialog>
+
+            {/* No teams yet — simple prompt */}
+            {teams.length === 0 && (
+              <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 py-14 text-center">
+                <Users className="h-8 w-8 text-muted-foreground/20 mx-auto mb-3" />
+                <p className="text-sm font-medium text-foreground/70 mb-1">No teams yet</p>
+                <p className="text-xs text-muted-foreground/50 max-w-xs mx-auto mb-5">
+                  Teams let employees share context and memory. Create one to build your org chart.
+                </p>
+                <button onClick={() => setShowCreateTeam(true)} className={cn("inline-flex items-center gap-2 h-9 px-5 rounded-xl text-sm font-medium transition-all text-background bg-foreground hover:bg-foreground/90")}>
+                  <Plus className="h-3.5 w-3.5" />New Team
+                </button>
               </div>
-            </div>
-          </div>
+            )}
+
+            {/* Org chart */}
+            {teams.length > 0 && (
+              <>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground/50">Drag unassigned employees onto teams to add them</p>
+                  <button onClick={() => setShowCreateTeam(true)} className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    <Plus className="h-3 w-3" />New Team
+                  </button>
+                </div>
+                <div className="relative rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-10 overflow-x-auto shadow-sm dark:shadow-none">
+                  {/* Dot grid background */}
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-[0.35] dark:opacity-[0.15]"
+                    style={{
+                      backgroundImage: "radial-gradient(circle, rgb(161 161 170) 0.75px, transparent 0.75px)",
+                      backgroundSize: "24px 24px",
+                    }}
+                  />
+                  {/* Subtle radial vignette */}
+                  <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(ellipse_at_center,transparent_40%,rgb(255_255_255/0.8)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_40%,rgb(9_9_11/0.8)_100%)]" />
+                  <div className="relative">
+                    <OrgChart teams={teams} schedules={schedules} onRefresh={refreshAll} onEdit={setEditChatId} />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
 

@@ -134,6 +134,7 @@ export const metadata: Metadata = {
     telephone: false,
   },
   metadataBase: new URL("https://coasty.ai"),
+  manifest: "/manifest.json",
   verification: {
     google: "google-site-verification-code",
     yandex: "yandex-verification-code",
@@ -150,19 +151,18 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      {!isDev ? (
-        <>
+      <head>
+        {!isDev ? (
           <Script
             async
             src="https://analytics.umami.is/script.js"
             data-website-id="42e5b68c-5478-41a6-bc68-088d029cee52"
           />
-        </>
-      ) : null}
-      {/* Structured Data for SEO */}
-      <Script
-        id="structured-data"
-        type="application/ld+json"
+        ) : null}
+        {/* Structured Data for SEO */}
+        <Script
+          id="structured-data"
+          type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
@@ -319,7 +319,8 @@ export default async function RootLayout({
           })
         }}
       />
-      <SEOSchemas />
+        <SEOSchemas />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning

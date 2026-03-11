@@ -683,6 +683,95 @@ async def update_triggers(
     return {"success": True, "triggers": schedule["triggers"]}
 
 
+# ─── Delegates ───
+
+
+class DelegateConfig(BaseModel):
+    chat_id: str = Field(description="Chat ID of the delegate employee")
+    title: str = Field(description="Display name of the delegate")
+    role: str = Field(default="General tasks", description="Role/specialty description")
+
+
+class UpdateDelegatesRequest(BaseModel):
+    delegates: List[DelegateConfig] = Field(
+        default_factory=list, description="List of delegate employees"
+    )
+
+
+@router.put("/{chat_id}/delegates")
+async def update_delegates(
+    chat_id: str,
+    req: UpdateDelegatesRequest,
+    user_id: str = Depends(get_verified_user_id),
+):
+    """Set the delegates list for a schedule (employees this agent can call)."""
+    chat = await _verify_chat_ownership(chat_id, user_id)
+    room_settings = _parse_room_settings(chat.get("room_settings"))
+    schedule = room_settings.get("schedule")
+    if not schedule:
+        raise HTTPException(status_code=400, detail="No schedule configured for this chat")
+
+    # Validate delegates
+    for delegate in req.delegates:
+        if delegate.chat_id == chat_id:
+            raise HTTPException(status_code=400, detail="An employee cannot delegate to itself")
+        # Verify delegate chat exists and belongs to user
+        delegate_chat = await _verify_chat_ownership(delegate.chat_id, user_id)
+        # Verify delegate has a schedule with a machine
+        delegate_rs = _parse_room_settings(delegate_chat.get("room_settings"))
+        delegate_sched = delegate_rs.get("schedule", {})
+        if not delegate_sched.get("target_machine_id"):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Delegate '{delegate.title}' has no machine assigned",
+            )
+
+    schedule["delegates"] = [
+        {
+            "chat_id": d.chat_id,
+            "title": d.title,
+            "role": d.role,
+            "added_at": datetime.now(timezone.utc).isoformat(),
+        }
+        for d in req.delegates
+    ]
+    room_settings["schedule"] = schedule
+
+    try:
+        import asyncio
+
+        loop = asyncio.get_event_loop()
+        await asyncio.wait_for(
+            loop.run_in_executor(
+                None,
+                lambda: db_service.client.table("chats")
+                .update({"room_settings": room_settings})
+                .eq("id", chat_id)
+                .eq("user_id", user_id)
+                .execute(),
+            ),
+            timeout=15,
+        )
+    except Exception as e:
+        logger.error(f"Failed to update delegates: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update delegates")
+
+    return {"success": True, "delegates": schedule["delegates"]}
+
+
+@router.get("/{chat_id}/delegates")
+async def get_delegates(
+    chat_id: str,
+    user_id: str = Depends(get_verified_user_id),
+):
+    """Get the delegates list for a schedule."""
+    chat = await _verify_chat_ownership(chat_id, user_id)
+    room_settings = _parse_room_settings(chat.get("room_settings"))
+    schedule = room_settings.get("schedule", {})
+    delegates = schedule.get("delegates", [])
+    return {"success": True, "delegates": delegates}
+
+
 # ─── Team Hubs ───
 
 

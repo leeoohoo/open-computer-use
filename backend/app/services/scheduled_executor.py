@@ -488,6 +488,12 @@ async def execute_scheduled_chat(
                 chat_title=_chat_title,
             )
 
+        # 6b. Enable delegation tools with execution-time context
+        executor.set_delegation_context(
+            user_id=user_id,
+            billing_session_id=billing_session_id,
+        )
+
         # 7. Consume the stream internally (no SSE)
         all_content = ""
         all_tool_invocations: List[Dict] = []

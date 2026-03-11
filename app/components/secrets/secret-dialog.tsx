@@ -20,10 +20,12 @@ interface SecretDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   secret?: UserSecret | null
-  onSaved: () => void
+  onSaved: (info?: { name: string; service: string }) => void
+  /** Pre-fill the service field when creating a new credential */
+  initialService?: string
 }
 
-export function SecretDialog({ open, onOpenChange, secret, onSaved }: SecretDialogProps) {
+export function SecretDialog({ open, onOpenChange, secret, onSaved, initialService }: SecretDialogProps) {
   const isEditing = !!secret
 
   const [name, setName] = useState("")
@@ -52,15 +54,15 @@ export function SecretDialog({ open, onOpenChange, secret, onSaved }: SecretDial
           .catch(() => {})
           .finally(() => setLoadingPassword(false))
       } else {
-        setName("")
-        setService("")
+        setName(initialService ? initialService.split(".")[0].charAt(0).toUpperCase() + initialService.split(".")[0].slice(1) : "")
+        setService(initialService ?? "")
         setUsername("")
         setPassword("")
         setNotes("")
         setShowPassword(false)
       }
     }
-  }, [open, secret])
+  }, [open, secret, initialService])
 
   async function handleSave() {
     if (!name.trim() || !service.trim() || !username.trim() || !password.trim()) {
@@ -88,7 +90,7 @@ export function SecretDialog({ open, onOpenChange, secret, onSaved }: SecretDial
 
       toast.success(isEditing ? "Credential updated" : "Credential saved")
       onOpenChange(false)
-      onSaved()
+      onSaved({ name: name.trim(), service: service.trim() })
     } catch {
       toast.error("Failed to save credential")
     } finally {

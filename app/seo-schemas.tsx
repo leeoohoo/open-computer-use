@@ -93,6 +93,18 @@ export function SEOSchemas() {
     "award": "#1 Ranked on OSWorld Benchmark — 82% completion rate across 369 real-world computer tasks"
   }
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://coasty.ai" },
+      { "@type": "ListItem", "position": 2, "name": "AI Agent Case Studies", "item": "https://coasty.ai/results" },
+      { "@type": "ListItem", "position": 3, "name": "Blog", "item": "https://coasty.ai/blog" },
+      { "@type": "ListItem", "position": 4, "name": "Download Desktop App", "item": "https://coasty.ai/download" },
+      { "@type": "ListItem", "position": 5, "name": "Compare AI Agents", "item": "https://coasty.ai/compare" }
+    ]
+  }
+
   const videoSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -178,6 +190,11 @@ export function SEOSchemas() {
         id="video-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }}
+      />
+      <script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
     </>
   )

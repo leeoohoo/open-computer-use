@@ -270,6 +270,10 @@ class MultiAgentExecutor:
             except Exception as e:
                 logger.warning(f"Failed to create shared memory tools: {e}")
 
+        # Delegation tools — populated later via set_delegation_context()
+        # because user_id and billing_session_id aren't available at construction time.
+        self.delegation_tools: Dict = {}
+
         # Agent system prompts
         self.agent_prompts = {
             AgentType.BROWSER: self._get_browser_agent_prompt(),
@@ -285,6 +289,34 @@ class MultiAgentExecutor:
             AgentType.DESKTOP: self._get_desktop_tools()
         }
     
+    def set_delegation_context(
+        self, user_id: str, billing_session_id: Optional[str] = None
+    ):
+        """Inject delegation context that's only available at execution time.
+
+        Must be called before stream_execution() for delegation tools to work.
+        Called by scheduled_executor.py after constructing the executor.
+        """
+        if self.chat_id:
+            try:
+                from app.services.delegation import create_delegation_tools
+
+                self.delegation_tools = create_delegation_tools(
+                    self.chat_id,
+                    self.chat_title,
+                    user_id,
+                    billing_session_id,
+                    caller_machine_id=self.machine_id,
+                )
+                # Rebuild agent_tools to include delegation tools
+                self.agent_tools = {
+                    AgentType.BROWSER: self._get_browser_tools(),
+                    AgentType.TERMINAL: self._get_terminal_tools(),
+                    AgentType.DESKTOP: self._get_desktop_tools(),
+                }
+            except Exception as e:
+                logger.warning(f"Failed to create delegation tools: {e}")
+
     def _create_credential_tool(self):
         """Create the lookup_credential tool.
 
@@ -1217,6 +1249,9 @@ CRITICAL: Return ONLY JSON. No text before/after."""
         # Add shared memory tools for team collaboration
         tools.update(self.shared_memory_tools)
 
+        # Add delegation tools for employee-to-employee invocation
+        tools.update(self.delegation_tools)
+
         return tools
 
     def _get_terminal_tools(self) -> Dict:
@@ -1233,6 +1268,7 @@ CRITICAL: Return ONLY JSON. No text before/after."""
         tools["lookup_credential"] = self.credential_tool
         tools["type_credential"] = self.type_credential_tool
         tools.update(self.shared_memory_tools)
+        tools.update(self.delegation_tools)
         return tools
 
     def _get_desktop_tools(self) -> Dict:
@@ -1247,8 +1283,9 @@ CRITICAL: Return ONLY JSON. No text before/after."""
         tools["lookup_credential"] = self.credential_tool
         tools["type_credential"] = self.type_credential_tool
         tools.update(self.shared_memory_tools)
+        tools.update(self.delegation_tools)
         return tools
-    
+
     async def plan_tasks(self, user_request: str, context: Optional[str] = None) -> TaskPlan:
         """Create a task plan from user request with retry mechanism"""
         logger.info(f"Planning tasks for request: {user_request[:100]}...")

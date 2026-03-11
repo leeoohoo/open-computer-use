@@ -16,9 +16,12 @@ import {
   getSchedule,
   listSchedules,
   updateTriggers,
+  getDelegates,
+  updateDelegates,
   type ScheduleConfig,
   type ScheduleResponse,
   type TriggerConfig,
+  type DelegateConfig,
 } from "@/lib/services/schedules-api"
 import { trackScheduleCreated } from "@/lib/posthog/analytics"
 import type { UserMachine } from "@/types/machines.types"
@@ -76,6 +79,8 @@ export function ScheduleDialog({
   const [loadingExisting, setLoadingExisting] = useState(false)
   const { isActiveSubscriber, loading: subLoading } = useSubscription()
   const [triggers, setTriggers] = useState<TriggerConfig[]>([])
+  const [delegates, setDelegates] = useState<DelegateConfig[]>([])
+  const [delegatesExpanded, setDelegatesExpanded] = useState(false)
   const [allSchedules, setAllSchedules] = useState<ScheduleResponse[]>([])
   const [triggersExpanded, setTriggersExpanded] = useState(true)
 
@@ -110,16 +115,23 @@ export function ScheduleDialog({
       setError(null)
       setLoadingExisting(true)
       setTriggers([])
+      setDelegates([])
       setTriggersExpanded(false)
+      setDelegatesExpanded(false)
       setEmployeeName(chatTitle && chatTitle.length <= 30 ? chatTitle : randomEmployeeName())
 
-      // Load schedule + all schedules for trigger targets
+      // Load schedule + all schedules for trigger targets + delegates
       Promise.all([
         getSchedule(chatId),
         listSchedules(),
+        getDelegates(chatId).catch(() => [] as DelegateConfig[]),
       ])
-        .then(([schedule, allScheds]) => {
+        .then(([schedule, allScheds, existingDelegates]) => {
           setAllSchedules(allScheds.filter((s) => s.chat_id !== chatId))
+          setDelegates(existingDelegates)
+          if (existingDelegates.length > 0) {
+            setDelegatesExpanded(true)
+          }
           if (schedule) {
             setExistingSchedule(schedule)
             setConfig((prev) => ({
@@ -200,6 +212,9 @@ export function ScheduleDialog({
       if (triggers.length > 0) {
         await updateTriggers(chatId, triggers)
       }
+
+      // Save delegates
+      await updateDelegates(chatId, delegates)
 
       trackScheduleCreated(chatId, config.frequency)
       onScheduleCreated?.(schedule)
@@ -343,7 +358,7 @@ export function ScheduleDialog({
                 rows={3}
                 className={cn(
                   "resize-none text-sm leading-relaxed rounded-xl",
-                  "!bg-white dark:bg-zinc-800 text-foreground",
+                  "bg-white dark:bg-zinc-800 text-foreground",
                   "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:border-zinc-400 dark:focus-visible:border-zinc-500",
                   "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.3)]",
                   "placeholder:text-muted-foreground",
@@ -481,6 +496,146 @@ export function ScheduleDialog({
                                     event: "on_complete",
                                     pass_output: true,
                                     enabled: true,
+                                  }])
+                                }}
+                                className={cn(
+                                  "flex items-center gap-3 w-full px-3.5 py-2.5 text-left",
+                                  "hover:bg-white dark:bg-zinc-800 transition-all",
+                                )}
+                              >
+                                <div className={cn(
+                                  "h-6 w-6 rounded-full flex items-center justify-center shrink-0",
+                                  active ? "bg-emerald-500/15" : "bg-zinc-100 dark:bg-zinc-800",
+                                )}>
+                                  <AgentIcon className={cn("h-2.5 w-2.5", active ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/50")} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs font-medium text-foreground/80 truncate">{s.title || "Untitled Employee"}</p>
+                                </div>
+                                <Plus className="h-3 w-3 text-muted-foreground/40 shrink-0" />
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })()}
+                </div>
+              )}
+            </div>
+
+            {/* Delegates */}
+            <div className="space-y-2.5">
+              <button
+                type="button"
+                onClick={() => setDelegatesExpanded(!delegatesExpanded)}
+                className="flex items-center gap-2 w-full"
+              >
+                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800">
+                  <User className="h-3 w-3 text-foreground/50" />
+                </div>
+                <span className="text-[11px] font-semibold text-foreground/80 tracking-wide uppercase">
+                  Delegates
+                </span>
+                {delegates.length > 0 && (
+                  <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-muted-foreground tabular-nums">
+                    {delegates.length}
+                  </span>
+                )}
+                <ChevronDown className={cn(
+                  "h-3 w-3 ml-auto text-muted-foreground transition-transform duration-200",
+                  delegatesExpanded && "rotate-180",
+                )} />
+              </button>
+
+              {delegatesExpanded && (
+                <div className="space-y-2">
+                  <p className="text-[11px] text-muted-foreground pl-0.5">
+                    Employees this agent can call mid-task to delegate subtasks to.
+                  </p>
+
+                  {/* Existing delegates */}
+                  {delegates.map((del, idx) => {
+                    const target = allSchedules.find((s) => s.chat_id === del.chat_id)
+                    return (
+                      <div
+                        key={del.chat_id}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl px-3.5 py-3",
+                          "bg-white dark:bg-zinc-800 ring-1 ring-zinc-200 dark:ring-zinc-700",
+                          "transition-all hover:ring-zinc-300 dark:hover:ring-zinc-600",
+                        )}
+                      >
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                          <User className="h-3 w-3 text-foreground/50" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-foreground truncate">
+                            {target?.title || del.title || "Unknown Employee"}
+                          </p>
+                          <input
+                            type="text"
+                            value={del.role}
+                            onChange={(e) => {
+                              const updated = [...delegates]
+                              updated[idx] = { ...updated[idx], role: e.target.value }
+                              setDelegates(updated)
+                            }}
+                            placeholder="Role description (e.g. 'Research specialist')"
+                            className={cn(
+                              "mt-1 w-full text-[11px] bg-transparent text-muted-foreground",
+                              "border-none outline-none ring-0 p-0",
+                              "placeholder:text-muted-foreground/40",
+                            )}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setDelegates(delegates.filter((_, i) => i !== idx))}
+                          className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground/40 hover:text-foreground hover:bg-zinc-100 dark:bg-zinc-800 transition-all"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )
+                  })}
+
+                  {/* Add delegate — employee picker */}
+                  {(() => {
+                    const available = allSchedules.filter(
+                      (s) => !delegates.some((d) => d.chat_id === s.chat_id)
+                    )
+                    if (available.length === 0 && allSchedules.length === 0) {
+                      return (
+                        <div className={cn(
+                          "rounded-xl py-4 text-center",
+                          "border border-dashed border-zinc-300 dark:border-zinc-700",
+                        )}>
+                          <p className="text-[11px] text-muted-foreground/50">Hire more employees to set up delegates</p>
+                        </div>
+                      )
+                    }
+                    if (available.length === 0) return null
+                    return (
+                      <div className={cn(
+                        "rounded-xl overflow-hidden",
+                        "ring-1 ring-zinc-200 dark:ring-zinc-700",
+                      )}>
+                        <div className="px-3.5 py-2 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60">
+                          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Add delegate</p>
+                        </div>
+                        <div className="max-h-[140px] overflow-y-auto scrollbar-invisible divide-y divide-zinc-100 dark:divide-zinc-800">
+                          {available.map((s) => {
+                            const active = s.enabled && !s.paused_reason
+                            return (
+                              <button
+                                key={s.chat_id}
+                                type="button"
+                                onClick={() => {
+                                  setDelegates([...delegates, {
+                                    chat_id: s.chat_id,
+                                    title: s.title || "Untitled Employee",
+                                    role: "",
                                   }])
                                 }}
                                 className={cn(
