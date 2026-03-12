@@ -1,7 +1,7 @@
 "use client"
 
 import { toast } from "@/components/ui/toast"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react"
 import { MODEL_DEFAULT } from "../../config"
 import { SystemPrompts } from "../../prompts/system-prompts"
 import type { Chats } from "../types"
@@ -19,6 +19,9 @@ interface ChatsContextType {
   chats: Chats[]
   refresh: () => Promise<void>
   isLoading: boolean
+  isLoadingMore: boolean
+  hasMore: boolean
+  loadMore: () => Promise<void>
   updateTitle: (id: string, title: string) => Promise<void>
   updateChat: (id: string, updates: Partial<Chats>) => Promise<void>
   deleteChat: (
@@ -56,7 +59,10 @@ export function ChatsProvider({
   children: React.ReactNode
 }) {
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
   const [chats, setChats] = useState<Chats[]>([])
+  const offsetRef = useRef(0)
 
   useEffect(() => {
     if (!userId) return
@@ -67,8 +73,10 @@ export function ChatsProvider({
       setChats(cached)
 
       try {
-        const fresh = await fetchAndCacheChats(userId)
+        const { chats: fresh, hasMore: more } = await fetchAndCacheChats(userId, 0)
         setChats(fresh)
+        setHasMore(more)
+        offsetRef.current = fresh.length
       } finally {
         setIsLoading(false)
       }
@@ -77,11 +85,34 @@ export function ChatsProvider({
     load()
   }, [userId])
 
+  const loadMore = useCallback(async () => {
+    if (!userId || isLoadingMore || !hasMore) return
+
+    setIsLoadingMore(true)
+    try {
+      const { chats: moreChats, hasMore: stillMore } = await fetchAndCacheChats(
+        userId,
+        offsetRef.current
+      )
+      setChats(prev => {
+        const existingIds = new Set(prev.map(c => c.id))
+        const newChats = moreChats.filter(c => !existingIds.has(c.id))
+        return [...prev, ...newChats]
+      })
+      setHasMore(stillMore)
+      offsetRef.current += moreChats.length
+    } finally {
+      setIsLoadingMore(false)
+    }
+  }, [userId, isLoadingMore, hasMore])
+
   const refresh = async () => {
     if (!userId) return
 
-    const fresh = await fetchAndCacheChats(userId)
+    const { chats: fresh, hasMore: more } = await fetchAndCacheChats(userId, 0)
     setChats(fresh)
+    setHasMore(more)
+    offsetRef.current = fresh.length
   }
 
   const updateTitle = async (id: string, title: string) => {
@@ -238,6 +269,9 @@ export function ChatsProvider({
         updateChat,
         bumpChat,
         isLoading,
+        isLoadingMore,
+        hasMore,
+        loadMore,
       }}
     >
       {children}

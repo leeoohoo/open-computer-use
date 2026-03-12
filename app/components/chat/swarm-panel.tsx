@@ -6,35 +6,7 @@ import { CircleNotch, GitFork, Robot, Stop, CheckCircle, XCircle, Warning } from
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-
-// Strip ALL internal agent tags/markers from display text
-function stripAgentTags(text: string): string {
-  return text
-    // <cua-section type="...">...</cua-section> (matched + partial/unclosed)
-    .replace(/<cua-section[^>]*>[\s\S]*?<\/cua-section>/g, "")
-    .replace(/<cua-section[^>]*>/g, "")
-    .replace(/<\/cua-section>/g, "")
-    // [TASK_PLAN_START]...[TASK_PLAN_END]
-    .replace(/\[TASK_PLAN_START\][\s\S]*?\[TASK_PLAN_END\]/g, "")
-    .replace(/\[TASK_PLAN_START\]/g, "")
-    .replace(/\[TASK_PLAN_END\]/g, "")
-    // [Coasty_REPORT_START]...[Coasty_REPORT_END]
-    .replace(/\[Coasty_REPORT_START\][\s\S]*?\[Coasty_REPORT_END\]/g, "")
-    .replace(/\[Coasty_REPORT_START\]/g, "")
-    .replace(/\[Coasty_REPORT_END\]/g, "")
-    // <file-attachment .../> and <file-attachment ...>...</file-attachment>
-    .replace(/<file-attachment[^>]*>[\s\S]*?<\/file-attachment>/g, "")
-    .replace(/<file-attachment[^>]*\/>/g, "")
-    .replace(/<file-attachment[^>]*>/g, "")
-    .replace(/<\/file-attachment>/g, "")
-    // Agent code blocks: ```python agent.* ```
-    .replace(/```python\s+agent\.[\s\S]*?```/g, "")
-    // [NEED_USER_INPUT] markers
-    .replace(/\[NEED_USER_INPUT\]/g, "")
-    // Generic self-closing XML-like tags
-    .replace(/<[a-z][\w-]*[^>]*\/>/g, "")
-    .trim()
-}
+import { SwarmTree, stripAgentTags, type SwarmEvent } from "@/app/components/swarms/swarm-tree"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -59,6 +31,8 @@ interface SwarmChunk {
   error?: string
   content?: string
   machine_statuses?: Record<string, string>
+  tool_name?: string
+  screenshot?: string
   [key: string]: any
 }
 
@@ -78,7 +52,9 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
   const [machines, setMachines] = useState<SwarmMachine[]>([])
   const [overallStatus, setOverallStatus] = useState<"idle" | "creating" | "running" | "completed" | "cancelled" | "failed">("idle")
   const [error, setError] = useState<string | null>(null)
+  const [swarmEvents, setSwarmEvents] = useState<SwarmEvent[]>([])
   const eventSourceRef = useRef<ReadableStreamDefaultReader | null>(null)
+  const eventIdCounter = useRef(0)
 
   // Start listening to the swarm SSE stream
   const startListening = useCallback(async () => {
@@ -87,6 +63,8 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
     setOverallStatus("creating")
     setError(null)
     setMachines([])
+    setSwarmEvents([])
+    eventIdCounter.current = 0
 
     try {
       const res = await fetch("/api/swarm", {
@@ -148,6 +126,21 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
     }
   }, [swarmId, isActive, prompt, machineCount])
 
+  // Convert SSE chunk to SwarmEvent and accumulate
+  const appendSwarmEvent = useCallback((eventType: string, chunk: SwarmChunk) => {
+    const event: SwarmEvent = {
+      id: `sse-${eventIdCounter.current++}`,
+      swarm_id: chunk.swarm_id || swarmId || "",
+      machine_index: chunk.machine_index ?? null,
+      event_type: eventType,
+      content: chunk.content || chunk.status || chunk.error || "",
+      screenshot: chunk.screenshot || null,
+      tool_name: chunk.tool_name || null,
+      created_at: new Date().toISOString(),
+    }
+    setSwarmEvents((prev) => [...prev, event])
+  }, [swarmId])
+
   const handleChunk = useCallback((code: string, chunk: SwarmChunk) => {
     const type = chunk.type
 
@@ -164,6 +157,7 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
         )
       } else if (chunk.status === "completed") {
         setOverallStatus("completed")
+        appendSwarmEvent("swarm_meta", chunk)
         if (chunk.machine_statuses) {
           setMachines((prev) =>
             prev.map((m) => ({
@@ -174,6 +168,7 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
         }
       } else if (chunk.status === "cancelled") {
         setOverallStatus("cancelled")
+        appendSwarmEvent("swarm_meta", chunk)
       }
     } else if (type === "swarm_machine_status") {
       const mid = chunk.machine_id
@@ -184,6 +179,7 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
             m.machine_id === mid ? { ...m, status: status as any } : m
           )
         )
+        appendSwarmEvent("machine_status", chunk)
       }
     } else if (type === "text" && chunk.machine_index !== undefined) {
       const cleaned = stripAgentTags(chunk.content || "").slice(0, 120)
@@ -196,6 +192,11 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
           )
         )
       }
+      appendSwarmEvent("text", chunk)
+    } else if (type === "tool_call" && chunk.machine_index !== undefined) {
+      appendSwarmEvent("tool_call", chunk)
+    } else if (type === "tool_result" && chunk.machine_index !== undefined) {
+      appendSwarmEvent("tool_result", chunk)
     } else if (type === "step_complete" && chunk.machine_id) {
       setMachines((prev) =>
         prev.map((m) =>
@@ -204,6 +205,7 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
             : m
         )
       )
+      appendSwarmEvent("step_complete", chunk)
     } else if (type === "error") {
       if (chunk.machine_id) {
         setMachines((prev) =>
@@ -216,8 +218,9 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
       } else {
         setError(chunk.error || "Unknown error")
       }
+      appendSwarmEvent("error", chunk)
     }
-  }, [])
+  }, [appendSwarmEvent])
 
   useEffect(() => {
     if (isActive && swarmId) {
@@ -247,8 +250,12 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
 
   const completed = machines.filter((m) => m.status === "completed").length
   const failed = machines.filter((m) => m.status === "failed").length
-  const running = machines.filter((m) => m.status === "running").length
   const total = machines.length
+
+  // Show tree graph once we have events with machine data
+  const hasTreeEvents = swarmEvents.some(
+    (e) => e.machine_index !== null && ["text", "tool_call", "tool_result", "step_complete"].includes(e.event_type)
+  )
 
   return (
     <AnimatePresence>
@@ -286,7 +293,7 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
           </div>
 
           {/* Prompt preview */}
-          {prompt && (
+          {prompt && !hasTreeEvents && (
             <div className="px-4 py-2 border-b border-border/30">
               <p className="text-xs text-muted-foreground truncate">
                 {prompt}
@@ -301,7 +308,7 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
             </div>
           )}
 
-          {/* Machine list */}
+          {/* Creating state */}
           {overallStatus === "creating" && machines.length === 0 && (
             <div className="flex items-center gap-2 px-4 py-6 justify-center">
               <CircleNotch className="size-4 animate-spin text-muted-foreground" />
@@ -311,16 +318,32 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
             </div>
           )}
 
-          {machines.length > 0 && (
-            <div className="divide-y divide-border/30">
-              {machines.map((m) => (
-                <MachineRow key={m.machine_id} machine={m} />
-              ))}
-            </div>
+          {/* Tree graph — shown once events start arriving */}
+          {hasTreeEvents ? (
+            <SwarmTree
+              events={swarmEvents}
+              machineCount={machineCount || total}
+              prompt={prompt}
+              status={overallStatus}
+              className="rounded-b-2xl"
+              containerClassName="rounded-b-2xl"
+              height={Math.min(450, Math.max(280, (machineCount || total) * 60 + 180))}
+            />
+          ) : (
+            <>
+              {/* Machine list fallback — before events arrive */}
+              {machines.length > 0 && !hasTreeEvents && (
+                <div className="divide-y divide-border/30">
+                  {machines.map((m) => (
+                    <MachineRow key={m.machine_id} machine={m} />
+                  ))}
+                </div>
+              )}
+            </>
           )}
 
           {/* Summary footer */}
-          {(overallStatus === "completed" || overallStatus === "cancelled") && (
+          {(overallStatus === "completed" || overallStatus === "cancelled") && !hasTreeEvents && (
             <div className="px-4 py-2.5 bg-muted/30 border-t border-border/30">
               <p className="text-xs text-muted-foreground">
                 {overallStatus === "completed"

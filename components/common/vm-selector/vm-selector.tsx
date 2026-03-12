@@ -228,7 +228,7 @@ export function VMSelector({
                                    allMachines.find(m => m.id === selectedVMId);
             return (
               <div className="flex items-center gap-1 sm:gap-2 truncate">
-                <MacMiniIcon className="h-3.5 w-3.5 shrink-0" />
+                <MacMiniIcon className="h-5 w-5 shrink-0" />
                 <span className="truncate max-w-[60px] sm:max-w-none">
                   {selectedMachine?.displayName || "Unknown VM"}
                 </span>
@@ -253,7 +253,7 @@ export function VMSelector({
           })()
         ) : (
           <div className="flex items-center gap-1 sm:gap-2">
-            <MacMiniIcon className="h-3.5 w-3.5 opacity-50 shrink-0" />
+            <MacMiniIcon className="h-5 w-5 opacity-50 shrink-0" />
             <span className="hidden sm:inline">Select a Computer</span>
             <span className="sm:hidden text-[11px]">Select</span>
             <span className="hidden sm:inline-flex px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 border bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20">
@@ -276,7 +276,7 @@ export function VMSelector({
           <SelectItem key={machine.id} value={machine.id} className="py-2">
             <div className="flex flex-col gap-1.5 w-full">
               <div className="flex items-center gap-2 w-full">
-                <MacMiniIcon className="h-4 w-4 shrink-0" />
+                <MacMiniIcon className="h-5 w-5 shrink-0" />
                 <span className="text-sm font-medium truncate flex-1">
                   {machine.displayName}
                   {machine.settings?.isLocal && (

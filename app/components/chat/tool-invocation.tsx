@@ -15,10 +15,12 @@ interface ToolInvocationProps {
   toolInvocations: ToolInvocationUIPart[]
   className?: string
   defaultOpen?: boolean
+  fullyRounded?: boolean
 }
 
 export function ToolInvocation({
   toolInvocations,
+  fullyRounded,
 }: ToolInvocationProps) {
   const { isOpen, setIsOpen } = useProjectNavigator()
   const [previousScreenshot, setPreviousScreenshot] = useState<string | null>(null)
@@ -374,7 +376,7 @@ export function ToolInvocation({
           animate="idle"
           className={cn(
             "group relative w-full",
-            "rounded-t-2xl rounded-b-none",
+            fullyRounded ? "rounded-2xl" : "rounded-t-2xl rounded-b-none",
             "bg-gradient-to-b from-neutral-300/90 to-neutral-100 dark:from-neutral-600/90 dark:to-neutral-800",
             "px-4 py-3",
             "cursor-pointer"

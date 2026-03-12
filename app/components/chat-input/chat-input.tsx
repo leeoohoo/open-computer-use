@@ -262,7 +262,7 @@ function VMStatusBar({ isVisible, machineName, status }: { isVisible: boolean; m
               <span className="text-sm font-medium">
                 {getStatusMessage()}
               </span>
-              <MacMiniIcon className={`h-4 w-4 ${getIconColor()}`} />
+              <MacMiniIcon className={`h-5 w-5 ${getIconColor()}`} />
             </div>
           </div>
         </motion.div>

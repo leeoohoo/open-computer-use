@@ -32,6 +32,7 @@ import { QuickStartGuide } from "./quick-start-guide"
 import Link from "next/link"
 import { ShieldCheck } from "lucide-react"
 import { SwarmPanel } from "./swarm-panel"
+import { ActiveSwarmBanner } from "./active-swarm-banner"
 
 const handwriting = Caveat({
   subsets: ["latin"],
@@ -468,12 +469,19 @@ export function Chat() {
     [effectiveMessages, status, handleDelete, handleEdit, handleReload]
   )
 
-  // Swarm mode state
+  // Swarm mode state — only available on homepage (no active chat)
   const [swarmMode, setSwarmMode] = useState(false)
   const [swarmCount, setSwarmCount] = useState(2)
   const [swarmActive, setSwarmActive] = useState(false)
   const [swarmId, setSwarmId] = useState<string | null>(null)
   const [swarmPrompt, setSwarmPrompt] = useState("")
+
+  // Reset swarm mode when entering a chat
+  useEffect(() => {
+    if (effectiveChatId) {
+      setSwarmMode(false)
+    }
+  }, [effectiveChatId])
 
   // Check if there are tool invocations to show above the chat input
   const hasToolInvocations = useMemo(() => {
@@ -528,10 +536,11 @@ export function Chat() {
       status,
       onAuthRequired: () => setHasDialogAuth(true),
       hasToolInvocations,
-      swarmMode,
-      onSwarmModeChange: setSwarmMode,
-      swarmCount,
-      onSwarmCountChange: setSwarmCount,
+      // Swarm mode only available on homepage (no active chat)
+      swarmMode: !effectiveChatId ? swarmMode : false,
+      onSwarmModeChange: !effectiveChatId ? setSwarmMode : undefined,
+      swarmCount: !effectiveChatId ? swarmCount : undefined,
+      onSwarmCountChange: !effectiveChatId ? setSwarmCount : undefined,
       userTier,
       maxSwarmMachines,
       }
@@ -870,6 +879,8 @@ export function Chat() {
             className="mb-3 -mx-4 sm:mx-0"
           />
         )} */}
+        {/* Show active swarm banner on homepage when no local swarm is running */}
+        {showOnboarding && !swarmActive && <ActiveSwarmBanner />}
         <SwarmPanel
           isActive={swarmActive}
           swarmId={swarmId}

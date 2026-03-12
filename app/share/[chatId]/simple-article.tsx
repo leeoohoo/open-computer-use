@@ -796,7 +796,7 @@ function SimpleArticleContent({
                         transition={{ duration: 0.2 }}
                         className="relative z-0 mb-1 px-1"
                       >
-                        <ToolInvocation toolInvocations={currentToolInvocations} />
+                        <ToolInvocation toolInvocations={currentToolInvocations} fullyRounded />
                       </motion.div>
                     )}
                   </AnimatePresence>

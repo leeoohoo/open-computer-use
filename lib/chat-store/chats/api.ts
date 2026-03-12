@@ -6,21 +6,30 @@ import { MODEL_DEFAULT } from "../../config"
 import { fetchClient } from "../../fetch"
 import { API_ROUTE_UPDATE_CHAT_MODEL } from "../../routes"
 
-export async function getChatsForUserInDb(userId: string): Promise<Chats[]> {
-  const supabase = createClient()
-  if (!supabase) return []
+const CHATS_PAGE_SIZE = 20
 
-  // Get chats owned by the user
+export async function getChatsForUserInDb(
+  userId: string,
+  offset: number = 0,
+  limit: number = CHATS_PAGE_SIZE
+): Promise<{ chats: Chats[]; hasMore: boolean }> {
+  const supabase = createClient()
+  if (!supabase) return { chats: [], hasMore: false }
+
+  // Get chats owned by the user with pagination
   const { data: ownedChats, error: ownedError } = await supabase
     .from("chats")
     .select("*")
     .eq("user_id", userId)
     .order("updated_at", { ascending: false })
+    .range(offset, offset + limit - 1)
 
   if (ownedError) {
     console.error("Failed to fetch owned chats:", ownedError)
-    return []
+    return { chats: [], hasMore: false }
   }
+
+  const hasMore = (ownedChats || []).length === limit
 
   // For each chat, get the last assistant message
   const chatsWithPreviews = await Promise.all(
@@ -100,7 +109,7 @@ export async function getChatsForUserInDb(userId: string): Promise<Chats[]> {
     })
   )
 
-  return chatsWithPreviews || []
+  return { chats: chatsWithPreviews || [], hasMore }
 }
 
 export async function updateChatTitleInDb(id: string, title: string) {
@@ -155,18 +164,30 @@ export async function createChatInDb(
   return data.id
 }
 
-export async function fetchAndCacheChats(userId: string): Promise<Chats[]> {
+export async function fetchAndCacheChats(
+  userId: string,
+  offset: number = 0,
+  limit: number = CHATS_PAGE_SIZE
+): Promise<{ chats: Chats[]; hasMore: boolean }> {
   if (!isSupabaseEnabled) {
-    return await getCachedChats()
+    const cached = await getCachedChats()
+    return { chats: cached, hasMore: false }
   }
 
-  const data = await getChatsForUserInDb(userId)
+  const { chats: data, hasMore } = await getChatsForUserInDb(userId, offset, limit)
 
-  if (data.length > 0) {
+  if (offset === 0 && data.length > 0) {
+    // Only overwrite cache on initial load
     await writeToIndexedDB("chats", data)
+  } else if (data.length > 0) {
+    // Append to cache for subsequent pages
+    const cached = await getCachedChats()
+    const existingIds = new Set(cached.map(c => c.id))
+    const newChats = data.filter(c => !existingIds.has(c.id))
+    await writeToIndexedDB("chats", [...cached, ...newChats])
   }
 
-  return data
+  return { chats: data, hasMore }
 }
 
 export async function getCachedChats(): Promise<Chats[]> {
