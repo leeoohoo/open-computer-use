@@ -71,8 +71,29 @@ export function SEOSchemas() {
         "name": "Free Tier",
         "price": "0",
         "priceCurrency": "USD",
+        "priceValidUntil": "2027-12-31",
         "availability": "https://schema.org/InStock",
-        "url": "https://coasty.ai/auth"
+        "url": "https://coasty.ai/auth",
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": "0",
+            "currency": "USD"
+          },
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "handlingTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" },
+            "transitTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" }
+          },
+          "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "US" }
+        },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "US",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted",
+          "merchantReturnDays": "0"
+        }
       },
       {
         "@type": "Offer",
@@ -81,7 +102,27 @@ export function SEOSchemas() {
         "priceCurrency": "USD",
         "priceValidUntil": "2027-12-31",
         "availability": "https://schema.org/InStock",
-        "url": "https://coasty.ai/auth"
+        "url": "https://coasty.ai/auth",
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": "0",
+            "currency": "USD"
+          },
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "handlingTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" },
+            "transitTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" }
+          },
+          "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "US" }
+        },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "US",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted",
+          "merchantReturnDays": "0"
+        }
       }
     ],
     "aggregateRating": {
@@ -117,7 +158,7 @@ export function SEOSchemas() {
         "name": "Coasty AI Agent — Autonomous Reddit Marketing Campaign",
         "description": "Watch Coasty autonomously run a full Reddit marketing campaign: researching competitors, identifying subreddits, crafting posts, and engaging with comments.",
         "thumbnailUrl": "https://img.youtube.com/vi/icxgLDephHE/maxresdefault.jpg",
-        "uploadDate": "2026-03-04",
+        "uploadDate": "2026-03-04T00:00:00+00:00",
         "contentUrl": "https://youtube.com/watch?v=icxgLDephHE",
         "embedUrl": "https://youtube.com/embed/icxgLDephHE"
       },
@@ -127,7 +168,7 @@ export function SEOSchemas() {
         "name": "Coasty AI Agent — Autonomous Sales Prospecting & Email Outreach",
         "description": "Coasty finds prospective customers, researches their companies, writes personalized outreach emails, and sends them autonomously.",
         "thumbnailUrl": "https://img.youtube.com/vi/qTvmGfg3HVw/maxresdefault.jpg",
-        "uploadDate": "2026-02-28",
+        "uploadDate": "2026-02-28T00:00:00+00:00",
         "contentUrl": "https://youtube.com/watch?v=qTvmGfg3HVw",
         "embedUrl": "https://youtube.com/embed/qTvmGfg3HVw"
       },
@@ -137,7 +178,7 @@ export function SEOSchemas() {
         "name": "Coasty AI Agent — Automated QA Testing",
         "description": "Watch Coasty QA test its own product: navigating checkout flows, catching bugs, and filing detailed reports.",
         "thumbnailUrl": "https://img.youtube.com/vi/Wbo2o74hVIo/maxresdefault.jpg",
-        "uploadDate": "2026-03-03",
+        "uploadDate": "2026-03-03T00:00:00+00:00",
         "contentUrl": "https://youtube.com/watch?v=Wbo2o74hVIo",
         "embedUrl": "https://youtube.com/embed/Wbo2o74hVIo"
       },
@@ -147,7 +188,7 @@ export function SEOSchemas() {
         "name": "Coasty AI Agent — Autonomous Job Applications",
         "description": "Coasty finds matching roles, tailors resumes, and submits job applications across multiple platforms.",
         "thumbnailUrl": "https://img.youtube.com/vi/mH-csaCa508/maxresdefault.jpg",
-        "uploadDate": "2026-02-24",
+        "uploadDate": "2026-02-24T00:00:00+00:00",
         "contentUrl": "https://youtube.com/watch?v=mH-csaCa508",
         "embedUrl": "https://youtube.com/embed/mH-csaCa508"
       },
@@ -157,7 +198,7 @@ export function SEOSchemas() {
         "name": "Coasty AI Agent — Filling Out YC S26 Application",
         "description": "Watch Coasty fill out the entire Y Combinator application: 30+ fields across multiple pages, completed autonomously.",
         "thumbnailUrl": "https://img.youtube.com/vi/AnHJuRMLCnE/maxresdefault.jpg",
-        "uploadDate": "2026-02-26",
+        "uploadDate": "2026-02-26T00:00:00+00:00",
         "contentUrl": "https://youtube.com/watch?v=AnHJuRMLCnE",
         "embedUrl": "https://youtube.com/embed/AnHJuRMLCnE"
       },
@@ -167,7 +208,7 @@ export function SEOSchemas() {
         "name": "Coasty AI Agent — Posting on Hacker News Autonomously",
         "description": "Coasty drafts a blog post, submits it to Hacker News, and engages with comments in real time.",
         "thumbnailUrl": "https://img.youtube.com/vi/A_OvNh51Npg/maxresdefault.jpg",
-        "uploadDate": "2026-02-22",
+        "uploadDate": "2026-02-22T00:00:00+00:00",
         "contentUrl": "https://youtube.com/watch?v=A_OvNh51Npg",
         "embedUrl": "https://youtube.com/embed/A_OvNh51Npg"
       }

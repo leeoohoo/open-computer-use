@@ -179,7 +179,25 @@ export default async function RootLayout({
                 "@type": "Offer",
                 "name": "Free Tier",
                 "price": "0",
-                "priceCurrency": "USD"
+                "priceCurrency": "USD",
+                "priceValidUntil": "2027-12-31",
+                "availability": "https://schema.org/InStock",
+                "shippingDetails": {
+                  "@type": "OfferShippingDetails",
+                  "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "USD" },
+                  "deliveryTime": {
+                    "@type": "ShippingDeliveryTime",
+                    "handlingTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" },
+                    "transitTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" }
+                  },
+                  "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "US" }
+                },
+                "hasMerchantReturnPolicy": {
+                  "@type": "MerchantReturnPolicy",
+                  "applicableCountry": "US",
+                  "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted",
+                  "merchantReturnDays": "0"
+                }
               },
               {
                 "@type": "Offer",
@@ -188,7 +206,23 @@ export default async function RootLayout({
                 "priceCurrency": "USD",
                 "billingIncrement": "month",
                 "priceValidUntil": "2027-12-31",
-                "availability": "https://schema.org/InStock"
+                "availability": "https://schema.org/InStock",
+                "shippingDetails": {
+                  "@type": "OfferShippingDetails",
+                  "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "USD" },
+                  "deliveryTime": {
+                    "@type": "ShippingDeliveryTime",
+                    "handlingTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" },
+                    "transitTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" }
+                  },
+                  "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "US" }
+                },
+                "hasMerchantReturnPolicy": {
+                  "@type": "MerchantReturnPolicy",
+                  "applicableCountry": "US",
+                  "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted",
+                  "merchantReturnDays": "0"
+                }
               }
             ],
             "aggregateRating": {

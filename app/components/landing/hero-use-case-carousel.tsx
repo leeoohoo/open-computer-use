@@ -19,16 +19,16 @@ interface UseCase {
 }
 
 const USE_CASES: UseCase[] = [
-  { label: "Marketing", headline: "runs your marketing.", task: "Run a Reddit campaign — research, post, engage, and report back", videoId: "icxgLDephHE" },
-  { label: "Sales", headline: "works your pipeline.", task: "Research 50 leads, personalize outreach, and send follow-ups", videoId: "qTvmGfg3HVw" },
-  { label: "QA", headline: "tests your product.", task: "Run every checkout flow, catch bugs, and file detailed reports", videoId: "Wbo2o74hVIo" },
-  { label: "Lead Gen", headline: "fills your pipeline.", task: "Build prospect lists and launch outreach sequences at scale", videoId: "icxgLDephHE" },
-  { label: "Recruiting", headline: "hires your team.", task: "Source candidates on LinkedIn, screen profiles, and schedule calls", videoId: "AnHJuRMLCnE" },
-  { label: "HR & Admin", headline: "handles the paperwork.", task: "Process applications, fill onboarding forms, and manage documents", videoId: "mH-csaCa508" },
-  { label: "Support", headline: "runs your helpdesk.", task: "Resolve tickets 24/7 — look up accounts, draft replies, close issues", videoId: "A_OvNh51Npg" },
-  { label: "Finance", headline: "processes your books.", task: "Extract invoice data, reconcile entries, and update spreadsheets", videoId: "AnHJuRMLCnE" },
-  { label: "Growth", headline: "grows your channels.", task: "Post across Hacker News, Reddit, and social — engage with every reply", videoId: "A_OvNh51Npg" },
-  { label: "Operations", headline: "runs your ops.", task: "Generate weekly reports, sync data across systems, and schedule follow-ups", videoId: "qTvmGfg3HVw" },
+  { label: "Marketing", headline: "runs campaigns on Reddit, Twitter, and LinkedIn.", task: "Research competitors, write posts, engage with comments, and report results", videoId: "icxgLDephHE" },
+  { label: "Sales", headline: "researches leads and sends personalized outreach.", task: "Find 50 prospects, enrich their profiles, write emails, and follow up automatically", videoId: "qTvmGfg3HVw" },
+  { label: "QA", headline: "tests every flow and files bug reports.", task: "Navigate your app, click through checkout, catch regressions, screenshot issues", videoId: "Wbo2o74hVIo" },
+  { label: "Lead Gen", headline: "builds prospect lists from any website.", task: "Scrape directories, enrich contacts, verify emails, and export to your CRM", videoId: "icxgLDephHE" },
+  { label: "Recruiting", headline: "sources candidates and screens profiles.", task: "Search LinkedIn, filter by criteria, rank matches, and schedule interviews", videoId: "AnHJuRMLCnE" },
+  { label: "HR & Admin", headline: "fills forms and processes documents.", task: "Complete onboarding paperwork, extract data from PDFs, update spreadsheets", videoId: "mH-csaCa508" },
+  { label: "Support", headline: "resolves tickets by navigating your tools.", task: "Look up accounts, check order status, draft replies, and close issues — 24/7", videoId: "A_OvNh51Npg" },
+  { label: "Finance", headline: "extracts invoice data and reconciles books.", task: "Open invoices, pull line items, match to POs, and update your accounting software", videoId: "AnHJuRMLCnE" },
+  { label: "Growth", headline: "posts content and engages across platforms.", task: "Write and publish on Hacker News, Reddit, and social — reply to every comment", videoId: "A_OvNh51Npg" },
+  { label: "Data Entry", headline: "copies data between any two apps.", task: "Read from spreadsheets, fill web forms, sync CRMs, and generate reports", videoId: "qTvmGfg3HVw" },
 ]
 
 const CYCLE_MS = 4000
@@ -96,14 +96,24 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           </div>
         </div>
 
-        {/* Headline — the positioning statement */}
+        {/* Headline */}
         <h1 className={cn(
-          "font-bold tracking-tight leading-[1.08]",
-          isMobile ? "text-3xl mb-3" : "text-4xl sm:text-5xl lg:text-[3.25rem] mb-4"
+          "font-bold tracking-tight",
+          isMobile ? "text-3xl leading-[1.3] mb-3" : "text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.2] mb-4"
         )}>
-          <span className="text-foreground">Run your entire company.</span>
+          <span className="text-foreground">An AI agent that uses a</span>
           <br />
-          <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, #eab308 0%, #f27a2e 18%, #ef4444 36%, #f43f5e 52%, #ec4899 66%, #14b8a6 83%, #10b981 100%)' }}>Zero employees.</span>
+          <span className="relative text-foreground">
+            computer
+            <span className={cn(
+              "absolute left-0 bottom-0 h-[3px] rounded-full bg-foreground/20",
+              isMobile ? "right-0" : "right-0"
+            )} />
+          </span>
+          {" "}
+          <span className="text-muted-foreground/60">for you,</span>
+          {" "}
+          <span className="text-emerald-500 dark:text-emerald-400">safely.</span>
         </h1>
 
         {/* Rotating department line */}
@@ -111,6 +121,14 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           "mx-auto",
           isMobile ? "max-w-sm" : "max-w-2xl"
         )}>
+          {/* No integration tagline */}
+          <p className={cn(
+            "text-muted-foreground/50",
+            isMobile ? "text-sm mb-3" : "text-base sm:text-lg mb-4"
+          )}>
+            No MCP servers. No integrations. No setup. It just works.
+          </p>
+
           <div className={cn(
             "flex items-center justify-center gap-2",
             isMobile ? "min-h-[2rem]" : "h-8"
@@ -119,7 +137,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               "text-muted-foreground/60 shrink-0",
               isMobile ? "text-sm" : "text-base sm:text-lg"
             )}>
-              AI that
+              It
             </span>
             <AnimatePresence mode="wait">
               <motion.span
@@ -176,7 +194,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
             >
-              Deploy Your Workforce
+              Start Automating
               <ArrowRight className="h-4 w-4" />
             </motion.button>
           </Link>
