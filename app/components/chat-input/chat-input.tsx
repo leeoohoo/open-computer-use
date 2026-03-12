@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { VMSelector } from "@/components/common/vm-selector/vm-selector"
-import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Desktop, Monitor, ArrowsClockwise } from "@phosphor-icons/react"
+import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Desktop, Monitor, ArrowsClockwise, Lightning } from "@phosphor-icons/react"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { useCallback, useMemo, useState, useEffect } from "react"
 import { PromptSystem } from "../suggestions/prompt-system"
@@ -39,6 +39,11 @@ type ChatInputProps = {
   status?: "submitted" | "streaming" | "ready" | "error"
   onAuthRequired: () => void
   hasToolInvocations?: boolean
+  // Swarm mode
+  swarmMode?: boolean
+  onSwarmModeChange?: (enabled: boolean) => void
+  swarmCount?: number
+  onSwarmCountChange?: (count: number) => void
 }
 
 // Fun startup messages
@@ -333,6 +338,10 @@ export function ChatInput({
   status,
   onAuthRequired,
   hasToolInvocations,
+  swarmMode,
+  onSwarmModeChange,
+  swarmCount,
+  onSwarmCountChange,
 }: ChatInputProps) {
   const isOnlyWhitespace = (text: string) => !/[^\s]/.test(text)
   const [machineStatus, setMachineStatus] = useState<UserMachine['status'] | null>(null)
@@ -586,6 +595,12 @@ export function ChatInput({
       return
     }
 
+    // Swarm mode bypasses VM checks — it creates its own machines
+    if (swarmMode) {
+      onSend()
+      return
+    }
+
     // Start VM if needed and validate
     const canProceed = await startVMIfNeeded()
     if (!canProceed) {
@@ -602,7 +617,7 @@ export function ChatInput({
     // Send message - VM ID is already being sent through use-chat-core
     onSend()
 
-  }, [isSubmitting, onSend, status, stop, isUserAuthenticated, onAuthRequired, selectedVMId, machineStatus, agentReady, startVMIfNeeded, checkMachineBusy])
+  }, [isSubmitting, onSend, status, stop, isUserAuthenticated, onAuthRequired, selectedVMId, machineStatus, agentReady, startVMIfNeeded, checkMachineBusy, swarmMode])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -630,7 +645,13 @@ export function ChatInput({
           onAuthRequired()
           return
         }
-        
+
+        // Swarm mode bypasses VM checks
+        if (swarmMode) {
+          handleSend()
+          return
+        }
+
         // Don't allow sending unless machine is running and agent is ready
         if (!selectedVMId || selectedVMId === "none") {
           return
@@ -651,7 +672,7 @@ export function ChatInput({
         handleSend()
       }
     },
-    [isSubmitting, status, value, isUserAuthenticated, onAuthRequired, handleSend, stop, selectedVMId, machineStatus, agentReady, isMachineBusy, forceStopAndSend]
+    [isSubmitting, status, value, isUserAuthenticated, onAuthRequired, handleSend, stop, selectedVMId, machineStatus, agentReady, isMachineBusy, forceStopAndSend, swarmMode]
   )
 
   const handlePaste = useCallback(
@@ -736,14 +757,16 @@ export function ChatInput({
           />
           <PromptInputActions className="mt-5 w-full justify-between px-2 sm:px-3 pb-3">
             <div className="flex gap-1 sm:gap-2 overflow-hidden">
-              <VMSelector
-                selectedVMId={selectedVMId}
-                setSelectedVMId={setSelectedVMId}
-                isUserAuthenticated={isUserAuthenticated}
-                className="h-9 min-w-0 flex-shrink"
-              />
+              {!swarmMode && (
+                <VMSelector
+                  selectedVMId={selectedVMId}
+                  setSelectedVMId={setSelectedVMId}
+                  isUserAuthenticated={isUserAuthenticated}
+                  className="h-9 min-w-0 flex-shrink"
+                />
+              )}
               {/* Connect to Desktop - opens noVNC in new tab */}
-              {selectedVMId && selectedVMId !== "none" && machineStatus === "running" && agentReady && currentMachine?.publicIpAddress && (
+              {selectedVMId && selectedVMId !== "none" && !swarmMode && machineStatus === "running" && agentReady && currentMachine?.publicIpAddress && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -768,18 +791,72 @@ export function ChatInput({
                   </TooltipContent>
                 </Tooltip>
               )}
-              {/* File upload feature - only show when VM is selected */}
-              {selectedVMId && selectedVMId !== "none" && (
+              {/* File upload feature - only show when VM is selected and not in swarm mode */}
+              {selectedVMId && selectedVMId !== "none" && !swarmMode && (
                 <ButtonVMFileUpload
                   onFileUpload={onFileUpload}
                   isUserAuthenticated={isUserAuthenticated}
                   vmName={machineName || undefined}
                 />
               )}
+              {/* Swarm mode toggle */}
+              {onSwarmModeChange && (
+                <div className="flex items-center gap-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant={swarmMode ? "default" : "secondary"}
+                        type="button"
+                        onClick={() => onSwarmModeChange(!swarmMode)}
+                        className={cn(
+                          "border-border h-9 rounded-full border px-2.5 sm:px-3 transition-all duration-200",
+                          swarmMode
+                            ? "bg-amber-500 hover:bg-amber-600 text-white border-amber-500"
+                            : "bg-transparent dark:bg-secondary"
+                        )}
+                        aria-label={swarmMode ? "Disable swarm mode" : "Enable swarm mode"}
+                      >
+                        <Lightning className="size-4 flex-shrink-0" weight={swarmMode ? "fill" : "regular"} />
+                        <span className="hidden sm:inline text-xs ml-1.5">Swarm</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[220px] text-center">
+                      {swarmMode
+                        ? "Swarm mode ON — your prompt will run on multiple machines in parallel"
+                        : "Enable swarm mode to run your prompt across multiple machines simultaneously"}
+                    </TooltipContent>
+                  </Tooltip>
+                  {swarmMode && onSwarmCountChange && (
+                    <div className="flex items-center gap-0.5 h-9 rounded-full border border-amber-500/40 bg-amber-500/10 px-1">
+                      <button
+                        type="button"
+                        onClick={() => onSwarmCountChange(Math.max(2, (swarmCount || 2) - 1))}
+                        className="size-6 rounded-full flex items-center justify-center text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-colors text-sm font-medium"
+                        aria-label="Decrease machine count"
+                      >
+                        −
+                      </button>
+                      <span className="text-xs font-semibold text-amber-600 dark:text-amber-400 min-w-[2ch] text-center tabular-nums">
+                        {swarmCount || 2}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => onSwarmCountChange(Math.min(10, (swarmCount || 2) + 1))}
+                        className="size-6 rounded-full flex items-center justify-center text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-colors text-sm font-medium"
+                        aria-label="Increase machine count"
+                      >
+                        +
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <PromptInputAction
               tooltip={
                 status === "streaming" ? "Stop" :
+                swarmMode ? "Send to swarm" :
                 isMachineBusy ? "Another task is running — click to stop it and run yours" :
                 (!selectedVMId || selectedVMId === "none") ? "Select a computer to send messages" :
                 (machineStatus === "creating") ? "Please wait for VM to be created" :
@@ -811,7 +888,7 @@ export function ChatInput({
                 <Button
                   size="sm"
                   className="size-9 rounded-full transition-all duration-300 ease-out"
-                  disabled={status === "streaming" ? false : (!!(!value || isSubmitting || isOnlyWhitespace(value) || !selectedVMId || selectedVMId === "none" || machineStatus !== "running" || !agentReady))}
+                  disabled={status === "streaming" ? false : (!!(!value || isSubmitting || isOnlyWhitespace(value) || (!swarmMode && (!selectedVMId || selectedVMId === "none" || machineStatus !== "running" || !agentReady))))}
                   type="button"
                   onClick={handleSend}
                   aria-label={status === "streaming" ? "Stop" : "Send message"}

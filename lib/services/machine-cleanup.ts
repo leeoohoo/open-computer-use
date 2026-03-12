@@ -26,11 +26,13 @@ export class MachineCleanupService {
     // Run immediately on start
     this.runCleanup();
     this.runPeriodicSnapshots();
+    this.cleanupSwarmMachines();
 
     // Then run every 2 hours (2 * 60 * 60 * 1000 ms)
     this.intervalId = setInterval(() => {
       this.runCleanup();
       this.runPeriodicSnapshots();
+      this.cleanupSwarmMachines();
     }, 2 * 60 * 60 * 1000);
   }
 
@@ -238,6 +240,49 @@ export class MachineCleanupService {
   }
 
   /**
+   * Delete any swarm machines older than 30 minutes.
+   * Swarm machines are temporary and MUST always be cleaned up regardless
+   * of user tier.  They are identified by settings.is_swarm === true.
+   */
+  private async cleanupSwarmMachines(): Promise<void> {
+    try {
+      const supabase = createServiceClient();
+      if (!supabase) return;
+
+      const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+
+      const { data: machines, error } = await (supabase as any)
+        .from("user_machines")
+        .select("id, user_id, display_name, settings, status, created_at")
+        .lt("created_at", thirtyMinAgo)
+        .neq("status", "deleting");
+
+      if (error || !machines || machines.length === 0) return;
+
+      const swarmMachines = machines.filter((m: any) => {
+        const s = m.settings as any;
+        return s?.is_swarm === true;
+      });
+
+      if (swarmMachines.length === 0) return;
+
+      console.log(`Found ${swarmMachines.length} orphaned swarm machines to clean up`);
+
+      for (const machine of swarmMachines) {
+        try {
+          // No snapshots for swarm machines — just terminate and delete
+          await this.deleteMachine(machine, supabase);
+          console.log(`Swarm cleanup: deleted ${machine.display_name} (${machine.id})`);
+        } catch (err) {
+          console.error(`Swarm cleanup: failed to delete ${machine.id}:`, err);
+        }
+      }
+    } catch (err) {
+      console.error("Swarm machine cleanup failed:", err);
+    }
+  }
+
+  /**
    * Delete a single machine (terminate EC2 instance + delete database record)
    */
   private async deleteMachine(machine: any, supabase: any): Promise<void> {
@@ -257,7 +302,10 @@ export class MachineCleanupService {
           const awsService = getAwsEc2Service();
 
           // Snapshot the instance before termination so user can restore later
-          try {
+          // Skip snapshots for swarm machines — they're temporary throwaway instances
+          if (settings?.is_swarm) {
+            console.log(`Skipping snapshot for swarm machine ${machine.id}`);
+          } else try {
             const snapshot = await awsService.createMachineImage(
               settings.awsInstanceId,
               machine.user_id,

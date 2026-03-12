@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent / "app"))
 
 from app.core.config import settings
 from app.core.logging import setup_logging
-from app.api.routes import chat, chats, health, models, search, vm_control, screenshots, billing, file_operations, electron_bridge, schedules
+from app.api.routes import chat, chats, health, models, search, vm_control, screenshots, billing, file_operations, electron_bridge, schedules, swarm
 from app.core.middleware import InternalAPIKeyMiddleware, RateLimitMiddleware, CSRFMiddleware
 from app.core.exceptions import setup_exception_handlers
 
@@ -48,6 +48,16 @@ async def lifespan(app: FastAPI):
 
     await cache_service.initialize()
     await screenshot_storage.initialize()
+
+    # Clean up orphaned swarm machines from previous runs.
+    # Swarm machines are temporary and must always be deleted.
+    from app.services.swarm_cleanup import cleanup_orphaned_swarm_machines
+    try:
+        cleaned = await cleanup_orphaned_swarm_machines()
+        if cleaned > 0:
+            logger.info(f"Startup: cleaned up {cleaned} orphaned swarm machines")
+    except Exception as e:
+        logger.error(f"Startup swarm cleanup failed: {e}")
 
     # Start periodic cleanup task for orphaned sessions
     cleanup_task = None
@@ -141,6 +151,7 @@ app.include_router(file_operations.router, prefix="/api/files", tags=["files"])
 app.include_router(electron_bridge.router, prefix="/api/electron", tags=["electron"])
 app.include_router(chats.router, prefix="/api/chats", tags=["chats"])
 app.include_router(schedules.router, prefix="/api/schedules", tags=["schedules"])
+app.include_router(swarm.router, prefix="/api/swarm", tags=["swarm"])
 
 # Root endpoint
 @app.get("/")

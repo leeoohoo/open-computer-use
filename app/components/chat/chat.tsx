@@ -31,6 +31,7 @@ import { Switch } from "@/components/ui/switch"
 import { QuickStartGuide } from "./quick-start-guide"
 import Link from "next/link"
 import { ShieldCheck } from "lucide-react"
+import { SwarmPanel } from "./swarm-panel"
 
 const handwriting = Caveat({
   subsets: ["latin"],
@@ -450,6 +451,13 @@ export function Chat() {
     [effectiveMessages, status, handleDelete, handleEdit, handleReload]
   )
 
+  // Swarm mode state
+  const [swarmMode, setSwarmMode] = useState(false)
+  const [swarmCount, setSwarmCount] = useState(2)
+  const [swarmActive, setSwarmActive] = useState(false)
+  const [swarmId, setSwarmId] = useState<string | null>(null)
+  const [swarmPrompt, setSwarmPrompt] = useState("")
+
   // Check if there are tool invocations to show above the chat input
   const hasToolInvocations = useMemo(() => {
     const messagesWithTools = [...effectiveMessages]
@@ -463,6 +471,25 @@ export function Chat() {
     return toolInvocationParts.length > 0
   }, [effectiveMessages])
 
+  // Swarm submit handler
+  const handleSwarmSubmit = useCallback(() => {
+    if (swarmMode && input.trim()) {
+      const id = crypto.randomUUID()
+      setSwarmId(id)
+      setSwarmPrompt(input)
+      setSwarmActive(true)
+      handleCollaborativeInputChange("")
+    } else {
+      submit()
+    }
+  }, [swarmMode, input, submit, handleCollaborativeInputChange])
+
+  const handleSwarmStop = useCallback(() => {
+    setSwarmActive(false)
+    setSwarmId(null)
+    setSwarmPrompt("")
+  }, [])
+
   // Memoize the chat input props
   const chatInputProps = useMemo(
     () => {
@@ -470,7 +497,7 @@ export function Chat() {
       value: input,
       onSuggestion: handleSuggestion,
         onValueChange: handleCollaborativeInputChange,
-      onSend: () => submit(),
+      onSend: handleSwarmSubmit,
       isSubmitting,
       // File upload props
       files,
@@ -484,6 +511,10 @@ export function Chat() {
       status,
       onAuthRequired: () => setHasDialogAuth(true),
       hasToolInvocations,
+      swarmMode,
+      onSwarmModeChange: setSwarmMode,
+      swarmCount,
+      onSwarmCountChange: setSwarmCount,
       }
     },
     [
@@ -493,7 +524,7 @@ export function Chat() {
       input,
       handleSuggestion,
       handleCollaborativeInputChange,
-      submit,
+      handleSwarmSubmit,
       isSubmitting,
       // File upload dependencies
       files,
@@ -508,6 +539,8 @@ export function Chat() {
       status,
       setHasDialogAuth,
       hasToolInvocations,
+      swarmMode,
+      swarmCount,
     ]
   )
 
@@ -543,6 +576,7 @@ export function Chat() {
       setQuickStartDismissed(true)
     }
   }, [])
+
   // Check if user has saved credentials (for nudge in greeting)
   const [hasCredentials, setHasCredentials] = useState<boolean | null>(null)
   useEffect(() => {
@@ -815,6 +849,13 @@ export function Chat() {
             className="mb-3 -mx-4 sm:mx-0"
           />
         )} */}
+        <SwarmPanel
+          isActive={swarmActive}
+          swarmId={swarmId}
+          prompt={swarmPrompt}
+          machineCount={swarmCount}
+          onStop={handleSwarmStop}
+        />
         <ChatInput {...chatInputProps} />
       </motion.div>
     </div>
