@@ -20,10 +20,23 @@ import {
   MagnifyingGlassMinus,
   ArrowsOutCardinal,
   ArrowCounterClockwise,
+  ShareNetwork,
+  Globe,
+  Lock,
+  Copy,
+  Check,
+  X,
+  TwitterLogo,
+  LinkedinLogo,
+  WhatsappLogo,
+  FacebookLogo,
+  TelegramLogo,
+  RedditLogo,
 } from "@phosphor-icons/react"
 import { AnimatePresence, motion } from "motion/react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
+import { APP_DOMAIN } from "@/lib/config"
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -390,8 +403,41 @@ function SwarmRunCard({
   const [events, setEvents] = useState<SwarmEvent[]>([])
   const [eventsLoading, setEventsLoading] = useState(false)
   const [eventsFetched, setEventsFetched] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
+  const [isPublic, setIsPublic] = useState(swarm.public ?? false)
+  const [shareLoading, setShareLoading] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const isActive = swarm.status === "running" || swarm.status === "creating"
+  const shareUrl = `${APP_DOMAIN}/share/swarm/${swarm.swarm_id}`
+
+  const toggleVisibility = useCallback(async () => {
+    setShareLoading(true)
+    try {
+      const csrf = document.cookie
+        .split("; ")
+        .find((c) => c.startsWith("csrf_token="))
+        ?.split("=")[1]
+      const res = await fetch(`/api/swarms/${swarm.swarm_id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrf || "",
+        },
+        body: JSON.stringify({ public: !isPublic }),
+      })
+      if (res.ok) {
+        setIsPublic(!isPublic)
+      }
+    } catch {}
+    setShareLoading(false)
+  }, [isPublic, swarm.swarm_id])
+
+  const copyLink = useCallback(() => {
+    navigator.clipboard.writeText(shareUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }, [shareUrl])
 
   // Fetch events on first expand
   useEffect(() => {
@@ -431,8 +477,9 @@ function SwarmRunCard({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-xl transition-all duration-300",
+        "group relative rounded-xl transition-all duration-300",
         "border bg-card/50 backdrop-blur-sm",
+        "overflow-hidden",
         isExpanded
           ? "border-border/50 bg-card/80 shadow-lg shadow-foreground/[0.02]"
           : "border-border/30 hover:bg-card/80 hover:border-border/50 hover:shadow-lg hover:shadow-foreground/[0.02]"
@@ -442,11 +489,11 @@ function SwarmRunCard({
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
 
       {/* Header */}
-      <button
-        onClick={onToggle}
-        className="flex items-start justify-between gap-4 w-full text-left px-5 py-4"
-      >
-        <div className="flex items-start gap-3 flex-1 min-w-0">
+      <div className="flex items-start justify-between gap-4 w-full text-left px-5 py-4">
+        <button
+          onClick={onToggle}
+          className="flex items-start gap-3 flex-1 min-w-0 text-left"
+        >
           <div className="mt-1 text-muted-foreground/60">
             {isExpanded ? (
               <CaretDown className="size-3.5" weight="bold" />
@@ -471,9 +518,9 @@ function SwarmRunCard({
               )}
             </div>
           </div>
-        </div>
+        </button>
 
-        {/* Status pill */}
+        {/* Status + Share */}
         <div className="flex items-center gap-2 shrink-0">
           {isActive && (
             <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-blue-600 dark:text-blue-400">
@@ -493,8 +540,21 @@ function SwarmRunCard({
             {statusMeta.icon}
             {statusMeta.label}
           </span>
+
+          {/* Share button */}
+          <SharePopover
+            swarm={swarm}
+            isPublic={isPublic}
+            shareLoading={shareLoading}
+            copied={copied}
+            shareUrl={shareUrl}
+            onToggleVisibility={toggleVisibility}
+            onCopyLink={copyLink}
+            shareOpen={shareOpen}
+            onShareOpenChange={setShareOpen}
+          />
         </div>
-      </button>
+      </div>
 
       {/* Expandable detail */}
       <AnimatePresence>
@@ -535,6 +595,228 @@ function SwarmRunCard({
         )}
       </AnimatePresence>
     </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Share button + centered modal dialog
+// ---------------------------------------------------------------------------
+
+function SharePopover({
+  swarm,
+  isPublic,
+  shareLoading,
+  copied,
+  shareUrl,
+  onToggleVisibility,
+  onCopyLink,
+  shareOpen,
+  onShareOpenChange,
+}: {
+  swarm: SwarmRun
+  isPublic: boolean
+  shareLoading: boolean
+  copied: boolean
+  shareUrl: string
+  onToggleVisibility: () => void
+  onCopyLink: () => void
+  shareOpen: boolean
+  onShareOpenChange: (open: boolean) => void
+}) {
+  const socialText = `I just ran ${swarm.machine_count} AI agents in parallel on @coasty_ai — one prompt, ${swarm.machine_count} machines, fully autonomous. Check out the full execution tree:`
+  const socialTextPlain = `I just ran ${swarm.machine_count} AI agents in parallel on Coasty — one prompt, ${swarm.machine_count} machines, fully autonomous. Check out the full execution tree: ${shareUrl}`
+
+  const socials = [
+    {
+      icon: TwitterLogo,
+      label: "X",
+      color: "hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-500/30",
+      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(socialText)}&url=${encodeURIComponent(shareUrl)}`,
+    },
+    {
+      icon: LinkedinLogo,
+      label: "LinkedIn",
+      color: "hover:bg-blue-600/10 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-600/30",
+      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+    },
+    {
+      icon: FacebookLogo,
+      label: "Facebook",
+      color: "hover:bg-blue-500/10 hover:text-blue-500 dark:hover:text-blue-400 hover:border-blue-500/30",
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+    },
+    {
+      icon: WhatsappLogo,
+      label: "WhatsApp",
+      color: "hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400 hover:border-green-500/30",
+      url: `https://wa.me/?text=${encodeURIComponent(socialTextPlain)}`,
+    },
+    {
+      icon: TelegramLogo,
+      label: "Telegram",
+      color: "hover:bg-sky-400/10 hover:text-sky-500 dark:hover:text-sky-400 hover:border-sky-400/30",
+      url: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(socialText)}`,
+    },
+    {
+      icon: RedditLogo,
+      label: "Reddit",
+      color: "hover:bg-orange-500/10 hover:text-orange-500 dark:hover:text-orange-400 hover:border-orange-500/30",
+      url: `https://reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(socialText)}`,
+    },
+  ]
+
+  return (
+    <>
+      <button
+        onClick={(e) => {
+          e.stopPropagation()
+          onShareOpenChange(!shareOpen)
+        }}
+        className={cn(
+          "inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg border text-xs font-medium transition-all duration-200",
+          isPublic
+            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/15"
+            : "border-border/40 bg-background/60 text-muted-foreground hover:text-foreground hover:bg-background/90"
+        )}
+        title={isPublic ? "Shared publicly" : "Share this swarm"}
+      >
+        <ShareNetwork className="size-3.5" weight={isPublic ? "fill" : "regular"} />
+        <span className="hidden sm:inline">{isPublic ? "Shared" : "Share"}</span>
+      </button>
+
+      {shareOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[100] flex items-center justify-center">
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                onShareOpenChange(false)
+              }}
+            />
+
+            {/* Modal */}
+            <div
+              className="relative z-[101] w-[400px] max-w-[calc(100vw-2rem)] rounded-2xl border border-border/50 bg-card shadow-2xl shadow-black/20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 pt-5 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className={cn(
+                      "h-8 w-8 rounded-lg flex items-center justify-center",
+                      isPublic ? "bg-emerald-500/10" : "bg-amber-500/10"
+                    )}
+                  >
+                    {isPublic ? (
+                      <Globe className="size-4 text-emerald-500" weight="fill" />
+                    ) : (
+                      <Lock className="size-4 text-amber-500" weight="fill" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium">
+                      {isPublic ? "This swarm is live!" : "Share this swarm"}
+                    </h3>
+                    <p className="text-[11px] text-muted-foreground/70">
+                      {isPublic
+                        ? "Anyone with the link can view the full execution"
+                        : "Make it public to get a shareable link"}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => onShareOpenChange(false)}
+                  className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+
+              {/* Toggle */}
+              <div className="px-5 pb-4">
+                <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3.5 py-3">
+                  <p className="text-xs font-medium">
+                    {isPublic ? "Public" : "Private"}
+                  </p>
+                  <button
+                    onClick={onToggleVisibility}
+                    disabled={shareLoading}
+                    className={cn(
+                      "relative h-6 w-11 rounded-full transition-colors duration-200 shrink-0",
+                      isPublic ? "bg-emerald-500" : "bg-muted-foreground/20"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200",
+                        isPublic && "translate-x-5"
+                      )}
+                    />
+                  </button>
+                </div>
+              </div>
+
+              {/* Link + socials — only when public */}
+              {isPublic && (
+                <div className="px-5 pb-5 space-y-3">
+                  {/* Copy link */}
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 min-w-0 rounded-lg border border-border/40 bg-background/50 px-3 py-2">
+                      <p className="text-xs text-muted-foreground truncate font-mono">
+                        {shareUrl}
+                      </p>
+                    </div>
+                    <button
+                      onClick={onCopyLink}
+                      className={cn(
+                        "h-9 px-3 flex items-center justify-center gap-1.5 rounded-lg border text-xs font-medium transition-all duration-200 shrink-0",
+                        copied
+                          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-500"
+                          : "border-border/40 bg-background/60 text-muted-foreground hover:text-foreground hover:bg-background/90"
+                      )}
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="size-3.5" weight="bold" />
+                          Copied
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="size-3.5" />
+                          Copy
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Social grid */}
+                  <div className="grid grid-cols-3 gap-2">
+                    {socials.map(({ icon: Icon, label, color, url }) => (
+                      <a
+                        key={label}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          "h-9 flex items-center justify-center gap-1.5 rounded-lg border border-border/40 bg-background/60 text-muted-foreground text-xs font-medium transition-all duration-200",
+                          color
+                        )}
+                      >
+                        <Icon className="size-3.5" weight="fill" />
+                        {label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body
+        )}
+    </>
   )
 }
 

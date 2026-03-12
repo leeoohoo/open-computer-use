@@ -1,6 +1,7 @@
 import { APP_DOMAIN } from "@/lib/config"
 import { isSupabaseEnabled } from "@/lib/supabase/config"
 import { createClient } from "@/lib/supabase/server"
+import { createServiceClient } from "@/lib/supabase/service"
 import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import { SharedSwarmView } from "./shared-swarm-view"
@@ -17,20 +18,21 @@ export async function generateMetadata({
   }
 
   const { swarmId } = await params
-  const supabase = await createClient()
+  const admin = createServiceClient()
 
-  if (!supabase) {
+  if (!admin) {
     return notFound()
   }
 
-  const { data: swarm } = await (supabase as any)
+  const { data: swarm } = await (admin as any)
     .from("swarm_runs")
     .select("prompt, machine_count, status, public, user_id, created_at")
     .eq("swarm_id", swarmId)
     .single()
 
   // Check if public or owner
-  const { data: { user } } = await supabase.auth.getUser()
+  const supabase = await createClient()
+  const { data: { user } } = await supabase!.auth.getUser()
   const isOwner = user?.id === swarm?.user_id
   const isPublic = swarm?.public === true
 
@@ -74,15 +76,16 @@ export default async function ShareSwarmPage({
   }
 
   const { swarmId } = await params
-  const supabase = await createClient()
+  const admin = createServiceClient()
 
-  if (!supabase) {
+  if (!admin) {
     return notFound()
   }
 
-  const { data: swarm, error: swarmError } = await (supabase as any)
+  // Use service client to bypass RLS — access control is handled below
+  const { data: swarm, error: swarmError } = await (admin as any)
     .from("swarm_runs")
-    .select("*")
+    .select("swarm_id, prompt, machine_count, status, model, result_summary, created_at, completed_at, public, user_id")
     .eq("swarm_id", swarmId)
     .single()
 
@@ -91,7 +94,8 @@ export default async function ShareSwarmPage({
   }
 
   // Check if public or owner
-  const { data: { user } } = await supabase.auth.getUser()
+  const supabase = await createClient()
+  const { data: { user } } = await supabase!.auth.getUser()
   const isOwner = user?.id === swarm.user_id
   const isPublic = swarm.public === true
 
@@ -100,7 +104,7 @@ export default async function ShareSwarmPage({
   }
 
   // Fetch events
-  const { data: events } = await (supabase as any)
+  const { data: events } = await (admin as any)
     .from("swarm_run_events")
     .select("*")
     .eq("swarm_id", swarmId)

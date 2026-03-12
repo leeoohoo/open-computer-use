@@ -9,7 +9,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { VMSelector } from "@/components/common/vm-selector/vm-selector"
-import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Desktop, Monitor, ArrowsClockwise, GitFork, Lock, Lightning, ArrowRight } from "@phosphor-icons/react"
+import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Monitor, ArrowsClockwise, GitFork, Lock, Lightning, ArrowRight } from "@phosphor-icons/react"
+import { MacMiniIcon } from "@/components/icons/mac-mini"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card"
 import { useCallback, useMemo, useState, useEffect } from "react"
@@ -261,7 +262,7 @@ function VMStatusBar({ isVisible, machineName, status }: { isVisible: boolean; m
               <span className="text-sm font-medium">
                 {getStatusMessage()}
               </span>
-              <Desktop className={`h-4 w-4 ${getIconColor()}`} />
+              <MacMiniIcon className={`h-4 w-4 ${getIconColor()}`} />
             </div>
           </div>
         </motion.div>

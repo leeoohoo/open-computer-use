@@ -24,7 +24,6 @@ import { AnimatePresence, motion } from "motion/react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
 import { CoastyIcon } from "@/components/icons/coasty"
-import { HeaderGoBack } from "@/app/components/header-go-back"
 import { Button } from "@/components/ui/button"
 
 // ---------------------------------------------------------------------------
@@ -130,7 +129,15 @@ export function SharedSwarmView({
         />
       </div>
 
-      <HeaderGoBack href="/" />
+      <header className="relative z-20 p-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-muted transition-colors"
+        >
+          <CoastyIcon className="size-6" />
+          <span className="text-sm font-semibold tracking-tight">Coasty</span>
+        </Link>
+      </header>
 
       <main className="relative flex flex-1 flex-col lg:flex-row items-stretch z-10 overflow-hidden">
         {/* ───── Left brand panel ───── */}

@@ -100,8 +100,9 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     .single();
 
   if (updateError) {
+    console.error("Error updating swarm visibility:", updateError);
     return NextResponse.json(
-      { error: "Failed to update visibility" },
+      { error: "Failed to update visibility", details: updateError.message },
       { status: 500 }
     );
   }
