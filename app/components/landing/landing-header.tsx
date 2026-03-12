@@ -13,6 +13,7 @@ import { useTheme } from "next-themes"
 const navItems = [
   { href: "/#hero", label: "Home" },
   { href: "/#features", label: "Features" },
+  { href: "/agent-swarms", label: "Agent Swarms", external: true },
   { href: "/results", label: "Case Studies", external: true },
   { href: "/#pricing", label: "Pricing" },
   { href: "/download", label: "Download", external: true },

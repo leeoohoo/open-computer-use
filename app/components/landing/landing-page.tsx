@@ -10,7 +10,7 @@ import { BentoGrid, BentoCard } from "@/components/magicui/bento-grid"
 import { Globe as GlobeComponent } from "@/components/magicui/globe"
 import { Tree, Folder, File, type TreeViewElement } from "@/components/magicui/file-tree"
 import { RainbowButton } from "@/components/magicui/rainbow-button"
-import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download, CalendarCheck, RefreshCw } from "lucide-react"
+import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download, CalendarCheck, RefreshCw, GitFork } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
 import Link from "next/link"
 import { useState, useEffect, useCallback } from "react"
@@ -57,6 +57,12 @@ const features = [
     icon: Star,
     title: "82% OSWorld — #1 AI Agent in the World",
     description: "The highest score ever on the OSWorld benchmark for computer-use agents. Not a chatbot — a real agent that navigates apps, clicks buttons, and completes tasks end-to-end.",
+  },
+  {
+    icon: GitFork,
+    title: "Agent Swarms — Parallel Execution",
+    description: "Split one task across multiple machines running simultaneously. Each agent works independently, completing work in parallel that would take hours sequentially.",
+    href: "/agent-swarms",
   },
 ]
 
@@ -919,8 +925,8 @@ export function LandingPage() {
                     }
                     Icon={feature.icon}
                     description={feature.description}
-                    href="/auth"
-                    cta="Get started"
+                    href={(feature as any).href || "/auth"}
+                    cta={(feature as any).href ? "Learn more" : "Get started"}
                   />
                 </motion.div>
               ))}
