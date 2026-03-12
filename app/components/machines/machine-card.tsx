@@ -40,7 +40,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { NoiseBackground } from "@/components/ui/noise-background";
 import { useSubscription } from "@/hooks/use-subscription";
 import { formatTimeRemaining } from "@/lib/utils/subscription";
 import type { UserMachine, MachineStatus } from "@/types/machines.types";
@@ -75,7 +74,6 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
   const isElectron = machine.settings?.provider === 'electron';
   const isAws = machine.settings?.provider === 'aws';
 
-  // Update time remaining for free tier users
   useEffect(() => {
     if (!isFreeTier || subscriptionLoading || isLocal) {
       setTimeRemaining(null);
@@ -87,10 +85,8 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
       setTimeRemaining(remaining);
     };
 
-    // Update immediately
     updateTimeRemaining();
 
-    // Update every minute
     const interval = setInterval(updateTimeRemaining, 60000);
 
     return () => clearInterval(interval);
@@ -118,14 +114,12 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
         return;
       }
 
-      // Handle password update if container was recreated
       if ((action === "start" || action === "restart") && data.recreated && data.vncPassword) {
         toast.success(
           `Machine ${action === "restart" ? "restarted" : "recreated"} with new password. Please use the new password to connect.`,
           { duration: 8000 }
         );
 
-        // Update machine with new password
         const updatedMachine = {
           ...machine,
           vncPassword: data.vncPassword,
@@ -143,16 +137,14 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
         if (action === "delete") {
           onDelete(machine.id);
         } else {
-          // Update machine status locally
           const newStatus = action === "start" ? "starting" :
                            action === "stop" ? "stopping" :
-                           action === "restart" ? "stopping" : // restart starts with stopping
+                           action === "restart" ? "stopping" :
                            "starting";
           onUpdate({ ...machine, status: newStatus as any });
         }
       }
 
-      // Poll for status updates
       if (action !== "delete") {
         pollMachineStatus(machine.id);
       }
@@ -165,19 +157,17 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
   };
 
   const pollMachineStatus = async (machineId: string, attempts = 0) => {
-    if (attempts > 20) return; // Stop after 20 attempts (about 1 minute)
+    if (attempts > 20) return;
 
     try {
       const response = await fetch(`/api/machines/${machineId}`);
       if (response.ok) {
         const data = await response.json();
         onUpdate(data.machine);
-        
-        // Continue polling if still transitioning
+
         if (["creating", "starting", "stopping"].includes(data.machine.status)) {
           setTimeout(() => pollMachineStatus(machineId, attempts + 1), 3000);
         } else if (data.machine.status === "error") {
-          // Check if it's a deallocation error
           const statusResponse = await fetch(`/api/machines/${machineId}/status`);
           if (statusResponse.ok) {
             const statusData = await statusResponse.json();
@@ -200,12 +190,12 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
 
   const formatUptime = () => {
     if (!machine.startedAt || machine.status !== "running") return null;
-    
+
     const start = new Date(machine.startedAt);
     const now = new Date();
     const hours = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60));
     const minutes = Math.floor(((now.getTime() - start.getTime()) % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     return `${hours}h ${minutes}m`;
   };
 
@@ -214,113 +204,53 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
   return (
     <>
       <Card className={cn(
-        "relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-0 h-full"
+        "relative overflow-hidden group transition-all duration-300 h-full",
+        "border-border/30 bg-card/50 backdrop-blur-sm hover:bg-card/80 hover:border-border/50 hover:shadow-lg hover:shadow-foreground/[0.02]",
+        machine.status === "error" && "border-destructive/20 bg-destructive/[0.02]"
       )}>
-        {/* Rotating beam effect for active states */}
-        {(machine.status === "running" || machine.status === "creating" || machine.status === "stopping") && (
-          <>
-            {/* Animated border container */}
-            <div className="absolute -inset-[2px] rounded-lg overflow-hidden">
-              <div
-                className="absolute w-full h-full animate-rotate-beam dark:brightness-150"
-                style={{
-                  filter: "drop-shadow(0 0 6px rgba(0, 0, 0, 0.2)) drop-shadow(0 0 12px currentColor)",
-                  background: machine.status === "running" 
-                    ? `conic-gradient(from var(--beam-angle) at 50% 50%, 
-                        transparent 0deg, 
-                        rgba(34, 197, 94, 0.2) 5deg, 
-                        rgba(34, 197, 94, 0.5) 10deg, 
-                        rgba(34, 197, 94, 0.8) 20deg, 
-                        rgba(255, 255, 255, 1) 30deg, 
-                        rgba(34, 197, 94, 0.8) 40deg, 
-                        rgba(34, 197, 94, 0.5) 50deg, 
-                        rgba(34, 197, 94, 0.2) 55deg, 
-                        transparent 60deg, 
-                        transparent 360deg)`
-                    : machine.status === "creating"
-                    ? `conic-gradient(from var(--beam-angle) at 50% 50%, 
-                        transparent 0deg, 
-                        rgba(59, 130, 246, 0.2) 5deg, 
-                        rgba(59, 130, 246, 0.5) 10deg, 
-                        rgba(59, 130, 246, 0.8) 20deg, 
-                        rgba(255, 255, 255, 1) 30deg, 
-                        rgba(59, 130, 246, 0.8) 40deg, 
-                        rgba(59, 130, 246, 0.5) 50deg, 
-                        rgba(59, 130, 246, 0.2) 55deg, 
-                        transparent 60deg, 
-                        transparent 360deg)`
-                    : `conic-gradient(from var(--beam-angle) at 50% 50%, 
-                        transparent 0deg, 
-                        rgba(249, 115, 22, 0.2) 5deg, 
-                        rgba(249, 115, 22, 0.5) 10deg, 
-                        rgba(249, 115, 22, 0.8) 20deg, 
-                        rgba(255, 255, 255, 1) 30deg, 
-                        rgba(249, 115, 22, 0.8) 40deg, 
-                        rgba(249, 115, 22, 0.5) 50deg, 
-                        rgba(249, 115, 22, 0.2) 55deg, 
-                        transparent 60deg, 
-                        transparent 360deg)`,
-                }}
-              />
-            </div>
-            
-            {/* Inner content mask with slight inset for border visibility */}
-            <div className="absolute inset-[2px] bg-background rounded-lg z-[1]" />
-            
-            <style jsx>{`
-              @property --beam-angle {
-                syntax: '<angle>';
-                inherits: false;
-                initial-value: 0deg;
-              }
-              
-              @keyframes rotate-beam {
-                from {
-                  --beam-angle: 0deg;
-                }
-                to {
-                  --beam-angle: 360deg;
-                }
-              }
-              
-              .animate-rotate-beam {
-                animation: rotate-beam 3s linear infinite;
-              }
-            `}</style>
-          </>
+        {/* Subtle status indicator line at top */}
+        {machine.status === "running" && (
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
         )}
-        
-        {/* Error state background */}
-        {machine.status === "error" && (
-          <div className="absolute inset-0 bg-red-500/5 rounded-lg" />
+        {(machine.status === "creating" || machine.status === "starting") && (
+          <div className="absolute top-0 inset-x-0 h-px overflow-hidden">
+            <div
+              className="h-full w-full"
+              style={{
+                background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent)",
+                animation: "slide 2s linear infinite",
+              }}
+            />
+          </div>
         )}
-        
-        {/* Content container with higher z-index */}
-        <div className="relative z-[2] flex flex-col h-full">
-        <CardHeader>
+        {machine.status === "stopping" && (
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+        )}
+
+        <CardHeader className="pb-3">
           <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <CardTitle className="text-base sm:text-lg truncate pr-2 flex items-center gap-2">
+            <div className="space-y-1 min-w-0 flex-1">
+              <CardTitle className="text-base font-medium truncate pr-2 flex items-center gap-2">
                 {machine.displayName}
                 {isElectron && (
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-normal gap-1 text-blue-400 border-blue-400/30">
+                  <span className="inline-flex items-center rounded-md border border-blue-500/20 bg-blue-500/[0.06] px-1.5 py-0.5 text-[10px] font-medium text-blue-500 dark:text-blue-400">
                     Desktop
-                  </Badge>
+                  </span>
                 )}
                 {isAws && (
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-normal gap-1">
-                    <Server className="h-3 w-3" />
+                  <span className="inline-flex items-center gap-1 rounded-md border border-border/40 bg-foreground/[0.03] px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                    <Server className="h-2.5 w-2.5" />
                     SSH
-                  </Badge>
+                  </span>
                 )}
               </CardTitle>
-              <CardDescription className="text-xs truncate pr-2">
+              <CardDescription className="text-xs truncate">
                 {isElectron ? `Connected via Desktop App` : isLocal ? `Local Docker: ${machine.containerName}` : isAws ? `Cloud Machine - SSH` : machine.containerName}
               </CardDescription>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg text-muted-foreground hover:text-foreground">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -364,19 +294,24 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
             </DropdownMenu>
           </div>
         </CardHeader>
-        
-        <CardContent className="space-y-4 flex-1 flex flex-col">
-          {/* Status */}
+
+        <CardContent className="space-y-3 flex-1 flex flex-col pt-0">
+          {/* Status row */}
           <div className="flex items-center justify-between">
-            <Badge 
-              variant={machine.status === "running" ? "default" : "secondary"}
-              className="gap-1"
-            >
-              <StatusIcon className={`h-3 w-3 ${isTransitioning ? "animate-spin" : ""}`} />
+            <div className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+              machine.status === "running" && "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+              machine.status === "stopped" && "bg-foreground/[0.05] text-muted-foreground",
+              machine.status === "error" && "bg-destructive/10 text-destructive",
+              (machine.status === "creating" || machine.status === "starting") && "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+              machine.status === "stopping" && "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+              machine.status === "deleting" && "bg-destructive/10 text-destructive",
+            )}>
+              <StatusIcon className={cn("h-3 w-3", isTransitioning && "animate-spin")} />
               {status.label}
-            </Badge>
+            </div>
             {formatUptime() && (
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <span className="text-[11px] text-muted-foreground/70 flex items-center gap-1 tabular-nums">
                 <Clock className="h-3 w-3" />
                 {formatUptime()}
               </span>
@@ -385,7 +320,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
 
           {/* Restored from snapshot indicator */}
           {machine.settings?.restoredFromSnapshot && (
-            <div className="flex items-center gap-1.5 text-xs text-blue-500">
+            <div className="flex items-center gap-1.5 text-xs text-blue-500/80">
               <History className="h-3 w-3" />
               <span>Restored from snapshot</span>
             </div>
@@ -393,91 +328,84 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
 
           {/* Machine type hint */}
           {isElectron && (
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-xs text-muted-foreground/70 leading-relaxed">
               Running on your local computer via the Desktop App.
             </p>
           )}
 
           {/* Auto-deletion notice for free tier users */}
           {timeRemaining && isFreeTier && !subscriptionLoading && (
-            <NoiseBackground
-              containerClassName="w-full p-[1px] rounded-lg bg-transparent dark:bg-transparent shadow-none"
-              className="p-0"
-              gradientColors={
-                timeRemaining.isExpiringSoon
-                  ? ["rgb(239, 68, 68)", "rgb(220, 38, 38)", "rgb(248, 113, 113)"]
-                  : ["rgb(139, 92, 246)", "rgb(99, 102, 241)", "rgb(168, 85, 247)"]
-              }
-              noiseIntensity={0.06}
-              speed={0.06}
-            >
-              <div className="flex items-center justify-between gap-2 rounded-[7px] bg-background/80 px-3 py-2">
-                <div className="flex items-center gap-2 min-w-0">
-                  <Clock className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                  <p className="text-xs text-muted-foreground truncate">
-                    {timeRemaining.timeString === "Expired"
-                      ? <span className="font-medium text-destructive">Machine expired</span>
-                      : <>Deletes in <span className="font-medium text-foreground">{timeRemaining.timeString}</span></>
-                    }
-                  </p>
-                </div>
-                <a
-                  href="/account?section=billing"
-                  className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-foreground hover:opacity-80 transition-opacity"
-                >
-                  Upgrade
-                  <ArrowRight className="h-3 w-3" />
-                </a>
+            <div className={cn(
+              "flex items-center justify-between gap-2 rounded-lg border px-3 py-2",
+              timeRemaining.isExpiringSoon
+                ? "border-destructive/20 bg-destructive/[0.04]"
+                : "border-border/30 bg-foreground/[0.02]"
+            )}>
+              <div className="flex items-center gap-2 min-w-0">
+                <Clock className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
+                <p className="text-xs text-muted-foreground truncate">
+                  {timeRemaining.timeString === "Expired"
+                    ? <span className="font-medium text-destructive">Machine expired</span>
+                    : <>Deletes in <span className="font-medium text-foreground">{timeRemaining.timeString}</span></>
+                  }
+                </p>
               </div>
-            </NoiseBackground>
+              <a
+                href="/account?section=billing"
+                className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-foreground hover:opacity-70 transition-opacity"
+              >
+                Upgrade
+                <ArrowRight className="h-3 w-3" />
+              </a>
+            </div>
           )}
 
           {/* Status Message */}
           {machine.statusMessage && (
-            <p className={`text-xs ${machine.status === "error" ? "text-destructive" : "text-muted-foreground"}`}>
+            <p className={`text-xs ${machine.status === "error" ? "text-destructive" : "text-muted-foreground/70"}`}>
               {machine.statusMessage}
             </p>
           )}
-          
+
           {/* Error state info */}
           {machine.status === "error" && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-md p-2">
-              <p className="text-xs text-destructive">
+            <div className="rounded-lg border border-destructive/15 bg-destructive/[0.04] px-3 py-2.5">
+              <p className="text-xs text-destructive/80">
                 Machine encountered an error. Try starting it again or contact support if the issue persists.
               </p>
             </div>
           )}
 
-          {/* Spacer to push actions to bottom */}
+          {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Actions — Electron machines are controlled via the desktop app, not here */}
+          {/* Actions */}
           {isElectron ? (
-            <div className="flex gap-2">
+            <div className="flex gap-2 pt-1">
               <Button
                 size="sm"
                 variant="default"
                 onClick={handleConnect}
-                className="flex-1"
+                className="flex-1 h-9 rounded-xl font-medium"
               >
-                <Monitor className="h-4 w-4 mr-1" />
+                <Monitor className="h-4 w-4 mr-1.5" />
                 View Details
               </Button>
             </div>
           ) : (
-            <div className="flex gap-2">
+            <div className="flex gap-2 pt-1">
               {(machine.status === "stopped" || machine.status === "error") && !isTemporary && (
                 <Button
                   size="sm"
                   onClick={() => handleAction("start")}
                   disabled={loading !== null}
-                  className="flex-1"
+                  className="flex-1 h-9 rounded-xl font-medium"
                 >
                   {loading === "start" ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <>
-                      <Play className="h-4 w-4 mr-1" />
+                      <Play className="h-4 w-4 mr-1.5" />
                       {machine.status === "error" ? "Retry Start" : "Start"}
                     </>
                   )}
@@ -490,16 +418,16 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
                     size="sm"
                     variant="default"
                     onClick={handleConnect}
-                    className="flex-1"
+                    className="flex-1 h-9 rounded-xl font-medium"
                   >
                     {isAws ? (
                       <>
-                        <Terminal className="h-4 w-4 mr-1" />
+                        <Terminal className="h-4 w-4 mr-1.5" />
                         Connect
                       </>
                     ) : (
                       <>
-                        <Monitor className="h-4 w-4 mr-1" />
+                        <Monitor className="h-4 w-4 mr-1.5" />
                         Open
                       </>
                     )}
@@ -509,26 +437,26 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
                     variant="outline"
                     onClick={() => handleAction("stop")}
                     disabled={loading !== null}
+                    className="h-9 w-9 p-0 rounded-xl border-border/40"
                   >
                     {loading === "stop" ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      <Square className="h-4 w-4" />
+                      <Square className="h-3.5 w-3.5" />
                     )}
                   </Button>
                 </>
               )}
 
               {(isTransitioning || (isTemporary && machine.status === "creating")) && (
-                <Button size="sm" disabled className="flex-1">
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                <Button size="sm" disabled className="flex-1 h-9 rounded-xl">
+                  <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
                   {isTemporary ? "Creating machine..." : `${status.label}...`}
                 </Button>
               )}
             </div>
           )}
         </CardContent>
-        </div>
       </Card>
 
       {/* Delete Confirmation Dialog */}
@@ -537,7 +465,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Machine</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{machine.displayName}"? This action cannot be undone.
+              Are you sure you want to delete &ldquo;{machine.displayName}&rdquo;? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

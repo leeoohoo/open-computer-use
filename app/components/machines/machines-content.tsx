@@ -2,17 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Monitor, MonitorCog, ArrowRight, Download, Globe, Terminal, MousePointer2, ScanLine, Cpu, MoreHorizontal, Zap, RefreshCw, ShieldCheck } from "lucide-react";
+import { Plus, Monitor, Globe, Terminal, MousePointer2, ScanLine, Cpu, MoreHorizontal, Zap, ShieldCheck, Download, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
-
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { NoiseBackground } from "@/components/ui/noise-background";
 import Link from "next/link";
 import { WindowsIcon, AppleIcon } from "@/components/icons/platform-icons";
 import { MachineCard } from "@/app/components/machines/machine-card";
 import { CreateMachineDialog } from "@/app/components/machines/create-machine-dialog";
 import { UsageStats } from "@/app/components/machines/usage-stats";
+import { motion, AnimatePresence } from "framer-motion";
 import type { UserMachine, MachineUsage } from "@/types/machines.types";
 
 interface MachinesData {
@@ -33,7 +32,6 @@ interface MachinesData {
 
 export function MachinesContent() {
   const router = useRouter();
-  // Remove unused store methods since we're fetching directly from database
   const [loading, setLoading] = useState(true);
   const [machines, setMachines] = useState<UserMachine[]>([]);
   const [limits, setLimits] = useState<MachinesData["limits"]>({
@@ -57,23 +55,20 @@ export function MachinesContent() {
   useEffect(() => {
     fetchMachines();
   }, []);
-  
+
   useEffect(() => {
-    // Start polling for any machines that are in transitioning states
-    const transitioningMachines = machines.filter(m => 
+    const transitioningMachines = machines.filter(m =>
       ["creating", "starting", "stopping", "deleting"].includes(m.status)
     );
-    
+
     transitioningMachines.forEach(machine => {
-      // Only start polling if we're not already polling this machine
       if (!statusPollingIntervals.has(machine.id)) {
         pollMachineStatus(machine.id);
       }
     });
-  }, [machines.length]); // Only re-run when number of machines changes
-  
+  }, [machines.length]);
+
   useEffect(() => {
-    // Cleanup intervals on unmount
     return () => {
       statusPollingIntervals.forEach(interval => clearInterval(interval));
       if (fastPollingTimeout) {
@@ -85,7 +80,7 @@ export function MachinesContent() {
   const fetchMachines = async () => {
     try {
       const response = await fetch("/api/machines");
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           router.push("/auth");
@@ -95,15 +90,11 @@ export function MachinesContent() {
       }
 
       const data: MachinesData = await response.json();
-      
-      // Set machines directly from database
+
       setMachines(data.machines);
       setLimits(data.limits);
-      
-      // Use usage from API (already excludes Electron/local machines from counts)
       setUsage(data.usage);
-      
-      // Start polling for machines that are in creating/starting state
+
       data.machines.forEach(machine => {
         if ((machine.status === "creating" || machine.status === "starting") && !statusPollingIntervals.has(machine.id)) {
           pollMachineStatus(machine.id);
@@ -118,7 +109,6 @@ export function MachinesContent() {
   };
 
   const pollMachineStatus = (machineId: string) => {
-    // Poll every 5 seconds for creating/starting machines
     const interval = setInterval(async () => {
       try {
         const response = await fetch("/api/machines");
@@ -126,19 +116,16 @@ export function MachinesContent() {
           console.error("Failed to poll machine status");
           return;
         }
-        
+
         const data: MachinesData = await response.json();
         const machine = data.machines.find(m => m.id === machineId);
-        
+
         if (!machine || (machine.status !== "creating" && machine.status !== "starting")) {
-          // Machine is no longer in creating/starting state, stop polling
           clearInterval(interval);
           statusPollingIntervals.delete(machineId);
-          
-          // Update the machines list with latest data
+
           setMachines(data.machines);
-          
-          // If machine was in creating/starting state and is now running, show notification
+
           const machine = data.machines.find(m => m.id === machineId);
           if (machine?.status === "running") {
             clearInterval(interval);
@@ -162,8 +149,7 @@ export function MachinesContent() {
         console.error("Error polling machine status:", error);
       }
     }, 5000);
-    
-    // Track the interval so we can clean it up
+
     statusPollingIntervals.set(machineId, interval);
   };
 
@@ -174,20 +160,17 @@ export function MachinesContent() {
   };
 
   const handleMachineCreated = async () => {
-    // Immediately refresh to show the creating machine
     await fetchMachines();
-    
-    // Set up fast polling for 30 seconds to catch the new machine quickly
+
     if (fastPollingTimeout) {
       clearTimeout(fastPollingTimeout);
     }
-    
+
     let pollCount = 0;
     const fastPoll = async () => {
       pollCount++;
       await fetchMachines();
-      
-      // Continue fast polling for up to 30 seconds (15 polls at 2 second intervals)
+
       if (pollCount < 15) {
         const timeout = setTimeout(fastPoll, 2000);
         setFastPollingTimeout(timeout);
@@ -195,17 +178,13 @@ export function MachinesContent() {
         setFastPollingTimeout(null);
       }
     };
-    
-    // Start fast polling after 1 second
+
     const timeout = setTimeout(fastPoll, 1000);
     setFastPollingTimeout(timeout);
   };
-  
-  // Removed pollForPendingMachine - we now poll for all creating/starting machines
-  // Removed startStatusPolling - now using simpler pollMachineStatus
 
   const handleMachineUpdated = (updatedMachine: UserMachine) => {
-    setMachines(machines.map(m => 
+    setMachines(machines.map(m =>
       m.id === updatedMachine.id ? updatedMachine : m
     ));
   };
@@ -234,9 +213,8 @@ export function MachinesContent() {
   const stoppedMachines = machines.filter(m => m.status === "stopped").length;
   const totalMachines = machines.length;
 
-  // Filter machines based on selected status
-  const filteredMachines = statusFilter === "all" 
-    ? machines 
+  const filteredMachines = statusFilter === "all"
+    ? machines
     : machines.filter(m => m.status === statusFilter);
 
   const statusFilters = [
@@ -247,45 +225,77 @@ export function MachinesContent() {
   ];
 
   return (
-    <div className="h-full overflow-y-auto scrollbar-invisible relative bg-transparent">
+    <div className="h-full overflow-y-auto scrollbar-invisible relative">
+      {/* Ambient background */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div
+          className="absolute -top-[30%] -right-[15%] h-[60%] w-[50%] rounded-full opacity-[0.02] dark:opacity-[0.04] blur-[120px]"
+          style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
+        />
+        <div
+          className="absolute -bottom-[20%] -left-[10%] h-[50%] w-[40%] rounded-full opacity-[0.015] dark:opacity-[0.035] blur-[100px]"
+          style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.012] dark:opacity-[0.025]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(128,128,128,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(128,128,128,0.3) 1px, transparent 1px)`,
+            backgroundSize: "80px 80px",
+          }}
+        />
+      </div>
+
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl space-y-6 relative z-10">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        >
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold tracking-tight">Virtual Machines</h1>
+              <h1 className="text-3xl font-medium tracking-tight">Virtual Machines</h1>
               {limits.max_machines > 0 && (
-                <span className="inline-flex items-center rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+                <span className="inline-flex items-center rounded-full border border-border/60 bg-background px-2.5 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
                   {usage.machines_count} / {limits.max_machines}
                 </span>
               )}
             </div>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-muted-foreground text-sm mt-1.5">
               Manage your AI-controlled desktop environments
             </p>
           </div>
-          <NoiseBackground
-            containerClassName="w-auto p-[1px] rounded-lg bg-transparent dark:bg-transparent shadow-none"
-            className="p-0"
-            gradientColors={["rgb(115, 115, 115)", "rgb(163, 163, 163)", "rgb(82, 82, 82)"]}
-            noiseIntensity={0.06}
-            speed={0.06}
-          >
-            <button
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="h-9 w-9 p-0 rounded-xl text-muted-foreground hover:text-foreground"
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+            </Button>
+            <Button
               onClick={() => setShowCreateDialog(true)}
-              className="inline-flex h-10 items-center justify-center rounded-[7px] bg-background/80 px-5 text-sm font-medium text-foreground transition-opacity hover:opacity-80 gap-2"
+              size="sm"
+              className="h-9 rounded-xl gap-2 px-4 font-medium"
             >
               <Plus className="h-4 w-4" />
               New Machine
-            </button>
-          </NoiseBackground>
-        </div>
-
+            </Button>
+          </div>
+        </motion.div>
 
         {/* Desktop App Banner */}
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+          className="flex items-center justify-between gap-3 rounded-xl border border-border/40 bg-card/50 backdrop-blur-sm px-4 py-3"
+        >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex items-center gap-1.5 text-muted-foreground/60">
+            <div className="flex items-center gap-1.5 text-muted-foreground/50">
               <WindowsIcon className="h-3.5 w-3.5" />
               <AppleIcon className="h-3.5 w-3.5" />
             </div>
@@ -295,25 +305,30 @@ export function MachinesContent() {
           </div>
           <Link
             href="/download"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 px-3 py-1.5 text-xs font-medium text-foreground transition-colors"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-foreground/[0.04] hover:bg-foreground/[0.08] px-3 py-1.5 text-xs font-medium text-foreground transition-colors"
           >
             <Download className="h-3 w-3" />
             Get the app
           </Link>
-        </div>
+        </motion.div>
 
         {/* Status Filters */}
         {machines.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-wrap gap-1.5"
+          >
             {statusFilters.map((filter) => (
               <button
                 key={filter.id}
                 onClick={() => setStatusFilter(filter.id)}
                 className={`
-                  px-4 py-2 rounded-lg transition-all duration-300
-                  ${statusFilter === filter.id 
-                    ? 'bg-foreground text-background font-medium' 
-                    : 'bg-secondary hover:bg-secondary/80 text-foreground'
+                  px-3.5 py-1.5 rounded-lg text-sm transition-all duration-200
+                  ${statusFilter === filter.id
+                    ? 'bg-foreground text-background font-medium shadow-sm'
+                    : 'bg-transparent hover:bg-foreground/[0.05] text-muted-foreground hover:text-foreground'
                   }
                 `}
               >
@@ -321,10 +336,10 @@ export function MachinesContent() {
                   {filter.label}
                   {filter.count > 0 && (
                     <span className={`
-                      text-xs px-1.5 py-0.5 rounded-full
-                      ${statusFilter === filter.id 
-                        ? 'bg-background/20' 
-                        : 'bg-foreground/10'
+                      text-[11px] tabular-nums px-1.5 py-0.5 rounded-full
+                      ${statusFilter === filter.id
+                        ? 'bg-background/20'
+                        : 'bg-foreground/[0.06]'
                       }
                     `}>
                       {filter.count}
@@ -333,41 +348,61 @@ export function MachinesContent() {
                 </span>
               </button>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Machines Grid */}
         {machines.length === 0 ? (
-          <div className="relative rounded-2xl border border-border/40 bg-card overflow-hidden">
-            {/* Smoke blobs */}
-            <div className="pointer-events-none absolute -top-16 -left-16 h-64 w-64 rounded-full bg-foreground/[0.04] blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-foreground/[0.03] blur-3xl" />
-            <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-48 w-48 rounded-full bg-foreground/[0.02] blur-2xl" />
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="relative rounded-2xl border border-border/30 bg-card/30 backdrop-blur-sm overflow-hidden"
+          >
+            {/* Ambient blobs */}
+            <div className="pointer-events-none absolute -top-20 -left-20 h-72 w-72 rounded-full bg-foreground/[0.02] blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-foreground/[0.015] blur-3xl" />
 
-            <div className="relative flex flex-col items-center px-6 py-14 text-center">
-              {/* Capability icon row */}
-              <div className="mb-8 flex items-center gap-3">
+            <div className="relative flex flex-col items-center px-6 py-16 text-center">
+              {/* Capability icons */}
+              <div className="mb-10 flex items-center gap-2">
                 {[Globe, Terminal, MousePointer2, ScanLine, Cpu].map((Icon, i) => (
-                  <div
+                  <motion.div
                     key={i}
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.2 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/40 bg-background/60 text-muted-foreground/70"
                   >
-                    <Icon className="h-5 w-5" />
-                  </div>
+                    <Icon className="h-[18px] w-[18px]" />
+                  </motion.div>
                 ))}
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm">
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/40 bg-background/60 text-muted-foreground/40"
+                >
                   <MoreHorizontal className="h-4 w-4" />
-                </div>
+                </motion.div>
               </div>
 
               {/* Headline */}
-              <h2 className="text-2xl font-semibold tracking-tight mb-2">True AI Employee with full computer access</h2>
-              <p className="text-sm text-muted-foreground max-w-sm mb-10">
-                Spin up an isolated virtual machine and let AI agents browse the web, run terminals, and control the desktop — hands-free.
-              </p>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <h2 className="text-2xl font-medium tracking-tight mb-2.5">
+                  True AI Employee with full computer access
+                </h2>
+                <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed mb-12">
+                  Spin up an isolated virtual machine and let AI agents browse the web, run terminals, and control the desktop — hands-free.
+                </p>
+              </motion.div>
 
               {/* Feature cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl mb-10">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl mb-12">
                 {[
                   {
                     icon: MousePointer2,
@@ -384,45 +419,69 @@ export function MachinesContent() {
                     title: "Isolated & safe",
                     desc: "Each machine runs in its own container — your local system stays untouched.",
                   },
-                ].map(({ icon: Icon, title, desc }) => (
-                  <div key={title} className="rounded-xl border border-border/50 bg-background/40 px-4 py-4 text-left">
-                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/5">
-                      <Icon className="h-4 w-4 text-foreground/70" />
+                ].map(({ icon: Icon, title, desc }, i) => (
+                  <motion.div
+                    key={title}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.4 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                    className="rounded-xl border border-border/30 bg-background/30 backdrop-blur-sm px-4 py-4 text-left"
+                  >
+                    <div className="mb-2.5 flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/[0.04]">
+                      <Icon className="h-4 w-4 text-foreground/60" />
                     </div>
-                    <p className="text-sm font-medium mb-0.5">{title}</p>
+                    <p className="text-sm font-medium mb-1">{title}</p>
                     <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
 
               {/* CTA */}
-              <Button onClick={() => setShowCreateDialog(true)} size="lg" className="gap-2">
-                <Plus className="h-4 w-4" />
-                Create your first machine
-              </Button>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Button onClick={() => setShowCreateDialog(true)} size="lg" className="gap-2 rounded-xl h-11 px-6">
+                  <Plus className="h-4 w-4" />
+                  Create your first machine
+                </Button>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         ) : filteredMachines.length === 0 ? (
-          <Card className="border-0">
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Monitor className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No {statusFilter !== 'all' ? statusFilter : ''} machines</h3>
-              <p className="text-muted-foreground text-center">
-                {statusFilter === 'all' 
-                  ? 'No machines found.' 
-                  : `No machines are currently ${statusFilter}.`}
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Card className="border-border/30 bg-card/30 backdrop-blur-sm">
+              <CardContent className="flex flex-col items-center justify-center py-14">
+                <Monitor className="h-10 w-10 text-muted-foreground/40 mb-4" />
+                <h3 className="text-base font-medium mb-1.5">No {statusFilter !== 'all' ? statusFilter : ''} machines</h3>
+                <p className="text-sm text-muted-foreground">
+                  {statusFilter === 'all'
+                    ? 'No machines found.'
+                    : `No machines are currently ${statusFilter}.`}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredMachines.map(machine => (
-              <MachineCard
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredMachines.map((machine, i) => (
+              <motion.div
                 key={machine.id}
-                machine={machine}
-                onUpdate={handleMachineUpdated}
-                onDelete={handleMachineDeleted}
-              />
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.05 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <MachineCard
+                  machine={machine}
+                  onUpdate={handleMachineUpdated}
+                  onDelete={handleMachineDeleted}
+                />
+              </motion.div>
             ))}
           </div>
         )}
@@ -432,7 +491,6 @@ export function MachinesContent() {
           open={showCreateDialog}
           onOpenChange={(open) => {
             setShowCreateDialog(open);
-            // If dialog is being closed (after creation), trigger fast polling
             if (!open && showCreateDialog) {
               handleMachineCreated();
             }

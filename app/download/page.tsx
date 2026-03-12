@@ -23,6 +23,7 @@ import { trackDesktopAppDownloaded } from "@/lib/posthog/analytics"
 import { cn } from "@/lib/utils"
 
 import { LandingHeader } from "@/app/components/landing/landing-header"
+import { OverlayDemo } from "@/app/components/download/overlay-demo"
 import { motion } from "framer-motion"
 
 type Platform = "windows" | "mac"
@@ -237,6 +238,23 @@ export default function DownloadPage() {
                   <Badge variant="secondary">v{version}</Badge>
                 </div>
               )}
+            </motion.div>
+
+            {/* Interactive overlay demo */}
+            <motion.div variants={itemVariants} className="mb-16">
+              <h3
+                className={cn(
+                  "text-center font-semibold mb-2",
+                  isMobile ? "text-xl" : "text-2xl"
+                )}
+              >
+                See it in action
+              </h3>
+              <p className="text-center text-sm text-muted-foreground mb-8 max-w-md mx-auto">
+                A lightweight overlay that floats on your desktop. Expand it to
+                chat, collapse it to a pill — always one click away.
+              </p>
+              <OverlayDemo />
             </motion.div>
 
             {/* Recommended download */}

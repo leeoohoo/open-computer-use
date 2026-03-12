@@ -241,7 +241,7 @@ function ActionButtons({ onReplay, onTryItOut }: { onReplay: () => void, onTryIt
 // Simplified header matching the main app header style
 function ShareHeader() {
   return (
-    <header className="h-app-header pointer-events-none fixed top-0 right-0 left-0 z-40">
+    <header className="h-app-header pointer-events-none absolute top-0 right-0 left-0 z-40">
       <div className="relative mx-auto flex h-full max-w-full items-center justify-between px-2 sm:px-4 lg:px-6 xl:px-8">
         <div className="flex w-full items-center justify-between min-w-0">
           <div className="-ml-0.5 flex items-center gap-1 sm:gap-2 lg:-ml-2.5 min-w-0 flex-shrink-0">
@@ -692,20 +692,21 @@ function SimpleArticleContent({
       </AnimatePresence>
 
       {/* Main content - matching the main app layout exactly */}
-      <div 
-        className="flex-1 flex transition-all duration-300"
-        style={{
-          marginRight: chatId && isNavigatorOpen && !isMobile ? `${navigatorWidth}%` : 0
-        }}
-      >
+      <div className="flex-1 flex transition-all duration-300">
         <main className="@container relative h-dvh w-full">
           {!isEmbed && <ShareHeader />}
 
           {/* Content area - matching main chat exactly */}
-          <div className={cn(
-            "relative h-full overflow-hidden scrollbar-invisible",
-            isEmbed ? "pt-0" : "pt-[var(--spacing-app-header,56px)]"
-          )}>
+          <div
+            className={cn(
+              "relative h-full overflow-hidden scrollbar-invisible",
+              isEmbed ? "pt-0" : "pt-[var(--spacing-app-header,56px)]"
+            )}
+            style={{
+              marginRight: chatId && isNavigatorOpen && !isMobile ? `${navigatorWidth}%` : 0,
+              transition: 'margin-right 0.25s ease'
+            }}
+          >
             <div className="h-full overflow-hidden scrollbar-invisible scroll-container">
               <div className="@container/main relative flex h-full flex-col items-center justify-end md:justify-center no-scrollbar">
                 
@@ -813,16 +814,15 @@ function SimpleArticleContent({
               </div>
             </div>
           </div>
+          {/* Project Navigator - inside the canvas */}
+          {chatId && (
+            <ProjectNavigator
+              isOpen={isNavigatorOpen}
+              onToggle={toggleNavigator}
+            />
+          )}
         </main>
       </div>
-
-      {/* Project Navigator - show for shared chat */}
-      {chatId && (
-        <ProjectNavigator
-          isOpen={isNavigatorOpen}
-          onToggle={toggleNavigator}
-        />
-      )}
     </div>
   )
 }

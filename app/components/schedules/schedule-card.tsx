@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   Play,
@@ -29,27 +29,6 @@ interface ScheduleCardProps {
   onEdit?: (chatId: string) => void
 }
 
-function useBeamAnimation() {
-  useEffect(() => {
-    const id = "beam-angle-styles"
-    if (document.getElementById(id)) return
-    const style = document.createElement("style")
-    style.id = id
-    style.textContent = `
-      @property --beam-angle {
-        syntax: '<angle>';
-        inherits: false;
-        initial-value: 0deg;
-      }
-      @keyframes rotate-beam {
-        from { --beam-angle: 0deg; }
-        to { --beam-angle: 360deg; }
-      }
-    `
-    document.head.appendChild(style)
-  }, [])
-}
-
 export function ScheduleCard({
   schedule,
   onUpdate,
@@ -58,7 +37,6 @@ export function ScheduleCard({
 }: ScheduleCardProps) {
   const router = useRouter()
   const [actionLoading, setActionLoading] = useState<string | null>(null)
-  useBeamAnimation()
 
   async function handleRunNow() {
     setActionLoading("run")
@@ -88,53 +66,31 @@ export function ScheduleCard({
           ? "Offline"
           : "Standby"
 
-  // Beam color based on status
-  const beamColor = isActive
-    ? "34, 197, 94"   // green
-    : isFailed
-      ? "245, 158, 11" // amber
-      : "161, 161, 170" // zinc/gray
-
   return (
     <div className={cn(
-      "group relative flex flex-col rounded-xl overflow-hidden transition-all duration-300 h-full border-0 bg-card shadow-sm hover:shadow-lg",
+      "group relative flex flex-col rounded-xl overflow-hidden transition-all duration-300 h-full",
+      "border border-border/30 bg-card/50 backdrop-blur-sm",
+      "hover:bg-card/80 hover:border-border/50 hover:shadow-lg hover:shadow-foreground/[0.02]",
       !isActive && !isFailed && "opacity-85 hover:opacity-100",
     )}>
-      {/* Rotating beam border */}
-      <div className="absolute -inset-[2px] rounded-xl overflow-hidden">
-        <div
-          className="absolute w-full h-full dark:brightness-150"
-          style={{
-            animation: `rotate-beam ${isActive ? "3s" : "6s"} linear infinite`,
-            filter: "drop-shadow(0 0 6px rgba(0, 0, 0, 0.2)) drop-shadow(0 0 12px currentColor)",
-            background: `conic-gradient(from var(--beam-angle) at 50% 50%,
-              transparent 0deg,
-              rgba(${beamColor}, 0.15) 5deg,
-              rgba(${beamColor}, 0.4) 10deg,
-              rgba(${beamColor}, 0.7) 20deg,
-              rgba(255, 255, 255, 0.9) 30deg,
-              rgba(${beamColor}, 0.7) 40deg,
-              rgba(${beamColor}, 0.4) 50deg,
-              rgba(${beamColor}, 0.15) 55deg,
-              transparent 60deg,
-              transparent 360deg)`,
-          }}
-        />
-      </div>
-      <div className="absolute inset-[2px] bg-background rounded-[10px] z-[1]" />
-
+      {/* Subtle top line */}
+      <div className={cn(
+        "absolute inset-x-0 top-0 h-px",
+        isActive
+          ? "bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent"
+          : isFailed
+            ? "bg-gradient-to-r from-transparent via-amber-500/40 to-transparent"
+            : "bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent",
+      )} />
 
       {/* Content */}
-      <div className="relative z-[2] flex flex-col h-full">
+      <div className="flex flex-col h-full">
         <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4 flex-1 space-y-3 sm:space-y-4">
           {/* Identity */}
           <div className="flex items-start justify-between">
             <div className="space-y-1 min-w-0 flex-1">
               <div className="flex items-center gap-2 sm:gap-2.5">
-                <div className={cn(
-                  "flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
-                  "bg-muted/60",
-                )}>
+                <div className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-lg bg-muted/60">
                   <CoastyIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground/60" />
                 </div>
                 <h3
@@ -149,7 +105,7 @@ export function ScheduleCard({
                   "w-1.5 h-1.5 rounded-full shrink-0",
                   isActive ? "bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.5)]"
                     : isFailed ? "bg-amber-500"
-                    : "bg-zinc-400 dark:bg-zinc-600",
+                    : "bg-muted-foreground/30",
                 )} />
                 <span className={cn(
                   "text-xs font-medium",

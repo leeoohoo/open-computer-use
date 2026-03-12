@@ -49,28 +49,37 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   // During hydration, always render the default layout to avoid mismatch
   // The layout will update after preferences are loaded
   return (
-    <div className="relative bg-background flex h-dvh w-full overflow-hidden">
+    <div className="relative flex h-dvh w-full overflow-hidden bg-sidebar">
       {mounted && hasSidebar && <AppSidebar />}
-      <div 
-        className="flex-1 flex transition-all duration-300"
-        style={{
-          marginRight: showProjectNavigator && isNavigatorOpen && !isMobile ? `${navigatorWidth}%` : 0
-        }}
+      <div
+        className={cn(
+          "flex-1 flex transition-all duration-300",
+          mounted && hasSidebar && "md:py-2 md:pr-2 md:pl-2"
+        )}
       >
-        <main className="@container relative h-dvh w-full">
-          <Header 
-            hasSidebar={hasSidebar} 
+        <main className={cn(
+          "@container relative h-full w-full bg-background",
+          mounted && hasSidebar && "md:rounded-2xl md:overflow-hidden md:shadow-sm"
+        )}>
+          <Header
+            hasSidebar={hasSidebar}
           />
-          <div className="relative pt-[var(--spacing-app-header,56px)] h-full overflow-hidden scrollbar-invisible">
+          <div
+            className="relative pt-[var(--spacing-app-header,56px)] h-full overflow-hidden scrollbar-invisible"
+            style={{
+              marginRight: showProjectNavigator && isNavigatorOpen && !isMobile ? `${navigatorWidth}%` : 0,
+              transition: 'margin-right 0.25s ease'
+            }}
+          >
             {children}
           </div>
+
+          {/* Project Navigator - inside the canvas */}
+          {showProjectNavigator && (
+            <ProjectNavigator isOpen={isNavigatorOpen} onToggle={toggleNavigator} disableAutoOpen={true} />
+          )}
         </main>
       </div>
-      
-      {/* Project Navigator - show for all active chats */}
-      {showProjectNavigator && (
-        <ProjectNavigator isOpen={isNavigatorOpen} onToggle={toggleNavigator} disableAutoOpen={true} />
-      )}
     </div>
   )
 }

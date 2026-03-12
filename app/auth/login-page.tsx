@@ -18,21 +18,22 @@ import { captureUtmParams, trackSignIn, trackSignUp } from "@/lib/posthog/analyt
 import { HeaderGoBack } from "../components/header-go-back"
 import { useRouter, useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
+import { CoastyIcon } from "@/components/icons/coasty"
 
 type AuthView = "sign-in" | "sign-up" | "magic-link" | "forgot-password"
 
 const viewTitles: Record<AuthView, string> = {
-  "sign-in": "Welcome back",
-  "sign-up": "Create your account",
-  "magic-link": "Passwordless sign in",
-  "forgot-password": "Reset your password",
+  "sign-in": "Your operator is standing by",
+  "sign-up": "Put your workflows on autopilot",
+  "magic-link": "Skip the password",
+  "forgot-password": "Let's get you back in",
 }
 
 const viewDescriptions: Record<AuthView, string> = {
-  "sign-in": "Sign in to your workspace",
-  "sign-up": "Get started with Coasty in seconds",
-  "magic-link": "We'll send a link to your email",
-  "forgot-password": "We'll send you a reset link",
+  "sign-in": "Pick up right where you left off — your agents remember",
+  "sign-up": "Deploy your first AI agent in under a minute",
+  "magic-link": "One click from your inbox and you're in",
+  "forgot-password": "We'll send a reset link to your email",
 }
 
 export default function LoginPage() {
@@ -295,20 +296,24 @@ export default function LoginPage() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="hidden lg:flex flex-1 flex-col justify-center items-start px-16 xl:px-24 max-w-2xl"
         >
+          <div className="mb-8">
+            <CoastyIcon className="size-10" />
+          </div>
           <h1 className="text-foreground text-5xl xl:text-6xl font-medium tracking-tight leading-[1.1]">
-            The AI that
+            You set the goal.
             <br />
-            <span className="text-muted-foreground">executes.</span>
+            <span className="text-muted-foreground">We handle the rest.</span>
           </h1>
           <p className="text-muted-foreground mt-6 text-lg leading-relaxed max-w-md">
-            Your always-on operator that runs workflows, navigates the web,
-            and handles the busywork. You decide the goal. It delivers the result.
+            Coasty deploys AI agents that browse, click, type, and navigate
+            like a teammate sitting at a real computer — so you can focus
+            on the work that actually needs you.
           </p>
           <div className="mt-12 flex flex-col gap-4 text-sm text-muted-foreground/70">
             {[
-              "Runs tasks in sandboxed environments",
-              "Full audit trail with screenshots",
-              "Schedule & automate 24/7",
+              "Agents run in isolated VMs — your data never leaks",
+              "Every action recorded with screenshots you can review",
+              "Set it once, schedule it forever — runs while you sleep",
             ].map((feature, i) => (
               <motion.div
                 key={feature}
@@ -334,11 +339,14 @@ export default function LoginPage() {
           >
             {/* Mobile-only heading */}
             <div className="lg:hidden text-center mb-8">
+              <div className="flex justify-center mb-4">
+                <CoastyIcon className="size-8" />
+              </div>
               <h1 className="text-foreground text-3xl sm:text-4xl font-medium tracking-tight">
-                The AI that executes.
+                You set the goal. We handle the rest.
               </h1>
               <p className="text-muted-foreground mt-3 text-sm sm:text-base">
-                Your always-on operator for workflows, browsing, and busywork.
+                AI agents that browse, click, and work like a real teammate.
               </p>
             </div>
 

@@ -177,13 +177,21 @@ class CSRFMiddleware(BaseHTTPMiddleware):
         # Skip CSRF for GET, HEAD, OPTIONS requests
         if request.method in ["GET", "HEAD", "OPTIONS"]:
             return await _safe_call_next(call_next, request)
-        
+
+        # Skip CSRF for Bearer-token-authenticated requests (e.g. Electron desktop app).
+        # CSRF attacks rely on browsers auto-attaching cookies; they cannot forge
+        # an Authorization header, so Bearer-authenticated requests are inherently
+        # CSRF-safe.
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            return await _safe_call_next(call_next, request)
+
         # Skip CSRF for certain paths and API routes
         skip_paths = [
             "/", "/api/health", "/docs", "/redoc", "/openapi.json",
             "/api/chat/", "/api/models/", "/api/search/", "/api/vm/"
         ]
-        
+
         # Check if path should skip CSRF
         if any(request.url.path.startswith(path) for path in skip_paths):
             return await _safe_call_next(call_next, request)

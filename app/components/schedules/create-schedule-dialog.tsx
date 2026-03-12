@@ -174,27 +174,23 @@ export function CreateScheduleDialog({
         className={cn(
           "flex flex-col max-w-[calc(100vw-2rem)] sm:max-w-[540px] max-h-[90dvh] p-0 gap-0 overflow-hidden",
           "bg-background text-foreground",
-          "border-zinc-200 dark:border-zinc-700",
-          "shadow-[0_8px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_60px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.06)_inset,0_-20px_60px_-20px_rgba(255,255,255,0.02)_inset]",
+          "border-border/30",
+          "shadow-xl",
         )}
       >
-        {/* Premium header with gradient */}
+        {/* Header */}
         <div className="relative shrink-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-foreground/[0.04] via-foreground/[0.02] to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.1] to-transparent" />
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.15] to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.1] to-transparent" />
 
           <div className="relative px-4 sm:px-6 pt-5 sm:pt-6 pb-4 sm:pb-5">
             <DialogHeader>
               <div className="flex items-center gap-3 sm:gap-3.5">
                 <div className={cn(
-                  "relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl sm:rounded-2xl",
-                  "bg-gradient-to-br from-foreground/15 to-foreground/[0.06]",
-                  "ring-1 ring-zinc-300 dark:ring-zinc-600",
-                  "dark:shadow-[0_2px_12px_rgba(255,255,255,0.06)]",
+                  "flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl sm:rounded-2xl",
+                  "bg-muted/60 ring-1 ring-border/30",
                 )}>
                   <AgentIcon className="h-4 w-4 sm:h-5 sm:w-5 text-foreground/80" />
-                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-white dark:bg-zinc-800 animate-pulse" />
                 </div>
                 <div>
                   <DialogTitle className="text-[15px] sm:text-[17px] font-bold tracking-tight">
@@ -214,7 +210,7 @@ export function CreateScheduleDialog({
           {/* Employee Name */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-2">
-              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800">
+              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-muted/60">
                 <User className="h-3 w-3 text-foreground/50" />
               </div>
               <label className="text-[11px] font-semibold text-muted-foreground tracking-widest uppercase">
@@ -230,9 +226,8 @@ export function CreateScheduleDialog({
                 autoFocus
                 className={cn(
                   "flex-1 h-10 rounded-xl px-4 text-sm font-medium",
-                  "bg-white dark:bg-zinc-800 text-foreground",
-                  "border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:border-zinc-400 dark:focus-visible:border-zinc-500",
-                  "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.3)]",
+                  "bg-muted/40 text-foreground",
+                  "border border-border/40 hover:border-border/60 focus-visible:border-border",
                   "placeholder:text-muted-foreground",
                   "focus:outline-none transition-all duration-200",
                 )}
@@ -242,8 +237,8 @@ export function CreateScheduleDialog({
                 onClick={() => setEmployeeName(randomEmployeeName())}
                 className={cn(
                   "shrink-0 h-10 w-10 flex items-center justify-center rounded-xl",
-                  "bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700",
-                  "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:bg-zinc-800",
+                  "bg-muted/40 border border-border/40",
+                  "text-muted-foreground hover:text-foreground hover:bg-muted/60",
                   "transition-all duration-200",
                 )}
                 title="Randomize name"
@@ -256,7 +251,7 @@ export function CreateScheduleDialog({
           {/* Instructions */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-2">
-              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800">
+              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-muted/60">
                 <PenLine className="h-3 w-3 text-foreground/50" />
               </div>
               <label className="text-[11px] font-semibold text-muted-foreground tracking-widest uppercase">
@@ -270,9 +265,8 @@ export function CreateScheduleDialog({
               rows={3}
               className={cn(
                 "resize-none text-sm leading-relaxed rounded-xl",
-                "bg-white dark:!bg-zinc-800 text-foreground",
-                "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:border-zinc-400 dark:focus-visible:border-zinc-500",
-                "shadow-[0_0_0_1px_rgba(0,0,0,0.03)_inset,0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset,0_2px_4px_rgba(0,0,0,0.3)]",
+                "bg-muted/40 text-foreground",
+                "border-border/40 hover:border-border/60 focus-visible:border-border",
                 "placeholder:text-muted-foreground",
                 "transition-all duration-200",
               )}
@@ -291,10 +285,9 @@ export function CreateScheduleDialog({
           {/* Credentials hint */}
           <div className={cn(
             "flex items-center gap-3 rounded-xl px-4 py-3",
-            "bg-zinc-50 dark:bg-zinc-900/60",
-            "border border-zinc-200 dark:border-zinc-800",
+            "border border-border/30 bg-card/50 backdrop-blur-sm",
           )}>
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/60">
               <KeyRound className="h-3.5 w-3.5 text-foreground/40" />
             </div>
             <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -312,8 +305,7 @@ export function CreateScheduleDialog({
           {error && (
             <div className={cn(
               "flex items-center gap-2.5 rounded-xl px-4 py-3",
-              "bg-zinc-50 dark:bg-zinc-900/60",
-              "border border-zinc-200 dark:border-zinc-700",
+              "border border-border/30 bg-card/50",
             )}>
               <AlertCircle className="h-4 w-4 text-muted-foreground shrink-0" />
               <p className="text-xs text-foreground/80 font-medium">{error}</p>
@@ -321,16 +313,16 @@ export function CreateScheduleDialog({
           )}
         </div>
 
-        {/* Premium footer */}
+        {/* Footer */}
         <div className={cn(
           "shrink-0 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-end gap-2",
-          "border-t border-zinc-200 dark:border-zinc-800",
+          "border-t border-border/30",
         )}>
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={loading}
-            className="h-9 sm:h-10 px-4 sm:px-5 text-[13px] sm:text-sm rounded-lg sm:rounded-xl text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            className="h-9 sm:h-10 px-4 sm:px-5 text-[13px] sm:text-sm rounded-lg sm:rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/60"
           >
             Cancel
           </Button>
@@ -342,15 +334,8 @@ export function CreateScheduleDialog({
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               "disabled:opacity-40 disabled:cursor-not-allowed",
               canSubmit && !loading
-                ? [
-                  "text-background",
-                  "bg-gradient-to-b from-foreground to-foreground/80",
-                  "hover:from-foreground hover:to-foreground/90",
-                  "shadow-[0_1px_3px_rgba(0,0,0,0.15)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.8)_inset,0_4px_16px_rgba(255,255,255,0.08)]",
-                  "hover:shadow-[0_1px_3px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.9)_inset,0_6px_24px_rgba(255,255,255,0.12)]",
-                  "hover:scale-[1.02] active:scale-[0.98]",
-                ]
-                : "text-muted-foreground bg-zinc-100 dark:bg-zinc-800"
+                ? "text-background bg-foreground hover:bg-foreground/90 hover:scale-[1.02] active:scale-[0.98]"
+                : "text-muted-foreground bg-muted/60"
             )}
           >
             <span className="flex items-center gap-2">

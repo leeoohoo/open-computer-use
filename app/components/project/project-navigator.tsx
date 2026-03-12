@@ -2226,7 +2226,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
             exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
             className={cn(
-            "fixed z-50",
+            "absolute z-50",
             "top-[var(--spacing-app-header,56px)] sm:top-[calc(var(--spacing-app-header,56px)+0.5rem)]",
             "bottom-0 sm:bottom-2",
             isMobile ? "right-0 w-full" : ""

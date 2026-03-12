@@ -115,13 +115,10 @@ export function ProjectChatItem({ chat, formatDate }: ProjectChatItemProps) {
 
   const handleLinkClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    // Close sidebar on all devices when navigating
     if (isMobile) {
       setOpenMobile(false)
-    } else {
-      setOpen(false)
     }
-  }, [isMobile, setOpen, setOpenMobile])
+  }, [isMobile, setOpenMobile])
 
   // Memoize computed values
   const displayTitle = useMemo(

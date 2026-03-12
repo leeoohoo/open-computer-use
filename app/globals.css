@@ -5,6 +5,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Blinking caret for overlay demo typewriter */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* Shimmer animation for tool invocation placeholder */
 @keyframes shimmer {
   0% {
@@ -587,13 +593,13 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar: oklch(0.975 0.002 260);
+  --sidebar-foreground: oklch(0.4 0.005 260);
   --sidebar-primary: oklch(0.21 0.006 285.885);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
+  --sidebar-accent: oklch(0.94 0.003 260);
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-border: oklch(0.92 0.003 260);
   --sidebar-ring: oklch(0.705 0.015 286.067);
   --color-1: oklch(0.95 0 0); /* White */
   --color-2: oklch(0.1 0 0);  /* Black */
@@ -603,7 +609,7 @@
 }
 
 .dark {
-  --background: oklch(0% 0 0);
+  --background: oklch(8% 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(20% 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -628,13 +634,13 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(10% 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(25% 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(35% 0 0);
+  --sidebar: oklch(20% 0.005 260);
+  --sidebar-foreground: oklch(0.6 0.005 260);
+  --sidebar-primary: oklch(0.985 0 0);
+  --sidebar-primary-foreground: oklch(20% 0 0);
+  --sidebar-accent: oklch(25% 0.005 260);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(100% 0 0 / 30%);
+  --sidebar-border: oklch(100% 0 0 / 10%);
   --sidebar-ring: oklch(0.705 0.015 286.067);
   --color-1: oklch(0.95 0 0); /* White */
   --color-2: oklch(0.1 0 0);  /* Black */

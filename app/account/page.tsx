@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
 
 import { CombinedAccount } from "@/app/components/layout/settings/general/combined-account"
 import { PrivacySection } from "@/app/components/layout/settings/general/privacy-section"
@@ -78,15 +79,15 @@ function SidebarNavItem({
       onClick={onClick}
       disabled={isDisabled}
       className={cn(
-        "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left transition-colors duration-100",
+        "relative w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left transition-all duration-150",
         isActive
-          ? "text-foreground font-semibold"
-          : "text-muted-foreground/55 hover:text-foreground/80",
-        isDisabled && "opacity-30 cursor-not-allowed"
+          ? "text-foreground bg-foreground/[0.06]"
+          : "text-muted-foreground/55 hover:text-foreground/80 hover:bg-foreground/[0.03]",
+        isDisabled && "opacity-30 cursor-not-allowed hover:bg-transparent"
       )}
     >
-      <Icon className="h-3.5 w-3.5 shrink-0" />
-      <span className="text-[13px] font-medium leading-none">{section.label}</span>
+      <Icon className={cn("h-3.5 w-3.5 shrink-0", isActive && "text-foreground/70")} />
+      <span className={cn("text-[13px] leading-none", isActive ? "font-semibold" : "font-medium")}>{section.label}</span>
       {isDisabled && (
         <span className="ml-auto text-[9px] font-semibold tracking-[0.08em] uppercase text-muted-foreground/30">
           soon
@@ -99,11 +100,8 @@ function SidebarNavItem({
 function ComingSoonPlaceholder({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-      <div className="relative mb-5">
-        <div className="absolute inset-0 rounded-full bg-foreground/[0.04] blur-xl scale-150" />
-        <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-foreground/[0.05] ring-1 ring-foreground/[0.08]">
-          <Icon className="h-5 w-5 text-muted-foreground/40" />
-        </div>
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted/60 ring-1 ring-border/30 mb-5">
+        <Icon className="h-5 w-5 text-muted-foreground/40" />
       </div>
       <p className="text-sm font-medium text-foreground/60 mb-1">{label}</p>
       <p className="text-xs text-muted-foreground/40 max-w-[200px] leading-relaxed">
@@ -145,7 +143,7 @@ function AccountContent() {
   if (isLoading) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/40" />
+        <Loader2 className="h-5 w-5 animate-spin text-foreground/20" />
       </div>
     )
   }
@@ -179,9 +177,9 @@ function AccountContent() {
               key={href}
               href={href}
               {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              className="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-foreground/[0.04] transition-colors"
+              className="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-muted/40 transition-colors"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/[0.06] shrink-0">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/60 ring-1 ring-border/30 shrink-0">
                 <Icon className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex-1 min-w-0">
@@ -220,7 +218,7 @@ function AccountContent() {
                     <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-muted-foreground/50 mb-1.5 px-1">
                       {group.label}
                     </p>
-                    <div className="rounded-xl border border-border/50 divide-y divide-border/40 overflow-hidden">
+                    <div className="rounded-xl border border-border/30 divide-y divide-border/20 overflow-hidden">
                       {groupSections.map((section) => {
                         const Icon = section.icon
                         const isDisabled = !section.component
@@ -236,11 +234,11 @@ function AccountContent() {
                             }}
                             disabled={isDisabled}
                             className={cn(
-                              "w-full flex items-center gap-3 px-4 py-3 text-left bg-card transition-colors hover:bg-muted/40",
+                              "w-full flex items-center gap-3 px-4 py-3 text-left bg-card/50 transition-colors hover:bg-muted/40",
                               isDisabled && "opacity-40 cursor-not-allowed"
                             )}
                           >
-                            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-foreground/[0.05] shrink-0">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted/60 shrink-0">
                               <Icon className="h-3.5 w-3.5 text-muted-foreground" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -274,7 +272,7 @@ function AccountContent() {
               </button>
               <h1 className="text-lg font-semibold tracking-tight mb-0.5">{activeConfig?.label}</h1>
               <p className="text-xs text-muted-foreground mb-5">{activeConfig?.description}</p>
-              <div className="rounded-xl border border-border/50 overflow-hidden bg-card">
+              <div className="rounded-xl border border-border/30 overflow-hidden bg-card/50">
                 {renderSectionContent(true)}
               </div>
             </div>
@@ -283,30 +281,59 @@ function AccountContent() {
       </div>
 
       {/* ─── Desktop ─────────────────────────────────────────────────────── */}
-      <div className="hidden lg:flex flex-1 min-h-0">
-        <aside className="w-[196px] flex-shrink-0 flex flex-col overflow-y-auto">
+      <div className="hidden lg:flex flex-1 min-h-0 relative">
+        {/* Ambient background */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div
+            className="absolute -top-[30%] -left-[15%] h-[70%] w-[50%] rounded-full opacity-[0.02] dark:opacity-[0.04] blur-[100px]"
+            style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
+          />
+          <div
+            className="absolute -bottom-[20%] -right-[10%] h-[60%] w-[40%] rounded-full opacity-[0.015] dark:opacity-[0.03] blur-[100px]"
+            style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
+          />
+          <div
+            className="absolute inset-0 opacity-[0.012] dark:opacity-[0.025]"
+            style={{
+              backgroundImage: `linear-gradient(rgba(128,128,128,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(128,128,128,0.3) 1px, transparent 1px)`,
+              backgroundSize: "80px 80px",
+            }}
+          />
+        </div>
+
+        <motion.aside
+          initial={{ opacity: 0, x: -12 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-[220px] flex-shrink-0 flex flex-col overflow-y-auto border-r border-border/30"
+        >
           {/* User profile */}
-          <div className="px-3 pt-6 pb-4">
-            <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg">
-              <Avatar className="h-6 w-6 shrink-0">
+          <div className="px-4 pt-7 pb-5">
+            <div className="flex items-center gap-3 px-2 py-2.5 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30">
+              <Avatar className="h-8 w-8 shrink-0 ring-1 ring-border/30">
                 <AvatarImage src={user?.profile_image ?? ""} className="object-cover" />
-                <AvatarFallback className="text-[10px] font-semibold">
+                <AvatarFallback className="text-[11px] font-semibold bg-muted/60">
                   {userInitial}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="text-[12px] font-medium leading-tight truncate">{user?.display_name}</p>
-                <p className="text-[10px] text-muted-foreground/50 leading-tight truncate mt-0.5">{user?.email}</p>
+                <p className="text-[13px] font-medium leading-tight truncate">{user?.display_name}</p>
+                <p className="text-[11px] text-muted-foreground/50 leading-tight truncate mt-0.5">{user?.email}</p>
               </div>
             </div>
           </div>
 
           {/* Nav */}
-          <div className="flex-1 px-3 pb-6 space-y-6">
-            {navGroups.map((group) => {
+          <div className="flex-1 px-4 pb-6 space-y-6">
+            {navGroups.map((group, gi) => {
               const groupSections = sections.filter((s) => group.ids.includes(s.id))
               return (
-                <div key={group.label}>
+                <motion.div
+                  key={group.label}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 + gi * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                >
                   <p className="text-[9px] font-semibold tracking-[0.14em] uppercase text-muted-foreground/35 px-2.5 mb-2">
                     {group.label}
                   </p>
@@ -320,29 +347,37 @@ function AccountContent() {
                       />
                     ))}
                   </div>
-                </div>
+                </motion.div>
               )
             })}
           </div>
-        </aside>
+        </motion.aside>
 
         {/* Content area */}
-        <main className="flex-1 min-w-0 overflow-y-auto px-7 py-6">
-          <p className="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted-foreground/35 mb-5">
+        <motion.main
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          className="relative flex-1 min-w-0 overflow-y-auto px-8 py-7"
+        >
+          <p className="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted-foreground/40 mb-1.5">
             {activeConfig?.label}
           </p>
+          {activeConfig?.description && (
+            <p className="text-sm text-muted-foreground/60 mb-6">
+              {activeConfig.description}
+            </p>
+          )}
           {activeConfig?.component === "feedback" || activeConfig?.component === "about" ? (
-            <div className="rounded-xl bg-muted/20 overflow-hidden">
-              {renderSectionContent(true)}
-            </div>
+            renderSectionContent(true)
           ) : activeConfig?.component === "social" ? (
-            <div className="space-y-1.5">{renderSectionContent(false)}</div>
+            <div>{renderSectionContent(false)}</div>
           ) : typeof ActiveComponent === "function" ? (
             <ActiveComponent />
           ) : (
             <ComingSoonPlaceholder icon={activeConfig!.icon} label={activeConfig!.label} />
           )}
-        </main>
+        </motion.main>
       </div>
     </div>
   )

@@ -40,9 +40,9 @@ import {
   AlertTriangle,
 } from "lucide-react"
 import Link from "next/link"
+import { motion, AnimatePresence } from "framer-motion"
 import { CoastyIcon } from "@/components/icons/coasty"
 import { AgentIcon } from "@/components/icons/agent"
-import { NoiseBackground } from "@/components/ui/noise-background"
 import { trackScheduleTriggered } from "@/lib/posthog/analytics"
 import { ScheduleCalendar, getTasksForDate, type DayTask } from "./schedule-calendar"
 import { ScheduleHistory } from "./schedule-history"
@@ -350,12 +350,12 @@ function DayTaskItem({ task, onUpdate }: { task: DayTask; onUpdate: () => void }
   }
 
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition-all group">
+    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted/50 transition-all group">
       <div className={cn(
         "w-2 h-2 rounded-full shrink-0",
         isActive ? "bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.5)]"
           : s.paused_reason === "too_many_failures" ? "bg-amber-500"
-          : "bg-zinc-400 dark:bg-zinc-600",
+          : "bg-muted-foreground/30",
       )} />
       <div className="flex-1 min-w-0">
         <p
@@ -371,7 +371,7 @@ function DayTaskItem({ task, onUpdate }: { task: DayTask; onUpdate: () => void }
       <button
         onClick={run}
         disabled={!!loading}
-        className="h-6 px-2 rounded-md text-[11px] font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-foreground/60 hover:text-foreground opacity-0 group-hover:opacity-100 transition-all disabled:opacity-40"
+        className="h-6 px-2 rounded-md text-[11px] font-medium bg-muted/60 hover:bg-muted text-foreground/60 hover:text-foreground opacity-0 group-hover:opacity-100 transition-all disabled:opacity-40"
       >
         {loading === "run" ? "\u2026" : "Run"}
       </button>
@@ -573,7 +573,7 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
         </defs>
         {/* Tree connectors first (behind) */}
         {connectors.filter(c => c.type === "tree").map((c, i) => (
-          <path key={`t${i}`} d={c.d} fill="none" className="stroke-zinc-200 dark:stroke-zinc-700" strokeWidth="1.5" />
+          <path key={`t${i}`} d={c.d} fill="none" className="stroke-border/50" strokeWidth="1.5" />
         ))}
         {/* Delegation arrows on top — subtle dashed lines */}
         {connectors.filter(c => c.type === "delegation").map((c, i) => (
@@ -587,9 +587,9 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
         {/* ─ Company node ─ */}
         <div
           ref={companyRef}
-          className="flex items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 sm:px-5 py-2.5 sm:py-3.5 shadow-sm dark:shadow-none"
+          className="flex items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-border/30 bg-card/50 backdrop-blur-sm px-3 sm:px-5 py-2.5 sm:py-3.5 shadow-sm"
         >
-          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-800/60 flex items-center justify-center ring-1 ring-zinc-200/60 dark:ring-zinc-700/40">
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-muted/60 flex items-center justify-center ring-1 ring-border/30">
             <CoastyIcon className="h-4 w-4 sm:h-5 sm:w-5 text-foreground/60" />
           </div>
           <div>
@@ -617,14 +617,14 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                       "group relative flex items-center gap-2 sm:gap-2.5 rounded-lg sm:rounded-xl border px-3 sm:px-4 py-2.5 sm:py-3 shadow-sm dark:shadow-none transition-all duration-200",
                       dragOverTeam === team.hub_id
                         ? "border-emerald-400 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 ring-2 ring-emerald-400/30 dark:ring-emerald-500/20 scale-[1.02]"
-                        : "border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-600"
+                        : "border-border/30 bg-card/50 backdrop-blur-sm hover:border-border/50"
                     )}
                   >
                     <div className={cn(
                       "h-7 w-7 sm:h-8 sm:w-8 rounded-md sm:rounded-lg flex items-center justify-center ring-1 shrink-0 transition-colors duration-200",
                       dragOverTeam === team.hub_id
                         ? "bg-emerald-100 dark:bg-emerald-900/40 ring-emerald-300/60 dark:ring-emerald-600/40"
-                        : "bg-zinc-100 dark:bg-zinc-800 ring-zinc-200/60 dark:ring-zinc-700/40"
+                        : "bg-muted/60 ring-border/30"
                     )}>
                       <Users className={cn("h-3 w-3 sm:h-3.5 sm:w-3.5 transition-colors duration-200", dragOverTeam === team.hub_id ? "text-emerald-500" : "text-foreground/40")} />
                     </div>
@@ -633,9 +633,9 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                         <input type="text" value={editName} onChange={e => setEditName(e.target.value)}
                           onKeyDown={e => { if (e.key === "Enter") saveEdit(team.hub_id, team.name, team.instructions || ""); if (e.key === "Escape") cancelEdit() }}
                           autoFocus
-                          className="w-full h-7 rounded-md px-2 text-xs font-semibold bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground focus:outline-none focus:border-zinc-400 transition-all" />
+                          className="w-full h-7 rounded-md px-2 text-xs font-semibold bg-muted/60 border border-border/50 text-foreground focus:outline-none focus:border-border transition-all" />
                         <textarea value={editInstructions} onChange={e => setEditInstructions(e.target.value)} rows={1}
-                          className="w-full rounded-md px-2 py-1 text-[10px] resize-none bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground focus:outline-none focus:border-zinc-400 transition-all"
+                          className="w-full rounded-md px-2 py-1 text-[10px] resize-none bg-muted/60 border border-border/50 text-foreground focus:outline-none focus:border-border transition-all"
                           placeholder="Guidelines..." />
                         <div className="flex gap-1.5">
                           <button onClick={() => saveEdit(team.hub_id, team.name, team.instructions || "")} className="h-6 px-2.5 rounded-md text-[10px] font-semibold text-background bg-foreground hover:bg-foreground/90 transition-all">{busy === "edit" ? "\u2026" : "Save"}</button>
@@ -650,10 +650,10 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                     )}
                     {!isEditing && (
                       <div className="flex items-center gap-0.5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                        <button onClick={() => startEdit(team)} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" title="Edit">
+                        <button onClick={() => startEdit(team)} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-muted/60 transition-all" title="Edit">
                           <Pencil className="h-2.5 w-2.5" />
                         </button>
-                        <button onClick={() => disband(team.hub_id)} disabled={!!busy} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" title="Disband">
+                        <button onClick={() => disband(team.hub_id)} disabled={!!busy} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-muted/60 transition-all" title="Disband">
                           <Trash2 className="h-2.5 w-2.5" />
                         </button>
                       </div>
@@ -680,23 +680,23 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                             <div className={cn(
                               "h-10 w-10 rounded-full flex items-center justify-center transition-all sm:h-10 sm:w-10",
                               isDelegate
-                                ? "bg-slate-50 dark:bg-slate-900/30 ring-1.5 ring-slate-300/50 dark:ring-slate-600/40 group-hover/emp:ring-slate-400 dark:group-hover/emp:ring-slate-500"
-                                : "bg-zinc-50 dark:bg-zinc-800 ring-1 ring-zinc-200/60 dark:ring-zinc-700/40 group-hover/emp:ring-zinc-300 dark:group-hover/emp:ring-zinc-600",
+                                ? "bg-muted/40 ring-1.5 ring-border/40 group-hover/emp:ring-border/60"
+                                : "bg-muted/60 ring-1 ring-border/30 group-hover/emp:ring-border/50",
                             )}>
                               <CoastyIcon className={cn("h-4 w-4", isDelegate ? "text-slate-400" : "text-foreground/40")} />
                             </div>
                             <div className={cn(
-                              "absolute -bottom-px -right-px h-2.5 w-2.5 rounded-full border-2 border-white dark:border-zinc-900",
-                              isActive ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-600",
+                              "absolute -bottom-px -right-px h-2.5 w-2.5 rounded-full border-2 border-background",
+                              isActive ? "bg-emerald-500" : "bg-muted-foreground/30",
                             )} />
                           </div>
                           <p className="text-[10px] sm:text-[11px] font-semibold text-foreground mt-1.5 sm:mt-2 text-center max-w-[80px] sm:max-w-[100px] truncate leading-tight">{m.title || "Untitled"}</p>
                           {sched && <p className="text-[8px] sm:text-[9px] text-muted-foreground/40 leading-tight mt-0.5">{formatFrequency(sched.frequency)}</p>}
-                          {isDelegate && <span className="text-[8px] font-medium text-slate-400 dark:text-slate-500 mt-0.5 uppercase tracking-wider">delegate</span>}
+                          {isDelegate && <span className="text-[8px] font-medium text-muted-foreground/50 mt-0.5 uppercase tracking-wider">delegate</span>}
                           <button
                             onClick={e => { e.stopPropagation(); removeMember(team.hub_id, m.chat_id) }}
                             disabled={!!busy}
-                            className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 opacity-0 group-hover/emp:opacity-100 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 text-muted-foreground/40 transition-all ring-1 ring-zinc-200 dark:ring-zinc-700"
+                            className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center rounded-full bg-muted opacity-0 group-hover/emp:opacity-100 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 text-muted-foreground/40 transition-all ring-1 ring-border/50"
                           >
                             <X className="h-2 w-2" />
                           </button>
@@ -717,8 +717,8 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                               className={cn(
                                 "h-10 w-10 rounded-full border border-dashed flex items-center justify-center transition-all",
                                 avail.length === 0
-                                  ? "border-zinc-150 dark:border-zinc-800 text-muted-foreground/15 cursor-not-allowed"
-                                  : "border-zinc-300 dark:border-zinc-600 text-muted-foreground/30 hover:text-muted-foreground hover:border-zinc-400 dark:hover:border-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50",
+                                  ? "border-border/20 text-muted-foreground/15 cursor-not-allowed"
+                                  : "border-border/40 text-muted-foreground/30 hover:text-muted-foreground hover:border-border/60 hover:bg-muted/40",
                               )}
                             >
                               <Plus className="h-3.5 w-3.5" />
@@ -727,10 +727,10 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                             {showAddMenu === team.hub_id && avail.length > 0 && (
                               <>
                                 <div className="fixed inset-0 z-40" onClick={() => setShowAddMenu(null)} />
-                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-52 max-h-48 overflow-y-auto rounded-xl bg-background border border-zinc-200 dark:border-zinc-700 shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] py-1 scrollbar-invisible">
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-52 max-h-48 overflow-y-auto rounded-xl bg-background border border-border/50 shadow-xl py-1 scrollbar-invisible">
                                   {avail.map(s => (
                                     <button key={s.chat_id} onClick={() => addMember(team.hub_id, s.chat_id)} disabled={busy === `add-${s.chat_id}`}
-                                      className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors disabled:opacity-40">
+                                      className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-muted/60 transition-colors disabled:opacity-40">
                                       <div className="h-5 w-5 rounded-full flex items-center justify-center shrink-0 bg-muted/60">
                                         <CoastyIcon className="h-2.5 w-2.5 text-foreground/60" />
                                       </div>
@@ -764,9 +764,9 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
         {unassigned.length > 0 && teams.length > 0 && (
           <div className="mt-8 sm:mt-14 w-full">
             <div className="flex items-center gap-3 mb-3 sm:mb-4">
-              <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+              <div className="h-px flex-1 bg-border/30" />
               <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground/40 uppercase tracking-widest">Unassigned</span>
-              <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+              <div className="h-px flex-1 bg-border/30" />
             </div>
             <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
               {unassigned.map(s => {
@@ -779,15 +779,15 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                       e.dataTransfer.setData("application/x-employee-id", s.chat_id)
                       e.dataTransfer.effectAllowed = "copy"
                     }}
-                    className="flex items-center gap-2 sm:gap-2.5 rounded-lg sm:rounded-xl border border-dashed border-zinc-200 dark:border-zinc-700 px-2.5 sm:px-3 py-1.5 sm:py-2 cursor-grab active:cursor-grabbing hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all select-none"
+                    className="flex items-center gap-2 sm:gap-2.5 rounded-lg sm:rounded-xl border border-dashed border-border/40 px-2.5 sm:px-3 py-1.5 sm:py-2 cursor-grab active:cursor-grabbing hover:border-border/60 hover:bg-muted/40 transition-all select-none"
                   >
                     <div className="relative shrink-0">
-                      <div className="h-7 w-7 rounded-full bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center ring-1 ring-zinc-200/60 dark:ring-zinc-700/40">
+                      <div className="h-7 w-7 rounded-full bg-muted/60 flex items-center justify-center ring-1 ring-border/30">
                         <CoastyIcon className="h-3 w-3 text-foreground/30" />
                       </div>
                       <div className={cn(
-                        "absolute -bottom-px -right-px h-2 w-2 rounded-full border-[1.5px] border-white dark:border-zinc-900",
-                        isActive ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-600",
+                        "absolute -bottom-px -right-px h-2 w-2 rounded-full border-[1.5px] border-background",
+                        isActive ? "bg-emerald-500" : "bg-muted-foreground/30",
                       )} />
                     </div>
                     <div className="min-w-0">
@@ -1066,24 +1066,42 @@ export function SchedulesContent() {
 
   return (
     <div className="h-full overflow-y-auto scrollbar-invisible relative bg-transparent">
-      <div className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl space-y-6">
+      {/* Ambient background */}
+      <div className="pointer-events-none fixed inset-0">
+        <div className="absolute -top-1/4 -right-1/4 h-[600px] w-[600px] rounded-full bg-foreground/[0.02] dark:bg-foreground/[0.04] blur-3xl" />
+        <div className="absolute -bottom-1/4 -left-1/4 h-[500px] w-[500px] rounded-full bg-foreground/[0.02] dark:bg-foreground/[0.04] blur-3xl" />
+        <div
+          className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
+          style={{
+            backgroundImage: "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
+            backgroundSize: "80px 80px",
+          }}
+        />
+      </div>
+
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl space-y-6 relative">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        >
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Workforce</h1>
             <div className="flex items-center gap-3 mt-1.5 flex-wrap">
               <p className="text-sm text-muted-foreground">Your AI workforce — assign tasks and let them handle the rest</p>
               {schedules.length > 0 && (
                 <>
-                  <span className="h-3.5 w-px bg-zinc-200 dark:bg-zinc-800 hidden sm:block" />
+                  <span className="h-3.5 w-px bg-border/30 hidden sm:block" />
                   <div className="flex items-center gap-3 text-xs">
                     <span className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-medium">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.4)]" />{activeCount} on duty
                     </span>
                     {pausedCount > 0 && (
                       <span className="flex items-center gap-1.5 text-muted-foreground">
-                        <div className="w-1.5 h-1.5 rounded-full bg-zinc-500 dark:bg-zinc-600" />{pausedCount} standby
+                        <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />{pausedCount} standby
                       </span>
                     )}
                   </div>
@@ -1091,29 +1109,38 @@ export function SchedulesContent() {
               )}
             </div>
           </div>
-          <NoiseBackground containerClassName="w-auto p-[1px] rounded-lg bg-transparent dark:bg-transparent shadow-none" className="p-0" gradientColors={["rgb(115, 115, 115)", "rgb(163, 163, 163)", "rgb(82, 82, 82)"]} noiseIntensity={0.06} speed={0.06}>
-            <button onClick={() => setShowCreateDialog(true)} className={cn("inline-flex h-10 items-center justify-center rounded-[7px] px-5 text-sm font-medium gap-2 transition-all bg-background/90 text-foreground hover:text-foreground/80")}>
-              <UserPlus className="h-4 w-4" />Hire Employee
-            </button>
-          </NoiseBackground>
-        </div>
+          <button onClick={() => setShowCreateDialog(true)} className={cn("inline-flex h-9 items-center justify-center rounded-xl px-5 text-sm font-medium gap-2 transition-all bg-foreground text-background hover:bg-foreground/90")}>
+            <UserPlus className="h-4 w-4" />Hire Employee
+          </button>
+        </motion.div>
 
         {/* Banner */}
-        <div className={cn("flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl px-3 sm:px-4 py-3 bg-card border border-border")}>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+          className={cn("relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl px-3 sm:px-4 py-3 border border-border/30 bg-card/50 backdrop-blur-sm overflow-hidden")}
+        >
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent" />
           <div className="flex items-start sm:items-center gap-2 sm:gap-3 min-w-0">
             <AgentIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground mt-0.5 sm:mt-0" />
             <p className="text-xs sm:text-sm text-muted-foreground">
               Open any chat and click <span className="inline-flex items-center gap-1 font-bold text-foreground"><AgentIcon className="h-3 w-3" />Assign Employee</span> on the <span className="font-bold text-foreground">top right</span> to put it on autopilot
             </p>
           </div>
-          <Link href="/" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-foreground/70 hover:text-foreground")}>
+          <Link href="/" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all bg-muted/60 hover:bg-muted text-foreground/70 hover:text-foreground")}>
             <CoastyIcon className="h-3 w-3" />New Chat
           </Link>
-        </div>
+        </motion.div>
 
         {/* Tabs */}
         {schedules.length > 0 && (
-          <div className="inline-flex items-center rounded-xl bg-zinc-100 dark:bg-zinc-800/80 p-1 ring-1 ring-zinc-200/80 dark:ring-zinc-700/50">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="inline-flex items-center rounded-xl bg-foreground/[0.04] p-1"
+          >
             {tabs.map((tab) => {
               const Icon = tab.icon
               const active = activeTab === tab.id
@@ -1121,7 +1148,7 @@ export function SchedulesContent() {
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={cn(
                   "relative flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg",
                   active
-                    ? "bg-white dark:bg-zinc-900 text-foreground shadow-sm ring-1 ring-zinc-200/60 dark:ring-zinc-700/40"
+                    ? "bg-background text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground/80",
                 )}>
                   <Icon className={cn("h-3.5 w-3.5", active ? "text-foreground/70" : "text-muted-foreground/50")} />
@@ -1129,32 +1156,49 @@ export function SchedulesContent() {
                   {tab.count !== undefined && tab.count > 0 && (
                     <span className={cn(
                       "text-[11px] min-w-[18px] text-center px-1.5 py-px rounded-md tabular-nums font-semibold",
-                      active ? "bg-zinc-100 dark:bg-zinc-800 text-foreground/60" : "text-muted-foreground/40",
+                      active ? "bg-muted/60 text-foreground/60" : "text-muted-foreground/40",
                     )}>{tab.count}</span>
                   )}
                 </button>
               )
             })}
-          </div>
+          </motion.div>
         )}
 
         {/* ═══ Empty state ═══ */}
         {schedules.length === 0 && (
-          <div className={cn("relative rounded-2xl overflow-hidden bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800")}>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className={cn("relative rounded-2xl overflow-hidden border border-border/30 bg-card/50 backdrop-blur-sm")}
+          >
             <div className="pointer-events-none absolute inset-0">
-              <div className="absolute -top-12 right-1/4 h-56 w-56 rounded-full bg-zinc-200/50 dark:bg-zinc-800/30 blur-3xl" />
-              <div className="absolute -bottom-12 left-1/4 h-48 w-48 rounded-full bg-zinc-200/30 dark:bg-zinc-800/20 blur-3xl" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-32 w-32 rounded-full bg-zinc-200/20 dark:bg-zinc-800/15 blur-2xl" />
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.1] to-transparent" />
+              <div className="absolute -top-12 right-1/4 h-56 w-56 rounded-full bg-foreground/[0.02] blur-3xl" />
+              <div className="absolute -bottom-12 left-1/4 h-48 w-48 rounded-full bg-foreground/[0.02] blur-3xl" />
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
             </div>
             <div className="relative flex flex-col items-center py-10 sm:py-14 px-4 sm:px-6 text-center">
               <div className="flex items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8 flex-wrap justify-center">
                 {[Briefcase, Mail, Globe, RefreshCw, ShieldCheck, FileText].map((Icon, i) => (
-                  <div key={i} className={cn("flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-sm")}>
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: 0.15 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                    className={cn("flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-card/80 border border-border/30 shadow-sm")}
+                  >
                     <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
-                  </div>
+                  </motion.div>
                 ))}
-                <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800"><MoreHorizontal className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground/60" /></div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.39, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-muted/40 border border-border/20"
+                >
+                  <MoreHorizontal className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground/60" />
+                </motion.div>
               </div>
               <h3 className="text-xl font-bold mb-2 text-foreground">Hire your first employee</h3>
               <p className="text-sm text-muted-foreground max-w-sm mb-10">AI employees work on your behalf — assign a task, set a schedule, and they'll execute it automatically</p>
@@ -1163,25 +1207,31 @@ export function SchedulesContent() {
                   { icon: Clock, title: "Flexible shifts", desc: "Schedule employees hourly, daily, weekly, monthly — or use a custom cron expression" },
                   { icon: Cpu, title: "Full autonomy", desc: "Each employee gets full access to browsing, terminal, and your connected workstations" },
                   { icon: Activity, title: "Activity logs", desc: "Every execution is logged so you can review what your employees accomplished" },
-                ].map(({ icon: Icon, title, desc }) => (
-                  <div key={title} className={cn("relative flex flex-col gap-2 rounded-xl p-4 overflow-hidden bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60")}>
+                ].map(({ icon: Icon, title, desc }, i) => (
+                  <motion.div
+                    key={title}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.2 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                    className={cn("relative flex flex-col gap-2 rounded-xl p-4 overflow-hidden border border-border/30 bg-card/50 backdrop-blur-sm")}
+                  >
                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-700"><Icon className="h-3.5 w-3.5 text-muted-foreground" /></div>
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted/60"><Icon className="h-3.5 w-3.5 text-muted-foreground" /></div>
                     <p className="text-xs font-semibold text-foreground/80">{title}</p>
                     <p className="text-[11px] text-muted-foreground leading-relaxed">{desc}</p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
               <div className="flex items-center gap-3">
-                <button onClick={() => setShowCreateDialog(true)} className={cn("inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-300 text-background bg-gradient-to-b from-foreground to-foreground/80 hover:from-foreground hover:to-foreground/90 hover:scale-[1.02] active:scale-[0.98]")}>
+                <button onClick={() => setShowCreateDialog(true)} className={cn("inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-300 text-background bg-foreground hover:bg-foreground/90 hover:scale-[1.02] active:scale-[0.98]")}>
                   <UserPlus className="h-3.5 w-3.5" />Hire Employee
                 </button>
-                <Link href="/" className={cn("inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground/80 hover:bg-zinc-50 dark:hover:bg-zinc-700")}>
+                <Link href="/" className={cn("inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all border border-border/30 bg-card/50 text-foreground/80 hover:bg-card/80 hover:border-border/50")}>
                   <CoastyIcon className="h-3.5 w-3.5" />Start from a chat
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* ═══ TEAMS TAB ═══ */}
@@ -1191,7 +1241,7 @@ export function SchedulesContent() {
             {/* Create Team Dialog — template picker + form */}
             <Dialog open={showCreateTeam} onOpenChange={(open) => { if (!open) resetCreateTeam() }}>
               <DialogContent hasCloseButton={false} className={cn(
-                "p-0 gap-0 overflow-hidden rounded-2xl border-zinc-200 dark:border-zinc-800 shadow-2xl transition-all duration-300",
+                "p-0 gap-0 overflow-hidden rounded-2xl border-border/30 shadow-2xl transition-all duration-300",
                 createStep === "templates" ? "sm:max-w-2xl" : "sm:max-w-md"
               )}>
                 <VisuallyHidden.Root><DialogTitle>Create a new team</DialogTitle></VisuallyHidden.Root>
@@ -1200,9 +1250,6 @@ export function SchedulesContent() {
                   <>
                     {/* ── Template Picker ── */}
                     <div className="relative px-5 sm:px-7 pt-6 sm:pt-7 pb-4">
-                      {/* Subtle dot grid background */}
-                      <div className="absolute inset-0 opacity-[0.3] dark:opacity-[0.12]"
-                        style={{ backgroundImage: "radial-gradient(circle, rgb(161 161 170) 0.5px, transparent 0.5px)", backgroundSize: "20px 20px" }} />
                       <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent" />
                       <div className="relative">
                         <div className="flex items-center gap-2.5 mb-1.5">
@@ -1228,7 +1275,7 @@ export function SchedulesContent() {
                                 <TierIcon className="h-3 w-3" />
                                 {meta.label}
                               </div>
-                              <div className="h-px flex-1 bg-zinc-200/40 dark:bg-zinc-800/40" />
+                              <div className="h-px flex-1 bg-border/20" />
                               <div className="hidden sm:flex items-center gap-1.5 text-[10px] text-muted-foreground/40 font-medium tabular-nums shrink-0">
                                 <span className={cn("inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md", meta.badgeBg, meta.color)}>
                                   {meta.machines} {meta.machines === 1 ? "machine" : "machines"}
@@ -1251,7 +1298,7 @@ export function SchedulesContent() {
                                   <button
                                     key={t.id}
                                     onClick={() => pickTemplate(t)}
-                                    className="group relative text-left rounded-xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-900/60 p-3.5 sm:p-4 overflow-hidden transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
+                                    className="group relative text-left rounded-xl border border-border/30 bg-card/50 p-3.5 sm:p-4 overflow-hidden transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
                                     style={{ "--accent": meta.accentHex } as React.CSSProperties}
                                   >
                                     {/* Top accent line on hover */}
@@ -1260,15 +1307,15 @@ export function SchedulesContent() {
                                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `linear-gradient(to bottom right, ${meta.accentHex}08, transparent)` }} />
 
                                     <div className="relative flex sm:block items-center gap-3 sm:gap-0">
-                                      <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center sm:mb-3 shrink-0 transition-all duration-200 bg-zinc-100 dark:bg-zinc-800/80 group-hover:scale-110" style={{ ['--tw-group-hover-bg' as string]: `${meta.accentHex}15` }}>
+                                      <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center sm:mb-3 shrink-0 transition-all duration-200 bg-muted/60 group-hover:scale-110" style={{ ['--tw-group-hover-bg' as string]: `${meta.accentHex}15` }}>
                                         <Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-foreground/40 transition-colors duration-200 group-hover:text-foreground/70" />
                                       </div>
                                       <div className="min-w-0 flex-1 sm:flex-initial">
                                         <h3 className="text-[12px] sm:text-[13px] font-bold text-foreground/90 mb-0.5 leading-tight group-hover:text-foreground transition-colors">{t.name}</h3>
                                         <p className="text-[10px] sm:text-[11px] text-muted-foreground/45 leading-relaxed line-clamp-1 sm:line-clamp-2">{t.tagline}</p>
                                         <div className="flex items-center gap-1.5 mt-2 sm:mt-3">
-                                          <span className="text-[9px] sm:text-[10px] text-muted-foreground/30 font-semibold tabular-nums bg-zinc-100/80 dark:bg-zinc-800/50 px-1.5 py-0.5 rounded-md">{t.employees.length} employees</span>
-                                          <span className="text-[9px] sm:text-[10px] text-muted-foreground/30 font-semibold tabular-nums bg-zinc-100/80 dark:bg-zinc-800/50 px-1.5 py-0.5 rounded-md">{t.credentials.length} creds</span>
+                                          <span className="text-[9px] sm:text-[10px] text-muted-foreground/30 font-semibold tabular-nums bg-muted/60 px-1.5 py-0.5 rounded-md">{t.employees.length} employees</span>
+                                          <span className="text-[9px] sm:text-[10px] text-muted-foreground/30 font-semibold tabular-nums bg-muted/60 px-1.5 py-0.5 rounded-md">{t.credentials.length} creds</span>
                                         </div>
                                       </div>
                                     </div>
@@ -1283,13 +1330,13 @@ export function SchedulesContent() {
                     </div>
 
                     {/* Footer — custom option */}
-                    <div className="px-5 sm:px-7 py-3.5 sm:py-4 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30">
-                      <button onClick={resetCreateTeam} className="h-8 sm:h-9 px-3 sm:px-4 rounded-lg text-[12px] sm:text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
+                    <div className="px-5 sm:px-7 py-3.5 sm:py-4 flex items-center justify-between border-t border-border/20 bg-muted/20">
+                      <button onClick={resetCreateTeam} className="h-8 sm:h-9 px-3 sm:px-4 rounded-lg text-[12px] sm:text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all">
                         Cancel
                       </button>
                       <button
                         onClick={() => { setSelectedTemplate(null); setNewTeamName(""); setNewTeamInstructions(""); setCreateStep("form") }}
-                        className="h-8 sm:h-9 px-4 sm:px-5 rounded-lg text-[12px] sm:text-[13px] font-medium text-foreground/70 hover:text-foreground border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
+                        className="h-8 sm:h-9 px-4 sm:px-5 rounded-lg text-[12px] sm:text-[13px] font-medium text-foreground/70 hover:text-foreground border border-border/30 hover:border-border/50 hover:bg-muted/40 transition-all"
                       >
                         Custom Team
                       </button>
@@ -1299,8 +1346,6 @@ export function SchedulesContent() {
                   <>
                     {/* ── Form Step (template detail or custom) ── */}
                     <div className="relative px-4 sm:px-7 pt-5 sm:pt-6 pb-3 sm:pb-4">
-                      <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.035]"
-                        style={{ backgroundImage: "radial-gradient(circle, currentColor 0.5px, transparent 0.5px)", backgroundSize: "16px 16px" }} />
                       <div className="relative">
                         <button
                           onClick={() => setCreateStep("templates")}
@@ -1348,7 +1393,7 @@ export function SchedulesContent() {
                           onChange={(e) => setNewTeamName(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && handleCreateTeam()}
                           autoFocus
-                          className="w-full h-10 sm:h-11 rounded-lg sm:rounded-xl px-3 sm:px-4 text-[13px] sm:text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-zinc-300 dark:focus:border-zinc-600 transition-all"
+                          className="w-full h-10 sm:h-11 rounded-lg sm:rounded-xl px-3 sm:px-4 text-[13px] sm:text-sm bg-muted/40 border border-border/40 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-border transition-all"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -1358,7 +1403,7 @@ export function SchedulesContent() {
                           value={newTeamInstructions}
                           onChange={(e) => setNewTeamInstructions(e.target.value)}
                           rows={3}
-                          className="w-full rounded-lg sm:rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-[13px] sm:text-sm resize-none bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-zinc-300 dark:focus:border-zinc-600 transition-all"
+                          className="w-full rounded-lg sm:rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-[13px] sm:text-sm resize-none bg-muted/40 border border-border/40 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-border transition-all"
                         />
                       </div>
 
@@ -1372,14 +1417,14 @@ export function SchedulesContent() {
                             </label>
                             <div className="space-y-1">
                               {selectedTemplate.employees.map((emp, i) => (
-                                <div key={i} className="flex items-start gap-3 rounded-lg bg-zinc-50/80 dark:bg-zinc-800/40 border border-zinc-200/50 dark:border-zinc-700/30 px-3 py-2.5">
+                                <div key={i} className="flex items-start gap-3 rounded-lg bg-muted/30 border border-border/20 px-3 py-2.5">
                                   <div className="h-6 w-6 rounded-md bg-foreground/[0.05] flex items-center justify-center shrink-0 mt-0.5">
                                     <span className="text-[10px] font-bold text-foreground/30">{emp.name.charAt(0)}</span>
                                   </div>
                                   <div className="min-w-0 flex-1">
                                     <div className="flex items-center gap-2">
                                       <span className="text-[12px] font-semibold text-foreground/80">{emp.name}</span>
-                                      <span className="text-[10px] text-muted-foreground/35 font-medium bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">{formatFrequency(emp.frequency)}</span>
+                                      <span className="text-[10px] text-muted-foreground/35 font-medium bg-muted/60 px-1.5 py-0.5 rounded">{formatFrequency(emp.frequency)}</span>
                                     </div>
                                     <p className="text-[11px] text-muted-foreground/45 leading-relaxed mt-0.5">{emp.role}</p>
                                   </div>
@@ -1393,14 +1438,14 @@ export function SchedulesContent() {
                             <label className="text-[11px] font-medium text-foreground/40 uppercase tracking-widest flex items-center gap-1.5">
                               <Key className="h-3 w-3" />Suggested Credentials
                             </label>
-                            <div className="rounded-xl border border-zinc-200/60 dark:border-zinc-700/40 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-800/60">
+                            <div className="rounded-xl border border-border/30 overflow-hidden divide-y divide-border/20">
                               {selectedTemplate.credentials.map((cred, i) => {
                                 const isAdded = addedCredentials.has(cred.service)
                                 return (
-                                  <div key={i} className="flex items-center gap-3 px-3 py-2.5 bg-white dark:bg-zinc-900/40">
+                                  <div key={i} className="flex items-center gap-3 px-3 py-2.5 bg-card/30">
                                     <div className={cn(
                                       "h-6 w-6 rounded-md flex items-center justify-center shrink-0 transition-colors",
-                                      isAdded ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-zinc-100 dark:bg-zinc-800"
+                                      isAdded ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-muted/60"
                                     )}>
                                       {isAdded
                                         ? <ShieldCheck className="h-3 w-3 text-emerald-500" />
@@ -1416,7 +1461,7 @@ export function SchedulesContent() {
                                     ) : (
                                       <button
                                         onClick={() => { setCredDialogService(cred.service); setCredDialogOpen(true) }}
-                                        className="text-[10px] font-semibold text-foreground/50 hover:text-foreground bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 px-2.5 py-1 rounded-md transition-all shrink-0"
+                                        className="text-[10px] font-semibold text-foreground/50 hover:text-foreground bg-muted/60 hover:bg-muted px-2.5 py-1 rounded-md transition-all shrink-0"
                                       >
                                         + Add
                                       </button>
@@ -1436,9 +1481,9 @@ export function SchedulesContent() {
                         </label>
 
                         {customCredentials.length > 0 && (
-                          <div className="rounded-xl border border-zinc-200/60 dark:border-zinc-700/40 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-800/60">
+                          <div className="rounded-xl border border-border/30 overflow-hidden divide-y divide-border/20">
                             {customCredentials.map((cred, i) => (
-                              <div key={i} className="flex items-center gap-3 px-3 py-2.5 bg-white dark:bg-zinc-900/40">
+                              <div key={i} className="flex items-center gap-3 px-3 py-2.5 bg-card/30">
                                 <div className="h-6 w-6 rounded-md bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
                                   <ShieldCheck className="h-3 w-3 text-emerald-500" />
                                 </div>
@@ -1459,7 +1504,7 @@ export function SchedulesContent() {
 
                         <button
                           onClick={() => { setCredDialogService(""); setCredDialogOpen(true) }}
-                          className="w-full flex items-center justify-center gap-1.5 h-9 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 text-[12px] font-medium text-muted-foreground/50 hover:text-foreground/70 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all"
+                          className="w-full flex items-center justify-center gap-1.5 h-9 rounded-xl border border-dashed border-border/40 text-[12px] font-medium text-muted-foreground/50 hover:text-foreground/70 hover:border-border/60 hover:bg-muted/40 transition-all"
                         >
                           <Plus className="h-3 w-3" />Add credential
                         </button>
@@ -1520,7 +1565,7 @@ export function SchedulesContent() {
 
                     {/* Provisioning progress */}
                     {provisioning && (
-                      <div className="mx-4 sm:mx-7 mb-2 rounded-lg sm:rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-zinc-50 dark:bg-zinc-800/40 p-3 sm:p-4">
+                      <div className="mx-4 sm:mx-7 mb-2 rounded-lg sm:rounded-xl border border-border/30 bg-muted/30 p-3 sm:p-4">
                         <div className="flex items-center gap-3">
                           <div className="relative h-5 w-5 shrink-0">
                             <div className="absolute inset-0 rounded-full border-2 border-foreground/[0.08]" />
@@ -1532,8 +1577,8 @@ export function SchedulesContent() {
                     )}
 
                     {/* Footer */}
-                    <div className="px-4 sm:px-7 py-4 sm:py-5 flex items-center justify-end gap-2 sm:gap-2.5 border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30">
-                      <button onClick={resetCreateTeam} disabled={provisioning} className="h-8 sm:h-9 px-3 sm:px-4 rounded-lg text-[12px] sm:text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all disabled:opacity-40">
+                    <div className="px-4 sm:px-7 py-4 sm:py-5 flex items-center justify-end gap-2 sm:gap-2.5 border-t border-border/20 bg-muted/20">
+                      <button onClick={resetCreateTeam} disabled={provisioning} className="h-8 sm:h-9 px-3 sm:px-4 rounded-lg text-[12px] sm:text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all disabled:opacity-40">
                         Cancel
                       </button>
                       <button
@@ -1543,7 +1588,7 @@ export function SchedulesContent() {
                           "h-8 sm:h-9 px-4 sm:px-5 rounded-lg text-[12px] sm:text-[13px] font-semibold transition-all",
                           newTeamName.trim() && !provisioning
                             ? "text-background bg-foreground hover:bg-foreground/90 shadow-sm"
-                            : "text-muted-foreground/40 bg-zinc-100 dark:bg-zinc-800 cursor-not-allowed"
+                            : "text-muted-foreground/40 bg-muted/60 cursor-not-allowed"
                         )}
                       >
                         {provisioning ? "Setting up..." : selectedTemplate ? `Create ${selectedTemplate.employees.length} Employees` : "Create Team"}
@@ -1556,7 +1601,7 @@ export function SchedulesContent() {
 
             {/* No teams yet — simple prompt */}
             {teams.length === 0 && (
-              <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 py-14 text-center">
+              <div className="rounded-2xl border border-border/30 bg-card/50 backdrop-blur-sm py-14 text-center">
                 <Users className="h-8 w-8 text-muted-foreground/20 mx-auto mb-3" />
                 <p className="text-sm font-medium text-foreground/70 mb-1">No teams yet</p>
                 <p className="text-xs text-muted-foreground/50 max-w-xs mx-auto mb-5">
@@ -1643,17 +1688,7 @@ export function SchedulesContent() {
                     <Plus className="h-3 w-3" />New Team
                   </button>
                 </div>
-                <div className="relative rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-6 md:p-10 overflow-x-auto shadow-sm dark:shadow-none">
-                  {/* Dot grid background */}
-                  <div
-                    className="absolute inset-0 rounded-2xl opacity-[0.35] dark:opacity-[0.15]"
-                    style={{
-                      backgroundImage: "radial-gradient(circle, rgb(161 161 170) 0.75px, transparent 0.75px)",
-                      backgroundSize: "24px 24px",
-                    }}
-                  />
-                  {/* Subtle radial vignette */}
-                  <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(ellipse_at_center,transparent_40%,rgb(255_255_255/0.8)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_40%,rgb(9_9_11/0.8)_100%)]" />
+                <div className="relative rounded-xl sm:rounded-2xl border border-border/30 bg-card/50 backdrop-blur-sm p-4 sm:p-6 md:p-10 overflow-x-auto">
                   <div className="relative">
                     <OrgChart teams={teams} schedules={schedules} onRefresh={refreshAll} onEdit={setEditChatId} />
                   </div>
@@ -1663,25 +1698,25 @@ export function SchedulesContent() {
                     <div className="space-y-1.5 text-[9px] sm:text-[10px] leading-relaxed text-muted-foreground/35">
                       <p className="text-[8px] sm:text-[9px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/25 mb-1">How it works</p>
                       <div className="flex items-start gap-1.5">
-                        <div className="h-3.5 w-3.5 rounded-[4px] bg-zinc-200/50 dark:bg-zinc-700/30 flex items-center justify-center shrink-0 mt-px">
+                        <div className="h-3.5 w-3.5 rounded-[4px] bg-muted/60 flex items-center justify-center shrink-0 mt-px">
                           <GripVertical className="h-2 w-2 text-muted-foreground/30" />
                         </div>
                         <span>Drag employees onto a team</span>
                       </div>
                       <div className="flex items-start gap-1.5">
-                        <div className="h-3.5 w-3.5 rounded-[4px] bg-zinc-200/50 dark:bg-zinc-700/30 flex items-center justify-center shrink-0 mt-px">
+                        <div className="h-3.5 w-3.5 rounded-[4px] bg-muted/60 flex items-center justify-center shrink-0 mt-px">
                           <Pencil className="h-2 w-2 text-muted-foreground/30" />
                         </div>
                         <span>Click to edit schedule &amp; settings</span>
                       </div>
                       <div className="flex items-start gap-1.5">
-                        <div className="h-3.5 w-3.5 rounded-[4px] bg-zinc-200/50 dark:bg-zinc-700/30 flex items-center justify-center shrink-0 mt-px">
+                        <div className="h-3.5 w-3.5 rounded-[4px] bg-muted/60 flex items-center justify-center shrink-0 mt-px">
                           <Users className="h-2 w-2 text-muted-foreground/30" />
                         </div>
                         <span>Teams share memory &amp; guidelines</span>
                       </div>
                       <div className="flex items-start gap-1.5">
-                        <div className="h-3.5 w-3.5 rounded-[4px] bg-zinc-200/50 dark:bg-zinc-700/30 flex items-center justify-center shrink-0 mt-px">
+                        <div className="h-3.5 w-3.5 rounded-[4px] bg-muted/60 flex items-center justify-center shrink-0 mt-px">
                           <Activity className="h-2 w-2 text-muted-foreground/30" />
                         </div>
                         <span>Dashed lines &mdash; delegation between employees</span>
@@ -1708,14 +1743,14 @@ export function SchedulesContent() {
                   "h-8 px-3.5 rounded-lg transition-all text-sm font-medium",
                   statusFilter === f.id
                     ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800",
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60",
                 )}>
                   <span className="flex items-center gap-1.5">
                     {f.label}
                     {f.count > 0 && (
                       <span className={cn(
                         "text-[11px] tabular-nums px-1.5 py-px rounded-full font-medium",
-                        statusFilter === f.id ? "bg-background/20 text-background/80" : "bg-zinc-100 dark:bg-zinc-800",
+                        statusFilter === f.id ? "bg-background/20 text-background/80" : "bg-muted/60",
                       )}>
                         {f.count}
                       </span>
@@ -1727,8 +1762,15 @@ export function SchedulesContent() {
 
             {/* Employee grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filteredSchedules.map((s) => (
-                <ScheduleCard key={s.chat_id} schedule={s} onUpdate={loadSchedules} onViewHistory={(id) => { setHistoryChat(id); setShowHistory(true) }} onEdit={setEditChatId} />
+              {filteredSchedules.map((s, i) => (
+                <motion.div
+                  key={s.chat_id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.05 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <ScheduleCard schedule={s} onUpdate={loadSchedules} onViewHistory={(id) => { setHistoryChat(id); setShowHistory(true) }} onEdit={setEditChatId} />
+                </motion.div>
               ))}
             </div>
 
@@ -1744,14 +1786,14 @@ export function SchedulesContent() {
             <div className="space-y-2 pt-2">
               <div className="flex items-center gap-3 px-1">
                 <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Schedule</h2>
-                <div className="flex-1 h-px bg-zinc-100 dark:bg-zinc-800" />
+                <div className="flex-1 h-px bg-border/20" />
               </div>
-              <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 p-4 sm:p-5 shadow-sm dark:shadow-none">
+              <div className="rounded-2xl border border-border/30 bg-card/50 backdrop-blur-sm p-4 sm:p-5">
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] xl:grid-cols-[1fr_320px] gap-4">
                 <ScheduleCalendar schedules={filteredSchedules} selectedDate={selectedDate} onSelectDate={setSelectedDate} />
                 <div className="lg:sticky lg:top-6 lg:self-start">
-                  <div className="rounded-xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-none">
-                    <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+                  <div className="rounded-xl overflow-hidden border border-border/30 bg-card/50 backdrop-blur-sm">
+                    <div className="px-4 py-3 border-b border-border/30">
                       <div className="flex items-center justify-between">
                         <div>
                           <h3 className="text-sm font-semibold text-foreground">
@@ -1790,9 +1832,9 @@ export function SchedulesContent() {
             <div className="space-y-2 pt-2">
               <div className="flex items-center gap-3 px-1">
                 <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Recent Activity</h2>
-                <div className="flex-1 h-px bg-zinc-100 dark:bg-zinc-800" />
+                <div className="flex-1 h-px bg-border/20" />
               </div>
-              <div className="rounded-xl bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 overflow-hidden shadow-sm dark:shadow-none">
+              <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm overflow-hidden">
                 <ScheduleHistory chatId={showHistory ? historyChat : undefined} limit={10} />
               </div>
             </div>
