@@ -101,7 +101,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           "font-bold tracking-tight",
           isMobile ? "text-3xl leading-[1.3] mb-3" : "text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.2] mb-4"
         )}>
-          <span className="text-foreground">An AI agent that uses a</span>
+          <span className="text-foreground">Coasty uses a</span>
           <br />
           <span className="relative text-foreground">
             computer

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { SparklesCore } from "@/components/ui/sparkles"
+
 import { RainbowButton } from "@/components/magicui/rainbow-button"
 import { WindowsIcon, AppleIcon } from "@/components/icons/platform-icons"
 import {
@@ -21,7 +21,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { trackDesktopAppDownloaded } from "@/lib/posthog/analytics"
 import { cn } from "@/lib/utils"
-import { useTheme } from "next-themes"
+
 import { LandingHeader } from "@/app/components/landing/landing-header"
 import { motion } from "framer-motion"
 
@@ -82,8 +82,6 @@ export default function DownloadPage() {
   const [detectedPlatform, setDetectedPlatform] = useState<Platform>("windows")
   const [downloadData, setDownloadData] = useState<DownloadData | null>(null)
   const [loading, setLoading] = useState(true)
-  const { theme } = useTheme()
-
   useEffect(() => {
     setIsMobile(window.innerWidth < 768)
     setDetectedPlatform(detectPlatform())
@@ -192,19 +190,6 @@ export default function DownloadPage() {
 
   return (
     <div className="min-h-screen bg-background relative">
-      {/* Sparkles Background */}
-      <div className="absolute inset-0 w-full h-full">
-        <SparklesCore
-          id="download-sparkles"
-          background="transparent"
-          minSize={0.4}
-          maxSize={1}
-          particleDensity={6}
-          className="w-full h-full"
-          particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
-        />
-      </div>
-
       <LandingHeader />
 
       <main className={cn("relative", isMobile ? "pt-16" : "pt-20")}>

@@ -3,12 +3,12 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { SparklesCore } from "@/components/ui/sparkles"
+
 import { ArrowLeft, Shield, Lock, Database, Globe, Users, Clock, Mail, FileText, Eye, Download, Trash2, Settings, Baby, Code, Edit, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { useTheme } from "next-themes"
+
 import { LandingHeader } from "@/app/components/landing/landing-header"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -158,8 +158,6 @@ const privacySections = [
 export default function PrivacyPolicyPage() {
   const [activeSection, setActiveSection] = useState<string | null>(null)
   const [isMobile, setIsMobile] = useState(false)
-  const { theme } = useTheme()
-
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
@@ -194,20 +192,6 @@ export default function PrivacyPolicyPage() {
 
   return (
     <div className="min-h-screen bg-background relative">
-      {/* Sparkles Background */}
-      <div className="absolute inset-0 w-full h-full">
-        <SparklesCore
-          id="privacy-sparkles"
-          background="transparent"
-          minSize={0.4}
-          maxSize={1}
-          particleDensity={6}
-          className="w-full h-full"
-          particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
-        />
-      </div>
-
-      {/* Header */}
       <LandingHeader />
 
       {/* Main Content */}

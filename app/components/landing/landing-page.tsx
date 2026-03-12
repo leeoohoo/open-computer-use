@@ -1,7 +1,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { NoiseBackground } from "@/components/ui/noise-background"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { PointerHighlight } from "@/components/ui/pointer-highlight"
 // HeroParallaxChat removed — demo section is now static
@@ -11,7 +10,6 @@ import { BentoGrid, BentoCard } from "@/components/magicui/bento-grid"
 import { Globe as GlobeComponent } from "@/components/magicui/globe"
 import { Tree, Folder, File, type TreeViewElement } from "@/components/magicui/file-tree"
 import { RainbowButton } from "@/components/magicui/rainbow-button"
-import { GridPattern } from "@/components/magicui/grid-pattern"
 import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download, CalendarCheck, RefreshCw } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
 import Link from "next/link"
@@ -356,14 +354,6 @@ export function LandingPage() {
           "relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-hidden",
           isMobile ? "px-4 pt-8 pb-16" : "px-6 pt-16 pb-24"
         )}>
-          {/* Grid texture — fades from top to transparent */}
-          {!isMobile && (
-            <GridPattern
-              width={64}
-              height={64}
-              className="absolute inset-0 h-full w-full [mask-image:linear-gradient(to_bottom,white_10%,transparent_50%)] fill-muted-foreground/[0.02] stroke-muted-foreground/[0.05]"
-            />
-          )}
 
           <motion.div
             variants={containerVariants}

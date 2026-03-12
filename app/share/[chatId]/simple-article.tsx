@@ -2,7 +2,7 @@
 
 import type { Tables } from "@/app/types/database.types"
 import { CoastyIcon } from "@/components/icons/coasty"
-import { SparklesCore } from "@/components/ui/sparkles"
+
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import {
@@ -40,25 +40,6 @@ type ArticleProps = {
   title: string
   subtitle: string
   messages: MessageType[]
-}
-
-// Sparkles background component - matching the regular chat page
-function GridBackground() {
-  const { theme } = useTheme()
-
-  return (
-    <div className="absolute inset-0 w-full h-full">
-      <SparklesCore
-        id="share-sparkles"
-        background="transparent"
-        minSize={0.4}
-        maxSize={1}
-        particleDensity={6}
-        className="w-full h-full"
-        particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
-      />
-    </div>
-  )
 }
 
 // Play button overlay — clean frosted glass design
@@ -680,9 +661,6 @@ function SimpleArticleContent({
 
   return (
     <div className="relative bg-background flex h-dvh w-full overflow-hidden">
-      {/* Grid background pattern - exact same as main app */}
-      <GridBackground />
-      
       {/* Play overlay */}
       <AnimatePresence>
         {showPlayOverlay && (

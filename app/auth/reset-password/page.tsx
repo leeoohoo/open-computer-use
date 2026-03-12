@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createClient } from "@/lib/supabase/client"
-import { SparklesCore } from "@/components/ui/sparkles"
+
 import Link from "next/link"
 import { useState } from "react"
-import { useTheme } from "next-themes"
+
 import { useRouter } from "next/navigation"
 import { HeaderGoBack } from "../../components/header-go-back"
 
@@ -18,7 +18,6 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const router = useRouter()
-  const { theme } = useTheme()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -65,17 +64,6 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="relative bg-background flex h-dvh w-full flex-col">
-      <div className="pointer-events-none absolute inset-0 w-full h-full">
-        <SparklesCore
-          id="reset-sparkles"
-          background="transparent"
-          minSize={0.4}
-          maxSize={1}
-          particleDensity={6}
-          className="w-full h-full"
-          particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
-        />
-      </div>
       <div className="absolute inset-0 bg-gradient-to-t from-blue-100/25 via-blue-50/15 via-blue-25/8 to-transparent dark:from-blue-950/20 dark:via-blue-900/12 dark:via-blue-800/6 dark:to-transparent pointer-events-none z-0" />
       <HeaderGoBack href="/auth" />
 

@@ -12,15 +12,28 @@ import {
   resetPassword,
 } from "@/lib/api"
 import { createClient } from "@/lib/supabase/client"
-import { SparklesCore } from "@/components/ui/sparkles"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { captureUtmParams, trackSignIn, trackSignUp } from "@/lib/posthog/analytics"
-import { useTheme } from "next-themes"
 import { HeaderGoBack } from "../components/header-go-back"
 import { useRouter, useSearchParams } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
 
 type AuthView = "sign-in" | "sign-up" | "magic-link" | "forgot-password"
+
+const viewTitles: Record<AuthView, string> = {
+  "sign-in": "Welcome back",
+  "sign-up": "Create your account",
+  "magic-link": "Passwordless sign in",
+  "forgot-password": "Reset your password",
+}
+
+const viewDescriptions: Record<AuthView, string> = {
+  "sign-in": "Sign in to your workspace",
+  "sign-up": "Get started with Coasty in seconds",
+  "magic-link": "We'll send a link to your email",
+  "forgot-password": "We'll send you a reset link",
+}
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -33,9 +46,7 @@ export default function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { theme } = useTheme()
 
-  // Capture referral code and UTM params from URL
   useEffect(() => {
     const ref = searchParams.get("ref")
     if (ref) {
@@ -174,7 +185,6 @@ export default function LoginPage() {
 
       const data = await signUpWithEmail(supabase, email, password)
 
-      // If email confirmation is required, user.identities will be empty
       if (data?.user?.identities?.length === 0) {
         setError("An account with this email already exists. Try signing in instead.")
         return
@@ -254,290 +264,414 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative bg-background flex h-dvh w-full flex-col">
-      {/* Sparkles Background */}
-      <div className="pointer-events-none absolute inset-0 w-full h-full">
-        <SparklesCore
-          id="auth-sparkles"
-          background="transparent"
-          minSize={0.4}
-          maxSize={1}
-          particleDensity={6}
-          className="w-full h-full"
-          particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
+    <div className="relative flex h-dvh w-full flex-col bg-background overflow-hidden">
+      {/* Ambient gradient mesh background */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="absolute -top-[40%] -left-[20%] h-[80%] w-[60%] rounded-full opacity-[0.03] dark:opacity-[0.06] blur-[100px]"
+          style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
+        />
+        <div
+          className="absolute -bottom-[30%] -right-[10%] h-[70%] w-[50%] rounded-full opacity-[0.025] dark:opacity-[0.05] blur-[100px]"
+          style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
+        />
+        {/* Subtle grid texture */}
+        <div
+          className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(128,128,128,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(128,128,128,0.3) 1px, transparent 1px)`,
+            backgroundSize: "80px 80px",
+          }}
         />
       </div>
-      {/* Elegant monotonic bottom-up gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-blue-100/25 via-blue-50/15 via-blue-25/8 to-transparent dark:from-blue-950/20 dark:via-blue-900/12 dark:via-blue-800/6 dark:to-transparent pointer-events-none z-0" />
+
       <HeaderGoBack href="/" />
 
-      <main className="relative flex flex-1 flex-col items-center justify-center px-4 sm:px-6 z-10">
-        <div className="w-full max-w-md space-y-8">
-          <div className="text-center">
-            <h1 className="text-foreground text-3xl font-medium tracking-tight sm:text-4xl">
-              Meet the AI that executes, not excuses.
-            </h1>
-            <p className="text-muted-foreground mt-3">
-              Your always-on AI operator that runs workflows, navigates the web, and handles the busywork in your digital workspace. You decide the goal. It delivers the result.
-            </p>
+      <main className="relative flex flex-1 flex-col lg:flex-row items-center justify-center z-10">
+        {/* Left brand panel — visible on lg+ */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="hidden lg:flex flex-1 flex-col justify-center items-start px-16 xl:px-24 max-w-2xl"
+        >
+          <h1 className="text-foreground text-5xl xl:text-6xl font-medium tracking-tight leading-[1.1]">
+            The AI that
+            <br />
+            <span className="text-muted-foreground">executes.</span>
+          </h1>
+          <p className="text-muted-foreground mt-6 text-lg leading-relaxed max-w-md">
+            Your always-on operator that runs workflows, navigates the web,
+            and handles the busywork. You decide the goal. It delivers the result.
+          </p>
+          <div className="mt-12 flex flex-col gap-4 text-sm text-muted-foreground/70">
+            {[
+              "Runs tasks in sandboxed environments",
+              "Full audit trail with screenshots",
+              "Schedule & automate 24/7",
+            ].map((feature, i) => (
+              <motion.div
+                key={feature}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.4 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="flex items-center gap-3"
+              >
+                <div className="h-px w-5 bg-border" />
+                <span>{feature}</span>
+              </motion.div>
+            ))}
           </div>
+        </motion.div>
 
-          {error && (
-            <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
-              {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md p-3 text-sm">
-              {success}
-            </div>
-          )}
-
-          <div className="space-y-4">
-            {/* Google OAuth Button */}
-            <Button
-              variant="secondary"
-              className="w-full text-base sm:text-base"
-              size="lg"
-              onClick={handleSignInWithGoogle}
-              disabled={isLoading || isAnonymousLoading}
-            >
-              <img
-                src="https://www.google.com/favicon.ico"
-                alt="Google logo"
-                width={20}
-                height={20}
-                className="mr-2 size-4"
-              />
-              <span>
-                {isLoading && authView === "sign-in" && !email
-                  ? "Connecting..."
-                  : "Continue with Google"}
-              </span>
-            </Button>
-
-            {/* Divider */}
-            <div className="relative flex items-center gap-4">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-xs text-muted-foreground">or continue with email</span>
-              <div className="h-px flex-1 bg-border" />
+        {/* Right form panel */}
+        <div className="flex flex-1 items-center justify-center w-full lg:max-w-xl px-4 sm:px-6 lg:px-16">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-[420px]"
+          >
+            {/* Mobile-only heading */}
+            <div className="lg:hidden text-center mb-8">
+              <h1 className="text-foreground text-3xl sm:text-4xl font-medium tracking-tight">
+                The AI that executes.
+              </h1>
+              <p className="text-muted-foreground mt-3 text-sm sm:text-base">
+                Your always-on operator for workflows, browsing, and busywork.
+              </p>
             </div>
 
-            {/* Email Sign In */}
-            {authView === "sign-in" && (
-              <form onSubmit={handleEmailSignIn} className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isLoading}
-                    autoComplete="email"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading}
-                    autoComplete="current-password"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  size="lg"
-                  disabled={isLoading}
+            {/* Form card */}
+            <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 sm:p-8 shadow-sm">
+              {/* Dynamic title */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={authView}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.2 }}
+                  className="mb-6"
                 >
-                  {isLoading ? "Signing in..." : "Sign in"}
-                </Button>
-                <div className="flex items-center justify-between text-sm">
-                  <button
-                    type="button"
-                    onClick={() => switchView("forgot-password")}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Forgot password?
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => switchView("magic-link")}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Sign in with magic link
-                  </button>
-                </div>
-                <p className="text-center text-sm text-muted-foreground">
-                  Don&apos;t have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => switchView("sign-up")}
-                    className="text-foreground hover:underline font-medium"
-                  >
-                    Sign up
-                  </button>
-                </p>
-              </form>
-            )}
+                  <h2 className="text-foreground text-xl font-medium tracking-tight">
+                    {viewTitles[authView]}
+                  </h2>
+                  <p className="text-muted-foreground text-sm mt-1">
+                    {viewDescriptions[authView]}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
 
-            {/* Email Sign Up */}
-            {authView === "sign-up" && (
-              <form onSubmit={handleEmailSignUp} className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isLoading}
-                    autoComplete="email"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    placeholder="Min. 6 characters"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading}
-                    autoComplete="new-password"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="signup-confirm">Confirm password</Label>
-                  <Input
-                    id="signup-confirm"
-                    type="password"
-                    placeholder="Confirm your password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    disabled={isLoading}
-                    autoComplete="new-password"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  size="lg"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Creating account..." : "Create account"}
-                </Button>
-                <p className="text-center text-sm text-muted-foreground">
-                  Already have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => switchView("sign-in")}
-                    className="text-foreground hover:underline font-medium"
+              {/* Error / Success banners */}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-4 overflow-hidden"
                   >
-                    Sign in
-                  </button>
-                </p>
-              </form>
-            )}
+                    <div className="bg-destructive/10 text-destructive rounded-lg px-4 py-3 text-sm">
+                      {error}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-            {/* Magic Link */}
-            {authView === "magic-link" && (
-              <form onSubmit={handleMagicLink} className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="magic-email">Email</Label>
-                  <Input
-                    id="magic-email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isLoading}
-                    autoComplete="email"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  size="lg"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Sending..." : "Send magic link"}
-                </Button>
-                <p className="text-center text-sm text-muted-foreground">
-                  <button
-                    type="button"
-                    onClick={() => switchView("sign-in")}
-                    className="text-foreground hover:underline font-medium"
+              <AnimatePresence>
+                {success && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-4 overflow-hidden"
                   >
-                    Back to sign in
-                  </button>
-                </p>
-              </form>
-            )}
+                    <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg px-4 py-3 text-sm">
+                      {success}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-            {/* Forgot Password */}
-            {authView === "forgot-password" && (
-              <form onSubmit={handleForgotPassword} className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="reset-email">Email</Label>
-                  <Input
-                    id="reset-email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isLoading}
-                    autoComplete="email"
-                  />
-                </div>
+              <div className="space-y-4">
+                {/* Google OAuth */}
                 <Button
-                  type="submit"
-                  className="w-full"
-                  size="lg"
-                  disabled={isLoading}
+                  variant="secondary"
+                  className="w-full h-11 text-sm font-medium gap-3 rounded-xl"
+                  onClick={handleSignInWithGoogle}
+                  disabled={isLoading || isAnonymousLoading}
                 >
-                  {isLoading ? "Sending..." : "Send reset link"}
+                  <svg className="size-4" viewBox="0 0 24 24">
+                    <path
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+                      fill="#4285F4"
+                    />
+                    <path
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      fill="#34A853"
+                    />
+                    <path
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                      fill="#FBBC05"
+                    />
+                    <path
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      fill="#EA4335"
+                    />
+                  </svg>
+                  <span>
+                    {isLoading && authView === "sign-in" && !email
+                      ? "Connecting..."
+                      : "Continue with Google"}
+                  </span>
                 </Button>
-                <p className="text-center text-sm text-muted-foreground">
-                  <button
-                    type="button"
-                    onClick={() => switchView("sign-in")}
-                    className="text-foreground hover:underline font-medium"
+
+                {/* Divider */}
+                <div className="relative flex items-center gap-3 py-1">
+                  <div className="h-px flex-1 bg-border/60" />
+                  <span className="text-[11px] uppercase tracking-widest text-muted-foreground/50 font-medium select-none">
+                    or
+                  </span>
+                  <div className="h-px flex-1 bg-border/60" />
+                </div>
+
+                {/* Forms */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={authView}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    Back to sign in
-                  </button>
-                </p>
-              </form>
-            )}
-          </div>
+                    {authView === "sign-in" && (
+                      <form onSubmit={handleEmailSignIn} className="space-y-3">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+                            Email
+                          </Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled={isLoading}
+                            autoComplete="email"
+                            className="h-11 rounded-xl bg-background/50"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="password" className="text-xs font-medium text-muted-foreground">
+                            Password
+                          </Label>
+                          <Input
+                            id="password"
+                            type="password"
+                            placeholder="Your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            disabled={isLoading}
+                            autoComplete="current-password"
+                            className="h-11 rounded-xl bg-background/50"
+                          />
+                        </div>
+                        <Button
+                          type="submit"
+                          className="w-full h-11 rounded-xl font-medium"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Signing in..." : "Sign in"}
+                        </Button>
+                        <div className="flex items-center justify-between text-[13px] pt-1">
+                          <button
+                            type="button"
+                            onClick={() => switchView("forgot-password")}
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            Forgot password?
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => switchView("magic-link")}
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            Use magic link
+                          </button>
+                        </div>
+                        <p className="text-center text-[13px] text-muted-foreground pt-2">
+                          Don&apos;t have an account?{" "}
+                          <button
+                            type="button"
+                            onClick={() => switchView("sign-up")}
+                            className="text-foreground hover:underline font-medium"
+                          >
+                            Sign up
+                          </button>
+                        </p>
+                      </form>
+                    )}
+
+                    {authView === "sign-up" && (
+                      <form onSubmit={handleEmailSignUp} className="space-y-3">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="signup-email" className="text-xs font-medium text-muted-foreground">
+                            Email
+                          </Label>
+                          <Input
+                            id="signup-email"
+                            type="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled={isLoading}
+                            autoComplete="email"
+                            className="h-11 rounded-xl bg-background/50"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="signup-password" className="text-xs font-medium text-muted-foreground">
+                            Password
+                          </Label>
+                          <Input
+                            id="signup-password"
+                            type="password"
+                            placeholder="Min. 6 characters"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            disabled={isLoading}
+                            autoComplete="new-password"
+                            className="h-11 rounded-xl bg-background/50"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="signup-confirm" className="text-xs font-medium text-muted-foreground">
+                            Confirm password
+                          </Label>
+                          <Input
+                            id="signup-confirm"
+                            type="password"
+                            placeholder="Confirm your password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            disabled={isLoading}
+                            autoComplete="new-password"
+                            className="h-11 rounded-xl bg-background/50"
+                          />
+                        </div>
+                        <Button
+                          type="submit"
+                          className="w-full h-11 rounded-xl font-medium"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Creating account..." : "Create account"}
+                        </Button>
+                        <p className="text-center text-[13px] text-muted-foreground pt-2">
+                          Already have an account?{" "}
+                          <button
+                            type="button"
+                            onClick={() => switchView("sign-in")}
+                            className="text-foreground hover:underline font-medium"
+                          >
+                            Sign in
+                          </button>
+                        </p>
+                      </form>
+                    )}
+
+                    {authView === "magic-link" && (
+                      <form onSubmit={handleMagicLink} className="space-y-3">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="magic-email" className="text-xs font-medium text-muted-foreground">
+                            Email
+                          </Label>
+                          <Input
+                            id="magic-email"
+                            type="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled={isLoading}
+                            autoComplete="email"
+                            className="h-11 rounded-xl bg-background/50"
+                          />
+                        </div>
+                        <Button
+                          type="submit"
+                          className="w-full h-11 rounded-xl font-medium"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Sending..." : "Send magic link"}
+                        </Button>
+                        <p className="text-center text-[13px] text-muted-foreground pt-2">
+                          <button
+                            type="button"
+                            onClick={() => switchView("sign-in")}
+                            className="text-foreground hover:underline font-medium"
+                          >
+                            Back to sign in
+                          </button>
+                        </p>
+                      </form>
+                    )}
+
+                    {authView === "forgot-password" && (
+                      <form onSubmit={handleForgotPassword} className="space-y-3">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="reset-email" className="text-xs font-medium text-muted-foreground">
+                            Email
+                          </Label>
+                          <Input
+                            id="reset-email"
+                            type="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled={isLoading}
+                            autoComplete="email"
+                            className="h-11 rounded-xl bg-background/50"
+                          />
+                        </div>
+                        <Button
+                          type="submit"
+                          className="w-full h-11 rounded-xl font-medium"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Sending..." : "Send reset link"}
+                        </Button>
+                        <p className="text-center text-[13px] text-muted-foreground pt-2">
+                          <button
+                            type="button"
+                            onClick={() => switchView("sign-in")}
+                            className="text-foreground hover:underline font-medium"
+                          >
+                            Back to sign in
+                          </button>
+                        </p>
+                      </form>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-6 text-center">
+              <p className="text-[12px] text-muted-foreground/60 leading-relaxed">
+                By continuing, you agree to our{" "}
+                <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">
+                  Terms
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">
+                  Privacy Policy
+                </Link>
+              </p>
+            </div>
+          </motion.div>
         </div>
       </main>
-
-      <footer className="relative text-muted-foreground py-6 text-center text-sm z-10">
-        <p className="mb-3">
-          By continuing, you agree to our{" "}
-          <Link href="/terms" className="text-foreground hover:underline">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link href="/privacy" className="text-foreground hover:underline">
-            Privacy Policy
-          </Link>
-        </p>
-        <div className="flex gap-4 justify-center text-xs">
-          <Link href="/blog" className="hover:text-foreground transition-colors">
-            Blog
-          </Link>
-        </div>
-      </footer>
     </div>
   )
 }

@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react"
 import { Header } from "@/app/components/layout/header"
 import { AppSidebar } from "@/app/components/layout/sidebar/app-sidebar"
-import { SparklesCore } from "@/components/ui/sparkles"
-import { useTheme } from "next-themes"
+
 import { useUserPreferences } from "@/lib/user-preference-store/provider"
 import { MessagesProvider } from "@/lib/chat-store/messages/provider"
 import { ProjectNavigator } from "@/app/components/project/project-navigator"
@@ -14,25 +13,6 @@ import { useChats } from "@/lib/chat-store/chats/provider"
 import { cn } from "@/lib/utils"
 import { ChatStreamingProvider } from "@/lib/chat-streaming-store/provider"
 import dynamic from "next/dynamic"
-
-// Sparkles background component - matching landing page style
-function GridBackground() {
-  const { theme } = useTheme()
-
-  return (
-    <div className="absolute inset-0 w-full h-full">
-      <SparklesCore
-        id="chat-sparkles"
-        background="transparent"
-        minSize={0.4}
-        maxSize={1}
-        particleDensity={6}
-        className="w-full h-full"
-        particleColor={theme === "dark" ? "#FFFFFF" : "#000000"}
-      />
-    </div>
-  )
-}
 
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
@@ -70,9 +50,6 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   // The layout will update after preferences are loaded
   return (
     <div className="relative bg-background flex h-dvh w-full overflow-hidden">
-      {/* Grid background pattern */}
-      <GridBackground />
-      
       {mounted && hasSidebar && <AppSidebar />}
       <div 
         className="flex-1 flex transition-all duration-300"
