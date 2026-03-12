@@ -306,8 +306,8 @@ export function SecretsContent() {
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
         >
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Saved Credentials</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-2xl sm:text-3xl font-medium tracking-tight">Saved Credentials</h1>
+            <p className="text-muted-foreground text-sm mt-1.5">
               Stored securely and used automatically by the AI agent when logging in
             </p>
           </div>

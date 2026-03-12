@@ -23,12 +23,26 @@ export const AnimatedThemeToggler = ({ className }: props) => {
     if (!buttonRef.current) return;
 
     const newTheme = theme === "dark" ? "light" : "dark";
-    
-    await document.startViewTransition(() => {
+
+    // Simple instant toggle on mobile/small screens or without View Transition API
+    const isSmallScreen = window.innerWidth < 768;
+    if (isSmallScreen || !document.startViewTransition) {
+      setTheme(newTheme);
+      return;
+    }
+
+    const transition = document.startViewTransition(() => {
       flushSync(() => {
         setTheme(newTheme);
       });
-    }).ready;
+    });
+
+    try {
+      await transition.ready;
+    } catch {
+      // View transition was skipped — theme already applied via flushSync
+      return;
+    }
 
     const { top, left, width, height } =
       buttonRef.current.getBoundingClientRect();

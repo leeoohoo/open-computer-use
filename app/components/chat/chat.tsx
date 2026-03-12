@@ -169,6 +169,23 @@ export function Chat() {
   const { user } = useUser()
   const { preferences } = useUserPreferences()
   const { draftValue, clearDraft } = useChatDraft(effectiveChatId)
+
+  // Fetch subscription tier + machine limits for swarm gating
+  const [userTier, setUserTier] = useState<string | null>(null)
+  const [maxSwarmMachines, setMaxSwarmMachines] = useState(2)
+  useEffect(() => {
+    if (!user?.id) return
+    fetch("/api/machines")
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (data?.subscriptionTier) setUserTier(data.subscriptionTier)
+        else setUserTier("free")
+        // Swarm limit = 2x persistent machine limit, capped at 10
+        const planMax = data?.limits?.max_machines || 1
+        setMaxSwarmMachines(Math.min(planMax * 2, 10))
+      })
+      .catch(() => { setUserTier("free"); setMaxSwarmMachines(2) })
+  }, [user?.id])
   const { 
     isOpen: isNavigatorOpen, 
     width: navigatorWidth,
@@ -515,6 +532,8 @@ export function Chat() {
       onSwarmModeChange: setSwarmMode,
       swarmCount,
       onSwarmCountChange: setSwarmCount,
+      userTier,
+      maxSwarmMachines,
       }
     },
     [
@@ -541,6 +560,8 @@ export function Chat() {
       hasToolInvocations,
       swarmMode,
       swarmCount,
+      userTier,
+      maxSwarmMachines,
     ]
   )
 

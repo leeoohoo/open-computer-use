@@ -281,61 +281,14 @@
   @keyframes smoke-optimized-1 {
     0% {
       transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
-      opacity: 0.2;
-    }
-    15% {
-      transform: translate3d(30px, -20px, 0) scale(1.1) rotate(3deg);
-      opacity: 0.45;
-    }
-    30% {
-      transform: translate3d(80px, -30px, 0) scale(1.25) rotate(8deg);
-      opacity: 0.6;
-    }
-    45% {
-      transform: translate3d(40px, -60px, 0) scale(1.35) rotate(-2deg);
-      opacity: 0.5;
-    }
-    60% {
-      transform: translate3d(-30px, -80px, 0) scale(1.4) rotate(-6deg);
-      opacity: 0.35;
-    }
-    75% {
-      transform: translate3d(-20px, -50px, 0) scale(1.2) rotate(1deg);
-      opacity: 0.4;
-    }
-    90% {
-      transform: translate3d(20px, -20px, 0) scale(1.1) rotate(4deg);
-      opacity: 0.3;
-    }
-    100% {
-      transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
-      opacity: 0.2;
-    }
-  }
-
-  @keyframes smoke-optimized-2 {
-    0% {
-      transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
       opacity: 0.15;
     }
-    20% {
-      transform: translate3d(-40px, -25px, 0) scale(1.15) rotate(-4deg);
-      opacity: 0.4;
-    }
-    40% {
-      transform: translate3d(-90px, -45px, 0) scale(1.35) rotate(-9deg);
-      opacity: 0.55;
-    }
-    55% {
-      transform: translate3d(-50px, -75px, 0) scale(1.45) rotate(2deg);
-      opacity: 0.45;
-    }
-    70% {
-      transform: translate3d(40px, -95px, 0) scale(1.5) rotate(7deg);
+    33% {
+      transform: translate3d(20px, -15px, 0) scale(1.08) rotate(3deg);
       opacity: 0.3;
     }
-    85% {
-      transform: translate3d(30px, -60px, 0) scale(1.25) rotate(-1deg);
+    66% {
+      transform: translate3d(-15px, -30px, 0) scale(1.12) rotate(-2deg);
       opacity: 0.25;
     }
     100% {
@@ -344,42 +297,41 @@
     }
   }
 
-  @keyframes smoke-optimized-3 {
+  @keyframes smoke-optimized-2 {
     0% {
       transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
-      opacity: 0.18;
+      opacity: 0.12;
     }
-    12% {
-      transform: translate3d(25px, -15px, 0) scale(1.08) rotate(2deg);
-      opacity: 0.35;
-    }
-    25% {
-      transform: translate3d(60px, -35px, 0) scale(1.2) rotate(6deg);
-      opacity: 0.5;
-    }
-    38% {
-      transform: translate3d(20px, -55px, 0) scale(1.28) rotate(-3deg);
-      opacity: 0.4;
-    }
-    50% {
-      transform: translate3d(-45px, -70px, 0) scale(1.32) rotate(-7deg);
-      opacity: 0.35;
-    }
-    65% {
-      transform: translate3d(-35px, -45px, 0) scale(1.22) rotate(1deg);
-      opacity: 0.38;
-    }
-    80% {
-      transform: translate3d(15px, -25px, 0) scale(1.12) rotate(5deg);
+    33% {
+      transform: translate3d(-25px, -20px, 0) scale(1.1) rotate(-3deg);
       opacity: 0.28;
     }
-    92% {
-      transform: translate3d(10px, -10px, 0) scale(1.05) rotate(-1deg);
-      opacity: 0.22;
+    66% {
+      transform: translate3d(15px, -35px, 0) scale(1.15) rotate(2deg);
+      opacity: 0.2;
     }
     100% {
       transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
-      opacity: 0.18;
+      opacity: 0.12;
+    }
+  }
+
+  @keyframes smoke-optimized-3 {
+    0% {
+      transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+      opacity: 0.14;
+    }
+    33% {
+      transform: translate3d(18px, -12px, 0) scale(1.06) rotate(2deg);
+      opacity: 0.25;
+    }
+    66% {
+      transform: translate3d(-20px, -25px, 0) scale(1.1) rotate(-3deg);
+      opacity: 0.2;
+    }
+    100% {
+      transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+      opacity: 0.14;
     }
   }
 
@@ -786,31 +738,25 @@
     animation-delay: -10s;
   }
 
-  /* Fast smoke animations with GPU acceleration */
+  /* Smooth smoke animations with GPU acceleration */
   .animate-smoke-1-optimized {
-    animation: smoke-optimized-1 8s ease-in-out infinite;
+    animation: smoke-optimized-1 20s ease-in-out infinite;
     transform-origin: center;
-    will-change: transform, opacity;
     transform: translateZ(0);
-    backface-visibility: hidden;
   }
 
   .animate-smoke-2-optimized {
-    animation: smoke-optimized-2 10s ease-in-out infinite;
+    animation: smoke-optimized-2 25s ease-in-out infinite;
     transform-origin: center;
-    animation-delay: -3s;
-    will-change: transform, opacity;
+    animation-delay: -8s;
     transform: translateZ(0);
-    backface-visibility: hidden;
   }
 
   .animate-smoke-3-optimized {
-    animation: smoke-optimized-3 6s ease-in-out infinite;
+    animation: smoke-optimized-3 18s ease-in-out infinite;
     transform-origin: center;
-    animation-delay: -2s;
-    will-change: transform, opacity;
+    animation-delay: -5s;
     transform: translateZ(0);
-    backface-visibility: hidden;
   }
 
 }
@@ -930,35 +876,16 @@ code {
 }
 
 /* View transition styles for theme toggler */
-::view-transition-old(root), 
+::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
 
-/* Ensure view transitions work properly across the entire page */
 ::view-transition-old(root) {
-  z-index: 999999;
+  z-index: 1;
 }
 
 ::view-transition-new(root) {
-  z-index: 999999;
-}
-
-/* Remove overflow constraints during view transition */
-html:has(::view-transition) {
-  overflow: visible !important;
-}
-
-body:has(::view-transition) {
-  overflow: visible !important;
-}
-
-/* Ensure all parent containers don't clip the transition */
-.app-container:has(::view-transition),
-header:has(::view-transition),
-nav:has(::view-transition),
-div:has(::view-transition) {
-  overflow: visible !important;
-  contain: layout style !important;
+  z-index: 99999;
 }

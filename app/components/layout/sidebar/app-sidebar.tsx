@@ -18,6 +18,7 @@ import {
   Plus,
   Gift,
   Key,
+  GitFork,
 } from "@phosphor-icons/react"
 import { useParams, useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
@@ -237,6 +238,12 @@ export function AppSidebar() {
                   icon={<UsersThree size={16} weight="duotone" className="shrink-0" />}
                   label="Workforce"
                   onClick={() => handleNavigation(() => router.push("/schedules"))}
+                />
+                <NavButton
+                  id="sidebar-swarms-link"
+                  icon={<GitFork size={16} weight="duotone" className="shrink-0" />}
+                  label="Swarm Runs"
+                  onClick={() => handleNavigation(() => router.push("/swarms"))}
                 />
                 <NavButton
                   id="sidebar-secrets-link"

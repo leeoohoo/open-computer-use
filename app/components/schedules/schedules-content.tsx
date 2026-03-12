@@ -1089,7 +1089,7 @@ export function SchedulesContent() {
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
         >
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Workforce</h1>
+            <h1 className="text-2xl sm:text-3xl font-medium tracking-tight">Workforce</h1>
             <div className="flex items-center gap-3 mt-1.5 flex-wrap">
               <p className="text-sm text-muted-foreground">Your AI workforce — assign tasks and let them handle the rest</p>
               {schedules.length > 0 && (

@@ -255,7 +255,7 @@ export function MachinesContent() {
         >
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-medium tracking-tight">Virtual Machines</h1>
+              <h1 className="text-2xl sm:text-3xl font-medium tracking-tight">Virtual Machines</h1>
               {limits.max_machines > 0 && (
                 <span className="inline-flex items-center rounded-full border border-border/60 bg-background px-2.5 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
                   {usage.machines_count} / {limits.max_machines}
@@ -292,7 +292,7 @@ export function MachinesContent() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-          className="flex items-center justify-between gap-3 rounded-xl border border-border/40 bg-card/50 backdrop-blur-sm px-4 py-3"
+          className="hidden sm:flex items-center justify-between gap-3 rounded-xl border border-border/40 bg-card/50 backdrop-blur-sm px-4 py-3"
         >
           <div className="flex items-center gap-3 min-w-0">
             <div className="flex items-center gap-1.5 text-muted-foreground/50">

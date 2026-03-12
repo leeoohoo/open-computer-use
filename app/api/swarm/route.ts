@@ -74,11 +74,12 @@ export async function POST(req: NextRequest) {
     .in("status", ["active", "trialing", "past_due"]);
 
   const plan = subscriptions?.[0]?.subscription_plans;
-  const maxMachines = plan?.max_machines || 1;
+  const planMaxMachines = plan?.max_machines || 1;
+  // Swarm allows 2x the user's persistent machine limit (temp machines)
+  const swarmMaxMachines = Math.min(planMaxMachines * 2, 10); // hard cap at 10
   const requestedCount = Math.min(
-    body.machineCount || maxMachines,
-    maxMachines,
-    10 // hard cap
+    body.machineCount || swarmMaxMachines,
+    swarmMaxMachines,
   );
 
   if (requestedCount < 1) {
@@ -89,16 +90,30 @@ export async function POST(req: NextRequest) {
   }
 
   // -----------------------------------------------------------------------
-  // Create swarm machines
+  // Persist swarm run record
   // -----------------------------------------------------------------------
   const swarmId = crypto.randomUUID();
   console.log(`Swarm ${swarmId}: starting with ${requestedCount} machines for user ${userId}`);
+
+  await (supabase as any).from("swarm_runs").insert({
+    swarm_id: swarmId,
+    user_id: userId,
+    prompt: body.prompt.slice(0, 5000),
+    machine_count: requestedCount,
+    status: "creating",
+    model: body.model || null,
+    max_steps: body.maxSteps || 200,
+  });
+
+  // -----------------------------------------------------------------------
+  // Create swarm machines
+  // -----------------------------------------------------------------------
   const awsService = getAwsEc2Service();
   const machines: SwarmMachineRecord[] = [];
   let cleanedUp = false;
 
   // Helper: delete ALL swarm machines — idempotent via cleanedUp guard.
-  async function deleteAllSwarmMachines() {
+  async function deleteAllSwarmMachines(finalStatus: "completed" | "failed" | "cancelled" = "completed") {
     if (cleanedUp) return;
     cleanedUp = true;
 
@@ -122,6 +137,17 @@ export async function POST(req: NextRequest) {
         console.error(`Swarm cleanup: failed to delete DB record ${m.id}:`, e);
       }
     }
+
+    // Update swarm run record
+    await (supabase as any)
+      .from("swarm_runs")
+      .update({
+        status: finalStatus,
+        completed_at: new Date().toISOString(),
+        result_summary: `${machines.filter(m => m.awsInstanceId).length} machines used`,
+      })
+      .eq("swarm_id", swarmId);
+
     if (machines.length > 0) {
       console.log(
         `Swarm ${swarmId}: cleaned up ${machines.length} temporary machines`
@@ -229,7 +255,7 @@ export async function POST(req: NextRequest) {
     const liveMachines = machines.filter((m) => m.awsInstanceId);
 
     if (liveMachines.length === 0) {
-      await deleteAllSwarmMachines();
+      await deleteAllSwarmMachines("failed");
       return NextResponse.json(
         { error: "Failed to create any swarm machines" },
         { status: 500 }
@@ -252,7 +278,7 @@ export async function POST(req: NextRequest) {
 
     if (readyMachines.length === 0) {
       console.error(`Swarm ${swarmId}: no machines became ready`);
-      await deleteAllSwarmMachines();
+      await deleteAllSwarmMachines("failed");
       return NextResponse.json(
         { error: "No swarm machines became ready in time" },
         { status: 504 }
@@ -262,6 +288,11 @@ export async function POST(req: NextRequest) {
     console.log(
       `Swarm ${swarmId}: ${readyMachines.length} machines ready, starting execution`
     );
+
+    await (supabase as any)
+      .from("swarm_runs")
+      .update({ status: "running" })
+      .eq("swarm_id", swarmId);
 
     // -----------------------------------------------------------------------
     // Proxy to Python backend for parallel execution
@@ -304,7 +335,7 @@ export async function POST(req: NextRequest) {
 
     if (!backendResponse.ok) {
       const errText = await backendResponse.text();
-      await deleteAllSwarmMachines();
+      await deleteAllSwarmMachines("failed");
       return NextResponse.json(
         { error: errText || "Backend swarm execution failed" },
         { status: backendResponse.status }
@@ -313,11 +344,143 @@ export async function POST(req: NextRequest) {
 
     const reader = backendResponse.body?.getReader();
     if (!reader) {
-      await deleteAllSwarmMachines();
+      await deleteAllSwarmMachines("failed");
       return NextResponse.json(
         { error: "No response stream from backend" },
         { status: 500 }
       );
+    }
+
+    // Strip ALL internal agent tags/markers from content before saving
+    function stripAgentTags(text: string): string {
+      return text
+        // <cua-section type="...">...</cua-section> (matched + partial/unclosed)
+        .replace(/<cua-section[^>]*>[\s\S]*?<\/cua-section>/g, "")
+        .replace(/<cua-section[^>]*>/g, "")
+        .replace(/<\/cua-section>/g, "")
+        // [TASK_PLAN_START]...[TASK_PLAN_END]
+        .replace(/\[TASK_PLAN_START\][\s\S]*?\[TASK_PLAN_END\]/g, "")
+        .replace(/\[TASK_PLAN_START\]/g, "")
+        .replace(/\[TASK_PLAN_END\]/g, "")
+        // [Coasty_REPORT_START]...[Coasty_REPORT_END]
+        .replace(/\[Coasty_REPORT_START\][\s\S]*?\[Coasty_REPORT_END\]/g, "")
+        .replace(/\[Coasty_REPORT_START\]/g, "")
+        .replace(/\[Coasty_REPORT_END\]/g, "")
+        // <file-attachment .../> and <file-attachment ...>...</file-attachment>
+        .replace(/<file-attachment[^>]*>[\s\S]*?<\/file-attachment>/g, "")
+        .replace(/<file-attachment[^>]*\/>/g, "")
+        .replace(/<file-attachment[^>]*>/g, "")
+        .replace(/<\/file-attachment>/g, "")
+        // Agent code blocks: ```python agent.* ```
+        .replace(/```python\s+agent\.[\s\S]*?```/g, "")
+        // [NEED_USER_INPUT] markers
+        .replace(/\[NEED_USER_INPUT\]/g, "")
+        // Generic self-closing XML-like tags (e.g. <tool-result />)
+        .replace(/<[a-z][\w-]*[^>]*\/>/g, "")
+        .trim();
+    }
+
+    // Buffer for parsing SSE events from the stream
+    const decoder = new TextDecoder();
+    let sseBuf = "";
+
+    // Fire-and-forget: save an event row (don't block stream)
+    function saveEvent(
+      machineIndex: number | null,
+      eventType: string,
+      content: string,
+      screenshot?: string | null,
+      toolName?: string | null,
+    ) {
+      const row: Record<string, any> = {
+        swarm_id: swarmId,
+        machine_index: machineIndex,
+        event_type: eventType,
+        content: content.slice(0, 10000),
+      };
+      if (screenshot) row.screenshot = screenshot;
+      if (toolName) row.tool_name = toolName;
+
+      (supabase as any)
+        .from("swarm_run_events")
+        .insert(row)
+        .then(() => {})
+        .catch((e: any) =>
+          console.error(`Swarm ${swarmId}: failed to save event:`, e)
+        );
+    }
+
+    // Parse SSE lines and persist interesting events
+    function captureEvents(raw: string) {
+      sseBuf += raw;
+      const parts = sseBuf.split("\n\n");
+      sseBuf = parts.pop() || "";
+
+      for (const part of parts) {
+        if (!part.trim()) continue;
+        const colonIdx = part.indexOf(":");
+        if (colonIdx < 0) continue;
+        const dataStr = part.substring(colonIdx + 1);
+        try {
+          const chunk = JSON.parse(dataStr);
+          const type = chunk.type;
+
+          if (type === "swarm_meta") {
+            saveEvent(null, "swarm_meta", chunk.status || "unknown");
+          } else if (type === "swarm_machine_status") {
+            saveEvent(
+              chunk.machine_index ?? null,
+              "machine_status",
+              chunk.status || "unknown"
+            );
+          } else if (type === "text" && chunk.machine_index !== undefined) {
+            const cleaned = stripAgentTags(chunk.content || "");
+            if (cleaned) {
+              saveEvent(
+                chunk.machine_index,
+                "text",
+                cleaned
+              );
+            }
+          } else if (type === "tool_call") {
+            saveEvent(
+              chunk.machine_index ?? null,
+              "tool_call",
+              chunk.toolName || chunk.tool_name || "",
+              null,
+              chunk.toolName || chunk.tool_name || null,
+            );
+          } else if (type === "tool_result") {
+            // Capture screenshot from frontendScreenshot field
+            const screenshot = chunk.frontendScreenshot || null;
+            const toolName = chunk.toolName || chunk.tool_name || "";
+            const result = typeof chunk.result === "string"
+              ? chunk.result.slice(0, 500)
+              : JSON.stringify(chunk.result || "").slice(0, 500);
+            saveEvent(
+              chunk.machine_index ?? null,
+              "tool_result",
+              `${toolName}: ${result}`,
+              screenshot,
+              toolName || null,
+            );
+          } else if (type === "step_complete") {
+            saveEvent(
+              chunk.machine_index ?? null,
+              "step_complete",
+              `Step ${chunk.step || "?"}`
+            );
+          } else if (type === "error") {
+            saveEvent(
+              chunk.machine_index ?? null,
+              "error",
+              chunk.error || "Unknown error"
+            );
+          }
+        } catch {
+          // skip non-JSON
+        }
+      }
     }
 
     const stream = new ReadableStream({
@@ -329,7 +492,14 @@ export async function POST(req: NextRequest) {
               streamController.close();
               break;
             }
+            // Pass through to client
             streamController.enqueue(value);
+            // Also capture events for persistence
+            try {
+              captureEvents(decoder.decode(value, { stream: true }));
+            } catch {
+              /* capture failure should never break stream */
+            }
           }
         } catch (e) {
           try {
@@ -360,7 +530,7 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error(`Swarm ${swarmId} error:`, error?.message || error);
     console.error(`Swarm ${swarmId} stack:`, error?.stack);
-    await deleteAllSwarmMachines();
+    await deleteAllSwarmMachines("failed");
     return NextResponse.json(
       { error: error.message || "Swarm execution failed" },
       { status: 500 }

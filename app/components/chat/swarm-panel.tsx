@@ -2,10 +2,39 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { CircleNotch, Lightning, Robot, Stop, CheckCircle, XCircle, Warning } from "@phosphor-icons/react"
+import { CircleNotch, GitFork, Robot, Stop, CheckCircle, XCircle, Warning } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+
+// Strip ALL internal agent tags/markers from display text
+function stripAgentTags(text: string): string {
+  return text
+    // <cua-section type="...">...</cua-section> (matched + partial/unclosed)
+    .replace(/<cua-section[^>]*>[\s\S]*?<\/cua-section>/g, "")
+    .replace(/<cua-section[^>]*>/g, "")
+    .replace(/<\/cua-section>/g, "")
+    // [TASK_PLAN_START]...[TASK_PLAN_END]
+    .replace(/\[TASK_PLAN_START\][\s\S]*?\[TASK_PLAN_END\]/g, "")
+    .replace(/\[TASK_PLAN_START\]/g, "")
+    .replace(/\[TASK_PLAN_END\]/g, "")
+    // [Coasty_REPORT_START]...[Coasty_REPORT_END]
+    .replace(/\[Coasty_REPORT_START\][\s\S]*?\[Coasty_REPORT_END\]/g, "")
+    .replace(/\[Coasty_REPORT_START\]/g, "")
+    .replace(/\[Coasty_REPORT_END\]/g, "")
+    // <file-attachment .../> and <file-attachment ...>...</file-attachment>
+    .replace(/<file-attachment[^>]*>[\s\S]*?<\/file-attachment>/g, "")
+    .replace(/<file-attachment[^>]*\/>/g, "")
+    .replace(/<file-attachment[^>]*>/g, "")
+    .replace(/<\/file-attachment>/g, "")
+    // Agent code blocks: ```python agent.* ```
+    .replace(/```python\s+agent\.[\s\S]*?```/g, "")
+    // [NEED_USER_INPUT] markers
+    .replace(/\[NEED_USER_INPUT\]/g, "")
+    // Generic self-closing XML-like tags
+    .replace(/<[a-z][\w-]*[^>]*\/>/g, "")
+    .trim()
+}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -157,13 +186,16 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
         )
       }
     } else if (type === "text" && chunk.machine_index !== undefined) {
-      setMachines((prev) =>
-        prev.map((m) =>
-          m.machine_index === chunk.machine_index
-            ? { ...m, lastText: (chunk.content || "").slice(0, 120) }
-            : m
+      const cleaned = stripAgentTags(chunk.content || "").slice(0, 120)
+      if (cleaned) {
+        setMachines((prev) =>
+          prev.map((m) =>
+            m.machine_index === chunk.machine_index
+              ? { ...m, lastText: cleaned }
+              : m
+          )
         )
-      )
+      }
     } else if (type === "step_complete" && chunk.machine_id) {
       setMachines((prev) =>
         prev.map((m) =>
@@ -227,11 +259,11 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
         transition={{ type: "spring", duration: 0.5 }}
         className="w-full max-w-3xl mx-auto mb-4"
       >
-        <div className="rounded-2xl border border-border/60 bg-background/80 backdrop-blur-sm overflow-hidden">
+        <div className="rounded-2xl border border-border/60 bg-background overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border/40">
             <div className="flex items-center gap-2">
-              <Lightning className="size-4 text-amber-500" weight="fill" />
+              <GitFork className="size-4 text-amber-500" weight="duotone" />
               <span className="text-sm font-medium">Swarm Mode</span>
               <StatusBadge status={overallStatus} />
               {total > 0 && (

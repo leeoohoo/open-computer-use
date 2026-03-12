@@ -25,6 +25,7 @@ const subscriptionPlans = [
     features: [
       "1 persistent machine, no limits",
       "2x more credits than Free",
+      "Swarm mode — 2x your machine limit in parallel",
       "Advanced web search & data extraction",
       "Standard support (real humans, not bots)",
     ],
@@ -41,6 +42,7 @@ const subscriptionPlans = [
     features: [
       "2 persistent machines, no limits",
       "3x more credits than Starter",
+      "Swarm mode — 2x your machine limit in parallel",
       "Advanced web search & data extraction",
       "Full API access (coming soon)",
       "Advanced data extraction at scale",
@@ -59,6 +61,7 @@ const subscriptionPlans = [
     features: [
       "3 persistent machines, no limits",
       "2.5x more credits than Plus",
+      "Swarm mode — 2x your machine limit in parallel",
       "Advanced web search & data extraction",
       "Full API access (coming soon)",
       "Advanced data extraction at scale",
