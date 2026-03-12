@@ -21,7 +21,7 @@ import {
   GitFork,
 } from "@phosphor-icons/react"
 import { useParams, useRouter } from "next/navigation"
-import { useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { DialogCollaborativeAuth } from "../../collaborative/dialog-collaborative-auth"
 import { SidebarList } from "./sidebar-list"
 import { CoastyIcon } from "@/components/icons/coasty"
@@ -91,7 +91,26 @@ export function AppSidebar() {
   const { setOpenMobile, open, isMobile: isMobileSidebar } = useSidebar()
   // On mobile the slide-in panel is always fully expanded
   const expanded = isMobileSidebar || open
-  const { chats, isLoading, refresh } = useChats()
+  const { chats, isLoading, isLoadingMore, hasMore, loadMore, refresh } = useChats()
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+
+  // Infinite scroll: observe sentinel element at the bottom of the chat list
+  useEffect(() => {
+    const sentinel = loadMoreRef.current
+    if (!sentinel) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+          loadMore()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [hasMore, isLoadingMore, loadMore])
   const { user } = useUser()
   const { chatId } = useChatSession()
   const params = useParams<{ chatId: string }>()
@@ -277,6 +296,18 @@ export function AppSidebar() {
                         isCollaborative={group.isCollaborative}
                       />
                     ))}
+                    {/* Sentinel for infinite scroll */}
+                    <div ref={loadMoreRef} className="h-1" />
+                    {isLoadingMore && (
+                      <div className="space-y-1.5 pb-2">
+                        {[...Array(3)].map((_, i) => (
+                          <div
+                            key={i}
+                            className="rounded-md bg-sidebar-accent/50 animate-pulse h-8"
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-6 text-center">
