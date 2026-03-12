@@ -22,11 +22,11 @@ import {
   CaretRight,
   Camera,
   User,
-  Robot,
   MagnifyingGlassPlus,
   MagnifyingGlassMinus,
   ArrowCounterClockwise,
   ArrowsOutCardinal,
+  ArrowRight,
   TwitterLogo,
   LinkedinLogo,
   WhatsappLogo,
@@ -56,6 +56,47 @@ interface ChatMessage {
   created_at: string | null
   model: string | null
   experimental_attachments: any[] | null
+  parts: any[] | null
+}
+
+interface ExtractedStep {
+  toolName: string
+  args: any
+  result: any
+  screenshot: string | null
+  status: "success" | "error" | "pending"
+}
+
+function toDataUri(raw: string): string | null {
+  const clean = raw.trim()
+  if (!clean) return null
+  if (clean.startsWith("data:image/")) return clean
+  if (clean.startsWith("/9j/")) return `data:image/jpeg;base64,${clean}`
+  if (clean.startsWith("iVBOR")) return `data:image/png;base64,${clean}`
+  return `data:image/jpeg;base64,${clean}`
+}
+
+function extractStepsFromParts(parts: any[] | null): ExtractedStep[] {
+  if (!parts || !Array.isArray(parts)) return []
+  const steps: ExtractedStep[] = []
+  for (const part of parts) {
+    if (part.type === "tool-invocation" && part.toolInvocation) {
+      const inv = part.toolInvocation
+      let screenshot: string | null = null
+      const rawScreenshot = inv.frontendScreenshot || inv.result?.frontendScreenshot
+      if (rawScreenshot) {
+        screenshot = toDataUri(rawScreenshot)
+      }
+      steps.push({
+        toolName: inv.toolName || "action",
+        args: inv.args,
+        result: inv.result,
+        screenshot,
+        status: inv.state === "result" ? "success" : inv.state === "call" ? "pending" : "pending",
+      })
+    }
+  }
+  return steps
 }
 
 // ---------------------------------------------------------------------------
@@ -491,7 +532,7 @@ function ChatCard({
       if (supabase) {
         supabase
           .from("messages")
-          .select("id, role, content, created_at, model, experimental_attachments")
+          .select("id, role, content, created_at, model, experimental_attachments, parts")
           .eq("chat_id", chat.id)
           .order("created_at", { ascending: true })
           .then(({ data }: { data: ChatMessage[] | null }) => {
@@ -666,6 +707,18 @@ function ChatCard({
           <button
             onClick={(e) => {
               e.stopPropagation()
+              router.push(`/c/${chat.id}`)
+            }}
+            className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-border/40 bg-background/60 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/90 transition-all duration-200"
+            title="Open conversation"
+          >
+            <ArrowRight className="size-3.5" weight="bold" />
+            <span className="hidden sm:inline">Open</span>
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
               setShareOpen(true)
             }}
             className={cn(
@@ -747,6 +800,44 @@ const TREE_MIN_ZOOM = 0.2
 const TREE_MAX_ZOOM = 2
 const TREE_ZOOM_STEP = 0.15
 
+// Conversation turn — a user message paired with its assistant response
+interface ConversationTurn {
+  user: ChatMessage | null
+  assistant: ChatMessage | null
+  assistantSteps: ExtractedStep[]
+}
+
+function buildConversationTurns(messages: ChatMessage[]): ConversationTurn[] {
+  const turns: ConversationTurn[] = []
+  let currentTurn: ConversationTurn = { user: null, assistant: null, assistantSteps: [] }
+
+  for (const msg of messages) {
+    if (msg.role === "user") {
+      // If we already have a user in the current turn, push it and start new
+      if (currentTurn.user || currentTurn.assistant) {
+        turns.push(currentTurn)
+        currentTurn = { user: null, assistant: null, assistantSteps: [] }
+      }
+      currentTurn.user = msg
+    } else if (msg.role === "assistant") {
+      // If we already have an assistant, push turn and start new with just this assistant
+      if (currentTurn.assistant) {
+        turns.push(currentTurn)
+        currentTurn = { user: null, assistant: null, assistantSteps: [] }
+      }
+      currentTurn.assistant = msg
+      currentTurn.assistantSteps = extractStepsFromParts(msg.parts)
+    }
+  }
+
+  // Push last turn if it has anything
+  if (currentTurn.user || currentTurn.assistant) {
+    turns.push(currentTurn)
+  }
+
+  return turns
+}
+
 function ChatTree({
   messages,
   messageScreenshots,
@@ -773,38 +864,53 @@ function ChatTree({
   const panStart = useRef({ x: 0, y: 0 })
   const panOrigin = useRef({ x: 0, y: 0 })
 
-  const userMsgs = useMemo(() => messages.filter((m) => m.role === "user"), [messages])
-  const assistantMsgs = useMemo(() => messages.filter((m) => m.role === "assistant"), [messages])
+  const turns = useMemo(() => buildConversationTurns(messages), [messages])
+
+  const totalSteps = useMemo(
+    () => turns.reduce((sum, t) => sum + t.assistantSteps.length, 0),
+    [turns]
+  )
+  const stepScreenshotCount = useMemo(
+    () => turns.reduce((sum, t) => sum + t.assistantSteps.filter((s) => s.screenshot).length, 0),
+    [turns]
+  )
+
+  const CONTENT_W = 520
 
   // Auto-fit on mount
   useEffect(() => {
     if (!containerRef.current) return
     const containerW = containerRef.current.clientWidth
-    const contentW = 500
-    const fit = Math.min(1, (containerW - 24) / contentW)
+    const fit = Math.min(1, (containerW - 24) / CONTENT_W)
     const clamped = Math.max(TREE_MIN_ZOOM, Math.min(TREE_MAX_ZOOM, fit))
     setZoom(clamped)
-    const scaledW = contentW * clamped
+    const scaledW = CONTENT_W * clamped
     setPan({ x: Math.max(0, (containerW - scaledW) / 2), y: 0 })
   }, [])
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault()
-    const container = containerRef.current
-    if (!container) return
-    const rect = container.getBoundingClientRect()
-    const cursorX = e.clientX - rect.left
-    const cursorY = e.clientY - rect.top
-    setZoom((prev) => {
-      const dir = e.deltaY < 0 ? 1 : -1
-      const next = Math.max(TREE_MIN_ZOOM, Math.min(TREE_MAX_ZOOM, prev + dir * TREE_ZOOM_STEP))
-      const ratio = next / prev
-      setPan((p) => ({
-        x: cursorX - ratio * (cursorX - p.x),
-        y: cursorY - ratio * (cursorY - p.y),
-      }))
-      return next
-    })
+  // Attach non-passive wheel listener so preventDefault() actually stops page scroll
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      const rect = el.getBoundingClientRect()
+      const cursorX = e.clientX - rect.left
+      const cursorY = e.clientY - rect.top
+      setZoom((prev) => {
+        const dir = e.deltaY < 0 ? 1 : -1
+        const next = Math.max(TREE_MIN_ZOOM, Math.min(TREE_MAX_ZOOM, prev + dir * TREE_ZOOM_STEP))
+        const ratio = next / prev
+        setPan((p) => ({
+          x: cursorX - ratio * (cursorX - p.x),
+          y: cursorY - ratio * (cursorY - p.y),
+        }))
+        return next
+      })
+    }
+    el.addEventListener("wheel", onWheel, { passive: false })
+    return () => el.removeEventListener("wheel", onWheel)
   }, [])
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
@@ -833,16 +939,16 @@ function ChatTree({
   const resetView = useCallback(() => {
     if (!containerRef.current) return
     const containerW = containerRef.current.clientWidth
-    const contentW = 500
-    const fit = Math.min(1, (containerW - 24) / contentW)
+    const fit = Math.min(1, (containerW - 24) / CONTENT_W)
     const clamped = Math.max(TREE_MIN_ZOOM, Math.min(TREE_MAX_ZOOM, fit))
     setZoom(clamped)
-    const scaledW = contentW * clamped
+    const scaledW = CONTENT_W * clamped
     setPan({ x: Math.max(0, (containerW - scaledW) / 2), y: 0 })
   }, [])
 
   const zoomPercent = Math.round(zoom * 100)
-  const treeHeight = Math.min(550, Math.max(300, Math.max(userMsgs.length, assistantMsgs.length) * 70 + 160))
+  // Height based on number of turns — each turn row ~100px, plus root + padding
+  const treeHeight = Math.min(700, Math.max(320, turns.length * 110 + 160))
 
   return (
     <div className="relative rounded-b-xl" style={{ height: treeHeight }}>
@@ -856,7 +962,7 @@ function ChatTree({
           }}
         />
         <div className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-blue-500/[0.03] dark:bg-blue-400/[0.04] blur-3xl" />
-        <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-purple-500/[0.03] dark:bg-purple-400/[0.04] blur-3xl" />
+        <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-teal-500/[0.03] dark:bg-teal-400/[0.04] blur-3xl" />
       </div>
 
       {/* Zoom controls */}
@@ -888,9 +994,10 @@ function ChatTree({
       <div className="absolute bottom-3 right-3 z-[10]">
         <button
           onClick={() => router.push(`/c/${chatId}`)}
-          className="px-3 py-1.5 rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-background transition-all shadow-sm"
+          className="px-4 py-2 rounded-xl border border-border/40 bg-background/90 backdrop-blur-sm text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background transition-all shadow-sm flex items-center gap-1.5"
         >
           Open conversation
+          <ArrowRight className="size-3.5" weight="bold" />
         </button>
       </div>
 
@@ -899,7 +1006,6 @@ function ChatTree({
         ref={containerRef}
         className="relative z-[1] overflow-hidden h-full select-none rounded-b-xl"
         style={{ cursor: isPanning.current ? "grabbing" : "grab" }}
-        onWheel={handleWheel}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -913,102 +1019,93 @@ function ChatTree({
             transition: isPanning.current ? "none" : "transform 0.15s ease-out",
           }}
         >
-          <div className="px-6 py-6" style={{ width: 500 }}>
+          <div className="px-6 py-6" style={{ width: CONTENT_W }}>
             {/* Root node */}
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, ease: EASE }}
-              className="flex justify-center mb-1"
+              className="flex justify-center mb-4"
             >
               <div className="relative max-w-sm px-5 py-3 rounded-xl border border-border/40 bg-background/90 backdrop-blur-sm text-center shadow-sm">
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
                 <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-1 font-medium">Conversation</p>
                 <p className="text-sm leading-snug line-clamp-2">{chatTitle}</p>
                 <div className="flex items-center justify-center gap-3 mt-2 text-[10px] text-muted-foreground/50">
-                  <span className="flex items-center gap-1"><span className="size-1.5 rounded-full bg-blue-500" />{userCount}</span>
-                  <span className="flex items-center gap-1"><span className="size-1.5 rounded-full bg-purple-500" />{assistantCount}</span>
-                  {totalScreenshots > 0 && <span className="flex items-center gap-1"><Camera className="size-2.5" />{totalScreenshots}</span>}
+                  <span className="flex items-center gap-1"><span className="size-1.5 rounded-full bg-blue-500" />{userCount} message{userCount !== 1 ? "s" : ""}</span>
+                  <span className="flex items-center gap-1"><span className="size-1.5 rounded-full bg-teal-500" />{totalSteps > 0 ? `${totalSteps} step${totalSteps !== 1 ? "s" : ""}` : `${assistantCount} response${assistantCount !== 1 ? "s" : ""}`}</span>
+                  {(totalScreenshots > 0 || stepScreenshotCount > 0) && <span className="flex items-center gap-1"><Camera className="size-2.5" />{totalScreenshots + stepScreenshotCount}</span>}
                 </div>
               </div>
             </motion.div>
 
-            {/* Fork SVG */}
-            <div className="flex justify-center">
-              <svg width={500} height={52} viewBox="0 0 500 52" className="shrink-0">
-                {[0, 1].map((i) => {
-                  const startX = 250
-                  const endX = i === 0 ? 125 : 375
-                  return (
-                    <motion.path
-                      key={i}
-                      d={`M ${startX} 0 C ${startX} 26, ${endX} 26, ${endX} 52`}
-                      fill="none"
-                      className="stroke-border/50"
-                      strokeWidth={1.5}
-                      strokeDasharray="4 3"
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{ pathLength: 1, opacity: 1 }}
-                      transition={{ duration: 0.6, delay: 0.1 + i * 0.08, ease: "easeOut" }}
-                    />
-                  )
-                })}
-              </svg>
-            </div>
-
-            {/* Two columns: User | Assistant */}
-            <div className="grid grid-cols-2 gap-4">
-              {/* User branch */}
-              <div className="flex flex-col items-center">
-                <div className="w-full rounded-xl border border-blue-500/25 bg-blue-50/80 dark:bg-blue-950/30 px-3 py-2.5 text-center shadow-sm backdrop-blur-sm">
-                  <div className="flex items-center justify-center gap-1.5">
-                    <User className="size-3.5 text-blue-500" weight="fill" />
-                    <span className="text-xs font-medium">You</span>
-                    <span className="text-[10px] text-muted-foreground/50">({userCount})</span>
-                  </div>
-                </div>
-                {userMsgs.length > 0 ? (
-                  <div className="relative w-full mt-0 pt-2">
+            {/* Conversation turns — alternating user ↔ assistant rows */}
+            <div className="flex flex-col items-center gap-0">
+              {turns.map((turn, ti) => (
+                <motion.div
+                  key={ti}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25, delay: 0.1 + ti * 0.05, ease: EASE }}
+                  className="w-full"
+                >
+                  {/* Vertical connector from root/previous turn */}
+                  <div className="flex justify-center">
                     <div
-                      className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2"
-                      style={{ backgroundImage: "repeating-linear-gradient(to bottom, hsl(var(--border) / 0.35) 0px, hsl(var(--border) / 0.35) 4px, transparent 4px, transparent 8px)" }}
+                      className="w-px h-6"
+                      style={{ backgroundImage: "repeating-linear-gradient(to bottom, hsl(var(--border) / 0.4) 0px, hsl(var(--border) / 0.4) 4px, transparent 4px, transparent 8px)" }}
                     />
-                    <div className="relative flex flex-col gap-2 items-center">
-                      {userMsgs.map((msg, i) => (
-                        <MessageStepCard key={msg.id} msg={msg} index={i} screenshots={messageScreenshots[msg.id] || []} color="blue" />
-                      ))}
+                  </div>
+
+                  {/* Turn row: [User] → [Assistant] */}
+                  <div className="grid grid-cols-[1fr_32px_1fr] items-start gap-0">
+                    {/* User side */}
+                    <div className="flex flex-col items-center">
+                      {turn.user ? (
+                        <TurnUserNode
+                          msg={turn.user}
+                          screenshots={messageScreenshots[turn.user.id] || []}
+                          index={ti}
+                        />
+                      ) : (
+                        <div className="w-full rounded-lg border border-dashed border-border/30 bg-background/50 px-3 py-2 text-center">
+                          <span className="text-[10px] text-muted-foreground/40 italic">No prompt</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Horizontal connector arrow */}
+                    <div className="flex items-center justify-center pt-3">
+                      <div className="relative w-full flex items-center">
+                        <div
+                          className="flex-1 h-px"
+                          style={{ backgroundImage: "repeating-linear-gradient(to right, hsl(var(--border) / 0.4) 0px, hsl(var(--border) / 0.4) 4px, transparent 4px, transparent 8px)" }}
+                        />
+                        <ArrowRight className="size-3 text-muted-foreground/40 shrink-0 -ml-0.5" weight="bold" />
+                      </div>
+                    </div>
+
+                    {/* Assistant side */}
+                    <div className="flex flex-col items-center">
+                      {turn.assistant ? (
+                        turn.assistantSteps.length > 0 ? (
+                          <TurnAssistantSteps steps={turn.assistantSteps} index={ti} />
+                        ) : (
+                          <TurnAssistantNode
+                            msg={turn.assistant}
+                            screenshots={messageScreenshots[turn.assistant.id] || []}
+                            index={ti}
+                          />
+                        )
+                      ) : (
+                        <div className="w-full rounded-lg border border-dashed border-border/30 bg-background/50 px-3 py-2 text-center">
+                          <span className="text-[10px] text-muted-foreground/40 italic">Pending...</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                ) : (
-                  <div className="mt-3 text-[11px] text-muted-foreground/50 text-center">No messages</div>
-                )}
-              </div>
-
-              {/* Assistant branch */}
-              <div className="flex flex-col items-center">
-                <div className="w-full rounded-xl border border-purple-500/25 bg-purple-50/80 dark:bg-purple-950/30 px-3 py-2.5 text-center shadow-sm backdrop-blur-sm">
-                  <div className="flex items-center justify-center gap-1.5">
-                    <Robot className="size-3.5 text-purple-500" weight="fill" />
-                    <span className="text-xs font-medium">Assistant</span>
-                    <span className="text-[10px] text-muted-foreground/50">({assistantCount})</span>
-                  </div>
-                </div>
-                {assistantMsgs.length > 0 ? (
-                  <div className="relative w-full mt-0 pt-2">
-                    <div
-                      className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2"
-                      style={{ backgroundImage: "repeating-linear-gradient(to bottom, hsl(var(--border) / 0.35) 0px, hsl(var(--border) / 0.35) 4px, transparent 4px, transparent 8px)" }}
-                    />
-                    <div className="relative flex flex-col gap-2 items-center">
-                      {assistantMsgs.map((msg, i) => (
-                        <MessageStepCard key={msg.id} msg={msg} index={i} screenshots={messageScreenshots[msg.id] || []} color="purple" />
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mt-3 text-[11px] text-muted-foreground/50 text-center">No responses</div>
-                )}
-              </div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
@@ -1018,22 +1115,70 @@ function ChatTree({
 }
 
 // ---------------------------------------------------------------------------
-// Message step card — single node in tree branch
+// Turn node components — compact cards for the alternating flow
 // ---------------------------------------------------------------------------
 
-function MessageStepCard({
+function TurnUserNode({
   msg,
-  index,
   screenshots,
-  color,
+  index,
 }: {
   msg: ChatMessage
-  index: number
   screenshots: { url: string; name: string }[]
-  color: "blue" | "purple"
+  index: number
 }) {
-  const [detailsOpen, setDetailsOpen] = useState(false)
+  const preview = useMemo(() => {
+    const content = msg.content || ""
+    let cleaned = content
+      .replace(/\[TASK_PLAN_START\][\s\S]*?\[TASK_PLAN_END\]/g, "")
+      .replace(/\[REASONING_START\][\s\S]*?\[REASONING_END\]/g, "")
+      .replace(/\[THINKING_START\][\s\S]*?\[THINKING_END\]/g, "")
+      .replace(/```[\s\S]*?```/g, "[code]")
+      .replace(/`[^`]+`/g, "[code]")
+      .replace(/[#*_~\[\]()]/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+    if (cleaned.length > 120) cleaned = cleaned.substring(0, 120).trim() + "..."
+    return cleaned
+  }, [msg.content])
 
+  return (
+    <div className="w-full rounded-lg border border-blue-500/25 bg-blue-50/60 dark:bg-blue-950/20 px-3 py-2 shadow-sm backdrop-blur-sm">
+      <div className="flex items-center gap-1.5 mb-1">
+        <User className="size-3 text-blue-500" weight="fill" />
+        <span className="text-[10px] font-medium text-blue-600 dark:text-blue-400">You</span>
+        {msg.created_at && (
+          <span className="text-[9px] text-muted-foreground/40 ml-auto">{formatTime(new Date(msg.created_at))}</span>
+        )}
+      </div>
+      {preview && (
+        <p className="text-[11px] leading-relaxed text-foreground/80 line-clamp-2">{preview}</p>
+      )}
+      {screenshots.length > 0 && (
+        <div className="flex gap-1 mt-1.5 overflow-x-auto scrollbar-invisible">
+          {screenshots.slice(0, 2).map((img, j) => (
+            <ScreenshotThumb key={j} src={img.url} alt={img.name} />
+          ))}
+          {screenshots.length > 2 && (
+            <span className="shrink-0 flex items-center justify-center h-14 w-8 rounded border border-border/20 bg-foreground/[0.02] text-[9px] text-muted-foreground/50">
+              +{screenshots.length - 2}
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TurnAssistantNode({
+  msg,
+  screenshots,
+  index,
+}: {
+  msg: ChatMessage
+  screenshots: { url: string; name: string }[]
+  index: number
+}) {
   const preview = useMemo(() => {
     const content = msg.content || ""
     let cleaned = content
@@ -1049,106 +1194,84 @@ function MessageStepCard({
       .replace(/[#*_~\[\]()]/g, "")
       .replace(/\s+/g, " ")
       .trim()
-    if (cleaned.length > 200) cleaned = cleaned.substring(0, 200).trim() + "..."
+    if (cleaned.length > 120) cleaned = cleaned.substring(0, 120).trim() + "..."
     return cleaned
   }, [msg.content])
-
-  const fullPreview = useMemo(() => {
-    const content = msg.content || ""
-    let cleaned = content
-      .replace(/\[TASK_PLAN_START\][\s\S]*?\[TASK_PLAN_END\]/g, "")
-      .replace(/\[REASONING_START\][\s\S]*?\[REASONING_END\]/g, "")
-      .replace(/\[THINKING_START\][\s\S]*?\[THINKING_END\]/g, "")
-      .replace(/<cua-section\s+[^>]*>/g, "")
-      .replace(/<\/cua-section>/g, "")
-      .replace(/\[TASK_STATUS:[^:]+:[^\]]+\]/g, "")
-      .replace(/\[TASK_SUMMARY:[^:]+:[^\]]+\]/g, "")
-      .replace(/\s+/g, " ")
-      .trim()
-    if (cleaned.length > 500) cleaned = cleaned.substring(0, 500).trim() + "..."
-    return cleaned
-  }, [msg.content])
-
-  if (!preview) return null
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2, delay: index * 0.03 }}
-      className="relative w-full z-[1]"
-    >
-      {/* Timeline dot */}
-      <div className="absolute left-1/2 -top-1 -translate-x-1/2 z-[2]">
-        {screenshots.length > 0 ? (
-          <ScreenshotDot src={screenshots[0].url} />
-        ) : (
-          <span className={cn(
-            "block size-2.5 rounded-full ring-2 ring-background",
-            color === "blue" ? "bg-blue-500/70" : "bg-purple-500/70"
-          )} />
-        )}
-      </div>
-
-      <div className={cn(
-        "mx-1 mt-2 rounded-lg border px-3 py-2 text-left transition-all shadow-sm",
-        "border-border/30 bg-background/85 backdrop-blur-sm hover:border-border/50 hover:bg-background/95"
-      )}>
+    <div className="w-full rounded-lg border border-teal-500/25 bg-teal-50/60 dark:bg-teal-950/20 px-3 py-2 shadow-sm backdrop-blur-sm">
+      <div className="flex items-center gap-1.5 mb-1">
+        <AgentIconFilled className="size-3 text-teal-500" />
+        <span className="text-[10px] font-medium text-teal-600 dark:text-teal-400">Coasty</span>
         {msg.created_at && (
-          <p className="text-[9px] text-muted-foreground/40 mb-1 font-medium">
-            {formatTime(new Date(msg.created_at))}
-          </p>
-        )}
-
-        <p className="text-[12px] leading-relaxed text-foreground/85 line-clamp-3">{preview}</p>
-
-        {/* Inline screenshots */}
-        {screenshots.length > 0 && (
-          <div className="flex gap-1.5 mt-2 overflow-x-auto scrollbar-invisible">
-            {screenshots.slice(0, 3).map((img, j) => (
-              <ScreenshotThumb key={j} src={img.url} alt={img.name} />
-            ))}
-            {screenshots.length > 3 && (
-              <span className="shrink-0 flex items-center justify-center h-14 w-10 rounded border border-border/20 bg-foreground/[0.02] text-[10px] text-muted-foreground/50">
-                +{screenshots.length - 3}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Expand toggle */}
-        {fullPreview.length > preview.length && (
-          <div className="mt-1">
-            <button
-              type="button"
-              onClick={() => setDetailsOpen((o) => !o)}
-              className="flex items-center gap-1 py-0.5 text-[11px] text-muted-foreground/50 hover:text-muted-foreground transition-colors"
-            >
-              <CaretRight
-                weight="bold"
-                className={cn("size-2 shrink-0 transition-transform duration-150", detailsOpen && "rotate-90")}
-              />
-              <span>{detailsOpen ? "Less" : "More"}</span>
-            </button>
-            <AnimatePresence initial={false}>
-              {detailsOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="overflow-hidden"
-                >
-                  <p className="text-[11px] leading-relaxed text-muted-foreground/60 pt-1 whitespace-pre-wrap break-words">
-                    {fullPreview}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <span className="text-[9px] text-muted-foreground/40 ml-auto">{formatTime(new Date(msg.created_at))}</span>
         )}
       </div>
-    </motion.div>
+      {preview && (
+        <p className="text-[11px] leading-relaxed text-foreground/80 line-clamp-2">{preview}</p>
+      )}
+      {screenshots.length > 0 && (
+        <div className="flex gap-1 mt-1.5 overflow-x-auto scrollbar-invisible">
+          {screenshots.slice(0, 2).map((img, j) => (
+            <ScreenshotThumb key={j} src={img.url} alt={img.name} />
+          ))}
+          {screenshots.length > 2 && (
+            <span className="shrink-0 flex items-center justify-center h-14 w-8 rounded border border-border/20 bg-foreground/[0.02] text-[9px] text-muted-foreground/50">
+              +{screenshots.length - 2}
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TurnAssistantSteps({
+  steps,
+  index,
+}: {
+  steps: ExtractedStep[]
+  index: number
+}) {
+  return (
+    <div className="w-full rounded-lg border border-teal-500/25 bg-teal-50/60 dark:bg-teal-950/20 px-3 py-2 shadow-sm backdrop-blur-sm">
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <AgentIconFilled className="size-3 text-teal-500" />
+        <span className="text-[10px] font-medium text-teal-600 dark:text-teal-400">Coasty</span>
+        <span className="text-[9px] text-muted-foreground/40 ml-auto">{steps.length} step{steps.length !== 1 ? "s" : ""}</span>
+      </div>
+      {/* Each step as its own row: badge + screenshot */}
+      <div className="flex flex-col gap-1.5">
+        {steps.map((step, i) => {
+          const label = step.toolName
+            .replace(/_/g, " ")
+            .replace(/([a-z])([A-Z])/g, "$1 $2")
+            .replace(/^./, (c) => c.toUpperCase())
+          return (
+            <div key={i}>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-0.5 text-[9px] leading-none px-1.5 py-0.5 rounded-full font-medium",
+                  step.status === "error"
+                    ? "text-red-500/80 bg-red-500/8"
+                    : step.status === "success"
+                      ? "text-emerald-600/80 dark:text-emerald-400/70 bg-emerald-500/8"
+                      : "text-muted-foreground/60 bg-muted-foreground/8"
+                )}
+              >
+                <CheckCircle className="size-2" weight="fill" />
+                {label}
+              </span>
+              {step.screenshot && (
+                <div className="mt-1">
+                  <ScreenshotThumb src={step.screenshot} alt={label} />
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }
 
@@ -1334,29 +1457,6 @@ function ShareModal({
 // ---------------------------------------------------------------------------
 // Screenshot components (matching swarm-tree style)
 // ---------------------------------------------------------------------------
-
-function ScreenshotDot({ src }: { src: string }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <>
-      <motion.button
-        type="button"
-        className="cursor-pointer z-[2] focus:outline-none"
-        whileHover={{ scale: 1.15 }}
-        whileTap={{ scale: 0.95 }}
-        transition={{ type: "spring", stiffness: 500, damping: 15 }}
-        onClick={() => setOpen(true)}
-      >
-        <div className="size-[18px] rounded-[3px] overflow-hidden ring-2 ring-background shadow-sm">
-          <img src={src} alt="" className="size-full object-cover" draggable={false} />
-        </div>
-      </motion.button>
-      <AnimatePresence>
-        {open && <ScreenshotLightbox src={src} onClose={() => setOpen(false)} />}
-      </AnimatePresence>
-    </>
-  )
-}
 
 function ScreenshotThumb({ src, alt }: { src: string; alt: string }) {
   const [open, setOpen] = useState(false)

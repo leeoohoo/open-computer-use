@@ -60,7 +60,7 @@ function NavButton({
         expanded ? "gap-2 px-2.5 py-1.5" : "justify-center p-2",
         variant === "primary"
           ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
-          : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          : "text-sidebar-foreground hover:bg-sidebar-accent"
       )}
       type="button"
       onClick={onClick}
@@ -165,7 +165,7 @@ export function AppSidebar() {
           {/* Activity */}
           <div className={cn("relative", expanded ? "pb-1" : "pb-1")}>
             {expanded && (
-              <div className="text-[10px] font-medium text-sidebar-foreground/40 uppercase tracking-wider mb-1.5 px-2.5">
+              <div className="text-[10px] font-medium text-sidebar-foreground/80 uppercase tracking-wider mb-1.5 px-2.5">
                 Activity
               </div>
             )}
@@ -188,7 +188,7 @@ export function AppSidebar() {
           {/* Infrastructure */}
           <div className={cn("relative", expanded ? "pb-1" : "pb-1")}>
             {expanded && (
-              <div className="text-[10px] font-medium text-sidebar-foreground/40 uppercase tracking-wider mb-1.5 px-2.5">
+              <div className="text-[10px] font-medium text-sidebar-foreground/80 uppercase tracking-wider mb-1.5 px-2.5">
                 Infrastructure
               </div>
             )}
@@ -218,44 +218,81 @@ export function AppSidebar() {
         {/* Footer */}
         <SidebarFooter className="relative pt-0">
           <div className={cn("space-y-1.5", expanded ? "p-3 pt-1" : "p-1.5 pt-1")}>
-            {/* Credits - simplified */}
-            {user && expanded && (
-              <button
-                className={cn(
-                  "flex w-full items-center gap-2 rounded-md text-sm transition-all duration-200",
-                  "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                  "px-2.5 py-1.5"
-                )}
-                type="button"
-                onClick={() => {
-                  router.push("/account?section=billing")
-                  if (isMobile) setOpenMobile(false)
-                }}
-              >
-                <CoastyIcon className="h-4 w-4 text-sidebar-primary shrink-0" />
-                <span className="text-sm text-sidebar-foreground">
-                  {(credits?.balance || 0).toLocaleString()}
-                </span>
-                <span className="text-xs text-sidebar-foreground/50">credits</span>
-                <span className="ml-auto text-[10px] text-sidebar-foreground/40 hover:text-sidebar-foreground/70 transition-colors">
-                  Buy
-                </span>
-              </button>
-            )}
+            {/* Credits — expanded */}
+            {user && expanded && (() => {
+              const balance = credits?.balance || 0
+              const isLow = balance > 0 && balance < 50
 
-            {/* Credits - collapsed icon */}
+              return (
+                <button
+                  className={cn(
+                    "group flex w-full flex-col rounded-lg border transition-all duration-200",
+                    "hover:border-sidebar-primary/30 hover:shadow-sm",
+                    "px-3 py-2.5",
+                    isLow
+                      ? "border-orange-500/20 bg-orange-500/[0.04]"
+                      : "border-sidebar-border/60 bg-sidebar-accent/30"
+                  )}
+                  type="button"
+                  onClick={() => {
+                    router.push("/account?section=billing")
+                    if (isMobile) setOpenMobile(false)
+                  }}
+                >
+                  <div className="flex items-center justify-between w-full mb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <CoastyIcon className={cn("h-3.5 w-3.5 shrink-0", isLow ? "text-orange-500" : "text-sidebar-primary")} />
+                      <span className="text-[11px] font-medium text-sidebar-foreground/90 uppercase tracking-wider">Credits</span>
+                    </div>
+                    <span className={cn(
+                      "text-[10px] font-medium px-1.5 py-0.5 rounded-md transition-colors",
+                      "bg-sidebar-primary/10 text-sidebar-primary group-hover:bg-sidebar-primary/20"
+                    )}>
+                      Buy
+                    </span>
+                  </div>
+                  <div className="flex items-baseline gap-1">
+                    <span className={cn(
+                      "text-lg font-semibold tabular-nums leading-none",
+                      isLow ? "text-orange-500" : "text-sidebar-foreground"
+                    )}>
+                      {balance.toLocaleString()}
+                    </span>
+                    {isLow && (
+                      <span className="text-[10px] text-orange-500/70 font-medium">Low</span>
+                    )}
+                  </div>
+                </button>
+              )
+            })()}
+
+            {/* Credits — collapsed */}
             {user && !expanded && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    className="flex w-full items-center justify-center p-2 rounded-md hover:bg-sidebar-accent transition-colors"
+                    className={cn(
+                      "flex w-full items-center justify-center p-2 rounded-lg border transition-all duration-200",
+                      "hover:border-sidebar-primary/30 hover:shadow-sm",
+                      (credits?.balance || 0) > 0 && (credits?.balance || 0) < 50
+                        ? "border-orange-500/20 bg-orange-500/[0.04]"
+                        : "border-sidebar-border/60 bg-sidebar-accent/30"
+                    )}
                     onClick={() => router.push("/account?section=billing")}
                   >
-                    <CoastyIcon className="h-4 w-4 text-sidebar-primary shrink-0" />
+                    <CoastyIcon className={cn(
+                      "h-4 w-4 shrink-0",
+                      (credits?.balance || 0) > 0 && (credits?.balance || 0) < 50
+                        ? "text-orange-500"
+                        : "text-sidebar-primary"
+                    )} />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={8}>
-                  {(credits?.balance || 0).toLocaleString()} credits
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-semibold">{(credits?.balance || 0).toLocaleString()}</span>
+                    <span className="text-muted-foreground">credits</span>
+                  </div>
                 </TooltipContent>
               </Tooltip>
             )}
@@ -306,7 +343,7 @@ export function AppSidebar() {
                 </Avatar>
                 <div className="flex flex-col min-w-0 flex-1 text-left">
                   <span className="text-sm font-medium truncate">{user?.display_name || "User"}</span>
-                  <span className="text-xs text-sidebar-foreground/60 truncate">{user?.email || ""}</span>
+                  <span className="text-xs text-sidebar-foreground/90 truncate">{user?.email || ""}</span>
                 </div>
               </button>
             ) : (

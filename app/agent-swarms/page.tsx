@@ -3,10 +3,11 @@
 import { LandingHeader } from "@/app/components/landing/landing-header"
 import { Button } from "@/components/ui/button"
 import { RainbowButton } from "@/components/magicui/rainbow-button"
+import { AuroraText } from "@/components/ui/aurora-text"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
-import { useState, useEffect, useCallback, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useEffect, useCallback, useRef, useId, useMemo } from "react"
+import { motion, AnimatePresence, useInView } from "framer-motion"
 import {
   ArrowRight,
   Check,
@@ -15,7 +16,6 @@ import {
   Monitor,
   GitFork,
   Play,
-  Pause,
   RotateCcw,
   ChevronRight,
   Layers,
@@ -23,11 +23,314 @@ import {
   TrendingUp,
   Shield,
   BarChart3,
+  Cpu,
+  Send,
+  Merge,
+  ChevronDown,
+  Terminal as TerminalIcon,
+  Globe,
+  Eye,
+  Sparkles,
 } from "lucide-react"
 
-// ---------------------------------------------------------------------------
-// Interactive Swarm Demo — simulates a prompt being split across N machines
-// ---------------------------------------------------------------------------
+// ==========================================================================
+// Mock Swarm Tree — mirrors the real SwarmTree aesthetic
+// ==========================================================================
+
+interface MockStep {
+  text: string
+  tool: string
+  status: "success" | "pending" | "running"
+  screenshot?: boolean
+}
+
+interface MockMachine {
+  label: string
+  status: "success" | "running" | "pending"
+  steps: MockStep[]
+}
+
+const MOCK_PROMPT = "Research top 5 CRM platforms — compare pricing, features, and user reviews"
+
+const MOCK_MACHINES: MockMachine[] = [
+  {
+    label: "Salesforce",
+    status: "success",
+    steps: [
+      { text: "Navigating to Salesforce pricing page", tool: "browser_navigate", status: "success" },
+      { text: "Extracting Enterprise, Professional, and Starter plan tiers with pricing", tool: "browser_extract", status: "success" },
+      { text: "Checking integration marketplace — found 4,000+ apps", tool: "browser_navigate", status: "success" },
+      { text: "Scraping G2 reviews — 4.3/5 from 19,842 reviews", tool: "browser_extract", status: "success", screenshot: true },
+      { text: "Compiling Salesforce findings into structured report", tool: "terminal_exec", status: "success" },
+    ],
+  },
+  {
+    label: "HubSpot",
+    status: "success",
+    steps: [
+      { text: "Opening HubSpot CRM pricing page", tool: "browser_navigate", status: "success" },
+      { text: "Comparing Free, Starter, Professional, Enterprise plans", tool: "browser_extract", status: "success" },
+      { text: "Reviewing 1,500+ integration listings", tool: "browser_navigate", status: "success", screenshot: true },
+      { text: "Reading Capterra reviews — 4.5/5 from 4,091 reviews", tool: "browser_extract", status: "success" },
+      { text: "Compiling HubSpot findings into structured report", tool: "terminal_exec", status: "success" },
+    ],
+  },
+  {
+    label: "Pipedrive",
+    status: "running",
+    steps: [
+      { text: "Loading Pipedrive pricing and features page", tool: "browser_navigate", status: "success" },
+      { text: "Cataloging Essential through Enterprise features", tool: "browser_extract", status: "success" },
+      { text: "Reviewing Zapier integrations — 400+ connections", tool: "browser_navigate", status: "success" },
+      { text: "Pulling TrustRadius scores and sentiment analysis", tool: "browser_extract", status: "running" },
+      { text: "Compile Pipedrive findings", tool: "terminal_exec", status: "pending" },
+    ],
+  },
+  {
+    label: "Zoho CRM",
+    status: "running",
+    steps: [
+      { text: "Visiting Zoho CRM editions page", tool: "browser_navigate", status: "success" },
+      { text: "Extracting Standard, Professional, Enterprise, Ultimate pricing", tool: "browser_extract", status: "success" },
+      { text: "Mapping Zoho ecosystem — 45+ native integrations", tool: "browser_navigate", status: "running" },
+      { text: "Check G2 sentiment analysis", tool: "browser_extract", status: "pending" },
+      { text: "Compile Zoho CRM findings", tool: "terminal_exec", status: "pending" },
+    ],
+  },
+  {
+    label: "Close",
+    status: "pending",
+    steps: [
+      { text: "Opening Close.com pricing page", tool: "browser_navigate", status: "success" },
+      { text: "Documenting Startup, Professional, Enterprise features", tool: "browser_extract", status: "running" },
+      { text: "Check API docs and integration capabilities", tool: "browser_navigate", status: "pending" },
+      { text: "Read customer testimonials and review scores", tool: "browser_extract", status: "pending" },
+      { text: "Compile Close findings", tool: "terminal_exec", status: "pending" },
+    ],
+  },
+]
+
+function MockSwarmTree() {
+  const [mounted, setMounted] = useState(false)
+  const treeRef = useRef<HTMLDivElement>(null)
+  const inView = useInView(treeRef, { once: true, amount: 0.2 })
+
+  useEffect(() => {
+    if (inView) {
+      const t = setTimeout(() => setMounted(true), 200)
+      return () => clearTimeout(t)
+    }
+  }, [inView])
+
+  const cols = MOCK_MACHINES.length
+
+  return (
+    <div ref={treeRef} className="relative w-full">
+      {/* Dotted canvas background */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-2xl">
+        <div
+          className="absolute inset-0 opacity-[0.25] dark:opacity-[0.12]"
+          style={{
+            backgroundImage: "radial-gradient(circle, currentColor 0.5px, transparent 0.5px)",
+            backgroundSize: "18px 18px",
+          }}
+        />
+        <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-amber-500/[0.04] dark:bg-amber-400/[0.06] blur-[80px]" />
+        <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-blue-500/[0.03] dark:bg-blue-400/[0.05] blur-[60px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-56 w-56 rounded-full bg-emerald-500/[0.02] dark:bg-emerald-400/[0.03] blur-[80px]" />
+      </div>
+
+      <div className="relative z-[1] px-4 sm:px-6 py-6 overflow-x-auto">
+        {/* Root prompt node */}
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={mounted ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="flex justify-center mb-1"
+        >
+          <div className="relative max-w-md px-5 py-3.5 rounded-xl border border-border/50 bg-background/90 dark:bg-background/70 backdrop-blur-sm text-center shadow-sm">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mb-1.5 font-medium font-mono">
+              Prompt
+            </p>
+            <p className="text-sm leading-snug text-foreground/90">{MOCK_PROMPT}</p>
+          </div>
+        </motion.div>
+
+        {/* Fork connector SVG */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={mounted ? { opacity: 1 } : {}}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="flex justify-center"
+        >
+          <svg
+            width={Math.max(cols * 200, 400)}
+            height={52}
+            viewBox={`0 0 ${Math.max(cols * 200, 400)} 52`}
+            className="shrink-0"
+          >
+            {MOCK_MACHINES.map((_, i) => {
+              const totalW = Math.max(cols * 200, 400)
+              const colW = totalW / cols
+              const startX = totalW / 2
+              const endX = colW * i + colW / 2
+              const midY = 26
+              return (
+                <motion.path
+                  key={i}
+                  d={`M ${startX} 0 C ${startX} ${midY}, ${endX} ${midY}, ${endX} 52`}
+                  fill="none"
+                  className="stroke-border/50 dark:stroke-border/40"
+                  strokeWidth={1.5}
+                  strokeDasharray="4 3"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={mounted ? { pathLength: 1, opacity: 1 } : {}}
+                  transition={{ duration: 0.7, delay: 0.3 + i * 0.08, ease: "easeOut" }}
+                />
+              )
+            })}
+          </svg>
+        </motion.div>
+
+        {/* Machine branches */}
+        <div
+          className="grid gap-3"
+          style={{
+            gridTemplateColumns: `repeat(${cols}, minmax(170px, 1fr))`,
+            minWidth: cols * 180,
+          }}
+        >
+          {MOCK_MACHINES.map((machine, i) => (
+            <motion.div
+              key={machine.label}
+              initial={{ opacity: 0, y: 16 }}
+              animate={mounted ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.45, delay: 0.4 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <MockMachineBranch machine={machine} index={i} animated={mounted} />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Zoom controls hint */}
+      <div className="absolute bottom-3 left-4 z-[10] flex items-center gap-1.5 text-[10px] text-muted-foreground/30 select-none pointer-events-none">
+        <Eye className="size-3" />
+        <span>Live swarm execution preview</span>
+      </div>
+    </div>
+  )
+}
+
+function MockMachineBranch({ machine, index, animated }: { machine: MockMachine; index: number; animated: boolean }) {
+  const statusIcon = machine.status === "success"
+    ? <Check className="size-3 text-emerald-500" />
+    : machine.status === "running"
+      ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}><RotateCcw className="size-3 text-amber-500" /></motion.div>
+      : <Clock className="size-3 text-muted-foreground/40" />
+
+  return (
+    <div className="flex flex-col items-center">
+      {/* Machine header */}
+      <div
+        className={cn(
+          "w-full rounded-xl border px-3 py-2.5 text-center transition-colors shadow-sm backdrop-blur-sm",
+          machine.status === "success"
+            ? "border-emerald-500/25 bg-emerald-50/60 dark:bg-emerald-950/25"
+            : machine.status === "running"
+              ? "border-amber-500/20 bg-amber-50/40 dark:bg-amber-950/15"
+              : "border-border/40 bg-background/70 dark:bg-background/50"
+        )}
+      >
+        <div className="flex items-center justify-center gap-1.5">
+          <Monitor className="size-3.5 text-muted-foreground/60" />
+          <span className="text-xs font-medium">{machine.label}</span>
+          {statusIcon}
+        </div>
+      </div>
+
+      {/* Timeline steps */}
+      <div className="relative w-full mt-0 pt-2">
+        {/* Dashed vertical connector */}
+        <div
+          className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(to bottom, hsl(var(--border) / 0.3) 0px, hsl(var(--border) / 0.3) 4px, transparent 4px, transparent 8px)",
+          }}
+        />
+        <div className="relative flex flex-col gap-2 items-center">
+          {machine.steps.map((step, j) => (
+            <motion.div
+              key={j}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={animated ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.25, delay: 0.6 + index * 0.08 + j * 0.06 }}
+              className="relative w-full z-[1]"
+            >
+              {/* Status dot */}
+              <div className="absolute left-1/2 -top-1 -translate-x-1/2 z-[2]">
+                {step.screenshot ? (
+                  <div className="size-4 rounded-full border-2 border-background bg-gradient-to-br from-amber-400 to-amber-600 shadow-sm shadow-amber-500/20 flex items-center justify-center">
+                    <Eye className="size-2 text-white" />
+                  </div>
+                ) : (
+                  <span
+                    className={cn(
+                      "block size-2.5 rounded-full ring-2 ring-background",
+                      step.status === "success"
+                        ? "bg-emerald-500/70"
+                        : step.status === "running"
+                          ? "bg-amber-500/70"
+                          : "bg-muted-foreground/20"
+                    )}
+                  />
+                )}
+              </div>
+
+              {/* Step card */}
+              <div
+                className={cn(
+                  "mx-1 mt-2 rounded-lg border px-3 py-2 text-left transition-all shadow-sm",
+                  step.status === "running"
+                    ? "border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/10"
+                    : "border-border/25 bg-background/80 dark:bg-background/60 backdrop-blur-sm"
+                )}
+              >
+                <p className="text-[11px] leading-relaxed text-foreground/80 line-clamp-2">{step.text}</p>
+
+                {/* Tool badge */}
+                <div className="flex items-center gap-1 mt-1.5">
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 text-[9px] leading-none px-1.5 py-0.5 rounded-full font-mono",
+                      step.status === "success"
+                        ? "text-emerald-600/70 dark:text-emerald-400/60 bg-emerald-500/8"
+                        : step.status === "running"
+                          ? "text-amber-600/70 dark:text-amber-400/60 bg-amber-500/8"
+                          : "text-muted-foreground/40 bg-muted/30"
+                    )}
+                  >
+                    <span className={cn(
+                      "size-1 rounded-full",
+                      step.status === "success" ? "bg-emerald-500" : step.status === "running" ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/30"
+                    )} />
+                    {step.tool}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ==========================================================================
+// Interactive Demo (refined)
+// ==========================================================================
 
 interface DemoMachine {
   id: number
@@ -41,82 +344,15 @@ interface DemoMachine {
 const demoPrompt = "Research the top 5 CRM tools — compare pricing, features, integrations, and user reviews"
 
 const demoMachines: DemoMachine[] = [
-  {
-    id: 1,
-    label: "Machine 1 — Salesforce",
-    status: "idle",
-    progress: 0,
-    currentStep: -1,
-    steps: [
-      "Opening Salesforce pricing page",
-      "Extracting plan tiers & limits",
-      "Checking integration marketplace",
-      "Scraping G2 reviews",
-      "Compiling findings",
-    ],
-  },
-  {
-    id: 2,
-    label: "Machine 2 — HubSpot",
-    status: "idle",
-    progress: 0,
-    currentStep: -1,
-    steps: [
-      "Navigating to HubSpot CRM",
-      "Comparing free vs paid tiers",
-      "Listing native integrations",
-      "Reading Capterra reviews",
-      "Compiling findings",
-    ],
-  },
-  {
-    id: 3,
-    label: "Machine 3 — Pipedrive",
-    status: "idle",
-    progress: 0,
-    currentStep: -1,
-    steps: [
-      "Loading Pipedrive pricing",
-      "Cataloging feature matrix",
-      "Reviewing Zapier integrations",
-      "Pulling TrustRadius scores",
-      "Compiling findings",
-    ],
-  },
-  {
-    id: 4,
-    label: "Machine 4 — Zoho CRM",
-    status: "idle",
-    progress: 0,
-    currentStep: -1,
-    steps: [
-      "Visiting Zoho CRM site",
-      "Extracting edition details",
-      "Mapping Zoho ecosystem",
-      "Checking G2 sentiment",
-      "Compiling findings",
-    ],
-  },
-  {
-    id: 5,
-    label: "Machine 5 — Close.io",
-    status: "idle",
-    progress: 0,
-    currentStep: -1,
-    steps: [
-      "Opening Close pricing page",
-      "Documenting feature set",
-      "Checking API & integrations",
-      "Reading customer testimonials",
-      "Compiling findings",
-    ],
-  },
+  { id: 1, label: "Salesforce", status: "idle", progress: 0, currentStep: -1, steps: ["Opening pricing page", "Extracting plan tiers", "Checking integrations", "Scraping G2 reviews", "Compiling findings"] },
+  { id: 2, label: "HubSpot", status: "idle", progress: 0, currentStep: -1, steps: ["Navigating to HubSpot", "Comparing plan tiers", "Listing integrations", "Reading Capterra reviews", "Compiling findings"] },
+  { id: 3, label: "Pipedrive", status: "idle", progress: 0, currentStep: -1, steps: ["Loading pricing page", "Cataloging features", "Reviewing Zapier integrations", "Pulling TrustRadius scores", "Compiling findings"] },
+  { id: 4, label: "Zoho CRM", status: "idle", progress: 0, currentStep: -1, steps: ["Visiting Zoho site", "Extracting editions", "Mapping ecosystem", "Checking G2 sentiment", "Compiling findings"] },
+  { id: 5, label: "Close", status: "idle", progress: 0, currentStep: -1, steps: ["Opening Close page", "Documenting features", "Checking API docs", "Reading testimonials", "Compiling findings"] },
 ]
 
 function useSwarmDemo() {
-  const [machines, setMachines] = useState<DemoMachine[]>(
-    demoMachines.map((m) => ({ ...m }))
-  )
+  const [machines, setMachines] = useState<DemoMachine[]>(demoMachines.map(m => ({ ...m })))
   const [phase, setPhase] = useState<"idle" | "running" | "done">("idle")
   const [elapsed, setElapsed] = useState(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -124,7 +360,7 @@ function useSwarmDemo() {
 
   const reset = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current)
-    setMachines(demoMachines.map((m) => ({ ...m })))
+    setMachines(demoMachines.map(m => ({ ...m })))
     setPhase("idle")
     setElapsed(0)
     tickRef.current = 0
@@ -133,257 +369,173 @@ function useSwarmDemo() {
   const start = useCallback(() => {
     reset()
     setPhase("running")
-
-    // Randomise per-machine speed variance
-    const speeds = demoMachines.map(() => 0.7 + Math.random() * 0.6) // 0.7–1.3x
+    const speeds = demoMachines.map(() => 0.7 + Math.random() * 0.6)
 
     intervalRef.current = setInterval(() => {
       tickRef.current += 1
       setElapsed(tickRef.current)
 
-      setMachines((prev) => {
+      setMachines(prev => {
         const next = prev.map((m, i) => {
           if (m.status === "done") return m
           const speed = speeds[i]
           const tick = tickRef.current
 
-          // Boot phase: ticks 1-3
-          if (tick <= 3) {
-            return { ...m, status: "booting" as const }
-          }
+          if (tick <= 3) return { ...m, status: "booting" as const }
 
-          // Running phase
           const runTick = tick - 3
-          const stepDuration = 4 // ticks per step (base)
-          const adjustedStep = Math.floor(
-            (runTick * speed) / stepDuration
-          )
+          const stepDuration = 4
+          const adjustedStep = Math.floor((runTick * speed) / stepDuration)
           const clampedStep = Math.min(adjustedStep, m.steps.length - 1)
-          const progress = Math.min(
-            ((runTick * speed) / (m.steps.length * stepDuration)) * 100,
-            100
-          )
+          const progress = Math.min(((runTick * speed) / (m.steps.length * stepDuration)) * 100, 100)
 
           if (progress >= 100) {
-            return {
-              ...m,
-              status: "done" as const,
-              progress: 100,
-              currentStep: m.steps.length - 1,
-            }
+            return { ...m, status: "done" as const, progress: 100, currentStep: m.steps.length - 1 }
           }
-
-          return {
-            ...m,
-            status: "running" as const,
-            progress,
-            currentStep: clampedStep,
-          }
+          return { ...m, status: "running" as const, progress, currentStep: clampedStep }
         })
 
-        // Check if all done
-        if (next.every((m) => m.status === "done")) {
+        if (next.every(m => m.status === "done")) {
           if (intervalRef.current) clearInterval(intervalRef.current)
           setPhase("done")
         }
-
         return next
       })
     }, 400)
   }, [reset])
 
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
-    }
-  }, [])
+  useEffect(() => () => { if (intervalRef.current) clearInterval(intervalRef.current) }, [])
 
   return { machines, phase, elapsed, start, reset }
 }
 
-// ---------------------------------------------------------------------------
-// Sub-components
-// ---------------------------------------------------------------------------
-
-function DemoMachineCard({ machine }: { machine: DemoMachine }) {
+function DemoMachineCard({ machine, index }: { machine: DemoMachine; index: number }) {
   const statusColor =
-    machine.status === "done"
-      ? "text-emerald-500"
-      : machine.status === "running"
-        ? "text-amber-500"
-        : machine.status === "booting"
-          ? "text-blue-400"
-          : "text-muted-foreground/40"
-
-  const statusBg =
-    machine.status === "done"
-      ? "bg-emerald-500/10 border-emerald-500/20"
-      : machine.status === "running"
-        ? "bg-amber-500/[0.06] border-amber-500/15"
-        : machine.status === "booting"
-          ? "bg-blue-500/[0.06] border-blue-400/15"
-          : "bg-muted/30 border-border/50"
+    machine.status === "done" ? "text-emerald-500"
+    : machine.status === "running" ? "text-amber-500"
+    : machine.status === "booting" ? "text-blue-400"
+    : "text-muted-foreground/25"
 
   return (
     <motion.div
-      layout
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "rounded-xl border p-4 transition-colors duration-300",
-        statusBg
+        "relative rounded-xl border p-4 backdrop-blur-sm transition-all duration-500 overflow-hidden",
+        machine.status === "done"
+          ? "border-emerald-500/20 bg-emerald-500/[0.03]"
+          : machine.status === "running"
+            ? "border-amber-500/15 bg-amber-500/[0.02]"
+            : machine.status === "booting"
+              ? "border-blue-400/15 bg-blue-500/[0.02]"
+              : "border-border/30 bg-card/20"
       )}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Monitor className={cn("h-4 w-4", statusColor)} />
-          <span className="text-sm font-medium truncate">{machine.label}</span>
-        </div>
-        <span className={cn("text-xs font-medium", statusColor)}>
-          {machine.status === "done"
-            ? "Complete"
-            : machine.status === "running"
-              ? `${Math.round(machine.progress)}%`
-              : machine.status === "booting"
-                ? "Booting..."
-                : "Idle"}
-        </span>
-      </div>
-
-      {/* Progress bar */}
-      <div className="h-1.5 rounded-full bg-muted/50 overflow-hidden mb-3">
-        <motion.div
-          className={cn(
-            "h-full rounded-full",
-            machine.status === "done"
-              ? "bg-emerald-500"
-              : "bg-amber-500"
-          )}
-          initial={{ width: 0 }}
-          animate={{ width: `${machine.progress}%` }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-        />
-      </div>
-
-      {/* Steps */}
-      <div className="space-y-1">
-        {machine.steps.map((step, i) => {
-          const isDone = machine.currentStep > i || machine.status === "done"
-          const isActive =
-            machine.currentStep === i && machine.status === "running"
-          return (
-            <div
-              key={i}
-              className={cn(
-                "flex items-center gap-2 text-xs transition-colors duration-200",
-                isDone
-                  ? "text-foreground/70"
-                  : isActive
-                    ? "text-foreground font-medium"
-                    : "text-muted-foreground/40"
-              )}
-            >
-              {isDone ? (
-                <Check className="h-3 w-3 text-emerald-500 flex-shrink-0" />
-              ) : isActive ? (
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                  className="flex-shrink-0"
-                >
-                  <RotateCcw className="h-3 w-3 text-amber-500" />
-                </motion.div>
-              ) : (
-                <div className="h-3 w-3 rounded-full border border-border/50 flex-shrink-0" />
-              )}
-              <span className="truncate">{step}</span>
+      <div className="relative">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className={cn(
+              "size-6 rounded-lg flex items-center justify-center border transition-colors duration-300",
+              machine.status === "done" ? "bg-emerald-500/10 border-emerald-500/20" :
+              machine.status === "running" ? "bg-amber-500/10 border-amber-500/20" :
+              "bg-muted/20 border-border/40"
+            )}>
+              <Monitor className={cn("size-3", statusColor)} />
             </div>
-          )
-        })}
+            <span className="text-sm font-medium">{machine.label}</span>
+          </div>
+          <span className={cn("text-[10px] font-mono tabular-nums tracking-wide", statusColor)}>
+            {machine.status === "done" ? "DONE"
+            : machine.status === "running" ? `${Math.round(machine.progress)}%`
+            : machine.status === "booting" ? "INIT"
+            : "IDLE"}
+          </span>
+        </div>
+
+        {/* Progress bar */}
+        <div className="h-[3px] rounded-full bg-foreground/[0.04] overflow-hidden mb-3">
+          <motion.div
+            className={cn(
+              "h-full rounded-full",
+              machine.status === "done" ? "bg-emerald-500"
+              : "bg-amber-500"
+            )}
+            initial={{ width: 0 }}
+            animate={{ width: `${machine.progress}%` }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          />
+        </div>
+
+        {/* Steps */}
+        <div className="space-y-1">
+          {machine.steps.map((step, i) => {
+            const isDone = machine.currentStep > i || machine.status === "done"
+            const isActive = machine.currentStep === i && machine.status === "running"
+            return (
+              <div
+                key={i}
+                className={cn(
+                  "flex items-center gap-2 text-[11px] transition-all duration-200",
+                  isDone ? "text-foreground/55"
+                  : isActive ? "text-foreground font-medium"
+                  : "text-muted-foreground/20"
+                )}
+              >
+                {isDone ? (
+                  <Check className="size-3 text-emerald-500 flex-shrink-0" />
+                ) : isActive ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                    className="flex-shrink-0"
+                  >
+                    <RotateCcw className="size-3 text-amber-500" />
+                  </motion.div>
+                ) : (
+                  <div className="size-3 rounded-full border border-foreground/[0.06] flex-shrink-0" />
+                )}
+                <span className="truncate">{step}</span>
+              </div>
+            )
+          })}
+        </div>
       </div>
     </motion.div>
   )
 }
 
-// ---------------------------------------------------------------------------
-// Comparison section data
-// ---------------------------------------------------------------------------
+// ==========================================================================
+// Data
+// ==========================================================================
 
 const comparisons = [
-  {
-    label: "5 CRM tools research",
-    sequential: "~50 min",
-    swarm: "~10 min",
-    speedup: "5x",
-  },
-  {
-    label: "QA across 8 pages",
-    sequential: "~40 min",
-    swarm: "~8 min",
-    speedup: "5x",
-  },
-  {
-    label: "Lead enrichment (100 contacts)",
-    sequential: "~3 hours",
-    swarm: "~30 min",
-    speedup: "6x",
-  },
-  {
-    label: "Competitor price monitoring",
-    sequential: "~25 min",
-    swarm: "~5 min",
-    speedup: "5x",
-  },
+  { label: "5 CRM tools research", sequential: "~50 min", swarm: "~10 min", speedup: "5x" },
+  { label: "QA across 8 pages", sequential: "~40 min", swarm: "~8 min", speedup: "5x" },
+  { label: "Lead enrichment (100)", sequential: "~3 hours", swarm: "~30 min", speedup: "6x" },
+  { label: "Price monitoring", sequential: "~25 min", swarm: "~5 min", speedup: "5x" },
 ]
 
 const useCases = [
-  {
-    icon: BarChart3,
-    title: "Market Research at Scale",
-    description:
-      "Research multiple competitors, markets, or products simultaneously. Each machine handles one target while results aggregate automatically.",
-  },
-  {
-    icon: Target,
-    title: "Lead Generation & Enrichment",
-    description:
-      "Split a list of leads across machines. Each enriches profiles, finds emails, and checks social presence — completing hours of work in minutes.",
-  },
-  {
-    icon: Shield,
-    title: "QA & Regression Testing",
-    description:
-      "Run test scenarios across different pages or flows in parallel. Catch bugs faster before they reach production.",
-  },
-  {
-    icon: Layers,
-    title: "Content & Social Campaigns",
-    description:
-      "Post to multiple platforms simultaneously. Each machine handles a different social network, forum, or listing site.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Data Extraction Pipelines",
-    description:
-      "Scrape and structure data from dozens of sources at once. Price monitoring, review aggregation, directory scraping — all in parallel.",
-  },
-  {
-    icon: Clock,
-    title: "Scheduled Swarm Runs",
-    description:
-      "Combine swarm mode with scheduling for recurring parallel tasks. Hourly price checks, daily report generation, weekly audits.",
-  },
+  { icon: BarChart3, title: "Market Research at Scale", description: "Research multiple competitors, markets, or products simultaneously across isolated machines." },
+  { icon: Target, title: "Lead Generation", description: "Enrich profiles, find emails, and verify social presence — hours of work in minutes." },
+  { icon: Shield, title: "QA & Regression Testing", description: "Run test scenarios across different pages or flows in parallel." },
+  { icon: Layers, title: "Content & Social", description: "Post to multiple platforms simultaneously with per-machine isolation." },
+  { icon: TrendingUp, title: "Data Extraction", description: "Scrape and structure data from dozens of sources at once." },
+  { icon: Clock, title: "Scheduled Runs", description: "Combine swarm mode with scheduling for recurring parallel tasks." },
 ]
 
-// ---------------------------------------------------------------------------
+// ==========================================================================
 // Page
-// ---------------------------------------------------------------------------
+// ==========================================================================
 
 export default function AgentSwarmsPage() {
   const { machines, phase, elapsed, start, reset } = useSwarmDemo()
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const heroRef = useRef<HTMLDivElement>(null)
+  const heroInView = useInView(heroRef, { once: true })
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768)
@@ -394,52 +546,39 @@ export default function AgentSwarmsPage() {
   }, [])
 
   const sectionViewport = { once: true, amount: isMobile ? 0.05 : 0.1 }
+
   const containerVariants = isMobile
     ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
-    : {
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-        },
-      }
+    : { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.08 } } }
+
   const itemVariants = isMobile
     ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
-    : {
-        hidden: { opacity: 0, y: 24 },
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.5, ease: "easeOut" as const },
-        },
-      }
+    : { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } } }
 
   return (
     <div className="min-h-screen bg-background relative">
       <LandingHeader />
 
       <main className={cn("relative", isMobile ? "pt-16" : "pt-20")}>
+
         {/* ── Hero ── */}
         <section
+          ref={heroRef}
           className={cn(
             "relative flex flex-col items-center justify-center overflow-hidden",
-            isMobile ? "px-4 pt-12 pb-16" : "px-6 pt-24 pb-28"
+            isMobile ? "px-4 pt-10 pb-8" : "px-6 pt-24 pb-6"
           )}
         >
-          {/* Subtle radial glow */}
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-amber-500/[0.04] blur-[120px]" />
-          </div>
 
           <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="relative z-10 max-w-3xl mx-auto text-center"
+            className="relative z-10 w-full max-w-3xl mx-auto text-center"
           >
             <motion.div variants={itemVariants} className="mb-4">
-              <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/[0.06] px-4 py-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
-                <GitFork className="h-3.5 w-3.5" />
+              <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/15 bg-amber-500/[0.04] px-3.5 py-1 text-[11px] font-medium text-amber-600 dark:text-amber-400/80 tracking-wide">
+                <GitFork className="size-3" />
                 Agent Swarm Mode
               </span>
             </motion.div>
@@ -447,14 +586,21 @@ export default function AgentSwarmsPage() {
             <motion.h1
               variants={itemVariants}
               className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-5xl sm:text-6xl"
+                "font-bold tracking-tight leading-[1.08]",
+                isMobile ? "text-3xl" : "text-5xl sm:text-[3.5rem]"
               )}
             >
               One prompt.{" "}
-              <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-                Multiple machines.
-              </span>
+              <AuroraText
+                colors={["#f59e0b", "#f97316", "#ef4444", "#f59e0b"]}
+                speed={1.5}
+                className={cn(
+                  "font-bold tracking-tight",
+                  isMobile ? "text-3xl" : "text-5xl sm:text-[3.5rem]"
+                )}
+              >
+                Infinite machines.
+              </AuroraText>
               <br />
               Parallel results.
             </motion.h1>
@@ -462,123 +608,98 @@ export default function AgentSwarmsPage() {
             <motion.p
               variants={itemVariants}
               className={cn(
-                "text-muted-foreground mt-5 max-w-xl mx-auto leading-relaxed",
-                isMobile ? "text-sm" : "text-lg"
+                "text-muted-foreground mt-4 max-w-lg mx-auto leading-relaxed",
+                isMobile ? "text-sm" : "text-[17px]"
               )}
             >
-              Agent Swarms split your task across multiple isolated machines
-              running simultaneously. Work that takes an hour sequentially
-              finishes in minutes.
+              Split any task across multiple isolated environments running simultaneously. Work that takes an hour finishes in minutes.
             </motion.p>
 
             <motion.div
               variants={itemVariants}
-              className="flex items-center justify-center gap-3 mt-8"
+              className="flex items-center justify-center gap-3 mt-7"
             >
               <RainbowButton className="gap-2" asChild>
                 <Link href="/auth">
                   Try Swarm Mode
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="size-4" />
                 </Link>
               </RainbowButton>
               <Button variant="outline" className="rounded-full" asChild>
                 <a href="#demo">
                   See it in action
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <ChevronDown className="size-3.5 ml-1" />
                 </a>
               </Button>
             </motion.div>
           </motion.div>
         </section>
 
-        {/* ── How It Works — 3-step visual ── */}
-        <section
-          className={cn("py-20", isMobile ? "px-4" : "px-6")}
-        >
+        {/* ── Hero Mock Swarm Tree ── */}
+        <section className={cn("relative", isMobile ? "px-3 pb-12" : "px-6 pb-16 pt-4")}>
+          <motion.div
+            initial={isMobile ? {} : { opacity: 0, y: 32 }}
+            animate={heroInView && mounted ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.4, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-6xl mx-auto"
+          >
+            <div className="relative rounded-2xl border border-border/30 bg-card/10 dark:bg-card/5 backdrop-blur-sm overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+              {/* Top bar */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/20 bg-muted/20 dark:bg-muted/10">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="size-2.5 rounded-full bg-red-400/50" />
+                    <div className="size-2.5 rounded-full bg-amber-400/50" />
+                    <div className="size-2.5 rounded-full bg-emerald-400/50" />
+                  </div>
+                  <span className="text-[10px] font-mono text-muted-foreground/40 ml-2">swarm-tree — live execution</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-mono text-amber-500/60">5 machines</span>
+                  <span className="flex items-center gap-1 text-[10px] font-mono text-emerald-500/60">
+                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    running
+                  </span>
+                </div>
+              </div>
+
+              <MockSwarmTree />
+            </div>
+          </motion.div>
+        </section>
+
+        {/* ── How It Works ── */}
+        <section className={cn("py-20", isMobile ? "px-4" : "px-6")}>
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-5xl mx-auto"
+            className="max-w-4xl mx-auto"
           >
             <motion.div variants={itemVariants} className="text-center mb-14">
-              <h2
-                className={cn(
-                  "font-bold tracking-tight",
-                  isMobile ? "text-3xl" : "text-4xl"
-                )}
-              >
-                How Agent Swarms work
+              <h2 className={cn("font-bold tracking-tight", isMobile ? "text-2xl" : "text-3xl sm:text-4xl")}>
+                Three steps to parallel execution
               </h2>
-              <p
-                className={cn(
-                  "text-muted-foreground mt-3 max-w-lg mx-auto",
-                  isMobile ? "text-sm" : "text-base"
-                )}
-              >
-                Three steps from prompt to parallel execution
-              </p>
             </motion.div>
 
-            <div
-              className={cn(
-                "grid gap-8",
-                isMobile ? "grid-cols-1" : "grid-cols-3"
-              )}
-            >
+            <div className={cn("grid gap-px bg-border/30 rounded-2xl overflow-hidden border border-border/30", isMobile ? "grid-cols-1" : "grid-cols-3")}>
               {[
-                {
-                  step: "1",
-                  title: "You type a prompt",
-                  desc: "Describe the task as usual — research, test, extract, post. Toggle Swarm mode and choose how many machines.",
-                  icon: Zap,
-                  color: "text-blue-500",
-                  bg: "bg-blue-500/10 border-blue-500/20",
-                },
-                {
-                  step: "2",
-                  title: "Machines spin up in parallel",
-                  desc: "Each machine gets a full isolated environment — browser, terminal, desktop. They all start working on your task simultaneously.",
-                  icon: Monitor,
-                  color: "text-amber-500",
-                  bg: "bg-amber-500/10 border-amber-500/20",
-                },
-                {
-                  step: "3",
-                  title: "Results stream back live",
-                  desc: "Watch every machine's progress in real-time. Screenshots, tool calls, and findings — all visible in the swarm tree view.",
-                  icon: TrendingUp,
-                  color: "text-emerald-500",
-                  bg: "bg-emerald-500/10 border-emerald-500/20",
-                },
-              ].map((s, i) => (
+                { step: "01", title: "Type your prompt", desc: "Describe the task. Toggle swarm mode and choose how many machines.", icon: Send, color: "text-blue-500", bg: "bg-blue-500/6" },
+                { step: "02", title: "Machines spin up", desc: "Each gets a full isolated environment — browser, terminal, desktop.", icon: Cpu, color: "text-amber-500", bg: "bg-amber-500/6" },
+                { step: "03", title: "Results stream live", desc: "Watch every machine in real-time via the swarm tree view.", icon: Merge, color: "text-emerald-500", bg: "bg-emerald-500/6" },
+              ].map((s) => (
                 <motion.div
                   key={s.step}
                   variants={itemVariants}
-                  className="relative"
+                  className="bg-background p-6 sm:p-8"
                 >
-                  {/* Connector line (desktop only) */}
-                  {!isMobile && i < 2 && (
-                    <div className="absolute top-10 -right-4 w-8 border-t border-dashed border-border/40 z-0" />
-                  )}
-                  <div className="relative rounded-2xl border border-border/50 bg-card/50 p-6 h-full">
-                    <div
-                      className={cn(
-                        "flex items-center justify-center h-10 w-10 rounded-xl border mb-4",
-                        s.bg
-                      )}
-                    >
-                      <s.icon className={cn("h-5 w-5", s.color)} />
-                    </div>
-                    <div className="text-xs font-medium text-muted-foreground/50 mb-1">
-                      Step {s.step}
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">{s.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {s.desc}
-                    </p>
+                  <div className={cn("inline-flex items-center justify-center size-10 rounded-xl mb-4", s.bg)}>
+                    <s.icon className={cn("size-5", s.color)} />
                   </div>
+                  <div className="text-[10px] font-mono text-muted-foreground/35 mb-2 tracking-widest uppercase">{s.step}</div>
+                  <h3 className="text-base font-semibold mb-1.5">{s.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -586,76 +707,63 @@ export default function AgentSwarmsPage() {
         </section>
 
         {/* ── Interactive Demo ── */}
-        <section
-          id="demo"
-          className={cn("py-20 bg-muted/20", isMobile ? "px-4" : "px-6")}
-        >
+        <section id="demo" className={cn("py-20 relative", isMobile ? "px-4" : "px-6")}>
+
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-6xl mx-auto"
+            className="max-w-6xl mx-auto relative z-10"
           >
             <motion.div variants={itemVariants} className="text-center mb-10">
-              <h2
-                className={cn(
-                  "font-bold tracking-tight",
-                  isMobile ? "text-3xl" : "text-4xl"
-                )}
-              >
+              <h2 className={cn("font-bold tracking-tight", isMobile ? "text-2xl" : "text-3xl sm:text-4xl")}>
                 See it in action
               </h2>
-              <p
-                className={cn(
-                  "text-muted-foreground mt-3 max-w-lg mx-auto",
-                  isMobile ? "text-sm" : "text-base"
-                )}
-              >
+              <p className={cn("text-muted-foreground mt-2", isMobile ? "text-sm" : "text-base")}>
                 Watch 5 machines tackle a CRM research task simultaneously
               </p>
             </motion.div>
 
             <motion.div variants={itemVariants}>
               {/* Prompt bar */}
-              <div className="rounded-xl border border-border/50 bg-background p-4 mb-6">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 mt-0.5 h-8 w-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                    <GitFork className="h-4 w-4 text-amber-500" />
+              <div className="rounded-xl border border-border/30 bg-card/30 backdrop-blur-sm p-4 mb-5">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 size-9 rounded-lg bg-amber-500/10 border border-amber-500/15 flex items-center justify-center">
+                    <GitFork className="size-4 text-amber-500" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs text-muted-foreground mb-1">
-                      Swarm prompt — 5 machines
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-[10px] font-mono text-amber-500/60 tracking-wide">SWARM</span>
+                      <span className="text-[10px] text-muted-foreground/30">5 machines</span>
                     </div>
-                    <p className="text-sm font-medium">{demoPrompt}</p>
+                    <p className="text-sm font-medium leading-relaxed truncate">{demoPrompt}</p>
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex-shrink-0">
                     {phase === "idle" && (
                       <Button
                         size="sm"
-                        className="gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
+                        className="gap-1.5 bg-amber-500 hover:bg-amber-600 text-white border-0 rounded-lg shadow-sm"
                         onClick={start}
                       >
-                        <Play className="h-3.5 w-3.5" />
-                        Run Demo
+                        <Play className="size-3" />
+                        Run
                       </Button>
                     )}
                     {phase === "running" && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground tabular-nums">
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/[0.06] border border-amber-500/10">
+                        <span className="text-xs font-mono text-amber-500 tabular-nums">
                           {(elapsed * 0.4).toFixed(1)}s
                         </span>
-                        <div className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                        <span className="relative size-2">
+                          <span className="absolute inset-0 rounded-full bg-amber-500 animate-ping opacity-30" />
+                          <span className="absolute inset-0 rounded-full bg-amber-500" />
+                        </span>
                       </div>
                     )}
                     {phase === "done" && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="gap-1.5"
-                        onClick={reset}
-                      >
-                        <RotateCcw className="h-3.5 w-3.5" />
+                      <Button size="sm" variant="outline" className="gap-1.5 rounded-lg" onClick={reset}>
+                        <RotateCcw className="size-3" />
                         Reset
                       </Button>
                     )}
@@ -664,41 +772,29 @@ export default function AgentSwarmsPage() {
               </div>
 
               {/* Machine grid */}
-              <div
-                className={cn(
-                  "grid gap-4",
-                  isMobile
-                    ? "grid-cols-1"
-                    : "grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
-                )}
-              >
-                {machines.map((m) => (
-                  <DemoMachineCard key={m.id} machine={m} />
+              <div className={cn("grid gap-3", isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-3 xl:grid-cols-5")}>
+                {machines.map((m, i) => (
+                  <DemoMachineCard key={m.id} machine={m} index={i} />
                 ))}
               </div>
 
-              {/* Completion banner */}
+              {/* Completion */}
               <AnimatePresence>
                 {phase === "done" && (
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="mt-6 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.06] p-5 text-center"
+                    className="mt-5 rounded-xl border border-emerald-500/15 bg-emerald-500/[0.03] p-5 text-center"
                   >
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <Check className="h-5 w-5 text-emerald-500" />
-                      <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                    <div className="flex items-center justify-center gap-2 mb-1">
+                      <Check className="size-4 text-emerald-500" />
+                      <span className="font-semibold text-sm text-emerald-600 dark:text-emerald-400">
                         All 5 machines completed
                       </span>
                     </div>
-                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                      In a real swarm, this would have taken ~10 minutes
-                      instead of ~50 minutes running sequentially. That's a{" "}
-                      <span className="font-semibold text-foreground">
-                        5x speedup
-                      </span>
-                      .
+                    <p className="text-sm text-muted-foreground">
+                      ~10 min instead of ~50 min — <span className="font-semibold text-foreground">5x faster</span>
                     </p>
                   </motion.div>
                 )}
@@ -714,119 +810,64 @@ export default function AgentSwarmsPage() {
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-4xl mx-auto"
+            className="max-w-3xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-12">
-              <h2
-                className={cn(
-                  "font-bold tracking-tight",
-                  isMobile ? "text-3xl" : "text-4xl"
-                )}
-              >
+            <motion.div variants={itemVariants} className="text-center mb-10">
+              <h2 className={cn("font-bold tracking-tight", isMobile ? "text-2xl" : "text-3xl sm:text-4xl")}>
                 Sequential vs Swarm
               </h2>
-              <p
-                className={cn(
-                  "text-muted-foreground mt-3 max-w-lg mx-auto",
-                  isMobile ? "text-sm" : "text-base"
-                )}
-              >
-                Real-world tasks completed dramatically faster with parallel
-                execution
-              </p>
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <div className="rounded-xl border border-border overflow-hidden">
+              <div className="rounded-xl border border-border/30 overflow-hidden">
                 {/* Table header */}
-                <div
-                  className={cn(
-                    "grid border-b border-border bg-muted/30",
-                    isMobile ? "grid-cols-3" : "grid-cols-4"
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "p-4 font-medium text-muted-foreground",
-                      isMobile ? "text-xs col-span-1" : "text-sm col-span-1"
-                    )}
-                  >
-                    Task
+                {!isMobile && (
+                  <div className="grid grid-cols-[1fr_100px_100px_72px] text-[11px] font-mono uppercase tracking-wider text-muted-foreground/40 bg-muted/20 dark:bg-muted/10 px-5 py-2.5 border-b border-border/20">
+                    <span>Task</span>
+                    <span className="text-center">Before</span>
+                    <span className="text-center">Swarm</span>
+                    <span className="text-center">Speed</span>
                   </div>
-                  <div
-                    className={cn(
-                      "p-4 text-center font-medium text-muted-foreground border-l border-border",
-                      isMobile ? "text-xs" : "text-sm"
-                    )}
-                  >
-                    Sequential
-                  </div>
-                  <div
-                    className={cn(
-                      "p-4 text-center font-medium border-l border-amber-500/20 bg-amber-500/[0.04]",
-                      isMobile ? "text-xs" : "text-sm"
-                    )}
-                  >
-                    <span className="text-amber-600 dark:text-amber-400 font-semibold">
-                      Swarm
-                    </span>
-                  </div>
-                  {!isMobile && (
-                    <div className="p-4 text-center font-medium text-muted-foreground border-l border-border text-sm">
-                      Speedup
-                    </div>
-                  )}
-                </div>
-
-                {/* Rows */}
+                )}
                 {comparisons.map((row, i) => (
-                  <div
+                  <motion.div
                     key={row.label}
+                    initial={isMobile ? {} : { opacity: 0, x: -12 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.06, duration: 0.35 }}
                     className={cn(
-                      "grid",
-                      isMobile ? "grid-cols-3" : "grid-cols-4",
-                      i < comparisons.length - 1 && "border-b border-border",
-                      i % 2 === 1 && "bg-muted/20"
+                      "bg-background",
+                      i < comparisons.length - 1 && "border-b border-border/15"
                     )}
                   >
-                    <div
-                      className={cn(
-                        "p-4 flex items-center",
-                        isMobile ? "text-xs" : "text-sm"
-                      )}
-                    >
-                      <span className="font-medium text-foreground">
-                        {row.label}
-                      </span>
-                    </div>
-                    <div className="p-4 flex items-center justify-center text-muted-foreground border-l border-border">
-                      <span
-                        className={cn(
-                          "line-through decoration-muted-foreground/30",
-                          isMobile ? "text-xs" : "text-sm"
-                        )}
-                      >
+                    <div className={cn(
+                      "grid items-center",
+                      isMobile
+                        ? "grid-cols-1 gap-1.5 p-4"
+                        : "grid-cols-[1fr_100px_100px_72px] px-5 py-3.5"
+                    )}>
+                      <div className="text-sm font-medium">{row.label}</div>
+                      <div className={cn(
+                        "text-muted-foreground/40 line-through decoration-muted-foreground/15",
+                        isMobile ? "text-xs" : "text-sm text-center"
+                      )}>
                         {row.sequential}
-                      </span>
-                    </div>
-                    <div className="p-4 flex items-center justify-center border-l border-amber-500/20 bg-amber-500/[0.02]">
-                      <span
-                        className={cn(
-                          "font-semibold text-amber-600 dark:text-amber-400",
-                          isMobile ? "text-xs" : "text-sm"
-                        )}
-                      >
-                        {row.swarm}
-                      </span>
-                    </div>
-                    {!isMobile && (
-                      <div className="p-4 flex items-center justify-center border-l border-border">
-                        <span className="text-sm font-bold text-emerald-500">
-                          {row.speedup}
-                        </span>
                       </div>
-                    )}
-                  </div>
+                      <div className={cn(
+                        "font-semibold text-amber-500",
+                        isMobile ? "text-xs" : "text-sm text-center"
+                      )}>
+                        {row.swarm}
+                      </div>
+                      <div className={cn(
+                        "font-bold text-emerald-500",
+                        isMobile ? "text-sm" : "text-sm text-center"
+                      )}>
+                        {row.speedup}
+                      </div>
+                    </div>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
@@ -834,64 +875,40 @@ export default function AgentSwarmsPage() {
         </section>
 
         {/* ── Use Cases ── */}
-        <section
-          className={cn("py-20 bg-muted/20", isMobile ? "px-4" : "px-6")}
-        >
+        <section className={cn("py-20 relative", isMobile ? "px-4" : "px-6")}>
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-5xl mx-auto"
+            className="max-w-4xl mx-auto relative z-10"
           >
-            <motion.div variants={itemVariants} className="text-center mb-12">
-              <h2
-                className={cn(
-                  "font-bold tracking-tight",
-                  isMobile ? "text-3xl" : "text-4xl"
-                )}
-              >
-                What you can do with Swarms
+            <motion.div variants={itemVariants} className="text-center mb-10">
+              <h2 className={cn("font-bold tracking-tight", isMobile ? "text-2xl" : "text-3xl sm:text-4xl")}>
+                Built for parallel work
               </h2>
-              <p
-                className={cn(
-                  "text-muted-foreground mt-3 max-w-lg mx-auto",
-                  isMobile ? "text-sm" : "text-base"
-                )}
-              >
-                Any task that can be parallelised benefits from swarm mode
-              </p>
             </motion.div>
 
-            <div
-              className={cn(
-                "grid gap-6",
-                isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-3"
-              )}
-            >
+            <div className={cn("grid gap-3", isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-3")}>
               {useCases.map((uc) => (
                 <motion.div
                   key={uc.title}
                   variants={itemVariants}
-                  className="rounded-xl border border-border/50 bg-background p-6"
+                  className="group rounded-xl border border-border/25 bg-card/15 p-5 transition-all duration-300 hover:border-border/40 hover:bg-card/30"
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                      <uc.icon className="h-4.5 w-4.5 text-amber-500" />
-                    </div>
-                    <h3 className="font-semibold text-sm">{uc.title}</h3>
+                  <div className="flex items-center justify-center size-9 rounded-lg bg-amber-500/8 border border-amber-500/10 mb-3 group-hover:bg-amber-500/12 transition-colors">
+                    <uc.icon className="size-4 text-amber-500" />
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {uc.description}
-                  </p>
+                  <h3 className="font-semibold text-sm mb-1">{uc.title}</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">{uc.description}</p>
                 </motion.div>
               ))}
             </div>
           </motion.div>
         </section>
 
-        {/* ── Key Benefits / Features ── */}
-        <section className={cn("py-20", isMobile ? "px-4" : "px-6")}>
+        {/* ── Key Features Strip ── */}
+        <section className={cn("py-16", isMobile ? "px-4" : "px-6")}>
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -899,66 +916,25 @@ export default function AgentSwarmsPage() {
             viewport={sectionViewport}
             className="max-w-4xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-12">
-              <h2
-                className={cn(
-                  "font-bold tracking-tight",
-                  isMobile ? "text-3xl" : "text-4xl"
-                )}
-              >
-                Why Agent Swarms
-              </h2>
-            </motion.div>
-
-            <div className="space-y-6">
+            <div className={cn(
+              "grid gap-px bg-border/20 rounded-xl overflow-hidden border border-border/20",
+              isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-3"
+            )}>
               {[
-                {
-                  title: "True Parallel Execution",
-                  desc: "Each machine is a fully isolated environment with its own browser, terminal, and desktop. There's no shared state — they all work independently at full speed.",
-                  icon: Layers,
-                },
-                {
-                  title: "2x Your Machine Limit",
-                  desc: "Swarm mode temporarily doubles your plan's machine capacity. If you have 3 machines on Pro, you can run a swarm across 6 machines.",
-                  icon: TrendingUp,
-                },
-                {
-                  title: "Live Progress Tracking",
-                  desc: "Watch every machine's progress in a real-time tree view. See screenshots, tool calls, and status updates as they happen — nothing is a black box.",
-                  icon: Monitor,
-                },
-                {
-                  title: "Automatic Result Aggregation",
-                  desc: "When all machines finish, their findings are combined into a single consolidated result. No manual merging required.",
-                  icon: Target,
-                },
-                {
-                  title: "Shareable Swarm Runs",
-                  desc: "Share completed swarm runs with your team via a link. Anyone with access can replay the full execution timeline of every machine.",
-                  icon: GitFork,
-                },
-                {
-                  title: "Sandboxed & Secure",
-                  desc: "Every machine in the swarm runs in its own isolated container. Nothing leaks between machines, and all environments are destroyed after completion.",
-                  icon: Shield,
-                },
-              ].map((b, i) => (
-                <motion.div
-                  key={b.title}
-                  variants={itemVariants}
-                  className={cn(
-                    "flex gap-5",
-                    isMobile ? "flex-col" : "items-start"
-                  )}
-                >
-                  <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex-shrink-0">
-                    <b.icon className="h-5 w-5 text-amber-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{b.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {b.desc}
-                    </p>
+                { title: "True Isolation", desc: "Each machine has its own browser, terminal, and desktop.", icon: Shield },
+                { title: "2x Machine Limit", desc: "Swarm mode doubles your plan's machine capacity.", icon: Zap },
+                { title: "Live Tree View", desc: "Screenshots and tool calls stream in real-time.", icon: Eye },
+                { title: "Auto Aggregation", desc: "Results combine into a single consolidated report.", icon: Merge },
+                { title: "Shareable Runs", desc: "Replay full execution timelines via a link.", icon: GitFork },
+                { title: "Fully Sandboxed", desc: "All environments destroyed after completion.", icon: Shield },
+              ].map((f) => (
+                <motion.div key={f.title} variants={itemVariants} className="bg-background p-5">
+                  <div className="flex items-start gap-3">
+                    <f.icon className="size-4 text-amber-500/70 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium mb-0.5">{f.title}</h3>
+                      <p className="text-[12px] text-muted-foreground leading-relaxed">{f.desc}</p>
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -966,109 +942,50 @@ export default function AgentSwarmsPage() {
           </motion.div>
         </section>
 
-        {/* ── Pricing CTA ── */}
-        <section
-          className={cn("py-20 bg-muted/20", isMobile ? "px-4" : "px-6")}
-        >
+        {/* ── CTA ── */}
+        <section className={cn("py-24 relative", isMobile ? "px-4" : "px-6")}>
+
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-3xl mx-auto text-center"
+            className="max-w-2xl mx-auto text-center relative z-10"
           >
-            <motion.div variants={itemVariants} className="mb-4">
-              <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/[0.06] px-4 py-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
-                Available on Starter, Plus & Pro plans
-              </span>
-            </motion.div>
-
-            <motion.h2
-              variants={itemVariants}
-              className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl"
-              )}
-            >
+            <motion.h2 variants={itemVariants} className={cn("font-bold tracking-tight", isMobile ? "text-2xl" : "text-3xl sm:text-4xl")}>
               Ready to run tasks in parallel?
             </motion.h2>
 
-            <motion.p
-              variants={itemVariants}
-              className={cn(
-                "text-muted-foreground mt-4 max-w-lg mx-auto leading-relaxed",
-                isMobile ? "text-sm" : "text-base"
-              )}
-            >
-              Swarm mode is included with every paid plan. Upgrade to unlock
-              parallel execution across multiple machines.
+            <motion.p variants={itemVariants} className={cn("text-muted-foreground mt-3 max-w-md mx-auto", isMobile ? "text-sm" : "text-base")}>
+              Swarm mode is included with every paid plan.
             </motion.p>
 
-            <motion.div
-              variants={itemVariants}
-              className="flex items-center justify-center gap-4 mt-8"
-            >
+            <motion.div variants={itemVariants} className="flex items-center justify-center gap-3 mt-7">
               <RainbowButton className="gap-2" asChild>
                 <Link href="/auth">
                   Get Started
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="size-4" />
                 </Link>
               </RainbowButton>
-              <Button variant="outline" className="rounded-full gap-2" asChild>
+              <Button variant="outline" className="rounded-full gap-1.5" asChild>
                 <Link href="/#pricing">
                   View Pricing
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="size-3.5" />
                 </Link>
               </Button>
             </motion.div>
 
-            {/* Plan breakdown */}
-            <motion.div
-              variants={itemVariants}
-              className={cn(
-                "mt-12 grid gap-4",
-                isMobile ? "grid-cols-1" : "grid-cols-3"
-              )}
-            >
+            {/* Compact plan indicators */}
+            <motion.div variants={itemVariants} className={cn("mt-10 flex items-center justify-center gap-6", isMobile && "flex-col gap-3")}>
               {[
-                {
-                  plan: "Starter",
-                  price: "$19/mo",
-                  machines: "Up to 2 machines",
-                },
-                {
-                  plan: "Plus",
-                  price: "$50/mo",
-                  machines: "Up to 4 machines",
-                  highlight: true,
-                },
-                {
-                  plan: "Pro",
-                  price: "$100/mo",
-                  machines: "Up to 6 machines",
-                },
-              ].map((p) => (
-                <div
-                  key={p.plan}
-                  className={cn(
-                    "rounded-xl border p-5",
-                    p.highlight
-                      ? "border-amber-500/30 bg-amber-500/[0.04]"
-                      : "border-border/50 bg-background"
-                  )}
-                >
-                  <div className="text-sm font-semibold mb-1">
-                    {p.plan}
-                    {p.highlight && (
-                      <span className="ml-2 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                        Popular
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-2xl font-bold">{p.price}</div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {p.machines} per swarm
-                  </div>
+                { plan: "Starter", price: "$19", machines: "2 machines" },
+                { plan: "Plus", price: "$50", machines: "4 machines" },
+                { plan: "Pro", price: "$100", machines: "6 machines" },
+              ].map(p => (
+                <div key={p.plan} className="flex items-baseline gap-2">
+                  <span className="text-sm font-semibold">{p.plan}</span>
+                  <span className="text-xl font-bold">{p.price}</span>
+                  <span className="text-[11px] text-muted-foreground">{p.machines}</span>
                 </div>
               ))}
             </motion.div>
@@ -1076,40 +993,19 @@ export default function AgentSwarmsPage() {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-border/40">
-          <div
-            className={cn(
-              "mx-auto py-10",
-              isMobile ? "px-4 max-w-xl" : "px-6 max-w-5xl"
-            )}
-          >
-            <div
-              className={cn(
-                "flex justify-between items-center",
-                isMobile && "flex-col gap-5"
-              )}
-            >
-              <p className="text-sm text-muted-foreground/70">
-                &copy; {new Date().getFullYear()} Coasty
-              </p>
-              <div
-                className={cn(
-                  "flex items-center gap-5",
-                  isMobile && "flex-wrap justify-center"
-                )}
-              >
+        <footer className="border-t border-border/30">
+          <div className={cn("mx-auto py-8", isMobile ? "px-4 max-w-xl" : "px-6 max-w-5xl")}>
+            <div className={cn("flex justify-between items-center", isMobile && "flex-col gap-4")}>
+              <p className="text-sm text-muted-foreground/50">&copy; {new Date().getFullYear()} Coasty</p>
+              <div className={cn("flex items-center gap-5", isMobile && "flex-wrap justify-center")}>
                 {[
                   { href: "/privacy", label: "Privacy" },
                   { href: "/terms", label: "Terms" },
                   { href: "/blog", label: "Blog" },
                   { href: "/download", label: "Download" },
                   { href: "mailto:founders@coasty.ai", label: "Contact" },
-                ].map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className="text-sm text-muted-foreground/60 hover:text-foreground transition-colors duration-200"
-                  >
+                ].map(link => (
+                  <Link key={link.label} href={link.href} className="text-sm text-muted-foreground/40 hover:text-foreground transition-colors">
                     {link.label}
                   </Link>
                 ))}
