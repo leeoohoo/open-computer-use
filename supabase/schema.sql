@@ -1659,7 +1659,7 @@ CREATE TABLE IF NOT EXISTS "public"."credit_transactions" (
     "metadata" "jsonb" DEFAULT '{}'::"jsonb",
     "created_at" timestamp with time zone DEFAULT "now"(),
     "subscription_id" "uuid",
-    CONSTRAINT "credit_transactions_type_check" CHECK (("type" = ANY (ARRAY['purchase'::"text", 'usage'::"text", 'refund'::"text", 'bonus'::"text", 'expired'::"text"])))
+    CONSTRAINT "credit_transactions_type_check" CHECK (("type" = ANY (ARRAY['purchase'::"text", 'usage'::"text", 'refund'::"text", 'bonus'::"text", 'expired'::"text", 'subscription_grant'::"text", 'subscription_renewal'::"text", 'subscription_reactivation'::"text"])))
 );
 
 

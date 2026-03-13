@@ -140,27 +140,34 @@ export async function POST(req: NextRequest) {
       }
     )
 
-    // Check if we've already processed this event (idempotency)
-    const { data: existingEvent } = await supabase
+    // Atomically check and record the event (prevents race condition with simultaneous deliveries)
+    // Uses upsert with onConflict + ignoreDuplicates → INSERT ON CONFLICT DO NOTHING
+    // maybeSingle() returns null data (no error) when the row is skipped, vs single() which throws PGRST116
+    const { data: insertedEvent, error: eventInsertError } = await supabase
       .from("stripe_events")
+      .upsert(
+        {
+          id: event.id,
+          type: event.type,
+          data: event.data,
+          processed: false,
+        },
+        { onConflict: "id", ignoreDuplicates: true }
+      )
       .select("id")
-      .eq("id", event.id)
-      .single()
+      .maybeSingle()
 
-    if (existingEvent) {
-      console.log(`Event ${event.id} already processed`)
-      return NextResponse.json({ received: true })
+    // Real DB error — let Stripe retry
+    if (eventInsertError) {
+      console.error(`Error recording stripe event ${event.id}:`, eventInsertError)
+      return NextResponse.json({ error: "Database error" }, { status: 500 })
     }
 
-    // Record the event
-    await supabase
-      .from("stripe_events")
-      .insert({
-        id: event.id,
-        type: event.type,
-        data: event.data,
-        processed: false,
-      })
+    // No row returned means the event already existed — skip processing
+    if (!insertedEvent) {
+      console.log(`Event ${event.id} already processed (atomic check)`)
+      return NextResponse.json({ received: true })
+    }
 
     // Log the event for debugging
     console.log(`Processing webhook event: ${event.type}`)
@@ -192,9 +199,9 @@ export async function POST(req: NextRequest) {
             .select("id")
             .eq("user_id", userId)
             .eq("type", "subscription_grant")
-            .eq("metadata->stripe_subscription_id", subscriptionId)
+            .eq("metadata->>stripe_subscription_id", subscriptionId)
             .single()
-          
+
           if (existingGrant) {
             console.log(`Credits already granted for subscription ${subscriptionId}, skipping credit grant in checkout.session.completed`)
             // Still create/update the subscription record, just don't grant credits
@@ -428,67 +435,31 @@ export async function POST(req: NextRequest) {
       }
 
       // Handle subscription creation (this has full subscription data)
+      // NOTE: This handler NEVER grants initial credits — that is done exclusively by checkout.session.completed.
+      // This handler only manages subscription records and handles reactivation credits.
       case "customer.subscription.created": {
         const subscription = event.data.object as any
         console.log(`Processing subscription created: ${subscription.id}`)
-        
+
         // Get metadata
         const userId = subscription.metadata?.user_id
         const tier = subscription.metadata?.tier
-        
+
         if (!userId || !tier) {
           console.error("Missing metadata in subscription.created:", { userId, tier })
           break
         }
-        
-        // IMPORTANT: Check if credits were already granted for this subscription
-        // This prevents double granting when both checkout.session.completed and customer.subscription.created fire
-        const { data: existingGrant } = await (supabase as any)
-          .from("credit_transactions")
-          .select("id")
-          .eq("user_id", userId)
-          .eq("type", "subscription_grant")
-          .eq("metadata->stripe_subscription_id", subscription.id)
-          .single()
-        
-        if (existingGrant) {
-          console.log(`Credits already granted for subscription ${subscription.id}, only updating subscription details`)
-          
-          // Just update the subscription record with full details if needed
-          const { data: existingSub } = await (supabase as any)
-            .from("user_subscriptions")
-            .select("*")
-            .eq("stripe_subscription_id", subscription.id)
-            .single()
-          
-          if (existingSub && subscription.current_period_start && subscription.current_period_end) {
-            await (supabase as any)
-              .from("user_subscriptions")
-              .update({
-                status: subscription.status,
-                current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-                current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-                cancel_at_period_end: subscription.cancel_at_period_end,
-                updated_at: new Date().toISOString()
-              })
-              .eq("id", existingSub.id)
-            
-            console.log(`Updated subscription ${existingSub.id} with full details`)
-          }
-          
-          break
-        }
-        
-        // Check if we already have this subscription
+
+        // Check if we already have this subscription record
         const { data: existingSub } = await (supabase as any)
           .from("user_subscriptions")
           .select("*")
           .eq("stripe_subscription_id", subscription.id)
           .single()
-        
+
         if (existingSub) {
           console.log("Subscription already exists, updating it with full details")
-          // Update the subscription with complete information
+          // Update the subscription with complete information from Stripe
           if (subscription.current_period_start && subscription.current_period_end) {
             await (supabase as any)
               .from("user_subscriptions")
@@ -500,85 +471,99 @@ export async function POST(req: NextRequest) {
                 updated_at: new Date().toISOString()
               })
               .eq("id", existingSub.id)
-            
+
             console.log(`Updated subscription ${existingSub.id} with full details`)
           }
-          
+
           // Check if this is a reactivation (status changed from canceled to active)
           if (existingSub.status === 'canceled' && subscription.status === 'active') {
-            console.log("Subscription reactivated, granting new credits")
-            
-            // Get the plan
-            const { data: plan } = await (supabase as any)
-              .from("subscription_plans")
-              .select("*")
-              .eq("tier", tier)
+            console.log("Subscription reactivated, checking for duplicate reactivation grant")
+
+            // Check if we've already granted reactivation credits for this subscription
+            const { data: existingReactivation } = await (supabase as any)
+              .from("credit_transactions")
+              .select("id")
+              .eq("user_id", userId)
+              .eq("type", "subscription_reactivation")
+              .eq("metadata->>stripe_subscription_id", subscription.id)
               .single()
-            
-            if (plan) {
-              // Grant reactivation credits
-              const { data: currentCredits } = await (supabase as any)
-                .from("user_credits")
+
+            if (existingReactivation) {
+              console.log(`Reactivation credits already granted for subscription ${subscription.id}, skipping`)
+            } else {
+              // Get the plan
+              const { data: plan } = await (supabase as any)
+                .from("subscription_plans")
                 .select("*")
-                .eq("user_id", userId)
+                .eq("tier", tier)
                 .single()
-              
-              if (currentCredits) {
-                const newBalance = (currentCredits.balance || 0) + plan.monthly_credits
-                await (supabase as any)
+
+              if (plan) {
+                // Grant reactivation credits
+                const { data: currentCredits } = await (supabase as any)
                   .from("user_credits")
-                  .update({
-                    balance: newBalance,
-                    has_active_subscription: true,
-                    subscription_tier: tier,
-                    updated_at: new Date().toISOString()
-                  })
+                  .select("*")
                   .eq("user_id", userId)
-                
-                console.log(`Reactivation: Added ${plan.monthly_credits} credits for user ${userId}, new balance: ${newBalance}`)
-                
-                // Record transaction
-                await (supabase as any)
-                  .from("credit_transactions")
-                  .insert({
-                    user_id: userId,
-                    type: "subscription_reactivation",
-                    amount: plan.monthly_credits,
-                    balance_after: newBalance,
-                    subscription_id: existingSub.id,
-                    description: `${tier} subscription reactivation`,
-                    metadata: {
-                      tier: tier,
-                      stripe_subscription_id: subscription.id,
-                      event: "customer.subscription.created (reactivation)"
-                    },
-                    created_at: new Date().toISOString()
-                  })
+                  .single()
+
+                if (currentCredits) {
+                  const newBalance = (currentCredits.balance || 0) + plan.monthly_credits
+                  await (supabase as any)
+                    .from("user_credits")
+                    .update({
+                      balance: newBalance,
+                      has_active_subscription: true,
+                      subscription_tier: tier,
+                      updated_at: new Date().toISOString()
+                    })
+                    .eq("user_id", userId)
+
+                  console.log(`Reactivation: Added ${plan.monthly_credits} credits for user ${userId}, new balance: ${newBalance}`)
+
+                  // Record transaction
+                  await (supabase as any)
+                    .from("credit_transactions")
+                    .insert({
+                      user_id: userId,
+                      type: "subscription_reactivation",
+                      amount: plan.monthly_credits,
+                      balance_after: newBalance,
+                      subscription_id: existingSub.id,
+                      description: `${tier} subscription reactivation`,
+                      metadata: {
+                        tier: tier,
+                        stripe_subscription_id: subscription.id,
+                        event: "customer.subscription.created (reactivation)"
+                      },
+                      created_at: new Date().toISOString()
+                    })
+                }
               }
             }
           }
-          
+
           break
         }
-        
-        // This is a fallback in case checkout.session.completed didn't process it
-        // This should rarely happen, but we handle it just in case
-        console.log("Processing subscription.created as fallback (checkout.session.completed may have failed)")
-        
+
+        // No subscription record exists yet — create it without granting credits.
+        // Credits are granted exclusively by checkout.session.completed.
+        // If that event failed, credits will be granted on the next invoice.payment_succeeded (monthly renewal).
+        console.log("Creating subscription record from subscription.created (no credit grant — handled by checkout.session.completed)")
+
         // Get the plan
         const { data: plan } = await (supabase as any)
           .from("subscription_plans")
           .select("*")
           .eq("tier", tier)
           .single()
-        
+
         if (!plan) {
           console.error("Plan not found for tier in subscription.created:", tier)
           break
         }
-        
-        // Create subscription record
-        const { data: newSubscription, error: insertError } = await (supabase as any)
+
+        // Create subscription record only — no credit granting
+        const { error: insertError } = await (supabase as any)
           .from("user_subscriptions")
           .insert({
             user_id: userId,
@@ -590,72 +575,31 @@ export async function POST(req: NextRequest) {
             current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
             cancel_at_period_end: subscription.cancel_at_period_end,
           })
-          .select()
-          .single()
-        
+
         if (insertError) {
           console.error("Error creating subscription in subscription.created:", insertError)
           break
         }
-        
-        // Grant credits
+
+        // Ensure user_credits has subscription flags set (but don't add credits)
         const { data: currentCredits } = await (supabase as any)
           .from("user_credits")
           .select("*")
           .eq("user_id", userId)
           .single()
-        
-        if (!currentCredits) {
-          // Create new credits record
-          await (supabase as any)
-            .from("user_credits")
-            .insert({
-              user_id: userId,
-              balance: plan.monthly_credits,
-              total_purchased: 0,
-              total_used: 0,
-              has_active_subscription: true,
-              subscription_tier: tier,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            })
-          
-          console.log(`Created credits for user ${userId} with ${plan.monthly_credits} credits (via subscription.created)`)
-        } else {
-          // Update existing
-          const newBalance = (currentCredits.balance || 0) + plan.monthly_credits
+
+        if (currentCredits) {
           await (supabase as any)
             .from("user_credits")
             .update({
-              balance: newBalance,
               has_active_subscription: true,
               subscription_tier: tier,
               updated_at: new Date().toISOString()
             })
             .eq("user_id", userId)
-          
-          console.log(`Updated user ${userId} balance to ${newBalance} (via subscription.created)`)
         }
-        
-        // Record transaction
-        await (supabase as any)
-          .from("credit_transactions")
-          .insert({
-            user_id: userId,
-            type: "subscription_grant",
-            amount: plan.monthly_credits,
-            balance_after: currentCredits ? (currentCredits.balance || 0) + plan.monthly_credits : plan.monthly_credits,
-            subscription_id: newSubscription.id,
-            description: `Initial ${tier} subscription credits`,
-            metadata: {
-              tier: tier,
-              stripe_subscription_id: subscription.id,
-              event_type: "customer.subscription.created",
-              is_fallback: true
-            },
-            created_at: new Date().toISOString()
-          })
-        
+
+        console.log(`Subscription record created for user ${userId}: ${tier} plan (credits deferred to checkout.session.completed)`)
         break
       }
 
