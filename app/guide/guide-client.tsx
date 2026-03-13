@@ -16,6 +16,7 @@ import {
   Monitor,
   CreditCard,
   ArrowRight,
+  VideoCamera,
 } from "@phosphor-icons/react"
 
 import { OverviewTab } from "./tabs/overview"
@@ -210,6 +211,15 @@ function GuideContent({ inApp }: { inApp: boolean }) {
             <p className="text-sm sm:text-base text-muted-foreground/70 mt-2 max-w-2xl leading-relaxed">
               From first setup to advanced features — learn how to get the most out of your AI agent.
             </p>
+            <a
+              href="https://cal.com/coasty/15min"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mt-4 h-9 px-4 rounded-xl border border-border/60 text-sm font-medium text-muted-foreground/70 hover:text-foreground hover:border-border transition-all"
+            >
+              <VideoCamera size={15} weight="duotone" />
+              Talk to Cofounders
+            </a>
           </motion.div>
 
           {/* ── tab navigation ── */}

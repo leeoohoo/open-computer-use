@@ -16,7 +16,8 @@ const navItems = [
   { href: "/#pricing", label: "Pricing" },
   { href: "/guide", label: "Guide", external: true },
   { href: "/download", label: "Download", external: true },
-  { href: "/blog", label: "Blog", external: true }
+  { href: "/blog", label: "Blog", external: true },
+  { href: "https://cal.com/coasty/15min", label: "Talk to Cofounders", external: true }
 ]
 
 export function LandingHeader({

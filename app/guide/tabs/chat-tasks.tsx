@@ -28,6 +28,7 @@ import {
   Monitor,
   Check,
   Warning,
+  VideoCamera,
 } from "@phosphor-icons/react"
 
 /* ─── animation variants ─── */
@@ -651,13 +652,24 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
         <p className="text-sm text-muted-foreground/60 max-w-lg mx-auto mb-6">
           Open a new chat, describe your task in plain English, and let Coasty take it from there.
         </p>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
-        >
-          Open a chat
-          <ArrowRight size={14} weight="bold" />
-        </Link>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            Open a chat
+            <ArrowRight size={14} weight="bold" />
+          </Link>
+          <a
+            href="https://cal.com/coasty/15min"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 h-10 px-5 rounded-xl border border-border/60 text-sm font-medium text-muted-foreground hover:text-foreground hover:border-border transition-all"
+          >
+            <VideoCamera size={16} weight="duotone" />
+            Talk to Cofounders
+          </a>
+        </div>
       </motion.section>
     </div>
   )

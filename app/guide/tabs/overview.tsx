@@ -26,6 +26,7 @@ import {
   ArrowSquareOut,
   CaretDown,
   Key,
+  VideoCamera,
 } from "@phosphor-icons/react"
 
 /* ─── animation variants ─── */
@@ -661,6 +662,15 @@ export function OverviewTab({ inApp }: { inApp: boolean }) {
                   Start free
                   <ArrowRight size={14} weight="bold" />
                 </Link>
+                <a
+                  href="https://cal.com/coasty/15min"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 h-11 px-6 rounded-xl border border-border/60 text-sm font-medium text-muted-foreground hover:text-foreground hover:border-border transition-all"
+                >
+                  <VideoCamera size={16} weight="duotone" />
+                  Talk to Cofounders
+                </a>
                 <Link
                   href="/download"
                   className="inline-flex items-center gap-2 h-11 px-6 rounded-xl border border-border/60 text-sm font-medium text-muted-foreground hover:text-foreground hover:border-border transition-all"

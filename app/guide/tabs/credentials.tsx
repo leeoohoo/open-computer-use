@@ -16,6 +16,7 @@ import {
   CheckCircle,
   Plus,
   ArrowsLeftRight,
+  VideoCamera,
 } from "@phosphor-icons/react"
 
 /* ─── animation variants ─── */
@@ -574,13 +575,24 @@ export function CredentialsTab({ inApp }: { inApp: boolean }) {
         <p className="text-sm text-muted-foreground/60 max-w-lg mx-auto mb-6">
           Head to Saved Credentials to add your logins so Coasty can auto-fill them during tasks.
         </p>
-        <Link
-          href="/secrets"
-          className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
-        >
-          Go to Saved Credentials
-          <ArrowRight size={14} weight="bold" />
-        </Link>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href="/secrets"
+            className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            Go to Saved Credentials
+            <ArrowRight size={14} weight="bold" />
+          </Link>
+          <a
+            href="https://cal.com/coasty/15min"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 h-10 px-5 rounded-xl border border-border/60 text-sm font-medium text-muted-foreground hover:text-foreground hover:border-border transition-all"
+          >
+            <VideoCamera size={16} weight="duotone" />
+            Talk to Cofounders
+          </a>
+        </div>
       </motion.section>
 
     </div>

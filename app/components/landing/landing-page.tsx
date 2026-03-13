@@ -1630,6 +1630,7 @@ export function LandingPage() {
                   { href: "/download", label: "Download" },
                   { href: "/privacy", label: "Privacy" },
                   { href: "/terms", label: "Terms" },
+                  { href: "https://cal.com/coasty/15min", label: "Talk to Cofounders" },
                   { href: "mailto:founders@coasty.ai", label: "Contact" },
                 ].map((link) => (
                   <Link

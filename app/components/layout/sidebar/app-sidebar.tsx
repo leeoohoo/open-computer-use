@@ -19,6 +19,7 @@ import {
   GitFork,
   ClockCounterClockwise,
   BookOpen,
+  VideoCamera,
 } from "@phosphor-icons/react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -300,6 +301,40 @@ export function AppSidebar() {
                     <span className="font-semibold">{(credits?.balance || 0).toLocaleString()}</span>
                     <span className="text-muted-foreground">credits</span>
                   </div>
+                </TooltipContent>
+              </Tooltip>
+            )}
+
+            {/* Talk to Cofounders */}
+            {expanded ? (
+              <a
+                href="https://cal.com/coasty/15min"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  "group flex w-full items-center gap-2 rounded-md text-sm transition-all duration-200",
+                  "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                  "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                  "px-2.5 py-1.5"
+                )}
+              >
+                <VideoCamera size={16} weight="duotone" className="shrink-0" />
+                <span className="truncate text-sm">Talk to Cofounders</span>
+              </a>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <a
+                    href="https://cal.com/coasty/15min"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center justify-center p-2 rounded-md hover:bg-sidebar-accent transition-colors"
+                  >
+                    <VideoCamera size={16} weight="duotone" className="shrink-0 text-sidebar-foreground" />
+                  </a>
+                </TooltipTrigger>
+                <TooltipContent side="right" sideOffset={8}>
+                  Talk to Cofounders
                 </TooltipContent>
               </Tooltip>
             )}
