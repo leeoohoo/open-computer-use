@@ -20,6 +20,8 @@ import {
   CheckCircle,
   CaretDown,
   CaretRight,
+  CaretUp,
+  CaretLeft,
   Camera,
   User,
   MagnifyingGlassPlus,
@@ -863,6 +865,8 @@ function ChatTree({
   const isPanning = useRef(false)
   const panStart = useRef({ x: 0, y: 0 })
   const panOrigin = useRef({ x: 0, y: 0 })
+  const lastPinchDist = useRef<number | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
 
   const turns = useMemo(() => buildConversationTurns(messages), [messages])
 
@@ -875,16 +879,20 @@ function ChatTree({
     [turns]
   )
 
-  const CONTENT_W = 520
+  // Responsive content width — narrower on mobile for vertical stacking
+  const contentW = isMobile ? 300 : 520
 
-  // Auto-fit on mount
+  // Auto-fit on mount + detect mobile
   useEffect(() => {
     if (!containerRef.current) return
     const containerW = containerRef.current.clientWidth
-    const fit = Math.min(1, (containerW - 24) / CONTENT_W)
+    const mobile = containerW < 500
+    setIsMobile(mobile)
+    const w = mobile ? 300 : 520
+    const fit = Math.min(1, (containerW - 24) / w)
     const clamped = Math.max(TREE_MIN_ZOOM, Math.min(TREE_MAX_ZOOM, fit))
     setZoom(clamped)
-    const scaledW = CONTENT_W * clamped
+    const scaledW = w * clamped
     setPan({ x: Math.max(0, (containerW - scaledW) / 2), y: 0 })
   }, [])
 
@@ -913,6 +921,53 @@ function ChatTree({
     return () => el.removeEventListener("wheel", onWheel)
   }, [])
 
+  // Pinch-to-zoom + touch pan
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        e.preventDefault()
+        const dx = e.touches[0].clientX - e.touches[1].clientX
+        const dy = e.touches[0].clientY - e.touches[1].clientY
+        lastPinchDist.current = Math.hypot(dx, dy)
+      }
+    }
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 2 && lastPinchDist.current !== null) {
+        e.preventDefault()
+        const dx = e.touches[0].clientX - e.touches[1].clientX
+        const dy = e.touches[0].clientY - e.touches[1].clientY
+        const dist = Math.hypot(dx, dy)
+        const delta = dist - lastPinchDist.current
+        lastPinchDist.current = dist
+        const rect = el.getBoundingClientRect()
+        const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left
+        const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top
+        setZoom((prev) => {
+          const next = Math.max(TREE_MIN_ZOOM, Math.min(TREE_MAX_ZOOM, prev + delta * 0.005))
+          const ratio = next / prev
+          setPan((p) => ({
+            x: cx - ratio * (cx - p.x),
+            y: cy - ratio * (cy - p.y),
+          }))
+          return next
+        })
+      }
+    }
+    const onTouchEnd = () => {
+      lastPinchDist.current = null
+    }
+    el.addEventListener("touchstart", onTouchStart, { passive: false })
+    el.addEventListener("touchmove", onTouchMove, { passive: false })
+    el.addEventListener("touchend", onTouchEnd)
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart)
+      el.removeEventListener("touchmove", onTouchMove)
+      el.removeEventListener("touchend", onTouchEnd)
+    }
+  }, [])
+
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     const target = e.target as HTMLElement
     if (target.closest("button, a, input, [data-no-pan]")) return
@@ -934,21 +989,28 @@ function ChatTree({
     isPanning.current = false
   }, [])
 
+  const PAN_STEP = 60
+  const panUp = useCallback(() => setPan((p) => ({ ...p, y: p.y + PAN_STEP })), [])
+  const panDown = useCallback(() => setPan((p) => ({ ...p, y: p.y - PAN_STEP })), [])
+  const panLeft = useCallback(() => setPan((p) => ({ ...p, x: p.x + PAN_STEP })), [])
+  const panRight = useCallback(() => setPan((p) => ({ ...p, x: p.x - PAN_STEP })), [])
   const zoomIn = useCallback(() => setZoom((z) => Math.min(TREE_MAX_ZOOM, z + TREE_ZOOM_STEP)), [])
   const zoomOut = useCallback(() => setZoom((z) => Math.max(TREE_MIN_ZOOM, z - TREE_ZOOM_STEP)), [])
   const resetView = useCallback(() => {
     if (!containerRef.current) return
     const containerW = containerRef.current.clientWidth
-    const fit = Math.min(1, (containerW - 24) / CONTENT_W)
+    const w = containerW < 500 ? 300 : 520
+    const fit = Math.min(1, (containerW - 24) / w)
     const clamped = Math.max(TREE_MIN_ZOOM, Math.min(TREE_MAX_ZOOM, fit))
     setZoom(clamped)
-    const scaledW = CONTENT_W * clamped
+    const scaledW = w * clamped
     setPan({ x: Math.max(0, (containerW - scaledW) / 2), y: 0 })
   }, [])
 
   const zoomPercent = Math.round(zoom * 100)
-  // Height based on number of turns — each turn row ~100px, plus root + padding
-  const treeHeight = Math.min(700, Math.max(320, turns.length * 110 + 160))
+  // Height: mobile vertical stacking needs more space per turn
+  const turnHeight = isMobile ? 160 : 110
+  const treeHeight = Math.min(800, Math.max(320, turns.length * turnHeight + 160))
 
   return (
     <div className="relative rounded-b-xl" style={{ height: treeHeight }}>
@@ -984,10 +1046,53 @@ function ChatTree({
         ))}
       </div>
 
+      {/* D-pad navigation — mobile only */}
+      {isMobile && (
+        <div className="absolute bottom-12 left-3 z-[10] flex flex-col items-center gap-0.5">
+          <button
+            onClick={panUp}
+            className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+            title="Pan up"
+          >
+            <CaretUp className="size-3.5" weight="bold" />
+          </button>
+          <div className="flex items-center gap-0.5">
+            <button
+              onClick={panLeft}
+              className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+              title="Pan left"
+            >
+              <CaretLeft className="size-3.5" weight="bold" />
+            </button>
+            <button
+              onClick={resetView}
+              className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+              title="Reset view"
+            >
+              <ArrowCounterClockwise className="size-3" />
+            </button>
+            <button
+              onClick={panRight}
+              className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+              title="Pan right"
+            >
+              <CaretRight className="size-3.5" weight="bold" />
+            </button>
+          </div>
+          <button
+            onClick={panDown}
+            className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+            title="Pan down"
+          >
+            <CaretDown className="size-3.5" weight="bold" />
+          </button>
+        </div>
+      )}
+
       {/* Hint */}
       <div className="absolute bottom-2.5 left-3 z-[10] flex items-center gap-1.5 text-[10px] text-muted-foreground/35 select-none pointer-events-none">
         <ArrowsOutCardinal className="size-3" />
-        <span>Drag to pan · Scroll to zoom</span>
+        <span>{isMobile ? "Pinch to zoom" : "Drag to pan · Scroll to zoom"}</span>
       </div>
 
       {/* Open chat */}
@@ -1005,7 +1110,7 @@ function ChatTree({
       <div
         ref={containerRef}
         className="relative z-[1] overflow-hidden h-full select-none rounded-b-xl"
-        style={{ cursor: isPanning.current ? "grabbing" : "grab" }}
+        style={{ cursor: isPanning.current ? "grabbing" : "grab", touchAction: "none" }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -1019,7 +1124,7 @@ function ChatTree({
             transition: isPanning.current ? "none" : "transform 0.15s ease-out",
           }}
         >
-          <div className="px-6 py-6" style={{ width: CONTENT_W }}>
+          <div className="px-6 py-6" style={{ width: contentW }}>
             {/* Root node */}
             <motion.div
               initial={{ opacity: 0, y: -8 }}
@@ -1057,53 +1162,98 @@ function ChatTree({
                     />
                   </div>
 
-                  {/* Turn row: [User] → [Assistant] */}
-                  <div className="grid grid-cols-[1fr_32px_1fr] items-start gap-0">
-                    {/* User side */}
-                    <div className="flex flex-col items-center">
-                      {turn.user ? (
-                        <TurnUserNode
-                          msg={turn.user}
-                          screenshots={messageScreenshots[turn.user.id] || []}
-                          index={ti}
-                        />
-                      ) : (
-                        <div className="w-full rounded-lg border border-dashed border-border/30 bg-background/50 px-3 py-2 text-center">
-                          <span className="text-[10px] text-muted-foreground/40 italic">No prompt</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Horizontal connector arrow */}
-                    <div className="flex items-center justify-center pt-3">
-                      <div className="relative w-full flex items-center">
-                        <div
-                          className="flex-1 h-px"
-                          style={{ backgroundImage: "repeating-linear-gradient(to right, hsl(var(--border) / 0.4) 0px, hsl(var(--border) / 0.4) 4px, transparent 4px, transparent 8px)" }}
-                        />
-                        <ArrowRight className="size-3 text-muted-foreground/40 shrink-0 -ml-0.5" weight="bold" />
-                      </div>
-                    </div>
-
-                    {/* Assistant side */}
-                    <div className="flex flex-col items-center">
-                      {turn.assistant ? (
-                        turn.assistantSteps.length > 0 ? (
-                          <TurnAssistantSteps steps={turn.assistantSteps} index={ti} />
-                        ) : (
-                          <TurnAssistantNode
-                            msg={turn.assistant}
-                            screenshots={messageScreenshots[turn.assistant.id] || []}
+                  {/* Turn row: horizontal on desktop, vertical on mobile */}
+                  {isMobile ? (
+                    <div className="flex flex-col items-center gap-0 w-full">
+                      {/* User */}
+                      <div className="w-full">
+                        {turn.user ? (
+                          <TurnUserNode
+                            msg={turn.user}
+                            screenshots={messageScreenshots[turn.user.id] || []}
                             index={ti}
                           />
-                        )
-                      ) : (
-                        <div className="w-full rounded-lg border border-dashed border-border/30 bg-background/50 px-3 py-2 text-center">
-                          <span className="text-[10px] text-muted-foreground/40 italic">Pending...</span>
-                        </div>
-                      )}
+                        ) : (
+                          <div className="w-full rounded-lg border border-dashed border-border/30 bg-background/50 px-3 py-2 text-center">
+                            <span className="text-[10px] text-muted-foreground/40 italic">No prompt</span>
+                          </div>
+                        )}
+                      </div>
+                      {/* Down connector */}
+                      <div className="flex flex-col items-center py-1">
+                        <div
+                          className="w-px h-4"
+                          style={{ backgroundImage: "repeating-linear-gradient(to bottom, hsl(var(--border) / 0.4) 0px, hsl(var(--border) / 0.4) 3px, transparent 3px, transparent 6px)" }}
+                        />
+                        <ArrowRight className="size-2.5 text-muted-foreground/40 rotate-90" weight="bold" />
+                      </div>
+                      {/* Assistant */}
+                      <div className="w-full">
+                        {turn.assistant ? (
+                          turn.assistantSteps.length > 0 ? (
+                            <TurnAssistantSteps steps={turn.assistantSteps} index={ti} />
+                          ) : (
+                            <TurnAssistantNode
+                              msg={turn.assistant}
+                              screenshots={messageScreenshots[turn.assistant.id] || []}
+                              index={ti}
+                            />
+                          )
+                        ) : (
+                          <div className="w-full rounded-lg border border-dashed border-border/30 bg-background/50 px-3 py-2 text-center">
+                            <span className="text-[10px] text-muted-foreground/40 italic">Pending...</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="grid grid-cols-[1fr_32px_1fr] items-start gap-0">
+                      {/* User side */}
+                      <div className="flex flex-col items-center">
+                        {turn.user ? (
+                          <TurnUserNode
+                            msg={turn.user}
+                            screenshots={messageScreenshots[turn.user.id] || []}
+                            index={ti}
+                          />
+                        ) : (
+                          <div className="w-full rounded-lg border border-dashed border-border/30 bg-background/50 px-3 py-2 text-center">
+                            <span className="text-[10px] text-muted-foreground/40 italic">No prompt</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Horizontal connector arrow */}
+                      <div className="flex items-center justify-center pt-3">
+                        <div className="relative w-full flex items-center">
+                          <div
+                            className="flex-1 h-px"
+                            style={{ backgroundImage: "repeating-linear-gradient(to right, hsl(var(--border) / 0.4) 0px, hsl(var(--border) / 0.4) 4px, transparent 4px, transparent 8px)" }}
+                          />
+                          <ArrowRight className="size-3 text-muted-foreground/40 shrink-0 -ml-0.5" weight="bold" />
+                        </div>
+                      </div>
+
+                      {/* Assistant side */}
+                      <div className="flex flex-col items-center">
+                        {turn.assistant ? (
+                          turn.assistantSteps.length > 0 ? (
+                            <TurnAssistantSteps steps={turn.assistantSteps} index={ti} />
+                          ) : (
+                            <TurnAssistantNode
+                              msg={turn.assistant}
+                              screenshots={messageScreenshots[turn.assistant.id] || []}
+                              index={ti}
+                            />
+                          )
+                        ) : (
+                          <div className="w-full rounded-lg border border-dashed border-border/30 bg-background/50 px-3 py-2 text-center">
+                            <span className="text-[10px] text-muted-foreground/40 italic">Pending...</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </div>

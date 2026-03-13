@@ -1,4 +1,4 @@
-export function SEOSchemas() {
+export function FAQSchema() {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -56,6 +56,16 @@ export function SEOSchemas() {
     ]
   }
 
+  return (
+    <script
+      id="faq-schema"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+    />
+  )
+}
+
+export function SEOSchemas() {
   const productSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -217,11 +227,6 @@ export function SEOSchemas() {
 
   return (
     <>
-      <script
-        id="faq-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
       <script
         id="product-schema"
         type="application/ld+json"
