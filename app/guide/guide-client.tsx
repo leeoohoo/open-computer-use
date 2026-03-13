@@ -17,6 +17,7 @@ import {
   CreditCard,
   ArrowRight,
   VideoCamera,
+  UsersThree,
 } from "@phosphor-icons/react"
 
 import { OverviewTab } from "./tabs/overview"
@@ -25,6 +26,7 @@ import { ChatTasksTab } from "./tabs/chat-tasks"
 import { MachinesTab } from "./tabs/machines"
 import { CredentialsTab } from "./tabs/credentials"
 import { SwarmModeTab } from "./tabs/swarm-mode"
+import { WorkforceTab } from "./tabs/workforce"
 import { DesktopAppTab } from "./tabs/desktop-app"
 import { BillingTab } from "./tabs/billing"
 
@@ -37,6 +39,7 @@ const tabs = [
   { id: "machines", label: "Machines", shortLabel: "Machines", icon: Desktop },
   { id: "credentials", label: "Credentials", shortLabel: "Creds", icon: Key },
   { id: "swarm-mode", label: "Swarm Mode", shortLabel: "Swarm", icon: Lightning },
+  { id: "workforce", label: "Workforce", shortLabel: "Workforce", icon: UsersThree },
   { id: "desktop-app", label: "Desktop App", shortLabel: "Desktop", icon: Monitor },
   { id: "billing", label: "Billing & Credits", shortLabel: "Billing", icon: CreditCard },
 ] as const
@@ -67,6 +70,8 @@ function TabContent({ activeTab, inApp }: { activeTab: TabId; inApp: boolean }) 
       return <CredentialsTab inApp={inApp} />
     case "swarm-mode":
       return <SwarmModeTab inApp={inApp} />
+    case "workforce":
+      return <WorkforceTab inApp={inApp} />
     case "desktop-app":
       return <DesktopAppTab inApp={inApp} />
     case "billing":
