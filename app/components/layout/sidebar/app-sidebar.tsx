@@ -18,6 +18,7 @@ import {
   Key,
   GitFork,
   ClockCounterClockwise,
+  BookOpen,
 } from "@phosphor-icons/react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -181,6 +182,12 @@ export function AppSidebar() {
                 icon={<GitFork size={16} weight="duotone" className="shrink-0" />}
                 label="Swarm Runs"
                 onClick={() => handleNavigation(() => router.push("/swarms"))}
+              />
+              <NavButton
+                id="sidebar-guide-link"
+                icon={<BookOpen size={16} className="shrink-0" />}
+                label="Guide"
+                onClick={() => handleNavigation(() => router.push("/guide"))}
               />
             </div>
           </div>

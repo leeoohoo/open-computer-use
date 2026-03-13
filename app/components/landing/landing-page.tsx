@@ -564,6 +564,95 @@ export function LandingPage() {
         </section>
 
 
+        {/* Why Coasty Section */}
+        <section id="why-coasty" className={cn(
+          "py-20",
+          isMobile ? "px-4" : "px-6"
+        )}>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-12">
+              <p className={cn(
+                "text-muted-foreground/60 font-medium uppercase tracking-[0.15em] mb-3",
+                isMobile ? "text-[10px]" : "text-xs"
+              )}>
+                Why Coasty
+              </p>
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+              )}>
+                Better than Operator. Not a chatbot. Not an RPA script.
+              </h2>
+              <p className={cn(
+                "text-muted-foreground mt-4 max-w-2xl mx-auto",
+                isMobile ? "text-sm" : "text-base"
+              )}>
+                Better than OpenAI Operator, smarter than traditional automation. Coasty is a real AI employee
+                that sees your screen and works like a human — no brittle scripts, no breaking when interfaces change.
+              </p>
+            </motion.div>
+
+            <div className={cn(
+              "grid gap-4",
+              isMobile ? "grid-cols-1" : "grid-cols-2"
+            )}>
+              {[
+                {
+                  icon: <Monitor className="size-5" />,
+                  title: "Works like a human",
+                  description: "Sees the screen, reads the content, clicks buttons, types text, and navigates pages — exactly like you would. Not an API wrapper. Real computer control.",
+                },
+                {
+                  icon: <MessageSquare className="size-5" />,
+                  title: "No scripts or setup",
+                  description: "Describe the task in plain English. Coasty figures out which sites to visit, what to click, and how to get it done. Zero configuration, zero code.",
+                },
+                {
+                  icon: <Zap className="size-5" />,
+                  title: "Handles the unexpected",
+                  description: "CAPTCHAs, cookie banners, login walls, layout changes — Coasty adapts in real time instead of breaking. Built-in CAPTCHA solving pipeline included.",
+                },
+                {
+                  icon: <Shield className="size-5" />,
+                  title: "Runs in isolation",
+                  description: "Every session gets its own sandboxed virtual machine. Your data stays safe, your machine stays untouched. Nothing leaks between sessions.",
+                },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  variants={itemVariants}
+                  className={cn(
+                    "group relative rounded-2xl border border-border/40 bg-card/30 p-6 transition-all duration-300 hover:border-border/60 hover:bg-card/50",
+                    isMobile ? "p-5" : "p-6"
+                  )}
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground/[0.05] mb-4 text-foreground/70 group-hover:text-foreground transition-colors">
+                    {item.icon}
+                  </div>
+                  <h3 className={cn(
+                    "font-semibold text-foreground mb-1.5",
+                    isMobile ? "text-base" : "text-lg"
+                  )}>
+                    {item.title}
+                  </h3>
+                  <p className={cn(
+                    "text-muted-foreground/60 leading-relaxed",
+                    isMobile ? "text-sm" : "text-[15px]"
+                  )}>
+                    {item.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
         {/* How It Works Section */}
         <section id="how-it-works" className={cn(
           "py-20",
