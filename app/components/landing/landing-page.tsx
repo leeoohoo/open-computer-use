@@ -587,13 +587,17 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Better than Operator. Not a chatbot. Not an RPA script.
+                Not a chatbot. Not an RPA script. Better than{" "}
+                <span className="inline-flex items-center gap-1.5 text-red-500">
+                  <img src="/openclaw.svg" alt="OpenClaw" className="size-[0.8em] shrink-0 rounded-sm" aria-hidden="true" />
+                  OpenClaw
+                </span>.
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-2xl mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Better than OpenAI Operator, smarter than traditional automation. Coasty is a real AI employee
+                Better than <span className="inline-flex items-center gap-1 text-red-500 font-medium"><img src="/openclaw.svg" alt="" className="size-4 rounded-sm" />OpenClaw</span>, smarter than traditional automation. Coasty is a real AI employee
                 that sees your screen and works like a human — no brittle scripts, no breaking when interfaces change.
               </p>
             </motion.div>
@@ -1620,10 +1624,12 @@ export function LandingPage() {
               </div>
               <div className={cn("flex items-center gap-5", isMobile && "flex-wrap justify-center")}>
                 {[
-                  { href: "/privacy", label: "Privacy" },
-                  { href: "/terms", label: "Terms" },
+                  { href: "/guide", label: "Guide" },
+                  { href: "/results", label: "Case Studies" },
                   { href: "/blog", label: "Blog" },
                   { href: "/download", label: "Download" },
+                  { href: "/privacy", label: "Privacy" },
+                  { href: "/terms", label: "Terms" },
                   { href: "mailto:founders@coasty.ai", label: "Contact" },
                 ].map((link) => (
                   <Link

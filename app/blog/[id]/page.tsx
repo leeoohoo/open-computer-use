@@ -4,6 +4,7 @@ import { useParams } from "next/navigation"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { LandingHeader } from "@/app/components/landing/landing-header"
+import { LandingFooter } from "@/app/components/landing/landing-footer"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { notFound } from "next/navigation"
@@ -27,6 +28,83 @@ interface BlogPost {
 }
 
 const blogPosts: BlogPost[] = [
+  {
+    id: "agent-swarm-launch",
+    title: "Introducing Agent Swarms: The Most Powerful Parallel Computer-Use System Ever Built",
+    excerpt: "Today we are launching Agent Swarms — the ability to split any task across multiple autonomous machines running simultaneously. This is not prompt chaining. This is full computer-use at scale.",
+    author: "Marcus Sterling",
+    date: "2026-03-13",
+    readTime: "12 min",
+    category: "Product",
+    content: [
+      {
+        type: "intro",
+        text: "Every other AI agent tool on the market works sequentially. One model, one task, one step at a time. That is fine for simple prompts. But real work does not happen that way. When you need to research 50 companies, apply to 20 jobs, or QA test 10 flows simultaneously — sequential execution is a bottleneck. Today, we are removing that bottleneck entirely."
+      },
+      {
+        type: "highlight",
+        text: "Agent Swarms let you split a single task across multiple autonomous machines, each running its own browser, terminal, and desktop — all executing in parallel."
+      },
+      {
+        type: "section",
+        title: "What Makes This Different from Every Other \"Multi-Agent\" System",
+        text: "Most multi-agent frameworks are just orchestration layers on top of API calls. They route prompts between models and call it parallel execution. Coasty Swarms are fundamentally different. Each swarm agent gets its own full virtual machine — a real Ubuntu desktop with Chrome, a terminal, a file system, and desktop automation. These are not threads sharing a context window. They are independent computers doing independent work, coordinated by a central orchestrator that decomposes your task, assigns subtasks, and aggregates results."
+      },
+      {
+        type: "section",
+        title: "The Architecture: Real VMs, Real Isolation, Real Parallelism",
+        text: "When you enable Swarm Mode and send a task, here is what happens under the hood:",
+        bullets: [
+          "The orchestrator analyzes your task and breaks it into independent subtasks that can run concurrently",
+          "For each subtask, a fresh VM is provisioned with its own browser, terminal, and desktop environment",
+          "Each agent receives its subtask plus any shared context (credentials, files, previous results)",
+          "All agents execute simultaneously — browsing different sites, filling different forms, researching different topics",
+          "Results stream back in real time to a unified panel where you can monitor every agent's progress",
+          "When all agents complete, results are aggregated into a single coherent output"
+        ]
+      },
+      {
+        type: "section",
+        title: "State-of-the-Art Computer Use at Scale",
+        text: "Coasty already holds the highest score on the OSWorld benchmark at 82% — the gold standard for measuring autonomous computer use. Swarms take that state-of-the-art capability and multiply it. Each agent in a swarm has the full power of our SOTA browser agent, terminal agent, and desktop agent. They can navigate complex websites, handle CAPTCHAs and popups, fill forms with saved credentials, execute shell commands, and interact with desktop applications. Now imagine that happening on 6 machines at once."
+      },
+      {
+        type: "highlight",
+        text: "A task that takes one agent 60 minutes can be completed by a 6-agent swarm in roughly 10 minutes. Same quality. Same reliability. 6x the throughput."
+      },
+      {
+        type: "section",
+        title: "Real Use Cases We Have Tested",
+        text: "During our internal beta, we ran swarms on production workloads that would be impractical with a single agent:",
+        bullets: [
+          "Sales prospecting: 6 agents each researching 10 companies, extracting decision-maker contacts, and drafting personalized outreach emails — 60 prospects in 15 minutes instead of 90",
+          "Job applications: 4 agents simultaneously applying to different roles on LinkedIn, Indeed, Glassdoor, and AngelList with tailored resumes for each",
+          "QA testing: 3 agents testing signup, checkout, and settings flows in parallel, each covering different edge cases and screen sizes",
+          "Competitive research: 5 agents monitoring different competitor websites, extracting pricing, features, and changelog updates into a unified spreadsheet",
+          "Content distribution: 4 agents posting the same announcement across Reddit, Twitter/X, LinkedIn, and Hacker News with platform-specific formatting"
+        ]
+      },
+      {
+        type: "section",
+        title: "Security and Isolation",
+        text: "Every swarm agent runs in its own isolated container. There is no shared memory, no shared file system, no cross-contamination between agents. Credentials are injected per-agent based on the subtask requirements. When a swarm session ends, all containers are destroyed. Nothing persists unless you explicitly save the results. This is the same security model we use for single-agent sessions, applied to every agent in the swarm."
+      },
+      {
+        type: "section",
+        title: "Pricing: Simple and Transparent",
+        text: "Swarm sessions consume credits at the same rate as regular sessions — 10 credits per minute per agent. If you run 4 agents for 10 minutes, that is 400 credits. Your plan's swarm limit is 2x your persistent machine count: Starter gets 2 parallel agents, Plus gets 4, and Pro gets 6. Swarm machines are temporary and auto-delete after the task completes, so you are only charged for active execution time."
+      },
+      {
+        type: "section",
+        title: "Why We Built This",
+        text: "We built Coasty to replace the repetitive computer work that drains human productivity. But some tasks are not just repetitive — they are embarrassingly parallel. There is no reason to research companies one at a time when you could research 6 simultaneously. There is no reason to test one flow and then the next when you could test all of them at once. Swarms are the natural evolution of computer-use agents. The question was never whether AI could do the work. It was whether it could do enough of it, fast enough, to actually change how teams operate. With Agent Swarms, the answer is yes."
+      },
+      {
+        type: "conclusion",
+        text: "Agent Swarms are available today for all paid plans. Enable Swarm Mode from the chat interface, describe your task, and watch multiple agents work in parallel. This is the most powerful parallel computer-use system ever built. And we are just getting started."
+      },
+    ],
+  },
   {
     id: "desktop-control-agi",
     title: "Why AI Agents Controlling Desktops Are Our Fastest Path to AGI",
@@ -967,6 +1045,8 @@ export default function BlogPostPage() {
           </div>
         </div>
       </main>
+
+      <LandingFooter />
     </div>
   )
 }

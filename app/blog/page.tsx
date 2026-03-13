@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { LandingHeader } from "@/app/components/landing/landing-header"
+import { LandingFooter } from "@/app/components/landing/landing-footer"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { useState } from "react"
@@ -20,6 +21,16 @@ interface BlogPost {
 
 const blogPosts: BlogPost[] = [
   {
+    id: "agent-swarm-launch",
+    title: "Introducing Agent Swarms: The Most Powerful Parallel Computer-Use System Ever Built",
+    excerpt: "Today we are launching Agent Swarms — the ability to split any task across multiple autonomous machines running simultaneously. While other tools let you chain API calls, Coasty spins up real VMs, each with its own browser, desktop, and terminal, and orchestrates them in parallel. This is not prompt chaining. This is full computer-use at scale.",
+    author: "Marcus Sterling",
+    date: "2026-03-13",
+    readTime: "12 min",
+    category: "Product",
+    featured: true,
+  },
+  {
     id: "desktop-control-agi",
     title: "Why AI Agents Controlling Desktops Are Our Fastest Path to AGI",
     excerpt: "Forget chat interfaces and API calls. The real breakthrough in artificial general intelligence is happening through AI agents that can see, click, and control computers exactly like humans do.",
@@ -27,7 +38,6 @@ const blogPosts: BlogPost[] = [
     date: "2026-03-05",
     readTime: "15 min",
     category: "Research",
-    featured: true,
   },
   {
     id: "coasty-reddit-marketing",
@@ -421,6 +431,8 @@ export default function BlogPage() {
           </motion.div>
         </div>
       </main>
+
+      <LandingFooter />
     </div>
   )
 }

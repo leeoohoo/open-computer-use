@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { LandingHeader } from "@/app/components/landing/landing-header"
+import { LandingFooter } from "@/app/components/landing/landing-footer"
 import { ArrowRight, ArrowUpRight, Play } from "lucide-react"
 import { motion } from "framer-motion"
 
@@ -382,6 +383,8 @@ export default function ResultsPage() {
           </motion.div>
         </div>
       </main>
+
+      <LandingFooter />
     </div>
   )
 }
