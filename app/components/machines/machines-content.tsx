@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Monitor, Globe, Terminal, MousePointer2, ScanLine, Cpu, MoreHorizontal, Zap, ShieldCheck, Download, RefreshCw } from "lucide-react";
+import { Plus, Monitor, Globe, Terminal, MousePointer2, ScanLine, Cpu, MoreHorizontal, Zap, ShieldCheck, Download, RefreshCw, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -262,9 +262,18 @@ export function MachinesContent() {
                 </span>
               )}
             </div>
-            <p className="text-muted-foreground text-sm mt-1.5">
-              Manage your AI-controlled desktop environments
-            </p>
+            <div className="flex items-center gap-3 mt-1.5">
+              <p className="text-muted-foreground text-sm">
+                Manage your AI-controlled desktop environments
+              </p>
+              <Link
+                href="/guide?tab=machines"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-foreground/[0.05] px-2.5 py-1 text-xs font-medium text-foreground/70 hover:text-foreground hover:border-border hover:bg-foreground/[0.08] transition-all"
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                Guide
+              </Link>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Button

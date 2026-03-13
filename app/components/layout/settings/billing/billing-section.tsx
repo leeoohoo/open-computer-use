@@ -553,11 +553,6 @@ export function BillingSection() {
                       const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier)
                       return activePlan?.price || 0
                     })()}/month
-                    <span className="mx-1.5 text-border">·</span>
-                    {(() => {
-                      const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier)
-                      return (activePlan?.monthlyCredits || 0).toLocaleString()
-                    })()} credits/mo
                   </p>
                 </div>
               </div>

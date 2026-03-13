@@ -35,7 +35,9 @@ import {
   FacebookLogo,
   TelegramLogo,
   RedditLogo,
+  BookOpen,
 } from "@phosphor-icons/react"
+import Link from "next/link"
 import { AnimatePresence, motion } from "motion/react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
@@ -275,9 +277,18 @@ export function HistoryContent() {
                 </span>
               )}
             </h1>
-            <p className="text-muted-foreground text-sm mt-1.5">
-              Browse and manage your past tasks
-            </p>
+            <div className="flex items-center gap-3 mt-1.5">
+              <p className="text-muted-foreground text-sm">
+                Browse and manage your past tasks
+              </p>
+              <Link
+                href="/guide?tab=chat-tasks"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-foreground/[0.05] px-2.5 py-1 text-xs font-medium text-foreground/70 hover:text-foreground hover:border-border hover:bg-foreground/[0.08] transition-all"
+              >
+                <BookOpen size={14} weight="duotone" />
+                Guide
+              </Link>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {isSelecting && (
@@ -1110,7 +1121,12 @@ function ChatTree({
       <div
         ref={containerRef}
         className="relative z-[1] overflow-hidden h-full select-none rounded-b-xl"
-        style={{ cursor: isPanning.current ? "grabbing" : "grab", touchAction: "none" }}
+        style={{
+          cursor: isPanning.current
+            ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000' stroke='%23fff' stroke-width='.5' d='M5 5.5a1 1 0 0 1 2 0V7h1V5.5a1 1 0 1 1 2 0V7h.5a1 1 0 0 1 2 0v3.5a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 2 0v1.5h.5V5.5a1 1 0 0 1 .5-.87z'/%3E%3C/svg%3E") 8 8, grabbing`
+            : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000' stroke='%23fff' stroke-width='.5' d='M5 4a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V4zm3-.5a1 1 0 0 0-1 1V5h2V4.5a1 1 0 0 0-1-1zM10 5v.5h.5a1 1 0 0 1 2 0v3a1 1 0 0 1 0 .5v1.5a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 2 0v1.5h.5V4a1 1 0 0 1 2 0v1h.5z'/%3E%3C/svg%3E") 8 8, grab`,
+          touchAction: "none",
+        }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}

@@ -27,7 +27,9 @@ import {
   FacebookLogo,
   TelegramLogo,
   RedditLogo,
+  BookOpen,
 } from "@phosphor-icons/react"
+import Link from "next/link"
 import { AnimatePresence, motion } from "motion/react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
@@ -193,9 +195,18 @@ export function SwarmsContent() {
                 </span>
               )}
             </h1>
-            <p className="text-muted-foreground text-sm mt-1.5">
-              View parallel task executions across multiple machines
-            </p>
+            <div className="flex items-center gap-3 mt-1.5">
+              <p className="text-muted-foreground text-sm">
+                View parallel task executions across multiple machines
+              </p>
+              <Link
+                href="/guide?tab=swarm-mode"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-foreground/[0.05] px-2.5 py-1 text-xs font-medium text-foreground/70 hover:text-foreground hover:border-border hover:bg-foreground/[0.08] transition-all"
+              >
+                <BookOpen size={14} weight="duotone" />
+                Guide
+              </Link>
+            </div>
           </div>
           <button
             onClick={handleRefresh}

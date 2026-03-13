@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { LandingHeader } from "@/app/components/landing/landing-header"
 import { LandingFooter } from "@/app/components/landing/landing-footer"
@@ -45,6 +46,11 @@ const tabs = [
 ] as const
 
 type TabId = (typeof tabs)[number]["id"]
+
+const tabIds = new Set<string>(tabs.map((t) => t.id))
+function isValidTabId(value: string | null): value is TabId {
+  return value !== null && tabIds.has(value)
+}
 
 /* ─── animation ─── */
 
@@ -126,7 +132,18 @@ function TabNav({ activeTab, onTabChange }: { activeTab: TabId; onTabChange: (id
 /* ─── guide content ─── */
 
 function GuideContent({ inApp }: { inApp: boolean }) {
-  const [activeTab, setActiveTab] = useState<TabId>("overview")
+  const searchParams = useSearchParams()
+  const tabParam = searchParams.get("tab")
+  const [activeTab, setActiveTab] = useState<TabId>(
+    isValidTabId(tabParam) ? tabParam : "overview"
+  )
+
+  // Sync with URL param changes (e.g. clicking guide links from other pages)
+  useEffect(() => {
+    if (isValidTabId(tabParam) && tabParam !== activeTab) {
+      setActiveTab(tabParam)
+    }
+  }, [tabParam]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (inApp) {
     return (

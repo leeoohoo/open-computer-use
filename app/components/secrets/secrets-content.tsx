@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useTheme } from "next-themes"
 import { motion } from "framer-motion"
-import { Plus, KeyRound, Eye, EyeOff, MoreHorizontal, Pencil, Trash2, ShieldCheck, LockKeyhole, Globe, MousePointerClick } from "lucide-react"
+import { Plus, KeyRound, Eye, EyeOff, MoreHorizontal, Pencil, Trash2, ShieldCheck, LockKeyhole, Globe, MousePointerClick, BookOpen } from "lucide-react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -307,9 +308,18 @@ export function SecretsContent() {
         >
           <div>
             <h1 className="text-2xl sm:text-3xl font-medium tracking-tight">Saved Credentials</h1>
-            <p className="text-muted-foreground text-sm mt-1.5">
-              Stored securely and used automatically by the AI agent when logging in
-            </p>
+            <div className="flex items-center gap-3 mt-1.5">
+              <p className="text-muted-foreground text-sm">
+                Stored securely and used automatically by the AI agent when logging in
+              </p>
+              <Link
+                href="/guide?tab=credentials"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-foreground/[0.05] px-2.5 py-1 text-xs font-medium text-foreground/70 hover:text-foreground hover:border-border hover:bg-foreground/[0.08] transition-all"
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                Guide
+              </Link>
+            </div>
           </div>
           <button
             onClick={handleAdd}

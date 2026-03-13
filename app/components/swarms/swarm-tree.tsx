@@ -9,6 +9,9 @@ import {
   Monitor,
   CircleNotch,
   CaretRight,
+  CaretLeft,
+  CaretUp,
+  CaretDown,
   Eye,
   Wrench,
   MagnifyingGlassPlus,
@@ -261,11 +264,14 @@ export function SwarmTree({
   const isPanning = useRef(false)
   const panStart = useRef({ x: 0, y: 0 })
   const panOrigin = useRef({ x: 0, y: 0 })
+  const lastPinchDist = useRef<number | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
 
-  // Auto-fit on mount
+  // Auto-fit on mount + detect mobile
   useEffect(() => {
     if (!containerRef.current || !contentRef.current) return
     const containerW = containerRef.current.clientWidth
+    setIsMobile(containerW < 500)
     const contentW = Math.max(cols * 220, 300)
     const fit = Math.min(1, (containerW - 32) / contentW)
     const clamped = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, fit))
@@ -274,23 +280,76 @@ export function SwarmTree({
     setPan({ x: Math.max(0, (containerW - scaledW) / 2), y: 0 })
   }, [cols])
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault()
-    const container = containerRef.current
-    if (!container) return
-    const rect = container.getBoundingClientRect()
-    const cursorX = e.clientX - rect.left
-    const cursorY = e.clientY - rect.top
-    setZoom((prev) => {
-      const dir = e.deltaY < 0 ? 1 : -1
-      const next = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prev + dir * ZOOM_STEP))
-      const ratio = next / prev
-      setPan((p) => ({
-        x: cursorX - ratio * (cursorX - p.x),
-        y: cursorY - ratio * (cursorY - p.y),
-      }))
-      return next
-    })
+  // Non-passive wheel listener so preventDefault() stops page scroll
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      const rect = el.getBoundingClientRect()
+      const cursorX = e.clientX - rect.left
+      const cursorY = e.clientY - rect.top
+      setZoom((prev) => {
+        const dir = e.deltaY < 0 ? 1 : -1
+        const next = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prev + dir * ZOOM_STEP))
+        const ratio = next / prev
+        setPan((p) => ({
+          x: cursorX - ratio * (cursorX - p.x),
+          y: cursorY - ratio * (cursorY - p.y),
+        }))
+        return next
+      })
+    }
+    el.addEventListener("wheel", onWheel, { passive: false })
+    return () => el.removeEventListener("wheel", onWheel)
+  }, [])
+
+  // Pinch-to-zoom + touch pan
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        e.preventDefault()
+        const dx = e.touches[0].clientX - e.touches[1].clientX
+        const dy = e.touches[0].clientY - e.touches[1].clientY
+        lastPinchDist.current = Math.hypot(dx, dy)
+      }
+    }
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 2 && lastPinchDist.current !== null) {
+        e.preventDefault()
+        const dx = e.touches[0].clientX - e.touches[1].clientX
+        const dy = e.touches[0].clientY - e.touches[1].clientY
+        const dist = Math.hypot(dx, dy)
+        const delta = dist - lastPinchDist.current
+        lastPinchDist.current = dist
+        const rect = el.getBoundingClientRect()
+        const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left
+        const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top
+        setZoom((prev) => {
+          const next = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prev + delta * 0.005))
+          const ratio = next / prev
+          setPan((p) => ({
+            x: cx - ratio * (cx - p.x),
+            y: cy - ratio * (cy - p.y),
+          }))
+          return next
+        })
+      }
+    }
+    const onTouchEnd = () => {
+      lastPinchDist.current = null
+    }
+    el.addEventListener("touchstart", onTouchStart, { passive: false })
+    el.addEventListener("touchmove", onTouchMove, { passive: false })
+    el.addEventListener("touchend", onTouchEnd)
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart)
+      el.removeEventListener("touchmove", onTouchMove)
+      el.removeEventListener("touchend", onTouchEnd)
+    }
   }, [])
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
@@ -314,6 +373,11 @@ export function SwarmTree({
     isPanning.current = false
   }, [])
 
+  const PAN_STEP = 60
+  const panUp = useCallback(() => setPan((p) => ({ ...p, y: p.y + PAN_STEP })), [])
+  const panDown = useCallback(() => setPan((p) => ({ ...p, y: p.y - PAN_STEP })), [])
+  const panLeft = useCallback(() => setPan((p) => ({ ...p, x: p.x + PAN_STEP })), [])
+  const panRight = useCallback(() => setPan((p) => ({ ...p, x: p.x - PAN_STEP })), [])
   const zoomIn = useCallback(() => {
     setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP))
   }, [])
@@ -385,10 +449,53 @@ export function SwarmTree({
         </button>
       </div>
 
+      {/* D-pad navigation — mobile only */}
+      {isMobile && (
+        <div className="absolute bottom-12 left-3 z-[10] flex flex-col items-center gap-0.5">
+          <button
+            onClick={panUp}
+            className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+            title="Pan up"
+          >
+            <CaretUp className="size-3.5" weight="bold" />
+          </button>
+          <div className="flex items-center gap-0.5">
+            <button
+              onClick={panLeft}
+              className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+              title="Pan left"
+            >
+              <CaretLeft className="size-3.5" weight="bold" />
+            </button>
+            <button
+              onClick={resetView}
+              className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+              title="Reset view"
+            >
+              <ArrowCounterClockwise className="size-3" />
+            </button>
+            <button
+              onClick={panRight}
+              className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+              title="Pan right"
+            >
+              <CaretRight className="size-3.5" weight="bold" />
+            </button>
+          </div>
+          <button
+            onClick={panDown}
+            className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+            title="Pan down"
+          >
+            <CaretDown className="size-3.5" weight="bold" />
+          </button>
+        </div>
+      )}
+
       {/* Hint */}
       <div className="absolute bottom-2.5 left-3 z-[10] flex items-center gap-1.5 text-[10px] text-muted-foreground/35 select-none pointer-events-none">
         <ArrowsOutCardinal className="size-3" />
-        <span>Drag to pan &middot; Scroll to zoom</span>
+        <span>{isMobile ? "Pinch to zoom" : "Drag to pan \u00b7 Scroll to zoom"}</span>
       </div>
 
       {/* Pan/zoom viewport */}
@@ -398,10 +505,10 @@ export function SwarmTree({
         style={{
           ...(height != null ? { height } : {}),
           cursor: isPanning.current
-            ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23222' stroke='%23fff' stroke-width='.5' d='M5 5.5a1 1 0 0 1 2 0V7h1V5.5a1 1 0 1 1 2 0V7h.5a1 1 0 0 1 2 0v3.5a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 2 0v1.5h.5V5.5a1 1 0 0 1 .5-.87z'/%3E%3C/svg%3E") 8 8, grabbing`
-            : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23222' stroke='%23fff' stroke-width='.5' d='M5 4a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V4zm3-.5a1 1 0 0 0-1 1V5h2V4.5a1 1 0 0 0-1-1zM10 5v.5h.5a1 1 0 0 1 2 0v3a1 1 0 0 1 0 .5v1.5a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 2 0v1.5h.5V4a1 1 0 0 1 2 0v1h.5z'/%3E%3C/svg%3E") 8 8, grab`,
+            ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000' stroke='%23fff' stroke-width='.5' d='M5 5.5a1 1 0 0 1 2 0V7h1V5.5a1 1 0 1 1 2 0V7h.5a1 1 0 0 1 2 0v3.5a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 2 0v1.5h.5V5.5a1 1 0 0 1 .5-.87z'/%3E%3C/svg%3E") 8 8, grabbing`
+            : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000' stroke='%23fff' stroke-width='.5' d='M5 4a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V4zm3-.5a1 1 0 0 0-1 1V5h2V4.5a1 1 0 0 0-1-1zM10 5v.5h.5a1 1 0 0 1 2 0v3a1 1 0 0 1 0 .5v1.5a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 2 0v1.5h.5V4a1 1 0 0 1 2 0v1h.5z'/%3E%3C/svg%3E") 8 8, grab`,
+          touchAction: "none",
         }}
-        onWheel={handleWheel}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
