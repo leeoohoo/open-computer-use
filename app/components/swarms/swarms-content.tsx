@@ -906,18 +906,19 @@ function SwarmRunSummary({ summary }: { summary: string }) {
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif; max-width: 100%; margin: 0; padding: 0; color: #1d1d1f; font-size: 13px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
 
-        /* ── Cover header ── */
-        .cover { padding: 56px 56px 0 56px; }
-        .cover-top { display: flex; align-items: center; gap: 10px; margin-bottom: 40px; }
-        .logo-mark { width: 32px; height: 32px; background: linear-gradient(145deg, #f97316, #fb923c, #fdba74); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 15px; box-shadow: 0 1px 3px rgba(249,115,22,0.3); }
-        .logo-text { font-size: 15px; font-weight: 500; color: #86868b; letter-spacing: -0.2px; }
+        /* ── Header ── */
+        .cover { padding: 48px 56px 0 56px; }
+        .cover-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .cover-brand { display: flex; align-items: center; gap: 10px; }
+        .logo-mark { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+        .logo-text { font-size: 14px; font-weight: 500; color: #86868b; letter-spacing: -0.2px; }
         .logo-text b { color: #1d1d1f; font-weight: 600; }
-        .cover-title { font-size: 34px; font-weight: 700; letter-spacing: -0.8px; color: #1d1d1f; line-height: 1.15; margin-bottom: 8px; }
-        .cover-subtitle { font-size: 13px; color: #86868b; font-weight: 400; letter-spacing: 0.2px; }
-        .cover-divider { height: 1px; background: linear-gradient(90deg, #e5e5ea 0%, transparent 100%); margin-top: 32px; }
+        .cover-meta { font-size: 11px; color: #aeaeb2; text-align: right; }
+        .cover-title { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; color: #1d1d1f; line-height: 1.2; margin-bottom: 4px; }
+        .cover-divider { height: 1px; background: linear-gradient(90deg, #e5e5ea 0%, transparent 100%); margin-top: 16px; }
 
         /* ── Content ── */
-        .content { padding: 28px 56px 40px 56px; }
+        .content { padding: 20px 56px 40px 56px; }
         h2 { font-size: 18px; font-weight: 600; margin-top: 32px; margin-bottom: 8px; color: #1d1d1f; letter-spacing: -0.3px; padding-bottom: 6px; border-bottom: 1px solid #f2f2f7; }
         h2:first-child { margin-top: 0; }
         h3 { font-size: 14px; font-weight: 600; margin-top: 22px; margin-bottom: 4px; color: #3a3a3c; letter-spacing: -0.1px; }
@@ -933,14 +934,13 @@ function SwarmRunSummary({ summary }: { summary: string }) {
         /* ── Footer ── */
         .footer { margin-top: 48px; padding: 20px 56px 36px 56px; border-top: 1px solid #e5e5ea; display: flex; align-items: center; justify-content: space-between; }
         .footer-left { display: flex; align-items: center; gap: 8px; }
-        .footer-dot { width: 6px; height: 6px; background: linear-gradient(135deg, #f97316, #fb923c); border-radius: 50%; }
+        .footer-dot { width: 14px; height: 14px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
         .footer-text { font-size: 10.5px; color: #aeaeb2; font-weight: 400; letter-spacing: 0.3px; }
         .footer-text a { color: #f97316; text-decoration: none; font-weight: 500; }
         .footer-right { font-size: 10px; color: #c7c7cc; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 500; }
 
         @media print {
           body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-          .cover, .content { break-inside: avoid; }
           h2 { break-after: avoid; }
           h3 { break-after: avoid; }
           blockquote { break-inside: avoid; }
@@ -949,11 +949,13 @@ function SwarmRunSummary({ summary }: { summary: string }) {
 
       <div class="cover">
         <div class="cover-top">
-          <div class="logo-mark">C</div>
-          <div class="logo-text"><b>coasty</b>.ai</div>
+          <div class="cover-brand">
+            <div class="logo-mark"><svg width="28" height="28" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:rgba(0,0,0,0);stop-opacity:0"/><stop offset="30%" style="stop-color:rgba(0,0,0,0.1);stop-opacity:1"/><stop offset="50%" style="stop-color:rgba(0,0,0,0.3);stop-opacity:1"/><stop offset="70%" style="stop-color:rgba(0,0,0,0.6);stop-opacity:1"/><stop offset="100%" style="stop-color:rgba(0,0,0,1);stop-opacity:1"/></linearGradient></defs><circle cx="100" cy="100" r="100" fill="url(#lg)"/></svg></div>
+            <div class="logo-text"><b>coasty</b>.ai</div>
+          </div>
+          <div class="cover-meta">${date}</div>
         </div>
         <div class="cover-title">Swarm Report</div>
-        <div class="cover-subtitle">${date} at ${time}</div>
         <div class="cover-divider"></div>
       </div>
 
@@ -971,7 +973,7 @@ function SwarmRunSummary({ summary }: { summary: string }) {
 
       <div class="footer">
         <div class="footer-left">
-          <div class="footer-dot"></div>
+          <div class="footer-dot"><svg width="14" height="14" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lg2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:rgba(0,0,0,0);stop-opacity:0"/><stop offset="30%" style="stop-color:rgba(0,0,0,0.1);stop-opacity:1"/><stop offset="50%" style="stop-color:rgba(0,0,0,0.3);stop-opacity:1"/><stop offset="70%" style="stop-color:rgba(0,0,0,0.6);stop-opacity:1"/><stop offset="100%" style="stop-color:rgba(0,0,0,1);stop-opacity:1"/></linearGradient></defs><circle cx="100" cy="100" r="100" fill="url(#lg2)"/></svg></div>
           <div class="footer-text">Generated by <a href="https://coasty.ai">coasty.ai</a></div>
         </div>
         <div class="footer-right">AI Swarm Intelligence</div>
