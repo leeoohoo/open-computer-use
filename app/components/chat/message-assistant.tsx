@@ -21,9 +21,11 @@ import { TaskPlanFormatter } from "./task-plan-formatter"
 import { MessageStatusIndicator } from "./message-status-indicator"
 import { CuaSectionRenderer, hasCuaSections, extractScreenshots } from "./cua-section-renderer"
 import { MessageStopBanner, detectStopReason, stripStopTags } from "./message-stop-banner"
+import { RunFeedbackBar } from "./run-feedback-bar"
 
 type MessageAssistantProps = {
   children: string
+  messageId?: string
   isLast?: boolean
   hasScrollAnchor?: boolean
   copied?: boolean
@@ -40,6 +42,7 @@ type MessageAssistantProps = {
 
 export function MessageAssistant({
   children,
+  messageId,
   isLast,
   hasScrollAnchor,
   copied,
@@ -205,6 +208,16 @@ export function MessageAssistant({
             ) : null}
             <MessageFeedbackButton />
           </MessageActions>
+        )}
+
+        {/* Run feedback bar — shown after the last completed message */}
+        {isLast && status === "ready" && !contentNullOrEmpty && (
+          <RunFeedbackBar
+            chatId={chatId}
+            messageId={messageId}
+            feedbackType="run"
+            className="mt-1 -ml-1"
+          />
         )}
       </div>
     </Message>

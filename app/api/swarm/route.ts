@@ -55,7 +55,17 @@ export async function POST(req: NextRequest) {
   }
 
   const userId = authData.user.id;
-  const body: SwarmRequest = await req.json();
+
+  let body: SwarmRequest;
+  try {
+    body = await req.json();
+  } catch {
+    // Empty or truncated body — typically from an aborted fetch
+    return NextResponse.json(
+      { error: "Invalid or empty request body" },
+      { status: 400 }
+    );
+  }
 
   if (!body.prompt?.trim()) {
     return NextResponse.json(

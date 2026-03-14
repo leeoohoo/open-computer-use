@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { Markdown } from "@/components/prompt-kit/markdown"
 import { SwarmTree, stripAgentTags, type SwarmEvent } from "@/app/components/swarms/swarm-tree"
+import { RunFeedbackBar } from "./run-feedback-bar"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -512,6 +513,16 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
                 ? `Swarm finished \u2014 ${completed} completed${failed > 0 ? `, ${failed} failed` : ""}`
                 : "Swarm cancelled. All temporary machines deleted."}
             </p>
+          </div>
+        )}
+
+        {/* Swarm feedback bar — shown after completion */}
+        {isDone && overallStatus !== "failed" && (
+          <div className="shrink-0 px-4 py-2.5 border-t border-border/20">
+            <RunFeedbackBar
+              swarmId={swarmId}
+              feedbackType="swarm"
+            />
           </div>
         )}
       </div>

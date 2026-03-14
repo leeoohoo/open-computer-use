@@ -12,6 +12,7 @@ import { ShoppingCart, ArrowUp, CheckCircle, XCircle, Spinner, CreditCard, Recei
 import { cn } from "@/lib/utils"
 import { Check, Zap, ArrowRight, Clock, HardDrive } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
+import { RunFeedbackBar } from "@/app/components/chat/run-feedback-bar"
 
 const subscriptionPlans = [
   {
@@ -378,18 +379,9 @@ export function BillingSection() {
           </div>
         </div>
 
-        {/* Feedback note */}
+        {/* Feedback bar — earn credits by sharing feedback */}
         <div className="mt-4 pt-4 border-t border-primary/10">
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Running low or having issues? Email{" "}
-            <a
-              href="mailto:founders@coasty.ai?subject=Feedback%20on%20Coasty"
-              className="font-medium text-primary hover:text-primary/80 underline underline-offset-2 decoration-primary/30 transition-colors"
-            >
-              founders@coasty.ai
-            </a>
-            {" "}— we&apos;ll probably just reset your credits for the month.
-          </p>
+          <RunFeedbackBar feedbackType="run" />
         </div>
       </div>
 

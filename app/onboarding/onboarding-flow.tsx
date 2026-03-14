@@ -508,8 +508,19 @@ export function OnboardingFlow({
                       className="size-16 rounded-full mx-auto ring-2 ring-border/50"
                     />
                   ) : (
-                    <div className="size-16 rounded-full mx-auto bg-muted flex items-center justify-center ring-2 ring-border/50">
-                      <User className="size-7 text-muted-foreground" />
+                    <div
+                      className="size-16 rounded-full mx-auto flex items-center justify-center ring-2 ring-border/30 shadow-lg"
+                      style={{
+                        background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)",
+                      }}
+                    >
+                      {initialName ? (
+                        <span className="text-xl font-semibold text-white/90 select-none">
+                          {initialName.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase()}
+                        </span>
+                      ) : (
+                        <User className="size-7 text-white/80" />
+                      )}
                     </div>
                   )}
                   <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-foreground">
