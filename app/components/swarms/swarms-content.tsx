@@ -28,11 +28,15 @@ import {
   TelegramLogo,
   RedditLogo,
   BookOpen,
+  DownloadSimple,
+  FilePdf,
+  Stop,
 } from "@phosphor-icons/react"
 import Link from "next/link"
 import { AnimatePresence, motion } from "motion/react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
+import { Markdown } from "@/components/prompt-kit/markdown"
 import { APP_DOMAIN } from "@/lib/config"
 import { SwarmTree, type SwarmEvent } from "./swarm-tree"
 
@@ -365,6 +369,7 @@ export function SwarmsContent() {
                   swarm={swarm}
                   isExpanded={expandedId === swarm.swarm_id}
                   onToggle={() => handleToggle(swarm.swarm_id)}
+                  onRefresh={fetchSwarms}
                 />
               </motion.div>
             ))}
@@ -383,10 +388,12 @@ function SwarmRunCard({
   swarm,
   isExpanded,
   onToggle,
+  onRefresh,
 }: {
   swarm: SwarmRun
   isExpanded: boolean
   onToggle: () => void
+  onRefresh: () => void
 }) {
   const [events, setEvents] = useState<SwarmEvent[]>([])
   const [eventsLoading, setEventsLoading] = useState(false)
@@ -395,8 +402,21 @@ function SwarmRunCard({
   const [isPublic, setIsPublic] = useState(swarm.public ?? false)
   const [shareLoading, setShareLoading] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [stopping, setStopping] = useState(false)
 
   const isActive = swarm.status === "running" || swarm.status === "creating"
+
+  const handleStop = useCallback(async () => {
+    setStopping(true)
+    try {
+      await fetch(`/api/swarm/${swarm.swarm_id}/stop`, { method: "POST" })
+      // Give backend a moment to update status, then refresh the list
+      setTimeout(() => onRefresh(), 1500)
+    } catch {
+      // best-effort
+    }
+    setStopping(false)
+  }, [swarm.swarm_id, onRefresh])
   const shareUrl = `${APP_DOMAIN}/share/swarm/${swarm.swarm_id}`
 
   const toggleVisibility = useCallback(async () => {
@@ -518,6 +538,29 @@ function SwarmRunCard({
                   <span className="hidden xs:inline sm:inline">{statusMeta.label}</span>
                 </span>
 
+                {isActive && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleStop()
+                    }}
+                    disabled={stopping}
+                    className={cn(
+                      "inline-flex items-center justify-center gap-1 h-7 sm:h-8 px-2 sm:px-2.5 rounded-lg border text-xs font-medium transition-all duration-200",
+                      "border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500/20 hover:border-red-500/40",
+                      "disabled:opacity-50 disabled:cursor-not-allowed"
+                    )}
+                    title="Stop this swarm"
+                  >
+                    {stopping ? (
+                      <CircleNotch className="size-3 animate-spin" />
+                    ) : (
+                      <Stop className="size-3" weight="fill" />
+                    )}
+                    <span className="hidden sm:inline">{stopping ? "Stopping" : "Stop"}</span>
+                  </button>
+                )}
+
                 <SharePopover
                   swarm={swarm}
                   isPublic={isPublic}
@@ -589,15 +632,20 @@ function SwarmRunCard({
                   <p className="text-xs text-muted-foreground">No event logs recorded</p>
                 </div>
               ) : (
-                <SwarmTree
-                  events={events}
-                  machineCount={swarm.machine_count}
-                  prompt={swarm.prompt}
-                  status={swarm.status}
-                  className="rounded-b-xl"
-                  containerClassName="rounded-b-xl"
-                  height={Math.min(600, Math.max(260, swarm.machine_count * 60 + 200))}
-                />
+                <>
+                  <SwarmTree
+                    events={events}
+                    machineCount={swarm.machine_count}
+                    prompt={swarm.prompt}
+                    status={swarm.status}
+                    className="rounded-b-xl"
+                    containerClassName="rounded-b-xl"
+                    height={Math.min(600, Math.max(260, swarm.machine_count * 60 + 200))}
+                  />
+                  {swarm.result_summary && swarm.status === "completed" && (
+                    <SwarmRunSummary summary={swarm.result_summary} />
+                  )}
+                </>
               )}
             </div>
           </motion.div>
@@ -826,6 +874,146 @@ function SharePopover({
           document.body
         )}
     </>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Swarm run summary — markdown + download
+// ---------------------------------------------------------------------------
+
+function SwarmRunSummary({ summary }: { summary: string }) {
+  const handleDownloadMd = useCallback(() => {
+    const blob = new Blob([summary], { type: "text/markdown;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `swarm-summary-${new Date().toISOString().slice(0, 10)}.md`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, [summary])
+
+  const handleDownloadPdf = useCallback(() => {
+    const date = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    const time = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+    const win = window.open("", "_blank")
+    if (!win) return
+    win.document.write(`
+      <html><head><title>Swarm Report - Coasty</title>
+      <style>
+        @page { margin: 0; size: A4; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif; max-width: 100%; margin: 0; padding: 0; color: #1d1d1f; font-size: 13px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+
+        /* ── Cover header ── */
+        .cover { padding: 56px 56px 0 56px; }
+        .cover-top { display: flex; align-items: center; gap: 10px; margin-bottom: 40px; }
+        .logo-mark { width: 32px; height: 32px; background: linear-gradient(145deg, #f97316, #fb923c, #fdba74); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 15px; box-shadow: 0 1px 3px rgba(249,115,22,0.3); }
+        .logo-text { font-size: 15px; font-weight: 500; color: #86868b; letter-spacing: -0.2px; }
+        .logo-text b { color: #1d1d1f; font-weight: 600; }
+        .cover-title { font-size: 34px; font-weight: 700; letter-spacing: -0.8px; color: #1d1d1f; line-height: 1.15; margin-bottom: 8px; }
+        .cover-subtitle { font-size: 13px; color: #86868b; font-weight: 400; letter-spacing: 0.2px; }
+        .cover-divider { height: 1px; background: linear-gradient(90deg, #e5e5ea 0%, transparent 100%); margin-top: 32px; }
+
+        /* ── Content ── */
+        .content { padding: 28px 56px 40px 56px; }
+        h2 { font-size: 18px; font-weight: 600; margin-top: 32px; margin-bottom: 8px; color: #1d1d1f; letter-spacing: -0.3px; padding-bottom: 6px; border-bottom: 1px solid #f2f2f7; }
+        h2:first-child { margin-top: 0; }
+        h3 { font-size: 14px; font-weight: 600; margin-top: 22px; margin-bottom: 4px; color: #3a3a3c; letter-spacing: -0.1px; }
+        p { margin: 8px 0; color: #3a3a3c; }
+        code { background: #f5f5f7; padding: 2px 7px; border-radius: 5px; font-size: 11.5px; font-family: "SF Mono", "Fira Code", "Consolas", monospace; color: #1d1d1f; }
+        blockquote { border-left: 3px solid #f97316; margin: 16px 0; padding: 10px 20px; color: #6e6e73; font-size: 12.5px; background: #fffbf5; border-radius: 0 8px 8px 0; }
+        ul { padding-left: 20px; margin: 8px 0; }
+        li { margin: 5px 0; color: #3a3a3c; }
+        li::marker { color: #c7c7cc; }
+        strong { color: #1d1d1f; font-weight: 600; }
+        hr { border: none; height: 1px; background: #e5e5ea; margin: 24px 0; }
+
+        /* ── Footer ── */
+        .footer { margin-top: 48px; padding: 20px 56px 36px 56px; border-top: 1px solid #e5e5ea; display: flex; align-items: center; justify-content: space-between; }
+        .footer-left { display: flex; align-items: center; gap: 8px; }
+        .footer-dot { width: 6px; height: 6px; background: linear-gradient(135deg, #f97316, #fb923c); border-radius: 50%; }
+        .footer-text { font-size: 10.5px; color: #aeaeb2; font-weight: 400; letter-spacing: 0.3px; }
+        .footer-text a { color: #f97316; text-decoration: none; font-weight: 500; }
+        .footer-right { font-size: 10px; color: #c7c7cc; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 500; }
+
+        @media print {
+          body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+          .cover, .content { break-inside: avoid; }
+          h2 { break-after: avoid; }
+          h3 { break-after: avoid; }
+          blockquote { break-inside: avoid; }
+        }
+      </style></head><body>
+
+      <div class="cover">
+        <div class="cover-top">
+          <div class="logo-mark">C</div>
+          <div class="logo-text"><b>coasty</b>.ai</div>
+        </div>
+        <div class="cover-title">Swarm Report</div>
+        <div class="cover-subtitle">${date} at ${time}</div>
+        <div class="cover-divider"></div>
+      </div>
+
+      <div class="content">
+      ${summary.replace(/^## (.*$)/gm, "<h2>$1</h2>")
+        .replace(/^### (.*$)/gm, "<h3>$1</h3>")
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/`(.*?)`/g, "<code>$1</code>")
+        .replace(/^- (.*$)/gm, "<li>$1</li>")
+        .replace(/(<li>.*<\/li>)/gs, "<ul>$1</ul>")
+        .replace(/^> (.*$)/gm, "<blockquote>$1</blockquote>")
+        .replace(/\n\n/g, "<br/><br/>")
+      }
+      </div>
+
+      <div class="footer">
+        <div class="footer-left">
+          <div class="footer-dot"></div>
+          <div class="footer-text">Generated by <a href="https://coasty.ai">coasty.ai</a></div>
+        </div>
+        <div class="footer-right">AI Swarm Intelligence</div>
+      </div>
+
+      </body></html>
+    `)
+    win.document.close()
+    win.print()
+  }, [summary])
+
+  return (
+    <div className="border-t border-border/20 bg-muted/20">
+      <div className="flex items-center justify-between px-4 sm:px-5 pt-4 pb-2">
+        <p className="text-sm font-semibold text-orange-500 dark:text-orange-400 uppercase tracking-widest">
+          Summary
+        </p>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleDownloadMd}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground/70 hover:text-foreground/80 bg-muted/60 hover:bg-muted rounded-full px-3 py-1.5 transition-colors"
+            title="Download as markdown"
+          >
+            <DownloadSimple className="size-3.5" />
+            Markdown
+          </button>
+          <button
+            onClick={handleDownloadPdf}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground/70 hover:text-foreground/80 bg-muted/60 hover:bg-muted rounded-full px-3 py-1.5 transition-colors"
+            title="Download as PDF"
+          >
+            <FilePdf className="size-3.5" />
+            PDF
+          </button>
+        </div>
+      </div>
+      <div className="px-4 sm:px-5 pb-4">
+        <div className="prose prose-sm dark:prose-invert max-w-none text-xs leading-relaxed text-foreground/70 [&_h2]:text-sm [&_h2]:font-semibold [&_h2]:text-foreground/90 [&_h2]:mt-3 [&_h2]:mb-1.5 [&_h3]:text-xs [&_h3]:font-semibold [&_h3]:text-foreground/80 [&_h3]:mt-2 [&_h3]:mb-1 [&_p]:my-1 [&_ul]:my-1 [&_ul]:pl-4 [&_li]:my-0.5 [&_blockquote]:my-1.5 [&_blockquote]:border-border/30 [&_blockquote]:text-muted-foreground [&_blockquote]:bg-muted/30 [&_blockquote]:rounded-md [&_blockquote]:px-3 [&_blockquote]:py-1.5 [&_code]:text-[11px] [&_code]:bg-muted/50 [&_code]:text-foreground/60 [&_strong]:text-foreground/90">
+          <Markdown>{summary}</Markdown>
+        </div>
+      </div>
+    </div>
   )
 }
 

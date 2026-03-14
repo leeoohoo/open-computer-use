@@ -1,10 +1,11 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { CircleNotch, GitFork, Robot, Stop, CheckCircle, XCircle, Warning } from "@phosphor-icons/react"
+import { CircleNotch, GitFork, Robot, Stop, CheckCircle, XCircle, Warning, DownloadSimple } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { Markdown } from "@/components/prompt-kit/markdown"
 import { SwarmTree, stripAgentTags, type SwarmEvent } from "@/app/components/swarms/swarm-tree"
 
 // ---------------------------------------------------------------------------
@@ -66,75 +67,12 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
   // Ref to always call the latest handleChunk from the long-running stream loop
   const handleChunkRef = useRef<(code: string, chunk: SwarmChunk) => void>(() => {})
 
-  // Start listening to the swarm SSE stream
-  const startListening = useCallback(async () => {
-    if (!swarmId || !isActive) return
-
-    setOverallStatus("creating")
-    setError(null)
-    setMachines([])
-    setSwarmEvents([])
-    eventIdCounter.current = 0
-
-    try {
-      const res = await fetch("/api/swarm", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, machineCount }),
-      })
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({ error: "Swarm request failed" }))
-        setError(errData.error || `HTTP ${res.status}`)
-        setOverallStatus("failed")
-        return
-      }
-
-      const reader = res.body?.getReader()
-      if (!reader) {
-        setError("No response stream")
-        setOverallStatus("failed")
-        return
-      }
-
-      eventSourceRef.current = reader
-      const decoder = new TextDecoder()
-      let buffer = ""
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split("\n\n")
-        buffer = lines.pop() || ""
-
-        for (const line of lines) {
-          if (!line.trim()) continue
-          const colonIdx = line.indexOf(":")
-          if (colonIdx < 0) continue
-
-          const code = line.substring(0, colonIdx)
-          const dataStr = line.substring(colonIdx + 1)
-
-          try {
-            const chunk: SwarmChunk = JSON.parse(dataStr)
-            handleChunkRef.current(code, chunk)
-          } catch {
-            // skip non-JSON
-          }
-        }
-      }
-
-      // Stream ended
-      setOverallStatus((prev) => (prev === "running" ? "completed" : prev))
-    } catch (e: any) {
-      if (e.name !== "AbortError") {
-        setError(e.message || "Stream error")
-        setOverallStatus("failed")
-      }
-    }
-  }, [swarmId, isActive, prompt, machineCount])
+  // Capture props in refs so the stream loop always reads the latest values
+  // without needing to be in the useEffect dependency array.
+  const promptRef = useRef(prompt)
+  promptRef.current = prompt
+  const machineCountRef = useRef(machineCount)
+  machineCountRef.current = machineCount
 
   // Convert SSE chunk to SwarmEvent and accumulate
   const appendSwarmEvent = useCallback((eventType: string, chunk: SwarmChunk) => {
@@ -276,18 +214,104 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
   // Keep the ref in sync so the long-running stream loop always calls the latest version
   handleChunkRef.current = handleChunk
 
+  // Launch the swarm stream ONCE when isActive+swarmId become truthy.
+  // We inline the fetch here instead of depending on a useCallback, because
+  // putting the callback in the dep array caused re-fires whenever prompt or
+  // machineCount changed reference — leading to duplicate POST /api/swarm calls
+  // that created two full sets of EC2 machines.
   useEffect(() => {
-    if (isActive && swarmId) {
-      startListening()
-    }
+    if (!isActive || !swarmId) return
+
+    const abortController = new AbortController()
+    let cancelled = false
+
+    ;(async () => {
+      setOverallStatus("creating")
+      setError(null)
+      setMachines([])
+      setSwarmEvents([])
+      eventIdCounter.current = 0
+
+      try {
+        const res = await fetch("/api/swarm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: promptRef.current,
+            machineCount: machineCountRef.current,
+          }),
+          signal: abortController.signal,
+        })
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({ error: "Swarm request failed" }))
+          if (!cancelled) {
+            setError(errData.error || `HTTP ${res.status}`)
+            setOverallStatus("failed")
+          }
+          return
+        }
+
+        const reader = res.body?.getReader()
+        if (!reader) {
+          if (!cancelled) {
+            setError("No response stream")
+            setOverallStatus("failed")
+          }
+          return
+        }
+
+        eventSourceRef.current = reader
+        const decoder = new TextDecoder()
+        let buffer = ""
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+
+          buffer += decoder.decode(value, { stream: true })
+          const lines = buffer.split("\n\n")
+          buffer = lines.pop() || ""
+
+          for (const line of lines) {
+            if (!line.trim()) continue
+            const colonIdx = line.indexOf(":")
+            if (colonIdx < 0) continue
+
+            const code = line.substring(0, colonIdx)
+            const dataStr = line.substring(colonIdx + 1)
+
+            try {
+              const chunk: SwarmChunk = JSON.parse(dataStr)
+              handleChunkRef.current(code, chunk)
+            } catch {
+              // skip non-JSON
+            }
+          }
+        }
+
+        // Stream ended
+        if (!cancelled) {
+          setOverallStatus((prev) => (prev === "running" ? "completed" : prev))
+        }
+      } catch (e: any) {
+        if (e.name !== "AbortError" && !cancelled) {
+          setError(e.message || "Stream error")
+          setOverallStatus("failed")
+        }
+      }
+    })()
 
     return () => {
+      cancelled = true
+      abortController.abort()
       if (eventSourceRef.current) {
-        eventSourceRef.current.cancel()
+        eventSourceRef.current.cancel().catch(() => {})
         eventSourceRef.current = null
       }
     }
-  }, [isActive, swarmId, startListening])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive, swarmId])
 
   const handleStop = useCallback(async () => {
     if (swarmId) {
@@ -464,14 +488,7 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
 
         {/* Aggregated summary */}
         {swarmSummary && (
-          <div className="shrink-0 px-4 py-3 bg-purple-50/40 dark:bg-purple-950/15 border-t border-purple-200/25 dark:border-purple-800/25">
-            <p className="text-[10px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-widest mb-1.5">
-              Summary
-            </p>
-            <p className="text-xs text-foreground/80 whitespace-pre-wrap leading-relaxed">
-              {swarmSummary}
-            </p>
-          </div>
+          <SwarmSummaryBlock summary={swarmSummary} />
         )}
 
         {/* Completion footer */}
@@ -489,6 +506,47 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
             </p>
           </div>
         )}
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Swarm summary block — markdown + download
+// ---------------------------------------------------------------------------
+
+function SwarmSummaryBlock({ summary }: { summary: string }) {
+  const handleDownload = useCallback(() => {
+    const blob = new Blob([summary], { type: "text/markdown;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `swarm-summary-${new Date().toISOString().slice(0, 10)}.md`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, [summary])
+
+  return (
+    <div className="shrink-0 border-t border-purple-200/25 dark:border-purple-800/25 bg-purple-50/40 dark:bg-purple-950/15">
+      <div className="flex items-center justify-between px-4 pt-3 pb-1.5">
+        <p className="text-[10px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-widest">
+          Summary
+        </p>
+        <button
+          onClick={handleDownload}
+          className="inline-flex items-center gap-1 text-[10px] font-medium text-purple-500/70 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+          title="Download as markdown"
+        >
+          <DownloadSimple className="size-3" />
+          .md
+        </button>
+      </div>
+      <div className="px-4 pb-3">
+        <div className="prose prose-sm dark:prose-invert max-w-none text-xs leading-relaxed [&_h2]:text-sm [&_h2]:font-semibold [&_h2]:mt-3 [&_h2]:mb-1.5 [&_h3]:text-xs [&_h3]:font-semibold [&_h3]:mt-2 [&_h3]:mb-1 [&_p]:my-1 [&_ul]:my-1 [&_ul]:pl-4 [&_li]:my-0.5 [&_blockquote]:my-1.5 [&_blockquote]:border-amber-500/40 [&_blockquote]:text-amber-700 [&_blockquote]:dark:text-amber-400 [&_blockquote]:bg-amber-50/50 [&_blockquote]:dark:bg-amber-950/20 [&_blockquote]:rounded-md [&_blockquote]:px-3 [&_blockquote]:py-1.5 [&_code]:text-[11px] [&_code]:bg-purple-100/50 [&_code]:dark:bg-purple-900/30 [&_strong]:text-foreground">
+          <Markdown>{summary}</Markdown>
+        </div>
       </div>
     </div>
   )

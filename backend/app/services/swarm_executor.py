@@ -280,15 +280,16 @@ class SwarmExecutor:
             "Given a user's task and a number of available machines, break the task "
             "into exactly that many independent subtasks that can run in parallel.\n\n"
             "Rules:\n"
+            "- Each subtask must be a plain, human-readable instruction describing what to do on the computer's desktop\n"
+            "- Write subtasks as GUI actions (e.g. 'Open Google Chrome and search for X', 'Navigate to Y website and extract Z')\n"
+            "- Do NOT include any API calls, function names, or code references in the subtask text\n"
+            "- Do NOT mention shared_memory, swarm_messages, or any internal coordination APIs — "
+            "those are handled automatically by the system\n"
             "- Each subtask must be self-contained and actionable on its own computer\n"
             "- Include all necessary context in each subtask\n"
             "- Subtasks should divide the work efficiently (not duplicate it)\n"
             "- If the task naturally has fewer parts than machines, assign supplementary "
-            "tasks (verification, documentation, alternative approaches)\n"
-            "- Each subtask should mention it can use shared memory "
-            "(read_shared_memory/write_shared_memory) to coordinate with other machines, "
-            "and swarm messaging (send_swarm_message/broadcast_swarm_message/read_swarm_messages) "
-            "to communicate with teammates\n\n"
+            "tasks (verification, documentation, alternative approaches)\n\n"
             f"Return ONLY a JSON array of exactly {n} strings. No other text."
         )
 
@@ -342,12 +343,16 @@ class SwarmExecutor:
         system_prompt = (
             "You are a results aggregator for a multi-agent swarm system. "
             "Multiple machines worked on subtasks of a larger goal in parallel. "
-            "Synthesize their results into a clear, unified summary.\n\n"
-            "Rules:\n"
-            "- Highlight key findings from each machine\n"
-            "- Note any conflicts or inconsistencies between results\n"
-            "- Provide a cohesive overall conclusion\n"
-            "- Keep the summary concise but comprehensive"
+            "Synthesize their results into a clear, well-structured markdown summary.\n\n"
+            "Format rules:\n"
+            "- Start with a one-line **Overview** that captures the outcome in a sentence\n"
+            "- Use a ## heading for each machine's contribution (e.g. '## Machine 1 — <subtask>')\n"
+            "- Under each machine heading, use bullet points for key findings\n"
+            "- End with a ## Conclusion section that synthesizes the overall result\n"
+            "- If any machine failed or had issues, note it clearly with a > blockquote\n"
+            "- Use **bold** for important values, `code` for technical terms\n"
+            "- Keep the summary concise — no fluff, just findings and conclusions\n"
+            "- Do NOT use h1 (#) headings — start at h2 (##)"
         )
 
         results_text = []
@@ -476,6 +481,64 @@ class SwarmExecutor:
                     connection_info.get("vnc_password"),
                 )
 
+            # Wait until the VM screen is actually ready (not black/blank).
+            # Freshly created EC2 machines may still be booting when the swarm
+            # starts; a black screenshot causes the agent to fall back to the
+            # code agent instead of using the desktop.
+            max_screen_checks = 10
+            screen_ready = False
+            for check_idx in range(max_screen_checks):
+                try:
+                    result = await vm_control_service.execute_command(
+                        machine_id, "screenshot", {}
+                    )
+                    if result and result.get("screenshot"):
+                        import base64
+                        from io import BytesIO
+                        from PIL import Image
+
+                        screenshot_b64 = result["screenshot"]
+                        if "," in screenshot_b64:
+                            screenshot_b64 = screenshot_b64.split(",", 1)[1]
+                        raw_bytes = base64.b64decode(screenshot_b64)
+                        image = Image.open(BytesIO(raw_bytes))
+                        # Check if the image is mostly black/blank
+                        small = image.resize((32, 32)).convert("L")
+                        pixels = list(small.getdata())
+                        avg_brightness = sum(pixels) / len(pixels)
+                        if avg_brightness > 15:  # Not a black screen
+                            screen_ready = True
+                            logger.info(
+                                f"Swarm machine {index} ({machine_id}): screen ready "
+                                f"(brightness={avg_brightness:.1f}, check {check_idx + 1})"
+                            )
+                            break
+                        else:
+                            logger.info(
+                                f"Swarm machine {index} ({machine_id}): screen still dark "
+                                f"(brightness={avg_brightness:.1f}), waiting... "
+                                f"({check_idx + 1}/{max_screen_checks})"
+                            )
+                    else:
+                        logger.info(
+                            f"Swarm machine {index} ({machine_id}): no screenshot yet, waiting... "
+                            f"({check_idx + 1}/{max_screen_checks})"
+                        )
+                except Exception as e:
+                    logger.warning(
+                        f"Swarm machine {index} ({machine_id}): screenshot check failed: {e}, "
+                        f"waiting... ({check_idx + 1}/{max_screen_checks})"
+                    )
+
+                if check_idx < max_screen_checks - 1:
+                    await asyncio.sleep(5)
+
+            if not screen_ready:
+                logger.warning(
+                    f"Swarm machine {index} ({machine_id}): screen not ready after "
+                    f"{max_screen_checks} checks, proceeding anyway"
+                )
+
             # Build context that tells the agent about swarm coordination
             # Include the FULL team plan so each machine knows what everyone is doing
             all_subtasks = self.swarm_memory.get_all_subtasks()
@@ -485,11 +548,13 @@ class SwarmExecutor:
                 team_plan_lines.append(f"  Machine {si}: {st}{marker}")
             team_plan = "\n".join(team_plan_lines)
 
-            swarm_context = (
+            # Separate the subtask (user_request) from coordination info (context)
+            # so that TASK_DESCRIPTION in the worker system prompt only contains
+            # the actual subtask — not the full swarm coordination blob.
+            swarm_coordination_context = (
                 f"You are Machine {index} in a {len(self.machines)}-machine swarm working together on a shared goal.\n\n"
                 f"OVERALL GOAL: {self.prompt}\n\n"
                 f"TEAM PLAN (all machines):\n{team_plan}\n\n"
-                f"YOUR SUBTASK: {subtask}\n\n"
                 f"COORDINATION:\n"
                 f"- Your teammates' recent progress will be automatically shown to you as [TEAM UPDATE] notes.\n"
                 f"  Use these to stay aware of what others have found — adapt your approach if relevant.\n"
@@ -515,7 +580,7 @@ class SwarmExecutor:
                 machine_index=index,
             )
 
-            async for chunk in executor.stream_execution(swarm_context):
+            async for chunk in executor.stream_execution(subtask, context=swarm_coordination_context):
                 if self._cancel_event.is_set():
                     break
 
