@@ -19,6 +19,7 @@ export function LandingFooter() {
               { href: "/results", label: "Case Studies" },
               { href: "/blog", label: "Blog" },
               { href: "/download", label: "Download" },
+              { href: "/status", label: "Status" },
               { href: "/privacy", label: "Privacy" },
               { href: "/terms", label: "Terms" },
               { href: "https://cal.com/coasty/15min", label: "Talk to Cofounders" },

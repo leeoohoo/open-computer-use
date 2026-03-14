@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Play } from "lucide-react"
+import { ArrowRight, Play, Video } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
@@ -181,7 +181,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
         </div>
 
         {/* CTA + cost */}
-        <div className={cn("mt-8 flex flex-col items-center gap-3", isMobile ? "mt-6" : "mt-8")}>
+        <div className={cn("mt-8 flex items-center justify-center gap-3", isMobile ? "mt-6 flex-col" : "mt-8 flex-row")}>
           <Link href="/auth">
             <motion.button
               className={cn(
@@ -198,6 +198,19 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               <ArrowRight className="h-4 w-4" />
             </motion.button>
           </Link>
+          <a href="https://cal.com/coasty/15min" target="_blank" rel="noopener noreferrer">
+            <motion.button
+              className={cn(
+                "inline-flex items-center gap-2.5 rounded-full font-semibold cursor-pointer border border-border/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors",
+                isMobile ? "px-6 py-3 text-sm" : "px-8 py-3.5 text-[15px]"
+              )}
+              whileHover={{ scale: 1.02, y: -1 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Video className="h-4 w-4" />
+              Talk to Cofounders
+            </motion.button>
+          </a>
         </div>
       </div>
 
