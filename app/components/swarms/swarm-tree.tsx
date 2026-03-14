@@ -16,12 +16,70 @@ import {
   Wrench,
   MagnifyingGlassPlus,
   MagnifyingGlassMinus,
+  MagnifyingGlass,
   ArrowsOutCardinal,
   ArrowCounterClockwise,
+  Globe,
+  GridFour,
+  X,
 } from "@phosphor-icons/react"
 import { AnimatePresence, motion } from "motion/react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
+
+// ---------------------------------------------------------------------------
+// Web search result parsing
+// ---------------------------------------------------------------------------
+
+interface WebSearchBlock {
+  query: string
+  results: Array<{ title: string; url: string; snippet: string }>
+}
+
+/**
+ * Detect and extract [WEB SEARCH: "query"] blocks from text.
+ * Returns { searches, remainingText } where searches is an array of parsed
+ * search blocks and remainingText has those blocks removed.
+ */
+function extractWebSearches(text: string): {
+  searches: WebSearchBlock[]
+  remainingText: string
+} {
+  const searches: WebSearchBlock[] = []
+  // Match [WEB SEARCH: "query"] followed by numbered results until next block or end
+  const searchBlockRegex = /\[WEB SEARCH:\s*"([^"]+)"\]\n?([\s\S]*?)(?=\[WEB SEARCH:|$)/g
+  let match: RegExpExecArray | null
+  let hasMatch = false
+
+  while ((match = searchBlockRegex.exec(text)) !== null) {
+    hasMatch = true
+    const query = match[1]
+    const body = match[2].trim()
+    const results: WebSearchBlock["results"] = []
+
+    // Parse numbered results: "1. Title\n   URL: ...\n   snippet"
+    const resultRegex = /\d+\.\s*(.+?)(?:\n\s+URL:\s*(\S+))?(?:\n\s+(.+?))?(?=\n\d+\.|$)/g
+    let rMatch: RegExpExecArray | null
+    while ((rMatch = resultRegex.exec(body)) !== null) {
+      results.push({
+        title: rMatch[1]?.trim() || "",
+        url: rMatch[2]?.trim() || "",
+        snippet: rMatch[3]?.trim() || "",
+      })
+    }
+
+    searches.push({ query, results })
+  }
+
+  if (!hasMatch) return { searches: [], remainingText: text }
+
+  // Remove all search blocks from the text
+  const remainingText = text
+    .replace(/\[WEB SEARCH:\s*"[^"]+"\]\n?[\s\S]*?(?=\[WEB SEARCH:|$)/g, "")
+    .trim()
+
+  return { searches, remainingText }
+}
 
 // ---------------------------------------------------------------------------
 // Types (exported for reuse)
@@ -54,13 +112,11 @@ export interface TimelineStep {
 
 export function stripAgentTags(text: string): string {
   return text
-    .replace(/<cua-section[^>]*>[\s\S]*?<\/cua-section>/g, "")
+    // Strip cua-section tags but KEEP inner content (so tree graph shows plans/reflections)
     .replace(/<cua-section[^>]*>/g, "")
     .replace(/<\/cua-section>/g, "")
-    .replace(/\[TASK_PLAN_START\][\s\S]*?\[TASK_PLAN_END\]/g, "")
     .replace(/\[TASK_PLAN_START\]/g, "")
     .replace(/\[TASK_PLAN_END\]/g, "")
-    .replace(/\[Coasty_REPORT_START\][\s\S]*?\[Coasty_REPORT_END\]/g, "")
     .replace(/\[Coasty_REPORT_START\]/g, "")
     .replace(/\[Coasty_REPORT_END\]/g, "")
     .replace(/<file-attachment[^>]*>[\s\S]*?<\/file-attachment>/g, "")
@@ -180,6 +236,28 @@ export function buildTimelineSteps(events: SwarmEvent[]): TimelineStep[] {
           event.content === "completed" ? "success" : event.content === "cancelled" ? "error" : "pending",
         timestamp: event.created_at,
       })
+    } else if (event.event_type === "swarm_planning") {
+      flush()
+      steps.push({
+        machineIndex: 0,
+        text: event.content || "Task decomposition",
+        toolCalls: [],
+        toolResults: [],
+        screenshot: null,
+        status: "success",
+        timestamp: event.created_at,
+      })
+    } else if (event.event_type === "swarm_summary") {
+      flush()
+      steps.push({
+        machineIndex: 0,
+        text: event.content || "Swarm summary",
+        toolCalls: [],
+        toolResults: [],
+        screenshot: null,
+        status: "success",
+        timestamp: event.created_at,
+      })
     }
   }
 
@@ -254,6 +332,23 @@ export function SwarmTree({
     return s
   }, [events, machineIndices])
 
+  // Collect latest screenshot per machine (for matrix view)
+  const latestScreenshots = useMemo(() => {
+    const map: Record<number, { src: string; toolName: string }> = {}
+    for (const event of events) {
+      if (event.screenshot && event.machine_index !== null) {
+        map[event.machine_index] = {
+          src: event.screenshot,
+          toolName: event.tool_name || event.event_type,
+        }
+      }
+    }
+    return map
+  }, [events])
+
+  const screenshotCount = Object.keys(latestScreenshots).length
+  const [showScreenshotMatrix, setShowScreenshotMatrix] = useState(false)
+
   const cols = machineIndices.length || machineCount
 
   // Pan/zoom state
@@ -266,6 +361,17 @@ export function SwarmTree({
   const panOrigin = useRef({ x: 0, y: 0 })
   const lastPinchDist = useRef<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
+
+  // Auto-pan down as new steps arrive during live execution
+  const prevEventCount = useRef(events.length)
+  const isLive = status === "running" || status === "creating" || status === "planning" || status === "aggregating"
+
+  useEffect(() => {
+    if (isLive && events.length > prevEventCount.current && prevEventCount.current > 0) {
+      setPan((p) => ({ ...p, y: p.y - 28 }))
+    }
+    prevEventCount.current = events.length
+  }, [events.length, isLive])
 
   // Auto-fit on mount + detect mobile
   useEffect(() => {
@@ -426,6 +532,21 @@ export function SwarmTree({
         <span className="text-[10px] tabular-nums text-muted-foreground/50 mr-1 select-none">
           {zoomPercent}%
         </span>
+        {screenshotCount > 0 && (
+          <button
+            onClick={() => setShowScreenshotMatrix((o) => !o)}
+            className={cn(
+              "h-7 px-2 flex items-center justify-center gap-1 rounded-lg border bg-background/90 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-background transition-colors shadow-sm",
+              showScreenshotMatrix
+                ? "border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/5"
+                : "border-border/40"
+            )}
+            title="Screenshot matrix"
+          >
+            <GridFour className="size-3.5" weight={showScreenshotMatrix ? "fill" : "regular"} />
+            <span className="text-[10px] font-medium">{screenshotCount}</span>
+          </button>
+        )}
         <button
           onClick={zoomIn}
           className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-background transition-colors shadow-sm"
@@ -589,6 +710,7 @@ export function SwarmTree({
                       machineIndex={idx}
                       steps={steps}
                       status={mStatus}
+                      isLive={isLive}
                     />
                   </motion.div>
                 )
@@ -597,7 +719,263 @@ export function SwarmTree({
           </div>
         </div>
       </div>
+
+      {/* Live screenshot strip — bottom-right on desktop, auto-visible */}
+      {!isMobile && screenshotCount > 0 && !showScreenshotMatrix && (
+        <div className="absolute bottom-2.5 right-3 z-[10] max-w-[55%]">
+          <div className="flex items-end gap-1.5 justify-end">
+            {machineIndices.map((idx, i) => {
+              const ss = latestScreenshots[idx]
+              if (!ss) return null
+              return (
+                <ScreenshotLiveThumb
+                  key={idx}
+                  machineIndex={idx}
+                  src={ss.src}
+                  status={machineStatuses[idx]}
+                  delay={i * 0.08}
+                />
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Screenshot matrix overlay — fullscreen (toggled via button, or always on mobile when tapped) */}
+      <AnimatePresence>
+        {showScreenshotMatrix && screenshotCount > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 z-[20] flex flex-col"
+          >
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-background/80 backdrop-blur-md"
+              onClick={() => setShowScreenshotMatrix(false)}
+            />
+
+            {/* Content */}
+            <div className="relative z-[1] flex flex-col h-full">
+              {/* Header */}
+              <div className="shrink-0 flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <GridFour className="size-4 text-amber-500" weight="fill" />
+                  <span className="text-sm font-semibold tracking-tight">Machine Screenshots</span>
+                  <span className="text-[10px] text-muted-foreground/60 bg-muted/50 px-1.5 py-0.5 rounded-full">
+                    {screenshotCount} machine{screenshotCount !== 1 ? "s" : ""}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setShowScreenshotMatrix(false)}
+                  className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 text-muted-foreground hover:text-foreground hover:bg-background transition-colors"
+                >
+                  <X className="size-3.5" />
+                </button>
+              </div>
+
+              {/* Grid */}
+              <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-4">
+                <div
+                  className="grid gap-3"
+                  style={{
+                    gridTemplateColumns: `repeat(${Math.min(screenshotCount, 3)}, minmax(0, 1fr))`,
+                  }}
+                >
+                  {machineIndices.map((idx, i) => {
+                    const ss = latestScreenshots[idx]
+                    if (!ss) return null
+                    return (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, y: 12, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ duration: 0.35, delay: i * 0.06, ease: EASE }}
+                      >
+                        <ScreenshotMatrixCard
+                          machineIndex={idx}
+                          src={ss.src}
+                          toolName={ss.toolName}
+                          status={machineStatuses[idx]}
+                        />
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Screenshot matrix card — single machine screenshot in the grid
+// ---------------------------------------------------------------------------
+
+function ScreenshotMatrixCard({
+  machineIndex,
+  src,
+  toolName,
+  status,
+}: {
+  machineIndex: number
+  src: string
+  toolName: string
+  status: "success" | "error" | "pending"
+}) {
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+
+  return (
+    <>
+      <div
+        className={cn(
+          "group rounded-xl border overflow-hidden transition-all cursor-pointer shadow-sm hover:shadow-md",
+          status === "success"
+            ? "border-emerald-500/20 hover:border-emerald-500/40"
+            : status === "error"
+              ? "border-red-500/20 hover:border-red-500/40"
+              : "border-border/40 hover:border-border/60"
+        )}
+        onClick={() => setLightboxOpen(true)}
+        data-no-pan
+      >
+        {/* Machine label bar */}
+        <div className={cn(
+          "flex items-center justify-between px-2.5 py-1.5",
+          status === "success"
+            ? "bg-emerald-50/60 dark:bg-emerald-950/20"
+            : status === "error"
+              ? "bg-red-50/60 dark:bg-red-950/20"
+              : "bg-muted/30"
+        )}>
+          <div className="flex items-center gap-1.5">
+            <Monitor className="size-3 text-muted-foreground/70" />
+            <span className="text-[11px] font-medium">Machine #{machineIndex + 1}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            {status === "success" && <CheckCircle className="size-3 text-emerald-500" weight="fill" />}
+            {status === "error" && <XCircle className="size-3 text-red-500" weight="fill" />}
+            {status === "pending" && <CircleNotch className="size-3 text-blue-500 animate-spin" />}
+          </div>
+        </div>
+
+        {/* Screenshot */}
+        <div className="relative bg-black/5 dark:bg-white/5">
+          <img
+            src={src}
+            alt={`Machine #${machineIndex + 1}`}
+            className="w-full aspect-video object-cover group-hover:scale-[1.02] transition-transform duration-300"
+            draggable={false}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute bottom-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="inline-flex items-center gap-1 text-[9px] text-white/90 bg-black/50 backdrop-blur-sm rounded-md px-1.5 py-0.5">
+              <MagnifyingGlassPlus className="size-2.5" />
+              View
+            </span>
+          </div>
+        </div>
+
+        {/* Last action label */}
+        <div className="px-2.5 py-1.5 border-t border-border/20 bg-background/60">
+          <p className="text-[10px] text-muted-foreground/60 truncate">
+            {toolName}
+          </p>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {lightboxOpen && <ScreenshotLightbox src={src} onClose={() => setLightboxOpen(false)} />}
+      </AnimatePresence>
+    </>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Live screenshot thumbnail — persistent bottom-right strip on desktop
+// ---------------------------------------------------------------------------
+
+function ScreenshotLiveThumb({
+  machineIndex,
+  src,
+  status,
+  delay,
+}: {
+  machineIndex: number
+  src: string
+  status: "success" | "error" | "pending"
+  delay: number
+}) {
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 10, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.4, delay, ease: EASE }}
+        className="group relative cursor-pointer"
+        onClick={() => setLightboxOpen(true)}
+        data-no-pan
+      >
+        <div
+          className={cn(
+            "rounded-lg overflow-hidden border shadow-lg transition-all",
+            "hover:shadow-xl hover:scale-105 hover:z-10",
+            "w-[120px]",
+            status === "success"
+              ? "border-emerald-500/30 ring-1 ring-emerald-500/10"
+              : status === "error"
+                ? "border-red-500/30 ring-1 ring-red-500/10"
+                : "border-border/50 ring-1 ring-border/10"
+          )}
+        >
+          {/* Screenshot image */}
+          <div className="relative bg-black/5 dark:bg-white/5">
+            <img
+              src={src}
+              alt={`Machine #${machineIndex + 1}`}
+              className="w-full aspect-video object-cover"
+              draggable={false}
+            />
+            {/* Status indicator dot */}
+            <div className="absolute top-1 left-1">
+              {status === "pending" && (
+                <span className="relative flex size-2">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-blue-500 opacity-60" />
+                  <span className="relative inline-flex size-2 rounded-full bg-blue-500" />
+                </span>
+              )}
+              {status === "success" && (
+                <span className="inline-flex size-2 rounded-full bg-emerald-500 ring-1 ring-white/30" />
+              )}
+              {status === "error" && (
+                <span className="inline-flex size-2 rounded-full bg-red-500 ring-1 ring-white/30" />
+              )}
+            </div>
+          </div>
+
+          {/* Label */}
+          <div className="px-1.5 py-1 bg-background/90 backdrop-blur-sm border-t border-border/20">
+            <div className="flex items-center gap-1">
+              <Monitor className="size-2.5 text-muted-foreground/60 shrink-0" />
+              <span className="text-[9px] font-medium text-muted-foreground/80 truncate">
+                #{machineIndex + 1}
+              </span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      <AnimatePresence>
+        {lightboxOpen && <ScreenshotLightbox src={src} onClose={() => setLightboxOpen(false)} />}
+      </AnimatePresence>
+    </>
   )
 }
 
@@ -609,11 +987,33 @@ function MachineBranch({
   machineIndex,
   steps,
   status,
+  isLive,
 }: {
   machineIndex: number
   steps: TimelineStep[]
   status: "success" | "error" | "pending"
+  isLive: boolean
 }) {
+  // Track how many steps have been seen so only truly new steps get entrance animation
+  const seenSteps = useRef(0)
+  const isFirstRender = useRef(true)
+
+  useEffect(() => {
+    // After first render, mark initial steps as seen so they don't re-animate
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      seenSteps.current = steps.length
+    }
+  }, [])
+
+  useEffect(() => {
+    // Update seen count after render so the animation has a chance to play
+    const timer = setTimeout(() => {
+      seenSteps.current = steps.length
+    }, 50)
+    return () => clearTimeout(timer)
+  }, [steps.length])
+
   return (
     <div className="flex flex-col items-center">
       <div
@@ -637,17 +1037,31 @@ function MachineBranch({
 
       {steps.length > 0 && (
         <div className="relative w-full mt-0 pt-2">
-          <div
-            className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2"
+          {/* Animated dashed connector line — grows from top */}
+          <motion.div
+            className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 origin-top"
             style={{
               backgroundImage:
                 "repeating-linear-gradient(to bottom, hsl(var(--border) / 0.35) 0px, hsl(var(--border) / 0.35) 4px, transparent 4px, transparent 8px)",
             }}
+            initial={{ scaleY: 0, opacity: 0 }}
+            animate={{ scaleY: 1, opacity: 1 }}
+            transition={{ duration: 0.8, ease: EASE }}
           />
           <div className="relative flex flex-col gap-2 items-center">
-            {steps.map((step, i) => (
-              <BranchStepCard key={i} step={step} index={i} />
-            ))}
+            {steps.map((step, i) => {
+              // For history load: stagger all cards. For live: only animate genuinely new steps.
+              const isNew = i >= seenSteps.current
+              return (
+                <BranchStepCard
+                  key={`${machineIndex}-${i}-${step.timestamp}`}
+                  step={step}
+                  index={i}
+                  animateEntrance={isFirstRender.current || isNew}
+                  staggerDelay={isFirstRender.current ? i * 0.06 : 0}
+                />
+              )
+            })}
           </div>
         </div>
       )}
@@ -663,16 +1077,36 @@ function MachineBranch({
 // Branch step card
 // ---------------------------------------------------------------------------
 
-function BranchStepCard({ step, index }: { step: TimelineStep; index: number }) {
+function BranchStepCard({
+  step,
+  index,
+  animateEntrance = true,
+  staggerDelay = 0,
+}: {
+  step: TimelineStep
+  index: number
+  animateEntrance?: boolean
+  staggerDelay?: number
+}) {
   const [detailsOpen, setDetailsOpen] = useState(false)
   const hasScreenshot = !!step.screenshot
   const hasDetails = step.toolCalls.length > 0 || step.toolResults.length > 0
 
+  // Parse web search blocks from text
+  const { searches, remainingText } = useMemo(
+    () => (step.text ? extractWebSearches(step.text) : { searches: [], remainingText: step.text }),
+    [step.text]
+  )
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2, delay: index * 0.03 }}
+      initial={animateEntrance ? { opacity: 0, y: 18, scale: 0.92 } : false}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{
+        duration: 0.45,
+        delay: staggerDelay,
+        ease: EASE,
+      }}
       className="relative w-full z-[1]"
     >
       <div className="absolute left-1/2 -top-1 -translate-x-1/2 z-[2]">
@@ -698,8 +1132,16 @@ function BranchStepCard({ step, index }: { step: TimelineStep; index: number }) 
           "border-border/30 bg-background/85 backdrop-blur-sm hover:border-border/50 hover:bg-background/95"
         )}
       >
-        {step.text && (
-          <p className="text-[12px] leading-relaxed text-foreground/85 line-clamp-3">{step.text}</p>
+        {remainingText && (
+          <p className="text-[12px] leading-relaxed text-foreground/85 line-clamp-3">{remainingText}</p>
+        )}
+
+        {searches.length > 0 && (
+          <div className="space-y-1.5 mt-1">
+            {searches.map((search, si) => (
+              <WebSearchCard key={si} search={search} />
+            ))}
+          </div>
         )}
 
         {step.toolResults.length > 0 && (
@@ -789,6 +1231,71 @@ function BranchStepCard({ step, index }: { step: TimelineStep; index: number }) 
         )}
       </div>
     </motion.div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Web Search Card — compact display for search results in tree nodes
+// ---------------------------------------------------------------------------
+
+function WebSearchCard({ search }: { search: WebSearchBlock }) {
+  const [expanded, setExpanded] = useState(false)
+  const resultCount = search.results.length
+
+  return (
+    <div className="rounded-md border border-blue-500/15 bg-blue-50/50 dark:bg-blue-950/20 overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setExpanded((o) => !o)}
+        className="w-full flex items-center gap-1.5 px-2 py-1.5 text-left hover:bg-blue-50/80 dark:hover:bg-blue-950/30 transition-colors"
+      >
+        <MagnifyingGlass className="size-3 text-blue-500 shrink-0" weight="bold" />
+        <span className="text-[11px] font-medium text-blue-700 dark:text-blue-300 truncate flex-1">
+          {search.query}
+        </span>
+        <span className="text-[9px] text-blue-500/60 shrink-0">
+          {resultCount > 0 ? `${resultCount} result${resultCount !== 1 ? "s" : ""}` : "No results"}
+        </span>
+        <CaretRight
+          weight="bold"
+          className={cn(
+            "size-2 text-blue-500/50 shrink-0 transition-transform duration-150",
+            expanded && "rotate-90"
+          )}
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {expanded && resultCount > 0 && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="overflow-hidden"
+          >
+            <div className="px-2 pb-1.5 space-y-1 border-t border-blue-500/10">
+              {search.results.slice(0, 5).map((r, ri) => (
+                <div key={ri} className="pt-1">
+                  <div className="flex items-start gap-1">
+                    <Globe className="size-2.5 text-blue-400/60 shrink-0 mt-0.5" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-foreground/80 leading-tight truncate">
+                        {r.title}
+                      </p>
+                      {r.snippet && (
+                        <p className="text-[9px] text-muted-foreground/50 leading-snug line-clamp-2 mt-0.5">
+                          {r.snippet}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 

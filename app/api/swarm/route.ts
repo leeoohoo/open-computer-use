@@ -369,16 +369,12 @@ export async function POST(req: NextRequest) {
     // Strip ALL internal agent tags/markers from content before saving
     function stripAgentTags(text: string): string {
       return text
-        // <cua-section type="...">...</cua-section> (matched + partial/unclosed)
-        .replace(/<cua-section[^>]*>[\s\S]*?<\/cua-section>/g, "")
+        // Strip cua-section tags but KEEP inner content (so DB events preserve plans/reflections)
         .replace(/<cua-section[^>]*>/g, "")
         .replace(/<\/cua-section>/g, "")
-        // [TASK_PLAN_START]...[TASK_PLAN_END]
-        .replace(/\[TASK_PLAN_START\][\s\S]*?\[TASK_PLAN_END\]/g, "")
+        // Strip markers but keep inner content
         .replace(/\[TASK_PLAN_START\]/g, "")
         .replace(/\[TASK_PLAN_END\]/g, "")
-        // [Coasty_REPORT_START]...[Coasty_REPORT_END]
-        .replace(/\[Coasty_REPORT_START\][\s\S]*?\[Coasty_REPORT_END\]/g, "")
         .replace(/\[Coasty_REPORT_START\]/g, "")
         .replace(/\[Coasty_REPORT_END\]/g, "")
         // <file-attachment .../> and <file-attachment ...>...</file-attachment>

@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
 import { useSearchParams } from "next/navigation"
 import { LandingHeader } from "./landing-header"
+import { LandingFooter } from "./landing-footer"
 import { HeroUseCaseCarousel } from "./hero-use-case-carousel"
 // MockChatDemo moved out of hero — still available for other sections
 // import { MockChatDemo } from "./mock-chat-demo"
@@ -1608,44 +1609,7 @@ export function LandingPage() {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-border/40">
-          <div className={cn(
-            "mx-auto py-10",
-            isMobile ? "px-4 max-w-xl" : "px-6 max-w-5xl"
-          )}>
-            <div className={cn(
-              "flex justify-between items-center",
-              isMobile && "flex-col gap-5"
-            )}>
-              <div className={cn("flex items-center gap-4", isMobile && "flex-col gap-3")}>
-                <p className="text-sm text-muted-foreground/70">
-                  © {new Date().getFullYear()} Coasty
-                </p>
-              </div>
-              <div className={cn("flex items-center gap-5", isMobile && "flex-wrap justify-center")}>
-                {[
-                  { href: "/guide", label: "Guide" },
-                  { href: "/results", label: "Case Studies" },
-                  { href: "/blog", label: "Blog" },
-                  { href: "/download", label: "Download" },
-                  { href: "/status", label: "Status" },
-                  { href: "/privacy", label: "Privacy" },
-                  { href: "/terms", label: "Terms" },
-                  { href: "https://cal.com/coasty/15min", label: "Talk to Cofounders" },
-                  { href: "mailto:founders@coasty.ai", label: "Contact" },
-                ].map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className="text-sm text-muted-foreground/60 hover:text-foreground transition-colors duration-200"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </footer>
+        <LandingFooter />
       </main>
       </div>
     </>

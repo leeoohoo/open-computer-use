@@ -32,7 +32,7 @@ import { QuickStartGuide } from "./quick-start-guide"
 import Link from "next/link"
 import { ShieldCheck } from "lucide-react"
 import { SwarmPanel } from "./swarm-panel"
-import { ActiveSwarmBanner } from "./active-swarm-banner"
+import { ActiveSwarmBanner, type ActiveSwarm } from "./active-swarm-banner"
 
 const handwriting = Caveat({
   subsets: ["latin"],
@@ -475,6 +475,12 @@ export function Chat() {
   const [swarmActive, setSwarmActive] = useState(false)
   const [swarmId, setSwarmId] = useState<string | null>(null)
   const [swarmPrompt, setSwarmPrompt] = useState("")
+  // Track if an existing active swarm was detected on page load
+  const [existingActiveSwarm, setExistingActiveSwarm] = useState<ActiveSwarm | null>(null)
+
+  const handleActiveSwarmDetected = useCallback((swarm: ActiveSwarm | null) => {
+    setExistingActiveSwarm(swarm)
+  }, [])
 
   // Reset swarm mode when entering a chat
   useEffect(() => {
@@ -622,10 +628,14 @@ export function Chat() {
     !!user &&
     !quickStartDismissed
 
+  // Any swarm is taking over the screen (new or returning)
+  const swarmFullscreen = swarmActive || (!!existingActiveSwarm && showOnboarding)
+
   return (
     <div
         className={cn(
-          "@container/main relative flex h-full flex-col items-center justify-end md:justify-center no-scrollbar"
+          "@container/main relative flex h-full flex-col items-center no-scrollbar",
+          swarmFullscreen ? "justify-start" : "justify-end md:justify-center"
         )}
       >
         <DialogAuth open={hasDialogAuth} setOpen={setHasDialogAuth} />
@@ -640,13 +650,13 @@ export function Chat() {
 
       
       <AnimatePresence initial={false} mode="popLayout">
-        {showOnboarding ? (
+        {showOnboarding && !swarmFullscreen && (
           <motion.div
             key="onboarding"
             className="absolute bottom-[25%] sm:bottom-auto mx-auto sm:relative w-full overflow-visible pb-16 sm:pb-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            exit={{ opacity: 0, y: -20, transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] } }}
             layout="position"
             layoutId="onboarding"
             transition={{
@@ -829,8 +839,43 @@ export function Chat() {
               </motion.div>
             )}
           </motion.div>
-        ) : (
+        )}
+        {!showOnboarding && !swarmFullscreen && (
           <Conversation key="conversation" {...conversationProps} />
+        )}
+      </AnimatePresence>
+
+      {/* Swarm panel — fills available space between header and input */}
+      <AnimatePresence>
+        {swarmActive && (
+          <motion.div
+            key="swarm-panel"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 30, transition: { duration: 0.25 } }}
+            transition={{ type: "spring", duration: 0.5, bounce: 0.15 }}
+            className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 md:px-8 min-h-0 pb-2 flex flex-col"
+          >
+            <SwarmPanel
+              isActive={swarmActive}
+              swarmId={swarmId}
+              prompt={swarmPrompt}
+              machineCount={swarmCount}
+              onStop={handleSwarmStop}
+            />
+          </motion.div>
+        )}
+        {!swarmActive && existingActiveSwarm && showOnboarding && (
+          <motion.div
+            key="active-swarm-fullscreen"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 30, transition: { duration: 0.25 } }}
+            transition={{ type: "spring", duration: 0.5, bounce: 0.15 }}
+            className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 md:px-8 min-h-0 pb-2 flex flex-col"
+          >
+            <ActiveSwarmBanner fullscreen onSwarmDetected={handleActiveSwarmDetected} />
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -879,15 +924,8 @@ export function Chat() {
             className="mb-3 -mx-4 sm:mx-0"
           />
         )} */}
-        {/* Show active swarm banner on homepage when no local swarm is running */}
-        {showOnboarding && !swarmActive && <ActiveSwarmBanner />}
-        <SwarmPanel
-          isActive={swarmActive}
-          swarmId={swarmId}
-          prompt={swarmPrompt}
-          machineCount={swarmCount}
-          onStop={handleSwarmStop}
-        />
+        {/* Show inline active swarm banner only when not in fullscreen swarm mode */}
+        {showOnboarding && !swarmFullscreen && <ActiveSwarmBanner onSwarmDetected={handleActiveSwarmDetected} />}
         <ChatInput {...chatInputProps} />
       </motion.div>
     </div>

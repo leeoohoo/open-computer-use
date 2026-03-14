@@ -78,10 +78,40 @@ async def lifespan(app: FastAPI):
     # Start task scheduler for automated/recurring tasks
     scheduler_task = asyncio.create_task(task_scheduler.start())
 
+    # Start status health check poller (records service health every 5 min)
+    import httpx
+    status_check_task = None
+    async def periodic_status_check():
+        """Poll /api/status/cron every 5 minutes to record service health."""
+        frontend_url = settings.CORS_ORIGINS[0] if isinstance(settings.CORS_ORIGINS, list) and settings.CORS_ORIGINS else "http://localhost:3000"
+        cron_secret = getattr(settings, "CRON_SECRET", None) or ""
+        await asyncio.sleep(30)  # Wait 30s for frontend to be ready
+        while True:
+            try:
+                async with httpx.AsyncClient(timeout=15) as client:
+                    headers = {}
+                    if cron_secret:
+                        headers["Authorization"] = f"Bearer {cron_secret}"
+                    await client.get(f"{frontend_url}/api/status/cron", headers=headers)
+                logger.debug("Status health check recorded")
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.debug(f"Status health check failed (non-critical): {e}")
+            await asyncio.sleep(300)  # 5 minutes
+
+    status_check_task = asyncio.create_task(periodic_status_check())
+
     yield
 
     # Shutdown
     logger.info("Shutting down Coasty Backend Server")
+    if status_check_task:
+        status_check_task.cancel()
+        try:
+            await status_check_task
+        except asyncio.CancelledError:
+            pass
     if scheduler_task:
         scheduler_task.cancel()
         try:

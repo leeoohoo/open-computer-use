@@ -276,8 +276,8 @@ export function SwarmsContent() {
             <div className="pointer-events-none absolute -top-20 -left-20 h-72 w-72 rounded-full bg-foreground/[0.02] blur-3xl" />
             <div className="pointer-events-none absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-foreground/[0.015] blur-3xl" />
 
-            <div className="relative flex flex-col items-center px-6 py-16 text-center">
-              <div className="mb-10 flex items-center gap-2">
+            <div className="relative flex flex-col items-center px-4 sm:px-6 py-10 sm:py-16 text-center">
+              <div className="mb-8 sm:mb-10 flex items-center gap-2">
                 {[GitFork, Monitor, Robot].map((Icon, i) => (
                   <motion.div
                     key={i}
@@ -291,12 +291,12 @@ export function SwarmsContent() {
                 ))}
               </div>
 
-              <h2 className="text-2xl font-medium tracking-tight mb-2.5">No swarm runs yet</h2>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed mb-12">
+              <h2 className="text-xl sm:text-2xl font-medium tracking-tight mb-2.5">No swarm runs yet</h2>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed mb-8 sm:mb-12">
                 Use the lightning bolt toggle in chat to execute tasks across multiple machines in parallel.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl mb-12">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 w-full max-w-2xl mb-8 sm:mb-12">
                 {[
                   {
                     icon: GitFork,
@@ -477,70 +477,88 @@ function SwarmRunCard({
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
 
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 w-full text-left px-5 py-4">
-        <button
-          onClick={onToggle}
-          className="flex items-start gap-3 flex-1 min-w-0 text-left"
-        >
-          <div className="mt-1 text-muted-foreground/60">
+      <div className="w-full text-left px-3 sm:px-5 py-3 sm:py-4">
+        <div className="flex items-start gap-2 sm:gap-3">
+          <button
+            onClick={onToggle}
+            className="mt-1 text-muted-foreground/60 shrink-0"
+          >
             {isExpanded ? (
               <CaretDown className="size-3.5" weight="bold" />
             ) : (
               <CaretRight className="size-3.5" weight="bold" />
             )}
-          </div>
+          </button>
+
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium leading-snug mb-2">{swarm.prompt}</p>
-            <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
-              <span className="flex items-center gap-1">
-                <Clock className="size-3" />
-                {formatDate(createdAt)}
-              </span>
-              <span className="flex items-center gap-1">
-                <Monitor className="size-3" />
-                {swarm.machine_count} machine{swarm.machine_count !== 1 ? "s" : ""}
-              </span>
-              {duration && <span>{duration}</span>}
-              {swarm.model && (
-                <span className="truncate max-w-[120px] opacity-60">{swarm.model}</span>
-              )}
+            {/* Prompt + status row */}
+            <div className="flex items-start justify-between gap-2 sm:gap-3">
+              <button onClick={onToggle} className="flex-1 min-w-0 text-left">
+                <p className="text-sm font-medium leading-snug line-clamp-2 sm:line-clamp-none">{swarm.prompt}</p>
+              </button>
+
+              {/* Status + Share */}
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {isActive && (
+                  <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-medium text-blue-600 dark:text-blue-400">
+                    <span className="relative flex size-1.5">
+                      <span className="absolute inline-flex size-full animate-ping rounded-full bg-blue-500 opacity-75" />
+                      <span className="relative inline-flex size-1.5 rounded-full bg-blue-500" />
+                    </span>
+                    Live
+                  </span>
+                )}
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full whitespace-nowrap",
+                    statusMeta.color
+                  )}
+                >
+                  {statusMeta.icon}
+                  <span className="hidden xs:inline sm:inline">{statusMeta.label}</span>
+                </span>
+
+                <SharePopover
+                  swarm={swarm}
+                  isPublic={isPublic}
+                  shareLoading={shareLoading}
+                  copied={copied}
+                  shareUrl={shareUrl}
+                  onToggleVisibility={toggleVisibility}
+                  onCopyLink={copyLink}
+                  shareOpen={shareOpen}
+                  onShareOpenChange={setShareOpen}
+                />
+              </div>
             </div>
+
+            {/* Metadata row */}
+            <button onClick={onToggle} className="w-full text-left">
+              <div className="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs text-muted-foreground flex-wrap mt-1.5">
+                <span className="flex items-center gap-1">
+                  <Clock className="size-3" />
+                  {formatDate(createdAt)}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Monitor className="size-3" />
+                  {swarm.machine_count} machine{swarm.machine_count !== 1 ? "s" : ""}
+                </span>
+                {isActive && (
+                  <span className="sm:hidden inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 font-medium">
+                    <span className="relative flex size-1.5">
+                      <span className="absolute inline-flex size-full animate-ping rounded-full bg-blue-500 opacity-75" />
+                      <span className="relative inline-flex size-1.5 rounded-full bg-blue-500" />
+                    </span>
+                    Live
+                  </span>
+                )}
+                {duration && <span>{duration}</span>}
+                {swarm.model && (
+                  <span className="truncate max-w-[100px] sm:max-w-[120px] opacity-60">{swarm.model}</span>
+                )}
+              </div>
+            </button>
           </div>
-        </button>
-
-        {/* Status + Share */}
-        <div className="flex items-center gap-2 shrink-0">
-          {isActive && (
-            <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-blue-600 dark:text-blue-400">
-              <span className="relative flex size-1.5">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-blue-500 opacity-75" />
-                <span className="relative inline-flex size-1.5 rounded-full bg-blue-500" />
-              </span>
-              Live
-            </span>
-          )}
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full",
-              statusMeta.color
-            )}
-          >
-            {statusMeta.icon}
-            {statusMeta.label}
-          </span>
-
-          {/* Share button */}
-          <SharePopover
-            swarm={swarm}
-            isPublic={isPublic}
-            shareLoading={shareLoading}
-            copied={copied}
-            shareUrl={shareUrl}
-            onToggleVisibility={toggleVisibility}
-            onCopyLink={copyLink}
-            shareOpen={shareOpen}
-            onShareOpenChange={setShareOpen}
-          />
         </div>
       </div>
 
@@ -578,7 +596,7 @@ function SwarmRunCard({
                   status={swarm.status}
                   className="rounded-b-xl"
                   containerClassName="rounded-b-xl"
-                  height={Math.min(600, Math.max(350, swarm.machine_count * 60 + 200))}
+                  height={Math.min(600, Math.max(260, swarm.machine_count * 60 + 200))}
                 />
               )}
             </div>
@@ -664,7 +682,7 @@ function SharePopover({
           onShareOpenChange(!shareOpen)
         }}
         className={cn(
-          "inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg border text-xs font-medium transition-all duration-200",
+          "inline-flex items-center justify-center gap-1.5 h-7 sm:h-8 w-7 sm:w-auto sm:px-2.5 rounded-lg border text-xs font-medium transition-all duration-200",
           isPublic
             ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/15"
             : "border-border/40 bg-background/60 text-muted-foreground hover:text-foreground hover:bg-background/90"
@@ -693,11 +711,11 @@ function SharePopover({
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-5 pt-5 pb-3">
+              <div className="flex items-center justify-between px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div
                     className={cn(
-                      "h-8 w-8 rounded-lg flex items-center justify-center",
+                      "h-8 w-8 rounded-lg flex items-center justify-center shrink-0",
                       isPublic ? "bg-emerald-500/10" : "bg-amber-500/10"
                     )}
                   >
@@ -707,27 +725,27 @@ function SharePopover({
                       <Lock className="size-4 text-amber-500" weight="fill" />
                     )}
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="text-sm font-medium">
                       {isPublic ? "This swarm is live!" : "Share this swarm"}
                     </h3>
-                    <p className="text-[11px] text-muted-foreground/70">
+                    <p className="text-[11px] text-muted-foreground/70 truncate">
                       {isPublic
-                        ? "Anyone with the link can view the full execution"
+                        ? "Anyone with the link can view"
                         : "Make it public to get a shareable link"}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => onShareOpenChange(false)}
-                  className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                  className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
                 >
                   <X className="size-4" />
                 </button>
               </div>
 
               {/* Toggle */}
-              <div className="px-5 pb-4">
+              <div className="px-4 sm:px-5 pb-4">
                 <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3.5 py-3">
                   <p className="text-xs font-medium">
                     {isPublic ? "Public" : "Private"}
@@ -752,11 +770,11 @@ function SharePopover({
 
               {/* Link + socials — only when public */}
               {isPublic && (
-                <div className="px-5 pb-5 space-y-3">
+                <div className="px-4 sm:px-5 pb-4 sm:pb-5 space-y-3">
                   {/* Copy link */}
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 min-w-0 rounded-lg border border-border/40 bg-background/50 px-3 py-2">
-                      <p className="text-xs text-muted-foreground truncate font-mono">
+                    <div className="flex-1 min-w-0 rounded-lg border border-border/40 bg-background/50 px-2.5 sm:px-3 py-2">
+                      <p className="text-[11px] sm:text-xs text-muted-foreground truncate font-mono">
                         {shareUrl}
                       </p>
                     </div>
@@ -784,7 +802,7 @@ function SharePopover({
                   </div>
 
                   {/* Social grid */}
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {socials.map(({ icon: Icon, label, color, url }) => (
                       <a
                         key={label}

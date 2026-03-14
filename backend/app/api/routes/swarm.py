@@ -263,6 +263,8 @@ def _chunk_type_to_sse_code(chunk_type: str) -> str:
         # Swarm-specific types all use "s"
         "swarm_meta": "s",
         "swarm_machine_status": "s",
+        "swarm_planning": "s",
+        "swarm_summary": "s",
         "keepalive": "s",
         "step_complete": "s",
     }
