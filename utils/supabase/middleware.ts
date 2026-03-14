@@ -48,7 +48,7 @@ export async function updateSession(request: NextRequest) {
 
   // Protected routes that require authentication
   const protectedPaths = ['/account', '/machines']
-  const isProtectedPath = protectedPaths.some(path => 
+  const isProtectedPath = protectedPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
   )
 
@@ -58,6 +58,31 @@ export async function updateSession(request: NextRequest) {
     url.pathname = '/auth'
     url.searchParams.set('redirectTo', request.nextUrl.pathname)
     return NextResponse.redirect(url)
+  }
+
+  // Redirect authenticated users who haven't completed onboarding
+  // Skip for onboarding page itself, auth routes, API routes, and static assets
+  const skipOnboardingCheck = ['/onboarding', '/auth', '/api/', '/_next/', '/favicon']
+  const shouldCheckOnboarding = user && !skipOnboardingCheck.some(path =>
+    request.nextUrl.pathname.startsWith(path)
+  )
+
+  if (shouldCheckOnboarding) {
+    try {
+      const { data: userData } = await supabase
+        .from('users')
+        .select('onboarding_completed')
+        .eq('id', user.id)
+        .single()
+
+      if (userData && !userData.onboarding_completed) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/onboarding'
+        return NextResponse.redirect(url)
+      }
+    } catch {
+      // If onboarding check fails, don't block the user
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

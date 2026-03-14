@@ -410,12 +410,12 @@ function SwarmRunCard({
     setStopping(true)
     try {
       await fetch(`/api/swarm/${swarm.swarm_id}/stop`, { method: "POST" })
-      // Give backend a moment to update status, then refresh the list
-      setTimeout(() => onRefresh(), 1500)
     } catch {
       // best-effort
     }
     setStopping(false)
+    // Refresh list to pick up the "cancelled" status from the DB
+    onRefresh()
   }, [swarm.swarm_id, onRefresh])
   const shareUrl = `${APP_DOMAIN}/share/swarm/${swarm.swarm_id}`
 

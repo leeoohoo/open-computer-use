@@ -87,6 +87,19 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       }
     }
 
+    // Update swarm_runs status to "cancelled" as a safety net.
+    // The stream cleanup in route.ts also tries, but if the stream already
+    // closed or the client disconnected this ensures the DB is correct.
+    await (supabase as any)
+      .from("swarm_runs")
+      .update({
+        status: "cancelled",
+        completed_at: new Date().toISOString(),
+      })
+      .eq("swarm_id", swarmId)
+      .eq("user_id", userId)
+      .in("status", ["creating", "running"]);
+
     return NextResponse.json({
       ...backendResult,
       machinesTerminated: terminated,

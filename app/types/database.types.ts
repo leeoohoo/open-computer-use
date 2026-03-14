@@ -257,6 +257,13 @@ export type Database = {
           daily_pro_message_count: number | null
           daily_pro_reset: string | null
           system_prompt: string | null
+          onboarding_completed: boolean | null
+          role: string | null
+          company: string | null
+          website: string | null
+          team_size: string | null
+          referral_source: string | null
+          use_case: string | null
         }
         Insert: {
           anonymous?: boolean | null
@@ -274,6 +281,13 @@ export type Database = {
           daily_pro_message_count?: number | null
           daily_pro_reset?: string | null
           system_prompt?: string | null
+          onboarding_completed?: boolean | null
+          role?: string | null
+          company?: string | null
+          website?: string | null
+          team_size?: string | null
+          referral_source?: string | null
+          use_case?: string | null
         }
         Update: {
           anonymous?: boolean | null
@@ -291,6 +305,13 @@ export type Database = {
           daily_pro_message_count?: number | null
           daily_pro_reset?: string | null
           system_prompt?: string | null
+          onboarding_completed?: boolean | null
+          role?: string | null
+          company?: string | null
+          website?: string | null
+          team_size?: string | null
+          referral_source?: string | null
+          use_case?: string | null
         }
         Relationships: []
       }

@@ -314,6 +314,14 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
   }, [isActive, swarmId])
 
   const handleStop = useCallback(async () => {
+    // Immediately show cancelled status and abort the local stream
+    setOverallStatus("cancelled")
+    if (eventSourceRef.current) {
+      eventSourceRef.current.cancel().catch(() => {})
+      eventSourceRef.current = null
+    }
+
+    // Tell the backend to cancel execution + terminate machines
     if (swarmId) {
       try {
         await fetch(`/api/swarm/${swarmId}/stop`, { method: "POST" })

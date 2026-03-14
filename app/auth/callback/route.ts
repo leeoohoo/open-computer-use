@@ -46,6 +46,8 @@ export async function GET(request: Request) {
     )
   }
 
+  let isNewUser = false
+
   try {
     // Try to insert user only if not exists
     const { error: insertError } = await supabaseAdmin.from("users").insert({
@@ -55,10 +57,16 @@ export async function GET(request: Request) {
       message_count: 0,
       premium: false,
       favorite_models: [MODEL_DEFAULT],
+      onboarding_completed: false,
     })
 
     if (insertError && insertError.code !== "23505") {
       // User insert error (duplicate check passed)
+    }
+
+    // New user was inserted successfully
+    if (!insertError) {
+      isNewUser = true
     }
   } catch (err) {
     // Unexpected error during user creation
@@ -66,6 +74,28 @@ export async function GET(request: Request) {
 
   const host = request.headers.get("host")
   const protocol = host?.includes("localhost") ? "http" : "https"
+
+  // Redirect new users to onboarding
+  if (isNewUser) {
+    return NextResponse.redirect(`${protocol}://${host}/onboarding`)
+  }
+
+  // Check if existing user has completed onboarding
+  if (!isNewUser) {
+    try {
+      const { data: existingUser } = await supabaseAdmin
+        .from("users")
+        .select("onboarding_completed")
+        .eq("id", user.id)
+        .single()
+
+      if (existingUser && !existingUser.onboarding_completed) {
+        return NextResponse.redirect(`${protocol}://${host}/onboarding`)
+      }
+    } catch {
+      // If check fails, proceed normally
+    }
+  }
 
   const redirectUrl = `${protocol}://${host}${next}`
 

@@ -503,6 +503,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    let streamCancelled = false;
+
     const stream = new ReadableStream({
       async start(streamController) {
         try {
@@ -529,10 +531,12 @@ export async function POST(req: NextRequest) {
           }
         } finally {
           // GUARANTEED CLEANUP — always runs
-          await deleteAllSwarmMachines();
+          const finalStatus = streamCancelled ? "cancelled" : "completed";
+          await deleteAllSwarmMachines(finalStatus);
         }
       },
       cancel() {
+        streamCancelled = true;
         reader.cancel();
         // cleanup handled by the finally above when reader errors/closes
       },
