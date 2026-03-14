@@ -4,11 +4,13 @@ import { createServiceClient } from "@/lib/supabase/service"
 const PYTHON_BACKEND_URL =
   process.env.PYTHON_BACKEND_URL || "http://127.0.0.1:8001"
 
+const CRON_SECRET = process.env.CRON_SECRET
+
 interface ServiceCheck {
-  name: string
+  service_name: string
   status: "operational" | "degraded" | "outage"
   latency: number | null
-  message?: string
+  message: string | null
 }
 
 async function checkService(
@@ -18,21 +20,31 @@ async function checkService(
   const start = Date.now()
   try {
     await fn()
-    return { name, status: "operational", latency: Date.now() - start }
+    return { service_name: name, status: "operational", latency: Date.now() - start, message: null }
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unknown error"
-    return { name, status: "outage", latency: null, message: msg }
+    return { service_name: name, status: "outage", latency: null, message: msg }
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Verify cron secret to prevent unauthorized calls
+  const authHeader = request.headers.get("authorization")
+  if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const supabase = createServiceClient()
+  if (!supabase) {
+    return NextResponse.json({ error: "Supabase not configured" }, { status: 500 })
+  }
+
+  // Run all health checks
   const checks = await Promise.all([
-    // 1. Website / Frontend
     checkService("Website", async () => {
-      // If this endpoint is responding, the frontend is up
+      // Self-check: if this endpoint responds, frontend is up
     }),
 
-    // 2. AI Backend
     checkService("AI Backend", async () => {
       const res = await fetch(`${PYTHON_BACKEND_URL}/api/health`, {
         signal: AbortSignal.timeout(5000),
@@ -42,11 +54,7 @@ export async function GET() {
       if (data.status !== "healthy") throw new Error("Unhealthy")
     }),
 
-    // 3. Database (Supabase)
     checkService("Database", async () => {
-      const supabase = createServiceClient()
-      if (!supabase) throw new Error("Supabase not configured")
-      // Simple query to verify connectivity
       const { error } = await supabase
         .from("users")
         .select("id")
@@ -54,7 +62,6 @@ export async function GET() {
       if (error) throw new Error(error.message)
     }),
 
-    // 4. Authentication
     checkService("Authentication", async () => {
       const url = process.env.NEXT_PUBLIC_SUPABASE_URL
       if (!url) throw new Error("Supabase URL not configured")
@@ -67,7 +74,6 @@ export async function GET() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
     }),
 
-    // 5. AI Models (shares backend with AI Backend — check /api/health as proxy)
     checkService("AI Models", async () => {
       const res = await fetch(`${PYTHON_BACKEND_URL}/api/health`, {
         signal: AbortSignal.timeout(5000),
@@ -77,7 +83,6 @@ export async function GET() {
       if (data.status !== "healthy") throw new Error("Backend unhealthy")
     }),
 
-    // 6. File Storage (Supabase Storage)
     checkService("File Storage", async () => {
       const url = process.env.NEXT_PUBLIC_SUPABASE_URL
       if (!url) throw new Error("Supabase URL not configured")
@@ -88,43 +93,27 @@ export async function GET() {
         },
         signal: AbortSignal.timeout(5000),
       })
-      // 200 = buckets listed, 400 = no auth but storage responding, 401/403 = storage is up but auth needed (still operational)
       if (res.status >= 500) throw new Error(`HTTP ${res.status}`)
     }),
   ])
 
-  // Persist checks to database (fire-and-forget, don't block response)
-  const supabase = createServiceClient()
-  if (supabase) {
-    const now = new Date().toISOString()
-    const rows = checks.map((c) => ({
-      service_name: c.name,
-      status: c.status,
-      latency: c.latency,
-      message: c.message || null,
-      checked_at: now,
-    }))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(supabase as any).from("status_checks").insert(rows).then(() => {})
+  // Persist to database
+  const now = new Date().toISOString()
+  const rows = checks.map((c) => ({ ...c, checked_at: now }))
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any).from("status_checks").insert(rows)
+
+  if (error) {
+    return NextResponse.json(
+      { error: "Failed to persist checks", detail: error.message },
+      { status: 500 }
+    )
   }
 
-  const allOperational = checks.every((c) => c.status === "operational")
-  const hasOutage = checks.some((c) => c.status === "outage")
-
-  return NextResponse.json(
-    {
-      overall: allOperational
-        ? "operational"
-        : hasOutage
-          ? "outage"
-          : "degraded",
-      timestamp: new Date().toISOString(),
-      services: checks,
-    },
-    {
-      headers: {
-        "Cache-Control": "public, max-age=30, s-maxage=30",
-      },
-    }
-  )
+  return NextResponse.json({
+    ok: true,
+    timestamp: now,
+    checks: checks.map((c) => ({ service: c.service_name, status: c.status })),
+  })
 }

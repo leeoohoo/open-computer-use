@@ -138,13 +138,28 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Update swarm run record
+    // Update swarm run record — fetch latest swarm_summary event if available
+    let resultSummary = `${machines.filter(m => m.awsInstanceId).length} machines used`;
+    try {
+      const { data: summaryEvent } = await (supabase as any)
+        .from("swarm_run_events")
+        .select("content")
+        .eq("swarm_id", swarmId)
+        .eq("event_type", "swarm_summary")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (summaryEvent?.content) {
+        resultSummary = summaryEvent.content.slice(0, 5000);
+      }
+    } catch { /* keep default */ }
+
     await (supabase as any)
       .from("swarm_runs")
       .update({
         status: finalStatus,
         completed_at: new Date().toISOString(),
-        result_summary: `${machines.filter(m => m.awsInstanceId).length} machines used`,
+        result_summary: resultSummary,
       })
       .eq("swarm_id", swarmId);
 
@@ -427,6 +442,15 @@ export async function POST(req: NextRequest) {
 
           if (type === "swarm_meta") {
             saveEvent(null, "swarm_meta", chunk.status || "unknown");
+          } else if (type === "swarm_planning") {
+            // Task decomposition status + subtask assignments
+            const content = chunk.subtasks
+              ? JSON.stringify(chunk.subtasks)
+              : chunk.status || "planning";
+            saveEvent(null, "swarm_planning", content);
+          } else if (type === "swarm_summary") {
+            // Aggregated result summary
+            saveEvent(null, "swarm_summary", chunk.summary || "");
           } else if (type === "swarm_machine_status") {
             saveEvent(
               chunk.machine_index ?? null,
