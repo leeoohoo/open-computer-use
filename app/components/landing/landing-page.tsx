@@ -462,17 +462,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Not a chatbot. Not an RPA script. Better than{" "}
-                <span className="inline-flex items-center gap-1.5 text-red-500">
-                  <img src="/openclaw.svg" alt="OpenClaw" className="size-[0.8em] shrink-0 rounded-sm" aria-hidden="true" />
-                  OpenClaw
-                </span>.
+                Not a chatbot. Not an RPA script. A real computer-using agent.
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-2xl mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Better than <span className="inline-flex items-center gap-1 text-red-500 font-medium"><img src="/openclaw.svg" alt="" className="size-4 rounded-sm" />OpenClaw</span>, smarter than traditional automation. Coasty is a real AI employee
+                Smarter than traditional automation. Coasty is a real AI employee
                 that sees your screen and works like a human — no brittle scripts, no breaking when interfaces change.
               </p>
             </motion.div>
