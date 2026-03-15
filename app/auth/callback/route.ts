@@ -67,6 +67,15 @@ export async function GET(request: Request) {
     // New user was inserted successfully
     if (!insertError) {
       isNewUser = true
+
+      // Email signups get 50 credits instead of the default 100
+      const provider = user.app_metadata?.provider
+      if (provider === "email") {
+        await supabaseAdmin
+          .from("user_credits")
+          .update({ balance: 50 })
+          .eq("user_id", user.id)
+      }
     }
   } catch (err) {
     // Unexpected error during user creation

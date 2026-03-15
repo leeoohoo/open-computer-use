@@ -11,6 +11,7 @@ import {
   signInWithMagicLink,
   resetPassword,
 } from "@/lib/api"
+import { validateEmailForSignup } from "@/lib/email-validation"
 import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
 import { useState, useEffect } from "react"
@@ -184,7 +185,14 @@ export default function LoginPage() {
       setError(null)
       setSuccess(null)
 
-      const data = await signUpWithEmail(supabase, email, password)
+      // Validate email against 121k+ disposable domains (server-side check)
+      const validation = await validateEmailForSignup(email)
+      if (!validation.valid) {
+        setError(validation.error || "Invalid email address.")
+        return
+      }
+
+      const data = await signUpWithEmail(supabase, validation.normalized || email, password)
 
       if (data?.user?.identities?.length === 0) {
         setError("An account with this email already exists. Try signing in instead.")
