@@ -312,7 +312,7 @@ function AccountContent() {
           <div className="px-4 pt-7 pb-5">
             <div className="flex items-center gap-3 px-2 py-2.5 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30">
               <Avatar className="h-8 w-8 shrink-0 ring-1 ring-border/30">
-                <AvatarImage src={user?.profile_image ?? ""} className="object-cover" />
+                <AvatarImage src={user?.profile_image || undefined} className="object-cover" />
                 <AvatarFallback className="bg-transparent">
                   <CoastyIcon className="h-4 w-4 text-primary" />
                 </AvatarFallback>

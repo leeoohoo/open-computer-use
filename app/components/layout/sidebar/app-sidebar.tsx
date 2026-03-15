@@ -380,7 +380,7 @@ export function AppSidebar() {
                 className="flex items-center gap-3 px-2.5 py-2 w-full rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 ease-in-out"
               >
                 <Avatar className="h-8 w-8 flex-shrink-0">
-                  <AvatarImage src={user?.profile_image ?? undefined} />
+                  <AvatarImage src={user?.profile_image || undefined} />
                   <AvatarFallback className="bg-transparent"><CoastyIcon className="h-5 w-5 text-sidebar-primary" /></AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col min-w-0 flex-1 text-left">
@@ -396,7 +396,7 @@ export function AppSidebar() {
                     className="flex w-full items-center justify-center p-1.5 rounded-md hover:bg-sidebar-accent transition-all duration-200"
                   >
                     <Avatar className="h-7 w-7 flex-shrink-0">
-                      <AvatarImage src={user?.profile_image ?? undefined} />
+                      <AvatarImage src={user?.profile_image || undefined} />
                       <AvatarFallback className="bg-transparent"><CoastyIcon className="h-4 w-4 text-sidebar-primary" /></AvatarFallback>
                     </Avatar>
                   </button>

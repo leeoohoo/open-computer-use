@@ -31,7 +31,7 @@ export function UserMenu({ children, showTooltip = true }: UserMenuProps) {
       className="rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-transform hover:scale-105"
     >
       <Avatar className="bg-background hover:bg-muted cursor-pointer">
-        <AvatarImage src={user?.profile_image ?? undefined} />
+        <AvatarImage src={user?.profile_image || undefined} />
         <AvatarFallback className="bg-transparent"><CoastyIcon className="h-5 w-5 text-primary" /></AvatarFallback>
       </Avatar>
     </button>
