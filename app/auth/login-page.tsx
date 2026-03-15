@@ -265,9 +265,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex h-dvh w-full flex-col bg-background overflow-hidden">
+    <div className="relative flex min-h-dvh w-full flex-col bg-background">
       {/* Ambient gradient mesh background */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div
           className="absolute -top-[40%] -left-[20%] h-[80%] w-[60%] rounded-full opacity-[0.03] dark:opacity-[0.06] blur-[100px]"
           style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
@@ -288,7 +288,7 @@ export default function LoginPage() {
 
       <HeaderGoBack href="/" />
 
-      <main className="relative flex flex-1 flex-col lg:flex-row items-center justify-center z-10">
+      <main className="relative flex flex-1 flex-col lg:flex-row items-center lg:justify-center z-10 py-4 sm:py-10">
         {/* Left brand panel — visible on lg+ */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -330,7 +330,7 @@ export default function LoginPage() {
         </motion.div>
 
         {/* Right form panel */}
-        <div className="flex flex-1 items-center justify-center w-full lg:max-w-xl px-4 sm:px-6 lg:px-16">
+        <div className="flex flex-none lg:flex-1 items-center justify-center w-full lg:max-w-xl px-4 sm:px-6 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -338,20 +338,20 @@ export default function LoginPage() {
             className="w-full max-w-[420px]"
           >
             {/* Mobile-only heading */}
-            <div className="lg:hidden text-center mb-8">
-              <div className="flex justify-center mb-4">
-                <CoastyIcon className="size-8" />
+            <div className="lg:hidden text-center mb-5 sm:mb-8">
+              <div className="flex justify-center mb-3">
+                <CoastyIcon className="size-7 sm:size-8" />
               </div>
-              <h1 className="text-foreground text-3xl sm:text-4xl font-medium tracking-tight">
+              <h1 className="text-foreground text-2xl sm:text-4xl font-medium tracking-tight">
                 You set the goal. We handle the rest.
               </h1>
-              <p className="text-muted-foreground mt-3 text-sm sm:text-base">
+              <p className="text-muted-foreground mt-2 text-sm sm:text-base">
                 AI agents that browse, click, and work like a real teammate.
               </p>
             </div>
 
             {/* Form card */}
-            <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 sm:p-8 shadow-sm">
+            <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-5 sm:p-8 shadow-sm">
               {/* Dynamic title */}
               <AnimatePresence mode="wait">
                 <motion.div
@@ -360,7 +360,7 @@ export default function LoginPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.2 }}
-                  className="mb-6"
+                  className="mb-4 sm:mb-6"
                 >
                   <h2 className="text-foreground text-xl font-medium tracking-tight">
                     {viewTitles[authView]}
@@ -665,7 +665,7 @@ export default function LoginPage() {
             </div>
 
             {/* Footer */}
-            <div className="mt-6 text-center">
+            <div className="mt-4 sm:mt-6 text-center">
               <p className="text-[12px] text-muted-foreground/60 leading-relaxed">
                 By continuing, you agree to our{" "}
                 <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">
