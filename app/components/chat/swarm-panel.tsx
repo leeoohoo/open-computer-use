@@ -58,6 +58,17 @@ interface SwarmPanelProps {
 export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: SwarmPanelProps) {
   const [machines, setMachines] = useState<SwarmMachine[]>([])
   const [overallStatus, setOverallStatus] = useState<"idle" | "creating" | "planning" | "running" | "aggregating" | "completed" | "cancelled" | "failed">("idle")
+
+  // Warn user before leaving the page while swarm is running
+  const isRunning = overallStatus === "creating" || overallStatus === "planning" || overallStatus === "running" || overallStatus === "aggregating"
+  useEffect(() => {
+    if (!isRunning) return
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+    }
+    window.addEventListener("beforeunload", handler)
+    return () => window.removeEventListener("beforeunload", handler)
+  }, [isRunning])
   const [error, setError] = useState<string | null>(null)
   const [swarmEvents, setSwarmEvents] = useState<SwarmEvent[]>([])
   const [subtasks, setSubtasks] = useState<Array<{ machine_index: number; subtask: string }>>([])
@@ -384,6 +395,16 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
           </Button>
         )}
       </div>
+
+      {/* Exit warning */}
+      {isRunning && (
+        <div className="shrink-0 mx-1 sm:mx-2 mb-1.5 flex items-center gap-2 rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-2">
+          <Warning className="size-3.5 text-amber-500 shrink-0" weight="fill" />
+          <p className="text-[11px] text-amber-600 dark:text-amber-400">
+            Leaving or refreshing this page will stop the swarm. Stay on this page until it completes.
+          </p>
+        </div>
+      )}
 
       {/* Main content area */}
       <div className="flex-1 min-h-0 flex flex-col rounded-2xl border border-border/50 bg-background/50 backdrop-blur-sm mx-1 sm:mx-2 mb-1 overflow-hidden">

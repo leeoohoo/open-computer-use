@@ -34,6 +34,111 @@ import { ShieldCheck } from "lucide-react"
 import { SwarmPanel } from "./swarm-panel"
 import { ActiveSwarmBanner, type ActiveSwarm } from "./active-swarm-banner"
 
+// ── Task templates by role & use-case (activation metric: first task < 5 min) ──
+const ROLE_TEMPLATES: Record<string, { label: string; prompt: string }[]> = {
+  founder: [
+    { label: "Research competitors", prompt: "Research the top 5 competitors in my space, compare their pricing, features, and positioning. Compile everything into a spreadsheet." },
+    { label: "Draft investor update", prompt: "Go to my email and draft a monthly investor update summarizing key metrics, milestones hit, and next month's priorities." },
+    { label: "Find leads on LinkedIn", prompt: "Search LinkedIn for 20 potential customers matching [your ICP] and export their names, titles, companies, and profile URLs." },
+  ],
+  developer: [
+    { label: "Test a web app", prompt: "Go to [URL] and test the full signup → onboarding → dashboard flow. Screenshot each step and report any bugs or broken UI." },
+    { label: "Scrape API docs", prompt: "Go to [documentation URL] and extract all API endpoints, methods, parameters, and response examples into a structured JSON file." },
+    { label: "Fill out forms", prompt: "Go to [URL] and fill out the registration form with the following details: [name, email, etc.]" },
+  ],
+  marketer: [
+    { label: "Post on social media", prompt: "Log in to Twitter/X and post: \"[your message]\". Then check for early engagement and reply to any comments." },
+    { label: "Research trending topics", prompt: "Search Google, Reddit, and Hacker News for trending topics in [your niche] this week. Summarize the top 10 with links." },
+    { label: "Competitor ad analysis", prompt: "Visit [competitor URLs] and screenshot their landing pages, pricing pages, and any ads. Summarize their messaging strategy." },
+  ],
+  product_manager: [
+    { label: "Collect user feedback", prompt: "Go to G2, Capterra, and Product Hunt for [product name]. Extract all reviews from the last 3 months, noting common complaints and feature requests." },
+    { label: "Competitive feature matrix", prompt: "Research [competitor 1], [competitor 2], and [competitor 3]. Build a feature comparison matrix covering pricing, integrations, and key capabilities." },
+    { label: "Monitor release notes", prompt: "Check the changelogs and release notes of [competitor URLs]. Summarize any new features or changes from the past month." },
+  ],
+  data_analyst: [
+    { label: "Scrape public data", prompt: "Go to [website] and extract all the data from the table on the page. Export it as a CSV file." },
+    { label: "Research market stats", prompt: "Search for the latest market size, growth rate, and key statistics for [your industry]. Compile sources and numbers." },
+    { label: "Pull financial data", prompt: "Go to Yahoo Finance and pull the last 12 months of stock price data for [ticker symbols]. Save as a spreadsheet." },
+  ],
+  operations: [
+    { label: "Automate data entry", prompt: "Go to [web app URL] and enter the following records into the system: [paste your data or describe the source]." },
+    { label: "Vendor price check", prompt: "Visit [vendor website 1] and [vendor website 2]. Compare pricing for [product/service] and summarize the best deal." },
+    { label: "Process invoices", prompt: "Go to [email/portal] and download all invoices from the last month. Extract vendor names, amounts, and dates into a spreadsheet." },
+  ],
+  designer: [
+    { label: "Screenshot competitor UIs", prompt: "Visit [competitor URLs] and take full-page screenshots of their homepage, pricing page, and dashboard. Save all images." },
+    { label: "Check responsive design", prompt: "Go to [your URL] and test it at mobile (375px), tablet (768px), and desktop (1440px) widths. Screenshot each and note any layout issues." },
+    { label: "Find design inspiration", prompt: "Search Dribbble and Behance for the best [dashboard/landing page/mobile app] designs in [your industry]. Save the top 10 screenshots." },
+  ],
+}
+
+const USE_CASE_TEMPLATES: Record<string, { label: string; prompt: string }[]> = {
+  web_scraping: [
+    { label: "Scrape a website", prompt: "Go to [URL] and extract all [product names / prices / emails / data] from the page. Export as a CSV." },
+  ],
+  browser_automation: [
+    { label: "Automate a workflow", prompt: "Go to [website], log in with my saved credentials, navigate to [section], and [perform action]. Repeat for all items." },
+  ],
+  data_entry: [
+    { label: "Bulk data entry", prompt: "Go to [web app] and enter these records one by one: [paste data]. Confirm each entry was saved." },
+  ],
+  email_outreach: [
+    { label: "Send personalized emails", prompt: "Go to my email and send personalized messages to these contacts: [list]. Use this template: [your template]." },
+  ],
+  testing: [
+    { label: "QA test a website", prompt: "Go to [URL] and test the core user flows: signup, login, main feature, and logout. Screenshot each step and report any bugs." },
+  ],
+  ecommerce: [
+    { label: "Monitor product prices", prompt: "Check [competitor store URLs] for [product name] pricing. Record current prices, availability, and any active promotions." },
+  ],
+  social_media: [
+    { label: "Post & engage", prompt: "Log in to [Twitter/LinkedIn/Reddit] and post: \"[your content]\". Then engage with any replies for the next few minutes." },
+  ],
+  general_automation: [
+    { label: "Automate a task", prompt: "Go to [website] and [describe what you need done step by step]." },
+  ],
+}
+
+function getTaskTemplates(role: string | null | undefined, useCase: string | null | undefined): { label: string; prompt: string }[] {
+  const templates: { label: string; prompt: string }[] = []
+  const seen = new Set<string>()
+
+  // Add role-based templates first (primary persona)
+  const roles = (role || "").split(",").map(r => r.trim()).filter(Boolean)
+  for (const r of roles) {
+    for (const t of ROLE_TEMPLATES[r] || []) {
+      if (!seen.has(t.label)) {
+        seen.add(t.label)
+        templates.push(t)
+      }
+    }
+  }
+
+  // Fill with use-case templates
+  const useCases = (useCase || "").split(",").map(u => u.trim()).filter(Boolean)
+  for (const uc of useCases) {
+    for (const t of USE_CASE_TEMPLATES[uc] || []) {
+      if (!seen.has(t.label)) {
+        seen.add(t.label)
+        templates.push(t)
+      }
+    }
+  }
+
+  // Fallback if nothing matched
+  if (templates.length === 0) {
+    return [
+      { label: "Scrape a website", prompt: "Go to [URL] and extract all the data from the page. Export as a CSV." },
+      { label: "Test a web app", prompt: "Go to [URL] and test the full signup → dashboard flow. Screenshot each step and report any bugs." },
+      { label: "Research a topic", prompt: "Search Google for [your topic] and summarize the top 10 results with key takeaways and links." },
+      { label: "Fill out a form", prompt: "Go to [URL] and fill out the form with the following details: [your data]." },
+    ]
+  }
+
+  return templates.slice(0, 4)
+}
+
 const handwriting = Caveat({
   subsets: ["latin"],
   weight: ["600"],
@@ -628,6 +733,12 @@ export function Chat() {
     !!user &&
     !quickStartDismissed
 
+  // Task templates based on onboarding role + use-case (activation metric)
+  const taskTemplates = useMemo(
+    () => getTaskTemplates(user?.role, user?.use_case),
+    [user?.role, user?.use_case]
+  )
+
   // Any swarm is taking over the screen (new or returning)
   const swarmFullscreen = swarmActive || (!!existingActiveSwarm && showOnboarding)
 
@@ -854,7 +965,7 @@ export function Chat() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30, transition: { duration: 0.25 } }}
             transition={{ type: "spring", duration: 0.5, bounce: 0.15 }}
-            className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 md:px-8 min-h-0 pb-2 flex flex-col"
+            className="flex-1 w-full mx-auto px-4 sm:px-6 md:px-8 min-h-0 pb-2 flex flex-col"
           >
             <SwarmPanel
               isActive={swarmActive}
@@ -927,6 +1038,40 @@ export function Chat() {
         {/* Show inline active swarm banner only when not in fullscreen swarm mode */}
         {showOnboarding && !swarmFullscreen && <ActiveSwarmBanner onSwarmDetected={handleActiveSwarmDetected} />}
         <ChatInput {...chatInputProps} />
+
+        {/* Task templates — reduces friction to first task completion */}
+        <AnimatePresence>
+          {showOnboarding && !swarmMode && !swarmFullscreen && user && (
+            <motion.div
+              key="task-templates"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6, transition: { duration: 0.15 } }}
+              transition={{ delay: 0.3, duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="mt-3 mb-1"
+            >
+              <div className="flex items-center justify-center gap-1.5 mb-2">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className="text-muted-foreground/50">
+                  <path d="M8 1l1.796 4.898L15 7.5l-3.804 2.952L12.392 16 8 12.6 3.608 16l1.196-5.548L1 7.5l5.204-1.602L8 1z" fill="currentColor" opacity="0.5" />
+                  <path d="M8 1l1.796 4.898L15 7.5l-3.804 2.952L12.392 16 8 12.6 3.608 16l1.196-5.548L1 7.5l5.204-1.602L8 1z" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
+                </svg>
+                <span className="text-[11px] text-muted-foreground/50 font-medium tracking-wide">Try a task</span>
+              </div>
+              <div className="flex flex-wrap justify-center gap-1.5">
+                {taskTemplates.map((t) => (
+                  <button
+                    key={t.label}
+                    type="button"
+                    onClick={() => handleCollaborativeInputChange(t.prompt)}
+                    className="inline-flex items-center gap-1 rounded-lg border border-border/40 bg-card/60 hover:bg-accent/60 hover:border-border/60 px-2.5 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-all duration-150 cursor-pointer"
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   )

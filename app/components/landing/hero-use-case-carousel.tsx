@@ -118,7 +118,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
             >
-              Start Automating
+              Try Coasty
               <ArrowRight className="h-4 w-4" />
             </motion.button>
           </Link>
