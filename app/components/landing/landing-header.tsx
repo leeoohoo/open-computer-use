@@ -27,7 +27,7 @@ export function LandingHeader({
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState("hero")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [currentPath, setCurrentPath] = useState("")
 
@@ -171,7 +171,7 @@ export function LandingHeader({
                 >
                   {mounted && (
                     <Image
-                      src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                      src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
                       alt="Coasty Logo"
                       width={40}
                       height={40}

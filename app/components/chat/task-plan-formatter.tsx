@@ -111,7 +111,7 @@ const statusColors = {
 export function TaskPlanFormatter({ content, className, isStreaming = false }: TaskPlanFormatterProps) {
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set())
   const [metadataExpanded, setMetadataExpanded] = useState(false)
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
 
   // Debug content changes
   useEffect(() => {
@@ -334,7 +334,7 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm">
               <Image
-                src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
                 alt="coasty"
                 width={24}
                 height={24}
@@ -530,7 +530,7 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <Image
-                  src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                  src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
                   alt="coasty"
                   width={24}
                   height={24}
@@ -553,7 +553,7 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <Image
-                  src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                  src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
                   alt="coasty"
                   width={24}
                   height={24}
@@ -654,7 +654,7 @@ export function TaskPlanFormatter({ content, className, isStreaming = false }: T
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
                   <Image
-                    src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                    src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
                     alt="coasty"
                     width={24}
                     height={24}

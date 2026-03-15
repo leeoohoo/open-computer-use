@@ -299,7 +299,7 @@ export function LandingPage() {
   const [mounted, setMounted] = useState(false)
   const [comparisonPlan, setComparisonPlan] = useState(2) // default to Plus (index 2)
   const [activePersona, setActivePersona] = useState(0)
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
 
   const searchParams = useSearchParams()
 
@@ -823,7 +823,7 @@ export function LandingPage() {
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/15">
                           {mounted && (
                             <Image
-                              src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                              src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
                               alt="Coasty"
                               width={22}
                               height={22}
@@ -1104,7 +1104,7 @@ export function LandingPage() {
                     )}>
                       {entry.highlight && mounted && (
                         <Image
-                          src={theme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                          src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
                           alt="Coasty"
                           width={16}
                           height={16}

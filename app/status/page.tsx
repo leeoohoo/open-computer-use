@@ -484,7 +484,7 @@ export default function StatusPage() {
             </motion.p>
             <motion.div variants={fade} custom={0} className="flex items-start justify-between gap-4">
               <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground leading-[1.1] tracking-tight">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground leading-[1.2] tracking-tight">
                   Coasty Status
                 </h1>
                 <p className="text-sm sm:text-base text-muted-foreground/70 mt-2 max-w-lg leading-relaxed">

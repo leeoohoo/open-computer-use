@@ -299,7 +299,7 @@ export default function LoginPage() {
           <div className="mb-8">
             <CoastyIcon className="size-10" />
           </div>
-          <h1 className="text-foreground text-5xl xl:text-6xl font-medium tracking-tight leading-[1.1]">
+          <h1 className="text-foreground text-5xl xl:text-6xl font-medium tracking-tight leading-[1.2]">
             You set the goal.
             <br />
             <span className="text-muted-foreground">We handle the rest.</span>

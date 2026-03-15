@@ -368,7 +368,7 @@ export default function CompetitorPage() {
             transition={{ duration: 0.6 }}
             className="mb-12"
           >
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1] mb-4">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.2] mb-4">
               Coasty vs {data.name}
             </h1>
             <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl">
