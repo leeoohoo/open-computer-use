@@ -381,10 +381,10 @@ export function AppSidebar() {
               >
                 <Avatar className="h-8 w-8 flex-shrink-0">
                   <AvatarImage src={user?.profile_image ?? undefined} />
-                  <AvatarFallback className="text-xs">{user?.display_name?.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="bg-transparent"><CoastyIcon className="h-5 w-5 text-sidebar-primary" /></AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col min-w-0 flex-1 text-left">
-                  <span className="text-sm font-medium truncate">{user?.display_name || "User"}</span>
+                  <span className="text-sm font-medium truncate">{user?.display_name || user?.email?.split("@")[0] || "User"}</span>
                   <span className="text-xs text-sidebar-foreground/90 truncate">{user?.email || ""}</span>
                 </div>
               </button>
@@ -397,12 +397,12 @@ export function AppSidebar() {
                   >
                     <Avatar className="h-7 w-7 flex-shrink-0">
                       <AvatarImage src={user?.profile_image ?? undefined} />
-                      <AvatarFallback className="text-xs">{user?.display_name?.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-transparent"><CoastyIcon className="h-4 w-4 text-sidebar-primary" /></AvatarFallback>
                     </Avatar>
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={8}>
-                  {user?.display_name || "Account"}
+                  {user?.display_name || user?.email?.split("@")[0] || "Account"}
                 </TooltipContent>
               </Tooltip>
             )}

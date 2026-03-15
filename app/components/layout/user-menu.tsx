@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip"
 import { useUser } from "@/lib/user-store/provider"
 import { useRouter } from "next/navigation"
+import { CoastyIcon } from "@/components/icons/coasty"
 
 interface UserMenuProps {
   children?: React.ReactNode
@@ -31,7 +32,7 @@ export function UserMenu({ children, showTooltip = true }: UserMenuProps) {
     >
       <Avatar className="bg-background hover:bg-muted cursor-pointer">
         <AvatarImage src={user?.profile_image ?? undefined} />
-        <AvatarFallback>{user?.display_name?.charAt(0)}</AvatarFallback>
+        <AvatarFallback className="bg-transparent"><CoastyIcon className="h-5 w-5 text-primary" /></AvatarFallback>
       </Avatar>
     </button>
   )

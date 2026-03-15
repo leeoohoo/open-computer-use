@@ -7,7 +7,8 @@ import { useChats } from "@/lib/chat-store/chats/provider"
 import { useMessages } from "@/lib/chat-store/messages/provider"
 import { clearAllIndexedDBStores } from "@/lib/chat-store/persist"
 import { useUser } from "@/lib/user-store/provider"
-import { User, SignOut } from "@phosphor-icons/react"
+import { SignOut } from "@phosphor-icons/react"
+import { CoastyIcon } from "@/components/icons/coasty"
 import { useRouter } from "next/navigation"
 
 export function CombinedAccount() {
@@ -41,10 +42,10 @@ export function CombinedAccount() {
             {user?.profile_image ? (
               <Avatar className="size-12">
                 <AvatarImage src={user.profile_image} className="object-cover" />
-                <AvatarFallback>{user?.display_name?.charAt(0)}</AvatarFallback>
+                <AvatarFallback className="bg-transparent"><CoastyIcon className="size-6 text-primary" /></AvatarFallback>
               </Avatar>
             ) : (
-              <User className="text-muted-foreground size-12" />
+              <CoastyIcon className="size-8 text-primary" />
             )}
           </div>
           <div>

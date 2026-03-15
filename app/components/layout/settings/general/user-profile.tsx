@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useUser } from "@/lib/user-store/provider"
-import { User } from "@phosphor-icons/react"
+import { CoastyIcon } from "@/components/icons/coasty"
 
 export function UserProfile() {
   const { user } = useUser()
@@ -17,10 +17,10 @@ export function UserProfile() {
           {user?.profile_image ? (
             <Avatar className="size-12">
               <AvatarImage src={user.profile_image} className="object-cover" />
-              <AvatarFallback>{user?.display_name?.charAt(0)}</AvatarFallback>
+              <AvatarFallback className="bg-transparent"><CoastyIcon className="size-6 text-primary" /></AvatarFallback>
             </Avatar>
           ) : (
-            <User className="text-muted-foreground size-12" />
+            <CoastyIcon className="size-8 text-primary" />
           )}
         </div>
         <div>

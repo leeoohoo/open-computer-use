@@ -31,6 +31,7 @@ import { AppInfoContent } from "@/app/components/layout/app-info/app-info-conten
 import { useUser } from "@/lib/user-store/provider"
 import XIcon from "@/components/icons/x"
 import { GithubLogoIcon } from "@phosphor-icons/react"
+import { CoastyIcon } from "@/components/icons/coasty"
 
 type SectionType =
   | "account"
@@ -312,12 +313,12 @@ function AccountContent() {
             <div className="flex items-center gap-3 px-2 py-2.5 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30">
               <Avatar className="h-8 w-8 shrink-0 ring-1 ring-border/30">
                 <AvatarImage src={user?.profile_image ?? ""} className="object-cover" />
-                <AvatarFallback className="text-[11px] font-semibold bg-muted/60">
-                  {userInitial}
+                <AvatarFallback className="bg-transparent">
+                  <CoastyIcon className="h-4 w-4 text-primary" />
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-medium leading-tight truncate">{user?.display_name}</p>
+                <p className="text-[13px] font-medium leading-tight truncate">{user?.display_name || user?.email?.split("@")[0] || "User"}</p>
                 <p className="text-[11px] text-muted-foreground/50 leading-tight truncate mt-0.5">{user?.email}</p>
               </div>
             </div>
