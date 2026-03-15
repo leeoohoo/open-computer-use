@@ -1346,7 +1346,7 @@ export default function AgentSwarmsPage() {
             )}>
               {[
                 { title: "True Isolation", desc: "Each machine has its own browser, terminal, and desktop.", icon: Shield },
-                { title: "2x Machine Limit", desc: "Swarm mode doubles your plan's machine capacity.", icon: Zap },
+                { title: "3x Machine Limit", desc: "Swarm mode triples your plan's machine capacity.", icon: Zap },
                 { title: "Live Tree View", desc: "Screenshots and tool calls stream in real-time.", icon: Eye },
                 { title: "Auto Aggregation", desc: "Results combine into a single consolidated report.", icon: Merge },
                 { title: "Shareable Runs", desc: "Replay full execution timelines via a link.", icon: GitFork },

@@ -48,7 +48,7 @@ type ChatInputProps = {
   onSwarmCountChange?: (count: number) => void
   // Subscription tier — determines whether swarm is locked
   userTier?: string | null
-  // Max swarm machines (2x plan max_machines, capped at 10)
+  // Max swarm machines (3x plan max_machines, capped at 10)
   maxSwarmMachines?: number
 }
 
@@ -349,7 +349,7 @@ export function ChatInput({
   swarmCount,
   onSwarmCountChange,
   userTier,
-  maxSwarmMachines = 2,
+  maxSwarmMachines = 3,
 }: ChatInputProps) {
   const isOnlyWhitespace = (text: string) => !/[^\s]/.test(text)
   const isSwarmLocked = !userTier || userTier === "free"
@@ -951,12 +951,12 @@ export function ChatInput({
                         {/* Feature list */}
                         <div className="px-5 pb-2">
                           <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-                            Run one prompt across <span className="text-foreground font-medium">2x your machine limit</span> in parallel — each tackling the task independently.
+                            Run one prompt across <span className="text-foreground font-medium">3x your machine limit</span> in parallel — each tackling the task independently.
                           </p>
                           <div className="space-y-2">
                             {[
                               { icon: Lightning, text: "Parallel execution across temporary machines" },
-                              { icon: GitFork, text: "2x your plan's machine limit per swarm" },
+                              { icon: GitFork, text: "3x your plan's machine limit per swarm" },
                               { icon: Monitor, text: "Each machine runs autonomously" },
                             ].map((feature, i) => (
                               <div key={i} className="flex items-center gap-2.5">

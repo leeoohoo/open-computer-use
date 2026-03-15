@@ -85,8 +85,8 @@ export async function POST(req: NextRequest) {
 
   const plan = subscriptions?.[0]?.subscription_plans;
   const planMaxMachines = plan?.max_machines || 1;
-  // Swarm allows 2x the user's persistent machine limit (temp machines)
-  const swarmMaxMachines = Math.min(planMaxMachines * 2, 10); // hard cap at 10
+  // Swarm allows 3x the user's persistent machine limit (temp machines)
+  const swarmMaxMachines = Math.min(planMaxMachines * 3, 10); // hard cap at 10
   const requestedCount = Math.min(
     body.machineCount || swarmMaxMachines,
     swarmMaxMachines,

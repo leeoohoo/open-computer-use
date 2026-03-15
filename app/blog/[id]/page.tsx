@@ -92,7 +92,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "section",
         title: "Pricing: Simple and Transparent",
-        text: "Swarm sessions consume credits at the same rate as regular sessions — 10 credits per minute per agent. If you run 4 agents for 10 minutes, that is 400 credits. Your plan's swarm limit is 2x your persistent machine count: Starter gets 2 parallel agents, Plus gets 4, and Pro gets 6. Swarm machines are temporary and auto-delete after the task completes, so you are only charged for active execution time."
+        text: "Swarm sessions consume credits at the same rate as regular sessions — 10 credits per minute per agent. If you run 4 agents for 10 minutes, that is 400 credits. Your plan's swarm limit is 3x your persistent machine count: Starter gets 3 parallel agents, Plus gets 6, and Pro gets 9. Swarm machines are temporary and auto-delete after the task completes, so you are only charged for active execution time."
       },
       {
         type: "section",

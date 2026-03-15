@@ -87,7 +87,7 @@ const plans: Plan[] = [
     features: [
       { text: "200 credits/month", included: true },
       { text: "1 persistent machine, no limits", included: true },
-      { text: "Swarm mode (2x parallel)", included: true },
+      { text: "Swarm mode (3x parallel)", included: true },
       { text: "Advanced web search & extraction", included: true },
       { text: "Standard support (real humans)", included: true },
       { text: "SLA guarantee", included: false },
@@ -106,7 +106,7 @@ const plans: Plan[] = [
     features: [
       { text: "600 credits/month", included: true },
       { text: "2 persistent machines, no limits", included: true },
-      { text: "Swarm mode (2x parallel)", included: true },
+      { text: "Swarm mode (3x parallel)", included: true },
       { text: "Advanced data extraction at scale", included: true },
       { text: "Priority support, 24hr response", included: true },
       { text: "Full API access (coming soon)", included: true },
@@ -124,7 +124,7 @@ const plans: Plan[] = [
     features: [
       { text: "1,500 credits/month", included: true },
       { text: "3 persistent machines, no limits", included: true },
-      { text: "Swarm mode (2x parallel)", included: true },
+      { text: "Swarm mode (3x parallel)", included: true },
       { text: "Early access to new features", included: true },
       { text: "SLA guarantee, 99.9% uptime", included: true },
       { text: "Premium support, 12hr response", included: true },

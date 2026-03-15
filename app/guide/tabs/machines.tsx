@@ -527,7 +527,7 @@ export function MachinesTab({ inApp }: { inApp: boolean }) {
           className="rounded-xl border border-border/30 bg-background/50 p-3.5 mt-4"
         >
           <p className="text-[13px] text-muted-foreground/60 leading-relaxed">
-            Swarm mode lets you run tasks on multiple machines in parallel. The limit is 2× your plan&apos;s persistent machine count. Swarm machines are temporary and auto-delete after the task completes.
+            Swarm mode lets you run tasks on multiple machines in parallel. The limit is 3× your plan&apos;s persistent machine count. Swarm machines are temporary and auto-delete after the task completes.
           </p>
         </motion.div>
       </motion.section>

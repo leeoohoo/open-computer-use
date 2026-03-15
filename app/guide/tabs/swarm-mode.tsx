@@ -180,7 +180,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
           custom={3}
           className="text-[13px] sm:text-sm text-muted-foreground/70 leading-relaxed max-w-2xl mb-4"
         >
-          Swarm mode spins up 2&ndash;10 temporary VMs and runs your task on each one in parallel.
+          Swarm mode spins up 3&ndash;10 temporary VMs and runs your task on each one in parallel.
           Each machine works independently, handling its own slice of the work. When all machines
           finish, results are collected in one place.
         </motion.p>
@@ -238,7 +238,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
             {
               step: 3,
               title: "Set the number of machines",
-              description: "Use the slider to choose how many machines (2–10) will run in parallel.",
+              description: "Use the slider to choose how many machines (3–10) will run in parallel.",
             },
             {
               step: 4,
@@ -631,7 +631,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground">Starter+ Plans</p>
               <p className="text-[13px] text-muted-foreground/60 mt-0.5">
-                Available with a max of 2x your plan&apos;s machine limit.
+                Available with a max of 3x your plan&apos;s machine limit.
               </p>
             </div>
             <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-400/10 px-2.5 py-1 rounded-full shrink-0">

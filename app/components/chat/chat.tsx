@@ -286,11 +286,11 @@ export function Chat() {
       .then((data) => {
         if (data?.subscriptionTier) setUserTier(data.subscriptionTier)
         else setUserTier("free")
-        // Swarm limit = 2x persistent machine limit, capped at 10
+        // Swarm limit = 3x persistent machine limit, capped at 10
         const planMax = data?.limits?.max_machines || 1
-        setMaxSwarmMachines(Math.min(planMax * 2, 10))
+        setMaxSwarmMachines(Math.min(planMax * 3, 10))
       })
-      .catch(() => { setUserTier("free"); setMaxSwarmMachines(2) })
+      .catch(() => { setUserTier("free"); setMaxSwarmMachines(3) })
   }, [user?.id])
   const { 
     isOpen: isNavigatorOpen, 
@@ -576,7 +576,7 @@ export function Chat() {
 
   // Swarm mode state — only available on homepage (no active chat)
   const [swarmMode, setSwarmMode] = useState(false)
-  const [swarmCount, setSwarmCount] = useState(2)
+  const [swarmCount, setSwarmCount] = useState(3)
   const [swarmActive, setSwarmActive] = useState(false)
   const [swarmId, setSwarmId] = useState<string | null>(null)
   const [swarmPrompt, setSwarmPrompt] = useState("")
