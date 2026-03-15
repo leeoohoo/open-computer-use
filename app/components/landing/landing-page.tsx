@@ -619,6 +619,197 @@ export function LandingPage() {
 
         <SectionDivider />
 
+        {/* OSWorld Benchmark Section */}
+        <section className={cn(
+          "py-20",
+          isMobile ? "px-4" : "px-6"
+        )}>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-12">
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+              )}>
+                Benchmarked #1 worldwide
+              </h2>
+              <p className={cn(
+                "text-muted-foreground mt-4 max-w-lg mx-auto",
+                isMobile ? "text-sm" : "text-base"
+              )}>
+                82% on OSWorld — the hardest benchmark for AI agents that use real computers
+              </p>
+            </motion.div>
+
+            {/* Legend */}
+            <motion.div variants={itemVariants} className="flex items-center justify-center gap-4 sm:gap-6 mb-4">
+              <div className="flex items-center gap-1.5">
+                <div className="h-2.5 w-2.5 rounded-full bg-sky-500/70" />
+                <span className="text-xs text-muted-foreground">Agentic Framework</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />
+                <span className="text-xs text-muted-foreground">Foundation Model</span>
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className={cn(isMobile ? "space-y-3" : "space-y-2.5")}>
+              {[
+                { name: "Coasty", org: "Ours", score: 82.0, highlight: true, type: "framework" as const },
+                { name: "Agent S3", org: "Simular · Opus 4.5 + GPT-5", score: 72.6, type: "framework" as const },
+                { name: "Agent S3", org: "Simular · GPT-5", score: 69.9, type: "framework" as const },
+                { name: "UiPath Screen Agent", org: "UiPath · Opus 4.5", score: 67.1, type: "framework" as const },
+                { name: "Agent S3", org: "Simular · Opus 4.5", score: 66.0, type: "framework" as const },
+                { name: "Kimi K2.5", org: "Moonshot AI", score: 63.3, type: "model" as const },
+                { name: "Claude Sonnet 4.5", org: "Anthropic", score: 62.9, type: "model" as const },
+                { name: "Seed-1.8", org: "ByteDance", score: 61.9, type: "model" as const },
+                { name: "Claude Sonnet 4.5", org: "Anthropic · 50 steps", score: 58.1, type: "model" as const },
+              ].map((entry, i) => (
+                <motion.div
+                  key={i}
+                  initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                  animate={isMobile ? { opacity: 1, x: 0 } : undefined}
+                  whileInView={isMobile ? undefined : { opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={isMobile ? { duration: 0 } : { delay: i * 0.06, duration: 0.4 }}
+                  className={cn(
+                    isMobile ? "flex flex-col gap-1" : "flex items-center gap-3",
+                    entry.highlight && "py-1"
+                  )}
+                >
+                  {/* Label: stacked above bar on mobile, side-by-side on desktop */}
+                  <div className={cn(
+                    isMobile
+                      ? "flex items-center justify-between text-xs"
+                      : "flex-shrink-0 text-right w-44 text-sm"
+                  )}>
+                    <span className={cn(
+                      "font-medium inline-flex items-center gap-1.5",
+                      isMobile ? "justify-start" : "justify-end",
+                      entry.highlight ? "text-primary" : "text-foreground"
+                    )}>
+                      {entry.highlight && mounted && (
+                        <Image
+                          src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                          alt="Coasty"
+                          width={16}
+                          height={16}
+                          className={cn(isMobile ? "h-3.5 w-3.5" : "h-4 w-4")}
+                        />
+                      )}
+                      {entry.name}
+                      {isMobile && (
+                        <span className="text-muted-foreground font-normal ml-1">{entry.org}</span>
+                      )}
+                    </span>
+                    {isMobile && (
+                      <span className={cn(
+                        "font-semibold tabular-nums",
+                        entry.highlight ? "text-primary" : "text-foreground"
+                      )}>
+                        {entry.score}%
+                      </span>
+                    )}
+                    {!isMobile && (
+                      <span className="text-muted-foreground block text-xs">{entry.org}</span>
+                    )}
+                  </div>
+                  {/* Bar */}
+                  <div className={cn(
+                    "relative rounded-md bg-muted/50 overflow-hidden",
+                    isMobile ? "w-full" : "flex-1",
+                    entry.highlight
+                      ? cn(isMobile ? "h-8" : "h-10", "shadow-[0_0_20px_rgba(59,130,246,0.3)] ring-1 ring-blue-500/30")
+                      : cn(isMobile ? "h-6" : "h-7")
+                  )}>
+                    {/* Bar fill */}
+                    {isMobile ? (
+                      <div
+                        className={cn(
+                          "absolute inset-y-0 left-0 rounded-md overflow-hidden",
+                          entry.highlight
+                            ? "bg-[#0c2d3e]"
+                            : entry.type === "framework"
+                              ? "bg-sky-500/25"
+                              : "bg-muted-foreground/20"
+                        )}
+                        style={{ width: `${(entry.score / 82) * 100}%` }}
+                      >
+                        {entry.highlight && (
+                          <div
+                            className="absolute inset-0"
+                            style={{
+                              background: "linear-gradient(90deg, #2563eb, #0891b2, #0d9488)",
+                            }}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${(entry.score / 82) * 100}%` }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.06 + 0.2, duration: 0.7, ease: "easeOut" }}
+                        className={cn(
+                          "absolute inset-y-0 left-0 rounded-md overflow-hidden",
+                          entry.highlight
+                            ? "bg-[#0c2d3e]"
+                            : entry.type === "framework"
+                              ? "bg-sky-500/25"
+                              : "bg-muted-foreground/20"
+                        )}
+                      >
+                        {/* Smoke layers inside the bar — desktop only */}
+                        {entry.highlight && (
+                          <>
+                            <div
+                              className="absolute inset-[-40%]"
+                              style={{
+                                background: "radial-gradient(circle 120px at 20% 50%, #2563eb, transparent), radial-gradient(circle 100px at 80% 50%, #0891b2, transparent)",
+                                animation: "coasty-smoke-1 4s ease-in-out infinite alternate",
+                              }}
+                            />
+                            <div
+                              className="absolute inset-[-40%]"
+                              style={{
+                                background: "radial-gradient(circle 90px at 55% 30%, #0d9488, transparent), radial-gradient(circle 110px at 35% 70%, #1d4ed8, transparent)",
+                                animation: "coasty-smoke-2 5s ease-in-out infinite alternate",
+                              }}
+                            />
+                            <div
+                              className="absolute inset-[-40%]"
+                              style={{
+                                background: "radial-gradient(circle 100px at 70% 60%, #0e7490, transparent), radial-gradient(circle 80px at 10% 40%, #3b82f6, transparent)",
+                                animation: "coasty-smoke-3 3.5s ease-in-out infinite alternate",
+                              }}
+                            />
+                          </>
+                        )}
+                      </motion.div>
+                    )}
+                    {/* Score label inside bar — desktop only (mobile shows it in the header row) */}
+                    {!isMobile && (
+                      <span className={cn(
+                        "absolute right-2 top-1/2 -translate-y-1/2 font-semibold tabular-nums z-10 text-sm",
+                        entry.highlight ? "text-white" : "text-foreground"
+                      )}>
+                        {entry.score}%
+                      </span>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </section>
+
+        <SectionDivider />
+
         {/* Cost Comparison */}
         <section id="cost" className={cn(
           "py-20",
@@ -906,197 +1097,6 @@ export function LandingPage() {
                 </motion.div>
               ))}
             </BentoGrid>
-          </motion.div>
-        </section>
-
-        <SectionDivider />
-
-        {/* OSWorld Benchmark Section */}
-        <section className={cn(
-          "py-20",
-          isMobile ? "px-4" : "px-6"
-        )}>
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-            className="max-w-5xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className="text-center mb-12">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
-              )}>
-                Benchmarked #1 worldwide
-              </h2>
-              <p className={cn(
-                "text-muted-foreground mt-4 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-base"
-              )}>
-                82% on OSWorld — the hardest benchmark for AI agents that use real computers
-              </p>
-            </motion.div>
-
-            {/* Legend */}
-            <motion.div variants={itemVariants} className="flex items-center justify-center gap-4 sm:gap-6 mb-4">
-              <div className="flex items-center gap-1.5">
-                <div className="h-2.5 w-2.5 rounded-full bg-sky-500/70" />
-                <span className="text-xs text-muted-foreground">Agentic Framework</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />
-                <span className="text-xs text-muted-foreground">Foundation Model</span>
-              </div>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className={cn(isMobile ? "space-y-3" : "space-y-2.5")}>
-              {[
-                { name: "Coasty", org: "Ours", score: 82.0, highlight: true, type: "framework" as const },
-                { name: "Agent S3", org: "Simular · Opus 4.5 + GPT-5", score: 72.6, type: "framework" as const },
-                { name: "Agent S3", org: "Simular · GPT-5", score: 69.9, type: "framework" as const },
-                { name: "UiPath Screen Agent", org: "UiPath · Opus 4.5", score: 67.1, type: "framework" as const },
-                { name: "Agent S3", org: "Simular · Opus 4.5", score: 66.0, type: "framework" as const },
-                { name: "Kimi K2.5", org: "Moonshot AI", score: 63.3, type: "model" as const },
-                { name: "Claude Sonnet 4.5", org: "Anthropic", score: 62.9, type: "model" as const },
-                { name: "Seed-1.8", org: "ByteDance", score: 61.9, type: "model" as const },
-                { name: "Claude Sonnet 4.5", org: "Anthropic · 50 steps", score: 58.1, type: "model" as const },
-              ].map((entry, i) => (
-                <motion.div
-                  key={i}
-                  initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                  animate={isMobile ? { opacity: 1, x: 0 } : undefined}
-                  whileInView={isMobile ? undefined : { opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={isMobile ? { duration: 0 } : { delay: i * 0.06, duration: 0.4 }}
-                  className={cn(
-                    isMobile ? "flex flex-col gap-1" : "flex items-center gap-3",
-                    entry.highlight && "py-1"
-                  )}
-                >
-                  {/* Label: stacked above bar on mobile, side-by-side on desktop */}
-                  <div className={cn(
-                    isMobile
-                      ? "flex items-center justify-between text-xs"
-                      : "flex-shrink-0 text-right w-44 text-sm"
-                  )}>
-                    <span className={cn(
-                      "font-medium inline-flex items-center gap-1.5",
-                      isMobile ? "justify-start" : "justify-end",
-                      entry.highlight ? "text-primary" : "text-foreground"
-                    )}>
-                      {entry.highlight && mounted && (
-                        <Image
-                          src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
-                          alt="Coasty"
-                          width={16}
-                          height={16}
-                          className={cn(isMobile ? "h-3.5 w-3.5" : "h-4 w-4")}
-                        />
-                      )}
-                      {entry.name}
-                      {isMobile && (
-                        <span className="text-muted-foreground font-normal ml-1">{entry.org}</span>
-                      )}
-                    </span>
-                    {isMobile && (
-                      <span className={cn(
-                        "font-semibold tabular-nums",
-                        entry.highlight ? "text-primary" : "text-foreground"
-                      )}>
-                        {entry.score}%
-                      </span>
-                    )}
-                    {!isMobile && (
-                      <span className="text-muted-foreground block text-xs">{entry.org}</span>
-                    )}
-                  </div>
-                  {/* Bar */}
-                  <div className={cn(
-                    "relative rounded-md bg-muted/50 overflow-hidden",
-                    isMobile ? "w-full" : "flex-1",
-                    entry.highlight
-                      ? cn(isMobile ? "h-8" : "h-10", "shadow-[0_0_20px_rgba(59,130,246,0.3)] ring-1 ring-blue-500/30")
-                      : cn(isMobile ? "h-6" : "h-7")
-                  )}>
-                    {/* Bar fill */}
-                    {isMobile ? (
-                      <div
-                        className={cn(
-                          "absolute inset-y-0 left-0 rounded-md overflow-hidden",
-                          entry.highlight
-                            ? "bg-[#0c2d3e]"
-                            : entry.type === "framework"
-                              ? "bg-sky-500/25"
-                              : "bg-muted-foreground/20"
-                        )}
-                        style={{ width: `${(entry.score / 82) * 100}%` }}
-                      >
-                        {entry.highlight && (
-                          <div
-                            className="absolute inset-0"
-                            style={{
-                              background: "linear-gradient(90deg, #2563eb, #0891b2, #0d9488)",
-                            }}
-                          />
-                        )}
-                      </div>
-                    ) : (
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${(entry.score / 82) * 100}%` }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.06 + 0.2, duration: 0.7, ease: "easeOut" }}
-                        className={cn(
-                          "absolute inset-y-0 left-0 rounded-md overflow-hidden",
-                          entry.highlight
-                            ? "bg-[#0c2d3e]"
-                            : entry.type === "framework"
-                              ? "bg-sky-500/25"
-                              : "bg-muted-foreground/20"
-                        )}
-                      >
-                        {/* Smoke layers inside the bar — desktop only */}
-                        {entry.highlight && (
-                          <>
-                            <div
-                              className="absolute inset-[-40%]"
-                              style={{
-                                background: "radial-gradient(circle 120px at 20% 50%, #2563eb, transparent), radial-gradient(circle 100px at 80% 50%, #0891b2, transparent)",
-                                animation: "coasty-smoke-1 4s ease-in-out infinite alternate",
-                              }}
-                            />
-                            <div
-                              className="absolute inset-[-40%]"
-                              style={{
-                                background: "radial-gradient(circle 90px at 55% 30%, #0d9488, transparent), radial-gradient(circle 110px at 35% 70%, #1d4ed8, transparent)",
-                                animation: "coasty-smoke-2 5s ease-in-out infinite alternate",
-                              }}
-                            />
-                            <div
-                              className="absolute inset-[-40%]"
-                              style={{
-                                background: "radial-gradient(circle 100px at 70% 60%, #0e7490, transparent), radial-gradient(circle 80px at 10% 40%, #3b82f6, transparent)",
-                                animation: "coasty-smoke-3 3.5s ease-in-out infinite alternate",
-                              }}
-                            />
-                          </>
-                        )}
-                      </motion.div>
-                    )}
-                    {/* Score label inside bar — desktop only (mobile shows it in the header row) */}
-                    {!isMobile && (
-                      <span className={cn(
-                        "absolute right-2 top-1/2 -translate-y-1/2 font-semibold tabular-nums z-10 text-sm",
-                        entry.highlight ? "text-white" : "text-foreground"
-                      )}>
-                        {entry.score}%
-                      </span>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
           </motion.div>
         </section>
 
