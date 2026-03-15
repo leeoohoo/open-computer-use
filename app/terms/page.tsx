@@ -10,6 +10,7 @@ import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 
 import { LandingHeader } from "@/app/components/landing/landing-header"
+import { LandingFooter } from "@/app/components/landing/landing-footer"
 import { GuideLines } from "@/app/components/landing/guide-lines"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -529,46 +530,7 @@ export default function TermsPage() {
           </motion.div>
         </section>
 
-        {/* Footer */}
-        <footer className="py-12 mt-20 border-t border-border/50">
-          <div className={cn(
-            "mx-auto",
-            isMobile ? "px-4 max-w-xl" : "px-6 max-w-7xl"
-          )}>
-            <div className={cn(
-              "flex justify-between items-center",
-              isMobile && "flex-col gap-6"
-            )}>
-              <p className="text-sm text-muted-foreground">
-                © {new Date().getFullYear()} Coasty. All rights reserved.
-              </p>
-              <div className="flex gap-6">
-                <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Privacy
-                </Link>
-                <Link href="/terms" className="text-sm text-primary hover:text-primary/80 transition-colors">
-                  Terms
-                </Link>
-                <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Blog
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Giant Coasty wordmark */}
-          <div className="relative w-full flex items-end justify-center select-none overflow-x-clip overflow-y-visible px-4 sm:px-6 md:px-8 pb-6">
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-[80%] h-[60%] bg-gradient-to-r from-blue-500/[0.07] via-purple-500/[0.07] to-blue-500/[0.07] dark:from-blue-400/[0.05] dark:via-purple-400/[0.05] dark:to-blue-400/[0.05] rounded-full blur-3xl" />
-            </div>
-            <h2
-              className="relative text-[20vw] sm:text-[18vw] md:text-[16vw] lg:text-[14vw] font-black tracking-tighter leading-[1.15] bg-gradient-to-b from-foreground/90 via-foreground/50 to-foreground/10 bg-clip-text text-transparent px-[0.15em] pb-[0.15em]"
-              aria-hidden="true"
-            >
-              Coasty
-            </h2>
-          </div>
-        </footer>
+        <LandingFooter />
       </main>
     </div>
   )
