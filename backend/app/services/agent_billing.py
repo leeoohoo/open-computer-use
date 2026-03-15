@@ -127,13 +127,17 @@ class AgentBillingService:
 
                 if new_minutes <= 0:
                     balance = await self._get_user_balance(session["user_id"])
+                    # Don't stop on balance fetch error (None) — only stop on confirmed zero
+                    should_stop = balance is not None and balance <= 0
+                    if balance is None:
+                        logger.warning(f"Could not fetch balance for session {session_id}, allowing continuation")
                     return {
                         "step": step_number,
                         "charged": 0,
                         "total_charged_minutes": already_charged_minutes,
                         "total_credits_used": already_charged_minutes * self.CREDITS_PER_MINUTE,
-                        "remaining_balance": balance,
-                        "should_stop": balance <= 0,
+                        "remaining_balance": balance if balance is not None else -1,
+                        "should_stop": should_stop,
                     }
 
                 new_credits = new_minutes * self.CREDITS_PER_MINUTE
@@ -149,6 +153,10 @@ class AgentBillingService:
                 session["last_check"] = now
 
                 balance = await self._get_user_balance(session["user_id"])
+                # Don't stop on balance fetch error (None) — only stop on confirmed zero
+                should_stop = balance is not None and balance <= 0
+                if balance is None:
+                    logger.warning(f"Could not fetch balance after charge for session {session_id}, allowing continuation")
 
                 logger.info(
                     f"Step {step_number} charge for session {session_id}: "
@@ -161,8 +169,8 @@ class AgentBillingService:
                     "new_minutes": new_minutes,
                     "total_charged_minutes": total_minutes,
                     "total_credits_used": session["credits_used"],
-                    "remaining_balance": balance,
-                    "should_stop": balance <= 0,
+                    "remaining_balance": balance if balance is not None else -1,
+                    "should_stop": should_stop,
                 }
 
         except Exception as e:
@@ -319,15 +327,17 @@ class AgentBillingService:
                     balance = await self._get_user_balance(session["user_id"])
                     
                     # Calculate remaining runtime
-                    remaining_credits = balance
-                    remaining_minutes = remaining_credits // self.CREDITS_PER_MINUTE
+                    remaining_credits = balance if balance is not None else 0
+                    remaining_minutes = remaining_credits // self.CREDITS_PER_MINUTE if remaining_credits > 0 else 0
                     
                     # Log current status
                     logger.debug(f"Session {session_id}: {duration_minutes} min used, "
                                f"{credits_used} credits, balance: {balance}")
                     
-                    # Check if we need to warn or stop
-                    if balance <= 0:
+                    # Check if we need to warn or stop (None = fetch error, don't stop)
+                    if balance is None:
+                        logger.warning(f"Could not fetch balance for session {session_id}, skipping check")
+                    elif balance <= 0:
                         logger.error(f"User {session['user_id']} out of credits, ending session")
                         await self.end_session(session_id, "insufficient_credits", "Out of credits")
                         break
@@ -347,65 +357,109 @@ class AgentBillingService:
         except Exception as e:
             logger.error(f"Error in periodic credit check: {str(e)}")
     
-    async def _get_user_balance(self, user_id: str) -> int:
-        """Get user's current credit balance"""
-        try:
-            if not self.db_service.client:
-                return 0
-            
-            response = self.db_service.client.table("user_credits").select("balance").eq(
-                "user_id", user_id
-            ).single().execute()
-            
-            if response and response.data:
-                return response.data.get("balance", 0)
-            return 0
-            
-        except Exception as e:
-            logger.error(f"Error getting user balance: {str(e)}")
-            return 0
+    async def _get_user_balance(self, user_id: str, max_retries: int = 3) -> Optional[int]:
+        """Get user's current credit balance with retries. Returns None only if all retries fail."""
+        last_error = None
+
+        for attempt in range(max_retries):
+            try:
+                if not self.db_service.client:
+                    logger.warning(f"No DB client when checking balance for user {user_id} (attempt {attempt + 1})")
+                    if attempt < max_retries - 1:
+                        await asyncio.sleep(0.5 * (attempt + 1))
+                    continue
+
+                response = self.db_service.client.table("user_credits").select("balance").eq(
+                    "user_id", user_id
+                ).single().execute()
+
+                if response and response.data:
+                    balance = response.data.get("balance")
+                    if balance is not None:
+                        return int(balance)
+
+                # Row exists but no balance field, or no row — treat as 0
+                if response and response.data is not None:
+                    return 0
+
+                # No response data — retry
+                logger.warning(f"Empty response fetching balance for user {user_id} (attempt {attempt + 1})")
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(0.5 * (attempt + 1))
+
+            except Exception as e:
+                last_error = e
+                logger.warning(
+                    f"Error fetching balance for user {user_id} (attempt {attempt + 1}/{max_retries}): {e}"
+                )
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(0.5 * (attempt + 1))
+
+        logger.error(f"All {max_retries} attempts to fetch balance failed for user {user_id}: {last_error}")
+        return None
     
     async def _deduct_credits(
         self,
         user_id: str,
         amount: int,
         description: str,
-        session_id: str
+        session_id: str,
+        max_retries: int = 3
     ) -> int:
         """
-        Deduct credits from user balance (partial deduction if insufficient)
-        Returns the actual amount deducted
+        Deduct credits from user balance (partial deduction if insufficient).
+        Retries on transient DB errors. Returns actual amount deducted (0 if all retries fail).
         """
-        try:
-            if not self.db_service.client:
-                return 0
-            
-            # Use the new partial deduction function
-            response = self.db_service.client.rpc(
-                "deduct_credits_partial",
-                {
-                    "p_user_id": user_id,
-                    "p_amount": amount,
-                    "p_resource_type": "virtual_machine",
-                    "p_resource_id": session_id,
-                    "p_description": description
-                }
-            ).execute()
-            
-            if response and response.data is not None:
-                actual_deducted = response.data
-                if actual_deducted < amount:
-                    logger.warning(f"Partial deduction for user {user_id}: {actual_deducted} of {amount} credits")
-                return actual_deducted
-            return 0
-            
-        except Exception as e:
-            logger.error(f"Error deducting credits: {str(e)}")
-            return 0
+        last_error = None
+
+        for attempt in range(max_retries):
+            try:
+                if not self.db_service.client:
+                    logger.warning(f"No DB client for deduction (attempt {attempt + 1})")
+                    if attempt < max_retries - 1:
+                        await asyncio.sleep(0.5 * (attempt + 1))
+                    continue
+
+                response = self.db_service.client.rpc(
+                    "deduct_credits_partial",
+                    {
+                        "p_user_id": user_id,
+                        "p_amount": amount,
+                        "p_resource_type": "virtual_machine",
+                        "p_resource_id": session_id,
+                        "p_description": description
+                    }
+                ).execute()
+
+                if response and response.data is not None:
+                    actual_deducted = int(response.data)
+                    if actual_deducted < amount:
+                        logger.warning(f"Partial deduction for user {user_id}: {actual_deducted} of {amount} credits")
+                    return actual_deducted
+
+                # Got a response but no data — retry
+                logger.warning(f"Empty RPC response for deduction (attempt {attempt + 1})")
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(0.5 * (attempt + 1))
+
+            except Exception as e:
+                last_error = e
+                logger.warning(
+                    f"Error deducting credits for user {user_id} (attempt {attempt + 1}/{max_retries}): {e}"
+                )
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(0.5 * (attempt + 1))
+
+        logger.error(f"All {max_retries} deduction attempts failed for user {user_id}: {last_error}")
+        return 0
     
     async def check_balance_for_session(self, user_id: str) -> Dict[str, Any]:
         """Check if user has enough balance to start a session"""
         balance = await self._get_user_balance(user_id)
+        if balance is None:
+            # DB error — allow session to start rather than blocking paying users
+            logger.warning(f"Could not fetch balance for user {user_id}, allowing session start")
+            balance = self.MIN_BALANCE_REQUIRED  # assume sufficient
         can_start = balance >= self.MIN_BALANCE_REQUIRED
         estimated_minutes = balance // self.CREDITS_PER_MINUTE if balance > 0 else 0
         
