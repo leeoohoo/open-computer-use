@@ -13,7 +13,7 @@ import { useTheme } from "next-themes"
 const navItems = [
   { href: "/agent-swarms", label: "Agent Swarms", external: true },
   { href: "/results", label: "Case Studies", external: true },
-  { href: "/#pricing", label: "Pricing" },
+  { href: "/pricing", label: "Pricing", external: true },
   { href: "/guide", label: "Guide", external: true },
   { href: "/download", label: "Download", external: true },
   { href: "/blog", label: "Blog", external: true }

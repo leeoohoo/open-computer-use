@@ -2,72 +2,43 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Play, Video } from "lucide-react"
+import { ArrowRight, Video, Play } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
-// ─── Neutral accent ───
-const ACCENT_RGB = "212, 212, 216"
-
 // ─── Use Cases ───
 interface UseCase {
   label: string
-  headline: string
-  task: string
+  verb: string
   videoId: string
 }
 
 const USE_CASES: UseCase[] = [
-  { label: "Marketing", headline: "runs campaigns on Reddit, Twitter, and LinkedIn.", task: "Research competitors, write posts, engage with comments, and report results", videoId: "icxgLDephHE" },
-  { label: "Sales", headline: "researches leads and sends personalized outreach.", task: "Find 50 prospects, enrich their profiles, write emails, and follow up automatically", videoId: "qTvmGfg3HVw" },
-  { label: "QA", headline: "tests every flow and files bug reports.", task: "Navigate your app, click through checkout, catch regressions, screenshot issues", videoId: "Wbo2o74hVIo" },
-  { label: "Lead Gen", headline: "builds prospect lists from any website.", task: "Scrape directories, enrich contacts, verify emails, and export to your CRM", videoId: "icxgLDephHE" },
-  { label: "Recruiting", headline: "sources candidates and screens profiles.", task: "Search LinkedIn, filter by criteria, rank matches, and schedule interviews", videoId: "AnHJuRMLCnE" },
-  { label: "HR & Admin", headline: "fills forms and processes documents.", task: "Complete onboarding paperwork, extract data from PDFs, update spreadsheets", videoId: "mH-csaCa508" },
-  { label: "Support", headline: "resolves tickets by navigating your tools.", task: "Look up accounts, check order status, draft replies, and close issues — 24/7", videoId: "A_OvNh51Npg" },
-  { label: "Finance", headline: "extracts invoice data and reconciles books.", task: "Open invoices, pull line items, match to POs, and update your accounting software", videoId: "AnHJuRMLCnE" },
-  { label: "Growth", headline: "posts content and engages across platforms.", task: "Write and publish on Hacker News, Reddit, and social — reply to every comment", videoId: "A_OvNh51Npg" },
-  { label: "Data Entry", headline: "copies data between any two apps.", task: "Read from spreadsheets, fill web forms, sync CRMs, and generate reports", videoId: "qTvmGfg3HVw" },
+  { label: "Support", verb: "resolves tickets", videoId: "A_OvNh51Npg" },
+  { label: "Sales", verb: "researches leads", videoId: "qTvmGfg3HVw" },
+  { label: "Marketing", verb: "runs campaigns", videoId: "icxgLDephHE" },
+  { label: "QA", verb: "tests every flow", videoId: "Wbo2o74hVIo" },
+  { label: "Recruiting", verb: "sources candidates", videoId: "AnHJuRMLCnE" },
+  { label: "Finance", verb: "processes invoices", videoId: "AnHJuRMLCnE" },
+  { label: "Data Entry", verb: "syncs your apps", videoId: "qTvmGfg3HVw" },
 ]
 
-const CYCLE_MS = 4000
+const CYCLE_MS = 2800
 
 export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
   const [index, setIndex] = useState(0)
-  const [progress, setProgress] = useState(0)
   const [playing, setPlaying] = useState<string | null>(null)
   const paused = useRef(false)
-  const elapsed = useRef(0)
-  const lastTick = useRef(Date.now())
   const current = USE_CASES[index]
 
-  // Auto-cycle with pause support
   useEffect(() => {
-    const tick = setInterval(() => {
-      const now = Date.now()
+    const interval = setInterval(() => {
       if (!paused.current) {
-        elapsed.current += now - lastTick.current
-        const p = elapsed.current / CYCLE_MS
-        if (p >= 1) {
-          elapsed.current = 0
-          setIndex((prev) => (prev + 1) % USE_CASES.length)
-          setProgress(0)
-        } else {
-          setProgress(p)
-        }
+        setIndex((prev) => (prev + 1) % USE_CASES.length)
       }
-      lastTick.current = now
-    }, 30)
-    return () => clearInterval(tick)
-  }, [])
-
-  const pick = useCallback((i: number) => {
-    setIndex(i)
-    setProgress(0)
-    setPlaying(null)
-    elapsed.current = 0
-    lastTick.current = Date.now()
+    }, CYCLE_MS)
+    return () => clearInterval(interval)
   }, [])
 
   const handlePlay = useCallback(() => {
@@ -76,19 +47,15 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
   }, [current.videoId])
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto">
-      {/* ─── Top section: headline + subtitle ─── */}
-      <div className={cn("relative z-10 text-center", isMobile ? "mb-8" : "mb-10")}>
-        {/* Trust badge */}
-        <div className="flex justify-center mb-6">
+    <div className="relative w-full max-w-4xl mx-auto">
+      {/* ─── Hero text ─── */}
+      <div className={cn("relative z-10 text-center", isMobile ? "mb-10" : "mb-14")}>
+        {/* Badge */}
+        <div className="flex justify-center mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-border/40 bg-background/60 backdrop-blur-sm px-4 py-1.5">
             <span className="relative flex h-1.5 w-1.5">
-              <span
-                className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 bg-emerald-400"
-              />
-              <span
-                className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400"
-              />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 bg-emerald-400" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
             </span>
             <span className="text-xs font-medium text-muted-foreground">
               #1 State of the Art · <span className="text-foreground font-semibold">82% OSWorld</span>
@@ -99,98 +66,55 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
         {/* Headline */}
         <h1 className={cn(
           "font-bold tracking-tight",
-          isMobile ? "text-3xl leading-[1.3] mb-3" : "text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.2] mb-4"
+          isMobile ? "text-4xl leading-[1.2]" : "text-5xl sm:text-6xl lg:text-7xl leading-[1.1]"
         )}>
-          <span className="text-foreground">Coasty uses a</span>
+          <span className="text-foreground">Coasty uses a computer</span>
           <br />
-          <span className="relative text-foreground">
-            computer
-            <span className={cn(
-              "absolute left-0 bottom-0 h-[3px] rounded-full bg-foreground/20",
-              isMobile ? "right-0" : "right-0"
-            )} />
-          </span>
-          {" "}
-          <span className="text-muted-foreground/60">for you,</span>
-          {" "}
+          <span className="text-muted-foreground/40">for you, </span>
           <span className="text-emerald-500 dark:text-emerald-400">safely.</span>
         </h1>
 
-        {/* Rotating department line */}
-        <div className={cn(
-          "mx-auto",
-          isMobile ? "max-w-sm" : "max-w-2xl"
+        {/* Sub */}
+        <p className={cn(
+          "text-muted-foreground/50 mt-5 mx-auto",
+          isMobile ? "text-sm max-w-xs" : "text-lg max-w-md"
         )}>
-          {/* No integration tagline */}
-          <p className={cn(
-            "text-muted-foreground/50",
-            isMobile ? "text-sm mb-3" : "text-base sm:text-lg mb-4"
-          )}>
-            No MCP servers. No integrations. No setup. It just works.
-          </p>
+          No MCP servers. No integrations. No setup. It just works.
+        </p>
 
-          <div className={cn(
-            "flex items-center justify-center gap-2",
-            isMobile ? "min-h-[2rem]" : "h-8"
-          )}>
-            <span className={cn(
-              "text-muted-foreground/60 shrink-0",
-              isMobile ? "text-sm" : "text-base sm:text-lg"
-            )}>
-              It
-            </span>
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={index}
-                initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
-                transition={{ duration: 0.3 }}
-                className={cn(
-                  "text-foreground font-medium",
-                  isMobile ? "text-sm" : "text-base sm:text-lg",
-                  !isMobile && "whitespace-nowrap"
-                )}
-              >
-                {current.headline}
-              </motion.span>
-            </AnimatePresence>
-          </div>
-
-          {/* Task example */}
-          <div className={cn(
-            "flex items-center justify-center gap-1.5 mt-1",
-            isMobile ? "min-h-[2rem]" : "h-7"
-          )}>
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={index}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                className={cn(
-                  "text-muted-foreground/50",
-                  isMobile ? "text-xs" : "text-sm"
-                )}
-              >
-                {current.task}
-              </motion.span>
-            </AnimatePresence>
-          </div>
+        {/* Rotating verb line */}
+        <div className={cn(
+          "mt-6 flex items-center justify-center gap-[0.35em]",
+          isMobile ? "text-base" : "text-xl"
+        )}>
+          <span className="text-muted-foreground/50">It</span>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={index}
+              initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="text-foreground font-semibold"
+            >
+              {current.verb}
+            </motion.span>
+          </AnimatePresence>
+          <span className="text-muted-foreground/50">for you.</span>
         </div>
 
-        {/* CTA + cost */}
-        <div className={cn("mt-8 flex items-center justify-center gap-3", isMobile ? "mt-6 flex-col" : "mt-8 flex-row")}>
+        {/* CTAs */}
+        <div className={cn(
+          "flex items-center justify-center gap-3",
+          isMobile ? "mt-8 flex-col" : "mt-10"
+        )}>
           <Link href="/auth">
             <motion.button
               className={cn(
                 "inline-flex items-center gap-2.5 rounded-full font-semibold cursor-pointer bg-foreground text-background",
                 isMobile ? "px-6 py-3 text-sm" : "px-8 py-3.5 text-[15px]"
               )}
-              style={{
-                boxShadow: `0 8px 30px rgba(0, 0, 0, 0.15)`,
-              }}
+              style={{ boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -212,65 +136,53 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
             </motion.button>
           </a>
         </div>
-      </div>
 
-      {/* ─── Use case selector pills ─── */}
-      <div className={cn(
-        "relative z-10 flex flex-wrap justify-center",
-        isMobile ? "gap-1 mb-6" : "gap-1.5 mb-8"
-      )}>
-        {USE_CASES.map((uc, i) => {
-          const isActive = i === index
-          return (
-            <motion.button
-              key={uc.label}
-              onClick={() => pick(i)}
-              layout
-              className={cn(
-                "relative rounded-full font-medium overflow-hidden transition-all duration-300 cursor-pointer",
-                isMobile ? "text-[10px] px-2.5 py-1" : "text-[11px] px-3.5 py-1.5",
-                isActive
-                  ? "text-foreground"
-                  : "text-muted-foreground/40 hover:text-muted-foreground/70"
-              )}
-            >
-              {/* Active pill background */}
-              {isActive && (
-                <motion.span
-                  layoutId="active-pill"
-                  className="absolute inset-0 rounded-full bg-foreground/[0.08] border border-foreground/[0.12]"
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
-              )}
-              {/* Progress bar inside active pill */}
-              {isActive && (
-                <span
-                  className="absolute bottom-0 left-0 h-[2px] rounded-full transition-none"
-                  style={{
-                    width: `${progress * 100}%`,
-                    background: `linear-gradient(90deg, transparent, rgba(${ACCENT_RGB}, 0.6))`,
-                  }}
-                />
-              )}
-              <span className="relative z-10">{uc.label}</span>
-            </motion.button>
-          )
-        })}
+        {/* Use case labels */}
+        <div className={cn(
+          "flex flex-wrap justify-center",
+          isMobile ? "gap-x-4 gap-y-2 mt-8" : "gap-x-5 gap-y-2 mt-10"
+        )}>
+          {USE_CASES.map((uc, i) => {
+            const isActive = i === index
+            return (
+              <button
+                key={uc.label}
+                onClick={() => { setIndex(i); setPlaying(null); paused.current = false }}
+                className={cn(
+                  "relative cursor-pointer transition-colors duration-300",
+                  isMobile ? "text-xs" : "text-sm",
+                  isActive
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground/30 hover:text-muted-foreground/60"
+                )}
+              >
+                {uc.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="hero-underline"
+                    className="absolute -bottom-1 left-0 right-0 h-px bg-foreground/40"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* ─── Video player ─── */}
       <div
         className="relative z-10"
         onMouseEnter={() => { if (!playing) paused.current = true }}
-        onMouseLeave={() => { if (!playing) { paused.current = false; lastTick.current = Date.now() } }}
+        onMouseLeave={() => { if (!playing) { paused.current = false } }}
       >
-        {/* Screen glow — blurred gradient beneath the player */}
+        {/* Screen glow */}
         <div
           className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-[80%] h-[40%] rounded-full blur-[80px] opacity-[0.07] dark:opacity-[0.12] pointer-events-none"
           style={{ background: "radial-gradient(ellipse, currentColor 0%, transparent 70%)" }}
         />
 
-        {/* Browser-window chrome */}
+        {/* Browser chrome */}
         <div className={cn(
           "relative rounded-xl sm:rounded-2xl overflow-hidden",
           "border border-border/40 dark:border-border/30",
@@ -280,19 +192,16 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
         )}>
           {/* Title bar */}
           <div className="flex items-center px-4 py-2 bg-muted/30 dark:bg-white/[0.03] border-b border-border/20">
-            {/* Traffic lights */}
             <div className="flex items-center gap-[6px]">
               <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />
               <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />
               <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />
             </div>
-            {/* URL bar */}
             <div className="flex-1 flex justify-center">
               <div className={cn(
                 "rounded-md bg-foreground/[0.04] dark:bg-white/[0.04] flex items-center justify-center gap-1.5",
                 isMobile ? "px-3 py-[3px] max-w-[200px]" : "px-4 py-[3px] max-w-[300px]"
               )}>
-                {/* Lock icon */}
                 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" className="text-muted-foreground/30 shrink-0">
                   <path d="M11.5 7V5a3.5 3.5 0 10-7 0v2M4 7h8a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -313,7 +222,6 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                 </AnimatePresence>
               </div>
             </div>
-            {/* Spacer to balance traffic lights */}
             <div className="w-[54px]" />
           </div>
 
@@ -321,7 +229,6 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           <div className="relative w-full bg-neutral-950" style={{ paddingTop: "56.25%" }}>
             <AnimatePresence mode="wait">
               {playing === current.videoId ? (
-                /* Iframe — loaded on play */
                 <motion.div
                   key={`iframe-${current.videoId}`}
                   initial={{ opacity: 0 }}
@@ -339,7 +246,6 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                   />
                 </motion.div>
               ) : (
-                /* Thumbnail + play button */
                 <motion.div
                   key={`thumb-${current.videoId}`}
                   initial={{ opacity: 0, scale: 1.02 }}
@@ -349,7 +255,6 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                   className="absolute inset-0 cursor-pointer group"
                   onClick={handlePlay}
                 >
-                  {/* Thumbnail image */}
                   <Image
                     src={`https://img.youtube.com/vi/${current.videoId}/maxresdefault.jpg`}
                     alt={`${current.label} demo`}
@@ -358,11 +263,9 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                     sizes="(max-width: 768px) 100vw, 960px"
                     priority={index === 0}
                   />
-
-                  {/* Gradient overlay — cinematic vignette */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-black/5 group-hover:from-black/50 transition-colors duration-500" />
 
-                  {/* Play button — frosted glass */}
+                  {/* Play button */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <motion.div
                       className={cn(
@@ -374,17 +277,15 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                       whileHover={{ scale: 1.06 }}
                       whileTap={{ scale: 0.94 }}
                     >
-                      <Play
-                        className={cn(
-                          "text-white fill-white ml-[2px] drop-shadow-sm",
-                          isMobile ? "h-5 w-5" : "h-6 w-6"
-                        )}
-                      />
+                      <Play className={cn(
+                        "text-white fill-white ml-[2px] drop-shadow-sm",
+                        isMobile ? "h-5 w-5" : "h-6 w-6"
+                      )} />
                     </motion.div>
                   </div>
 
-                  {/* Use case label — bottom left */}
-                  <div className={cn("absolute left-0 bottom-0 p-3", isMobile ? "p-2.5" : "p-4")}>
+                  {/* Label badge */}
+                  <div className={cn("absolute left-0 bottom-0", isMobile ? "p-2.5" : "p-4")}>
                     <AnimatePresence mode="wait">
                       <motion.span
                         key={index}
@@ -403,7 +304,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                     </AnimatePresence>
                   </div>
 
-                  {/* Watch demo text — bottom right */}
+                  {/* Watch demo */}
                   <div className={cn("absolute right-0 bottom-0", isMobile ? "p-2.5" : "p-4")}>
                     <span className={cn(
                       "text-white/40 group-hover:text-white/60 transition-colors duration-300",

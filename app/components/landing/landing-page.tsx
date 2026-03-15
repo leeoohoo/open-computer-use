@@ -21,6 +21,7 @@ import { useSearchParams } from "next/navigation"
 import { LandingHeader } from "./landing-header"
 import { LandingFooter } from "./landing-footer"
 import { HeroUseCaseCarousel } from "./hero-use-case-carousel"
+// HeroMachineDemo removed
 // MockChatDemo moved out of hero — still available for other sections
 // import { MockChatDemo } from "./mock-chat-demo"
 // import { MockVMDisplay } from "./mock-vm-display"
@@ -297,7 +298,6 @@ export function LandingPage() {
   const [selectedFaq, setSelectedFaq] = useState<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const [comparisonPlan, setComparisonPlan] = useState(2) // default to Plus (index 2)
   const [activePersona, setActivePersona] = useState(0)
   const { resolvedTheme } = useTheme()
 
@@ -1217,7 +1217,7 @@ export function LandingPage() {
           </motion.div>
         </section>
 
-        {/* Pricing Section */}
+        {/* Pricing Section — simplified overview */}
         <section id="pricing" className={cn(
           "py-20",
           isMobile ? "px-4" : "px-6"
@@ -1229,307 +1229,130 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
+            {/* Header */}
             <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className={cn(
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Simple, transparent pricing
+                Start free, scale when ready
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Start free. Upgrade when you need more.
+                100 free credits. No credit card. Your AI agent is ready in 60 seconds.
               </p>
             </motion.div>
 
-            {/* Plan pills with prices */}
+            {/* Plan cards — simple 4-col grid */}
             <div className={cn(
-              "flex items-center justify-center gap-2 mb-10 flex-wrap",
-              isMobile ? "gap-1.5" : "gap-2"
+              "grid gap-3",
+              isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-4"
             )}>
-              {pricingPlans.map((plan, i) => (
-                <button
+              {pricingPlans.map((plan) => (
+                <motion.div
                   key={plan.name}
-                  onClick={() => setComparisonPlan(i)}
+                  variants={itemVariants}
                   className={cn(
-                    "relative rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5",
-                    isMobile ? "px-3 py-2" : "px-4 py-2.5",
-                    comparisonPlan === i
-                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                      : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                    "relative rounded-xl border p-5 flex flex-col",
+                    plan.highlighted
+                      ? "border-foreground/20 bg-foreground/[0.03]"
+                      : "border-border/50"
                   )}
                 >
-                  {plan.name}
-                  <span className={cn(
-                    "text-xs font-normal",
-                    comparisonPlan === i ? "text-primary-foreground/70" : "text-muted-foreground/60"
-                  )}>
-                    {plan.price}
-                  </span>
-                  {plan.badge && comparisonPlan !== i && (
-                    <span className="absolute -top-1.5 -right-1.5 flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                  {plan.badge && (
+                    <span className="absolute -top-2.5 left-4 rounded-full bg-foreground text-background px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+                      {plan.badge}
                     </span>
                   )}
-                </button>
-              ))}
-              <Link
-                href="mailto:founders@coasty.ai"
-                className={cn(
-                  "rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5 bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground",
-                  isMobile ? "px-3 py-2" : "px-4 py-2.5"
-                )}
-              >
-                <span className="leading-none">Enterprise</span>
-                <span className="text-xs font-normal text-muted-foreground/60 leading-none">Custom</span>
-              </Link>
-            </div>
 
-            {/* Selected plan detail + comparison */}
-            {(() => {
-              const plan = pricingPlans[comparisonPlan]
-              // Tier-appropriate human equivalent costs
-              const humanCost = plan.price === "$0" ? "$2,000" : plan.price === "$19" ? "$4,000" : plan.price === "$50" ? "$8,000" : "$12,000"
-              const humanCostNum = plan.price === "$0" ? 2000 : plan.price === "$19" ? 4000 : plan.price === "$50" ? 8000 : 12000
-              const coastyCostNum = plan.price === "$0" ? 0 : plan.price === "$19" ? 19 : plan.price === "$50" ? 50 : 100
-              const savings = (humanCostNum - coastyCostNum).toLocaleString()
+                  <div className="mb-4">
+                    <h3 className="text-sm font-semibold text-foreground">{plan.name}</h3>
+                    <div className="mt-2 flex items-baseline gap-1">
+                      <span className="text-3xl font-bold tracking-tight">{plan.price}</span>
+                      <span className="text-sm text-muted-foreground">/{plan.period}</span>
+                    </div>
+                    <p className="mt-1.5 text-xs text-muted-foreground">{plan.description}</p>
+                  </div>
 
-              const rows: { label: string; coasty: string | boolean; human: string | boolean }[] = [
-                { label: "Monthly cost", coasty: `${plan.price}/mo`, human: `${humanCost}/mo (manual labor)` },
-                { label: "You save", coasty: `$${savings}/mo`, human: "$0" },
-                { label: "Availability", coasty: "24/7, every day", human: "Business hours only" },
-                { label: "Setup time", coasty: "60 seconds", human: "Hours of SOPs + training" },
-                { label: "Consistency", coasty: "Identical every time", human: "Varies by person/day" },
-                { label: "Full audit trail", coasty: true, human: false },
-                { label: "Scale instantly", coasty: true, human: false },
-                { label: "Runs on schedule", coasty: true, human: false },
-                { label: "Cancel anytime", coasty: true, human: false },
-              ]
-
-              const taskVolume = plan.price === "$0" ? "~10 tasks" : plan.price === "$19" ? "~40 tasks" : plan.price === "$50" ? "~120 tasks" : "~300 tasks"
-              const multiplier = plan.price === "$0" ? "Free" : plan.price === "$19" ? "210x" : plan.price === "$50" ? "160x" : "120x"
-
-              return (
-                <>
-                  {/* Savings highlight pill */}
-                  <motion.div
-                    key={`pill-${plan.name}`}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex justify-center mb-8"
-                  >
-                    <div className="inline-flex items-center gap-3 rounded-full border border-border bg-muted/40 px-5 py-2.5 shadow-sm">
-                      <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
-                        Save <span className="font-semibold text-foreground">${savings}/mo</span>
-                      </span>
-                      <span className="h-3.5 w-px bg-border" />
-                      <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
-                        <span className="font-semibold text-foreground">{taskVolume}</span>/mo
-                      </span>
-                      <span className="h-3.5 w-px bg-border" />
-                      <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
-                        <span className="font-semibold text-foreground">{multiplier}</span> cheaper
+                  {/* Key details */}
+                  <div className="space-y-2 mb-4 flex-1">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Zap className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                      <span className="text-muted-foreground">{plan.agentMinutes}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <HardDrive className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                      <span className="text-muted-foreground">
+                        {plan.name === "Free" ? "1 VM, 2-hour limit" : `${plan.name === "Starter" ? "1" : plan.name === "Plus" ? "2" : "3"} persistent machine${plan.name !== "Starter" ? "s" : ""}`}
                       </span>
                     </div>
-                  </motion.div>
-
-                  <div className={cn(
-                    "grid gap-6",
-                    isMobile ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
-                  )}>
-                    {/* Left column — Coasty plan details */}
-                    <motion.div
-                      key={plan.name}
-                      initial={{ opacity: 0, x: -12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className={cn(
-                        "relative rounded-xl border p-6",
-                        "border-primary/30 bg-gradient-to-b from-primary/[0.06] to-primary/[0.02] shadow-sm shadow-primary/10"
-                      )}
-                    >
-                      {plan.badge && (
-                        <div className="absolute -top-2.5 left-4">
-                          <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-medium text-primary-foreground">
-                            {plan.badge}
-                          </span>
-                        </div>
-                      )}
-
-                      <div className="mb-5">
-                        <div className="flex items-center gap-2">
-                          <CoastyIcon className="h-5 w-5 text-primary" />
-                          <h3 className="text-sm font-semibold text-primary">Coasty {plan.name}</h3>
-                        </div>
-                        <div className="mt-3 flex items-baseline gap-1">
-                          <span className="text-4xl font-semibold tracking-tight text-foreground">{plan.price}</span>
-                          <span className="text-sm text-muted-foreground">/{plan.period}</span>
-                        </div>
-                        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{plan.description}</p>
-                      </div>
-
-                      <div className="mb-3 flex items-center gap-2 rounded-lg bg-primary/[0.08] border border-primary/10 px-3 py-2">
-                        <Zap className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-                        <span className="text-sm font-medium text-foreground">
-                          {typeof plan.agentMinutes === 'string'
-                            ? plan.agentMinutes
-                            : <>
-                                {`${(plan.agentMinutes * 10).toLocaleString()} credits`}
-                                <span className="text-muted-foreground font-normal">/month</span>
-                              </>
-                          }
+                    {plan.name !== "Free" && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Bot className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                        <span className="text-muted-foreground">
+                          Swarm: {plan.name === "Starter" ? "2" : plan.name === "Plus" ? "4" : "6"} parallel agents
                         </span>
                       </div>
-
-                      {/* Persistent machines highlight */}
-                      {plan.name !== "Free" && (
-                        <div className="mb-5 flex items-center gap-2 rounded-lg bg-violet-500/[0.08] border border-violet-500/15 px-3 py-2">
-                          <HardDrive className="h-3.5 w-3.5 text-violet-500 flex-shrink-0" />
-                          <span className="text-sm font-medium text-foreground">
-                            {plan.name === "Starter" ? "1" : plan.name === "Plus" ? "2" : "3"} persistent machine{plan.name !== "Starter" ? "s" : ""}
-                            <span className="text-muted-foreground font-normal">, no limits</span>
-                          </span>
-                        </div>
-                      )}
-
-                      <Button
-                        className={cn(
-                          "w-full mb-6",
-                          plan.highlighted
-                            ? ""
-                            : "hover:bg-primary hover:text-primary-foreground"
-                        )}
-                        variant={plan.highlighted ? "default" : "outline"}
-                        size="sm"
-                        asChild
-                      >
-                        <Link href="/auth">
-                          {plan.cta}
-                          <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                        </Link>
-                      </Button>
-
-                      <div className="space-y-2.5">
-                        {plan.features.map((feature) => (
-                          <div key={feature} className="flex items-start gap-2">
-                            <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-muted-foreground">{feature}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
-
-                    {/* Right column — Comparison table */}
-                    <motion.div
-                      key={`compare-${plan.name}`}
-                      initial={{ opacity: 0, x: 12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.25, delay: 0.05 }}
-                      className="flex flex-col"
-                    >
-                      <div className="rounded-xl border border-border overflow-hidden">
-                        {/* Table header */}
-                        <div className="grid grid-cols-3 border-b border-border bg-muted/30">
-                          <div className="p-4" />
-                          <div className="p-4 text-center border-l border-primary/20 bg-primary/[0.04]">
-                            <div className={cn("font-semibold text-primary", isMobile ? "text-xs" : "text-sm")}>
-                              Coasty {plan.name}
-                            </div>
-                            <div className={cn("font-bold text-primary mt-1", isMobile ? "text-lg" : "text-xl")}>
-                              {plan.price}<span className="text-xs font-normal text-primary/60">/mo</span>
-                            </div>
-                          </div>
-                          <div className="p-4 text-center border-l border-border">
-                            <div className={cn("font-semibold text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
-                              Doing It Manually
-                            </div>
-                            <div className={cn("font-bold text-muted-foreground mt-1 line-through decoration-destructive/50", isMobile ? "text-lg" : "text-xl")}>
-                              {humanCost}<span className="text-xs font-normal no-underline">/mo</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Table rows */}
-                        {rows.map((row, i) => (
-                          <div
-                            key={row.label}
-                            className={cn(
-                              "grid grid-cols-3",
-                              i < rows.length - 1 && "border-b border-border",
-                              i % 2 === 1 && "bg-muted/20"
-                            )}
-                          >
-                            <div className={cn("p-3 flex items-center", isMobile ? "text-xs px-2.5" : "text-sm")}>
-                              <span className="font-medium text-foreground">{row.label}</span>
-                            </div>
-                            <div className={cn(
-                              "p-3 flex items-center justify-center border-l",
-                              "border-primary/20 bg-primary/[0.02]"
-                            )}>
-                              {typeof row.coasty === "boolean" ? (
-                                row.coasty
-                                  ? <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary/10"><Check className="h-3.5 w-3.5 text-primary" /></div>
-                                  : <X className="h-4 w-4 text-muted-foreground/40" />
-                              ) : (
-                                <span className={cn(
-                                  "font-semibold text-primary",
-                                  isMobile ? "text-xs" : "text-sm"
-                                )}>
-                                  {row.coasty}
-                                </span>
-                              )}
-                            </div>
-                            <div className="p-3 flex items-center justify-center border-l border-border">
-                              {typeof row.human === "boolean" ? (
-                                row.human
-                                  ? <Check className="h-4 w-4 text-muted-foreground/60" />
-                                  : <X className="h-4 w-4 text-destructive/40" />
-                              ) : (
-                                <span className={cn(
-                                  "font-medium text-muted-foreground",
-                                  isMobile ? "text-xs" : "text-sm"
-                                )}>
-                                  {row.human}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
+                    )}
                   </div>
-                </>
-              )
-            })()}
 
-            {/* Enterprise pill */}
+                  <Button
+                    className="w-full"
+                    variant={plan.highlighted ? "default" : "outline"}
+                    size="sm"
+                    asChild
+                  >
+                    <Link href={plan.price === "$0" ? "/auth" : "/pricing"}>
+                      {plan.price === "$0" ? "Start Free" : plan.cta}
+                      <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                    </Link>
+                  </Button>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Bargain callout — why this is a steal */}
             <motion.div variants={itemVariants} className={cn(
-              "mt-12 rounded-2xl border border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden",
-              isMobile ? "p-5" : "p-8"
+              "mt-10 rounded-xl border border-border/40 overflow-hidden",
+              isMobile ? "p-5" : "p-6 sm:p-8"
             )}>
-              <div className={cn(
-                "flex items-center justify-between gap-6",
-                isMobile && "flex-col text-center"
-              )}>
-                <div className={cn("flex-1", isMobile ? "space-y-2" : "space-y-1")}>
-                  <div className="flex items-center gap-2.5" style={isMobile ? { justifyContent: "center" } : undefined}>
-                    <h3 className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>Enterprise</h3>
-                    <span className="rounded-full bg-foreground/5 border border-border/50 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Custom</span>
-                  </div>
-                  <p className={cn("text-muted-foreground leading-relaxed", isMobile ? "text-xs" : "text-sm")}>
-                    Custom credits, dedicated VMs, SLA guarantees, SSO, priority support, and a dedicated setup session.
-                  </p>
-                </div>
-                <Button variant="outline" className="flex-shrink-0 gap-2" asChild>
-                  <Link href="mailto:founders@coasty.ai">
-                    Contact Us
-                    <ArrowRight className="h-3.5 w-3.5" />
+              <div className="text-center max-w-2xl mx-auto">
+                <p className={cn(
+                  "font-bold tracking-tight",
+                  isMobile ? "text-xl" : "text-2xl sm:text-3xl"
+                )}>
+                  The same work costs <span className="text-muted-foreground line-through decoration-muted-foreground/40">$8,000/mo</span> with manual labor
+                </p>
+                <p className={cn(
+                  "text-muted-foreground mt-3 leading-relaxed",
+                  isMobile ? "text-xs" : "text-sm"
+                )}>
+                  A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more.
+                  Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time.
+                </p>
+                <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <Link href="/auth">
+                    <motion.button
+                      className={cn(
+                        "inline-flex items-center gap-2 rounded-full font-semibold cursor-pointer bg-foreground text-background",
+                        isMobile ? "px-5 py-2.5 text-sm" : "px-6 py-3 text-sm"
+                      )}
+                      whileHover={{ scale: 1.02, y: -1 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Start Free — 100 Credits
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </motion.button>
                   </Link>
-                </Button>
+                  <Link
+                    href="/pricing"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
+                  >
+                    Compare all plans &amp; features
+                  </Link>
+                </div>
               </div>
             </motion.div>
           </motion.div>

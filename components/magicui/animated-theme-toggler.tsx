@@ -11,7 +11,7 @@ type props = {
 };
 
 export const AnimatedThemeToggler = ({ className }: props) => {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   
@@ -22,7 +22,7 @@ export const AnimatedThemeToggler = ({ className }: props) => {
   const changeTheme = async () => {
     if (!buttonRef.current) return;
 
-    const newTheme = theme === "dark" ? "light" : "dark";
+    const newTheme = resolvedTheme === "dark" ? "light" : "dark";
 
     // Simple instant toggle on mobile/small screens or without View Transition API
     const isSmallScreen = window.innerWidth < 768;
@@ -74,7 +74,7 @@ export const AnimatedThemeToggler = ({ className }: props) => {
   
   return (
     <button ref={buttonRef} onClick={changeTheme} className={cn(className)}>
-      {theme === "dark" ? <Moon /> : <SunDim />}
+      {resolvedTheme === "dark" ? <Moon /> : <SunDim />}
     </button>
   );
 };
