@@ -191,7 +191,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           "ring-1 ring-white/[0.05] dark:ring-white/[0.03]"
         )}>
           {/* Title bar */}
-          <div className="flex items-center px-4 py-2 bg-muted/30 dark:bg-white/[0.03] border-b border-border/20">
+          <div className="flex items-center px-4 py-2 bg-muted dark:bg-neutral-900 border-b border-border/20">
             <div className="flex items-center gap-[6px]">
               <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />
               <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />

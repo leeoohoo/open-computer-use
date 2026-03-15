@@ -298,7 +298,6 @@ export function LandingPage() {
   const [selectedFaq, setSelectedFaq] = useState<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const [activePersona, setActivePersona] = useState(0)
   const { resolvedTheme } = useTheme()
 
   const searchParams = useSearchParams()
@@ -350,9 +349,45 @@ export function LandingPage() {
         }
       }
 
+  // Section divider — cross marks on the guide lines
+  const SectionDivider = () => (
+    <div className="relative max-w-7xl mx-auto px-4 sm:px-6" aria-hidden="true">
+      <div className="relative h-px">
+        {/* Horizontal line connecting the two verticals */}
+        <div className="absolute inset-x-0 h-px bg-border/30 dark:bg-border/20" />
+        {/* Left cross marks — on both lines */}
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2">
+          <div className="w-[7px] h-[7px] rotate-45 border border-border/40 dark:border-border/25 bg-background" />
+        </div>
+        <div className="absolute left-[4px] sm:left-[8px] top-1/2 -translate-y-1/2 -translate-x-1/2">
+          <div className="w-[5px] h-[5px] rotate-45 border border-border/25 dark:border-border/15 bg-background" />
+        </div>
+        {/* Right cross marks — on both lines */}
+        <div className="absolute right-[4px] sm:right-[8px] top-1/2 -translate-y-1/2 translate-x-1/2">
+          <div className="w-[5px] h-[5px] rotate-45 border border-border/25 dark:border-border/15 bg-background" />
+        </div>
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2">
+          <div className="w-[7px] h-[7px] rotate-45 border border-border/40 dark:border-border/25 bg-background" />
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <>
       <div className="min-h-screen bg-background relative">
+
+      {/* Vertical guide lines spanning full page — all devices */}
+      <div className="absolute inset-0 pointer-events-none z-[1]" aria-hidden="true">
+        <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
+          {/* Left double lines */}
+          <div className="absolute left-4 sm:left-6 top-0 bottom-0 w-px bg-border/30 dark:bg-border/20" />
+          <div className="absolute left-5 sm:left-[32px] top-0 bottom-0 w-px bg-border/15 dark:bg-border/10" />
+          {/* Right double lines */}
+          <div className="absolute right-5 sm:right-[32px] top-0 bottom-0 w-px bg-border/15 dark:bg-border/10" />
+          <div className="absolute right-4 sm:right-6 top-0 bottom-0 w-px bg-border/30 dark:bg-border/20" />
+        </div>
+      </div>
 
       {/* Fixed header */}
       <LandingHeader />
@@ -364,6 +399,20 @@ export function LandingPage() {
           "relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-hidden",
           isMobile ? "px-4 pt-8 pb-16" : "px-6 pt-16 pb-24"
         )}>
+
+          {/* Orange sunrise glow — constrained to guide lines with inverted-U mask */}
+          <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full relative">
+              <div
+                className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 opacity-[0.1] dark:opacity-[0.13] overflow-hidden"
+                style={{
+                  background: "linear-gradient(to top, rgb(52,211,153) 0%, rgb(16,185,129) 40%, rgb(5,150,105) 100%)",
+                  WebkitMaskImage: "radial-gradient(ellipse 120% 140% at 50% 100%, black 0%, black 40%, transparent 62%)",
+                  maskImage: "radial-gradient(ellipse 120% 140% at 50% 100%, black 0%, black 40%, transparent 62%)",
+                }}
+              />
+            </div>
+          </div>
 
           <motion.div
             variants={containerVariants}
@@ -378,6 +427,7 @@ export function LandingPage() {
           </motion.div>
         </section>
 
+        <SectionDivider />
 
         {/* Social Proof Bar */}
         <section className={cn(
@@ -418,152 +468,7 @@ export function LandingPage() {
           </motion.div>
         </section>
 
-        {/* Use Cases by Persona */}
-        <section id="use-cases" className={cn(
-          "py-20 relative",
-          isMobile ? "px-4" : "px-6"
-        )}>
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-            className="max-w-5xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className="text-center mb-12">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
-              )}>
-                One agent. Any task. Any app.
-              </h2>
-              <p className={cn(
-                "text-muted-foreground mt-4 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-base"
-              )}>
-                Tell Coasty what to do. It opens the app, navigates the UI, and completes the task.
-              </p>
-            </motion.div>
-
-            {(() => {
-              const personas = [
-                {
-                  persona: "Startup",
-                  pain: "We spend half our time on repetitive tasks instead of building.",
-                  result: "Automate research, outreach, and reporting end-to-end",
-                  tasks: ["Research competitors across 10 markets weekly", "Build a 500-lead pipeline from LinkedIn and directories", "Compare vendor proposals side-by-side in a spreadsheet", "Generate investor update decks every Friday"],
-                },
-                {
-                  persona: "Agency",
-                  pain: "We have 3x more clients but the same manual workload.",
-                  result: "Automate reporting, QA, and content across all clients",
-                  tasks: ["Pull analytics and generate weekly reports per client", "Run QA tests across every client's staging site", "Schedule and post content for 15 social accounts", "Research and brief 20 content pieces per week"],
-                },
-                {
-                  persona: "E-commerce",
-                  pain: "Support tickets, price monitoring, and returns eat our time.",
-                  result: "Automate support, pricing, and data extraction 24/7",
-                  tasks: ["Look up order data and draft support ticket replies", "Monitor competitor pricing and update product catalogs", "Process returns and extract data into refund reports", "Post product content and reply to comments daily"],
-                },
-                {
-                  persona: "Solo Founder",
-                  pain: "I do everything myself — there aren't enough hours in the day.",
-                  result: "Automate the tasks you'd normally do manually",
-                  tasks: ["Find prospects, enrich profiles, and send outreach", "Schedule meetings, send agendas, and follow up", "Extract invoice data and update financial trackers", "Post across 4 platforms and engage with every reply"],
-                },
-              ]
-              const active = personas[activePersona]
-
-              return (
-                <motion.div variants={itemVariants}>
-                  {/* Tabs — just text, no decoration */}
-                  <div className={cn(
-                    "flex justify-center",
-                    isMobile ? "gap-0 mb-8 border-b border-border/30" : "gap-0 mb-10 border-b border-border/30"
-                  )}>
-                    {personas.map((p, i) => {
-                      const isActive = i === activePersona
-                      return (
-                        <button
-                          key={p.persona}
-                          onClick={() => setActivePersona(i)}
-                          className={cn(
-                            "relative cursor-pointer transition-colors duration-200 -mb-px",
-                            isMobile ? "px-3 pb-3 text-xs" : "px-5 pb-3.5 text-sm",
-                            isActive
-                              ? "text-foreground font-medium"
-                              : "text-muted-foreground/40 hover:text-muted-foreground/70"
-                          )}
-                        >
-                          {p.persona}
-                          {isActive && (
-                            <motion.div
-                              layoutId="persona-underline"
-                              className="absolute bottom-0 left-0 right-0 h-px bg-foreground"
-                              transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                            />
-                          )}
-                        </button>
-                      )
-                    })}
-                  </div>
-
-                  {/* Content */}
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activePersona}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className={cn(
-                        isMobile ? "space-y-6" : "grid grid-cols-2 gap-16 max-w-3xl mx-auto"
-                      )}
-                    >
-                      {/* Left — quote + result */}
-                      <div>
-                        <p className={cn(
-                          "text-foreground/50 leading-relaxed",
-                          isMobile ? "text-base" : "text-lg"
-                        )}>
-                          &ldquo;{active.pain}&rdquo;
-                        </p>
-                        <p className={cn(
-                          "text-foreground font-medium mt-5",
-                          isMobile ? "text-sm" : "text-base"
-                        )}>
-                          {active.result}
-                        </p>
-                      </div>
-
-                      {/* Right — task list */}
-                      <div className={cn(isMobile ? "border-t border-border/20 pt-5" : "")}>
-                        <ul className={cn(isMobile ? "space-y-2" : "space-y-2.5")}>
-                          {active.tasks.map((task, ti) => (
-                            <motion.li
-                              key={task}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: ti * 0.04, duration: 0.15 }}
-                              className={cn(
-                                "flex items-start gap-2.5",
-                                isMobile ? "text-sm" : "text-[15px]"
-                              )}
-                            >
-                              <span className="text-muted-foreground/30 select-none shrink-0 leading-snug">&mdash;</span>
-                              <span className="text-muted-foreground leading-snug">{task}</span>
-                            </motion.li>
-                          ))}
-                        </ul>
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </motion.div>
-              )
-            })()}
-          </motion.div>
-        </section>
-
+        <SectionDivider />
 
         {/* Why Coasty Section */}
         <section id="why-coasty" className={cn(
@@ -658,6 +563,8 @@ export function LandingPage() {
           </motion.div>
         </section>
 
+        <SectionDivider />
+
         {/* How It Works Section */}
         <section id="how-it-works" className={cn(
           "py-20",
@@ -741,6 +648,7 @@ export function LandingPage() {
           </motion.div>
         </section>
 
+        <SectionDivider />
 
         {/* Cost Comparison */}
         <section id="cost" className={cn(
@@ -881,6 +789,8 @@ export function LandingPage() {
           </motion.div>
         </section>
 
+        <SectionDivider />
+
         {/* Demo Section */}
         <section id="demo" className={cn(
           "py-20",
@@ -970,6 +880,8 @@ export function LandingPage() {
           </motion.div>
         </section>
 
+        <SectionDivider />
+
         {/* Features Section */}
         <section id="features" className={cn(
           "py-20",
@@ -1027,6 +939,8 @@ export function LandingPage() {
             </BentoGrid>
           </motion.div>
         </section>
+
+        <SectionDivider />
 
         {/* OSWorld Benchmark Section */}
         <section className={cn(
@@ -1217,6 +1131,8 @@ export function LandingPage() {
           </motion.div>
         </section>
 
+        <SectionDivider />
+
         {/* Pricing Section — simplified overview */}
         <section id="pricing" className={cn(
           "py-20",
@@ -1358,6 +1274,8 @@ export function LandingPage() {
           </motion.div>
         </section>
 
+        <SectionDivider />
+
         {/* FAQ Section */}
         <section id="faq" className={cn(
           "py-20",
@@ -1430,6 +1348,8 @@ export function LandingPage() {
             </div>
           </motion.div>
         </section>
+
+        <SectionDivider />
 
         {/* Footer */}
         <LandingFooter />

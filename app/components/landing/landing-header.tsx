@@ -124,20 +124,21 @@ export function LandingHeader({
         animate={{ y: 0 }}
         transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          scrolled ? "py-3" : "py-3.5 sm:py-4"
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
+          scrolled ? "py-2.5" : "py-3.5 sm:py-4"
         )}
       >
-        <div className="container mx-auto px-2 sm:px-3 md:px-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="px-1 sm:px-2 lg:px-4">
           <div
             className={cn(
-              "relative mx-auto transition-all duration-500",
-              scrolled ? "max-w-7xl lg:max-w-6xl" : "max-w-7xl"
+              "relative mx-auto transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
+              scrolled ? "max-w-5xl" : ""
             )}
           >
             <div
               className={cn(
-                "absolute inset-0 border border-border/50 shadow-lg transition-all duration-500",
+                "absolute inset-0 border border-border/50 shadow-lg transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
                 "rounded-xl sm:rounded-2xl bg-background/95 sm:bg-background/90 sm:backdrop-blur-xl",
                 scrolled
                   ? "shadow-lg shadow-primary/5"
@@ -286,6 +287,7 @@ export function LandingHeader({
                 </Button>
               </div>
             </nav>
+          </div>
           </div>
         </div>
       </motion.header>
