@@ -1,6 +1,7 @@
 "use client"
 
 import { LandingHeader } from "@/app/components/landing/landing-header"
+import { GuideLines } from "@/app/components/landing/guide-lines"
 import { Button } from "@/components/ui/button"
 import { RainbowButton } from "@/components/magicui/rainbow-button"
 import { AuroraText } from "@/components/ui/aurora-text"
@@ -978,6 +979,7 @@ export default function AgentSwarmsPage() {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <GuideLines />
       <LandingHeader />
 
       <main className={cn("relative", isMobile ? "pt-16" : "pt-20")}>

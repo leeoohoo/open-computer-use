@@ -1,5 +1,6 @@
 "use client"
 
+import { GuideLines } from "@/app/components/landing/guide-lines"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
@@ -191,6 +192,7 @@ export default function DownloadPage() {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <GuideLines />
       <LandingHeader />
 
       <main className={cn("relative", isMobile ? "pt-16" : "pt-20")}>

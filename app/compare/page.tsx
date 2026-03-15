@@ -4,6 +4,7 @@ import Link from "next/link"
 import { LandingHeader } from "@/app/components/landing/landing-header"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { motion } from "framer-motion"
+import { GuideLines } from "@/app/components/landing/guide-lines"
 
 const competitors = [
   { slug: "anthropic-computer-use", name: "Anthropic Computer Use", tagline: "Managed platform vs raw API", category: "AI Agent" },
@@ -29,7 +30,8 @@ const fade = {
 
 export default function ComparePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background">
+      <GuideLines />
       <LandingHeader />
 
       <main className="pt-32 sm:pt-36 pb-24">

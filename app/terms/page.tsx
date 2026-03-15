@@ -10,6 +10,7 @@ import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 
 import { LandingHeader } from "@/app/components/landing/landing-header"
+import { GuideLines } from "@/app/components/landing/guide-lines"
 import { motion, AnimatePresence } from "framer-motion"
 
 const termsSections = [
@@ -301,6 +302,7 @@ export default function TermsPage() {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <GuideLines />
       <LandingHeader />
 
       {/* Main Content */}
