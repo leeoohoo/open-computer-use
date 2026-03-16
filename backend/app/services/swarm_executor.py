@@ -1,11 +1,15 @@
 """
 Swarm Executor — decomposes a prompt into subtasks and runs them across
-multiple machines in parallel with shared memory and message passing.
+multiple machines in parallel with shared memory, message passing,
+a live coordinator, event bus, and formal state machine.
 
 1. LLM decomposes user prompt into N subtasks (one per machine)
 2. Each machine gets its own CUAExecutor with a unique subtask
 3. Machines share an in-memory SwarmMemory for key-value storage and messaging
-4. After all machines finish, LLM aggregates results into a summary
+4. A live SwarmCoordinator monitors, dispatches help, and steals work
+5. A priority-based SwarmEventBus routes events reactively
+6. A SwarmStateMachine tracks formal states for each machine
+7. After all machines finish, LLM aggregates results into a summary
 """
 
 import asyncio
@@ -18,7 +22,19 @@ from typing import Any, AsyncGenerator, Dict, List, Optional
 
 from app.core.config import settings
 from app.services.cua_executor import CUAExecutor
+from app.services.swarm_coordinator import SwarmCoordinator
+from app.services.swarm_event_bus import (
+    EVT_MACHINE_COMPLETED,
+    EVT_PEER_ACTIVITY,
+    EventPriority,
+    SwarmEvent,
+    SwarmEventBus,
+)
 from app.services.swarm_memory import SwarmMemory
+from app.services.swarm_state_machine import (
+    MachineStatus,
+    SwarmStateMachine,
+)
 from app.services.vm_control import vm_control_service
 
 logger = logging.getLogger(__name__)
@@ -70,7 +86,8 @@ def _extract_json_array(text: str) -> Optional[List[str]]:
 
 
 class SwarmExecutor:
-    """Orchestrates parallel CUA execution across N machines with task decomposition."""
+    """Orchestrates parallel CUA execution across N machines with task decomposition,
+    a live coordinator, event bus, and formal state machine."""
 
     def __init__(
         self,
@@ -93,12 +110,27 @@ class SwarmExecutor:
         self.max_steps = max_steps
 
         self._cancel_event = asyncio.Event()
+        self._pause_event = asyncio.Event()   # When set, machines are paused
+        self._resume_event = asyncio.Event()  # When set, machines resume
+        self._resume_event.set()  # Start in "not paused" state
         self._machine_statuses: Dict[str, str] = {
             m["machine_id"]: "pending" for m in machines
         }
 
+        n = len(machines)
+
         # Swarm-level shared memory (ephemeral, in-memory)
-        self.swarm_memory = SwarmMemory(len(machines))
+        self.swarm_memory = SwarmMemory(n)
+
+        # Priority-based event bus
+        self.event_bus = SwarmEventBus(n)
+
+        # Formal state machine for all machines
+        self.state_machine = SwarmStateMachine(n, event_bus=self.event_bus)
+
+        # Live coordinator (initialized after decomposition)
+        self.coordinator: Optional[SwarmCoordinator] = None
+        self._coordinator_task: Optional[asyncio.Task] = None
 
         # Per-machine subtasks (populated by _decompose_task)
         self._subtasks: List[str] = []
@@ -110,9 +142,36 @@ class SwarmExecutor:
     def request_cancellation(self) -> None:
         """Signal all machines to stop."""
         self._cancel_event.set()
+        # If paused, resume so machines can exit cleanly
+        self._resume_event.set()
+        self._pause_event.clear()
+        if self.coordinator:
+            self.coordinator.stop()
         for m in self.machines:
             evt = vm_control_service.get_cancellation_event(m["machine_id"])
             evt.set()
+
+    def pause(self) -> bool:
+        """Pause all machines. Returns True if state changed."""
+        if self._pause_event.is_set() or self._cancel_event.is_set():
+            return False
+        self._pause_event.set()
+        self._resume_event.clear()
+        logger.info(f"Swarm {self.swarm_id}: paused")
+        return True
+
+    def resume(self) -> bool:
+        """Resume all paused machines. Returns True if state changed."""
+        if not self._pause_event.is_set():
+            return False
+        self._pause_event.clear()
+        self._resume_event.set()
+        logger.info(f"Swarm {self.swarm_id}: resumed")
+        return True
+
+    @property
+    def is_paused(self) -> bool:
+        return self._pause_event.is_set()
 
     async def stream_execution(self) -> AsyncGenerator[Dict[str, Any], None]:
         """Run all machines in parallel and yield interleaved chunks.
@@ -122,7 +181,7 @@ class SwarmExecutor:
             - ``machine_id`` / ``machine_index`` (per-machine chunks)
             - ``type``  (text | tool_call | tool_result | reasoning | error |
                          step_complete | finish | swarm_meta | swarm_planning |
-                         swarm_summary)
+                         swarm_summary | coordinator_action)
         """
         _active_swarms[self.swarm_id] = self
 
@@ -140,6 +199,16 @@ class SwarmExecutor:
 
         cancelled = False
 
+        # Queue for coordinator events to be streamed to the frontend
+        coordinator_events_queue: asyncio.Queue[Dict[str, Any]] = asyncio.Queue()
+
+        def _on_coordinator_event(event_dict: Dict[str, Any]) -> None:
+            """Callback for coordinator to push events into the SSE stream."""
+            try:
+                coordinator_events_queue.put_nowait(event_dict)
+            except asyncio.QueueFull:
+                pass
+
         try:
             # ── Phase 1: Task decomposition ──
             yield {
@@ -155,6 +224,15 @@ class SwarmExecutor:
                 i: self._subtasks[i] for i in range(len(self._subtasks))
             })
 
+            # Register machines in the state machine
+            for idx, machine in enumerate(self.machines):
+                subtask = self._subtasks[idx] if idx < len(self._subtasks) else self.prompt
+                self.state_machine.register_machine(
+                    index=idx,
+                    machine_id=machine["machine_id"],
+                    subtask=subtask,
+                )
+
             yield {
                 "type": "swarm_planning",
                 "swarm_id": self.swarm_id,
@@ -169,6 +247,21 @@ class SwarmExecutor:
                 ],
             }
 
+            # ── Start Coordinator ──
+            self.coordinator = SwarmCoordinator(
+                swarm_id=self.swarm_id,
+                prompt=self.prompt,
+                event_bus=self.event_bus,
+                state_machine=self.state_machine,
+                swarm_memory=self.swarm_memory,
+                llm_call=self._call_bedrock_converse,
+                on_coordinator_event=_on_coordinator_event,
+            )
+            self._coordinator_task = asyncio.create_task(
+                self.coordinator.run(),
+                name=f"swarm-{self.swarm_id}-coordinator",
+            )
+
             # ── Phase 2: Parallel execution ──
             queue: asyncio.Queue[Optional[Dict[str, Any]]] = asyncio.Queue()
             tasks = []
@@ -182,6 +275,7 @@ class SwarmExecutor:
 
             finished_count = 0
             total = len(self.machines)
+            _was_paused = False  # Track pause state changes for SSE emission
 
             while finished_count < total:
                 if self._cancel_event.is_set():
@@ -197,9 +291,33 @@ class SwarmExecutor:
                     }
                     break
 
+                # Emit pause/resume transitions
+                if self._pause_event.is_set() and not _was_paused:
+                    _was_paused = True
+                    yield {
+                        "type": "swarm_meta",
+                        "swarm_id": self.swarm_id,
+                        "status": "paused",
+                    }
+                elif not self._pause_event.is_set() and _was_paused:
+                    _was_paused = False
+                    yield {
+                        "type": "swarm_meta",
+                        "swarm_id": self.swarm_id,
+                        "status": "running",
+                    }
+
                 try:
                     chunk = await asyncio.wait_for(queue.get(), timeout=2.0)
                 except asyncio.TimeoutError:
+                    # Drain coordinator events during timeout
+                    while not coordinator_events_queue.empty():
+                        try:
+                            coord_evt = coordinator_events_queue.get_nowait()
+                            coord_evt["swarm_id"] = self.swarm_id
+                            yield coord_evt
+                        except asyncio.QueueEmpty:
+                            break
                     yield {
                         "type": "keepalive",
                         "swarm_id": self.swarm_id,
@@ -213,6 +331,15 @@ class SwarmExecutor:
 
                 yield chunk
 
+                # Also drain any pending coordinator events
+                while not coordinator_events_queue.empty():
+                    try:
+                        coord_evt = coordinator_events_queue.get_nowait()
+                        coord_evt["swarm_id"] = self.swarm_id
+                        yield coord_evt
+                    except asyncio.QueueEmpty:
+                        break
+
             await asyncio.gather(*tasks, return_exceptions=True)
 
             # Drain remaining items
@@ -223,6 +350,15 @@ class SwarmExecutor:
                         yield leftover
                 except asyncio.QueueEmpty:
                     break
+
+            # Stop coordinator
+            if self.coordinator:
+                self.coordinator.stop()
+            if self._coordinator_task and not self._coordinator_task.done():
+                try:
+                    await asyncio.wait_for(self._coordinator_task, timeout=5.0)
+                except (asyncio.TimeoutError, asyncio.CancelledError):
+                    self._coordinator_task.cancel()
 
             # ── Phase 3: Result aggregation ──
             if not cancelled:
@@ -257,6 +393,11 @@ class SwarmExecutor:
                 "error": str(e),
             }
         finally:
+            # Ensure coordinator is stopped
+            if self.coordinator:
+                self.coordinator.stop()
+            if self._coordinator_task and not self._coordinator_task.done():
+                self._coordinator_task.cancel()
             _active_swarms.pop(self.swarm_id, None)
 
     # ------------------------------------------------------------------
@@ -443,6 +584,12 @@ class SwarmExecutor:
             else self.prompt
         )
 
+        # Transition state machine: PENDING → RUNNING
+        try:
+            self.state_machine.start(index)
+        except Exception as e:
+            logger.warning(f"State machine start failed for machine {index}: {e}")
+
         self._machine_statuses[machine_id] = "running"
 
         # Notify that this machine started (include its subtask)
@@ -558,15 +705,23 @@ class SwarmExecutor:
                 f"COORDINATION:\n"
                 f"- Your teammates' recent progress will be automatically shown to you as [TEAM UPDATE] notes.\n"
                 f"  Use these to stay aware of what others have found — adapt your approach if relevant.\n"
+                f"- The coordinator is watching the team and will send you [COORDINATOR] messages if you need to change approach.\n"
                 f"- agent.write_shared_memory(key, value) / agent.read_shared_memory(key) — "
                 f"shared key-value store for passing data between machines (e.g. URLs, findings, config)\n"
                 f"- agent.send_swarm_message(machine_index, message) — send a direct message to a specific teammate\n"
                 f"- agent.broadcast_swarm_message(message) — announce something important to all teammates\n"
-                f"- agent.read_swarm_messages() — check for direct messages from teammates\n\n"
+                f"- agent.read_swarm_messages() — check for direct messages from teammates\n"
+                f"- agent.request_help(description) — ask the coordinator for help when you're stuck\n"
+                f"- agent.wait_for_dependency(key, description) — block until a shared memory key is available\n"
+                f"- agent.claim_expertise(domain) — declare yourself the expert in a domain\n"
+                f"- agent.propose_decision(question, options) — propose a team-wide decision\n"
+                f"- agent.resume_own_task() — resume your own task after helping a teammate\n\n"
                 f"TIPS:\n"
                 f"- Write important findings to shared memory early so teammates can use them.\n"
                 f"- If you find something that changes the overall approach, broadcast it.\n"
-                f"- Check shared memory before doing work that a teammate may have already done."
+                f"- Check shared memory before doing work that a teammate may have already done.\n"
+                f"- If you're stuck, call agent.request_help() — the coordinator will dispatch a helper.\n"
+                f"- If you need data another machine is producing, use agent.wait_for_dependency()."
             )
 
             executor = CUAExecutor(
@@ -578,11 +733,22 @@ class SwarmExecutor:
                 max_steps=self.max_steps,
                 swarm_memory=self.swarm_memory,
                 machine_index=index,
+                event_bus=self.event_bus,
+                state_machine=self.state_machine,
             )
 
             async for chunk in executor.stream_execution(subtask, context=swarm_coordination_context):
                 if self._cancel_event.is_set():
                     break
+
+                # Wait while paused (blocks until resume or cancel)
+                if self._pause_event.is_set():
+                    try:
+                        await self._resume_event.wait()
+                    except asyncio.CancelledError:
+                        break
+                    if self._cancel_event.is_set():
+                        break
 
                 # Accumulate text content for result aggregation
                 if chunk.get("type") == "text":
@@ -599,15 +765,29 @@ class SwarmExecutor:
             result_summary = accumulated_content[-2000:] if accumulated_content else "No output produced"
             self.swarm_memory.set_result(index, result_summary)
 
+            # Transition state machine: RUNNING → COMPLETED
+            try:
+                self.state_machine.complete(index)
+            except Exception:
+                pass  # May already be in a terminal state
+
             self._machine_statuses[machine_id] = "completed"
 
         except asyncio.CancelledError:
             self._machine_statuses[machine_id] = "cancelled"
             self.swarm_memory.set_result(index, "Execution was cancelled")
+            try:
+                self.state_machine.cancel(index)
+            except Exception:
+                pass
             logger.info(f"Swarm machine {index} ({machine_id}) cancelled")
         except Exception as e:
             self._machine_statuses[machine_id] = "failed"
             self.swarm_memory.set_result(index, f"Failed with error: {e}")
+            try:
+                self.state_machine.fail(index, str(e))
+            except Exception:
+                pass
             logger.error(
                 f"Swarm machine {index} ({machine_id}) failed: {e}",
                 exc_info=True,

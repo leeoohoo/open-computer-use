@@ -7,6 +7,7 @@ Provides:
 - Message passing (point-to-point and broadcast) between machines
 - Activity log — automatic timeline of significant actions across all machines
 - Result storage for post-execution aggregation
+- Async dependency waiting (wait_for_key) for blocking on shared memory keys
 
 This is ephemeral — scoped to a single swarm execution lifetime.
 NOT the same as the DB-backed shared_memory.py used for cross-chat team persistence.
@@ -15,6 +16,7 @@ Thread safety: all access happens on the asyncio event loop, so no locks needed.
 SwarmMemory methods must NOT be called from threads (e.g. inside asyncio.to_thread).
 """
 
+import asyncio
 import time
 from typing import Any, Dict, List, Optional
 
@@ -37,6 +39,12 @@ class SwarmMemory:
         }
         # Subtask assignments — set by the orchestrator after decomposition
         self._subtasks: Dict[int, str] = {}
+        # Async key waiters — machines can block until a key is written
+        self._key_events: Dict[str, asyncio.Event] = {}
+        # Help request tracking
+        self._help_requests: List[Dict[str, Any]] = []
+        # Expertise registry — domain → machine_index
+        self._expertise: Dict[str, int] = {}
 
     # ------------------------------------------------------------------
     # Subtask registry (set once by orchestrator, read by all machines)
@@ -92,12 +100,18 @@ class SwarmMemory:
         return self._store.get(key)
 
     def write(self, key: str, value: str, writer_index: int) -> None:
-        """Write a key-value pair to shared memory."""
+        """Write a key-value pair to shared memory.
+
+        Also wakes up any machines waiting on this key via wait_for_key().
+        """
         self._store[key] = {
             "value": value,
-            "written_by": f"machine_{writer_index}",
+            "written_by": f"machine_{writer_index}" if writer_index >= 0 else "coordinator",
             "updated_at": time.time(),
         }
+        # Wake up anyone waiting on this key
+        if key in self._key_events:
+            self._key_events[key].set()
 
     def list_keys(self) -> List[Dict[str, Any]]:
         """List all keys with metadata."""
@@ -159,3 +173,69 @@ class SwarmMemory:
     def get_all_results(self) -> Dict[int, str]:
         """Get all stored results keyed by machine index."""
         return dict(self._results)
+
+    # ------------------------------------------------------------------
+    # Async dependency waiting
+    # ------------------------------------------------------------------
+
+    async def wait_for_key(self, key: str, timeout: float = 120.0) -> Optional[Dict[str, Any]]:
+        """Block until a key exists in shared memory, or timeout.
+
+        Returns the entry dict if the key was written, None on timeout.
+        Must be called from the asyncio event loop.
+        """
+        # Check if already exists
+        existing = self.read(key)
+        if existing is not None:
+            return existing
+
+        # Create or get the event for this key
+        if key not in self._key_events:
+            self._key_events[key] = asyncio.Event()
+
+        try:
+            await asyncio.wait_for(self._key_events[key].wait(), timeout=timeout)
+            return self.read(key)
+        except asyncio.TimeoutError:
+            return None
+
+    # ------------------------------------------------------------------
+    # Help requests
+    # ------------------------------------------------------------------
+
+    def add_help_request(self, machine_index: int, description: str) -> Dict[str, Any]:
+        """Record a help request from a machine."""
+        request = {
+            "machine_index": machine_index,
+            "description": description,
+            "timestamp": time.time(),
+            "resolved": False,
+        }
+        self._help_requests.append(request)
+        return request
+
+    def get_pending_help_requests(self) -> List[Dict[str, Any]]:
+        """Get all unresolved help requests."""
+        return [r for r in self._help_requests if not r["resolved"]]
+
+    def resolve_help_request(self, machine_index: int) -> None:
+        """Mark all help requests from a machine as resolved."""
+        for r in self._help_requests:
+            if r["machine_index"] == machine_index:
+                r["resolved"] = True
+
+    # ------------------------------------------------------------------
+    # Expertise registry
+    # ------------------------------------------------------------------
+
+    def claim_expertise(self, machine_index: int, domain: str) -> None:
+        """Register a machine as an expert in a domain."""
+        self._expertise[domain] = machine_index
+
+    def find_expert(self, domain: str) -> Optional[int]:
+        """Find which machine (if any) is the expert for a domain."""
+        return self._expertise.get(domain)
+
+    def list_expertise(self) -> Dict[str, int]:
+        """List all expertise claims."""
+        return dict(self._expertise)

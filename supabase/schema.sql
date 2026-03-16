@@ -1950,7 +1950,7 @@ CREATE TABLE IF NOT EXISTS "public"."subscription_plans" (
     "allow_snapshots" boolean DEFAULT false,
     "allow_custom_software" boolean DEFAULT false,
     CONSTRAINT "subscription_plans_interval_check" CHECK (("interval" = ANY (ARRAY['month'::"text", 'year'::"text"]))),
-    CONSTRAINT "subscription_plans_tier_check" CHECK (("tier" = ANY (ARRAY['starter'::"text", 'professional'::"text", 'enterprise'::"text"])))
+    CONSTRAINT "subscription_plans_tier_check" CHECK (("tier" = ANY (ARRAY['lite'::"text", 'starter'::"text", 'professional'::"text", 'enterprise'::"text"])))
 );
 
 
