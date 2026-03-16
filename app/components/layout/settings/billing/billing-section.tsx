@@ -16,6 +16,22 @@ import { RunFeedbackBar } from "@/app/components/chat/run-feedback-bar"
 
 const subscriptionPlans = [
   {
+    id: "lite",
+    name: "Lite",
+    tier: "lite",
+    price: 9,
+    monthlyCredits: 100,
+    agentMinutes: 10,
+    description: "Light daily automation",
+    features: [
+      "1 persistent machine, no limits",
+      "Persistent machine (always-on)",
+      "Swarm mode — 2 parallel agents",
+      "Standard support (real humans, not bots)",
+    ],
+    popular: false,
+  },
+  {
     id: "starter",
     name: "Starter",
     tier: "starter",
@@ -25,7 +41,7 @@ const subscriptionPlans = [
     description: "Saves ~6-12 hrs of manual work",
     features: [
       "1 persistent machine, no limits",
-      "2x more credits than Free",
+      "2x more credits than Lite",
       "Swarm mode — 3x your machine limit in parallel",
       "Advanced web search & data extraction",
       "Standard support (real humans, not bots)",
@@ -136,7 +152,7 @@ export function BillingSection() {
   const [showAllTransactions, setShowAllTransactions] = useState(false)
   const [allTransactions, setAllTransactions] = useState<Transaction[]>([])
   const [loadingAllTransactions, setLoadingAllTransactions] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState(1) // default to Plus
+  const [selectedPlan, setSelectedPlan] = useState(2) // default to Plus
 
   // Fetch subscription status
   useEffect(() => {
@@ -423,10 +439,10 @@ export function BillingSection() {
 
           {/* Savings pill */}
           {(() => {
-            const humanCost = plan.price === 19 ? 1500 : plan.price === 50 ? 3000 : 5000
+            const humanCost = plan.price === 9 ? 1000 : plan.price === 19 ? 1500 : plan.price === 50 ? 3000 : 5000
             const moneySaved = (humanCost - plan.price).toLocaleString()
-            const timeSaved = plan.price === 19 ? "6-12 hrs" : plan.price === 50 ? "18-24 hrs" : "24-36 hrs"
-            const multiplier = plan.price === 19 ? "79x" : plan.price === 50 ? "60x" : "50x"
+            const timeSaved = plan.price === 9 ? "3-6 hrs" : plan.price === 19 ? "6-12 hrs" : plan.price === 50 ? "18-24 hrs" : "24-36 hrs"
+            const multiplier = plan.price === 9 ? "111x" : plan.price === 19 ? "79x" : plan.price === 50 ? "60x" : "50x"
             return (
               <div className="flex justify-center mb-6">
                 <div className="inline-flex items-center gap-3 rounded-full border border-border bg-muted/40 px-4 py-2">
@@ -486,7 +502,7 @@ export function BillingSection() {
             <div className="mb-5 flex items-center gap-2 rounded-lg bg-violet-500/[0.08] border border-violet-500/15 px-3 py-2">
               <HardDrive className="h-3.5 w-3.5 text-violet-500 flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">
-                {plan.name === "Starter" ? "1" : plan.name === "Plus" ? "2" : "3"} persistent machine{plan.name !== "Starter" ? "s" : ""}
+                {plan.name === "Lite" || plan.name === "Starter" ? "1" : plan.name === "Plus" ? "2" : "3"} persistent machine{plan.name !== "Lite" && plan.name !== "Starter" ? "s" : ""}
                 <span className="text-muted-foreground font-normal">, no limits</span>
               </span>
             </div>

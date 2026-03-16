@@ -90,6 +90,27 @@ const pricingPlans = [
     highlighted: false,
   },
   {
+    name: "Lite",
+    price: "$9",
+    period: "month",
+    description: "Light daily automation",
+    agentMinutes: "100 credits/month",
+    features: [
+      "1 persistent machine, no limits",
+      "SOTA OSWorld Agent 82%",
+      "Full AI computer-use agent",
+      "One-click remote connection",
+      "File upload & download",
+      "Full audit trail",
+      "Persistent machine (always-on)",
+      "Swarm mode — 2 parallel agents",
+      "Standard support (real humans, not bots)",
+    ],
+    limitations: [],
+    cta: "Get Lite",
+    highlighted: false,
+  },
+  {
     name: "Starter",
     price: "$19",
     period: "month",
@@ -102,7 +123,7 @@ const pricingPlans = [
       "One-click remote connection",
       "File upload & download",
       "Full audit trail",
-      "2x more credits than Free",
+      "2x more credits than Lite",
       "Swarm mode — 3x your machine limit in parallel",
       "Advanced web search & data extraction",
       "Standard support (real humans, not bots)",
@@ -1126,10 +1147,10 @@ export function LandingPage() {
               </p>
             </motion.div>
 
-            {/* Plan cards — simple 4-col grid */}
+            {/* Plan cards — 5-col grid */}
             <div className={cn(
               "grid gap-3",
-              isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-4"
+              isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-5"
             )}>
               {pricingPlans.map((plan) => (
                 <motion.div
@@ -1166,14 +1187,14 @@ export function LandingPage() {
                     <div className="flex items-center gap-2 text-sm">
                       <HardDrive className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                       <span className="text-muted-foreground">
-                        {plan.name === "Free" ? "1 VM, 2-hour limit" : `${plan.name === "Starter" ? "1" : plan.name === "Plus" ? "2" : "3"} persistent machine${plan.name !== "Starter" ? "s" : ""}`}
+                        {plan.name === "Free" ? "1 VM, 2-hour limit" : `${plan.name === "Lite" || plan.name === "Starter" ? "1" : plan.name === "Plus" ? "2" : "3"} persistent machine${plan.name !== "Lite" && plan.name !== "Starter" ? "s" : ""}`}
                       </span>
                     </div>
                     {plan.name !== "Free" && (
                       <div className="flex items-center gap-2 text-sm">
                         <Bot className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                         <span className="text-muted-foreground">
-                          Swarm: {plan.name === "Starter" ? "2" : plan.name === "Plus" ? "4" : "6"} parallel agents
+                          Swarm: {plan.name === "Lite" ? "2" : plan.name === "Starter" ? "3" : plan.name === "Plus" ? "6" : "9"} parallel agents
                         </span>
                       </div>
                     )}

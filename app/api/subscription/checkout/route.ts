@@ -10,6 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
 
 // Map tier names to Stripe price IDs (you'll need to create these in Stripe Dashboard)
 const STRIPE_PRICE_IDS: Record<string, string> = {
+  lite: process.env.STRIPE_PRICE_LITE || "",
   starter: process.env.STRIPE_PRICE_STARTER || "",
   professional: process.env.STRIPE_PRICE_PROFESSIONAL || "",
   enterprise: process.env.STRIPE_PRICE_ENTERPRISE || "",

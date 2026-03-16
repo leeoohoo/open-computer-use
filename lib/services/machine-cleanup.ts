@@ -25,12 +25,14 @@ export class MachineCleanupService {
 
     // Run immediately on start
     this.runCleanup();
+    this.cleanupLiteMachines();
     this.runPeriodicSnapshots();
     this.cleanupSwarmMachines();
 
     // Then run every 2 hours (2 * 60 * 60 * 1000 ms)
     this.intervalId = setInterval(() => {
       this.runCleanup();
+      this.cleanupLiteMachines();
       this.runPeriodicSnapshots();
       this.cleanupSwarmMachines();
     }, 2 * 60 * 60 * 1000);
@@ -158,6 +160,77 @@ export class MachineCleanupService {
     }
 
     return stats;
+  }
+
+  /**
+   * Delete machines belonging to Lite-tier users that are older than 48 hours.
+   * Lite users get persistent machines but they expire after 48 hours,
+   * unlike higher tiers (starter/professional/enterprise) which persist indefinitely.
+   */
+  private async cleanupLiteMachines(): Promise<void> {
+    try {
+      const supabase = createServiceClient();
+      if (!supabase) return;
+
+      const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+
+      const { data: expiredMachines, error } = await (supabase as any)
+        .from("user_machines")
+        .select(`
+          id,
+          user_id,
+          container_name,
+          display_name,
+          settings,
+          status,
+          created_at,
+          users!inner (
+            user_subscriptions (
+              status,
+              subscription_plans (
+                tier
+              )
+            )
+          )
+        `)
+        .lt('created_at', fortyEightHoursAgo)
+        .neq('status', 'deleting')
+        .neq('status', 'error');
+
+      if (error || !expiredMachines || expiredMachines.length === 0) return;
+
+      // Filter to only Lite-tier users
+      const liteMachines = expiredMachines.filter((machine: any) => {
+        const settings = machine.settings as any;
+        if (settings?.provider === 'electron' || settings?.isLocal || settings?.is_swarm) {
+          return false;
+        }
+
+        const userSubscriptions = (machine.users as any)?.user_subscriptions;
+        if (!userSubscriptions || userSubscriptions.length === 0) return false;
+
+        // Check if user's ONLY active subscription is lite
+        const activeSubs = userSubscriptions.filter((sub: any) => sub.status === 'active');
+        return activeSubs.length > 0 && activeSubs.every((sub: any) =>
+          sub.subscription_plans?.tier === 'lite'
+        );
+      });
+
+      if (liteMachines.length === 0) return;
+
+      console.log(`Found ${liteMachines.length} Lite-tier machines older than 48 hours to clean up`);
+
+      for (const machine of liteMachines) {
+        try {
+          await this.deleteMachine(machine, supabase);
+          console.log(`Lite cleanup: deleted ${machine.display_name} (${machine.id})`);
+        } catch (err) {
+          console.error(`Lite cleanup: failed to delete ${machine.id}:`, err);
+        }
+      }
+    } catch (err) {
+      console.error("Lite machine cleanup failed:", err);
+    }
   }
 
   /**
