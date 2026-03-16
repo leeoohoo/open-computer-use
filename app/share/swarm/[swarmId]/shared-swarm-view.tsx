@@ -54,7 +54,7 @@ export function SharedSwarmView({
   const statusMeta = STATUS_META[swarm.status] || STATUS_META.creating
 
   return (
-    <div className="relative flex h-dvh w-full flex-col bg-background overflow-hidden">
+    <div className="relative flex min-h-dvh lg:h-dvh w-full flex-col bg-background">
       {/* Ambient gradient mesh background — matching auth page */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
@@ -75,26 +75,26 @@ export function SharedSwarmView({
         />
       </div>
 
-      <header className="relative z-20 p-4">
+      <header className="relative z-20 p-3 sm:p-4">
         <Link
           href="/"
           className="inline-flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-muted transition-colors"
         >
-          <CoastyIcon className="size-6" />
+          <CoastyIcon className="size-5 sm:size-6" />
           <span className="text-sm font-semibold tracking-tight">Coasty</span>
         </Link>
       </header>
 
-      <main className="relative flex flex-1 flex-col lg:flex-row items-stretch z-10 overflow-hidden">
+      <main className="relative flex flex-1 flex-col lg:flex-row items-stretch z-10 lg:overflow-hidden">
         {/* ───── Left brand panel ───── */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: EASE }}
-          className="flex flex-col justify-center items-start px-6 sm:px-10 lg:px-16 xl:px-24 py-8 lg:py-0 lg:flex-1 lg:max-w-2xl"
+          className="flex flex-col items-start px-4 sm:px-8 lg:px-16 xl:px-24 py-6 sm:py-8 lg:py-0 lg:justify-center lg:flex-1 lg:max-w-2xl min-w-0 lg:overflow-y-auto shrink-0"
         >
-          <div className="mb-6 lg:mb-8">
-            <CoastyIcon className="size-8 lg:size-10" />
+          <div className="mb-4 lg:mb-8 hidden lg:block">
+            <CoastyIcon className="size-10" />
           </div>
 
           {/* Status pill */}
@@ -102,11 +102,11 @@ export function SharedSwarmView({
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.15, ease: EASE }}
-            className="mb-5"
+            className="mb-3 sm:mb-5"
           >
             <span
               className={cn(
-                "inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full",
+                "inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full",
                 statusMeta.color
               )}
             >
@@ -115,19 +115,34 @@ export function SharedSwarmView({
             </span>
           </motion.div>
 
-          {/* Prompt as headline */}
-          <h1 className="text-foreground text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-medium tracking-tight leading-[1.15]">
-            {swarm.prompt}
-          </h1>
+          {/* Prompt as headline — scale down for long prompts, scrollable */}
+          {swarm.prompt.length > 150 ? (
+            <div className="w-full max-h-[25vh] sm:max-h-[30vh] lg:max-h-[35vh] overflow-y-auto rounded-xl border border-border/40 bg-card/20 px-3 py-2.5 sm:px-4 sm:py-3 scrollbar-thin">
+              <p className="text-foreground text-sm sm:text-base lg:text-xl font-medium tracking-tight leading-relaxed break-words whitespace-pre-wrap">
+                {swarm.prompt}
+              </p>
+            </div>
+          ) : (
+            <h1
+              className={cn(
+                "text-foreground font-medium tracking-tight leading-[1.15] w-full break-words",
+                swarm.prompt.length > 100
+                  ? "text-lg sm:text-xl lg:text-3xl"
+                  : "text-2xl sm:text-3xl lg:text-5xl xl:text-[3.25rem]"
+              )}
+            >
+              {swarm.prompt}
+            </h1>
+          )}
 
           {/* Meta info */}
-          <div className="mt-5 lg:mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+          <div className="mt-3 sm:mt-5 lg:mt-6 flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-1.5 sm:gap-y-2 text-xs sm:text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <Monitor className="size-3.5" />
+              <Monitor className="size-3 sm:size-3.5" />
               {swarm.machine_count} machine{swarm.machine_count !== 1 ? "s" : ""}
             </span>
             <span className="flex items-center gap-1.5">
-              <Clock className="size-3.5" />
+              <Clock className="size-3 sm:size-3.5" />
               {createdAt.toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -136,12 +151,12 @@ export function SharedSwarmView({
             </span>
             {duration && (
               <span className="flex items-center gap-1.5">
-                <CircleNotch className="size-3.5" />
+                <CircleNotch className="size-3 sm:size-3.5" />
                 {duration}
               </span>
             )}
             {swarm.model && (
-              <span className="opacity-60 truncate max-w-[180px]">{swarm.model}</span>
+              <span className="opacity-60 truncate max-w-[140px] sm:max-w-[180px]">{swarm.model}</span>
             )}
           </div>
 
@@ -170,10 +185,10 @@ export function SharedSwarmView({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.7, ease: EASE }}
-            className="mt-8 lg:mt-12"
+            className="mt-5 sm:mt-8 lg:mt-12 w-full sm:w-auto"
           >
             <Link href="/">
-              <Button className="h-11 rounded-xl font-medium px-6 gap-2">
+              <Button className="h-10 sm:h-11 rounded-xl font-medium px-5 sm:px-6 gap-2 w-full sm:w-auto">
                 <GitFork className="size-4" weight="duotone" />
                 Launch your own Swarm
                 <ArrowRight className="size-3.5" />
@@ -187,16 +202,16 @@ export function SharedSwarmView({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1, ease: EASE }}
-          className="flex-1 lg:max-w-[55%] xl:max-w-[58%] flex items-center justify-center p-3 sm:p-4 lg:p-6 min-h-[400px] lg:min-h-0"
+          className="flex-1 lg:max-w-[55%] xl:max-w-[58%] flex items-center justify-center p-3 sm:p-4 lg:p-6 min-h-[280px] sm:min-h-[350px] lg:min-h-0"
         >
           <div className="w-full h-full rounded-2xl border border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden shadow-sm relative">
             {/* Inner gradient accent */}
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
 
             {events.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full py-16 text-center">
-                <Terminal className="size-8 text-muted-foreground/25 mb-3" />
-                <p className="text-sm text-muted-foreground">No event logs recorded</p>
+              <div className="flex flex-col items-center justify-center h-full py-12 sm:py-16 text-center">
+                <Terminal className="size-7 sm:size-8 text-muted-foreground/25 mb-3" />
+                <p className="text-xs sm:text-sm text-muted-foreground">No event logs recorded</p>
               </div>
             ) : (
               <SwarmTree

@@ -377,7 +377,7 @@ export function SwarmTree({
   useEffect(() => {
     if (!containerRef.current || !contentRef.current) return
     const containerW = containerRef.current.clientWidth
-    setIsMobile(containerW < 500)
+    setIsMobile(containerW < 768)
     const contentW = Math.max(cols * 220, 300)
     const fit = Math.min(1, (containerW - 32) / contentW)
     const clamped = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, fit))
@@ -570,53 +570,56 @@ export function SwarmTree({
         </button>
       </div>
 
-      {/* D-pad navigation — mobile only */}
+      {/* D-pad navigation — small screens & touch devices */}
       {isMobile && (
-        <div className="absolute bottom-12 left-3 z-[10] flex flex-col items-center gap-0.5">
+        <div className="absolute bottom-14 left-3 z-[10] flex flex-col items-center gap-1" data-no-pan>
           <button
             onClick={panUp}
-            className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+            className="h-9 w-9 flex items-center justify-center rounded-xl border border-border/50 bg-background/95 backdrop-blur-sm text-muted-foreground active:scale-90 active:bg-muted transition-all shadow-sm"
             title="Pan up"
           >
-            <CaretUp className="size-3.5" weight="bold" />
+            <CaretUp className="size-4" weight="bold" />
           </button>
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-1">
             <button
               onClick={panLeft}
-              className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+              className="h-9 w-9 flex items-center justify-center rounded-xl border border-border/50 bg-background/95 backdrop-blur-sm text-muted-foreground active:scale-90 active:bg-muted transition-all shadow-sm"
               title="Pan left"
             >
-              <CaretLeft className="size-3.5" weight="bold" />
+              <CaretLeft className="size-4" weight="bold" />
             </button>
             <button
               onClick={resetView}
-              className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+              className="h-9 w-9 flex items-center justify-center rounded-xl border border-border/50 bg-background/95 backdrop-blur-sm text-muted-foreground active:scale-90 active:bg-muted transition-all shadow-sm"
               title="Reset view"
             >
-              <ArrowCounterClockwise className="size-3" />
+              <ArrowCounterClockwise className="size-3.5" />
             </button>
             <button
               onClick={panRight}
-              className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+              className="h-9 w-9 flex items-center justify-center rounded-xl border border-border/50 bg-background/95 backdrop-blur-sm text-muted-foreground active:scale-90 active:bg-muted transition-all shadow-sm"
               title="Pan right"
             >
-              <CaretRight className="size-3.5" weight="bold" />
+              <CaretRight className="size-4" weight="bold" />
             </button>
           </div>
           <button
             onClick={panDown}
-            className="h-7 w-7 flex items-center justify-center rounded-lg border border-border/40 bg-background/90 backdrop-blur-sm text-muted-foreground active:bg-background shadow-sm"
+            className="h-9 w-9 flex items-center justify-center rounded-xl border border-border/50 bg-background/95 backdrop-blur-sm text-muted-foreground active:scale-90 active:bg-muted transition-all shadow-sm"
             title="Pan down"
           >
-            <CaretDown className="size-3.5" weight="bold" />
+            <CaretDown className="size-4" weight="bold" />
           </button>
         </div>
       )}
 
       {/* Hint */}
-      <div className="absolute bottom-2.5 left-3 z-[10] flex items-center gap-1.5 text-[10px] text-muted-foreground/35 select-none pointer-events-none">
+      <div className={cn(
+        "absolute left-3 z-[10] flex items-center gap-1.5 text-[10px] text-muted-foreground/35 select-none pointer-events-none",
+        isMobile ? "bottom-2.5 right-3 justify-center" : "bottom-2.5"
+      )}>
         <ArrowsOutCardinal className="size-3" />
-        <span>{isMobile ? "Pinch to zoom" : "Drag to pan \u00b7 Scroll to zoom"}</span>
+        <span>{isMobile ? "Pinch to zoom \u00b7 Use D-pad to pan" : "Drag to pan \u00b7 Scroll to zoom"}</span>
       </div>
 
       {/* Pan/zoom viewport */}
