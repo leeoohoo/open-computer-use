@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
+import { Menu, X, ArrowRight } from "lucide-react"
 import Image from "next/image"
 import { useState, useEffect, useCallback } from "react"
 import { cn } from "@/lib/utils"
@@ -36,7 +36,6 @@ export function LandingHeader({
     setCurrentPath(window.location.pathname)
   }, [])
 
-  // Ensure mobile menu is closed when resizing to desktop/tablet layouts
   useEffect(() => {
     const closeMenuOnLargeScreens = () => {
       if (window.innerWidth >= 1024) {
@@ -47,7 +46,6 @@ export function LandingHeader({
     return () => window.removeEventListener("resize", closeMenuOnLargeScreens)
   }, [])
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden"
@@ -59,14 +57,12 @@ export function LandingHeader({
 
   const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), [])
 
-  // Handle scroll events for header appearance
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
-      
-      // Only update active section based on scroll if we're on the home page
+
       if (currentPath === '/' || currentPath === '') {
-        const sections = navItems.filter(item => !item.external).map(item => item.href.substring(2)) // substring(2) to skip "/#"
+        const sections = navItems.filter(item => !item.external).map(item => item.href.substring(2))
         const scrollPosition = window.scrollY + 100
 
         for (let i = sections.length - 1; i >= 0; i--) {
@@ -83,27 +79,23 @@ export function LandingHeader({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [currentPath])
 
-  // Smooth scroll to section or navigate to external link
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, external?: boolean) => {
     if (external) {
-      // Allow normal navigation for external links
       setMobileMenuOpen(false)
       return
     }
-    
-    // If we're not on the home page, navigate to home with the hash
+
     if (currentPath !== '/' && currentPath !== '') {
-      // Allow default navigation to home with hash
       setMobileMenuOpen(false)
       return
     }
-    
+
     e.preventDefault()
-    const targetId = href.substring(2) // Skip "/#"
+    const targetId = href.substring(2)
     const targetElement = document.getElementById(targetId)
-    
+
     if (targetElement) {
-      const offset = 80 // Account for fixed header
+      const offset = 80
       const elementPosition = targetElement.getBoundingClientRect().top
       const offsetPosition = elementPosition + window.pageYOffset - offset
 
@@ -113,69 +105,68 @@ export function LandingHeader({
       })
     }
 
-    // Close mobile menu if open
     setMobileMenuOpen(false)
   }
 
   return (
     <>
       <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
-          scrolled ? "py-2.5" : "py-3.5 sm:py-4"
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          scrolled ? "py-2" : "py-3 sm:py-4"
         )}
       >
         <div className="mx-auto max-w-7xl px-7 sm:px-10">
-          <div className="px-1 sm:px-2 lg:px-4">
           <div
             className={cn(
-              "relative mx-auto transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
+              "relative mx-auto transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
               scrolled ? "max-w-5xl" : ""
             )}
           >
+            {/* Glass background */}
             <div
               className={cn(
-                "absolute inset-0 border border-border/50 shadow-lg transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
-                "rounded-xl sm:rounded-2xl bg-background/95 sm:bg-background/90 sm:backdrop-blur-xl",
+                "absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                "rounded-2xl",
+                "bg-background/80 backdrop-blur-2xl backdrop-saturate-[1.8]",
+                "border border-border/30",
                 scrolled
-                  ? "shadow-lg shadow-primary/5"
-                  : "shadow-2xl shadow-primary/10"
+                  ? "shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)]"
+                  : "shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_32px_rgba(0,0,0,0.06)]"
               )}
             />
-            
-            <div className="pointer-events-none absolute inset-0 hidden rounded-2xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-50 sm:block" />
-            
+
             {/* Content */}
             <nav
               className={cn(
                 "relative flex items-center justify-between transition-all duration-500 gap-4",
-                scrolled ? "px-3 py-2.5 sm:px-4 md:px-5" : "px-3 py-2.5 sm:px-4 md:px-5 lg:px-6"
+                scrolled ? "px-4 py-2 sm:px-5" : "px-4 py-2.5 sm:px-6"
               )}
             >
               {/* Logo */}
-              <Link 
-                href="/" 
-                className="flex items-center gap-2 group flex-shrink-0"
+              <Link
+                href="/"
+                className="flex items-center gap-2.5 group flex-shrink-0"
               >
                 <motion.div
                   layoutId={animateBrandFromIntro ? "landing-brand-logo" : undefined}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.15 }}
                   className={cn(
                     "relative transition-all duration-500 flex-shrink-0",
-                    scrolled ? "h-8 w-8 sm:h-9 sm:w-9" : "h-9 w-9 sm:h-10 sm:w-10"
+                    scrolled ? "h-7 w-7 sm:h-8 sm:w-8" : "h-8 w-8 sm:h-9 sm:w-9"
                   )}
                 >
                   {mounted && (
                     <Image
                       src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
                       alt="Coasty Logo"
-                      width={40}
-                      height={40}
+                      width={36}
+                      height={36}
                       className="w-full h-full object-contain"
                       priority
                     />
@@ -184,8 +175,8 @@ export function LandingHeader({
                 <motion.span
                   layoutId={animateBrandFromIntro ? "landing-brand-text" : undefined}
                   className={cn(
-                    "font-semibold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent transition-all duration-500 whitespace-nowrap text-base sm:text-lg leading-normal pb-0.5",
-                    scrolled ? "lg:text-lg" : "lg:text-xl"
+                    "font-semibold text-foreground transition-all duration-500 whitespace-nowrap tracking-[-0.01em]",
+                    scrolled ? "text-[15px] sm:text-base" : "text-base sm:text-lg"
                   )}
                 >
                   Coasty
@@ -193,55 +184,60 @@ export function LandingHeader({
               </Link>
 
               {/* Desktop Navigation */}
-              <ul className="hidden lg:flex items-center gap-1 xl:gap-1.5 relative flex-1 justify-center px-2">
+              <ul className="hidden lg:flex items-center gap-0.5 relative flex-1 justify-center">
                 {navItems.map((item) => {
-                  const isActive = item.external 
-                    ? currentPath === item.href 
-                    : (currentPath === '/' || currentPath === '') && activeSection === item.href.substring(2) // substring(2) to skip "/#"
-                  
+                  const isActive = item.external
+                    ? currentPath === item.href
+                    : (currentPath === '/' || currentPath === '') && activeSection === item.href.substring(2)
+
                   return (
                     <li key={item.label} className="relative">
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeSection"
-                          className="absolute inset-x-[-4px] inset-y-[-2px] bg-primary/10 rounded-full border border-primary/20"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{
-                            type: "spring",
-                            bounce: 0.2,
-                            stiffness: 380,
-                            damping: 30,
-                          }}
-                        />
-                      )}
                       {item.external ? (
                         <Link
                           href={item.href}
                           className={cn(
-                            "relative rounded-full transition-all duration-200 cursor-pointer block whitespace-nowrap px-2.5 xl:px-3 py-2",
-                            scrolled ? "text-sm" : "text-sm xl:text-base",
-                            isActive 
-                              ? "text-primary font-medium" 
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                            "relative block whitespace-nowrap px-3 py-1.5 text-[13px] font-medium tracking-[-0.006em] rounded-lg transition-colors duration-200",
+                            isActive
+                              ? "text-foreground"
+                              : "text-muted-foreground/60 hover:text-foreground"
                           )}
                         >
                           {item.label}
+                          {isActive && (
+                            <motion.span
+                              layoutId="nav-indicator"
+                              className="absolute bottom-0 left-3 right-3 h-px bg-foreground/40"
+                              transition={{
+                                type: "spring",
+                                stiffness: 500,
+                                damping: 35,
+                              }}
+                            />
+                          )}
                         </Link>
                       ) : (
                         <a
                           href={item.href}
                           onClick={(e) => handleNavClick(e, item.href, item.external)}
                           className={cn(
-                            "relative rounded-full transition-all duration-200 cursor-pointer block whitespace-nowrap px-2.5 xl:px-3 py-2",
-                            scrolled ? "text-sm" : "text-sm xl:text-base",
-                            isActive 
-                              ? "text-primary font-medium" 
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                            "relative block whitespace-nowrap px-3 py-1.5 text-[13px] font-medium tracking-[-0.006em] rounded-lg transition-colors duration-200",
+                            isActive
+                              ? "text-foreground"
+                              : "text-muted-foreground/60 hover:text-foreground"
                           )}
                         >
                           {item.label}
+                          {isActive && (
+                            <motion.span
+                              layoutId="nav-indicator"
+                              className="absolute bottom-0 left-3 right-3 h-px bg-foreground/40"
+                              transition={{
+                                type: "spring",
+                                stiffness: 500,
+                                damping: 35,
+                              }}
+                            />
+                          )}
                         </a>
                       )}
                     </li>
@@ -249,50 +245,55 @@ export function LandingHeader({
                 })}
               </ul>
 
-              {/* Desktop CTA Button and Theme Toggle */}
-              <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
-                <AnimatedThemeToggler 
+              {/* Desktop CTA */}
+              <div className="hidden lg:flex items-center gap-1.5 flex-shrink-0">
+                <AnimatedThemeToggler
                   className={cn(
-                    "p-2 rounded-full transition-all hover:bg-muted/50",
-                    scrolled ? "h-9 w-9" : "h-9 w-9 xl:h-10 xl:w-10"
+                    "rounded-lg transition-all hover:bg-foreground/[0.04]",
+                    scrolled ? "h-8 w-8 p-1.5" : "h-9 w-9 p-2"
                   )}
                 />
-                <Button
-                  size={scrolled ? "sm" : "default"}
-                  className="rounded-full group whitespace-nowrap"
-                  asChild
+                <div className="w-px h-4 bg-border/40 mx-1" />
+                <Link
+                  href="/auth"
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-lg font-medium transition-all duration-200",
+                    "text-[13px] tracking-[-0.006em]",
+                    "bg-foreground text-background",
+                    "hover:opacity-90 active:scale-[0.98]",
+                    scrolled ? "px-3.5 py-1.5" : "px-4 py-2"
+                  )}
                 >
-                  <Link href="/auth">
-                    Sign Up / Log In
-                  </Link>
-                </Button>
+                  Get Started
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
               </div>
 
-              {/* Mobile Theme Toggle and Menu Button */}
-              <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden">
+              {/* Mobile controls */}
+              <div className="flex items-center gap-1 lg:hidden">
                 <AnimatedThemeToggler
-                  className="p-2 rounded-full h-8 w-8 sm:h-9 sm:w-9 hover:bg-muted/50 inline-flex items-center justify-center"
+                  className="p-1.5 rounded-lg h-8 w-8 hover:bg-foreground/[0.04] inline-flex items-center justify-center"
                 />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full h-8 w-8 sm:h-9 sm:w-9"
+                <button
+                  className={cn(
+                    "inline-flex items-center justify-center rounded-lg h-8 w-8 transition-colors duration-200",
+                    "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04]"
+                  )}
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 >
                   {mobileMenuOpen ? (
-                    <X className="h-5 w-5" />
+                    <X className="h-[18px] w-[18px]" strokeWidth={1.5} />
                   ) : (
-                    <Menu className="h-5 w-5" />
+                    <Menu className="h-[18px] w-[18px]" strokeWidth={1.5} />
                   )}
-                </Button>
+                </button>
               </div>
             </nav>
-          </div>
           </div>
         </div>
       </motion.header>
 
-      {/* Mobile Menu — full-screen overlay */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -301,39 +302,39 @@ export function LandingHeader({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
+              transition={{ duration: 0.25 }}
+              className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm lg:hidden"
               onClick={closeMobileMenu}
             />
 
-            {/* Menu panel — slides down from header */}
+            {/* Menu panel */}
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="fixed inset-x-0 top-0 z-40 lg:hidden pt-[68px] sm:pt-[76px]"
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed inset-x-0 top-0 z-40 lg:hidden pt-[60px] sm:pt-[68px]"
             >
-              <div className="mx-0 sm:mx-3 bg-background border-b border-border/50 sm:border sm:rounded-b-2xl shadow-2xl">
-                <nav className="flex flex-col px-7 sm:px-10 py-4 sm:py-5 gap-1">
+              <div className="mx-2 sm:mx-4 bg-background/95 backdrop-blur-2xl border border-border/30 rounded-b-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
+                <nav className="flex flex-col px-3 py-3 gap-0.5">
                   {navItems.map((item, index) => {
                     const isActive = item.external
                       ? currentPath === item.href
                       : (currentPath === '/' || currentPath === '') && activeSection === item.href.substring(2)
 
                     const linkClasses = cn(
-                      "flex items-center px-4 py-3 sm:py-3.5 rounded-xl transition-all duration-200 text-[15px] sm:text-base font-medium",
+                      "flex items-center px-3.5 py-2.5 rounded-xl transition-all duration-150 text-[15px] font-medium tracking-[-0.006em]",
                       isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50 active:bg-muted"
+                        ? "text-foreground bg-foreground/[0.04]"
+                        : "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/[0.03] active:bg-foreground/[0.06]"
                     )
 
                     return (
                       <motion.div
                         key={item.label}
-                        initial={{ opacity: 0, x: -12 }}
+                        initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.04, duration: 0.2 }}
+                        transition={{ delay: index * 0.03, duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                       >
                         {item.external ? (
                           <Link
@@ -357,19 +358,23 @@ export function LandingHeader({
                   })}
 
                   {/* Divider */}
-                  <div className="my-2 border-t border-border/50" />
+                  <div className="my-1.5 mx-3.5 border-t border-border/20" />
 
                   {/* CTA */}
                   <motion.div
-                    initial={{ opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: navItems.length * 0.04, duration: 0.25 }}
+                    transition={{ delay: navItems.length * 0.03 + 0.05, duration: 0.2 }}
+                    className="px-1 pb-1"
                   >
-                    <Button className="w-full rounded-xl h-12 text-[15px] sm:text-base font-semibold" asChild>
-                      <Link href="/auth" onClick={closeMobileMenu}>
-                        Sign Up / Log In
-                      </Link>
-                    </Button>
+                    <Link
+                      href="/auth"
+                      onClick={closeMobileMenu}
+                      className="flex items-center justify-center gap-2 w-full rounded-xl h-11 text-[15px] font-semibold tracking-[-0.006em] bg-foreground text-background hover:opacity-90 active:scale-[0.99] transition-all duration-150"
+                    >
+                      Get Started
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
                   </motion.div>
                 </nav>
               </div>

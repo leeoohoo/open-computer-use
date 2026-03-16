@@ -1149,6 +1149,27 @@ export default function AgentSwarmsPage() {
               </p>
             </motion.div>
 
+            {/* YouTube demo video */}
+            <motion.div variants={itemVariants} className="mb-12">
+              <div className={cn(
+                "relative rounded-xl sm:rounded-2xl overflow-hidden",
+                "border border-border/40 dark:border-border/30",
+                "shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08),0_12px_48px_-8px_rgba(0,0,0,0.1)]",
+                "dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.3),0_12px_48px_-8px_rgba(0,0,0,0.4)]",
+              )}>
+                <div className="relative w-full bg-neutral-950" style={{ paddingTop: "56.25%" }}>
+                  <iframe
+                    className="absolute inset-0 w-full h-full"
+                    src="https://www.youtube-nocookie.com/embed/IBydvwkJcCQ?rel=0&modestbranding=1&showinfo=0"
+                    title="Agent Swarms Demo"
+                    allowFullScreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    style={{ border: "none" }}
+                  />
+                </div>
+              </div>
+            </motion.div>
+
             <motion.div variants={itemVariants}>
               {/* Prompt bar */}
               <div className="rounded-xl border border-border/30 bg-card/30 backdrop-blur-sm p-4 mb-5">

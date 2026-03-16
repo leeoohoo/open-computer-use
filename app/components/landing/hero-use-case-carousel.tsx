@@ -68,10 +68,10 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           "font-bold tracking-tight",
           isMobile ? "text-4xl leading-[1.2]" : "text-5xl sm:text-6xl lg:text-7xl leading-[1.1]"
         )}>
-          <span className="text-foreground">Coasty uses a computer</span>
+          <span className="text-foreground">Autopilot operations</span>
           <br />
-          <span className="text-muted-foreground/40">for you, </span>
-          <span className="text-emerald-500 dark:text-emerald-400">safely.</span>
+          <span className="text-muted-foreground/40">powered by </span>
+          <span className="text-emerald-500 dark:text-emerald-400">Coasty.</span>
         </h1>
 
         {/* Sub */}
