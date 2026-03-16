@@ -48,6 +48,7 @@ interface Feature {
   icon: LucideIcon
   title: string
   subtitle: (plan: Plan) => string
+  highlight?: { label: string; color: string; bg: string; border: string }
 }
 
 // ─── Data ───────────────────────────────────────────────────────────────────
@@ -61,12 +62,12 @@ const plans: Plan[] = [
 ]
 
 const featureList: Feature[] = [
-  { icon: Monitor, title: "AI Computer Agent", subtitle: () => "Full browser, desktop & terminal" },
+  { icon: Monitor, title: "Coasty Computer Agent", subtitle: () => "Full browser, desktop & terminal", highlight: { label: "Core", color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" } },
+  { icon: Workflow, title: "Swarm Mode", subtitle: (p) => p.swarm === 0 ? "Sequential only" : `${p.swarm} agents in parallel`, highlight: { label: "Powerful", color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" } },
+  { icon: Shield, title: "Security", subtitle: () => "Sandboxed, E2E encrypted", highlight: { label: "Every plan", color: "text-green-600 dark:text-green-400", bg: "bg-green-500/10", border: "border-green-500/20" } },
   { icon: Zap, title: "Monthly Credits", subtitle: (p) => `${p.credits.toLocaleString()} credits/mo` },
   { icon: HardDrive, title: "Persistent Machines", subtitle: (p) => p.machines === 0 ? "1 temporary VM (2hr)" : `${p.machines} always-on VM${p.machines > 1 ? "s" : ""}` },
-  { icon: Workflow, title: "Swarm Mode", subtitle: (p) => p.swarm === 0 ? "Sequential only" : `${p.swarm} agents in parallel` },
   { icon: Globe, title: "Web Search", subtitle: (p) => p.search ? "Advanced search & extraction" : "Basic search" },
-  { icon: Shield, title: "Security", subtitle: () => "Sandboxed, E2E encrypted" },
 ]
 
 const faqs = [
@@ -496,11 +497,11 @@ function FeatureVisual({ featureIndex, plan }: { featureIndex: number; plan: Pla
         className="h-full"
       >
         {featureIndex === 0 && <AgentVisual />}
-        {featureIndex === 1 && <CreditsVisual plan={plan} />}
-        {featureIndex === 2 && <MachinesVisual plan={plan} />}
-        {featureIndex === 3 && <SwarmVisual plan={plan} />}
-        {featureIndex === 4 && <SearchVisual plan={plan} />}
-        {featureIndex === 5 && <SecurityVisual />}
+        {featureIndex === 1 && <SwarmVisual plan={plan} />}
+        {featureIndex === 2 && <SecurityVisual />}
+        {featureIndex === 3 && <CreditsVisual plan={plan} />}
+        {featureIndex === 4 && <MachinesVisual plan={plan} />}
+        {featureIndex === 5 && <SearchVisual plan={plan} />}
       </motion.div>
     </AnimatePresence>
   )
@@ -675,40 +676,56 @@ export default function PricingPage() {
                   {/* Feature list — left */}
                   <div className="flex-1 p-4 sm:p-6 lg:border-r border-border/30">
                     <div className="space-y-0.5">
-                      {featureList.map((feature, i) => (
-                        <button
-                          key={feature.title}
-                          onMouseEnter={() => setActiveFeature(i)}
-                          onClick={() => setActiveFeature(i)}
-                          className={cn(
-                            "w-full flex items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-all duration-200",
-                            activeFeature === i
-                              ? "bg-muted/50"
-                              : "hover:bg-muted/25"
-                          )}
-                        >
-                          <div className={cn(
-                            "h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-200",
-                            activeFeature === i ? "bg-primary/10 text-primary" : "bg-muted/40 text-muted-foreground"
-                          )}>
-                            <feature.icon className="h-4 w-4" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className={cn(
-                              "text-sm font-medium transition-colors duration-200",
-                              activeFeature === i ? "text-foreground" : "text-foreground/80"
+                      {featureList.map((feature, i) => {
+                        const hl = feature.highlight
+                        const active = activeFeature === i
+                        return (
+                          <button
+                            key={feature.title}
+                            onMouseEnter={() => setActiveFeature(i)}
+                            onClick={() => setActiveFeature(i)}
+                            className={cn(
+                              "w-full flex items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-all duration-200 border",
+                              active
+                                ? hl ? `${hl.bg} ${hl.border}` : "bg-muted/50 border-transparent"
+                                : "border-transparent hover:bg-muted/25"
+                            )}
+                          >
+                            <div className={cn(
+                              "h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-200",
+                              hl ? `${hl.bg} ${hl.color}` : active ? "bg-primary/10 text-primary" : "bg-muted/40 text-muted-foreground"
                             )}>
-                              {feature.title}
-                            </h3>
-                            <p className="text-xs text-muted-foreground truncate">{feature.subtitle(plan)}</p>
-                          </div>
-                          {/* Active indicator bar */}
-                          <div className={cn(
-                            "w-0.5 h-6 rounded-full transition-colors duration-200",
-                            activeFeature === i ? "bg-primary" : "bg-transparent"
-                          )} />
-                        </button>
-                      ))}
+                              <feature.icon className="h-4 w-4" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <h3 className={cn(
+                                  "text-sm font-medium transition-colors duration-200",
+                                  active ? "text-foreground" : "text-foreground/80"
+                                )}>
+                                  {feature.title}
+                                </h3>
+                                {hl && (
+                                  <span className={cn(
+                                    "text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full leading-none",
+                                    hl.bg, hl.color
+                                  )}>
+                                    {hl.label}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground truncate">{feature.subtitle(plan)}</p>
+                            </div>
+                            {/* Active indicator bar */}
+                            <div className={cn(
+                              "w-0.5 h-6 rounded-full transition-colors duration-200",
+                              active
+                                ? hl ? hl.bg.replace("/10", "/40") : "bg-primary"
+                                : hl ? hl.bg.replace("/10", "/20") : "bg-transparent"
+                            )} />
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
 

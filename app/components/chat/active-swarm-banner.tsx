@@ -36,7 +36,7 @@ export function ActiveSwarmBanner({ fullscreen, onSwarmDetected }: ActiveSwarmBa
       const data = await res.json()
       const runs = data.swarms || []
       const active = runs.find(
-        (s: any) => s.status === "running" || s.status === "creating"
+        (s: any) => s.status === "running" || s.status === "creating" || s.status === "paused"
       )
       if (active) {
         setSwarm(active)
@@ -74,7 +74,7 @@ export function ActiveSwarmBanner({ fullscreen, onSwarmDetected }: ActiveSwarmBa
         const data = await res.json()
         const runs = data.swarms || []
         const active = runs.find(
-          (s: any) => s.status === "running" || s.status === "creating"
+          (s: any) => s.status === "running" || s.status === "creating" || s.status === "paused"
         )
         if (active) {
           setSwarm(active)

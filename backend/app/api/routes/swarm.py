@@ -244,7 +244,50 @@ async def swarm_status(
         "swarm_id": swarm_id,
         "machine_statuses": dict(swarm._machine_statuses),
         "cancelled": swarm._cancel_event.is_set(),
+        "paused": swarm.is_paused,
     }
+
+
+# ---------------------------------------------------------------------------
+# POST /api/swarm/pause/{swarm_id}
+# ---------------------------------------------------------------------------
+
+@router.post("/pause/{swarm_id}")
+async def swarm_pause(
+    swarm_id: str,
+    user_id: str = Depends(get_verified_user_id),
+) -> Dict[str, Any]:
+    """Pause a running swarm. Machines will finish their current step then wait."""
+    swarm = get_active_swarm(swarm_id)
+    if not swarm:
+        return {"paused": False, "reason": "Swarm not found or already finished"}
+
+    if swarm.user_id and swarm.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    changed = swarm.pause()
+    return {"paused": True, "swarm_id": swarm_id, "state_changed": changed}
+
+
+# ---------------------------------------------------------------------------
+# POST /api/swarm/resume/{swarm_id}
+# ---------------------------------------------------------------------------
+
+@router.post("/resume/{swarm_id}")
+async def swarm_resume(
+    swarm_id: str,
+    user_id: str = Depends(get_verified_user_id),
+) -> Dict[str, Any]:
+    """Resume a paused swarm."""
+    swarm = get_active_swarm(swarm_id)
+    if not swarm:
+        return {"resumed": False, "reason": "Swarm not found or already finished"}
+
+    if swarm.user_id and swarm.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    changed = swarm.resume()
+    return {"resumed": True, "swarm_id": swarm_id, "state_changed": changed}
 
 
 # ---------------------------------------------------------------------------
@@ -267,5 +310,6 @@ def _chunk_type_to_sse_code(chunk_type: str) -> str:
         "swarm_summary": "s",
         "keepalive": "s",
         "step_complete": "s",
+        "coordinator_action": "s",
     }
     return mapping.get(chunk_type, "s")

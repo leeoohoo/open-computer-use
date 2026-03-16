@@ -89,10 +89,11 @@ const preInstalled = [
 ]
 
 const planLimits = [
-  { plan: "Free", machines: "0 persistent (temporary only)", swarm: "Not available" },
-  { plan: "Starter", machines: "1 persistent machine", swarm: "2 parallel (2\u00d7)" },
-  { plan: "Plus", machines: "2 persistent machines", swarm: "4 parallel (2\u00d7)" },
-  { plan: "Pro", machines: "3 persistent machines", swarm: "6 parallel (2\u00d7)" },
+  { plan: "Free", machines: "1 temporary VM (2hr)", swarm: "Not available" },
+  { plan: "Lite", machines: "1 always-on VM", swarm: "2 agents in parallel" },
+  { plan: "Starter", machines: "1 always-on VM", swarm: "3 agents in parallel" },
+  { plan: "Plus", machines: "2 always-on VMs", swarm: "6 agents in parallel" },
+  { plan: "Pro", machines: "3 always-on VMs", swarm: "9 agents in parallel" },
 ]
 
 /* ─── status helpers ─── */
@@ -527,7 +528,7 @@ export function MachinesTab({ inApp }: { inApp: boolean }) {
           className="rounded-xl border border-border/30 bg-background/50 p-3.5 mt-4"
         >
           <p className="text-[13px] text-muted-foreground/60 leading-relaxed">
-            Swarm mode lets you run tasks on multiple machines in parallel. The limit is 3× your plan&apos;s persistent machine count. Swarm machines are temporary and auto-delete after the task completes.
+            Swarm mode lets you run tasks on multiple machines in parallel. Each plan has a set number of parallel agents (2–9). Swarm machines are temporary and auto-delete after the task completes.
           </p>
         </motion.div>
       </motion.section>

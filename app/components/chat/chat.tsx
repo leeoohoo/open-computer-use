@@ -621,6 +621,12 @@ export function Chat() {
   }, [swarmMode, input, submit, handleCollaborativeInputChange])
 
   const handleSwarmStop = useCallback(() => {
+    // Don't dismiss the panel — it stays visible showing final state.
+    // The panel itself handles showing completed/cancelled results.
+  }, [])
+
+  const handleSwarmDismiss = useCallback(() => {
+    // User explicitly wants to start fresh — dismiss the panel
     setSwarmActive(false)
     setSwarmId(null)
     setSwarmPrompt("")
@@ -973,6 +979,7 @@ export function Chat() {
               prompt={swarmPrompt}
               machineCount={swarmCount}
               onStop={handleSwarmStop}
+              onDismiss={handleSwarmDismiss}
             />
           </motion.div>
         )}

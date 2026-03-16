@@ -75,14 +75,14 @@ const pricingPlans = [
     price: "$0",
     period: "month",
     description: "Try the #1 computer-use agent",
-    agentMinutes: "100 credits/month",
+    credits: 100,
+    machines: 0,
+    swarm: 0,
     features: [
-      "1 virtual machine, 2 hours",
-      "SOTA OSWorld Agent 82%",
-      "Full AI computer-use agent",
-      "One-click remote connection",
-      "File upload & download",
-      "Full audit trail",
+      "1 temporary VM (2hr)",
+      "Coasty Computer Agent",
+      "Basic search",
+      "Sandboxed, E2E encrypted",
       "No credit card required",
     ],
     limitations: [],
@@ -94,17 +94,15 @@ const pricingPlans = [
     price: "$9",
     period: "month",
     description: "Light daily automation",
-    agentMinutes: "100 credits/month",
+    credits: 100,
+    machines: 1,
+    swarm: 2,
     features: [
-      "1 persistent machine, no limits",
-      "SOTA OSWorld Agent 82%",
-      "Full AI computer-use agent",
-      "One-click remote connection",
-      "File upload & download",
-      "Full audit trail",
-      "Persistent machine (always-on)",
-      "Swarm mode — 2 parallel agents",
-      "Standard support (real humans, not bots)",
+      "1 always-on VM",
+      "Coasty Computer Agent",
+      "2 agents in parallel",
+      "Basic search",
+      "Standard support (real humans)",
     ],
     limitations: [],
     cta: "Get Lite",
@@ -114,42 +112,34 @@ const pricingPlans = [
     name: "Starter",
     price: "$19",
     period: "month",
-    description: "Automate tasks daily",
-    agentMinutes: "200 credits/month",
+    description: "Automate tasks every day",
+    credits: 200,
+    machines: 1,
+    swarm: 3,
     features: [
-      "1 persistent machine, no limits",
-      "SOTA OSWorld Agent 82%",
-      "Full AI computer-use agent",
-      "One-click remote connection",
-      "File upload & download",
-      "Full audit trail",
-      "2x more credits than Lite",
-      "Swarm mode — 3x your machine limit in parallel",
-      "Advanced web search & data extraction",
-      "Standard support (real humans, not bots)",
+      "1 always-on VM",
+      "Coasty Computer Agent",
+      "3 agents in parallel",
+      "Advanced search & extraction",
+      "Standard support (real humans)",
     ],
     limitations: [],
-    cta: "Start with Starter",
+    cta: "Get Starter",
     highlighted: false,
   },
   {
     name: "Plus",
     price: "$50",
     period: "month",
-    description: "Automate complex workflows at scale",
-    agentMinutes: "600 credits/month",
+    description: "Scale complex workflows",
+    credits: 600,
+    machines: 2,
+    swarm: 6,
     features: [
-      "2 persistent machines, no limits",
-      "SOTA OSWorld Agent 82%",
-      "Full AI computer-use agent",
-      "One-click remote connection",
-      "File upload & download",
-      "Full audit trail",
-      "3x more credits than Starter",
-      "Swarm mode — 3x your machine limit in parallel",
-      "Advanced web search & data extraction",
-      "Full API access (coming soon)",
-      "Advanced data extraction at scale",
+      "2 always-on VMs",
+      "Coasty Computer Agent",
+      "6 agents in parallel",
+      "Advanced search & extraction",
       "Priority support, 24hr response",
     ],
     limitations: [],
@@ -161,22 +151,15 @@ const pricingPlans = [
     name: "Pro",
     price: "$100",
     period: "month",
-    description: "Heavy automation, unlimited tasks",
-    agentMinutes: "1500 credits/month",
+    description: "Unlimited heavy automation",
+    credits: 1500,
+    machines: 3,
+    swarm: 9,
     features: [
-      "3 persistent machines, no limits",
-      "SOTA OSWorld Agent 82%",
-      "Full AI computer-use agent",
-      "One-click remote connection",
-      "File upload & download",
-      "Full audit trail",
-      "2.5x more credits than Plus",
-      "Swarm mode — 3x your machine limit in parallel",
-      "Advanced web search & data extraction",
-      "Full API access (coming soon)",
-      "Advanced data extraction at scale",
-      "Early access to new features",
-      "SLA guarantee, 99.9% uptime",
+      "3 always-on VMs",
+      "Coasty Computer Agent",
+      "9 agents in parallel",
+      "Advanced search & extraction",
       "Premium support, 12hr response",
     ],
     limitations: [],
@@ -1182,19 +1165,19 @@ export function LandingPage() {
                   <div className="space-y-2 mb-4 flex-1">
                     <div className="flex items-center gap-2 text-sm">
                       <Zap className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-                      <span className="text-muted-foreground">{plan.agentMinutes}</span>
+                      <span className="text-muted-foreground">{plan.credits.toLocaleString()} credits/mo</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <HardDrive className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                       <span className="text-muted-foreground">
-                        {plan.name === "Free" ? "1 VM, 2-hour limit" : `${plan.name === "Lite" || plan.name === "Starter" ? "1" : plan.name === "Plus" ? "2" : "3"} persistent machine${plan.name !== "Lite" && plan.name !== "Starter" ? "s" : ""}`}
+                        {plan.machines === 0 ? "1 temporary VM (2hr)" : `${plan.machines} always-on VM${plan.machines > 1 ? "s" : ""}`}
                       </span>
                     </div>
-                    {plan.name !== "Free" && (
+                    {plan.swarm > 0 && (
                       <div className="flex items-center gap-2 text-sm">
                         <Bot className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                         <span className="text-muted-foreground">
-                          Swarm: {plan.name === "Lite" ? "2" : plan.name === "Starter" ? "3" : plan.name === "Plus" ? "6" : "9"} parallel agents
+                          {plan.swarm} agents in parallel
                         </span>
                       </div>
                     )}

@@ -21,13 +21,14 @@ const subscriptionPlans = [
     tier: "lite",
     price: 9,
     monthlyCredits: 100,
-    agentMinutes: 10,
+    machines: 1,
+    swarm: 2,
     description: "Light daily automation",
     features: [
-      "1 persistent machine, no limits",
-      "Persistent machine (always-on)",
-      "Swarm mode — 2 parallel agents",
-      "Standard support (real humans, not bots)",
+      "1 always-on VM",
+      "2 agents in parallel",
+      "Basic search",
+      "Standard support (real humans)",
     ],
     popular: false,
   },
@@ -37,14 +38,14 @@ const subscriptionPlans = [
     tier: "starter",
     price: 19,
     monthlyCredits: 200,
-    agentMinutes: 20,
-    description: "Saves ~6-12 hrs of manual work",
+    machines: 1,
+    swarm: 3,
+    description: "Automate tasks every day",
     features: [
-      "1 persistent machine, no limits",
-      "2x more credits than Lite",
-      "Swarm mode — 3x your machine limit in parallel",
-      "Advanced web search & data extraction",
-      "Standard support (real humans, not bots)",
+      "1 always-on VM",
+      "3 agents in parallel",
+      "Advanced search & extraction",
+      "Standard support (real humans)",
     ],
     popular: false,
   },
@@ -54,15 +55,13 @@ const subscriptionPlans = [
     tier: "professional",
     price: 50,
     monthlyCredits: 600,
-    agentMinutes: 60,
-    description: "Saves ~18-24 hrs of manual work",
+    machines: 2,
+    swarm: 6,
+    description: "Scale complex workflows",
     features: [
-      "2 persistent machines, no limits",
-      "3x more credits than Starter",
-      "Swarm mode — 3x your machine limit in parallel",
-      "Advanced web search & data extraction",
-      "Full API access (coming soon)",
-      "Advanced data extraction at scale",
+      "2 always-on VMs",
+      "6 agents in parallel",
+      "Advanced search & extraction",
       "Priority support, 24hr response",
     ],
     popular: true,
@@ -73,17 +72,13 @@ const subscriptionPlans = [
     tier: "enterprise",
     price: 100,
     monthlyCredits: 1500,
-    agentMinutes: 150,
-    description: "Saves ~24-36 hrs of manual work",
+    machines: 3,
+    swarm: 9,
+    description: "Unlimited heavy automation",
     features: [
-      "3 persistent machines, no limits",
-      "2.5x more credits than Plus",
-      "Swarm mode — 3x your machine limit in parallel",
-      "Advanced web search & data extraction",
-      "Full API access (coming soon)",
-      "Advanced data extraction at scale",
-      "Early access to new features",
-      "SLA guarantee, 99.9% uptime",
+      "3 always-on VMs",
+      "9 agents in parallel",
+      "Advanced search & extraction",
       "Premium support, 12hr response",
     ],
     popular: false,
@@ -498,12 +493,11 @@ export function BillingSection() {
               </span>
             </div>
 
-            {/* Persistent machines highlight */}
+            {/* Machines highlight */}
             <div className="mb-5 flex items-center gap-2 rounded-lg bg-violet-500/[0.08] border border-violet-500/15 px-3 py-2">
               <HardDrive className="h-3.5 w-3.5 text-violet-500 flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">
-                {plan.name === "Lite" || plan.name === "Starter" ? "1" : plan.name === "Plus" ? "2" : "3"} persistent machine{plan.name !== "Lite" && plan.name !== "Starter" ? "s" : ""}
-                <span className="text-muted-foreground font-normal">, no limits</span>
+                {plan.machines} always-on VM{plan.machines > 1 ? "s" : ""}
               </span>
             </div>
 

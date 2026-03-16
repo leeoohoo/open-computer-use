@@ -1,50 +1,20 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight, Video, Play } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { MockSwarmTree } from "./swarm-demo"
 
-// ─── Use Cases ───
-interface UseCase {
-  label: string
-  verb: string
-  videoId: string
-}
-
-const USE_CASES: UseCase[] = [
-  { label: "Support", verb: "resolves tickets", videoId: "A_OvNh51Npg" },
-  { label: "Sales", verb: "researches leads", videoId: "qTvmGfg3HVw" },
-  { label: "Marketing", verb: "runs campaigns", videoId: "icxgLDephHE" },
-  { label: "QA", verb: "tests every flow", videoId: "Wbo2o74hVIo" },
-  { label: "Recruiting", verb: "sources candidates", videoId: "AnHJuRMLCnE" },
-  { label: "Finance", verb: "processes invoices", videoId: "AnHJuRMLCnE" },
-  { label: "Data Entry", verb: "syncs your apps", videoId: "qTvmGfg3HVw" },
-]
-
-const CYCLE_MS = 2800
+const VIDEO_ID = "IBydvwkJcCQ"
 
 export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
-  const [index, setIndex] = useState(0)
-  const [playing, setPlaying] = useState<string | null>(null)
-  const paused = useRef(false)
-  const current = USE_CASES[index]
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!paused.current) {
-        setIndex((prev) => (prev + 1) % USE_CASES.length)
-      }
-    }, CYCLE_MS)
-    return () => clearInterval(interval)
-  }, [])
+  const [playing, setPlaying] = useState(false)
 
   const handlePlay = useCallback(() => {
-    paused.current = true
-    setPlaying(current.videoId)
-  }, [current.videoId])
+    setPlaying(true)
+  }, [])
 
   return (
     <div className="relative w-full max-w-4xl mx-auto">
@@ -70,8 +40,8 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
         )}>
           <span className="text-foreground">Autopilot operations</span>
           <br />
-          <span className="text-muted-foreground/40">powered by </span>
-          <span className="text-emerald-500 dark:text-emerald-400">Coasty.</span>
+          <span className="text-muted-foreground/40">with </span>
+          <span className="text-emerald-500 dark:text-emerald-400">computer-using agent swarms.</span>
         </h1>
 
         {/* Sub */}
@@ -79,29 +49,8 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           "text-muted-foreground/50 mt-5 mx-auto",
           isMobile ? "text-sm max-w-xs" : "text-lg max-w-md"
         )}>
-          No MCP servers. No integrations. No setup. It just works.
+          The most advanced computer-using agent swarm technology. No&nbsp;integrations. No&nbsp;setup. It just works.
         </p>
-
-        {/* Rotating verb line */}
-        <div className={cn(
-          "mt-6 flex items-center justify-center gap-[0.35em]",
-          isMobile ? "text-base" : "text-xl"
-        )}>
-          <span className="text-muted-foreground/50">It</span>
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={index}
-              initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="text-foreground font-semibold"
-            >
-              {current.verb}
-            </motion.span>
-          </AnimatePresence>
-          <span className="text-muted-foreground/50">for you.</span>
-        </div>
 
         {/* CTAs */}
         <div className={cn(
@@ -136,46 +85,10 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
             </motion.button>
           </a>
         </div>
-
-        {/* Use case labels */}
-        <div className={cn(
-          "flex flex-wrap justify-center",
-          isMobile ? "gap-x-4 gap-y-2 mt-8" : "gap-x-5 gap-y-2 mt-10"
-        )}>
-          {USE_CASES.map((uc, i) => {
-            const isActive = i === index
-            return (
-              <button
-                key={uc.label}
-                onClick={() => { setIndex(i); setPlaying(null); paused.current = false }}
-                className={cn(
-                  "relative cursor-pointer transition-colors duration-300",
-                  isMobile ? "text-xs" : "text-sm",
-                  isActive
-                    ? "text-foreground font-medium"
-                    : "text-muted-foreground/30 hover:text-muted-foreground/60"
-                )}
-              >
-                {uc.label}
-                {isActive && (
-                  <motion.span
-                    layoutId="hero-underline"
-                    className="absolute -bottom-1 left-0 right-0 h-px bg-foreground/40"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-              </button>
-            )
-          })}
-        </div>
       </div>
 
-      {/* ─── Video player ─── */}
-      <div
-        className="relative z-10"
-        onMouseEnter={() => { if (!playing) paused.current = true }}
-        onMouseLeave={() => { if (!playing) { paused.current = false } }}
-      >
+      {/* ─── Swarm demo / Video ─── */}
+      <div className="relative z-10">
         {/* Screen glow */}
         <div
           className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-[80%] h-[40%] rounded-full blur-[80px] opacity-[0.07] dark:opacity-[0.12] pointer-events-none"
@@ -190,133 +103,96 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           "dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.3),0_12px_48px_-8px_rgba(0,0,0,0.4)]",
           "ring-1 ring-white/[0.05] dark:ring-white/[0.03]"
         )}>
-          {/* Title bar */}
-          <div className="flex items-center px-4 py-2 bg-muted dark:bg-neutral-900 border-b border-border/20">
-            <div className="flex items-center gap-[6px]">
-              <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />
-              <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />
-              <div className="h-[10px] w-[10px] rounded-full bg-foreground/[0.08] dark:bg-white/[0.08]" />
-            </div>
-            <div className="flex-1 flex justify-center">
-              <div className={cn(
-                "rounded-md bg-foreground/[0.04] dark:bg-white/[0.04] flex items-center justify-center gap-1.5",
-                isMobile ? "px-3 py-[3px] max-w-[200px]" : "px-4 py-[3px] max-w-[300px]"
-              )}>
-                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" className="text-muted-foreground/30 shrink-0">
-                  <path d="M11.5 7V5a3.5 3.5 0 10-7 0v2M4 7h8a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={index}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className={cn(
-                      "text-muted-foreground/35 truncate select-none font-mono",
-                      isMobile ? "text-[9px]" : "text-[11px]"
-                    )}
-                  >
-                    coasty.ai/{current.label.toLowerCase().replace(/[\s-]+/g, "-")}
-                  </motion.span>
-                </AnimatePresence>
-              </div>
-            </div>
-            <div className="w-[54px]" />
-          </div>
+          <AnimatePresence mode="wait">
+            {playing ? (
+              <motion.div
+                key="video"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="relative w-full bg-neutral-950"
+                style={{ paddingTop: "56.25%" }}
+              >
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src={`https://www.youtube-nocookie.com/embed/${VIDEO_ID}?rel=0&modestbranding=1&showinfo=0&autoplay=1`}
+                  title="Coasty Agent Swarm Demo"
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  style={{ border: "none" }}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="demo"
+                initial={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="relative"
+              >
+                {/* Interactive swarm tree graph */}
+                <div className="bg-background">
+                  <MockSwarmTree />
+                </div>
 
-          {/* Video area */}
-          <div className="relative w-full bg-neutral-950" style={{ paddingTop: "56.25%" }}>
-            <AnimatePresence mode="wait">
-              {playing === current.videoId ? (
-                <motion.div
-                  key={`iframe-${current.videoId}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute inset-0"
-                >
-                  <iframe
-                    className="w-full h-full"
-                    src={`https://www.youtube-nocookie.com/embed/${current.videoId}?rel=0&modestbranding=1&showinfo=0&autoplay=1`}
-                    title="Coasty AI Agent Demo"
-                    allowFullScreen
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    style={{ border: "none" }}
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={`thumb-${current.videoId}`}
-                  initial={{ opacity: 0, scale: 1.02 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="absolute inset-0 cursor-pointer group"
+                {/* Clickable overlay with play button — sits above everything */}
+                <div
+                  className="absolute inset-0 z-[20] flex flex-col items-center justify-center cursor-pointer group"
                   onClick={handlePlay}
                 >
-                  <Image
-                    src={`https://img.youtube.com/vi/${current.videoId}/maxresdefault.jpg`}
-                    alt={`${current.label} demo`}
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.015]"
-                    sizes="(max-width: 768px) 100vw, 960px"
-                    priority={index === 0}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-black/5 group-hover:from-black/50 transition-colors duration-500" />
+                  {/* Scrim that darkens on hover */}
+                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 dark:bg-black/10 dark:group-hover:bg-black/30 transition-colors duration-500 rounded-xl sm:rounded-2xl" />
 
                   {/* Play button */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                      className={cn(
-                        "relative flex items-center justify-center rounded-full",
-                        "bg-white/[0.15] backdrop-blur-md border border-white/20",
-                        "group-hover:bg-white/[0.22] group-hover:border-white/30 transition-all duration-400",
-                        isMobile ? "h-14 w-14" : "h-[72px] w-[72px]"
-                      )}
-                      whileHover={{ scale: 1.06 }}
-                      whileTap={{ scale: 0.94 }}
-                    >
-                      <Play className={cn(
-                        "text-white fill-white ml-[2px] drop-shadow-sm",
-                        isMobile ? "h-5 w-5" : "h-6 w-6"
-                      )} />
-                    </motion.div>
-                  </div>
-
-                  {/* Label badge */}
-                  <div className={cn("absolute left-0 bottom-0", isMobile ? "p-2.5" : "p-4")}>
-                    <AnimatePresence mode="wait">
-                      <motion.span
-                        key={index}
-                        initial={{ opacity: 0, y: 4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -4 }}
-                        transition={{ duration: 0.2 }}
-                        className={cn(
-                          "inline-flex items-center gap-1.5 text-white/80 font-medium backdrop-blur-sm bg-white/[0.08] rounded-md border border-white/[0.08]",
-                          isMobile ? "text-[10px] px-2 py-1" : "text-xs px-2.5 py-1"
-                        )}
-                      >
-                        <span className="h-1 w-1 rounded-full bg-white/50" />
-                        {current.label}
-                      </motion.span>
-                    </AnimatePresence>
-                  </div>
-
-                  {/* Watch demo */}
-                  <div className={cn("absolute right-0 bottom-0", isMobile ? "p-2.5" : "p-4")}>
+                  <motion.div
+                    className={cn(
+                      "relative z-[1] flex items-center justify-center rounded-full",
+                      "bg-foreground shadow-2xl",
+                      "group-hover:scale-105 transition-transform duration-300",
+                      isMobile ? "h-14 w-14" : "h-[72px] w-[72px]"
+                    )}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {/* Outer glow ring */}
                     <span className={cn(
-                      "text-white/40 group-hover:text-white/60 transition-colors duration-300",
+                      "absolute rounded-full border-2 border-foreground/20 group-hover:border-foreground/40 transition-all duration-500",
+                      isMobile ? "-inset-2" : "-inset-2.5"
+                    )} />
+                    {/* Soft pulse */}
+                    <span className={cn(
+                      "absolute rounded-full bg-foreground/10 animate-[ping_3s_ease-in-out_infinite]",
+                      isMobile ? "-inset-3" : "-inset-4"
+                    )} />
+                    <Play className={cn(
+                      "text-background fill-background ml-[2px]",
+                      isMobile ? "h-5 w-5" : "h-6 w-6"
+                    )} />
+                  </motion.div>
+
+                  {/* Label pill below */}
+                  <motion.div
+                    className={cn(
+                      "relative z-[1] mt-3 inline-flex items-center gap-2 rounded-full",
+                      "bg-foreground/90 backdrop-blur-sm px-4 py-1.5",
+                      "group-hover:bg-foreground transition-colors duration-300"
+                    )}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.3, duration: 0.4 }}
+                  >
+                    <span className={cn(
+                      "font-semibold text-background",
                       isMobile ? "text-[10px]" : "text-xs"
                     )}>
-                      Watch demo &rarr;
+                      Watch Demo
                     </span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

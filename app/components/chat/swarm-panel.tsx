@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { CircleNotch, GitFork, Robot, Stop, CheckCircle, XCircle, Warning, DownloadSimple, FilePdf } from "@phosphor-icons/react"
+import { CircleNotch, GitFork, Robot, Stop, CheckCircle, XCircle, Warning, DownloadSimple, FilePdf, Pause, Play } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
@@ -49,18 +49,19 @@ interface SwarmPanelProps {
   prompt: string
   machineCount?: number
   onStop: () => void
+  onDismiss?: () => void
 }
 
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
-export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: SwarmPanelProps) {
+export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop, onDismiss }: SwarmPanelProps) {
   const [machines, setMachines] = useState<SwarmMachine[]>([])
-  const [overallStatus, setOverallStatus] = useState<"idle" | "creating" | "planning" | "running" | "aggregating" | "completed" | "cancelled" | "failed">("idle")
+  const [overallStatus, setOverallStatus] = useState<"idle" | "creating" | "planning" | "running" | "paused" | "aggregating" | "completed" | "cancelled" | "failed">("idle")
 
   // Warn user before leaving the page while swarm is running
-  const isRunning = overallStatus === "creating" || overallStatus === "planning" || overallStatus === "running" || overallStatus === "aggregating"
+  const isRunning = overallStatus === "creating" || overallStatus === "planning" || overallStatus === "running" || overallStatus === "paused" || overallStatus === "aggregating"
   useEffect(() => {
     if (!isRunning) return
     const handler = (e: BeforeUnloadEvent) => {
@@ -136,6 +137,10 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
             stepCount: 0,
           }))
         )
+      } else if (chunk.status === "running" && !chunk.machines) {
+        // Resume from paused state (no machines array = not the initial "starting" event)
+        setOverallStatus("running")
+        appendSwarmEvent("swarm_meta", { ...chunk, content: "Swarm resumed" })
       } else if (chunk.status === "aggregating") {
         setOverallStatus("aggregating")
         appendSwarmEvent("swarm_meta", { ...chunk, content: "Aggregating results..." })
@@ -150,6 +155,9 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
             }))
           )
         }
+      } else if (chunk.status === "paused") {
+        setOverallStatus("paused")
+        appendSwarmEvent("swarm_meta", { ...chunk, content: "Swarm paused" })
       } else if (chunk.status === "cancelled") {
         setOverallStatus("cancelled")
         appendSwarmEvent("swarm_meta", chunk)
@@ -341,8 +349,29 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
         // best-effort
       }
     }
+    // Notify parent that the swarm was stopped (but panel stays visible)
     onStop()
   }, [swarmId, onStop])
+
+  const handlePause = useCallback(async () => {
+    if (!swarmId) return
+    setOverallStatus("paused")
+    try {
+      await fetch(`/api/swarm/${swarmId}/pause`, { method: "POST" })
+    } catch {
+      // best-effort — the SSE stream will confirm the actual state
+    }
+  }, [swarmId])
+
+  const handleResume = useCallback(async () => {
+    if (!swarmId) return
+    setOverallStatus("running")
+    try {
+      await fetch(`/api/swarm/${swarmId}/resume`, { method: "POST" })
+    } catch {
+      // best-effort
+    }
+  }, [swarmId])
 
   const completed = machines.filter((m) => m.status === "completed").length
   const running = machines.filter((m) => m.status === "running").length
@@ -375,25 +404,54 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
               <span className="text-[11px] text-muted-foreground/70 leading-none mt-0.5">
                 {isDone
                   ? `${completed} of ${total} machines completed${failed > 0 ? ` \u00b7 ${failed} failed` : ""}`
-                  : running > 0
-                    ? `${running} of ${total} machines running`
-                    : `${total} machines allocated`
+                  : overallStatus === "paused"
+                    ? `${total} machines paused`
+                    : running > 0
+                      ? `${running} of ${total} machines running`
+                      : `${total} machines allocated`
                 }
               </span>
             )}
           </div>
         </div>
-        {(overallStatus === "running" || overallStatus === "creating" || overallStatus === "planning") && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleStop}
-            className="h-8 px-3 text-xs gap-1.5 text-red-600 border-red-200/60 hover:text-red-700 hover:bg-red-50 hover:border-red-300/60 dark:text-red-400 dark:border-red-800/40 dark:hover:bg-red-950/30 dark:hover:border-red-700/50 transition-colors"
-          >
-            <Stop className="size-3.5" weight="fill" />
-            Stop
-          </Button>
-        )}
+        <div className="flex items-center gap-1.5">
+          {/* Pause button — shown when running */}
+          {overallStatus === "running" && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handlePause}
+              className="h-8 px-3 text-xs gap-1.5 text-amber-600 border-amber-200/60 hover:text-amber-700 hover:bg-amber-50 hover:border-amber-300/60 dark:text-amber-400 dark:border-amber-800/40 dark:hover:bg-amber-950/30 dark:hover:border-amber-700/50 transition-colors"
+            >
+              <Pause className="size-3.5" weight="fill" />
+              Pause
+            </Button>
+          )}
+          {/* Resume button — shown when paused */}
+          {overallStatus === "paused" && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleResume}
+              className="h-8 px-3 text-xs gap-1.5 text-emerald-600 border-emerald-200/60 hover:text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300/60 dark:text-emerald-400 dark:border-emerald-800/40 dark:hover:bg-emerald-950/30 dark:hover:border-emerald-700/50 transition-colors"
+            >
+              <Play className="size-3.5" weight="fill" />
+              Resume
+            </Button>
+          )}
+          {/* Stop button — shown when active (running, creating, planning, paused) */}
+          {(overallStatus === "running" || overallStatus === "creating" || overallStatus === "planning" || overallStatus === "paused") && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleStop}
+              className="h-8 px-3 text-xs gap-1.5 text-red-600 border-red-200/60 hover:text-red-700 hover:bg-red-50 hover:border-red-300/60 dark:text-red-400 dark:border-red-800/40 dark:hover:bg-red-950/30 dark:hover:border-red-700/50 transition-colors"
+            >
+              <Stop className="size-3.5" weight="fill" />
+              Stop
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Exit warning */}
@@ -506,6 +564,16 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
           </div>
         )}
 
+        {/* Paused overlay — shown on top of tree when paused */}
+        {overallStatus === "paused" && hasTreeEvents && (
+          <div className="shrink-0 flex items-center justify-center gap-2.5 px-4 py-3 border-t border-amber-500/15 bg-amber-50/40 dark:bg-amber-950/15">
+            <Pause className="size-4 text-amber-500" weight="fill" />
+            <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+              Swarm paused — machines are holding at their current step
+            </span>
+          </div>
+        )}
+
         {/* Aggregating overlay — shown on top of tree when aggregating */}
         {overallStatus === "aggregating" && hasTreeEvents && (
           <div className="shrink-0 flex items-center justify-center gap-2.5 px-4 py-3 border-t border-purple-500/15 bg-purple-50/40 dark:bg-purple-950/15">
@@ -523,27 +591,49 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop }: 
 
         {/* Completion footer */}
         {(overallStatus === "completed" || overallStatus === "cancelled") && !swarmSummary && (
-          <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-t border-border/30 bg-muted/20">
-            {overallStatus === "completed" ? (
-              <CheckCircle className="size-3.5 text-emerald-500 shrink-0" weight="fill" />
-            ) : (
-              <Warning className="size-3.5 text-amber-500 shrink-0" weight="fill" />
+          <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-t border-border/30 bg-muted/20">
+            <div className="flex items-center gap-2">
+              {overallStatus === "completed" ? (
+                <CheckCircle className="size-3.5 text-emerald-500 shrink-0" weight="fill" />
+              ) : (
+                <Warning className="size-3.5 text-amber-500 shrink-0" weight="fill" />
+              )}
+              <p className="text-xs text-muted-foreground">
+                {overallStatus === "completed"
+                  ? `Swarm finished \u2014 ${completed} completed${failed > 0 ? `, ${failed} failed` : ""}`
+                  : "Swarm cancelled. All temporary machines deleted."}
+              </p>
+            </div>
+            {onDismiss && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onDismiss}
+                className="h-7 px-3 text-xs text-muted-foreground hover:text-foreground"
+              >
+                New Task
+              </Button>
             )}
-            <p className="text-xs text-muted-foreground">
-              {overallStatus === "completed"
-                ? `Swarm finished \u2014 ${completed} completed${failed > 0 ? `, ${failed} failed` : ""}`
-                : "Swarm cancelled. All temporary machines deleted."}
-            </p>
           </div>
         )}
 
         {/* Swarm feedback bar — shown after completion */}
         {isDone && overallStatus !== "failed" && (
-          <div className="shrink-0 px-4 py-2.5 border-t border-border/20">
+          <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-t border-border/20">
             <RunFeedbackBar
               swarmId={swarmId}
               feedbackType="swarm"
             />
+            {onDismiss && swarmSummary && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onDismiss}
+                className="h-7 px-3 text-xs text-muted-foreground hover:text-foreground shrink-0"
+              >
+                New Task
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -761,6 +851,7 @@ function StatusBadge({ status }: { status: string }) {
     creating: { className: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20", label: "Creating" },
     planning: { className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20", label: "Planning" },
     running: { className: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20", label: "Running" },
+    paused: { className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20", label: "Paused" },
     aggregating: { className: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20", label: "Aggregating" },
     completed: { className: "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20", label: "Completed" },
     cancelled: { className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20", label: "Cancelled" },

@@ -31,6 +31,8 @@ import {
   DownloadSimple,
   FilePdf,
   Stop,
+  Pause,
+  Play,
 } from "@phosphor-icons/react"
 import Link from "next/link"
 import { AnimatePresence, motion } from "motion/react"
@@ -51,7 +53,7 @@ interface SwarmRun {
   swarm_id: string
   prompt: string
   machine_count: number
-  status: "creating" | "running" | "completed" | "failed" | "cancelled"
+  status: "creating" | "running" | "paused" | "completed" | "failed" | "cancelled"
   model: string | null
   max_steps: number | null
   result_summary: string | null
@@ -94,7 +96,7 @@ export function SwarmsContent() {
       setLoading(false)
       // Auto-expand the first running/creating swarm
       if (list && !autoExpandedRef.current) {
-        const active = list.find((s: SwarmRun) => s.status === "running" || s.status === "creating")
+        const active = list.find((s: SwarmRun) => s.status === "running" || s.status === "creating" || s.status === "paused")
         if (active) {
           setExpandedId(active.swarm_id)
           autoExpandedRef.current = true
@@ -105,7 +107,7 @@ export function SwarmsContent() {
 
   // Poll swarm list every 5s while any swarm is active
   const hasActiveSwarm = useMemo(
-    () => swarms.some((s) => s.status === "running" || s.status === "creating"),
+    () => swarms.some((s) => s.status === "running" || s.status === "creating" || s.status === "paused"),
     [swarms]
   )
 
@@ -136,6 +138,7 @@ export function SwarmsContent() {
       { id: "all", label: "All", count: counts.all },
       { id: "completed", label: "Completed", count: counts.completed || 0 },
       { id: "running", label: "Running", count: counts.running || 0 },
+      { id: "paused", label: "Paused", count: counts.paused || 0 },
       { id: "failed", label: "Failed", count: counts.failed || 0 },
     ].filter((f) => f.id === "all" || f.count > 0)
   }, [swarms])
@@ -404,7 +407,7 @@ function SwarmRunCard({
   const [copied, setCopied] = useState(false)
   const [stopping, setStopping] = useState(false)
 
-  const isActive = swarm.status === "running" || swarm.status === "creating"
+  const isActive = swarm.status === "running" || swarm.status === "creating" || swarm.status === "paused"
 
   const handleStop = useCallback(async () => {
     setStopping(true)
@@ -415,6 +418,27 @@ function SwarmRunCard({
     }
     setStopping(false)
     // Refresh list to pick up the "cancelled" status from the DB
+    onRefresh()
+  }, [swarm.swarm_id, onRefresh])
+
+  const [pausing, setPausing] = useState(false)
+  const [resuming, setResuming] = useState(false)
+
+  const handlePause = useCallback(async () => {
+    setPausing(true)
+    try {
+      await fetch(`/api/swarm/${swarm.swarm_id}/pause`, { method: "POST" })
+    } catch {}
+    setPausing(false)
+    onRefresh()
+  }, [swarm.swarm_id, onRefresh])
+
+  const handleResume = useCallback(async () => {
+    setResuming(true)
+    try {
+      await fetch(`/api/swarm/${swarm.swarm_id}/resume`, { method: "POST" })
+    } catch {}
+    setResuming(false)
     onRefresh()
   }, [swarm.swarm_id, onRefresh])
   const shareUrl = `${APP_DOMAIN}/share/swarm/${swarm.swarm_id}`
@@ -519,7 +543,7 @@ function SwarmRunCard({
 
               {/* Status + Share */}
               <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                {isActive && (
+                {isActive && swarm.status !== "paused" && (
                   <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-medium text-blue-600 dark:text-blue-400">
                     <span className="relative flex size-1.5">
                       <span className="absolute inline-flex size-full animate-ping rounded-full bg-blue-500 opacity-75" />
@@ -538,6 +562,53 @@ function SwarmRunCard({
                   <span className="hidden xs:inline sm:inline">{statusMeta.label}</span>
                 </span>
 
+                {/* Pause button — shown when running */}
+                {swarm.status === "running" && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handlePause()
+                    }}
+                    disabled={pausing}
+                    className={cn(
+                      "inline-flex items-center justify-center gap-1 h-7 sm:h-8 px-2 sm:px-2.5 rounded-lg border text-xs font-medium transition-all duration-200",
+                      "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 hover:border-amber-500/40",
+                      "disabled:opacity-50 disabled:cursor-not-allowed"
+                    )}
+                    title="Pause this swarm"
+                  >
+                    {pausing ? (
+                      <CircleNotch className="size-3 animate-spin" />
+                    ) : (
+                      <Pause className="size-3" weight="fill" />
+                    )}
+                    <span className="hidden sm:inline">{pausing ? "Pausing" : "Pause"}</span>
+                  </button>
+                )}
+                {/* Resume button — shown when paused */}
+                {swarm.status === "paused" && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleResume()
+                    }}
+                    disabled={resuming}
+                    className={cn(
+                      "inline-flex items-center justify-center gap-1 h-7 sm:h-8 px-2 sm:px-2.5 rounded-lg border text-xs font-medium transition-all duration-200",
+                      "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/40",
+                      "disabled:opacity-50 disabled:cursor-not-allowed"
+                    )}
+                    title="Resume this swarm"
+                  >
+                    {resuming ? (
+                      <CircleNotch className="size-3 animate-spin" />
+                    ) : (
+                      <Play className="size-3" weight="fill" />
+                    )}
+                    <span className="hidden sm:inline">{resuming ? "Resuming" : "Resume"}</span>
+                  </button>
+                )}
+                {/* Stop button — shown when active */}
                 {isActive && (
                   <button
                     onClick={(e) => {
@@ -586,7 +657,7 @@ function SwarmRunCard({
                   <Monitor className="size-3" />
                   {swarm.machine_count} machine{swarm.machine_count !== 1 ? "s" : ""}
                 </span>
-                {isActive && (
+                {isActive && swarm.status !== "paused" && (
                   <span className="sm:hidden inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 font-medium">
                     <span className="relative flex size-1.5">
                       <span className="absolute inline-flex size-full animate-ping rounded-full bg-blue-500 opacity-75" />
@@ -1031,6 +1102,11 @@ const STATUS_META: Record<string, { icon: React.ReactNode; label: string; color:
     icon: <CircleNotch className="size-3 animate-spin" />,
     label: "Running",
     color: "text-blue-600 dark:text-blue-400 bg-blue-500/10",
+  },
+  paused: {
+    icon: <Pause className="size-3" weight="fill" />,
+    label: "Paused",
+    color: "text-amber-600 dark:text-amber-400 bg-amber-500/10",
   },
   completed: {
     icon: <CheckCircle className="size-3" weight="fill" />,

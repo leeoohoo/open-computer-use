@@ -98,7 +98,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       })
       .eq("swarm_id", swarmId)
       .eq("user_id", userId)
-      .in("status", ["creating", "running"]);
+      .in("status", ["creating", "running", "paused"]);
 
     return NextResponse.json({
       ...backendResult,
