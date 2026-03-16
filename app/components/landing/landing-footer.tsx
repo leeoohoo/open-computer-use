@@ -6,7 +6,7 @@ import { useTheme } from "next-themes"
 import { useState, useEffect } from "react"
 import { ArrowUpRight } from "lucide-react"
 
-const footerColumns = [
+const footerColumns: { title: string; links: { href: string; label: string; external?: boolean }[] }[] = [
   {
     title: "Product",
     links: [
