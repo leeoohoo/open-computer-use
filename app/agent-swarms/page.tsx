@@ -1093,7 +1093,7 @@ export default function AgentSwarmsPage() {
         </section>
 
         {/* ── How It Works ── */}
-        <section className={cn("py-20", isMobile ? "px-4" : "px-6")}>
+        <section className={cn("py-20", isMobile ? "px-7" : "px-10")}>
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -1131,7 +1131,7 @@ export default function AgentSwarmsPage() {
         </section>
 
         {/* ── Interactive Demo ── */}
-        <section id="demo" className={cn("py-20 relative", isMobile ? "px-4" : "px-6")}>
+        <section id="demo" className={cn("py-20 relative", isMobile ? "px-7" : "px-10")}>
 
           <motion.div
             variants={containerVariants}
@@ -1228,7 +1228,7 @@ export default function AgentSwarmsPage() {
         </section>
 
         {/* ── Speed Comparison ── */}
-        <section className={cn("py-20", isMobile ? "px-4" : "px-6")}>
+        <section className={cn("py-20", isMobile ? "px-7" : "px-10")}>
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -1299,7 +1299,7 @@ export default function AgentSwarmsPage() {
         </section>
 
         {/* ── Use Cases ── */}
-        <section className={cn("py-20 relative", isMobile ? "px-4" : "px-6")}>
+        <section className={cn("py-20 relative", isMobile ? "px-7" : "px-10")}>
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -1332,7 +1332,7 @@ export default function AgentSwarmsPage() {
         </section>
 
         {/* ── Key Features Strip ── */}
-        <section className={cn("py-16", isMobile ? "px-4" : "px-6")}>
+        <section className={cn("py-16", isMobile ? "px-7" : "px-10")}>
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -1367,7 +1367,7 @@ export default function AgentSwarmsPage() {
         </section>
 
         {/* ── CTA ── */}
-        <section className={cn("py-24 relative", isMobile ? "px-4" : "px-6")}>
+        <section className={cn("py-24 relative", isMobile ? "px-7" : "px-10")}>
 
           <motion.div
             variants={containerVariants}

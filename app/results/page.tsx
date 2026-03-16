@@ -227,7 +227,7 @@ export default function ResultsPage() {
 
       <main className="pt-32 sm:pt-36 pb-24">
         {/* ── Header ── */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 mb-20">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10 mb-20">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -256,7 +256,7 @@ export default function ResultsPage() {
         </div>
 
         {/* ── Featured Video ── */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 mb-6">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10 mb-6">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
@@ -272,7 +272,7 @@ export default function ResultsPage() {
         </div>
 
         {/* ── Video Grid ── */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 mb-28">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10 mb-28">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {rest.map((v, i) => (
               <motion.div
@@ -293,12 +293,12 @@ export default function ResultsPage() {
         </div>
 
         {/* ── Divider ── */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10">
           <div className="border-t border-border/30" />
         </div>
 
         {/* ── Sessions ── */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 mt-20">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10 mt-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -359,7 +359,7 @@ export default function ResultsPage() {
         </div>
 
         {/* ── CTA ── */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

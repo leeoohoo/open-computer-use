@@ -35,7 +35,7 @@ export default function ComparePage() {
       <LandingHeader />
 
       <main className="pt-32 sm:pt-36 pb-24">
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 mb-16">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10 mb-16">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -62,7 +62,7 @@ export default function ComparePage() {
           </motion.p>
         </div>
 
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 mb-28">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10 mb-28">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {competitors.map((comp, i) => (
               <motion.div
@@ -94,7 +94,7 @@ export default function ComparePage() {
         </div>
 
         {/* CTA */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10">
           <div className="border-t border-border/30" />
           <motion.div
             initial={{ opacity: 0 }}

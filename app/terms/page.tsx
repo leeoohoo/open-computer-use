@@ -314,7 +314,7 @@ export default function TermsPage() {
         {/* Hero Section */}
         <section className={cn(
           "flex items-center justify-center",
-          isMobile ? "px-4 py-12" : "px-6 py-20"
+          isMobile ? "px-7 py-12" : "px-10 py-20"
         )}>
           <motion.div
             variants={containerVariants}
@@ -351,7 +351,7 @@ export default function TermsPage() {
         {/* Terms Sections */}
         <section className={cn(
           "py-12",
-          isMobile ? "px-4" : "px-6"
+          isMobile ? "px-7" : "px-10"
         )}>
           <motion.div
             variants={containerVariants}

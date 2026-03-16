@@ -7,7 +7,7 @@ export function LandingFooter() {
   return (
     <footer className="border-t border-border/40">
       {/* Links + copyright */}
-      <div className="mx-auto px-5 sm:px-6 max-w-5xl py-10">
+      <div className="mx-auto px-7 sm:px-10 max-w-5xl py-10">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-5">
           <div className="flex items-center gap-4">
             <p className="text-sm text-muted-foreground/70">
@@ -39,7 +39,7 @@ export function LandingFooter() {
       </div>
 
       {/* Giant Coasty wordmark — below links, bottom of page */}
-      <div className="relative w-full flex items-end justify-center select-none overflow-x-clip overflow-y-visible px-4 sm:px-6 md:px-8 pb-6">
+      <div className="relative w-full flex items-end justify-center select-none overflow-x-clip overflow-y-visible px-7 sm:px-10 md:px-10 pb-6">
         {/* Subtle gradient glow behind the text */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-[80%] h-[60%] bg-gradient-to-r from-blue-500/[0.07] via-purple-500/[0.07] to-blue-500/[0.07] dark:from-blue-400/[0.05] dark:via-purple-400/[0.05] dark:to-blue-400/[0.05] rounded-full blur-3xl" />

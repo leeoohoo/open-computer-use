@@ -364,7 +364,7 @@ export default function PricingPage() {
           variants={sectionVariants}
           initial="hidden"
           animate="visible"
-          className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center"
+          className="relative max-w-4xl mx-auto px-7 sm:px-10 text-center"
         >
           {/* Urgency badge */}
           <motion.div variants={itemVariants} className="flex justify-center mb-6">
@@ -425,7 +425,7 @@ export default function PricingPage() {
       </section>
 
       {/* ─── Billing toggle ────────────────────────────────────────────── */}
-      <section className="pb-4 px-4 sm:px-6">
+      <section className="pb-4 px-7 sm:px-10">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -467,7 +467,7 @@ export default function PricingPage() {
       </section>
 
       {/* ─── Plan Cards ────────────────────────────────────────────────── */}
-      <section className="py-8 sm:py-12 px-4 sm:px-6">
+      <section className="py-8 sm:py-12 px-7 sm:px-10">
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -662,7 +662,7 @@ export default function PricingPage() {
       </section>
 
       {/* ─── Machines & Swarms Showcase ─────────────────────────────────── */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6">
+      <section className="py-12 sm:py-16 px-7 sm:px-10">
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -840,7 +840,7 @@ export default function PricingPage() {
       </section>
 
       {/* ─── Social Proof ──────────────────────────────────────────────── */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6">
+      <section className="py-12 sm:py-16 px-7 sm:px-10">
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -881,7 +881,7 @@ export default function PricingPage() {
       </section>
 
       {/* ─── ROI Calculator ────────────────────────────────────────────── */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6">
+      <section className="py-12 sm:py-16 px-7 sm:px-10">
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -973,7 +973,7 @@ export default function PricingPage() {
       </section>
 
       {/* ─── Feature Comparison Table ──────────────────────────────────── */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6">
+      <section className="py-12 sm:py-16 px-7 sm:px-10">
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -1088,7 +1088,7 @@ export default function PricingPage() {
       </section>
 
       {/* ─── Trust Signals ─────────────────────────────────────────────── */}
-      <section className="py-10 sm:py-14 px-4 sm:px-6">
+      <section className="py-10 sm:py-14 px-7 sm:px-10">
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -1120,7 +1120,7 @@ export default function PricingPage() {
       </section>
 
       {/* ─── Try Free CTA ─────────────────────────────────────────────── */}
-      <section className="py-10 sm:py-14 px-4 sm:px-6">
+      <section className="py-10 sm:py-14 px-7 sm:px-10">
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -1169,7 +1169,7 @@ export default function PricingPage() {
       </section>
 
       {/* ─── FAQ ───────────────────────────────────────────────────────── */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6">
+      <section className="py-12 sm:py-16 px-7 sm:px-10">
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -1227,7 +1227,7 @@ export default function PricingPage() {
       </section>
 
       {/* ─── Final CTA ─────────────────────────────────────────────────── */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6">
+      <section className="py-16 sm:py-24 px-7 sm:px-10">
         <motion.div
           variants={sectionVariants}
           initial="hidden"

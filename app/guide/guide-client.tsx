@@ -218,7 +218,7 @@ function GuideContent({ inApp }: { inApp: boolean }) {
       <LandingHeader />
 
       <div className="pt-28 sm:pt-32 pb-24">
-        <div className="mx-auto px-5 sm:px-6 max-w-5xl">
+        <div className="mx-auto px-7 sm:px-10 max-w-5xl">
           {/* ── header ── */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -251,7 +251,7 @@ function GuideContent({ inApp }: { inApp: boolean }) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] as const }}
-            className="sticky top-[56px] z-20 -mx-5 sm:-mx-6 px-5 sm:px-6 pb-4 pt-2 bg-background/80 backdrop-blur-xl border-b border-border/30"
+            className="sticky top-[56px] z-20 -mx-5 sm:-mx-6 px-7 sm:px-10 pb-4 pt-2 bg-background/80 backdrop-blur-xl border-b border-border/30"
           >
             <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
           </motion.div>

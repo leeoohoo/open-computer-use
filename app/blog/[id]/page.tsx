@@ -906,7 +906,7 @@ export default function BlogPostPage() {
 
       <main className="pt-32 sm:pt-36 pb-24">
         {/* Back link */}
-        <div className="max-w-3xl mx-auto px-5 sm:px-6 mb-10">
+        <div className="max-w-3xl mx-auto px-7 sm:px-10 mb-10">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -923,7 +923,7 @@ export default function BlogPostPage() {
         </div>
 
         {/* Article header */}
-        <div className="max-w-3xl mx-auto px-5 sm:px-6 mb-12">
+        <div className="max-w-3xl mx-auto px-7 sm:px-10 mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -946,12 +946,12 @@ export default function BlogPostPage() {
         </div>
 
         {/* Divider */}
-        <div className="max-w-3xl mx-auto px-5 sm:px-6 mb-12">
+        <div className="max-w-3xl mx-auto px-7 sm:px-10 mb-12">
           <div className="border-t border-border/30" />
         </div>
 
         {/* Article content */}
-        <div className="max-w-3xl mx-auto px-5 sm:px-6">
+        <div className="max-w-3xl mx-auto px-7 sm:px-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1019,7 +1019,7 @@ export default function BlogPostPage() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="max-w-3xl mx-auto px-5 sm:px-6 mt-20">
+        <div className="max-w-3xl mx-auto px-7 sm:px-10 mt-20">
           <div className="border-t border-border/30 pt-12">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               <div>

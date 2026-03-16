@@ -242,7 +242,7 @@ export default function BlogPage() {
 
       <main className="pt-32 sm:pt-36 pb-24">
         {/* Header */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 mb-16">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10 mb-16">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -270,7 +270,7 @@ export default function BlogPage() {
         </div>
 
         {/* Category Filter */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 mb-12">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10 mb-12">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -296,7 +296,7 @@ export default function BlogPage() {
 
         {/* Featured Post */}
         {featured && activeCategory === "All" && (
-          <div className="max-w-5xl mx-auto px-5 sm:px-6 mb-12">
+          <div className="max-w-5xl mx-auto px-7 sm:px-10 mb-12">
             <motion.div
               initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
@@ -335,7 +335,7 @@ export default function BlogPage() {
         )}
 
         {/* Post Grid */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 mb-28">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10 mb-28">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {filtered.map((post, i) => (
               <motion.div
@@ -390,12 +390,12 @@ export default function BlogPage() {
         </div>
 
         {/* Divider */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10">
           <div className="border-t border-border/30" />
         </div>
 
         {/* CTA */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-6">
+        <div className="max-w-5xl mx-auto px-7 sm:px-10">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

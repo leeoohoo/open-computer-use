@@ -348,7 +348,7 @@ export default function CompetitorPage() {
       <LandingHeader />
 
       <main className="pt-32 sm:pt-36 pb-24">
-        <div className="max-w-4xl mx-auto px-5 sm:px-6">
+        <div className="max-w-4xl mx-auto px-7 sm:px-10">
           {/* Back link */}
           <motion.div
             initial={{ opacity: 0 }}

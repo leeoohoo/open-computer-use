@@ -366,7 +366,7 @@ export function LandingPage() {
         {/* Hero Section */}
         <section id="hero" className={cn(
           "relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-hidden",
-          isMobile ? "px-4 pt-8 pb-16" : "px-6 pt-16 pb-24"
+          isMobile ? "px-7 pt-8 pb-16" : "px-10 pt-16 pb-24"
         )}>
 
           {/* Orange sunrise glow — constrained to guide lines with inverted-U mask */}
@@ -401,7 +401,7 @@ export function LandingPage() {
         {/* Social Proof Bar */}
         <section className={cn(
           "py-16",
-          isMobile ? "px-4" : "px-6"
+          isMobile ? "px-7" : "px-10"
         )}>
           <motion.div
             variants={containerVariants}
@@ -442,7 +442,7 @@ export function LandingPage() {
         {/* Why Coasty Section */}
         <section id="why-coasty" className={cn(
           "py-20",
-          isMobile ? "px-4" : "px-6"
+          isMobile ? "px-7" : "px-10"
         )}>
           <motion.div
             variants={containerVariants}
@@ -533,7 +533,7 @@ export function LandingPage() {
         {/* How It Works Section */}
         <section id="how-it-works" className={cn(
           "py-20",
-          isMobile ? "px-4" : "px-6"
+          isMobile ? "px-7" : "px-10"
         )}>
           <motion.div
             variants={containerVariants}
@@ -618,7 +618,7 @@ export function LandingPage() {
         {/* OSWorld Benchmark Section */}
         <section className={cn(
           "py-20",
-          isMobile ? "px-4" : "px-6"
+          isMobile ? "px-7" : "px-10"
         )}>
           <motion.div
             variants={containerVariants}
@@ -809,7 +809,7 @@ export function LandingPage() {
         {/* Cost Comparison */}
         <section id="cost" className={cn(
           "py-20",
-          isMobile ? "px-4" : "px-6"
+          isMobile ? "px-7" : "px-10"
         )}>
           <motion.div
             variants={containerVariants}
@@ -950,7 +950,7 @@ export function LandingPage() {
         {/* Demo Section */}
         <section id="demo" className={cn(
           "py-20",
-          isMobile ? "px-4" : "px-6"
+          isMobile ? "px-7" : "px-10"
         )}>
           <motion.div
             variants={containerVariants}
@@ -1041,7 +1041,7 @@ export function LandingPage() {
         {/* Features Section */}
         <section id="features" className={cn(
           "py-20",
-          isMobile ? "px-4" : "px-6"
+          isMobile ? "px-7" : "px-10"
         )}>
           <motion.div
             variants={containerVariants}
@@ -1101,7 +1101,7 @@ export function LandingPage() {
         {/* Pricing Section — simplified overview */}
         <section id="pricing" className={cn(
           "py-20",
-          isMobile ? "px-4" : "px-6"
+          isMobile ? "px-7" : "px-10"
         )}>
           <motion.div
             variants={containerVariants}
@@ -1244,7 +1244,7 @@ export function LandingPage() {
         {/* FAQ Section */}
         <section id="faq" className={cn(
           "py-20",
-          isMobile ? "px-4" : "px-6"
+          isMobile ? "px-7" : "px-10"
         )}>
           <motion.div
             variants={containerVariants}

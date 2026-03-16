@@ -201,7 +201,7 @@ export default function DownloadPage() {
         <section
           className={cn(
             "flex items-center justify-center",
-            isMobile ? "px-4 py-12" : "px-6 py-20"
+            isMobile ? "px-7 py-12" : "px-10 py-20"
           )}
         >
           <motion.div

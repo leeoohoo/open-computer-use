@@ -128,7 +128,7 @@ export function LandingHeader({
           scrolled ? "py-2.5" : "py-3.5 sm:py-4"
         )}
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto max-w-7xl px-7 sm:px-10">
           <div className="px-1 sm:px-2 lg:px-4">
           <div
             className={cn(
@@ -315,7 +315,7 @@ export function LandingHeader({
               className="fixed inset-x-0 top-0 z-40 lg:hidden pt-[68px] sm:pt-[76px]"
             >
               <div className="mx-0 sm:mx-3 bg-background border-b border-border/50 sm:border sm:rounded-b-2xl shadow-2xl">
-                <nav className="flex flex-col px-4 sm:px-6 py-4 sm:py-5 gap-1">
+                <nav className="flex flex-col px-7 sm:px-10 py-4 sm:py-5 gap-1">
                   {navItems.map((item, index) => {
                     const isActive = item.external
                       ? currentPath === item.href

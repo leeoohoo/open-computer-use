@@ -468,7 +468,7 @@ export default function StatusPage() {
       <LandingHeader />
 
       <div className="pt-28 sm:pt-32 pb-24">
-        <div className="mx-auto px-5 sm:px-6 max-w-3xl">
+        <div className="mx-auto px-7 sm:px-10 max-w-3xl">
 
           {/* ── header ── */}
           <motion.div
