@@ -1,4 +1,4 @@
-# Coasty — AI Employee Platform
+# Coasty - AI Employee Platform
 # https://coasty.ai
 
 > Coasty is the #1 ranked computer-using AI agent, scoring 82% on the OSWorld benchmark (369 real-world tasks). It controls a full desktop environment like a human — opening browsers, clicking, typing, filling forms, sending emails, and managing spreadsheets autonomously. Each session runs in an isolated sandboxed VM for security. Available as a web app and desktop app (Mac & Windows). Starting at $20/month.

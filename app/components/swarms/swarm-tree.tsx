@@ -22,6 +22,15 @@ import {
   Globe,
   GridFour,
   X,
+  ChatCircleDots,
+  Megaphone,
+  Database,
+  Lifebuoy,
+  ShieldStar,
+  Scales,
+  HourglassMedium,
+  Lightning,
+  ArrowBendUpRight,
 } from "@phosphor-icons/react"
 import { AnimatePresence, motion } from "motion/react"
 import { createPortal } from "react-dom"
@@ -127,6 +136,174 @@ export function stripAgentTags(text: string): string {
     .replace(/\[NEED_USER_INPUT\]/g, "")
     .replace(/<[a-z][\w-]*[^>]*\/>/g, "")
     .trim()
+}
+
+// ---------------------------------------------------------------------------
+// Swarm tool classification & interaction extraction
+// ---------------------------------------------------------------------------
+
+export type SwarmToolType =
+  | "direct_message"
+  | "broadcast"
+  | "shared_memory_write"
+  | "shared_memory_read"
+  | "help_request"
+  | "expertise_claim"
+  | "decision_proposal"
+  | "dependency_wait"
+  | "resume_task"
+
+export interface SwarmInteraction {
+  id: string
+  type: SwarmToolType
+  fromMachine: number
+  toMachine: number | null // null = all/coordinator/memory
+  label: string
+  timestamp: string
+}
+
+const SWARM_TOOL_META: Record<
+  SwarmToolType,
+  { icon: typeof ChatCircleDots; color: string; bgColor: string; label: string }
+> = {
+  direct_message: {
+    icon: ChatCircleDots,
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10 border-blue-500/20",
+    label: "Message",
+  },
+  broadcast: {
+    icon: Megaphone,
+    color: "text-cyan-500",
+    bgColor: "bg-cyan-500/10 border-cyan-500/20",
+    label: "Broadcast",
+  },
+  shared_memory_write: {
+    icon: Database,
+    color: "text-violet-500",
+    bgColor: "bg-violet-500/10 border-violet-500/20",
+    label: "Write Memory",
+  },
+  shared_memory_read: {
+    icon: Database,
+    color: "text-violet-400",
+    bgColor: "bg-violet-500/8 border-violet-500/15",
+    label: "Read Memory",
+  },
+  help_request: {
+    icon: Lifebuoy,
+    color: "text-amber-500",
+    bgColor: "bg-amber-500/10 border-amber-500/20",
+    label: "Help Request",
+  },
+  expertise_claim: {
+    icon: ShieldStar,
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-500/10 border-emerald-500/20",
+    label: "Expertise",
+  },
+  decision_proposal: {
+    icon: Scales,
+    color: "text-orange-500",
+    bgColor: "bg-orange-500/10 border-orange-500/20",
+    label: "Decision",
+  },
+  dependency_wait: {
+    icon: HourglassMedium,
+    color: "text-rose-400",
+    bgColor: "bg-rose-500/10 border-rose-500/20",
+    label: "Waiting",
+  },
+  resume_task: {
+    icon: Lightning,
+    color: "text-emerald-400",
+    bgColor: "bg-emerald-500/8 border-emerald-500/15",
+    label: "Resumed",
+  },
+}
+
+/** Classify a tool name into a swarm tool type, or null if not a swarm tool */
+export function classifySwarmTool(toolName: string): SwarmToolType | null {
+  const n = toolName.toLowerCase()
+  if (n.includes("send_swarm_message")) return "direct_message"
+  if (n.includes("broadcast_swarm_message")) return "broadcast"
+  if (n.includes("write_shared_memory")) return "shared_memory_write"
+  if (n.includes("read_shared_memory") || n.includes("list_shared_memory"))
+    return "shared_memory_read"
+  if (n.includes("request_help")) return "help_request"
+  if (n.includes("claim_expertise")) return "expertise_claim"
+  if (n.includes("propose_decision")) return "decision_proposal"
+  if (n.includes("wait_for_dependency")) return "dependency_wait"
+  if (n.includes("resume_own_task")) return "resume_task"
+  return null
+}
+
+/** Try to extract the target machine index from a tool call's content/args */
+function extractTargetMachine(content: string): number | null {
+  // Match patterns like: "to_machine": "2" or to_machine: 2 or machine_index: 1
+  const m =
+    content.match(/to_machine["']?\s*[:=]\s*["']?(\d+)/) ||
+    content.match(/machine_index["']?\s*[:=]\s*["']?(\d+)/) ||
+    content.match(/machine[_ ](\d+)/)
+  return m ? parseInt(m[1], 10) : null
+}
+
+/** Extract short message label from content */
+function extractMessagePreview(content: string): string {
+  // Try to extract the "message" field from JSON-like content
+  const m = content.match(/message["']?\s*[:=]\s*["']([^"']{1,60})/)
+  if (m) return m[1].length > 50 ? m[1].slice(0, 50) + "\u2026" : m[1]
+  // Try to extract a "key" field for shared memory
+  const k = content.match(/key["']?\s*[:=]\s*["']([^"']{1,40})/)
+  if (k) return k[1]
+  // Try to extract "domain" for expertise
+  const d = content.match(/domain["']?\s*[:=]\s*["']([^"']{1,40})/)
+  if (d) return d[1]
+  // Try to extract "question" for decisions
+  const q = content.match(/question["']?\s*[:=]\s*["']([^"']{1,60})/)
+  if (q) return q[1].length > 50 ? q[1].slice(0, 50) + "\u2026" : q[1]
+  return ""
+}
+
+/** Extract all inter-machine interactions from swarm events */
+export function extractSwarmInteractions(events: SwarmEvent[]): SwarmInteraction[] {
+  const interactions: SwarmInteraction[] = []
+  let idCounter = 0
+
+  for (const event of events) {
+    if (event.event_type !== "tool_call" || event.machine_index === null) continue
+    const toolType = classifySwarmTool(event.tool_name || event.content)
+    if (!toolType) continue
+
+    let toMachine: number | null = null
+    if (toolType === "direct_message") {
+      toMachine = extractTargetMachine(event.content)
+    }
+
+    interactions.push({
+      id: `interaction-${idCounter++}`,
+      type: toolType,
+      fromMachine: event.machine_index,
+      toMachine,
+      label: extractMessagePreview(event.content),
+      timestamp: event.created_at,
+    })
+  }
+
+  return interactions
+}
+
+// Stroke colors for SVG connection arcs (hex values for SVG)
+const INTERACTION_STROKE_COLORS: Record<SwarmToolType, string> = {
+  direct_message: "#3b82f6",
+  broadcast: "#06b6d4",
+  shared_memory_write: "#8b5cf6",
+  shared_memory_read: "#a78bfa",
+  help_request: "#f59e0b",
+  expertise_claim: "#10b981",
+  decision_proposal: "#f97316",
+  dependency_wait: "#fb7185",
+  resume_task: "#34d399",
 }
 
 // ---------------------------------------------------------------------------
@@ -331,6 +508,13 @@ export function SwarmTree({
     }
     return s
   }, [events, machineIndices])
+
+  // Extract swarm interactions for connection visualization
+  const swarmInteractions = useMemo(
+    () => extractSwarmInteractions(events),
+    [events]
+  )
+  const hasInteractions = swarmInteractions.length > 0
 
   // Collect latest screenshot per machine (for matrix view)
   const latestScreenshots = useMemo(() => {
@@ -692,36 +876,69 @@ export function SwarmTree({
               </svg>
             </div>
 
-            {/* Machine branches */}
-            <div
-              className="grid gap-4"
-              style={{
-                gridTemplateColumns: `repeat(${cols}, minmax(180px, 1fr))`,
-              }}
-            >
-              {machineIndices.map((idx, i) => {
-                const steps = perMachineSteps[idx] || []
-                const mStatus = machineStatuses[idx]
-                return (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, delay: 0.15 + i * 0.06, ease: EASE }}
-                  >
-                    <MachineBranch
-                      machineIndex={idx}
-                      steps={steps}
-                      status={mStatus}
-                      isLive={isLive}
-                    />
-                  </motion.div>
-                )
-              })}
+            {/* Machine branches — wrapped in relative for overlay positioning */}
+            <div className="relative">
+              {/* Swarm connections overlay — absolutely positioned over machine headers */}
+              {hasInteractions && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.4, ease: EASE }}
+                  className="absolute inset-x-0 top-0 z-[2] pointer-events-none"
+                >
+                  <SwarmConnectionsOverlay
+                    interactions={swarmInteractions}
+                    machineIndices={machineIndices}
+                    totalWidth={Math.max(cols * 220, 300)}
+                  />
+                </motion.div>
+              )}
+
+              <div
+                className="grid gap-4"
+                style={{
+                  gridTemplateColumns: `repeat(${cols}, minmax(180px, 1fr))`,
+                }}
+              >
+                {machineIndices.map((idx, i) => {
+                  const steps = perMachineSteps[idx] || []
+                  const mStatus = machineStatuses[idx]
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, delay: 0.15 + i * 0.06, ease: EASE }}
+                    >
+                      <MachineBranch
+                        machineIndex={idx}
+                        steps={steps}
+                        status={mStatus}
+                        isLive={isLive}
+                      />
+                    </motion.div>
+                  )
+                })}
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Interaction legend — floating bottom-left, next to pan hint */}
+      {hasInteractions && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.6, ease: EASE }}
+          className={cn(
+            "absolute z-[10] select-none",
+            isMobile ? "bottom-10 left-3 right-3" : "bottom-8 left-3"
+          )}
+        >
+          <SwarmInteractionLegend interactions={swarmInteractions} />
+        </motion.div>
+      )}
 
       {/* Live screenshot strip — bottom-right on desktop, auto-visible */}
       {!isMobile && screenshotCount > 0 && !showScreenshotMatrix && (
@@ -812,6 +1029,357 @@ export function SwarmTree({
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Swarm connections overlay — SVG arcs between machine columns
+// ---------------------------------------------------------------------------
+
+interface ConnectionGroup {
+  type: SwarmToolType
+  fromMachine: number
+  toMachine: number | null
+  count: number
+  label: string
+}
+
+function SwarmConnectionsOverlay({
+  interactions,
+  machineIndices,
+  totalWidth,
+}: {
+  interactions: SwarmInteraction[]
+  machineIndices: number[]
+  totalWidth: number
+}) {
+  if (interactions.length === 0 || machineIndices.length < 2) return null
+
+  const cols = machineIndices.length
+  const colW = totalWidth / cols
+
+  // Deduplicate: group by (type, from, to) and count
+  const groupMap = new Map<string, ConnectionGroup>()
+  for (const i of interactions) {
+    const key = `${i.type}-${i.fromMachine}-${i.toMachine}`
+    const existing = groupMap.get(key)
+    if (existing) {
+      existing.count++
+      if (!existing.label && i.label) existing.label = i.label
+    } else {
+      groupMap.set(key, {
+        type: i.type,
+        fromMachine: i.fromMachine,
+        toMachine: i.toMachine,
+        count: 1,
+        label: i.label,
+      })
+    }
+  }
+
+  const groups = Array.from(groupMap.values())
+  // Separate broadcasts and direct connections
+  const directConnections = groups.filter(
+    (g) => g.type === "direct_message" && g.toMachine !== null
+  )
+  const broadcasts = groups.filter((g) => g.type === "broadcast")
+  const memoryOps = groups.filter(
+    (g) => g.type === "shared_memory_write" || g.type === "shared_memory_read"
+  )
+  const coordOps = groups.filter((g) =>
+    ["help_request", "expertise_claim", "decision_proposal", "dependency_wait"].includes(g.type)
+  )
+
+  const svgH = 56
+  const centerX = totalWidth / 2
+
+  function machineX(machineIndex: number): number {
+    const colIdx = machineIndices.indexOf(machineIndex)
+    if (colIdx === -1) return centerX
+    return colW * colIdx + colW / 2
+  }
+
+  // Stack offset for overlapping arcs
+  let arcIndex = 0
+
+  return (
+    <div className="relative w-full" style={{ height: 0, overflow: "visible" }}>
+      <svg
+        width={totalWidth}
+        height={svgH}
+        viewBox={`0 0 ${totalWidth} ${svgH}`}
+        className="pointer-events-none"
+        style={{ position: "relative", top: -2 }}
+      >
+        <defs>
+          {/* Animated dash flow */}
+          <style>{`
+            @keyframes swarm-flow {
+              to { stroke-dashoffset: -20; }
+            }
+            .swarm-arc {
+              animation: swarm-flow 1.5s linear infinite;
+            }
+            @keyframes swarm-pulse {
+              0%, 100% { opacity: 0.5; }
+              50% { opacity: 1; }
+            }
+            .swarm-pulse {
+              animation: swarm-pulse 2s ease-in-out infinite;
+            }
+          `}</style>
+          {/* Glow filters for each color */}
+          {Object.entries(INTERACTION_STROKE_COLORS).map(([type, color]) => (
+            <filter key={type} id={`glow-${type}`} x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+              <feFlood floodColor={color} floodOpacity="0.3" result="color" />
+              <feComposite in="color" in2="blur" operator="in" result="glow" />
+              <feMerge>
+                <feMergeNode in="glow" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          ))}
+          {/* Arrow marker */}
+          <marker id="swarm-arrow-blue" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+            <path d="M 0 0 L 6 2 L 0 4 z" fill="#3b82f6" opacity="0.7" />
+          </marker>
+          <marker id="swarm-arrow-cyan" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+            <path d="M 0 0 L 6 2 L 0 4 z" fill="#06b6d4" opacity="0.7" />
+          </marker>
+          <marker id="swarm-arrow-violet" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+            <path d="M 0 0 L 6 2 L 0 4 z" fill="#8b5cf6" opacity="0.7" />
+          </marker>
+          <marker id="swarm-arrow-amber" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+            <path d="M 0 0 L 6 2 L 0 4 z" fill="#f59e0b" opacity="0.7" />
+          </marker>
+        </defs>
+
+        {/* Direct message arcs */}
+        {directConnections.map((conn) => {
+          const fromX = machineX(conn.fromMachine)
+          const toX = machineX(conn.toMachine!)
+          const dist = Math.abs(toX - fromX)
+          const offset = (arcIndex++ % 3) * 4
+          const arcH = Math.max(16, Math.min(40, dist * 0.18)) + offset
+          const midX = (fromX + toX) / 2
+          const stroke = INTERACTION_STROKE_COLORS[conn.type]
+          return (
+            <g key={`dm-${conn.fromMachine}-${conn.toMachine}`}>
+              {/* Glow path */}
+              <path
+                d={`M ${fromX} ${svgH} Q ${midX} ${svgH - arcH}, ${toX} ${svgH}`}
+                fill="none"
+                stroke={stroke}
+                strokeWidth={3}
+                opacity={0.1}
+                filter={`url(#glow-${conn.type})`}
+              />
+              {/* Main arc */}
+              <path
+                d={`M ${fromX} ${svgH} Q ${midX} ${svgH - arcH}, ${toX} ${svgH}`}
+                fill="none"
+                stroke={stroke}
+                strokeWidth={1.5}
+                strokeDasharray="6 4"
+                className="swarm-arc"
+                opacity={0.7}
+                markerEnd="url(#swarm-arrow-blue)"
+              />
+              {/* Count badge */}
+              {conn.count > 1 && (
+                <>
+                  <circle cx={midX} cy={svgH - arcH - 1} r={7} fill={stroke} opacity={0.15} />
+                  <text
+                    x={midX}
+                    y={svgH - arcH + 2.5}
+                    textAnchor="middle"
+                    fontSize={8}
+                    fontWeight={600}
+                    fill={stroke}
+                    opacity={0.8}
+                  >
+                    {conn.count}
+                  </text>
+                </>
+              )}
+            </g>
+          )
+        })}
+
+        {/* Broadcast arcs — fan from source to center, then to all */}
+        {broadcasts.map((conn) => {
+          const fromX = machineX(conn.fromMachine)
+          const stroke = INTERACTION_STROKE_COLORS.broadcast
+          return (
+            <g key={`bc-${conn.fromMachine}`}>
+              {machineIndices
+                .filter((idx) => idx !== conn.fromMachine)
+                .map((targetIdx) => {
+                  const toX = machineX(targetIdx)
+                  const dist = Math.abs(toX - fromX)
+                  const arcH = Math.max(14, Math.min(36, dist * 0.16))
+                  const midX = (fromX + toX) / 2
+                  return (
+                    <g key={`bc-${conn.fromMachine}-${targetIdx}`}>
+                      <path
+                        d={`M ${fromX} ${svgH} Q ${midX} ${svgH - arcH}, ${toX} ${svgH}`}
+                        fill="none"
+                        stroke={stroke}
+                        strokeWidth={1}
+                        strokeDasharray="4 4"
+                        className="swarm-arc"
+                        opacity={0.45}
+                      />
+                    </g>
+                  )
+                })}
+              {/* Broadcast origin pulse */}
+              <circle cx={fromX} cy={svgH - 2} r={4} fill={stroke} opacity={0.2} className="swarm-pulse" />
+              <circle cx={fromX} cy={svgH - 2} r={2} fill={stroke} opacity={0.5} />
+            </g>
+          )
+        })}
+
+        {/* Shared memory ops — arcs to/from center "memory" node */}
+        {memoryOps.length > 0 && (
+          <g>
+            {/* Central memory node */}
+            <rect
+              x={centerX - 16}
+              y={4}
+              width={32}
+              height={16}
+              rx={4}
+              fill={INTERACTION_STROKE_COLORS.shared_memory_write}
+              opacity={0.12}
+              stroke={INTERACTION_STROKE_COLORS.shared_memory_write}
+              strokeWidth={0.5}
+              strokeOpacity={0.3}
+            />
+            <text
+              x={centerX}
+              y={15}
+              textAnchor="middle"
+              fontSize={7}
+              fontWeight={600}
+              fill={INTERACTION_STROKE_COLORS.shared_memory_write}
+              opacity={0.6}
+            >
+              MEM
+            </text>
+            {memoryOps.map((conn) => {
+              const mX = machineX(conn.fromMachine)
+              const stroke = INTERACTION_STROKE_COLORS[conn.type]
+              const isWrite = conn.type === "shared_memory_write"
+              const midX = (mX + centerX) / 2
+              return (
+                <g key={`mem-${conn.type}-${conn.fromMachine}`}>
+                  <path
+                    d={
+                      isWrite
+                        ? `M ${mX} ${svgH} Q ${midX} ${svgH * 0.25}, ${centerX} 20`
+                        : `M ${centerX} 20 Q ${midX} ${svgH * 0.25}, ${mX} ${svgH}`
+                    }
+                    fill="none"
+                    stroke={stroke}
+                    strokeWidth={1}
+                    strokeDasharray="4 3"
+                    className="swarm-arc"
+                    opacity={0.5}
+                    markerEnd="url(#swarm-arrow-violet)"
+                  />
+                </g>
+              )
+            })}
+          </g>
+        )}
+
+        {/* Coordination ops — small arcs going up with icon */}
+        {coordOps.map((conn, ci) => {
+          const mX = machineX(conn.fromMachine)
+          const stroke = INTERACTION_STROKE_COLORS[conn.type]
+          const yOff = 8 + ci * 6
+          return (
+            <g key={`coord-${conn.type}-${conn.fromMachine}`}>
+              <line
+                x1={mX}
+                y1={svgH}
+                x2={mX}
+                y2={yOff + 8}
+                stroke={stroke}
+                strokeWidth={1}
+                strokeDasharray="3 3"
+                opacity={0.4}
+                className="swarm-arc"
+              />
+              <circle cx={mX} cy={yOff + 4} r={5} fill={stroke} opacity={0.15} />
+              <text
+                x={mX}
+                y={yOff + 7}
+                textAnchor="middle"
+                fontSize={6}
+                fill={stroke}
+                opacity={0.7}
+              >
+                {conn.type === "help_request"
+                  ? "?"
+                  : conn.type === "expertise_claim"
+                    ? "\u2605"
+                    : conn.type === "decision_proposal"
+                      ? "\u2696"
+                      : "\u23F3"}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Swarm interaction legend — small key showing connection types
+// ---------------------------------------------------------------------------
+
+function SwarmInteractionLegend({
+  interactions,
+  className,
+}: {
+  interactions: SwarmInteraction[]
+  className?: string
+}) {
+  const types = useMemo(() => {
+    const seen = new Set<SwarmToolType>()
+    for (const i of interactions) seen.add(i.type)
+    return Array.from(seen)
+  }, [interactions])
+
+  if (types.length === 0) return null
+
+  return (
+    <div className={cn("flex flex-wrap items-center gap-1.5", className)}>
+      {types.map((type) => {
+        const meta = SWARM_TOOL_META[type]
+        const Icon = meta.icon
+        return (
+          <span
+            key={type}
+            className={cn(
+              "inline-flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded-full border",
+              meta.bgColor,
+              meta.color
+            )}
+          >
+            <Icon className="size-2.5" weight="fill" />
+            {meta.label}
+          </span>
+        )
+      })}
+      <span className="text-[9px] text-muted-foreground/40 ml-0.5">
+        {interactions.length} interaction{interactions.length !== 1 ? "s" : ""}
+      </span>
     </div>
   )
 }
@@ -1149,20 +1717,38 @@ function BranchStepCard({
 
         {step.toolResults.length > 0 && (
           <div className="flex flex-wrap items-center gap-1 mt-1.5">
-            {step.toolResults.map((r, j) => (
-              <span
-                key={j}
-                className={cn(
-                  "inline-flex items-center gap-1 text-[10px] leading-none px-1.5 py-0.5 rounded-full",
-                  step.status === "error"
-                    ? "text-red-500/80 bg-red-500/8"
-                    : "text-emerald-600/80 dark:text-emerald-400/70 bg-emerald-500/8"
-                )}
-              >
-                <StatusDot status={step.status} />
-                {r.name || "Action"}
-              </span>
-            ))}
+            {step.toolResults.map((r, j) => {
+              const swarmType = classifySwarmTool(r.name || "")
+              if (swarmType) {
+                return <SwarmToolBadge key={j} type={swarmType} name={r.name} content={r.content} />
+              }
+              return (
+                <span
+                  key={j}
+                  className={cn(
+                    "inline-flex items-center gap-1 text-[10px] leading-none px-1.5 py-0.5 rounded-full",
+                    step.status === "error"
+                      ? "text-red-500/80 bg-red-500/8"
+                      : "text-emerald-600/80 dark:text-emerald-400/70 bg-emerald-500/8"
+                  )}
+                >
+                  <StatusDot status={step.status} />
+                  {r.name || "Action"}
+                </span>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Swarm tool calls — special rendering */}
+        {step.toolCalls.length > 0 && step.toolCalls.some((tc) => classifySwarmTool(tc.name)) && (
+          <div className="flex flex-wrap items-center gap-1 mt-1.5">
+            {step.toolCalls
+              .filter((tc) => classifySwarmTool(tc.name))
+              .map((tc, j) => {
+                const swarmType = classifySwarmTool(tc.name)!
+                return <SwarmToolBadge key={`stc-${j}`} type={swarmType} name={tc.name} content={tc.content} />
+              })}
           </div>
         )}
 
@@ -1199,33 +1785,74 @@ function BranchStepCard({
                   className="overflow-hidden"
                 >
                   <div className="pt-1 pb-1 space-y-1.5">
-                    {step.toolCalls.map((tc, j) => (
-                      <div key={`tc-${j}`} className="text-[11px]">
-                        <span className="inline-flex items-center gap-1 text-violet-600 dark:text-violet-400 font-medium">
-                          <Wrench className="size-2.5" />
-                          {tc.name || "Tool call"}
-                        </span>
-                        {tc.content && (
-                          <p className="text-muted-foreground/60 mt-0.5 break-words whitespace-pre-wrap text-[10px] line-clamp-4">
-                            {tc.content}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                    {step.toolResults.map((tr, j) => (
-                      <div key={`tr-${j}`} className="text-[11px]">
-                        <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
-                          <CheckCircle className="size-2.5" weight="fill" />
-                          {tr.name || "Result"}
-                        </span>
-                        {tr.content && (
-                          <p className="text-muted-foreground/60 mt-0.5 break-words whitespace-pre-wrap text-[10px] line-clamp-4">
-                            {tr.content}
-                          </p>
-                        )}
-                        {tr.screenshot && <ScreenshotInline src={tr.screenshot} />}
-                      </div>
-                    ))}
+                    {step.toolCalls.map((tc, j) => {
+                      const swarmType = classifySwarmTool(tc.name)
+                      if (swarmType) {
+                        const meta = SWARM_TOOL_META[swarmType]
+                        const Icon = meta.icon
+                        return (
+                          <div key={`tc-${j}`} className={cn("text-[11px] rounded-md border px-2 py-1.5", meta.bgColor)}>
+                            <span className={cn("inline-flex items-center gap-1 font-medium", meta.color)}>
+                              <Icon className="size-3" weight="fill" />
+                              {meta.label}
+                            </span>
+                            {tc.content && (
+                              <p className="text-muted-foreground/60 mt-0.5 break-words whitespace-pre-wrap text-[10px] line-clamp-4">
+                                {tc.content}
+                              </p>
+                            )}
+                          </div>
+                        )
+                      }
+                      return (
+                        <div key={`tc-${j}`} className="text-[11px]">
+                          <span className="inline-flex items-center gap-1 text-violet-600 dark:text-violet-400 font-medium">
+                            <Wrench className="size-2.5" />
+                            {tc.name || "Tool call"}
+                          </span>
+                          {tc.content && (
+                            <p className="text-muted-foreground/60 mt-0.5 break-words whitespace-pre-wrap text-[10px] line-clamp-4">
+                              {tc.content}
+                            </p>
+                          )}
+                        </div>
+                      )
+                    })}
+                    {step.toolResults.map((tr, j) => {
+                      const swarmType = classifySwarmTool(tr.name)
+                      if (swarmType) {
+                        const meta = SWARM_TOOL_META[swarmType]
+                        const Icon = meta.icon
+                        return (
+                          <div key={`tr-${j}`} className={cn("text-[11px] rounded-md border px-2 py-1.5", meta.bgColor)}>
+                            <span className={cn("inline-flex items-center gap-1 font-medium", meta.color)}>
+                              <Icon className="size-3" weight="fill" />
+                              {meta.label} Result
+                            </span>
+                            {tr.content && (
+                              <p className="text-muted-foreground/60 mt-0.5 break-words whitespace-pre-wrap text-[10px] line-clamp-4">
+                                {tr.content}
+                              </p>
+                            )}
+                            {tr.screenshot && <ScreenshotInline src={tr.screenshot} />}
+                          </div>
+                        )
+                      }
+                      return (
+                        <div key={`tr-${j}`} className="text-[11px]">
+                          <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                            <CheckCircle className="size-2.5" weight="fill" />
+                            {tr.name || "Result"}
+                          </span>
+                          {tr.content && (
+                            <p className="text-muted-foreground/60 mt-0.5 break-words whitespace-pre-wrap text-[10px] line-clamp-4">
+                              {tr.content}
+                            </p>
+                          )}
+                          {tr.screenshot && <ScreenshotInline src={tr.screenshot} />}
+                        </div>
+                      )
+                    })}
                   </div>
                 </motion.div>
               )}
@@ -1234,6 +1861,50 @@ function BranchStepCard({
         )}
       </div>
     </motion.div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Swarm Tool Badge — special visual for swarm communication tools
+// ---------------------------------------------------------------------------
+
+function SwarmToolBadge({
+  type,
+  name,
+  content,
+}: {
+  type: SwarmToolType
+  name: string
+  content: string
+}) {
+  const meta = SWARM_TOOL_META[type]
+  const Icon = meta.icon
+  const targetMachine = extractTargetMachine(content || name)
+  const preview = extractMessagePreview(content || name)
+
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 text-[10px] leading-none px-2 py-1 rounded-lg border transition-colors",
+        meta.bgColor,
+        meta.color
+      )}
+    >
+      <Icon className="size-3 shrink-0" weight="fill" />
+      <span className="font-medium">{meta.label}</span>
+      {type === "direct_message" && targetMachine !== null && (
+        <span className="inline-flex items-center gap-0.5 opacity-70">
+          <ArrowBendUpRight className="size-2" weight="bold" />
+          #{targetMachine + 1}
+        </span>
+      )}
+      {type === "broadcast" && (
+        <span className="opacity-60">all</span>
+      )}
+      {preview && type !== "direct_message" && type !== "broadcast" && (
+        <span className="opacity-60 truncate max-w-[80px]">{preview}</span>
+      )}
+    </span>
   )
 }
 

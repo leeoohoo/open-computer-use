@@ -577,6 +577,7 @@ export function Chat() {
   // Swarm mode state — only available on homepage (no active chat)
   const [swarmMode, setSwarmMode] = useState(false)
   const [swarmCount, setSwarmCount] = useState(3)
+  const [swarmPersistent, setSwarmPersistent] = useState(false)
   const [swarmActive, setSwarmActive] = useState(false)
   const [swarmId, setSwarmId] = useState<string | null>(null)
   const [swarmPrompt, setSwarmPrompt] = useState("")
@@ -658,6 +659,8 @@ export function Chat() {
       onSwarmModeChange: !effectiveChatId ? setSwarmMode : undefined,
       swarmCount: !effectiveChatId ? swarmCount : undefined,
       onSwarmCountChange: !effectiveChatId ? setSwarmCount : undefined,
+      swarmPersistent: !effectiveChatId ? swarmPersistent : undefined,
+      onSwarmPersistentChange: !effectiveChatId ? setSwarmPersistent : undefined,
       userTier,
       maxSwarmMachines,
       }
@@ -686,6 +689,7 @@ export function Chat() {
       hasToolInvocations,
       swarmMode,
       swarmCount,
+      swarmPersistent,
       userTier,
       maxSwarmMachines,
     ]
@@ -978,6 +982,7 @@ export function Chat() {
               swarmId={swarmId}
               prompt={swarmPrompt}
               machineCount={swarmCount}
+              persistent={swarmPersistent}
               onStop={handleSwarmStop}
               onDismiss={handleSwarmDismiss}
             />

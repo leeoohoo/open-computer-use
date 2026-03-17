@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { VMSelector } from "@/components/common/vm-selector/vm-selector"
-import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Monitor, ArrowsClockwise, GitFork, Lock, Lightning, ArrowRight } from "@phosphor-icons/react"
+import { ArrowUpIcon, StopIcon, WarningCircle, CircleNotch, Monitor, ArrowsClockwise, GitFork, Lock, Lightning, ArrowRight, HardDrive } from "@phosphor-icons/react"
 import { MacMiniIcon } from "@/components/icons/mac-mini"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card"
@@ -46,6 +46,9 @@ type ChatInputProps = {
   onSwarmModeChange?: (enabled: boolean) => void
   swarmCount?: number
   onSwarmCountChange?: (count: number) => void
+  // Persistent swarm (machines survive after completion)
+  swarmPersistent?: boolean
+  onSwarmPersistentChange?: (persistent: boolean) => void
   // Subscription tier — determines whether swarm is locked
   userTier?: string | null
   // Max swarm machines (3x plan max_machines, capped at 10)
@@ -348,11 +351,14 @@ export function ChatInput({
   onSwarmModeChange,
   swarmCount,
   onSwarmCountChange,
+  swarmPersistent,
+  onSwarmPersistentChange,
   userTier,
   maxSwarmMachines = 3,
 }: ChatInputProps) {
   const isOnlyWhitespace = (text: string) => !/[^\s]/.test(text)
   const isSwarmLocked = !userTier || userTier === "free"
+  const isPersistentEligible = userTier === "starter" || userTier === "professional" || userTier === "enterprise"
   const [machineStatus, setMachineStatus] = useState<UserMachine['status'] | null>(null)
   const [machineName, setMachineName] = useState<string | null>(null)
   const [showVMError, setShowVMError] = useState(false)
@@ -1040,6 +1046,40 @@ export function ChatInput({
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-[240px] text-center">
                             Up to {maxSwarmMachines} swarm machines on your plan. Need more? Contact founders@coasty.ai
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                      {swarmMode && onSwarmPersistentChange && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant={swarmPersistent ? "default" : "secondary"}
+                              type="button"
+                              onClick={() => {
+                                if (!isPersistentEligible) return
+                                onSwarmPersistentChange(!swarmPersistent)
+                              }}
+                              className={cn(
+                                "border-border h-9 rounded-full border px-2.5 sm:px-3 transition-all duration-200",
+                                swarmPersistent
+                                  ? "bg-emerald-500 hover:bg-emerald-600 text-white border-emerald-500"
+                                  : isPersistentEligible
+                                    ? "bg-transparent dark:bg-secondary"
+                                    : "bg-transparent dark:bg-secondary opacity-50 cursor-not-allowed"
+                              )}
+                              aria-label={swarmPersistent ? "Disable persistent mode" : "Enable persistent mode — machines stay after completion"}
+                            >
+                              <HardDrive className="size-3.5 flex-shrink-0" />
+                              <span className="hidden sm:inline text-xs ml-1.5">Keep</span>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-[260px] text-center">
+                            {!isPersistentEligible
+                              ? "Persistent swarms require Starter ($19+) plan — machines are kept after completion"
+                              : swarmPersistent
+                                ? "Persistent ON — machines will be kept as your VMs after completion"
+                                : "Enable to keep swarm machines as persistent VMs after the task completes"}
                           </TooltipContent>
                         </Tooltip>
                       )}

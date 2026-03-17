@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Compare Coasty — AI Agent Alternatives & Competitor Comparison",
+  title: "Compare Coasty - AI Agent Alternatives & Competitor Comparison",
   description: "See how Coasty's #1 ranked computer-using AI agent compares to Anthropic Computer Use, OpenAI Operator, Adept AI, Multion, UiPath, Automation Anywhere, and hiring virtual assistants. Feature-by-feature comparisons with pricing.",
   keywords: [
     "Coasty vs Anthropic Computer Use",

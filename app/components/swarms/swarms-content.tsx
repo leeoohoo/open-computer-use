@@ -58,6 +58,7 @@ interface SwarmRun {
   max_steps: number | null
   result_summary: string | null
   public: boolean
+  persistent: boolean
   created_at: string
   completed_at: string | null
 }
@@ -561,6 +562,11 @@ function SwarmRunCard({
                   {statusMeta.icon}
                   <span className="hidden xs:inline sm:inline">{statusMeta.label}</span>
                 </span>
+                {swarm.persistent && (
+                  <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-1.5 py-0.5">
+                    Persistent
+                  </span>
+                )}
 
                 {/* Pause button — shown when running */}
                 {swarm.status === "running" && (

@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useInView } from "framer-motion"
 import { Check, Monitor, GitFork, Play, RotateCcw, ChevronDown, Clock, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { MessageCircle, Radio, Database, HelpCircle, Shield } from "lucide-react"
 
 // ─── Types & Data ───────────────────────────────────────────────────────────
 
@@ -579,6 +580,10 @@ interface MockStep {
   tool: string
   status: "success" | "pending" | "running"
   screenshot?: boolean
+  /** Swarm communication type for special rendering */
+  swarmTool?: "message" | "broadcast" | "memory" | "help" | "expertise"
+  /** Target machine index for direct messages */
+  targetMachine?: number
 }
 
 interface MockMachine {
@@ -596,8 +601,10 @@ const MOCK_MACHINES: MockMachine[] = [
     steps: [
       { text: "Navigating to Salesforce pricing page", tool: "browser_navigate", status: "success" },
       { text: "Extracting Enterprise, Professional, and Starter plan tiers with pricing", tool: "browser_extract", status: "success" },
+      { text: "Shared pricing format template with team", tool: "write_shared_memory", status: "success", swarmTool: "memory" },
       { text: "Checking integration marketplace — found 4,000+ apps", tool: "browser_navigate", status: "success" },
       { text: "Scraping G2 reviews — 4.3/5 from 19,842 reviews", tool: "browser_extract", status: "success", screenshot: true },
+      { text: "Sent comparison data to HubSpot agent", tool: "send_swarm_message", status: "success", swarmTool: "message", targetMachine: 1 },
       { text: "Compiling Salesforce findings into structured report", tool: "terminal_exec", status: "success" },
     ],
   },
@@ -606,9 +613,11 @@ const MOCK_MACHINES: MockMachine[] = [
     status: "success",
     steps: [
       { text: "Opening HubSpot CRM pricing page", tool: "browser_navigate", status: "success" },
+      { text: "Read pricing format from shared memory", tool: "read_shared_memory", status: "success", swarmTool: "memory" },
       { text: "Comparing Free, Starter, Professional, Enterprise plans", tool: "browser_extract", status: "success" },
       { text: "Reviewing 1,500+ integration listings", tool: "browser_navigate", status: "success", screenshot: true },
       { text: "Reading Capterra reviews — 4.5/5 from 4,091 reviews", tool: "browser_extract", status: "success" },
+      { text: "Broadcast: Found free tier comparison data", tool: "broadcast_swarm_message", status: "success", swarmTool: "broadcast" },
       { text: "Compiling HubSpot findings into structured report", tool: "terminal_exec", status: "success" },
     ],
   },
@@ -618,6 +627,7 @@ const MOCK_MACHINES: MockMachine[] = [
     steps: [
       { text: "Loading Pipedrive pricing and features page", tool: "browser_navigate", status: "success" },
       { text: "Cataloging Essential through Enterprise features", tool: "browser_extract", status: "success" },
+      { text: "Claimed expertise: mid-market CRM analysis", tool: "claim_expertise", status: "success", swarmTool: "expertise" },
       { text: "Reviewing Zapier integrations — 400+ connections", tool: "browser_navigate", status: "success" },
       { text: "Pulling TrustRadius scores and sentiment analysis", tool: "browser_extract", status: "running" },
       { text: "Compile Pipedrive findings", tool: "terminal_exec", status: "pending" },
@@ -629,6 +639,7 @@ const MOCK_MACHINES: MockMachine[] = [
     steps: [
       { text: "Visiting Zoho CRM editions page", tool: "browser_navigate", status: "success" },
       { text: "Extracting Standard, Professional, Enterprise, Ultimate pricing", tool: "browser_extract", status: "success" },
+      { text: "Sent question to Salesforce agent about API limits", tool: "send_swarm_message", status: "success", swarmTool: "message", targetMachine: 0 },
       { text: "Mapping Zoho ecosystem — 45+ native integrations", tool: "browser_navigate", status: "running" },
       { text: "Check G2 sentiment analysis", tool: "browser_extract", status: "pending" },
       { text: "Compile Zoho CRM findings", tool: "terminal_exec", status: "pending" },
@@ -640,11 +651,22 @@ const MOCK_MACHINES: MockMachine[] = [
     steps: [
       { text: "Opening Close.com pricing page", tool: "browser_navigate", status: "success" },
       { text: "Documenting Startup, Professional, Enterprise features", tool: "browser_extract", status: "running" },
+      { text: "Requested help: Can't find Close API rate limits", tool: "request_help", status: "pending", swarmTool: "help" },
       { text: "Check API docs and integration capabilities", tool: "browser_navigate", status: "pending" },
       { text: "Read customer testimonials and review scores", tool: "browser_extract", status: "pending" },
       { text: "Compile Close findings", tool: "terminal_exec", status: "pending" },
     ],
   },
+]
+
+// Mock interaction connections data
+const MOCK_INTERACTIONS = [
+  { from: 0, to: 1, type: "message" as const, label: "pricing data" },
+  { from: 1, to: null, type: "broadcast" as const, label: "free tier comparison" },
+  { from: 0, to: null, type: "memory" as const, label: "pricing_template" },
+  { from: 1, to: null, type: "memory" as const, label: "pricing_template" },
+  { from: 3, to: 0, type: "message" as const, label: "API limits question" },
+  { from: 4, to: null, type: "help" as const, label: "API rate limits" },
 ]
 
 function MockMachineBranch({ machine, index, animated }: { machine: MockMachine; index: number; animated: boolean }) {
@@ -691,7 +713,22 @@ function MockMachineBranch({ machine, index, animated }: { machine: MockMachine;
               className="relative w-full z-[1]"
             >
               <div className="absolute left-1/2 -top-1 -translate-x-1/2 z-[2]">
-                {step.screenshot ? (
+                {step.swarmTool ? (
+                  <div className={cn(
+                    "size-4 rounded-full border-2 border-background shadow-sm flex items-center justify-center",
+                    step.swarmTool === "message" ? "bg-gradient-to-br from-blue-400 to-blue-600 shadow-blue-500/20"
+                    : step.swarmTool === "broadcast" ? "bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-cyan-500/20"
+                    : step.swarmTool === "memory" ? "bg-gradient-to-br from-violet-400 to-violet-600 shadow-violet-500/20"
+                    : step.swarmTool === "help" ? "bg-gradient-to-br from-amber-400 to-amber-600 shadow-amber-500/20"
+                    : "bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-emerald-500/20"
+                  )}>
+                    {step.swarmTool === "message" && <MessageCircle className="size-2 text-white" />}
+                    {step.swarmTool === "broadcast" && <Radio className="size-2 text-white" />}
+                    {step.swarmTool === "memory" && <Database className="size-2 text-white" />}
+                    {step.swarmTool === "help" && <HelpCircle className="size-2 text-white" />}
+                    {step.swarmTool === "expertise" && <Shield className="size-2 text-white" />}
+                  </div>
+                ) : step.screenshot ? (
                   <div className="size-4 rounded-full border-2 border-background bg-gradient-to-br from-amber-400 to-amber-600 shadow-sm shadow-amber-500/20 flex items-center justify-center">
                     <Eye className="size-2 text-white" />
                   </div>
@@ -712,29 +749,58 @@ function MockMachineBranch({ machine, index, animated }: { machine: MockMachine;
               <div
                 className={cn(
                   "mx-1 mt-2 rounded-lg border px-3 py-2 text-left transition-all shadow-sm",
-                  step.status === "running"
-                    ? "border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/10"
-                    : "border-border/25 bg-background/80 dark:bg-background/60 backdrop-blur-sm"
+                  step.swarmTool === "message"
+                    ? "border-blue-500/20 bg-blue-50/30 dark:bg-blue-950/10"
+                    : step.swarmTool === "broadcast"
+                      ? "border-cyan-500/20 bg-cyan-50/30 dark:bg-cyan-950/10"
+                      : step.swarmTool === "memory"
+                        ? "border-violet-500/20 bg-violet-50/30 dark:bg-violet-950/10"
+                        : step.swarmTool === "help"
+                          ? "border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/10"
+                          : step.swarmTool === "expertise"
+                            ? "border-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-950/10"
+                            : step.status === "running"
+                              ? "border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/10"
+                              : "border-border/25 bg-background/80 dark:bg-background/60 backdrop-blur-sm"
                 )}
               >
                 <p className="text-[11px] leading-relaxed text-foreground/80 line-clamp-2">{step.text}</p>
                 <div className="flex items-center gap-1 mt-1.5">
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 text-[9px] leading-none px-1.5 py-0.5 rounded-full font-mono",
-                      step.status === "success"
-                        ? "text-emerald-600/70 dark:text-emerald-400/60 bg-emerald-500/8"
-                        : step.status === "running"
-                          ? "text-amber-600/70 dark:text-amber-400/60 bg-amber-500/8"
-                          : "text-muted-foreground/40 bg-muted/30"
-                    )}
-                  >
-                    <span className={cn(
-                      "size-1 rounded-full",
-                      step.status === "success" ? "bg-emerald-500" : step.status === "running" ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/30"
-                    )} />
-                    {step.tool}
-                  </span>
+                  {step.swarmTool ? (
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 text-[9px] leading-none px-1.5 py-0.5 rounded-full font-medium",
+                        step.swarmTool === "message" ? "text-blue-600/80 dark:text-blue-400/70 bg-blue-500/10"
+                        : step.swarmTool === "broadcast" ? "text-cyan-600/80 dark:text-cyan-400/70 bg-cyan-500/10"
+                        : step.swarmTool === "memory" ? "text-violet-600/80 dark:text-violet-400/70 bg-violet-500/10"
+                        : step.swarmTool === "help" ? "text-amber-600/80 dark:text-amber-400/70 bg-amber-500/10"
+                        : "text-emerald-600/80 dark:text-emerald-400/70 bg-emerald-500/10"
+                      )}
+                    >
+                      {step.swarmTool === "message" && <><MessageCircle className="size-2.5" />Message{step.targetMachine !== undefined ? ` → #${step.targetMachine + 1}` : ""}</>}
+                      {step.swarmTool === "broadcast" && <><Radio className="size-2.5" />Broadcast</>}
+                      {step.swarmTool === "memory" && <><Database className="size-2.5" />Shared Memory</>}
+                      {step.swarmTool === "help" && <><HelpCircle className="size-2.5" />Help Request</>}
+                      {step.swarmTool === "expertise" && <><Shield className="size-2.5" />Expertise</>}
+                    </span>
+                  ) : (
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 text-[9px] leading-none px-1.5 py-0.5 rounded-full font-mono",
+                        step.status === "success"
+                          ? "text-emerald-600/70 dark:text-emerald-400/60 bg-emerald-500/8"
+                          : step.status === "running"
+                            ? "text-amber-600/70 dark:text-amber-400/60 bg-amber-500/8"
+                            : "text-muted-foreground/40 bg-muted/30"
+                      )}
+                    >
+                      <span className={cn(
+                        "size-1 rounded-full",
+                        step.status === "success" ? "bg-emerald-500" : step.status === "running" ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/30"
+                      )} />
+                      {step.tool}
+                    </span>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -828,6 +894,192 @@ export function MockSwarmTree() {
           </svg>
         </motion.div>
 
+        {/* Machine branches with swarm connections overlay */}
+        <div className="relative">
+        {/* Swarm connections overlay — absolutely positioned over machine headers */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={mounted ? { opacity: 1 } : {}}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="absolute inset-x-0 top-0 z-[2] pointer-events-none"
+        >
+          <div className="relative w-full" style={{ height: 0, overflow: "visible" }}>
+          <svg
+            width={Math.max(cols * 200, 400)}
+            height={48}
+            viewBox={`0 0 ${Math.max(cols * 200, 400)} 48`}
+            className="pointer-events-none"
+            style={{ position: "relative", top: -2 }}
+          >
+            <defs>
+              <style>{`
+                @keyframes mock-flow {
+                  to { stroke-dashoffset: -20; }
+                }
+                .mock-arc {
+                  animation: mock-flow 1.5s linear infinite;
+                }
+                @keyframes mock-pulse {
+                  0%, 100% { opacity: 0.4; }
+                  50% { opacity: 0.9; }
+                }
+                .mock-pulse {
+                  animation: mock-pulse 2s ease-in-out infinite;
+                }
+              `}</style>
+              <marker id="mock-arrow-blue" markerWidth="5" markerHeight="4" refX="4" refY="2" orient="auto">
+                <path d="M 0 0 L 5 2 L 0 4 z" fill="#3b82f6" opacity="0.6" />
+              </marker>
+              <marker id="mock-arrow-cyan" markerWidth="5" markerHeight="4" refX="4" refY="2" orient="auto">
+                <path d="M 0 0 L 5 2 L 0 4 z" fill="#06b6d4" opacity="0.6" />
+              </marker>
+            </defs>
+            {(() => {
+              const totalW = Math.max(cols * 200, 400)
+              const colW = totalW / cols
+              const machineX = (idx: number) => colW * idx + colW / 2
+
+              const CONN_COLORS: Record<string, string> = {
+                message: "#3b82f6",
+                broadcast: "#06b6d4",
+                memory: "#8b5cf6",
+                help: "#f59e0b",
+                expertise: "#10b981",
+              }
+
+              return MOCK_INTERACTIONS.map((conn, ci) => {
+                const fromX = machineX(conn.from)
+                const stroke = CONN_COLORS[conn.type]
+
+                if (conn.type === "message" && conn.to !== null) {
+                  const toX = machineX(conn.to)
+                  const dist = Math.abs(toX - fromX)
+                  const arcH = Math.max(14, Math.min(36, dist * 0.16)) + (ci % 3) * 3
+                  const midX = (fromX + toX) / 2
+                  return (
+                    <g key={ci}>
+                      <path
+                        d={`M ${fromX} 48 Q ${midX} ${48 - arcH}, ${toX} 48`}
+                        fill="none"
+                        stroke={stroke}
+                        strokeWidth={3}
+                        opacity={0.08}
+                      />
+                      <path
+                        d={`M ${fromX} 48 Q ${midX} ${48 - arcH}, ${toX} 48`}
+                        fill="none"
+                        stroke={stroke}
+                        strokeWidth={1.5}
+                        strokeDasharray="6 4"
+                        className="mock-arc"
+                        opacity={0.6}
+                        markerEnd="url(#mock-arrow-blue)"
+                      />
+                    </g>
+                  )
+                }
+
+                if (conn.type === "broadcast") {
+                  return (
+                    <g key={ci}>
+                      {[0, 1, 2, 3, 4].filter(i => i !== conn.from).map(targetIdx => {
+                        const toX = machineX(targetIdx)
+                        const dist = Math.abs(toX - fromX)
+                        const arcH = Math.max(12, Math.min(32, dist * 0.14))
+                        const midX = (fromX + toX) / 2
+                        return (
+                          <path
+                            key={targetIdx}
+                            d={`M ${fromX} 48 Q ${midX} ${48 - arcH}, ${toX} 48`}
+                            fill="none"
+                            stroke={stroke}
+                            strokeWidth={1}
+                            strokeDasharray="4 4"
+                            className="mock-arc"
+                            opacity={0.35}
+                          />
+                        )
+                      })}
+                      <circle cx={fromX} cy={46} r={3.5} fill={stroke} opacity={0.15} className="mock-pulse" />
+                      <circle cx={fromX} cy={46} r={1.5} fill={stroke} opacity={0.5} />
+                    </g>
+                  )
+                }
+
+                if (conn.type === "memory") {
+                  const centerX = totalW / 2
+                  return (
+                    <g key={ci}>
+                      <path
+                        d={`M ${fromX} 48 Q ${(fromX + centerX) / 2} ${20}, ${centerX} 12`}
+                        fill="none"
+                        stroke={stroke}
+                        strokeWidth={1}
+                        strokeDasharray="4 3"
+                        className="mock-arc"
+                        opacity={0.4}
+                      />
+                    </g>
+                  )
+                }
+
+                if (conn.type === "help") {
+                  return (
+                    <g key={ci}>
+                      <line
+                        x1={fromX} y1={48} x2={fromX} y2={14}
+                        stroke={stroke}
+                        strokeWidth={1}
+                        strokeDasharray="3 3"
+                        opacity={0.4}
+                        className="mock-arc"
+                      />
+                      <circle cx={fromX} cy={10} r={4} fill={stroke} opacity={0.12} />
+                      <text x={fromX} y={13} textAnchor="middle" fontSize={6} fill={stroke} opacity={0.6}>?</text>
+                    </g>
+                  )
+                }
+
+                return null
+              })
+            })()}
+
+            {/* Central memory node */}
+            {(() => {
+              const totalW = Math.max(cols * 200, 400)
+              const centerX = totalW / 2
+              return (
+                <g>
+                  <rect x={centerX - 14} y={4} width={28} height={14} rx={3} fill="#8b5cf6" opacity={0.1} stroke="#8b5cf6" strokeWidth={0.5} strokeOpacity={0.25} />
+                  <text x={centerX} y={14} textAnchor="middle" fontSize={6} fontWeight={600} fill="#8b5cf6" opacity={0.5}>MEM</text>
+                </g>
+              )
+            })()}
+          </svg>
+          </div>
+        </motion.div>
+
+        {/* Interaction legend — floating bottom-left */}
+        <motion.div
+          initial={{ opacity: 0, y: 4 }}
+          animate={mounted ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.3, delay: 0.55 }}
+          className="absolute z-[10] bottom-2 left-2 flex gap-1.5 flex-wrap pointer-events-none"
+        >
+          {[
+            { icon: MessageCircle, label: "Messages", color: "text-blue-500 bg-blue-500/10 border-blue-500/20" },
+            { icon: Radio, label: "Broadcast", color: "text-cyan-500 bg-cyan-500/10 border-cyan-500/20" },
+            { icon: Database, label: "Shared Memory", color: "text-violet-500 bg-violet-500/10 border-violet-500/20" },
+            { icon: HelpCircle, label: "Help", color: "text-amber-500 bg-amber-500/10 border-amber-500/20" },
+            { icon: Shield, label: "Expertise", color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" },
+          ].map(({ icon: Icon, label, color }) => (
+            <span key={label} className={cn("inline-flex items-center gap-1 text-[8px] font-medium px-1.5 py-0.5 rounded-full border", color)}>
+              <Icon className="size-2" />
+              {label}
+            </span>
+          ))}
+        </motion.div>
+
         {/* Machine branches */}
         <div
           className="grid gap-3"
@@ -847,12 +1099,13 @@ export function MockSwarmTree() {
             </motion.div>
           ))}
         </div>
+        </div>{/* close relative wrapper for overlay + branches */}
       </div>
 
       {/* Label */}
       <div className="absolute bottom-3 left-4 z-[10] flex items-center gap-1.5 text-[10px] text-muted-foreground/30 select-none pointer-events-none">
         <Eye className="size-3" />
-        <span>Live swarm execution preview</span>
+        <span>Live swarm execution with agent communication</span>
       </div>
     </div>
   )

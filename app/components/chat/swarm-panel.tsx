@@ -48,6 +48,8 @@ interface SwarmPanelProps {
   swarmId: string | null
   prompt: string
   machineCount?: number
+  /** Keep machines alive after completion (persistent swarm) */
+  persistent?: boolean
   onStop: () => void
   onDismiss?: () => void
 }
@@ -56,7 +58,7 @@ interface SwarmPanelProps {
 // Component
 // ---------------------------------------------------------------------------
 
-export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop, onDismiss }: SwarmPanelProps) {
+export function SwarmPanel({ isActive, swarmId, prompt, machineCount, persistent, onStop, onDismiss }: SwarmPanelProps) {
   const [machines, setMachines] = useState<SwarmMachine[]>([])
   const [overallStatus, setOverallStatus] = useState<"idle" | "creating" | "planning" | "running" | "paused" | "aggregating" | "completed" | "cancelled" | "failed">("idle")
 
@@ -86,6 +88,8 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop, on
   promptRef.current = prompt
   const machineCountRef = useRef(machineCount)
   machineCountRef.current = machineCount
+  const persistentRef = useRef(persistent)
+  persistentRef.current = persistent
 
   // Convert SSE chunk to SwarmEvent and accumulate
   const appendSwarmEvent = useCallback((eventType: string, chunk: SwarmChunk) => {
@@ -259,6 +263,7 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop, on
           body: JSON.stringify({
             prompt: promptRef.current,
             machineCount: machineCountRef.current,
+            persistent: persistentRef.current || false,
           }),
           signal: abortController.signal,
         })
@@ -399,6 +404,11 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop, on
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold tracking-tight">Swarm Mode</span>
               <StatusBadge status={overallStatus} />
+              {persistent && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-1.5 py-0.5">
+                  Persistent
+                </span>
+              )}
             </div>
             {total > 0 && (
               <span className="text-[11px] text-muted-foreground/70 leading-none mt-0.5">
@@ -503,7 +513,7 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop, on
                 {overallStatus === "planning"
                   ? "Decomposing task into subtasks\u2026"
                   : overallStatus === "creating"
-                    ? "Creating temporary machines\u2026"
+                    ? persistent ? "Creating persistent machines\u2026" : "Creating temporary machines\u2026"
                     : "Initializing\u2026"
                 }
               </span>
@@ -600,8 +610,12 @@ export function SwarmPanel({ isActive, swarmId, prompt, machineCount, onStop, on
               )}
               <p className="text-xs text-muted-foreground">
                 {overallStatus === "completed"
-                  ? `Swarm finished \u2014 ${completed} completed${failed > 0 ? `, ${failed} failed` : ""}`
-                  : "Swarm cancelled. All temporary machines deleted."}
+                  ? persistent
+                    ? `Swarm finished \u2014 ${completed} machine${completed !== 1 ? "s" : ""} kept as persistent VM${completed !== 1 ? "s" : ""}`
+                    : `Swarm finished \u2014 ${completed} completed${failed > 0 ? `, ${failed} failed` : ""}`
+                  : persistent
+                    ? "Swarm cancelled. Machines converted to persistent VMs."
+                    : "Swarm cancelled. All temporary machines deleted."}
               </p>
             </div>
             {onDismiss && (

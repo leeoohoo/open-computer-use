@@ -334,7 +334,9 @@ export class MachineCleanupService {
 
       const swarmMachines = machines.filter((m: any) => {
         const s = m.settings as any;
-        return s?.is_swarm === true;
+        // Only clean up temporary swarm machines — persistent swarm machines
+        // follow normal machine lifecycle (no auto-deletion)
+        return s?.is_swarm === true && !s?.persistent_swarm;
       });
 
       if (swarmMachines.length === 0) return;

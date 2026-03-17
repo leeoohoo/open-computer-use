@@ -140,7 +140,7 @@ function handleCheckoutSessionCompleted(
     subscription?: string
     customer?: string
   },
-  stripeSubscription: { status: string; current_period_start: number; current_period_end: number; cancel_at_period_end: boolean }
+  stripeSubscription: { id?: string; status: string; current_period_start: number; current_period_end: number; cancel_at_period_end: boolean }
 ): { status: number; body: any } {
   // Atomic event check
   if (!db.tryInsertEvent(eventId, "checkout.session.completed")) {

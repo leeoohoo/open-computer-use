@@ -1139,7 +1139,7 @@ class TestConfigurableTimeouts:
     def test_config_has_max_timeout(self):
         from app.core.config import Settings
         s = Settings()
-        assert s.SCHEDULED_TASK_MAX_TIMEOUT == 5400  # 90 minutes default
+        assert s.SCHEDULED_TASK_MAX_TIMEOUT == 21600  # 6 hours default
 
     def test_config_idle_timeout_overridable(self):
         """Env var override should work."""

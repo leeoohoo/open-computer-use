@@ -54,7 +54,7 @@ export function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Coasty Blog — AI Agent Insights &amp; Computer Use Research</title>
+    <title>Coasty Blog - AI Agent Insights &amp; Computer Use Research</title>
     <description>Deep dives into autonomous AI agents, computer use technology, real-world case studies, and the future of AI employees. From the team behind the #1 ranked computer-using agent.</description>
     <link>https://coasty.ai/blog</link>
     <atom:link href="https://coasty.ai/blog/feed.xml" rel="self" type="application/rss+xml" />

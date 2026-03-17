@@ -75,7 +75,7 @@ const pricingPlans = [
     price: "$0",
     period: "month",
     description: "Try the #1 computer-use agent",
-    credits: 100,
+    credits: 0,
     machines: 0,
     swarm: 0,
     features: [
@@ -98,7 +98,7 @@ const pricingPlans = [
     machines: 1,
     swarm: 2,
     features: [
-      "1 always-on VM",
+      "1 VM (deleted after inactivity)",
       "Coasty Computer Agent",
       "2 agents in parallel",
       "Basic search",
@@ -269,7 +269,7 @@ const faqs = [
   },
   {
     question: "What are credits and how are they used?",
-    answer: "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. The Free plan includes 100 credits per month, and paid plans offer significantly more. You can also purchase additional credit packs anytime."
+    answer: "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
   },
   {
     question: "Can Coasty run on my own computer?",
@@ -1126,7 +1126,7 @@ export function LandingPage() {
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                100 free credits. No credit card. Your AI agent is ready in 60 seconds.
+                No credit card. Your AI agent is ready in 60 seconds.
               </p>
             </motion.div>
 
@@ -1163,14 +1163,16 @@ export function LandingPage() {
 
                   {/* Key details */}
                   <div className="space-y-2 mb-4 flex-1">
+                    {plan.credits > 0 && (
                     <div className="flex items-center gap-2 text-sm">
                       <Zap className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                       <span className="text-muted-foreground">{plan.credits.toLocaleString()} credits/mo</span>
                     </div>
+                    )}
                     <div className="flex items-center gap-2 text-sm">
                       <HardDrive className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                       <span className="text-muted-foreground">
-                        {plan.machines === 0 ? "1 temporary VM (2hr)" : `${plan.machines} always-on VM${plan.machines > 1 ? "s" : ""}`}
+                        {plan.machines === 0 ? "1 temporary VM (2hr)" : plan.name === "Lite" ? "1 VM (deleted after inactivity)" : `${plan.machines} always-on VM${plan.machines > 1 ? "s" : ""}`}
                       </span>
                     </div>
                     {plan.swarm > 0 && (
@@ -1227,7 +1229,7 @@ export function LandingPage() {
                       whileHover={{ scale: 1.02, y: -1 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      Start Free — 100 Credits
+                      Start Free
                       <ArrowRight className="h-3.5 w-3.5" />
                     </motion.button>
                   </Link>

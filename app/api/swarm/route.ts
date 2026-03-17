@@ -27,7 +27,12 @@ interface SwarmRequest {
   machineCount?: number;
   maxSteps?: number;
   model?: string;
+  /** Keep machines alive after swarm completes (starter/plus/pro only) */
+  persistent?: boolean;
 }
+
+/** Tiers that support persistent swarms */
+const PERSISTENT_ELIGIBLE_TIERS = new Set(["starter", "professional", "enterprise"]);
 
 interface SwarmMachineRecord {
   id: string;
@@ -84,9 +89,58 @@ export async function POST(req: NextRequest) {
     .in("status", ["active", "trialing", "past_due"]);
 
   const plan = subscriptions?.[0]?.subscription_plans;
+  const planTier: string = plan?.tier || "free";
   const planMaxMachines = plan?.max_machines || 1;
-  // Swarm allows 3x the user's persistent machine limit (temp machines)
-  const swarmMaxMachines = Math.min(planMaxMachines * 3, 10); // hard cap at 10
+
+  // Persistent swarm validation
+  const isPersistent = body.persistent === true;
+
+  if (isPersistent) {
+    if (!PERSISTENT_ELIGIBLE_TIERS.has(planTier)) {
+      return NextResponse.json(
+        { error: "Persistent swarms require a Starter ($19), Plus ($50), or Pro ($100) plan" },
+        { status: 403 }
+      );
+    }
+
+    // Count user's existing persistent (non-swarm) machines
+    const { data: existingMachines } = await (supabase as any)
+      .from("user_machines")
+      .select("id, settings")
+      .eq("user_id", userId)
+      .neq("status", "deleting")
+      .neq("status", "error");
+
+    const existingPersistentCount = (existingMachines || []).filter((m: any) => {
+      const s = typeof m.settings === "string" ? JSON.parse(m.settings) : m.settings || {};
+      // Don't count temporary swarm machines (is_swarm but not persistent_swarm)
+      return !s.is_swarm || s.persistent_swarm;
+    }).length;
+
+    const requestedPersistent = Math.min(
+      body.machineCount || planMaxMachines,
+      planMaxMachines,
+    );
+
+    if (existingPersistentCount + requestedPersistent > planMaxMachines) {
+      const slotsLeft = Math.max(0, planMaxMachines - existingPersistentCount);
+      return NextResponse.json(
+        {
+          error: slotsLeft === 0
+            ? `You already have ${existingPersistentCount} persistent machine${existingPersistentCount !== 1 ? "s" : ""} (plan limit: ${planMaxMachines}). Delete a machine first or run a temporary swarm.`
+            : `Only ${slotsLeft} persistent machine slot${slotsLeft !== 1 ? "s" : ""} available (${existingPersistentCount}/${planMaxMachines} used). Reduce machine count to ${slotsLeft} or run a temporary swarm.`,
+        },
+        { status: 400 }
+      );
+    }
+  }
+
+  // Persistent swarms are capped at plan's max_machines (they become persistent machines).
+  // Temporary swarms get 3x the limit.
+  const swarmMaxMachines = isPersistent
+    ? planMaxMachines
+    : Math.min(planMaxMachines * 3, 10); // hard cap at 10
+
   const requestedCount = Math.min(
     body.machineCount || swarmMaxMachines,
     swarmMaxMachines,
@@ -113,6 +167,7 @@ export async function POST(req: NextRequest) {
     status: "creating",
     model: body.model || null,
     max_steps: body.maxSteps || 200,
+    persistent: isPersistent,
   });
 
   // -----------------------------------------------------------------------
@@ -122,29 +177,83 @@ export async function POST(req: NextRequest) {
   const machines: SwarmMachineRecord[] = [];
   let cleanedUp = false;
 
-  // Helper: delete ALL swarm machines — idempotent via cleanedUp guard.
+  // Helper: cleanup swarm machines — idempotent via cleanedUp guard.
+  // For persistent swarms that completed/cancelled successfully, converts machines
+  // to regular persistent machines instead of deleting them.
+  // For failed swarms or temporary swarms, deletes everything.
   async function deleteAllSwarmMachines(finalStatus: "completed" | "failed" | "cancelled" = "completed") {
     if (cleanedUp) return;
     cleanedUp = true;
 
-    for (const m of machines) {
-      try {
-        if (m.awsInstanceId) {
-          await awsService.terminateInstance(m.awsInstanceId, m.keyPairName);
+    // Persistent swarms keep machines on success/cancel — only delete on failure
+    const keepMachines = isPersistent && finalStatus !== "failed";
+
+    if (keepMachines) {
+      // Convert swarm machines to regular persistent machines
+      for (const m of machines) {
+        try {
+          if (!m.awsInstanceId) continue;
+          // Fetch current settings and strip swarm flags
+          const { data: dbm } = await (supabase as any)
+            .from("user_machines")
+            .select("settings, display_name")
+            .eq("id", m.id)
+            .single();
+
+          if (dbm) {
+            const settings = typeof dbm.settings === "string"
+              ? JSON.parse(dbm.settings)
+              : { ...dbm.settings };
+
+            // Remove swarm-specific flags, keep AWS/provider details
+            delete settings.is_swarm;
+            delete settings.persistent_swarm;
+            delete settings.swarm_id;
+            delete settings.swarm_index;
+            delete settings.swarm_created_at;
+
+            await (supabase as any)
+              .from("user_machines")
+              .update({
+                settings,
+                display_name: dbm.display_name?.replace(/^Swarm #\d+/, "Machine"),
+                status: "running",
+              })
+              .eq("id", m.id);
+          }
+        } catch (e) {
+          console.error(`Swarm ${swarmId}: failed to convert machine ${m.id} to persistent:`, e);
         }
-      } catch (e) {
-        console.error(
-          `Swarm cleanup: failed to terminate ${m.awsInstanceId}:`,
-          e
-        );
       }
-      try {
-        await (supabase as any)
-          .from("user_machines")
-          .delete()
-          .eq("id", m.id);
-      } catch (e) {
-        console.error(`Swarm cleanup: failed to delete DB record ${m.id}:`, e);
+      console.log(
+        `Swarm ${swarmId}: converted ${machines.filter(m => m.awsInstanceId).length} machines to persistent`
+      );
+    } else {
+      // Delete all swarm machines (temporary swarm or failed persistent)
+      for (const m of machines) {
+        try {
+          if (m.awsInstanceId) {
+            await awsService.terminateInstance(m.awsInstanceId, m.keyPairName);
+          }
+        } catch (e) {
+          console.error(
+            `Swarm cleanup: failed to terminate ${m.awsInstanceId}:`,
+            e
+          );
+        }
+        try {
+          await (supabase as any)
+            .from("user_machines")
+            .delete()
+            .eq("id", m.id);
+        } catch (e) {
+          console.error(`Swarm cleanup: failed to delete DB record ${m.id}:`, e);
+        }
+      }
+      if (machines.length > 0) {
+        console.log(
+          `Swarm ${swarmId}: cleaned up ${machines.length} temporary machines`
+        );
       }
     }
 
@@ -172,12 +281,6 @@ export async function POST(req: NextRequest) {
         result_summary: resultSummary,
       })
       .eq("swarm_id", swarmId);
-
-    if (machines.length > 0) {
-      console.log(
-        `Swarm ${swarmId}: cleaned up ${machines.length} temporary machines`
-      );
-    }
   }
 
   try {
@@ -212,6 +315,7 @@ export async function POST(req: NextRequest) {
           settings: {
             provider: "aws",
             is_swarm: true,
+            persistent_swarm: isPersistent,
             swarm_id: swarmId,
             swarm_index: i,
             swarm_created_at: new Date().toISOString(),
@@ -257,6 +361,7 @@ export async function POST(req: NextRequest) {
           settings: {
             provider: "aws",
             is_swarm: true,
+            persistent_swarm: isPersistent,
             swarm_id: swarmId,
             swarm_index: i,
             swarm_created_at: new Date().toISOString(),
@@ -332,6 +437,7 @@ export async function POST(req: NextRequest) {
       model: body.model,
       max_steps: body.maxSteps || 200,
       user_id: userId,
+      persistent: isPersistent,
     };
 
     const controller = new AbortController();

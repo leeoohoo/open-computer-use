@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!post) return { title: "Blog Post Not Found" }
 
   return {
-    title: `${post.title} — Coasty Blog`,
+    title: `${post.title} - Coasty Blog`,
     description: post.excerpt,
     keywords: [post.category, "AI agent", "computer use agent", "Coasty", "autonomous AI", "desktop automation"],
     authors: [{ name: post.author }],

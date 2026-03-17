@@ -21,7 +21,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { LandingHeader } from "@/app/components/landing/landing-header"
 import { LandingFooter } from "@/app/components/landing/landing-footer"
@@ -33,7 +33,6 @@ interface Plan {
   id: string
   name: string
   price: number
-  annualPrice: number
   tagline: string
   credits: number
   machines: number
@@ -54,19 +53,19 @@ interface Feature {
 // ─── Data ───────────────────────────────────────────────────────────────────
 
 const plans: Plan[] = [
-  { id: "free", name: "Free", price: 0, annualPrice: 0, tagline: "Try the #1 computer-use agent", credits: 100, machines: 0, swarm: 0, highlighted: false, cta: "Start Free", search: false },
-  { id: "lite", name: "Lite", price: 9, annualPrice: 7, tagline: "Light daily automation", credits: 100, machines: 1, swarm: 2, highlighted: false, cta: "Get Lite", search: false },
-  { id: "starter", name: "Starter", price: 19, annualPrice: 15, tagline: "Automate tasks every day", credits: 200, machines: 1, swarm: 3, highlighted: false, cta: "Get Starter", search: true },
-  { id: "plus", name: "Plus", price: 50, annualPrice: 40, tagline: "Scale complex workflows", credits: 600, machines: 2, swarm: 6, highlighted: true, badge: "Popular", cta: "Go Plus", search: true },
-  { id: "pro", name: "Pro", price: 100, annualPrice: 80, tagline: "Unlimited heavy automation", credits: 1500, machines: 3, swarm: 9, highlighted: false, cta: "Get Pro", search: true },
+  { id: "free", name: "Free", price: 0, tagline: "Try the #1 computer-use agent", credits: 0, machines: 0, swarm: 0, highlighted: false, cta: "Start Free", search: false },
+  { id: "lite", name: "Lite", price: 9, tagline: "Light daily automation", credits: 100, machines: 1, swarm: 2, highlighted: false, cta: "Get Lite", search: false },
+  { id: "starter", name: "Starter", price: 19, tagline: "Automate tasks every day", credits: 200, machines: 1, swarm: 3, highlighted: false, cta: "Get Starter", search: true },
+  { id: "plus", name: "Plus", price: 50, tagline: "Scale complex workflows", credits: 600, machines: 2, swarm: 6, highlighted: true, badge: "Most Popular", cta: "Go Plus", search: true },
+  { id: "pro", name: "Pro", price: 100, tagline: "Unlimited heavy automation", credits: 1500, machines: 3, swarm: 9, highlighted: false, cta: "Get Pro", search: true },
 ]
 
 const featureList: Feature[] = [
   { icon: Monitor, title: "Coasty Computer Agent", subtitle: () => "Full browser, desktop & terminal", highlight: { label: "Core", color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" } },
   { icon: Workflow, title: "Swarm Mode", subtitle: (p) => p.swarm === 0 ? "Sequential only" : `${p.swarm} agents in parallel`, highlight: { label: "Powerful", color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" } },
   { icon: Shield, title: "Security", subtitle: () => "Sandboxed, E2E encrypted", highlight: { label: "Every plan", color: "text-green-600 dark:text-green-400", bg: "bg-green-500/10", border: "border-green-500/20" } },
-  { icon: Zap, title: "Monthly Credits", subtitle: (p) => `${p.credits.toLocaleString()} credits/mo` },
-  { icon: HardDrive, title: "Persistent Machines", subtitle: (p) => p.machines === 0 ? "1 temporary VM (2hr)" : `${p.machines} always-on VM${p.machines > 1 ? "s" : ""}` },
+  { icon: Zap, title: "Monthly Credits", subtitle: (p) => p.credits === 0 ? "Pay as you go" : `${p.credits.toLocaleString()} credits/mo` },
+  { icon: HardDrive, title: "Persistent Machines", subtitle: (p) => p.machines === 0 ? "1 temporary VM (2hr)" : p.id === "lite" ? "1 VM (deleted after inactivity)" : `${p.machines} always-on VM${p.machines > 1 ? "s" : ""}` },
   { icon: Globe, title: "Web Search", subtitle: (p) => p.search ? "Advanced search & extraction" : "Basic search" },
 ]
 
@@ -163,9 +162,9 @@ function CreditsVisual({ plan }: { plan: Plan }) {
           animate={{ opacity: 1, y: 0 }}
           className="text-5xl font-bold tracking-tight text-foreground"
         >
-          {plan.credits.toLocaleString()}
+          {plan.credits === 0 ? "Free" : plan.credits.toLocaleString()}
         </motion.span>
-        <p className="text-sm text-muted-foreground mt-1">credits per month</p>
+        <p className="text-sm text-muted-foreground mt-1">{plan.credits === 0 ? "Pay as you go" : "credits per month"}</p>
       </motion.div>
 
       {/* Animated task list showing credit usage */}
@@ -510,18 +509,12 @@ function FeatureVisual({ featureIndex, plan }: { featureIndex: number; plan: Pla
 // ─── Main Page ──────────────────────────────────────────────────────────────
 
 export default function PricingPage() {
-  const [isAnnual, setIsAnnual] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState(3)
   const [activeFeature, setActiveFeature] = useState(0)
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
 
-  const getPrice = useCallback(
-    (plan: Plan) => (isAnnual ? plan.annualPrice : plan.price),
-    [isAnnual]
-  )
-
   const plan = plans[selectedPlan]
-  const price = getPrice(plan)
+  const price = plan.price
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
@@ -545,7 +538,7 @@ export default function PricingPage() {
             <span className="text-muted-foreground">real autopilot</span>
           </h1>
           <p className="mt-4 text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Start free with 100 credits. Upgrade when you need more power.
+            Start free. Upgrade when you need more power.
           </p>
         </motion.div>
       </section>
@@ -553,39 +546,6 @@ export default function PricingPage() {
       {/* ─── Plan Tabs + Split Feature Explorer ──────────────────────── */}
       <section className="py-10 sm:py-14 px-7 sm:px-10">
         <div className="max-w-5xl mx-auto">
-
-          {/* Billing toggle */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.4, ease }}
-            className="flex items-center justify-center gap-3 mb-8"
-          >
-            <span className={cn("text-sm font-medium transition-colors", !isAnnual ? "text-foreground" : "text-muted-foreground")}>Monthly</span>
-            <button
-              onClick={() => setIsAnnual(!isAnnual)}
-              className={cn("relative h-7 w-[52px] rounded-full transition-colors duration-200", isAnnual ? "bg-primary" : "bg-muted-foreground/20")}
-            >
-              <motion.div
-                className="absolute top-0.5 h-6 w-6 rounded-full bg-white dark:bg-background shadow-md"
-                animate={{ left: isAnnual ? 24 : 2 }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              />
-            </button>
-            <span className={cn("text-sm font-medium transition-colors", isAnnual ? "text-foreground" : "text-muted-foreground")}>Annual</span>
-            <AnimatePresence>
-              {isAnnual && (
-                <motion.span
-                  initial={{ opacity: 0, scale: 0.8, x: -8 }}
-                  animate={{ opacity: 1, scale: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, x: -8 }}
-                  className="rounded-full bg-orange-500/10 border border-orange-500/20 px-2.5 py-0.5 text-xs font-semibold text-orange-600 dark:text-orange-400"
-                >
-                  Save 20%
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.div>
 
           {/* Plan tabs */}
           <motion.div
@@ -609,7 +569,7 @@ export default function PricingPage() {
                   </span>
                 )}
                 <span className="text-sm sm:text-base font-semibold">{p.name}</span>
-                <span className="text-xs text-muted-foreground tabular-nums">${isAnnual ? p.annualPrice : p.price}/mo</span>
+                <span className="text-xs text-muted-foreground tabular-nums">${p.price}/mo</span>
                 {selectedPlan === i && (
                   <motion.div
                     layoutId="plan-tab-bg"
@@ -643,7 +603,7 @@ export default function PricingPage() {
                       <p className="text-sm text-muted-foreground mb-1">{plan.tagline}</p>
                       <div className="flex items-baseline gap-1.5">
                         <motion.span
-                          key={`${plan.id}-${isAnnual}`}
+                          key={plan.id}
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="text-5xl sm:text-6xl font-bold tracking-tight"
@@ -652,12 +612,6 @@ export default function PricingPage() {
                         </motion.span>
                         <span className="text-lg text-muted-foreground">/mo</span>
                       </div>
-                      {isAnnual && plan.price > 0 && (
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          <span className="line-through">${plan.price}</span>{" "}
-                          <span className="text-orange-600 dark:text-orange-400 font-medium">save ${(plan.price - plan.annualPrice) * 12}/yr</span>
-                        </p>
-                      )}
                     </div>
                     {plan.highlighted ? (
                       <RainbowButton className="h-11 px-8 text-sm sm:text-base flex-shrink-0" asChild>
@@ -815,7 +769,7 @@ export default function PricingPage() {
           className="max-w-2xl mx-auto text-center"
         >
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Your AI agent is 60 seconds away</h2>
-          <p className="text-muted-foreground mt-4 text-lg">Sign up, get 100 free credits, and let Coasty handle the work.</p>
+          <p className="text-muted-foreground mt-4 text-lg">Sign up and let Coasty handle the work.</p>
           <div className="mt-8 flex flex-col items-center gap-4">
             <RainbowButton size="lg" className="text-base px-10 h-13 sm:h-14 sm:text-lg sm:px-12" asChild>
               <Link href="/auth">Start Free<ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" /></Link>

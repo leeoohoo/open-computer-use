@@ -30,8 +30,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Coasty — #1 Computer-Use AI Agent | AI Employee for Desktop & Browser Automation",
-    template: "%s | Coasty — AI Computer-Use Agent"
+    default: "Coasty - #1 Computer-Use AI Agent | AI Employee for Desktop & Browser Automation",
+    template: "%s | Coasty - AI Computer-Use Agent"
   },
   description:
     "Coasty is the #1 ranked computer-using AI agent — 82% on the OSWorld benchmark. It controls a full desktop like a human: opens browsers, clicks, types, fills forms, sends emails, manages spreadsheets. True VM-level isolation per session. Built-in CAPTCHA solving. Starting at $20/mo — replaces $3,000/mo virtual assistants. The best alternative to Anthropic Computer Use, OpenAI Operator, and traditional RPA tools.",
@@ -92,21 +92,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://coasty.ai",
-    siteName: "Coasty — #1 Computer-Use AI Agent",
-    title: "Coasty — #1 Computer-Use AI Agent | 82% OSWorld Benchmark",
+    siteName: "Coasty - #1 Computer-Use AI Agent",
+    title: "Coasty - #1 Computer-Use AI Agent | 82% OSWorld Benchmark",
     description: "AI employee that controls a desktop like a human. #1 on OSWorld benchmark (82%). Browser automation, desktop control, CAPTCHA solving, VM isolation. Starting at $20/mo.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Coasty — #1 Computer-Use AI Agent | 82% OSWorld Benchmark"
+        alt: "Coasty - #1 Computer-Use AI Agent | 82% OSWorld Benchmark"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Coasty — #1 Computer-Use AI Agent | 82% OSWorld Benchmark",
+    title: "Coasty - #1 Computer-Use AI Agent | 82% OSWorld Benchmark",
     description: "AI employee that controls a desktop like a human. Opens browsers, clicks, types, fills forms, sends emails. True VM isolation. $20/mo vs $3k/mo human VA.",
     images: ["/og-image.png"],
     creator: "@coasty_ai"

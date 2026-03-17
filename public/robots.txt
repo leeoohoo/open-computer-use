@@ -1,4 +1,4 @@
-# Coasty — AI Employee Platform | #1 Computer-Use Agent
+# Coasty - AI Employee Platform | #1 Computer-Use Agent
 # https://coasty.ai
 
 User-agent: *

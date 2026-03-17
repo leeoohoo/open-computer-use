@@ -2,7 +2,8 @@
  * POST /api/swarm/[swarmId]/stop — Stop a running swarm.
  *
  * 1. Proxies cancellation to the Python backend
- * 2. Also terminates swarm machines directly (safety net if stream disconnected)
+ * 2. For temporary swarms: terminates machines directly (safety net)
+ * 3. For persistent swarms: converts machines to regular persistent machines
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -53,43 +54,84 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       backendResult = await response.json();
     }
 
-    // 2. Also terminate and delete swarm machines directly (safety net)
+    // 2. Check if this is a persistent swarm
+    const { data: swarmRun } = await (supabase as any)
+      .from("swarm_runs")
+      .select("persistent")
+      .eq("swarm_id", swarmId)
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    const isPersistent = swarmRun?.persistent === true;
+
+    // 3. Handle swarm machines
     const { data: swarmMachines } = await (supabase as any)
       .from("user_machines")
-      .select("id, settings")
+      .select("id, settings, display_name")
       .eq("user_id", userId)
       .contains("settings", { swarm_id: swarmId });
 
     let terminated = 0;
-    if (swarmMachines && swarmMachines.length > 0) {
-      const awsService = getAwsEc2Service();
+    let converted = 0;
 
-      for (const m of swarmMachines) {
-        const s =
-          typeof m.settings === "string"
-            ? JSON.parse(m.settings)
-            : m.settings || {};
-        try {
-          if (s.awsInstanceId) {
-            await awsService.terminateInstance(
-              s.awsInstanceId,
-              s.awsKeyPairName
-            );
+    if (swarmMachines && swarmMachines.length > 0) {
+      if (isPersistent) {
+        // Convert machines to regular persistent machines (keep them alive)
+        for (const m of swarmMachines) {
+          const s =
+            typeof m.settings === "string"
+              ? JSON.parse(m.settings)
+              : { ...(m.settings || {}) };
+          try {
+            // Strip swarm flags
+            delete s.is_swarm;
+            delete s.persistent_swarm;
+            delete s.swarm_id;
+            delete s.swarm_index;
+            delete s.swarm_created_at;
+
+            await (supabase as any)
+              .from("user_machines")
+              .update({
+                settings: s,
+                display_name: m.display_name?.replace(/^Swarm #\d+/, "Machine"),
+                status: "running",
+              })
+              .eq("id", m.id);
+            converted++;
+          } catch (e) {
+            console.error(`Stop: failed to convert persistent machine ${m.id}:`, e);
           }
-          await (supabase as any)
-            .from("user_machines")
-            .delete()
-            .eq("id", m.id);
-          terminated++;
-        } catch (e) {
-          console.error(`Stop cleanup: failed for machine ${m.id}:`, e);
+        }
+      } else {
+        // Terminate temporary swarm machines
+        const awsService = getAwsEc2Service();
+
+        for (const m of swarmMachines) {
+          const s =
+            typeof m.settings === "string"
+              ? JSON.parse(m.settings)
+              : m.settings || {};
+          try {
+            if (s.awsInstanceId) {
+              await awsService.terminateInstance(
+                s.awsInstanceId,
+                s.awsKeyPairName
+              );
+            }
+            await (supabase as any)
+              .from("user_machines")
+              .delete()
+              .eq("id", m.id);
+            terminated++;
+          } catch (e) {
+            console.error(`Stop cleanup: failed for machine ${m.id}:`, e);
+          }
         }
       }
     }
 
     // Update swarm_runs status to "cancelled" as a safety net.
-    // The stream cleanup in route.ts also tries, but if the stream already
-    // closed or the client disconnected this ensures the DB is correct.
     await (supabase as any)
       .from("swarm_runs")
       .update({
@@ -103,6 +145,8 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({
       ...backendResult,
       machinesTerminated: terminated,
+      machinesConverted: converted,
+      persistent: isPersistent,
       swarmId,
     });
   } catch (error: any) {

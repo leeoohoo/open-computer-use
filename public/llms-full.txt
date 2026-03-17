@@ -1,4 +1,4 @@
-# Coasty — AI Employee Platform (Full Technical Documentation)
+# Coasty - AI Employee Platform (Full Technical Documentation)
 # https://coasty.ai
 # This is the extended version of llms.txt with comprehensive technical details.
 

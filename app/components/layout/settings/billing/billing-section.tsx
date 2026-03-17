@@ -25,7 +25,7 @@ const subscriptionPlans = [
     swarm: 2,
     description: "Light daily automation",
     features: [
-      "1 always-on VM",
+      "1 VM (deleted after inactivity)",
       "2 agents in parallel",
       "Basic search",
       "Standard support (real humans)",
@@ -497,7 +497,7 @@ export function BillingSection() {
             <div className="mb-5 flex items-center gap-2 rounded-lg bg-violet-500/[0.08] border border-violet-500/15 px-3 py-2">
               <HardDrive className="h-3.5 w-3.5 text-violet-500 flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">
-                {plan.machines} always-on VM{plan.machines > 1 ? "s" : ""}
+                {plan.id === "lite" ? "1 VM (deleted after inactivity)" : `${plan.machines} always-on VM${plan.machines > 1 ? "s" : ""}`}
               </span>
             </div>
 
