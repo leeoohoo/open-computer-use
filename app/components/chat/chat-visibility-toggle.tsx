@@ -180,15 +180,15 @@ export function ChatVisibilityToggle({
             variant="ghost"
             size="sm"
             className={cn(
-              "rounded-full px-2.5 py-1.5 h-8 transition-colors duration-150 font-medium",
+              "rounded-full px-3 py-1.5 h-8 font-medium transition-all duration-200 border",
               isPublic
-                ? "text-blue-600 dark:text-blue-400 bg-blue-500/8 hover:bg-blue-500/12"
-                : "text-muted-foreground hover:text-foreground bg-muted/40 hover:bg-muted/70"
+                ? "text-blue-600 dark:text-blue-400 bg-blue-500/10 hover:bg-blue-500/16 border-blue-500/20 dark:border-blue-400/20 shadow-[0_0_8px_-2px_rgba(59,130,246,0.15)] dark:shadow-[0_0_8px_-2px_rgba(96,165,250,0.12)]"
+                : "text-foreground bg-foreground/[0.04] hover:bg-foreground/[0.08] border-foreground/10 hover:border-foreground/15 dark:bg-white/[0.06] dark:hover:bg-white/[0.1] dark:border-white/10"
             )}
             onClick={() => handleOpenChange(true)}
           >
-            <ShareNetwork className="size-4" />
-            <span className="hidden sm:inline ml-1.5 text-sm">Share</span>
+            <ShareNetwork className="size-3.5" weight={isPublic ? "fill" : "regular"} />
+            <span className="ml-1.5 text-sm">Share</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>
