@@ -9,6 +9,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAwsEc2Service } from "@/lib/aws/ec2-service";
+import { cleanupOrphanedMailboxes } from "@/lib/services/workmail-service";
 
 const PYTHON_BACKEND_URL =
   process.env.PYTHON_BACKEND_URL || "http://127.0.0.1:8001";
@@ -129,6 +130,13 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
           }
         }
       }
+    }
+
+    // Cleanup WorkMail mailboxes for this swarm (fire-and-forget for non-persistent)
+    if (!isPersistent) {
+      cleanupOrphanedMailboxes(1).catch((e) =>
+        console.error(`Stop: mailbox cleanup error for swarm ${swarmId}:`, e)
+      );
     }
 
     // Update swarm_runs status to "cancelled" as a safety net.

@@ -38,9 +38,16 @@ provider_factory = ProviderFactory()
 # Request / response models
 # ---------------------------------------------------------------------------
 
+class EmailIdentity(BaseModel):
+    """Ephemeral WorkMail mailbox credentials for a swarm agent."""
+    email: str
+    password: str
+
+
 class SwarmMachine(BaseModel):
     machine_id: str
     display_name: Optional[str] = None
+    email_identity: Optional[EmailIdentity] = None
 
 
 class SwarmExecuteRequest(BaseModel):
@@ -85,11 +92,18 @@ async def swarm_execute(
         if not conn:
             logger.warning(f"Swarm: machine {m.machine_id} not reachable, skipping")
             continue
-        resolved_machines.append({
+        machine_entry: Dict[str, Any] = {
             "machine_id": m.machine_id,
             "connection_info": conn,
             "display_name": m.display_name or m.machine_id[:8],
-        })
+        }
+        # Pass through email identity if provisioned
+        if m.email_identity:
+            machine_entry["email_identity"] = {
+                "email": m.email_identity.email,
+                "password": m.email_identity.password,
+            }
+        resolved_machines.append(machine_entry)
 
     if not resolved_machines:
         raise HTTPException(

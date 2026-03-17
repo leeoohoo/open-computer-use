@@ -1,4 +1,5 @@
 import { createServiceClient } from "@/lib/supabase/service";
+import { deleteSwarmMailbox } from "@/lib/services/workmail-service";
 
 interface CleanupStats {
   deleted: number;
@@ -414,6 +415,16 @@ export class MachineCleanupService {
         } catch (awsError) {
           console.warn(`Failed to terminate EC2 instance ${settings.awsInstanceId} for machine ${machine.id}:`, awsError);
           // Continue with DB deletion — instance may already be gone
+        }
+      }
+
+      // Clean up WorkMail mailbox if one was provisioned
+      if (settings?.email_identity?.workmailUserId) {
+        try {
+          await deleteSwarmMailbox(settings.email_identity.workmailUserId);
+          console.log(`Deleted WorkMail mailbox for machine ${machine.id}`);
+        } catch (mailErr) {
+          console.warn(`Failed to delete WorkMail mailbox for machine ${machine.id}:`, mailErr);
         }
       }
 

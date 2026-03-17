@@ -44,6 +44,10 @@ cachetools==5.5.0
 # Scheduling
 croniter==3.0.3
 
+# Agent email (WorkMail IMAP/SMTP for swarm agents)
+aioimaplib==2.0.1
+aiosmtplib==5.1.0
+
 # Analytics
 posthog==3.7.0
 

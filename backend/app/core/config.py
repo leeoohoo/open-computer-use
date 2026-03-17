@@ -68,6 +68,13 @@ class Settings(BaseSettings):
     AZURE_STORAGE_ACCOUNT: Optional[str] = Field(default=None)
     AZURE_STORAGE_KEY: Optional[str] = Field(default=None)
     
+    # AWS WorkMail (agent email for swarms)
+    WORKMAIL_IMAP_HOST: str = Field(default="imap.mail.us-east-1.awsapps.com")
+    WORKMAIL_SMTP_HOST: str = Field(default="smtp.mail.us-east-1.awsapps.com")
+    WORKMAIL_IMAP_PORT: int = Field(default=993)
+    WORKMAIL_SMTP_PORT: int = Field(default=465)
+    WORKMAIL_DOMAIN: str = Field(default="agents.coasty.ai")
+
     # Redis Cache
     REDIS_URL: str = Field(default="redis://localhost:6379/0")
     CACHE_ENABLED: bool = Field(default=False)

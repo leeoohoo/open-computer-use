@@ -72,6 +72,12 @@ export interface MachineSettings {
   // Snapshot restore
   restoredFromSnapshot?: string;
   restoredAt?: string;
+  // Agent email identity (WorkMail)
+  email_identity?: {
+    email: string;
+    password: string;
+    workmailUserId: string;
+  };
 }
 
 export interface MachineSession {

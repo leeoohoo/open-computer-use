@@ -222,6 +222,7 @@ async def get_machine_connection_info(machine_id: str, user_id: str) -> Optional
 
         # Check if it's marked as local in settings
         settings = machine.get("settings", {})
+        email_identity = settings.get("email_identity")
         if settings.get("isLocal"):
             ports = settings.get("ports", {})
             # Check if it's localhost - use port 8081, otherwise use configured port
@@ -234,9 +235,10 @@ async def get_machine_connection_info(machine_id: str, user_id: str) -> Optional
                 "websocket_port": ports.get("websocket", 6080),
                 "machine_name": machine.get("display_name", "Local VM"),
                 "vnc_password": machine.get("vnc_password", "coasty123"),  # Include password
-                "is_local": True
+                "is_local": True,
+                "email_identity": email_identity,
             }
-        
+
         # Azure machine
         return {
             "public_ip": machine.get("public_ip_address"),
@@ -245,7 +247,8 @@ async def get_machine_connection_info(machine_id: str, user_id: str) -> Optional
             "websocket_port": machine.get("websocket_port", 6080),
             "machine_name": machine.get("display_name", "VM Desktop"),
             "vnc_password": machine.get("vnc_password"),  # Include password for authentication
-            "is_local": False
+            "is_local": False,
+            "email_identity": email_identity,
         }
     except Exception as e:
         logger.error(f"Error getting machine connection info: {str(e)}")
@@ -397,6 +400,7 @@ async def chat_endpoint(
                 model=bedrock_model,
                 temperature=1.0,
                 max_tokens=None,
+                email_identity=connection_info.get("email_identity") if connection_info else None,
             )
             logger.info(f"Using CUA executor with model {bedrock_model}")
         else:

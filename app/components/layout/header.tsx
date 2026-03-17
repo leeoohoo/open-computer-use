@@ -7,12 +7,11 @@ import { CoastyIcon } from "@/components/icons/coasty"
 import { Button } from "@/components/ui/button"
 import { APP_NAME } from "@/lib/config"
 import { cn } from "@/lib/utils"
-import { useUserPreferences } from "@/lib/user-preference-store/provider"
 import { useUser } from "@/lib/user-store/provider"
 import { useChats } from "@/lib/chat-store/chats/provider"
 import { useChatSession } from "@/lib/chat-store/session/provider"
 import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
-import { Info, Users, Copy, Link as LinkIcon, UserPlus, SidebarSimple, Globe, Desktop } from "@phosphor-icons/react"
+import { Info, Desktop } from "@phosphor-icons/react"
 import { AgentIcon } from "@/components/icons/agent"
 import Link from "next/link"
 import { HeaderSidebarTrigger } from "./header-sidebar-trigger"
@@ -34,11 +33,9 @@ interface HeaderProps {
 export function Header({ hasSidebar }: HeaderProps) {
   const isMobile = useBreakpoint(768)
   const { user } = useUser()
-  const { preferences } = useUserPreferences()
   const { refresh, getChatById } = useChats()
   const { chatId } = useChatSession()
   const { isOpen: isNavigatorOpen, toggleNavigator, selectedVMId } = useProjectNavigator()
-  const isMultiModelEnabled = preferences.multiModelEnabled
   const isLoggedIn = !!user
 
 
@@ -63,42 +60,8 @@ export function Header({ hasSidebar }: HeaderProps) {
   const currentChat = chatId ? getChatById(chatId) : null
   const isCollaborativeRoom = currentChat?.collaborative === true
 
-  // Common button styling for consistency and emphasis - using card color for dark mode
-  const headerButtonClass = "text-foreground hover:text-foreground hover:bg-muted/80 bg-background dark:bg-card dark:hover:bg-card/70 rounded-3xl px-3 py-2 h-9 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
-  
-  // Mobile-responsive button styling - smaller on mobile - using card color for dark mode
-  const mobileHeaderButtonClass = "text-foreground hover:text-foreground hover:bg-muted/80 bg-background dark:bg-card dark:hover:bg-card/70 rounded-3xl transition-all duration-200 shadow-sm hover:shadow-md font-medium px-2 py-1.5 h-8 sm:px-3 sm:py-2 sm:h-9"
-
-  const handleRoomCreated = async () => {
-    // Refresh the chat list to include the new room
-    await refresh()
-  }
-
-  const handleRoomJoined = async () => {
-    // Refresh the chat list to include the joined room
-    await refresh()
-  }
-
-  // Helper functions for collaborative room actions
-  const copyInviteCode = async (inviteCode: string) => {
-    try {
-      await navigator.clipboard.writeText(inviteCode)
-      toast.success("Invite code copied!")
-    } catch (err) {
-      toast.error("Failed to copy invite code")
-    }
-  }
-
-  const copyInviteLink = async (inviteCode: string) => {
-    try {
-      const inviteLink = `${window.location.origin}/join/${inviteCode}`
-      await navigator.clipboard.writeText(inviteLink)
-      toast.success("Invite link copied!")
-    } catch (err) {
-      toast.error("Failed to copy invite link")
-    }
-  }
-
+  // Clean, minimal header button — no background, no shadow, just icon + text
+  const headerBtnClass = "text-muted-foreground hover:text-foreground rounded-full px-2 py-1.5 h-8 sm:h-8 transition-colors duration-150 font-medium"
 
   return (
     <>
@@ -122,15 +85,15 @@ export function Header({ hasSidebar }: HeaderProps) {
           </div>
           {!isLoggedIn ? (
             <div className="pointer-events-auto flex items-center justify-end gap-1 sm:gap-2 min-w-0 flex-shrink-0">
-              <AnimatedThemeToggler 
-                className="bg-background dark:bg-card dark:hover:bg-card/70 hover:bg-muted text-muted-foreground h-8 w-8 rounded-3xl flex items-center justify-center flex-shrink-0 shadow-sm hover:shadow-md transition-all duration-200"
+              <AnimatedThemeToggler
+                className="text-muted-foreground hover:text-foreground h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-150"
               />
               <AppInfoTrigger
                 trigger={
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="bg-background hover:bg-muted text-muted-foreground h-8 w-8 rounded-3xl flex-shrink-0"
+                    className="text-muted-foreground hover:text-foreground h-8 w-8 rounded-full flex-shrink-0 transition-colors duration-150"
                     aria-label={`About ${APP_NAME}`}
                   >
                     <Info className="size-4" />
@@ -145,34 +108,26 @@ export function Header({ hasSidebar }: HeaderProps) {
               </Link>
             </div>
           ) : (
-            <div className="pointer-events-auto flex items-center justify-end gap-1 sm:gap-2 min-w-0 flex-shrink-0">
-              {/* Show share button for non-collaborative chats */}
-              {chatId && !isCollaborativeRoom && currentChat && (
-                <ChatVisibilityToggle
-                  chatId={chatId}
-                  initialPublic={currentChat.public || false}
-                />
-              )}
-
-              {/* Assign Employee button - show for active chats */}
+            <div className="pointer-events-auto flex items-center justify-end gap-0.5 sm:gap-1 min-w-0 flex-shrink-0">
+              {/* Assign Employee */}
               {chatId && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={mobileHeaderButtonClass}
+                      className={headerBtnClass}
                       onClick={openScheduleDialog}
                     >
-                      <AgentIcon className="size-4 mr-0 sm:mr-2" />
-                      <span className="hidden sm:inline text-sm font-medium">Assign Employee</span>
+                      <AgentIcon className="size-4" />
+                      <span className="hidden sm:inline ml-1.5 text-sm">Assign</span>
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Assign an employee to run this task automatically</TooltipContent>
+                  <TooltipContent>Assign an employee to run this task</TooltipContent>
                 </Tooltip>
               )}
 
-              {/* Project Navigator Toggle - show for all active chats */}
+              {/* Computer */}
               {chatId && (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -180,25 +135,30 @@ export function Header({ hasSidebar }: HeaderProps) {
                       variant="ghost"
                       size="sm"
                       className={cn(
-                        mobileHeaderButtonClass,
-                        "relative overflow-hidden",
-                        isNavigatorOpen && "bg-accent text-accent-foreground"
+                        headerBtnClass,
+                        isNavigatorOpen && "text-foreground bg-muted/60"
                       )}
                       onClick={toggleNavigator}
                     >
-                      {/* Gradient background */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/[0.04] via-violet-600/[0.04] to-indigo-600/[0.04] dark:from-purple-600/[0.02] dark:via-violet-600/[0.02] dark:to-indigo-600/[0.02]" />
-                      <Desktop className="relative size-4 mr-0 sm:mr-2" />
-                      <span className="relative hidden sm:inline text-sm font-medium">Computer</span>
+                      <Desktop className="size-4" />
+                      <span className="hidden sm:inline ml-1.5 text-sm">Computer</span>
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>{isNavigatorOpen ? "Hide" : "Show"} Coasty's Computer</TooltipContent>
+                  <TooltipContent>{isNavigatorOpen ? "Hide" : "Show"} Computer</TooltipContent>
                 </Tooltip>
               )}
-              
+
+              {/* Share — slight accent to encourage usage */}
+              {chatId && !isCollaborativeRoom && currentChat && (
+                <ChatVisibilityToggle
+                  chatId={chatId}
+                  initialPublic={currentChat.public || false}
+                />
+              )}
+
               {/* Theme Toggle */}
-              <AnimatedThemeToggler 
-                className="bg-background dark:bg-card dark:hover:bg-card/70 hover:bg-muted text-muted-foreground h-8 w-8 rounded-3xl flex items-center justify-center flex-shrink-0 shadow-sm hover:shadow-md transition-all duration-200"
+              <AnimatedThemeToggler
+                className="text-muted-foreground hover:text-foreground h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-150"
               />
             </div>
           )}

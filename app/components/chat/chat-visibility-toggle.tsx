@@ -172,9 +172,6 @@ export function ChatVisibilityToggle({
     }
   }
 
-  // Mobile-responsive button styling - same as computer button - using card color for dark mode with nice borders
-  const mobileHeaderButtonClass = "text-foreground hover:text-foreground hover:bg-muted/80 bg-background dark:bg-card dark:hover:bg-card/70 border border-border/50 dark:border-zinc-700/50 rounded-3xl transition-all duration-200 shadow-sm hover:shadow-md hover:border-border dark:hover:border-zinc-600 font-medium px-2 py-1.5 h-8 sm:px-3 sm:py-2 sm:h-9"
-
   return (
     <>
       <Tooltip>
@@ -183,18 +180,15 @@ export function ChatVisibilityToggle({
             variant="ghost"
             size="sm"
             className={cn(
-              mobileHeaderButtonClass,
-              "relative overflow-hidden",
-              isPublic && "bg-accent/10"
+              "rounded-full px-2.5 py-1.5 h-8 transition-colors duration-150 font-medium",
+              isPublic
+                ? "text-blue-600 dark:text-blue-400 bg-blue-500/8 hover:bg-blue-500/12"
+                : "text-muted-foreground hover:text-foreground bg-muted/40 hover:bg-muted/70"
             )}
             onClick={() => handleOpenChange(true)}
           >
-            {/* Gradient background for public chats */}
-            {isPublic && (
-              <div className="absolute inset-0 bg-gradient-to-r from-green-600/[0.04] via-emerald-600/[0.04] to-teal-600/[0.04] dark:from-green-600/[0.02] dark:via-emerald-600/[0.02] dark:to-teal-600/[0.02]" />
-            )}
-            <ShareNetwork className="relative size-4 mr-0 sm:mr-2" />
-            <span className="relative hidden sm:inline text-sm font-medium">Share</span>
+            <ShareNetwork className="size-4" />
+            <span className="hidden sm:inline ml-1.5 text-sm">Share</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>

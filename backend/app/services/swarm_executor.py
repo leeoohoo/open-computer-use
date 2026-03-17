@@ -733,6 +733,37 @@ class SwarmExecutor:
                 f"- If you need data another machine is producing, use agent.wait_for_dependency()."
             )
 
+            # Extract email identity if the frontend provisioned a WorkMail mailbox
+            email_identity = machine.get("email_identity")  # {email, password} or None
+
+            # Add email tools to coordination context if email identity is available
+            if email_identity:
+                email_section = (
+                    f"\n\nEMAIL TOOLS (you have your own email address for this session):\n"
+                    f"- Your email: {email_identity['email']}\n"
+                    f"- agent.get_my_email_address() — returns your email address\n"
+                    f"- agent.check_my_email() — read your inbox (recent messages)\n"
+                    f"- agent.wait_for_verification_email(from_hint) — wait for a verification email and auto-extract codes/links\n"
+                    f"  Example: agent.wait_for_verification_email('noreply@github.com')\n"
+                    f"  Example: agent.wait_for_verification_email('verify@example.com', 60)\n"
+                    f"- agent.send_email(to, subject, body) — send an email from your mailbox\n"
+                    f"  Example: agent.send_email('user@example.com', 'Report', 'Here are the results...')\n\n"
+                    f"EMAIL TIPS:\n"
+                    f"- When signing up for services, use your email ({email_identity['email']}) instead of asking the user.\n"
+                    f"- After submitting a signup form, call agent.wait_for_verification_email() to get the confirmation code.\n"
+                    f"- You can type your email directly into form fields — no need to use fill_credential_field for your own email.\n"
+                    f"- Your teammates also have their own email addresses — check shared memory for machine_N_email keys."
+                )
+                swarm_coordination_context += email_section
+
+            # Store email address in swarm memory so teammates can discover it
+            if email_identity:
+                self.swarm_memory.write(
+                    f"machine_{index}_email",
+                    email_identity["email"],
+                    writer_index=index,
+                )
+
             executor = CUAExecutor(
                 machine_id=machine_id,
                 connection_info=connection_info,
@@ -744,6 +775,7 @@ class SwarmExecutor:
                 machine_index=index,
                 event_bus=self.event_bus,
                 state_machine=self.state_machine,
+                email_identity=email_identity,
             )
 
             async for chunk in executor.stream_execution(subtask, context=swarm_coordination_context):

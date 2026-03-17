@@ -4,6 +4,7 @@ import { getAzureContainerService } from "@/lib/azure/container-instances";
 import { getAwsEc2Service } from "@/lib/aws/ec2-service";
 import { transformMachineFromDB, transformSessionFromDB } from "@/lib/utils/db-transforms";
 import type { MachineActionRequest } from "@/types/machines.types";
+import { deleteSwarmMailbox } from "@/lib/services/workmail-service";
 
 interface RouteParams {
   params: Promise<{
@@ -365,6 +366,17 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         } else {
           const azureService = getAzureContainerService();
           await azureService.deleteContainer(machine.azure_container_group);
+        }
+
+        // Cleanup WorkMail mailbox if one was provisioned
+        const emailIdentity = settings?.email_identity;
+        if (emailIdentity?.workmailUserId) {
+          try {
+            await deleteSwarmMailbox(emailIdentity.workmailUserId);
+            console.log(`Machine ${machineId}: deleted email mailbox`);
+          } catch (emailErr: any) {
+            console.warn(`Machine ${machineId}: mailbox cleanup failed:`, emailErr.message);
+          }
         }
 
         await supabase

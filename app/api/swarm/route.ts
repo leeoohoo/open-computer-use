@@ -10,6 +10,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAwsEc2Service } from "@/lib/aws/ec2-service";
+import {
+  createSwarmMailboxes,
+  deleteSwarmMailboxes,
+  type SwarmMailbox,
+} from "@/lib/services/workmail-service";
 import WebSocket from "ws";
 
 const PYTHON_BACKEND_URL =
@@ -175,6 +180,7 @@ export async function POST(req: NextRequest) {
   // -----------------------------------------------------------------------
   const awsService = getAwsEc2Service();
   const machines: SwarmMachineRecord[] = [];
+  let mailboxes: SwarmMailbox[] = [];
   let cleanedUp = false;
 
   // Helper: cleanup swarm machines — idempotent via cleanedUp guard.
@@ -254,6 +260,15 @@ export async function POST(req: NextRequest) {
         console.log(
           `Swarm ${swarmId}: cleaned up ${machines.length} temporary machines`
         );
+      }
+    }
+
+    // Cleanup WorkMail mailboxes (unless keeping persistent machines)
+    if (!keepMachines && mailboxes.length > 0) {
+      try {
+        await deleteSwarmMailboxes(mailboxes);
+      } catch (e) {
+        console.error(`Swarm ${swarmId}: mailbox cleanup failed:`, e);
       }
     }
 
@@ -397,14 +412,23 @@ export async function POST(req: NextRequest) {
     );
 
     // -----------------------------------------------------------------------
-    // Poll for IP assignment and agent readiness
+    // Create WorkMail mailboxes in parallel with machine readiness polling
     // -----------------------------------------------------------------------
-    const readyMachines = await waitForMachinesReady(
-      supabase,
-      awsService,
-      liveMachines,
-      swarmId
-    );
+    const [readyMachines, createdMailboxes] = await Promise.all([
+      waitForMachinesReady(supabase, awsService, liveMachines, swarmId),
+      createSwarmMailboxes(swarmId, liveMachines.length).catch((e) => {
+        console.error(`Swarm ${swarmId}: mailbox creation failed:`, e);
+        return [] as SwarmMailbox[];
+      }),
+    ]);
+
+    mailboxes = createdMailboxes;
+
+    if (mailboxes.length > 0) {
+      console.log(
+        `Swarm ${swarmId}: ${mailboxes.length} email mailboxes provisioned`
+      );
+    }
 
     if (readyMachines.length === 0) {
       console.error(`Swarm ${swarmId}: no machines became ready`);
@@ -427,13 +451,28 @@ export async function POST(req: NextRequest) {
     // -----------------------------------------------------------------------
     // Proxy to Python backend for parallel execution
     // -----------------------------------------------------------------------
+    // Build a map of machine index → mailbox for the backend
+    const mailboxByIndex = new Map<number, SwarmMailbox>();
+    for (const mb of mailboxes) {
+      mailboxByIndex.set(mb.machineIndex, mb);
+    }
+
     const backendBody = {
       swarm_id: swarmId,
       prompt: body.prompt,
-      machines: readyMachines.map((m) => ({
-        machine_id: m.id,
-        display_name: `Swarm Machine`,
-      })),
+      machines: readyMachines.map((m, idx) => {
+        const mb = mailboxByIndex.get(idx);
+        return {
+          machine_id: m.id,
+          display_name: `Swarm Machine`,
+          ...(mb && {
+            email_identity: {
+              email: mb.email,
+              password: mb.password,
+            },
+          }),
+        };
+      }),
       model: body.model,
       max_steps: body.maxSteps || 200,
       user_id: userId,

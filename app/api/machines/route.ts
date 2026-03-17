@@ -5,6 +5,7 @@ import { getAwsEc2Service } from "@/lib/aws/ec2-service";
 import { transformMachineFromDB } from "@/lib/utils/db-transforms";
 import type { UserMachine, CreateMachineRequest, MachineStatus } from "@/types/machines.types";
 import { dockerService } from "@/lib/docker/docker-service";
+import { createSwarmMailbox, deleteSwarmMailbox } from "@/lib/services/workmail-service";
 
 // GET /api/machines - List user's machines
 export async function GET(request: NextRequest) {
@@ -526,6 +527,22 @@ export async function POST(request: NextRequest) {
 
           console.log(`AWS EC2 instance created: ${result.instanceId}`);
 
+          // Provision a WorkMail mailbox for the machine (fire-and-forget)
+          let emailIdentitySettings: Record<string, string> | undefined;
+          try {
+            const mailbox = await createSwarmMailbox(machineId, 0);
+            if (mailbox) {
+              emailIdentitySettings = {
+                email: mailbox.email,
+                password: mailbox.password,
+                workmailUserId: mailbox.userId,
+              };
+              console.log(`Machine ${machineId}: provisioned email ${mailbox.email}`);
+            }
+          } catch (emailErr: any) {
+            console.warn(`Machine ${machineId}: email provisioning failed:`, emailErr.message);
+          }
+
           // Store AWS details in settings
           await supabase
             .from("user_machines")
@@ -544,6 +561,9 @@ export async function POST(request: NextRequest) {
                 ...(snapshotAmiId && {
                   restoredFromSnapshot: snapshotAmiId,
                   restoredAt: new Date().toISOString(),
+                }),
+                ...(emailIdentitySettings && {
+                  email_identity: emailIdentitySettings,
                 }),
               },
               ssh_port: 22,

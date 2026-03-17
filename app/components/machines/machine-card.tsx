@@ -16,7 +16,8 @@ import {
   Terminal,
   Server,
   Save,
-  History
+  History,
+  Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -247,6 +248,14 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
               <CardDescription className="text-xs truncate">
                 {isElectron ? `Connected via Desktop App` : isLocal ? `Local Docker: ${machine.containerName}` : isAws ? `Cloud Machine - SSH` : machine.containerName}
               </CardDescription>
+              {machine.settings?.email_identity?.email && (
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <Mail className="h-3 w-3 text-muted-foreground/50 shrink-0" />
+                  <span className="text-[11px] text-muted-foreground/70 truncate font-mono">
+                    {machine.settings.email_identity.email}
+                  </span>
+                </div>
+              )}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
