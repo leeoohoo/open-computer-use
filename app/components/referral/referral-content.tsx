@@ -226,7 +226,7 @@ export function ReferralContent() {
   return (
     <div className="relative w-full h-full overflow-hidden">
       {/* Ambient background */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
           className="absolute -top-[40%] -left-[20%] h-[80%] w-[60%] rounded-full opacity-[0.02] dark:opacity-[0.05] blur-[100px]"
           style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
@@ -250,7 +250,7 @@ export function ReferralContent() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: easeOut }}
-          className="hidden lg:flex flex-col justify-center flex-1 px-12 xl:px-16 max-w-[540px] border-r border-border/[0.15] overflow-y-auto py-12"
+          className="hidden lg:flex flex-col justify-center flex-1 px-12 xl:px-16 max-w-[540px] overflow-y-auto py-12"
         >
           <h1 className="text-4xl xl:text-[2.75rem] font-medium tracking-tight leading-[1.1] text-foreground">
             Share Coasty.

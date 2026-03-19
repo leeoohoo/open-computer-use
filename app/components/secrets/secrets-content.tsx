@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useTheme } from "next-themes"
 import { motion } from "framer-motion"
-import { Plus, KeyRound, Eye, EyeOff, MoreHorizontal, Pencil, Trash2, ShieldCheck, LockKeyhole, Globe, MousePointerClick, BookOpen } from "lucide-react"
+import { Plus, KeyRound, Eye, EyeOff, MoreHorizontal, Pencil, Trash2, ShieldCheck, LockKeyhole, Globe, MousePointerClick, BookOpen, Download } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,6 +25,7 @@ import {
 import { toast } from "sonner"
 import type { UserSecret } from "@/types/secrets.types"
 import { SecretDialog } from "./secret-dialog"
+import { ImportDialog } from "./import-dialog"
 import { cn } from "@/lib/utils"
 
 /* ─── SecretCard ─── */
@@ -183,6 +184,7 @@ export function SecretsContent() {
   const [deleteTarget, setDeleteTarget] = useState<UserSecret | null>(null)
   const [revealedPasswords, setRevealedPasswords] = useState<Record<string, string>>({})
   const [revealingId, setRevealingId] = useState<string | null>(null)
+  const [importOpen, setImportOpen] = useState(false)
   const hideTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
 
   const fetchSecrets = useCallback(async () => {
@@ -321,13 +323,22 @@ export function SecretsContent() {
               </Link>
             </div>
           </div>
-          <button
-            onClick={handleAdd}
-            className="inline-flex h-9 items-center justify-center rounded-xl px-5 text-sm font-medium gap-2 transition-all bg-foreground text-background hover:bg-foreground/90"
-          >
-            <Plus className="h-4 w-4" />
-            Add Credential
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setImportOpen(true)}
+              className="inline-flex h-9 items-center justify-center rounded-xl px-4 text-sm font-medium gap-2 transition-all border border-border/60 bg-foreground/[0.05] text-foreground/80 hover:text-foreground hover:border-border hover:bg-foreground/[0.08]"
+            >
+              <Download className="h-4 w-4" />
+              Import
+            </button>
+            <button
+              onClick={handleAdd}
+              className="inline-flex h-9 items-center justify-center rounded-xl px-5 text-sm font-medium gap-2 transition-all bg-foreground text-background hover:bg-foreground/90"
+            >
+              <Plus className="h-4 w-4" />
+              Add Credential
+            </button>
+          </div>
         </motion.div>
 
         {/* Security Banner */}
@@ -466,6 +477,12 @@ export function SecretsContent() {
         onOpenChange={setDialogOpen}
         secret={editingSecret}
         onSaved={fetchSecrets}
+      />
+
+      <ImportDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        onImported={fetchSecrets}
       />
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
