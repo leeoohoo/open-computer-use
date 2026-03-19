@@ -2,14 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { PointerHighlight } from "@/components/ui/pointer-highlight"
 // HeroParallaxChat removed — demo section is now static
-// SparklesCore available but not used in current hero design
-// import { SparklesCore } from "@/components/ui/sparkles"
-import { BentoGrid, BentoCard } from "@/components/magicui/bento-grid"
-import { Globe as GlobeComponent } from "@/components/magicui/globe"
-import { Tree, Folder, File, type TreeViewElement } from "@/components/magicui/file-tree"
-import { RainbowButton } from "@/components/magicui/rainbow-button"
 import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download, CalendarCheck, RefreshCw, GitFork } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
 import Link from "next/link"
@@ -34,40 +27,6 @@ const handwriting = Caveat({
   subsets: ["latin"],
   weight: ["600"],
 })
-
-const features = [
-  {
-    icon: Zap,
-    title: "Self-Correcting Execution",
-    description: "Wrong click? Dead end? The agent detects errors, retries alternative paths, and keeps going until the task is done. Give it a goal and walk away.",
-  },
-  {
-    icon: Shield,
-    title: "Full Audit Trail",
-    description: "Every click, keystroke, and decision is logged with screenshots. You can replay any session step-by-step to see exactly what the agent did and why.",
-  },
-  {
-    icon: CalendarCheck,
-    title: "Schedule & Automate 24/7",
-    description: "Set tasks to run on a schedule — hourly, daily, weekly. Coasty works around the clock, processing data, sending follow-ups, and completing tasks while you sleep.",
-  },
-  {
-    icon: Monitor,
-    title: "Sandboxed & Secure",
-    description: "Every task runs in an isolated virtual machine. Nothing leaks between sessions, your credentials stay private, and each environment is destroyed after use.",
-  },
-  {
-    icon: Star,
-    title: "82% OSWorld — #1 AI Agent in the World",
-    description: "The highest score ever on the OSWorld benchmark for computer-use agents. Not a chatbot — a real agent that navigates apps, clicks buttons, and completes tasks end-to-end.",
-  },
-  {
-    icon: GitFork,
-    title: "Agent Swarms — Parallel Execution",
-    description: "Split one task across multiple machines running simultaneously. Each agent works independently, completing work in parallel that would take hours sequentially.",
-    href: "/agent-swarms",
-  },
-]
 
 const pricingPlans = [
   {
@@ -168,53 +127,6 @@ const pricingPlans = [
   },
 ]
 
-// Sample file tree for Storage Provided background
-const fileTreeElements: TreeViewElement[] = [
-  {
-    id: "1",
-    name: "Projects",
-    children: [
-      {
-        id: "2", 
-        name: "my-app",
-        children: [
-          { id: "3", name: "src", children: [
-            { id: "4", name: "index.tsx" },
-            { id: "5", name: "App.tsx" },
-            { id: "6", name: "styles.css" }
-          ]},
-          { id: "7", name: "package.json" },
-          { id: "8", name: "README.md" }
-        ]
-      },
-      {
-        id: "9",
-        name: "api-server", 
-        children: [
-          { id: "10", name: "server.js" },
-          { id: "11", name: "routes.js" }
-        ]
-      }
-    ]
-  },
-  {
-    id: "12",
-    name: "Documents",
-    children: [
-      { id: "13", name: "report.pdf" },
-      { id: "14", name: "notes.md" }
-    ]
-  },
-  {
-    id: "15", 
-    name: "Data",
-    children: [
-      { id: "16", name: "dataset.csv" },
-      { id: "17", name: "config.json" }
-    ]
-  }
-]
-
 const demoChatSessions = [
   {
     title: "Coasty on Reddit",
@@ -280,24 +192,6 @@ const faqs = [
     answer: "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
   },
 ]
-
-// Recursive component to render tree items
-function TreeItem({ element }: { element: TreeViewElement }) {
-  if (element.children && element.children.length > 0) {
-    return (
-      <Folder element={element.name} value={element.id}>
-        {element.children.map((child) => (
-          <TreeItem key={child.id} element={child} />
-        ))}
-      </Folder>
-    )
-  }
-  return (
-    <File value={element.id}>
-      <span>{element.name}</span>
-    </File>
-  )
-}
 
 export function LandingPage() {
   const [selectedFaq, setSelectedFaq] = useState<number | null>(null)
@@ -455,6 +349,26 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
+            {/* CSS animations for visual cards */}
+            <style dangerouslySetInnerHTML={{ __html: `
+              @keyframes lp-scan-line { 0% { top: 10% } 100% { top: 85% } }
+              @keyframes lp-check-pop { 0% { transform: scale(0); opacity: 0 } 60% { transform: scale(1.2); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
+              @keyframes lp-float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-3px) } }
+              @keyframes lp-click-ring { 0% { transform: scale(0.8); opacity: 0 } 50% { transform: scale(1); opacity: 1 } 100% { transform: scale(1.8); opacity: 0 } }
+              @keyframes lp-cursor-blink { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
+              @keyframes lp-typing { 0%, 100% { width: 0 } 30%, 70% { width: 100% } }
+              @keyframes lp-step-fill { 0% { transform: scaleX(0) } 100% { transform: scaleX(1) } }
+              @keyframes lp-msg-appear { 0% { opacity: 0; transform: translateY(6px) } 100% { opacity: 1; transform: translateY(0) } }
+              @keyframes lp-dot-pulse { 0%, 100% { opacity: 0.3 } 50% { opacity: 1 } }
+              @keyframes lp-progress { 0% { width: 0% } 100% { width: var(--progress, 75%) } }
+              @keyframes lp-retry-loop { 0%, 20% { opacity: 1 } 25%, 45% { opacity: 0.3 } 50%, 70% { opacity: 1 } 75%, 100% { opacity: 0.3 } }
+              @keyframes lp-screenshot-flash { 0%, 90% { opacity: 0 } 95% { opacity: 0.3 } 100% { opacity: 0 } }
+              @keyframes lp-bar-grow { 0% { width: 0 } 100% { width: var(--w, 60%) } }
+              @keyframes lp-swarm-stagger-1 { 0% { width: 0 } 100% { width: 85% } }
+              @keyframes lp-swarm-stagger-2 { 0% { width: 0 } 100% { width: 65% } }
+              @keyframes lp-swarm-stagger-3 { 0% { width: 0 } 100% { width: 40% } }
+            `}} />
+
             <motion.div variants={itemVariants} className="text-center mb-12">
               <p className={cn(
                 "text-muted-foreground/60 font-medium uppercase tracking-[0.15em] mb-3",
@@ -466,68 +380,132 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Not a chatbot. Not an RPA script. A real computer-using agent.
+                Not a chatbot. Not an RPA script.
               </h2>
-              <p className={cn(
-                "text-muted-foreground mt-4 max-w-2xl mx-auto",
-                isMobile ? "text-sm" : "text-base"
-              )}>
-                Smarter than traditional automation. Coasty is a real AI employee
-                that sees your screen and works like a human — no brittle scripts, no breaking when interfaces change.
-              </p>
             </motion.div>
 
             <div className={cn(
               "grid gap-4",
               isMobile ? "grid-cols-1" : "grid-cols-2"
             )}>
-              {[
-                {
-                  icon: <Monitor className="size-5" />,
-                  title: "Works like a human",
-                  description: "Sees the screen, reads the content, clicks buttons, types text, and navigates pages — exactly like you would. Not an API wrapper. Real computer control.",
-                },
-                {
-                  icon: <MessageSquare className="size-5" />,
-                  title: "No scripts or setup",
-                  description: "Describe the task in plain English. Coasty figures out which sites to visit, what to click, and how to get it done. Zero configuration, zero code.",
-                },
-                {
-                  icon: <Zap className="size-5" />,
-                  title: "Handles the unexpected",
-                  description: "CAPTCHAs, cookie banners, login walls, layout changes — Coasty adapts in real time instead of breaking. Built-in CAPTCHA solving pipeline included.",
-                },
-                {
-                  icon: <Shield className="size-5" />,
-                  title: "Runs in isolation",
-                  description: "Every session gets its own sandboxed virtual machine. Your data stays safe, your machine stays untouched. Nothing leaks between sessions.",
-                },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  variants={itemVariants}
-                  className={cn(
-                    "group relative rounded-2xl border border-border/40 bg-card/30 p-6 transition-all duration-300 hover:border-border/60 hover:bg-card/50",
-                    isMobile ? "p-5" : "p-6"
-                  )}
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground/[0.05] mb-4 text-foreground/70 group-hover:text-foreground transition-colors">
-                    {item.icon}
+              {/* Works like a human — scan + click visual */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-16" : "h-20")}>
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-[80px] h-[48px] rounded-lg border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
+                      <div className="space-y-1 p-2">
+                        <div className="h-[3px] w-[80%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[60%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[70%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[50%] rounded-full bg-foreground/10" />
+                      </div>
+                      <div
+                        className="absolute left-0 right-0 h-px bg-foreground/25"
+                        style={{ animation: "lp-scan-line 3s ease-in-out infinite" }}
+                      />
+                    </div>
+                    <ArrowRight className="size-3 text-foreground/20" />
+                    <div className="relative w-6 h-6 rounded-lg border border-foreground/20 flex items-center justify-center">
+                      <Monitor className="size-3 text-foreground/30" />
+                      <div
+                        className="absolute inset-0 rounded-lg border border-foreground/20"
+                        style={{ animation: "lp-click-ring 2s ease-out infinite" }}
+                      />
+                    </div>
                   </div>
-                  <h3 className={cn(
-                    "font-semibold text-foreground mb-1.5",
-                    isMobile ? "text-base" : "text-lg"
-                  )}>
-                    {item.title}
-                  </h3>
-                  <p className={cn(
-                    "text-muted-foreground/60 leading-relaxed",
-                    isMobile ? "text-sm" : "text-[15px]"
-                  )}>
-                    {item.description}
-                  </p>
-                </motion.div>
-              ))}
+                </div>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
+                  Works like a human
+                </p>
+                <p className="text-sm text-muted-foreground/50 mt-0.5">Sees, clicks, types, navigates — exactly like you</p>
+              </motion.div>
+
+              {/* No scripts or setup — plain english → done visual */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-16" : "h-20")}>
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-lg border border-foreground/10 bg-foreground/[0.03] px-3 py-2 overflow-hidden">
+                      <div className="relative">
+                        <span className="text-[10px] text-foreground/40 font-mono whitespace-nowrap" style={{ animation: "lp-typing 4s ease-in-out infinite", display: "inline-block", overflow: "hidden" }}>
+                          do this task for me
+                        </span>
+                        <span className="text-[10px] text-foreground/50" style={{ animation: "lp-cursor-blink 1s step-end infinite" }}>|</span>
+                      </div>
+                    </div>
+                    <ArrowRight className="size-3 text-foreground/20" />
+                    <div
+                      className="flex items-center gap-1 text-foreground/40"
+                      style={{ animation: "lp-check-pop 0.5s ease forwards 1.5s", opacity: 0 }}
+                    >
+                      <Check className="size-4" />
+                      <span className="text-xs font-medium">done</span>
+                    </div>
+                  </div>
+                </div>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
+                  No scripts or setup
+                </p>
+                <p className="text-sm text-muted-foreground/50 mt-0.5">Plain English in, results out</p>
+              </motion.div>
+
+              {/* Handles the unexpected — CAPTCHA → adapts → success */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-16" : "h-20")}>
+                  <div className="flex items-center gap-2.5">
+                    <div className="rounded-lg border border-foreground/15 bg-foreground/[0.03] px-2.5 py-1.5">
+                      <span className="text-[10px] text-foreground/30 font-medium">CAPTCHA</span>
+                    </div>
+                    <span
+                      className="text-xs text-foreground/20"
+                      style={{ animation: "lp-float 2s ease-in-out infinite" }}
+                    >→</span>
+                    <div className="rounded-lg border border-foreground/15 bg-foreground/[0.03] px-2.5 py-1.5">
+                      <span className="text-[10px] text-foreground/30 font-medium">adapts</span>
+                    </div>
+                    <span className="text-xs text-foreground/20">→</span>
+                    <div
+                      className="h-5 w-5 rounded-full border border-foreground/20 flex items-center justify-center"
+                      style={{ animation: "lp-check-pop 0.5s ease forwards 2s", opacity: 0 }}
+                    >
+                      <Check className="size-3 text-foreground/40" />
+                    </div>
+                  </div>
+                </div>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
+                  Handles the unexpected
+                </p>
+                <p className="text-sm text-muted-foreground/50 mt-0.5">Adapts to CAPTCHAs, popups, layout changes</p>
+              </motion.div>
+
+              {/* Runs in isolation — sandboxed VM visual */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-16" : "h-20")}>
+                  <div className="relative w-[60px] h-[44px] rounded-lg border border-dashed border-foreground/15 flex items-center justify-center">
+                    <div className="w-8 h-6 rounded border border-foreground/10 bg-foreground/[0.03] flex items-center justify-center">
+                      <Monitor className="size-3 text-foreground/20" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full border border-foreground/15 bg-background flex items-center justify-center">
+                      <Shield className="size-2.5 text-foreground/30" />
+                    </div>
+                  </div>
+                </div>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
+                  Runs in isolation
+                </p>
+                <p className="text-sm text-muted-foreground/50 mt-0.5">Sandboxed VM per session — nothing leaks</p>
+              </motion.div>
             </div>
           </motion.div>
         </section>
@@ -553,66 +531,130 @@ export function LandingPage() {
               )}>
                 How it works
               </h2>
-              <p className={cn(
-                "text-muted-foreground mt-4 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-base"
-              )}>
-                Describe a task in plain English. The agent does the rest.
-              </p>
             </motion.div>
 
             <div className={cn(
-              "grid gap-8",
+              "grid gap-4",
               isMobile ? "grid-cols-1" : "grid-cols-3"
             )}>
-              {[
-                {
-                  step: "1",
-                  icon: MessageSquare,
-                  title: "Describe your task",
-                  description: "\"Research 100 leads and add them to HubSpot.\" \"Test every checkout flow on staging.\" \"Post on Reddit and reply to comments.\""
-                },
-                {
-                  step: "2",
-                  icon: Monitor,
-                  title: "Watch the agent work",
-                  description: "Coasty opens a real browser, navigates websites, clicks buttons, fills forms, and types — exactly like a human would. You can watch live or check back later."
-                },
-                {
-                  step: "3",
-                  icon: Check,
-                  title: "Task complete",
-                  description: "Data extracted. Emails sent. Forms filled. Every action is logged with screenshots so you can verify exactly what happened."
-                }
-              ].map((item, i) => (
-                <motion.div
-                  key={item.step}
-                  variants={itemVariants}
-                  className="relative"
-                >
-                  {/* Connector line — desktop only, not on last item */}
-                  {!isMobile && i < 2 && (
-                    <div className="absolute top-10 left-[calc(50%+2rem)] right-[calc(-50%+2rem)] h-px border-t border-dashed border-border/60" />
-                  )}
-                  <div className="flex flex-col items-center text-center gap-4">
-                    <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-border/60 bg-card/80 shadow-sm">
-                      <item.icon className="h-8 w-8 text-foreground/70" />
-                      <span className="absolute -top-2.5 -right-2.5 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
-                        {item.step}
-                      </span>
-                    </div>
-                    <h3 className={cn(
-                      "font-semibold tracking-tight",
-                      isMobile ? "text-lg" : "text-xl"
-                    )}>
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-                      {item.description}
-                    </p>
+              {/* Step 1: Describe — typing animation */}
+              <motion.div
+                variants={itemVariants}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5"
+              >
+                {!isMobile && (
+                  <div className="absolute top-1/2 -right-2.5 text-foreground/15">
+                    <ArrowRight className="size-4" />
                   </div>
-                </motion.div>
-              ))}
+                )}
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-28")}>
+                  <div className="w-full max-w-[200px] rounded-lg border border-foreground/10 bg-foreground/[0.02] p-3">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
+                      <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
+                      <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
+                    </div>
+                    <div className="relative overflow-hidden">
+                      <span
+                        className="text-[10px] text-foreground/40 font-mono whitespace-nowrap inline-block overflow-hidden"
+                        style={{ animation: "lp-typing 5s ease-in-out infinite" }}
+                      >
+                        Research 100 leads on LinkedIn...
+                      </span>
+                      <span className="text-[10px] text-foreground/50" style={{ animation: "lp-cursor-blink 1s step-end infinite" }}>|</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">1</span>
+                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>Describe your task</p>
+                </div>
+                <p className="text-sm text-muted-foreground/50 pl-7">Plain English. That&apos;s it.</p>
+              </motion.div>
+
+              {/* Step 2: Agent works — mini browser with actions */}
+              <motion.div
+                variants={itemVariants}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5"
+              >
+                {!isMobile && (
+                  <div className="absolute top-1/2 -right-2.5 text-foreground/15">
+                    <ArrowRight className="size-4" />
+                  </div>
+                )}
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-28")}>
+                  <div className="w-full max-w-[200px] rounded-lg border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
+                    {/* Browser bar */}
+                    <div className="flex items-center gap-1 px-2 py-1.5 border-b border-foreground/[0.06]">
+                      <div className="h-1 w-1 rounded-full bg-foreground/15" />
+                      <div className="h-1 w-1 rounded-full bg-foreground/15" />
+                      <div className="h-1 w-1 rounded-full bg-foreground/15" />
+                      <div className="ml-1 h-3 flex-1 rounded bg-foreground/[0.04]" />
+                    </div>
+                    {/* Page content with scan line */}
+                    <div className="relative p-2 space-y-1.5">
+                      <div className="h-[3px] w-[90%] rounded-full bg-foreground/10" />
+                      <div className="h-[3px] w-[70%] rounded-full bg-foreground/10" />
+                      <div className="h-[3px] w-[80%] rounded-full bg-foreground/10" />
+                      <div className="h-[3px] w-[55%] rounded-full bg-foreground/10" />
+                      <div className="h-[3px] w-[75%] rounded-full bg-foreground/10" />
+                      <div
+                        className="absolute left-0 right-0 h-px bg-foreground/20"
+                        style={{ animation: "lp-scan-line 2.5s ease-in-out infinite" }}
+                      />
+                      {/* Click ring */}
+                      <div className="absolute top-3 right-4">
+                        <div
+                          className="h-3 w-3 rounded-full border border-foreground/20"
+                          style={{ animation: "lp-click-ring 2s ease-out infinite 1s" }}
+                        />
+                      </div>
+                      {/* Screenshot flash */}
+                      <div
+                        className="absolute inset-0 bg-foreground/10 rounded"
+                        style={{ animation: "lp-screenshot-flash 3s ease infinite" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">2</span>
+                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>Watch the agent work</p>
+                </div>
+                <p className="text-sm text-muted-foreground/50 pl-7">Opens browser, clicks, types, navigates</p>
+              </motion.div>
+
+              {/* Step 3: Done — results appearing */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-28")}>
+                  <div className="w-full max-w-[200px] space-y-2">
+                    {/* Result items appearing */}
+                    {["Task completed", "12 leads found", "Added to CRM"].map((text, i) => (
+                      <div
+                        key={text}
+                        className="flex items-center gap-2 rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] px-2.5 py-1.5"
+                        style={{ animation: `lp-msg-appear 0.4s ease forwards ${0.5 + i * 0.4}s`, opacity: 0 }}
+                      >
+                        <div
+                          className="h-3 w-3 rounded-full border border-foreground/20 flex items-center justify-center flex-shrink-0"
+                          style={{ animation: `lp-check-pop 0.3s ease forwards ${0.8 + i * 0.4}s`, opacity: 0 }}
+                        >
+                          <Check className="size-2 text-foreground/40" />
+                        </div>
+                        <span className="text-[10px] text-foreground/40">{text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">3</span>
+                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>Task complete</p>
+                </div>
+                <p className="text-sm text-muted-foreground/50 pl-7">Every action logged with screenshots</p>
+              </motion.div>
             </div>
           </motion.div>
         </section>
@@ -1061,42 +1103,180 @@ export function LandingPage() {
               )}>
                 Built for real computer tasks
               </h2>
-              <p className={cn(
-                "text-muted-foreground mt-4 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-base"
-              )}>
-                Not a chatbot. An AI agent that controls a real computer to complete tasks end-to-end.
-              </p>
             </motion.div>
-            
-            <BentoGrid className={cn(
-              "w-full",
-              isMobile
-                ? "grid-cols-1 auto-rows-[18rem]"
-                : "grid-cols-1 sm:grid-cols-2 auto-rows-[20rem]"
+
+            <div className={cn(
+              "grid gap-4",
+              isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-3"
             )}>
-              {features.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  variants={itemVariants}
-                  className={cn(index === 0 && !isMobile && "col-span-2")}
-                >
-                  <BentoCard
-                    name={feature.title}
-                    className="h-full col-span-1"
-                    background={
-                      <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                        <feature.icon className="h-32 w-32" />
+              {/* Self-Correcting — retry loop visual */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
+                  <div className="flex items-center gap-2">
+                    <div className="rounded border border-foreground/10 bg-foreground/[0.03] px-2 py-1">
+                      <span className="text-[9px] text-foreground/30 font-mono" style={{ animation: "lp-retry-loop 4s ease infinite" }}>click</span>
+                    </div>
+                    <span className="text-[9px] text-foreground/15">→</span>
+                    <div className="rounded border border-foreground/10 bg-foreground/[0.03] px-2 py-1">
+                      <span className="text-[9px] text-foreground/30 font-mono" style={{ animation: "lp-retry-loop 4s ease 1s infinite" }}>retry</span>
+                    </div>
+                    <span className="text-[9px] text-foreground/15">→</span>
+                    <div
+                      className="h-4 w-4 rounded-full border border-foreground/20 flex items-center justify-center"
+                      style={{ animation: "lp-check-pop 0.5s ease forwards 2s", opacity: 0 }}
+                    >
+                      <Check className="size-2.5 text-foreground/40" />
+                    </div>
+                  </div>
+                </div>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Self-Correcting</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">Detects errors, retries alternative paths</p>
+              </motion.div>
+
+              {/* Audit Trail — screenshot stack visual */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
+                  <div className="relative w-[80px] h-[40px]">
+                    {/* Stacked screenshots */}
+                    {[0, 1, 2].map((i) => (
+                      <div
+                        key={i}
+                        className="absolute rounded border border-foreground/10 bg-foreground/[0.03]"
+                        style={{
+                          width: 50, height: 30,
+                          left: i * 12, top: i * 3,
+                          animation: `lp-msg-appear 0.3s ease forwards ${0.3 + i * 0.2}s`,
+                          opacity: 0,
+                        }}
+                      >
+                        <div className="p-1 space-y-0.5">
+                          <div className="h-[2px] w-[70%] bg-foreground/10" />
+                          <div className="h-[2px] w-[50%] bg-foreground/10" />
+                        </div>
                       </div>
-                    }
-                    Icon={feature.icon}
-                    description={feature.description}
-                    href={(feature as any).href || "/auth"}
-                    cta={(feature as any).href ? "Learn more" : "Get started"}
-                  />
-                </motion.div>
-              ))}
-            </BentoGrid>
+                    ))}
+                  </div>
+                </div>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Full Audit Trail</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">Every click logged with screenshots</p>
+              </motion.div>
+
+              {/* Schedule — clock with ticks visual */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-10 h-10 rounded-full border border-foreground/15 flex items-center justify-center">
+                      <div className="h-3 w-px bg-foreground/25 origin-bottom" style={{ animation: "lp-float 3s ease-in-out infinite" }} />
+                      <div className="absolute h-2 w-px bg-foreground/15 origin-bottom rotate-90" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-1" style={{ animation: "lp-dot-pulse 2s ease infinite" }}>
+                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/20" />
+                        <span className="text-[8px] text-foreground/30 font-mono">9:00 AM</span>
+                      </div>
+                      <div className="flex items-center gap-1" style={{ animation: "lp-dot-pulse 2s ease 0.5s infinite" }}>
+                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/20" />
+                        <span className="text-[8px] text-foreground/30 font-mono">2:00 PM</span>
+                      </div>
+                      <div className="flex items-center gap-1" style={{ animation: "lp-dot-pulse 2s ease 1s infinite" }}>
+                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/20" />
+                        <span className="text-[8px] text-foreground/30 font-mono">11:00 PM</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Schedule 24/7</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">Runs on cron — hourly, daily, weekly</p>
+              </motion.div>
+
+              {/* Sandboxed — VM isolation visual */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
+                  <div className="flex items-center gap-2">
+                    <div className="relative w-10 h-8 rounded border border-dashed border-foreground/15 flex items-center justify-center">
+                      <Monitor className="size-3 text-foreground/20" />
+                      <div className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full border border-foreground/15 bg-background flex items-center justify-center">
+                        <Shield className="size-2 text-foreground/30" />
+                      </div>
+                    </div>
+                    <span className="text-[8px] text-foreground/15">×</span>
+                    <div className="relative w-10 h-8 rounded border border-dashed border-foreground/15 flex items-center justify-center">
+                      <Monitor className="size-3 text-foreground/20" />
+                      <div className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full border border-foreground/15 bg-background flex items-center justify-center">
+                        <Shield className="size-2 text-foreground/30" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Sandboxed & Secure</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">Isolated VM per session, destroyed after</p>
+              </motion.div>
+
+              {/* #1 Benchmark — bar chart visual */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
+                  <div className="w-[100px] space-y-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-2 rounded-full bg-foreground/20" style={{ animation: "lp-bar-grow 1.5s ease forwards", "--w": "100%" } as React.CSSProperties} />
+                      <span className="text-[7px] text-foreground/40 font-bold whitespace-nowrap">82%</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-2 rounded-full bg-foreground/10" style={{ animation: "lp-bar-grow 1.5s ease forwards 0.2s", "--w": "72%" } as React.CSSProperties} />
+                      <span className="text-[7px] text-foreground/25 whitespace-nowrap">73%</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-2 rounded-full bg-foreground/[0.07]" style={{ animation: "lp-bar-grow 1.5s ease forwards 0.4s", "--w": "60%" } as React.CSSProperties} />
+                      <span className="text-[7px] text-foreground/25 whitespace-nowrap">62%</span>
+                    </div>
+                  </div>
+                </div>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>#1 on OSWorld</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">82% — highest score ever recorded</p>
+              </motion.div>
+
+              {/* Swarms — parallel bars visual */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+              >
+                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
+                  <div className="w-[100px] space-y-1.5">
+                    {[
+                      { label: "Agent 1", anim: "lp-swarm-stagger-1" },
+                      { label: "Agent 2", anim: "lp-swarm-stagger-2" },
+                      { label: "Agent 3", anim: "lp-swarm-stagger-3" },
+                    ].map((a) => (
+                      <div key={a.label} className="flex items-center gap-1.5">
+                        <span className="text-[7px] text-foreground/25 w-[32px] text-right flex-shrink-0">{a.label}</span>
+                        <div className="flex-1 h-2 rounded-full bg-foreground/[0.04] overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-foreground/15"
+                            style={{ animation: `${a.anim} 3s ease-in-out infinite alternate` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Agent Swarms</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">Split tasks across machines in parallel</p>
+              </motion.div>
+            </div>
           </motion.div>
         </section>
 

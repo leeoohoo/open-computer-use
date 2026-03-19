@@ -41,66 +41,66 @@ type TaskTemplate = { label: string; prompt: string; icon: React.ElementType; co
 
 const ROLE_TEMPLATES: Record<string, TaskTemplate[]> = {
   founder: [
-    { label: "Research competitors", prompt: "Research the top 5 competitors of {company} ({url}). Compare their pricing, features, and positioning side-by-side. Compile everything into a spreadsheet.", icon: Search, color: "blue" },
-    { label: "Draft investor update", prompt: "Go to my email and draft a monthly investor update for {company}. Summarize key metrics, milestones hit, and next month's priorities. Reference {url} for any public stats.", icon: Mail, color: "violet" },
-    { label: "Find leads on LinkedIn", prompt: "Search LinkedIn for 20 potential customers who would benefit from {company}'s product at {url}. Export their names, titles, companies, and profile URLs.", icon: Users, color: "emerald" },
+    { label: "Get a competitor report", prompt: "Find the top 5 competitors of {company}. Go to each of their websites and {url}. Compare pricing, features, positioning, and traffic estimates. Deliver a side-by-side spreadsheet I can share with my team.", icon: Search, color: "blue" },
+    { label: "Generate 20 warm leads", prompt: "Search LinkedIn for 20 decision-makers who match {company}'s ideal customer profile. For each, grab their name, title, company, profile URL, and a personalized one-liner referencing {url}. Export as a CSV ready for outreach.", icon: Users, color: "emerald" },
+    { label: "Build a pitch deck draft", prompt: "Research {company}'s market, competitors, and traction visible on {url}. Draft a 10-slide investor pitch deck outline with key stats, market size, competitive advantages, and a growth narrative.", icon: FileText, color: "violet" },
   ],
   developer: [
-    { label: "Test my web app", prompt: "Go to {url} and test the full signup → onboarding → dashboard flow for {company}. Screenshot each step and report any bugs or broken UI.", icon: Bug, color: "rose" },
-    { label: "Scrape API docs", prompt: "Go to {url}/docs and extract all API endpoints, methods, parameters, and response examples for {company} into a structured JSON file.", icon: FileCode, color: "blue" },
-    { label: "Audit my site", prompt: "Go to {url} and audit {company}'s site for performance, broken links, and SEO issues. Compile a report with recommendations.", icon: Globe, color: "amber" },
+    { label: "Find bugs on my site", prompt: "Go to {url} and run through every user flow for {company} — signup, login, onboarding, core features, settings, and logout. Screenshot each step, flag any bugs, broken links, or UI glitches, and deliver a prioritized bug report.", icon: Bug, color: "rose" },
+    { label: "Get a performance report", prompt: "Audit {url} for {company} — check page load speed, Core Web Vitals, broken links, SEO meta tags, and accessibility issues. Deliver a scored report with specific fixes ranked by impact.", icon: TrendingUp, color: "emerald" },
+    { label: "Extract API documentation", prompt: "Go to {url}/docs and extract every API endpoint, method, parameter, and response example for {company}. Organize into a structured JSON file I can import into Postman.", icon: FileCode, color: "blue" },
   ],
   marketer: [
-    { label: "Analyze our SEO", prompt: "Search Google for the top 10 keywords {company} should rank for. Check {url} against each result and identify content gaps.", icon: TrendingUp, color: "emerald" },
-    { label: "Research trending topics", prompt: "Search Google, Reddit, and Hacker News for trending topics in {company}'s niche this week. Summarize the top 10 with links and angles for {url}.", icon: Sparkles, color: "violet" },
-    { label: "Competitor ad analysis", prompt: "Find the top 3 competitors of {company}. Visit their websites and screenshot their landing pages, pricing, and ads. Compare their messaging to {url}.", icon: Eye, color: "blue" },
+    { label: "Get an SEO gap analysis", prompt: "Search Google for the top 20 keywords {company} should rank for. Check where {url} appears for each. Identify the top 10 content gaps and suggest article titles that would close them.", icon: TrendingUp, color: "emerald" },
+    { label: "Spy on competitor ads", prompt: "Find {company}'s top 3 competitors. Visit their websites, screenshot their landing pages, pricing pages, and any visible ads. Deliver a messaging teardown comparing their strategy to {url}.", icon: Eye, color: "blue" },
+    { label: "Get trending content ideas", prompt: "Search Google, Reddit, Twitter, and Hacker News for what's trending in {company}'s niche right now. Deliver 10 content ideas with hooks, angles, and how each ties back to {url}.", icon: Sparkles, color: "violet" },
   ],
   product_manager: [
-    { label: "Collect user feedback", prompt: "Go to G2, Capterra, and Product Hunt and search for {company}. Extract all reviews from the last 3 months, noting common complaints and feature requests. Cross-reference with {url}.", icon: MessageCircle, color: "emerald" },
-    { label: "Competitive feature matrix", prompt: "Research the top 3 competitors of {company}. Build a feature comparison matrix covering pricing, integrations, and key capabilities vs {url}.", icon: LayoutGrid, color: "blue" },
-    { label: "Monitor release notes", prompt: "Find the changelogs and release notes of {company}'s top competitors. Summarize new features from the past month and compare them to what's on {url}.", icon: FileText, color: "violet" },
+    { label: "Get a review summary", prompt: "Search G2, Capterra, Product Hunt, and Reddit for every review of {company} from the last 3 months. Categorize into praise, complaints, and feature requests. Deliver a summary with quotes and links, cross-referenced with {url}.", icon: MessageCircle, color: "emerald" },
+    { label: "Build a feature comparison", prompt: "Find {company}'s top 3 competitors. Research their features, pricing, and integrations. Deliver a feature comparison matrix showing where {url} wins, loses, and has gaps.", icon: LayoutGrid, color: "blue" },
+    { label: "Track competitor launches", prompt: "Find the changelogs, blogs, and release notes of {company}'s top 3 competitors. Summarize everything they shipped in the past month and flag anything that threatens or validates what's on {url}.", icon: FileText, color: "violet" },
   ],
   data_analyst: [
-    { label: "Scrape our site data", prompt: "Go to {url} and extract all the structured data from {company}'s pages — products, pricing, metadata. Export as a CSV file.", icon: FileText, color: "blue" },
-    { label: "Research market stats", prompt: "Search for the latest market size, growth rate, and key statistics for {company}'s industry. Compile sources and compare to what {url} offers.", icon: BarChart3, color: "emerald" },
-    { label: "Benchmark analytics", prompt: "Research industry benchmarks for companies like {company}. Compare typical metrics (traffic, conversion, engagement) against what's visible on {url}.", icon: TrendingUp, color: "amber" },
+    { label: "Export site data to CSV", prompt: "Go to {url} and extract all structured data from {company}'s pages — products, pricing, categories, metadata. Clean it up and deliver as a well-formatted CSV file.", icon: FileText, color: "blue" },
+    { label: "Get a market sizing report", prompt: "Research the total addressable market for {company}'s industry. Find market size, growth rate, key players, and trends. Deliver a report with sources that I can reference alongside {url}.", icon: BarChart3, color: "emerald" },
+    { label: "Benchmark against industry", prompt: "Research industry benchmarks for companies like {company} — traffic, conversion rates, engagement, churn. Compare against what's visible on {url} and flag where we're above or below average.", icon: TrendingUp, color: "amber" },
   ],
   operations: [
-    { label: "Automate data entry", prompt: "Go to {url} and enter the following records into {company}'s system: [paste your data or describe the source].", icon: Clipboard, color: "blue" },
-    { label: "Vendor price check", prompt: "Search for the top 3 vendors that {company} might use. Compare their pricing and summarize the best deal. Check if any are linked on {url}.", icon: ShoppingCart, color: "emerald" },
-    { label: "Process invoices", prompt: "Go to {company}'s email or billing portal and download all invoices from the last month. Extract vendor names, amounts, and dates into a spreadsheet. Cross-reference with {url}.", icon: FileText, color: "violet" },
+    { label: "Enter records into our system", prompt: "Go to {url} and enter the following records into {company}'s system. Confirm each entry was saved successfully and flag any errors: [paste your data or describe the source].", icon: Clipboard, color: "blue" },
+    { label: "Find the cheapest vendor", prompt: "Search for the top 5 vendors that {company} could use for [service/product]. Compare pricing, reviews, and terms. Deliver a recommendation with the best deal, cross-referenced with any vendor links on {url}.", icon: ShoppingCart, color: "emerald" },
+    { label: "Get an invoice summary", prompt: "Go to {company}'s email or billing portal and download all invoices from the past month. Extract vendor names, amounts, due dates, and payment status into a spreadsheet. Cross-reference with {url}.", icon: FileText, color: "violet" },
   ],
   designer: [
-    { label: "Screenshot competitor UIs", prompt: "Find {company}'s top 3 competitors and take full-page screenshots of their homepage, pricing page, and dashboard. Compare their design to {url}.", icon: Eye, color: "violet" },
-    { label: "Check responsive design", prompt: "Go to {url} and test {company}'s site at mobile (375px), tablet (768px), and desktop (1440px) widths. Screenshot each and note any layout issues.", icon: MonitorSmartphone, color: "blue" },
-    { label: "Find design inspiration", prompt: "Search Dribbble and Behance for the best designs in {company}'s industry. Save the top 10 screenshots and note ideas that could improve {url}.", icon: PenTool, color: "rose" },
+    { label: "Get a design comparison", prompt: "Find {company}'s top 3 competitors. Take full-page screenshots of their homepage, pricing, and dashboard. Put them side-by-side with {url} and write up what they do better and worse.", icon: Eye, color: "violet" },
+    { label: "Run a responsive audit", prompt: "Go to {url} and test {company}'s site at mobile (375px), tablet (768px), and desktop (1440px). Screenshot each breakpoint, flag every layout issue, and deliver a fix-priority list.", icon: MonitorSmartphone, color: "blue" },
+    { label: "Collect design inspiration", prompt: "Search Dribbble, Behance, and Awwwards for the best designs in {company}'s industry. Save the top 10 screenshots with notes on what ideas could improve {url}.", icon: PenTool, color: "rose" },
   ],
 }
 
 const USE_CASE_TEMPLATES: Record<string, TaskTemplate[]> = {
   web_scraping: [
-    { label: "Scrape our site", prompt: "Go to {url} and extract all key data from {company}'s pages — products, prices, content. Export as a CSV.", icon: Globe, color: "blue" },
+    { label: "Export site data to CSV", prompt: "Go to {url} and extract all products, prices, descriptions, and metadata from {company}'s pages. Clean it up and deliver as a formatted CSV file.", icon: Globe, color: "blue" },
   ],
   browser_automation: [
-    { label: "Automate a workflow", prompt: "Go to {url}, log in to {company}'s platform with my saved credentials, navigate to the main dashboard, and export the latest reports.", icon: Zap, color: "amber" },
+    { label: "Export dashboard reports", prompt: "Go to {url}, log in to {company}'s platform with my saved credentials, navigate to the reports section, and export all available reports. Save them organized by date.", icon: Zap, color: "amber" },
   ],
   data_entry: [
-    { label: "Bulk data entry", prompt: "Go to {url} and enter these records into {company}'s system one by one: [paste data]. Confirm each entry was saved.", icon: Clipboard, color: "emerald" },
+    { label: "Enter records into our app", prompt: "Go to {url} and enter these records into {company}'s system one by one. Confirm each entry saved successfully and flag any that failed: [paste data].", icon: Clipboard, color: "emerald" },
   ],
   email_outreach: [
-    { label: "Send outreach emails", prompt: "Go to my email and send personalized outreach messages on behalf of {company}. Mention {url} in each email. Use this template: [your template].", icon: Send, color: "violet" },
+    { label: "Send personalized outreach", prompt: "Go to my email and send personalized outreach messages on behalf of {company} to the contacts below. Each email should mention {url} and use this template: [your template]. Confirm each was sent.", icon: Send, color: "violet" },
   ],
   testing: [
-    { label: "QA test our site", prompt: "Go to {url} and test {company}'s core user flows: signup, login, main feature, and logout. Screenshot each step and report any bugs.", icon: Bug, color: "rose" },
+    { label: "Get a full QA report", prompt: "Go to {url} and test every core flow for {company} — signup, login, main features, settings, and logout. Screenshot each step, flag every bug, and deliver a prioritized QA report.", icon: Bug, color: "rose" },
   ],
   ecommerce: [
-    { label: "Monitor competitor prices", prompt: "Find the top 3 competitors of {company}. Check their product pricing and compare to what's listed on {url}. Record prices, availability, and promotions.", icon: ShoppingCart, color: "amber" },
+    { label: "Get a pricing comparison", prompt: "Find the top 5 competitors of {company}. Check their product pricing, promotions, and availability. Deliver a comparison spreadsheet showing how {url}'s prices stack up.", icon: ShoppingCart, color: "amber" },
   ],
   social_media: [
-    { label: "Post & engage", prompt: "Log in to Twitter/X and post about {company}. Include a link to {url}. Then engage with any replies for the next few minutes.", icon: MessageCircle, color: "blue" },
+    { label: "Post and get engagement", prompt: "Log in to Twitter/X and craft a compelling post about {company} with a link to {url}. Post it, monitor replies for 5 minutes, and engage with every response to boost visibility.", icon: MessageCircle, color: "blue" },
   ],
   general_automation: [
-    { label: "Automate a task", prompt: "Go to {url} and help {company} with the following: [describe what you need done step by step].", icon: Bot, color: "violet" },
+    { label: "Run a task on my site", prompt: "Go to {url} and complete the following task for {company}: [describe what you need done and what the end result should look like].", icon: Bot, color: "violet" },
   ],
 }
 
@@ -164,10 +164,10 @@ function getTaskTemplates(
   // Fallback if nothing matched
   if (templates.length === 0) {
     return [
-      { label: "Scrape my site", prompt: personalize("Go to {url} and extract all key data from {company}'s pages. Export as a CSV."), icon: Globe, color: "blue" },
-      { label: "Test my web app", prompt: personalize("Go to {url} and test {company}'s full signup → dashboard flow. Screenshot each step and report any bugs."), icon: Bug, color: "rose" },
-      { label: "Research competitors", prompt: personalize("Search Google for {company}'s top 5 competitors. Compare their features and pricing to {url}."), icon: Search, color: "violet" },
-      { label: "Audit my site", prompt: personalize("Go to {url} and audit {company}'s site for SEO, broken links, and performance. Compile a report."), icon: TrendingUp, color: "emerald" },
+      { label: "Get a competitor report", prompt: personalize("Find the top 5 competitors of {company}. Compare their pricing, features, and traffic to {url}. Deliver a side-by-side spreadsheet."), icon: Search, color: "blue" },
+      { label: "Find bugs on my site", prompt: personalize("Go to {url} and test every user flow for {company}. Screenshot each step, flag any bugs or broken UI, and deliver a prioritized bug report."), icon: Bug, color: "rose" },
+      { label: "Export site data to CSV", prompt: personalize("Go to {url} and extract all structured data from {company}'s pages — products, pricing, metadata. Deliver as a clean CSV file."), icon: Globe, color: "violet" },
+      { label: "Get a performance report", prompt: personalize("Audit {url} for {company} — page speed, SEO, broken links, accessibility. Deliver a scored report with fixes ranked by impact."), icon: TrendingUp, color: "emerald" },
     ]
   }
 
@@ -612,7 +612,6 @@ export function Chat() {
   // Swarm mode state — only available on homepage (no active chat)
   const [swarmMode, setSwarmMode] = useState(false)
   const [swarmCount, setSwarmCount] = useState(3)
-  const [swarmPersistent, setSwarmPersistent] = useState(false)
   const [swarmActive, setSwarmActive] = useState(false)
   const [swarmId, setSwarmId] = useState<string | null>(null)
   const [swarmPrompt, setSwarmPrompt] = useState("")
@@ -694,8 +693,6 @@ export function Chat() {
       onSwarmModeChange: !effectiveChatId ? setSwarmMode : undefined,
       swarmCount: !effectiveChatId ? swarmCount : undefined,
       onSwarmCountChange: !effectiveChatId ? setSwarmCount : undefined,
-      swarmPersistent: !effectiveChatId ? swarmPersistent : undefined,
-      onSwarmPersistentChange: !effectiveChatId ? setSwarmPersistent : undefined,
       userTier,
       maxSwarmMachines,
       }
@@ -724,7 +721,6 @@ export function Chat() {
       hasToolInvocations,
       swarmMode,
       swarmCount,
-      swarmPersistent,
       userTier,
       maxSwarmMachines,
     ]
@@ -1017,7 +1013,6 @@ export function Chat() {
               swarmId={swarmId}
               prompt={swarmPrompt}
               machineCount={swarmCount}
-              persistent={swarmPersistent}
               onStop={handleSwarmStop}
               onDismiss={handleSwarmDismiss}
             />
