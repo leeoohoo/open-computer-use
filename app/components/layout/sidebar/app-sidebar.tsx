@@ -48,6 +48,7 @@ function useSecretSequence(sequence: string, onActivate: () => void) {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if (!e.key) return
       bufferRef.current += e.key.toLowerCase()
       if (bufferRef.current.length > sequence.length) {
         bufferRef.current = bufferRef.current.slice(-sequence.length)
