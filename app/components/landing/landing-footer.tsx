@@ -20,14 +20,15 @@ const footerColumns: { title: string; links: { href: string; label: string; exte
   {
     title: "Resources",
     links: [
+      { href: "/use-cases", label: "Use Cases" },
       { href: "/blog", label: "Blog" },
-      { href: "/results", label: "Case Studies" },
+      { href: "/results", label: "Demos" },
     ],
   },
   {
     title: "Company",
     links: [
-      { href: "https://cal.com/coasty/15min", label: "Talk to Cofounders", external: true },
+      { href: "https://cal.com/coasty/15min", label: "Talk to Cofounders & Demo", external: true },
       { href: "mailto:founders@coasty.ai", label: "Contact", external: true },
     ],
   },

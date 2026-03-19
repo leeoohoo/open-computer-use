@@ -35,91 +35,91 @@ const DEMO_VIDEOS = [
 const USE_CASES = [
   {
     label: "Computer-using agent",
-    headline: "10x output in 8 minutes",
+    headline: "automate any browser task - 47 steps done in 8 min",
     outcome: "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup. No code.",
     icon: MonitorSmartphone,
     color: "emerald",
   },
   {
     label: "Competitor intel",
-    headline: "5 competitor reports in 8 min",
+    headline: "spy on 5 competitors - full reports in 8 min",
     outcome: "5 competitor profiles with pricing, traffic stats, feature matrices, and positioning gaps — exported as a ready-to-share spreadsheet in under 8 minutes.",
     icon: Search,
     color: "emerald",
   },
   {
     label: "QA bug reports",
-    headline: "30+ flows tested in 12 min",
+    headline: "find bugs before users do - 30 flows tested in 12 min",
     outcome: "30+ user flows tested, 100% of critical paths covered, every bug screenshotted with repro steps — delivered as a prioritized Notion doc in 12 minutes.",
     icon: Bug,
     color: "rose",
   },
   {
     label: "SEO gap analysis",
-    headline: "150 keyword gaps in 15 min",
+    headline: "rank higher on Google - 150 keyword gaps in 15 min",
     outcome: "150+ keyword gaps identified, 10 high-impact content briefs drafted, competitor backlink sources mapped — full report in 15 minutes.",
     icon: TrendingUp,
     color: "blue",
   },
   {
     label: "Data extraction",
-    headline: "1,000 rows scraped in 6 min",
+    headline: "scrape any website - 1,000 rows cleaned in 6 min",
     outcome: "1,000+ product listings scraped with prices, specs, and images — cleaned, de-duped, and exported as structured CSV in 6 minutes.",
     icon: FileText,
     color: "violet",
   },
   {
     label: "Lead generation",
-    headline: "50 qualified leads in 10 min",
+    headline: "fill your pipeline - 50 qualified leads in 10 min",
     outcome: "50 qualified decision-makers matching your ICP — with verified titles, companies, LinkedIn URLs, and personalized openers — delivered in 10 minutes.",
     icon: Users,
     color: "amber",
   },
   {
     label: "Site audit",
-    headline: "200 pages audited in 9 min",
+    headline: "fix what's broken - 200 pages audited in 9 min",
     outcome: "200+ pages scanned, Core Web Vitals scored, 15+ broken links found, accessibility issues ranked by severity — full report with fix priorities in 9 minutes.",
     icon: BarChart3,
     color: "emerald",
   },
   {
     label: "Ad intelligence",
-    headline: "25 competitor ads in 11 min",
+    headline: "steal competitor ad strategies - 25 creatives pulled in 11 min",
     outcome: "8 competitor landing pages captured, 25+ ad creatives archived, messaging patterns analyzed — side-by-side teardown delivered in 11 minutes.",
     icon: Eye,
     color: "blue",
   },
   {
     label: "Email outreach",
-    headline: "50 cold emails in 7 min",
+    headline: "book more meetings - 50 personalized emails in 7 min",
     outcome: "50 personalized cold emails drafted — each referencing the prospect's company, role, and a specific pain point — ready to send in 7 minutes.",
     icon: Send,
     color: "violet",
   },
   {
     label: "Design review",
-    headline: "12 breakpoints tested in 8 min",
+    headline: "ship pixel-perfect - 12 breakpoints tested in 8 min",
     outcome: "12 breakpoints tested across mobile, tablet, and desktop — 20+ layout issues screenshotted with CSS fix suggestions — report in 8 minutes.",
     icon: MonitorSmartphone,
     color: "rose",
   },
   {
     label: "Price monitoring",
-    headline: "200 SKUs compared in 10 min",
+    headline: "never lose on price - 200 SKUs tracked in 10 min",
     outcome: "5 competitor price sheets compared across 200+ SKUs — promotions, availability, and margin gaps flagged in a live spreadsheet in 10 minutes.",
     icon: ShoppingCart,
     color: "amber",
   },
   {
     label: "Market research",
-    headline: "40 data points in 14 min",
+    headline: "validate your market - 40 data points in 14 min",
     outcome: "$2.4B TAM calculated, 12 key players profiled, 3-year growth trend charted — sourced from 40+ data points, compiled in 14 minutes.",
     icon: Globe,
     color: "blue",
   },
   {
     label: "Email campaigns",
-    headline: "100 emails personalized in 9 min",
+    headline: "stop generic blasts - 100 emails personalized in 9 min",
     outcome: "3-email nurture sequence written for 100 prospects — each personalized with company context and pain points — campaign-ready in 9 minutes.",
     icon: Mail,
     color: "emerald",
@@ -140,6 +140,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const pillContainerRef = useRef<HTMLDivElement>(null)
 
   // Auto-rotate carousel
   useEffect(() => {
@@ -151,6 +152,16 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
   }, [isPaused])
+
+  // Scroll active pill to center
+  useEffect(() => {
+    const container = pillContainerRef.current
+    if (!container) return
+    const activeBtn = container.querySelector<HTMLElement>(`[data-pill-index="${activeIndex}"]`)
+    if (!activeBtn) return
+    const scrollLeft = activeBtn.offsetLeft - container.offsetWidth / 2 + activeBtn.offsetWidth / 2
+    container.scrollTo({ left: scrollLeft, behavior: "smooth" })
+  }, [activeIndex])
 
   const activeCase = USE_CASES[activeIndex]
   const activeColors = CAROUSEL_COLORS[activeCase.color] || CAROUSEL_COLORS.emerald
@@ -177,10 +188,12 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           "font-bold tracking-tight",
           isMobile ? "text-4xl leading-[1.25]" : "text-5xl sm:text-6xl lg:text-7xl leading-[1.15]"
         )}>
-          10x on autopilot.{" "}
-          <span className="relative inline-block overflow-hidden pb-[0.15em]" style={{ height: "1.4em", verticalAlign: "bottom" }}>
-            {/* Invisible sizer — takes up the width of the longest headline */}
-            <span className="invisible whitespace-nowrap">100 emails personalized in 9 min</span>
+          <span className="block">Autopilot operations:</span>
+          <span className="relative block text-center">
+            {/* Invisible sizer -reserves height for the tallest headline so layout doesn't shift */}
+            <span className="invisible block" aria-hidden="true">
+              {USE_CASES.reduce((longest, uc) => uc.headline.length > longest.length ? uc.headline : longest, "")}
+            </span>
             <AnimatePresence mode="wait">
               <motion.span
                 key={activeIndex}
@@ -188,7 +201,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="absolute left-0 top-0 text-emerald-500 dark:text-emerald-400 whitespace-nowrap"
+                className="absolute inset-x-0 top-0 text-emerald-500 dark:text-emerald-400"
               >
                 {activeCase.headline}
               </motion.span>
@@ -202,26 +215,24 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {/* Marquee pill strip */}
-          <div className="relative overflow-hidden mx-auto max-w-3xl">
-            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+          {/* Pill strip -scrolls to center active pill */}
+          <div className="relative mx-auto max-w-3xl">
             <div
-              className="flex w-max gap-1 py-1"
-              style={{
-                animation: isPaused ? "none" : "marquee 30s linear infinite",
-              }}
+              ref={pillContainerRef}
+              className="flex gap-1 py-1 overflow-x-auto no-scrollbar"
+              style={{ scrollbarWidth: "none" }}
             >
-              {/* Duplicate the list for seamless loop */}
-              {[...USE_CASES, ...USE_CASES].map((uc, i) => {
-                const realIndex = i % USE_CASES.length
-                const isActive = realIndex === activeIndex
+              {/* Spacer so first item can center */}
+              <div className="shrink-0 w-[calc(50%-2rem)]" />
+              {USE_CASES.map((uc, i) => {
+                const isActive = i === activeIndex
                 const colors = CAROUSEL_COLORS[uc.color] || CAROUSEL_COLORS.emerald
                 const Icon = uc.icon
                 return (
                   <button
-                    key={`${uc.label}-${i}`}
-                    onClick={() => setActiveIndex(realIndex)}
+                    key={uc.label}
+                    data-pill-index={i}
+                    onClick={() => setActiveIndex(i)}
                     className={cn(
                       "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium whitespace-nowrap cursor-pointer border shrink-0 transition-all duration-400 ease-out",
                       isActive
@@ -234,16 +245,12 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                   </button>
                 )
               })}
+              {/* Spacer so last item can center */}
+              <div className="shrink-0 w-[calc(50%-2rem)]" />
             </div>
-            <style jsx>{`
-              @keyframes marquee {
-                0% { transform: translateX(0); }
-                100% { transform: translateX(-50%); }
-              }
-            `}</style>
           </div>
 
-          {/* Outcome text — simple fade */}
+          {/* Outcome text -simple fade */}
           <div className="mt-5 flex justify-center" style={{ minHeight: isMobile ? "3rem" : "2.5rem" }}>
             <AnimatePresence mode="wait">
               <motion.p
@@ -292,7 +299,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               whileTap={{ scale: 0.98 }}
             >
               <Video className="h-4 w-4" />
-              Talk to Cofounders
+              Talk to Cofounders & Demo
             </motion.button>
           </a>
         </div>
