@@ -30,78 +30,113 @@ import { themeConfig } from "@/lib/theme-config"
 import { Switch } from "@/components/ui/switch"
 import { QuickStartGuide } from "./quick-start-guide"
 import Link from "next/link"
-import { ShieldCheck } from "lucide-react"
+import { ShieldCheck, Search, Bug, Globe, FileText, BarChart3, Mail, Zap, Sparkles, PenTool, MonitorSmartphone, Clipboard, Users, TrendingUp, Eye, FileCode, LayoutGrid, Send, ShoppingCart, MessageCircle, Bot } from "lucide-react"
 import { SwarmPanel } from "./swarm-panel"
 import { ActiveSwarmBanner, type ActiveSwarm } from "./active-swarm-banner"
 
 // ── Task templates by role & use-case (activation metric: first task < 5 min) ──
-const ROLE_TEMPLATES: Record<string, { label: string; prompt: string }[]> = {
+// Templates use {url} and {company} tokens — replaced at runtime with onboarding data.
+// Every template references both so suggestions always feel personal.
+type TaskTemplate = { label: string; prompt: string; icon: React.ElementType; color: string }
+
+const ROLE_TEMPLATES: Record<string, TaskTemplate[]> = {
   founder: [
-    { label: "Research competitors", prompt: "Research the top 5 competitors in my space, compare their pricing, features, and positioning. Compile everything into a spreadsheet." },
-    { label: "Draft investor update", prompt: "Go to my email and draft a monthly investor update summarizing key metrics, milestones hit, and next month's priorities." },
-    { label: "Find leads on LinkedIn", prompt: "Search LinkedIn for 20 potential customers matching [your ICP] and export their names, titles, companies, and profile URLs." },
+    { label: "Research competitors", prompt: "Research the top 5 competitors of {company} ({url}). Compare their pricing, features, and positioning side-by-side. Compile everything into a spreadsheet.", icon: Search, color: "blue" },
+    { label: "Draft investor update", prompt: "Go to my email and draft a monthly investor update for {company}. Summarize key metrics, milestones hit, and next month's priorities. Reference {url} for any public stats.", icon: Mail, color: "violet" },
+    { label: "Find leads on LinkedIn", prompt: "Search LinkedIn for 20 potential customers who would benefit from {company}'s product at {url}. Export their names, titles, companies, and profile URLs.", icon: Users, color: "emerald" },
   ],
   developer: [
-    { label: "Test a web app", prompt: "Go to [URL] and test the full signup → onboarding → dashboard flow. Screenshot each step and report any bugs or broken UI." },
-    { label: "Scrape API docs", prompt: "Go to [documentation URL] and extract all API endpoints, methods, parameters, and response examples into a structured JSON file." },
-    { label: "Fill out forms", prompt: "Go to [URL] and fill out the registration form with the following details: [name, email, etc.]" },
+    { label: "Test my web app", prompt: "Go to {url} and test the full signup → onboarding → dashboard flow for {company}. Screenshot each step and report any bugs or broken UI.", icon: Bug, color: "rose" },
+    { label: "Scrape API docs", prompt: "Go to {url}/docs and extract all API endpoints, methods, parameters, and response examples for {company} into a structured JSON file.", icon: FileCode, color: "blue" },
+    { label: "Audit my site", prompt: "Go to {url} and audit {company}'s site for performance, broken links, and SEO issues. Compile a report with recommendations.", icon: Globe, color: "amber" },
   ],
   marketer: [
-    { label: "Post on social media", prompt: "Log in to Twitter/X and post: \"[your message]\". Then check for early engagement and reply to any comments." },
-    { label: "Research trending topics", prompt: "Search Google, Reddit, and Hacker News for trending topics in [your niche] this week. Summarize the top 10 with links." },
-    { label: "Competitor ad analysis", prompt: "Visit [competitor URLs] and screenshot their landing pages, pricing pages, and any ads. Summarize their messaging strategy." },
+    { label: "Analyze our SEO", prompt: "Search Google for the top 10 keywords {company} should rank for. Check {url} against each result and identify content gaps.", icon: TrendingUp, color: "emerald" },
+    { label: "Research trending topics", prompt: "Search Google, Reddit, and Hacker News for trending topics in {company}'s niche this week. Summarize the top 10 with links and angles for {url}.", icon: Sparkles, color: "violet" },
+    { label: "Competitor ad analysis", prompt: "Find the top 3 competitors of {company}. Visit their websites and screenshot their landing pages, pricing, and ads. Compare their messaging to {url}.", icon: Eye, color: "blue" },
   ],
   product_manager: [
-    { label: "Collect user feedback", prompt: "Go to G2, Capterra, and Product Hunt for [product name]. Extract all reviews from the last 3 months, noting common complaints and feature requests." },
-    { label: "Competitive feature matrix", prompt: "Research [competitor 1], [competitor 2], and [competitor 3]. Build a feature comparison matrix covering pricing, integrations, and key capabilities." },
-    { label: "Monitor release notes", prompt: "Check the changelogs and release notes of [competitor URLs]. Summarize any new features or changes from the past month." },
+    { label: "Collect user feedback", prompt: "Go to G2, Capterra, and Product Hunt and search for {company}. Extract all reviews from the last 3 months, noting common complaints and feature requests. Cross-reference with {url}.", icon: MessageCircle, color: "emerald" },
+    { label: "Competitive feature matrix", prompt: "Research the top 3 competitors of {company}. Build a feature comparison matrix covering pricing, integrations, and key capabilities vs {url}.", icon: LayoutGrid, color: "blue" },
+    { label: "Monitor release notes", prompt: "Find the changelogs and release notes of {company}'s top competitors. Summarize new features from the past month and compare them to what's on {url}.", icon: FileText, color: "violet" },
   ],
   data_analyst: [
-    { label: "Scrape public data", prompt: "Go to [website] and extract all the data from the table on the page. Export it as a CSV file." },
-    { label: "Research market stats", prompt: "Search for the latest market size, growth rate, and key statistics for [your industry]. Compile sources and numbers." },
-    { label: "Pull financial data", prompt: "Go to Yahoo Finance and pull the last 12 months of stock price data for [ticker symbols]. Save as a spreadsheet." },
+    { label: "Scrape our site data", prompt: "Go to {url} and extract all the structured data from {company}'s pages — products, pricing, metadata. Export as a CSV file.", icon: FileText, color: "blue" },
+    { label: "Research market stats", prompt: "Search for the latest market size, growth rate, and key statistics for {company}'s industry. Compile sources and compare to what {url} offers.", icon: BarChart3, color: "emerald" },
+    { label: "Benchmark analytics", prompt: "Research industry benchmarks for companies like {company}. Compare typical metrics (traffic, conversion, engagement) against what's visible on {url}.", icon: TrendingUp, color: "amber" },
   ],
   operations: [
-    { label: "Automate data entry", prompt: "Go to [web app URL] and enter the following records into the system: [paste your data or describe the source]." },
-    { label: "Vendor price check", prompt: "Visit [vendor website 1] and [vendor website 2]. Compare pricing for [product/service] and summarize the best deal." },
-    { label: "Process invoices", prompt: "Go to [email/portal] and download all invoices from the last month. Extract vendor names, amounts, and dates into a spreadsheet." },
+    { label: "Automate data entry", prompt: "Go to {url} and enter the following records into {company}'s system: [paste your data or describe the source].", icon: Clipboard, color: "blue" },
+    { label: "Vendor price check", prompt: "Search for the top 3 vendors that {company} might use. Compare their pricing and summarize the best deal. Check if any are linked on {url}.", icon: ShoppingCart, color: "emerald" },
+    { label: "Process invoices", prompt: "Go to {company}'s email or billing portal and download all invoices from the last month. Extract vendor names, amounts, and dates into a spreadsheet. Cross-reference with {url}.", icon: FileText, color: "violet" },
   ],
   designer: [
-    { label: "Screenshot competitor UIs", prompt: "Visit [competitor URLs] and take full-page screenshots of their homepage, pricing page, and dashboard. Save all images." },
-    { label: "Check responsive design", prompt: "Go to [your URL] and test it at mobile (375px), tablet (768px), and desktop (1440px) widths. Screenshot each and note any layout issues." },
-    { label: "Find design inspiration", prompt: "Search Dribbble and Behance for the best [dashboard/landing page/mobile app] designs in [your industry]. Save the top 10 screenshots." },
+    { label: "Screenshot competitor UIs", prompt: "Find {company}'s top 3 competitors and take full-page screenshots of their homepage, pricing page, and dashboard. Compare their design to {url}.", icon: Eye, color: "violet" },
+    { label: "Check responsive design", prompt: "Go to {url} and test {company}'s site at mobile (375px), tablet (768px), and desktop (1440px) widths. Screenshot each and note any layout issues.", icon: MonitorSmartphone, color: "blue" },
+    { label: "Find design inspiration", prompt: "Search Dribbble and Behance for the best designs in {company}'s industry. Save the top 10 screenshots and note ideas that could improve {url}.", icon: PenTool, color: "rose" },
   ],
 }
 
-const USE_CASE_TEMPLATES: Record<string, { label: string; prompt: string }[]> = {
+const USE_CASE_TEMPLATES: Record<string, TaskTemplate[]> = {
   web_scraping: [
-    { label: "Scrape a website", prompt: "Go to [URL] and extract all [product names / prices / emails / data] from the page. Export as a CSV." },
+    { label: "Scrape our site", prompt: "Go to {url} and extract all key data from {company}'s pages — products, prices, content. Export as a CSV.", icon: Globe, color: "blue" },
   ],
   browser_automation: [
-    { label: "Automate a workflow", prompt: "Go to [website], log in with my saved credentials, navigate to [section], and [perform action]. Repeat for all items." },
+    { label: "Automate a workflow", prompt: "Go to {url}, log in to {company}'s platform with my saved credentials, navigate to the main dashboard, and export the latest reports.", icon: Zap, color: "amber" },
   ],
   data_entry: [
-    { label: "Bulk data entry", prompt: "Go to [web app] and enter these records one by one: [paste data]. Confirm each entry was saved." },
+    { label: "Bulk data entry", prompt: "Go to {url} and enter these records into {company}'s system one by one: [paste data]. Confirm each entry was saved.", icon: Clipboard, color: "emerald" },
   ],
   email_outreach: [
-    { label: "Send personalized emails", prompt: "Go to my email and send personalized messages to these contacts: [list]. Use this template: [your template]." },
+    { label: "Send outreach emails", prompt: "Go to my email and send personalized outreach messages on behalf of {company}. Mention {url} in each email. Use this template: [your template].", icon: Send, color: "violet" },
   ],
   testing: [
-    { label: "QA test a website", prompt: "Go to [URL] and test the core user flows: signup, login, main feature, and logout. Screenshot each step and report any bugs." },
+    { label: "QA test our site", prompt: "Go to {url} and test {company}'s core user flows: signup, login, main feature, and logout. Screenshot each step and report any bugs.", icon: Bug, color: "rose" },
   ],
   ecommerce: [
-    { label: "Monitor product prices", prompt: "Check [competitor store URLs] for [product name] pricing. Record current prices, availability, and any active promotions." },
+    { label: "Monitor competitor prices", prompt: "Find the top 3 competitors of {company}. Check their product pricing and compare to what's listed on {url}. Record prices, availability, and promotions.", icon: ShoppingCart, color: "amber" },
   ],
   social_media: [
-    { label: "Post & engage", prompt: "Log in to [Twitter/LinkedIn/Reddit] and post: \"[your content]\". Then engage with any replies for the next few minutes." },
+    { label: "Post & engage", prompt: "Log in to Twitter/X and post about {company}. Include a link to {url}. Then engage with any replies for the next few minutes.", icon: MessageCircle, color: "blue" },
   ],
   general_automation: [
-    { label: "Automate a task", prompt: "Go to [website] and [describe what you need done step by step]." },
+    { label: "Automate a task", prompt: "Go to {url} and help {company} with the following: [describe what you need done step by step].", icon: Bot, color: "violet" },
   ],
 }
 
-function getTaskTemplates(role: string | null | undefined, useCase: string | null | undefined): { label: string; prompt: string }[] {
-  const templates: { label: string; prompt: string }[] = []
+const TASK_COLORS: Record<string, { icon: string; bg: string; border: string; hover: string }> = {
+  blue:    { icon: "text-blue-500 dark:text-blue-400",    bg: "bg-blue-500/[0.08] dark:bg-blue-400/[0.08]",    border: "border-blue-500/15 dark:border-blue-400/15",    hover: "hover:bg-blue-500/[0.13] dark:hover:bg-blue-400/[0.13] hover:border-blue-500/25 dark:hover:border-blue-400/25" },
+  violet:  { icon: "text-violet-500 dark:text-violet-400",  bg: "bg-violet-500/[0.08] dark:bg-violet-400/[0.08]",  border: "border-violet-500/15 dark:border-violet-400/15",  hover: "hover:bg-violet-500/[0.13] dark:hover:bg-violet-400/[0.13] hover:border-violet-500/25 dark:hover:border-violet-400/25" },
+  emerald: { icon: "text-emerald-500 dark:text-emerald-400", bg: "bg-emerald-500/[0.08] dark:bg-emerald-400/[0.08]", border: "border-emerald-500/15 dark:border-emerald-400/15", hover: "hover:bg-emerald-500/[0.13] dark:hover:bg-emerald-400/[0.13] hover:border-emerald-500/25 dark:hover:border-emerald-400/25" },
+  rose:    { icon: "text-rose-500 dark:text-rose-400",    bg: "bg-rose-500/[0.08] dark:bg-rose-400/[0.08]",    border: "border-rose-500/15 dark:border-rose-400/15",    hover: "hover:bg-rose-500/[0.13] dark:hover:bg-rose-400/[0.13] hover:border-rose-500/25 dark:hover:border-rose-400/25" },
+  amber:   { icon: "text-amber-500 dark:text-amber-400",   bg: "bg-amber-500/[0.08] dark:bg-amber-400/[0.08]",   border: "border-amber-500/15 dark:border-amber-400/15",   hover: "hover:bg-amber-500/[0.13] dark:hover:bg-amber-400/[0.13] hover:border-amber-500/25 dark:hover:border-amber-400/25" },
+}
+
+function getTaskTemplates(
+  role: string | null | undefined,
+  useCase: string | null | undefined,
+  website: string | null | undefined,
+  company: string | null | undefined,
+): TaskTemplate[] {
+  const siteUrl = website ? (website.startsWith("http") ? website : `https://${website}`) : null
+  const companyName = company?.trim() || null
+
+  const personalize = (prompt: string) => {
+    let p = prompt
+    if (siteUrl) {
+      p = p.replace(/\{url\}/g, siteUrl)
+    } else {
+      p = p.replace(/\{url\}/g, "[your website URL]")
+    }
+    if (companyName) {
+      p = p.replace(/\{company\}/g, companyName)
+    } else {
+      p = p.replace(/\{company\}/g, "[your company]")
+    }
+    return p
+  }
+
+  const templates: TaskTemplate[] = []
   const seen = new Set<string>()
 
   // Add role-based templates first (primary persona)
@@ -110,7 +145,7 @@ function getTaskTemplates(role: string | null | undefined, useCase: string | nul
     for (const t of ROLE_TEMPLATES[r] || []) {
       if (!seen.has(t.label)) {
         seen.add(t.label)
-        templates.push(t)
+        templates.push({ ...t, prompt: personalize(t.prompt) })
       }
     }
   }
@@ -121,7 +156,7 @@ function getTaskTemplates(role: string | null | undefined, useCase: string | nul
     for (const t of USE_CASE_TEMPLATES[uc] || []) {
       if (!seen.has(t.label)) {
         seen.add(t.label)
-        templates.push(t)
+        templates.push({ ...t, prompt: personalize(t.prompt) })
       }
     }
   }
@@ -129,10 +164,10 @@ function getTaskTemplates(role: string | null | undefined, useCase: string | nul
   // Fallback if nothing matched
   if (templates.length === 0) {
     return [
-      { label: "Scrape a website", prompt: "Go to [URL] and extract all the data from the page. Export as a CSV." },
-      { label: "Test a web app", prompt: "Go to [URL] and test the full signup → dashboard flow. Screenshot each step and report any bugs." },
-      { label: "Research a topic", prompt: "Search Google for [your topic] and summarize the top 10 results with key takeaways and links." },
-      { label: "Fill out a form", prompt: "Go to [URL] and fill out the form with the following details: [your data]." },
+      { label: "Scrape my site", prompt: personalize("Go to {url} and extract all key data from {company}'s pages. Export as a CSV."), icon: Globe, color: "blue" },
+      { label: "Test my web app", prompt: personalize("Go to {url} and test {company}'s full signup → dashboard flow. Screenshot each step and report any bugs."), icon: Bug, color: "rose" },
+      { label: "Research competitors", prompt: personalize("Search Google for {company}'s top 5 competitors. Compare their features and pricing to {url}."), icon: Search, color: "violet" },
+      { label: "Audit my site", prompt: personalize("Go to {url} and audit {company}'s site for SEO, broken links, and performance. Compile a report."), icon: TrendingUp, color: "emerald" },
     ]
   }
 
@@ -745,8 +780,8 @@ export function Chat() {
 
   // Task templates based on onboarding role + use-case (activation metric)
   const taskTemplates = useMemo(
-    () => getTaskTemplates(user?.role, user?.use_case),
-    [user?.role, user?.use_case]
+    () => getTaskTemplates(user?.role, user?.use_case, user?.website, user?.company),
+    [user?.role, user?.use_case, user?.website, user?.company]
   )
 
   // Any swarm is taking over the screen (new or returning)
@@ -1062,24 +1097,32 @@ export function Chat() {
               transition={{ delay: 0.3, duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
               className="mt-3 mb-1"
             >
-              <div className="flex items-center justify-center gap-1.5 mb-2">
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className="text-muted-foreground/50">
-                  <path d="M8 1l1.796 4.898L15 7.5l-3.804 2.952L12.392 16 8 12.6 3.608 16l1.196-5.548L1 7.5l5.204-1.602L8 1z" fill="currentColor" opacity="0.5" />
-                  <path d="M8 1l1.796 4.898L15 7.5l-3.804 2.952L12.392 16 8 12.6 3.608 16l1.196-5.548L1 7.5l5.204-1.602L8 1z" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
-                </svg>
-                <span className="text-[11px] text-muted-foreground/50 font-medium tracking-wide">Try a task</span>
-              </div>
               <div className="flex flex-wrap justify-center gap-1.5">
-                {taskTemplates.map((t) => (
-                  <button
-                    key={t.label}
-                    type="button"
-                    onClick={() => handleCollaborativeInputChange(t.prompt)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-border/40 bg-card/60 hover:bg-accent/60 hover:border-border/60 px-2.5 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-all duration-150 cursor-pointer"
-                  >
-                    {t.label}
-                  </button>
-                ))}
+                {taskTemplates.map((t, i) => {
+                  const Icon = t.icon
+                  const colors = TASK_COLORS[t.color] || TASK_COLORS.blue
+                  return (
+                    <motion.button
+                      key={t.label}
+                      type="button"
+                      onClick={() => handleCollaborativeInputChange(t.prompt)}
+                      initial={{ opacity: 0, scale: 0.92 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.35 + i * 0.04, duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      className={cn(
+                        "group inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-all duration-200 cursor-pointer",
+                        colors.border,
+                        colors.hover,
+                        "bg-card/40",
+                      )}
+                    >
+                      <Icon className={cn("size-3", colors.icon)} />
+                      <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                        {t.label}
+                      </span>
+                    </motion.button>
+                  )
+                })}
               </div>
             </motion.div>
           )}

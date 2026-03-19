@@ -90,43 +90,37 @@ function TabContent({ activeTab, inApp }: { activeTab: TabId; inApp: boolean }) 
 
 function TabNav({ activeTab, onTabChange }: { activeTab: TabId; onTabChange: (id: TabId) => void }) {
   return (
-    <div className="relative">
-      {/* Scroll fade indicators */}
-      <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background to-transparent z-10 sm:hidden" />
-      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-background to-transparent z-10 sm:hidden" />
-
-      <nav
-        className="flex gap-1 overflow-x-auto scrollbar-invisible pb-1 -mx-1 px-1"
-        role="tablist"
-      >
-        {tabs.map((tab) => {
-          const Icon = tab.icon
-          const isActive = activeTab === tab.id
-          return (
-            <button
-              key={tab.id}
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => onTabChange(tab.id)}
-              className={cn(
-                "relative flex items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-[13px] font-medium transition-all duration-200 shrink-0",
-                isActive
-                  ? "bg-foreground text-background shadow-sm"
-                  : "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/[0.04]"
-              )}
-            >
-              <Icon
-                size={15}
-                weight={isActive ? "fill" : "duotone"}
-                className="shrink-0"
-              />
-              <span className="hidden sm:inline">{tab.label}</span>
-              <span className="sm:hidden">{tab.shortLabel}</span>
-            </button>
-          )
-        })}
-      </nav>
-    </div>
+    <nav
+      className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-1"
+      role="tablist"
+    >
+      {tabs.map((tab) => {
+        const Icon = tab.icon
+        const isActive = activeTab === tab.id
+        return (
+          <button
+            key={tab.id}
+            role="tab"
+            aria-selected={isActive}
+            onClick={() => onTabChange(tab.id)}
+            className={cn(
+              "relative flex items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-[12px] sm:text-[13px] font-medium transition-all duration-200",
+              isActive
+                ? "bg-foreground text-background shadow-sm"
+                : "text-muted-foreground/70 hover:text-foreground hover:bg-muted/60"
+            )}
+          >
+            <Icon
+              size={15}
+              weight={isActive ? "fill" : "duotone"}
+              className="shrink-0"
+            />
+            <span className="hidden sm:inline truncate">{tab.label}</span>
+            <span className="sm:hidden truncate">{tab.shortLabel}</span>
+          </button>
+        )
+      })}
+    </nav>
   )
 }
 

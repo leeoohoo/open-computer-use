@@ -127,7 +127,7 @@ export function OnboardingFlow({
   const canProceed = () => {
     switch (step) {
       case 0:
-        return displayName.trim().length > 0
+        return displayName.trim().length > 0 && website.trim().length > 0
       case 1:
         return roles.length > 0 && teamSize.length > 0
       case 2:
@@ -579,9 +579,6 @@ export function OnboardingFlow({
                     <div className="space-y-2">
                       <Label className="text-xs font-medium text-muted-foreground">
                         Website
-                        <span className="text-muted-foreground/50 ml-1">
-                          (optional)
-                        </span>
                       </Label>
                       <div className="relative">
                         <Globe className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40" />
