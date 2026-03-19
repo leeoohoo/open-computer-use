@@ -193,6 +193,268 @@ class TestEmailActionParsing:
         assert actions[0].params["subject"] == "Hello"
         assert actions[0].params["body"] == "Body text"
 
+    def test_send_email_multiline_body_escaped_newlines(self):
+        """The exact failure case from production — body has \\n escape sequences."""
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = 'send_email("prateekjannu@gmail.com", "Head of Growth - Your team is still doing this manually?", "Hello It\'s Grace,\\n\\nWe\'re a Stanford x Columbia team and we\'re onboarding a limited batch of early users to try our autonomous AI agent platform.\\n\\nBest,\\nGrace")'
+        actions = parse_pyautogui_code(code)
+        assert len(actions) == 1
+        assert actions[0].action_type == "send_email"
+        assert actions[0].params["to"] == "prateekjannu@gmail.com"
+        assert "Head of Growth" in actions[0].params["subject"]
+        assert "Hello It's Grace," in actions[0].params["body"]
+        assert "\n\nWe're a Stanford" in actions[0].params["body"]
+        assert "Best,\nGrace" in actions[0].params["body"]
+
+    def test_send_email_literal_newlines_in_body(self):
+        """Body contains actual newline characters (not escape sequences)."""
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = 'send_email("to@x.com", "Subject", "Line 1\nLine 2\nLine 3")'
+        actions = parse_pyautogui_code(code)
+        assert len(actions) == 1
+        assert actions[0].action_type == "send_email"
+        assert actions[0].params["body"] == "Line 1\nLine 2\nLine 3"
+
+    def test_send_email_triple_quoted_body(self):
+        """Triple-quoted strings for long bodies."""
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = '''send_email("to@x.com", "Subject", """Hello,
+
+This is a multi-paragraph email.
+
+Best regards,
+Agent""")'''
+        actions = parse_pyautogui_code(code)
+        assert len(actions) == 1
+        assert actions[0].action_type == "send_email"
+        assert "multi-paragraph" in actions[0].params["body"]
+        assert actions[0].params["body"].count("\n") >= 3
+
+    def test_send_email_single_quotes(self):
+        """All arguments use single quotes."""
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        actions = parse_pyautogui_code("send_email('user@test.com', 'Hi there', 'Body content')")
+        assert len(actions) == 1
+        assert actions[0].params["to"] == "user@test.com"
+        assert actions[0].params["subject"] == "Hi there"
+        assert actions[0].params["body"] == "Body content"
+
+    def test_send_email_escaped_quotes_in_body(self):
+        """Body contains escaped quote characters."""
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = 'send_email("to@x.com", "Subject", "She said \\"hello\\" to me")'
+        actions = parse_pyautogui_code(code)
+        assert len(actions) == 1
+        assert actions[0].params["body"] == 'She said "hello" to me'
+
+    def test_send_email_escaped_single_quotes_in_body(self):
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = "send_email('to@x.com', 'Subject', 'It\\'s a great day')"
+        actions = parse_pyautogui_code(code)
+        assert len(actions) == 1
+        assert actions[0].params["body"] == "It's a great day"
+
+    def test_send_email_tabs_in_body(self):
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = 'send_email("to@x.com", "Report", "Name\\tScore\\nAlice\\t95\\nBob\\t87")'
+        actions = parse_pyautogui_code(code)
+        assert len(actions) == 1
+        assert "\t" in actions[0].params["body"]
+        assert "Alice\t95" in actions[0].params["body"]
+
+    def test_send_email_long_body_with_urls(self):
+        """Real-world long email with URLs and special chars."""
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = 'send_email("recipient@company.com", "Check this out", "Hi,\\n\\nHere is the link: https://example.com/path?key=value&foo=bar\\n\\nLet me know if you have questions.\\n\\nBest,\\nAgent")'
+        actions = parse_pyautogui_code(code)
+        assert len(actions) == 1
+        assert actions[0].params["to"] == "recipient@company.com"
+        assert "https://example.com/path?key=value&foo=bar" in actions[0].params["body"]
+
+    def test_send_email_empty_body(self):
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        actions = parse_pyautogui_code('send_email("to@x.com", "Subject", "")')
+        assert len(actions) == 1
+        assert actions[0].params["body"] == ""
+
+    def test_send_email_with_commas_in_body(self):
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = 'send_email("to@x.com", "Hello, World", "Dear user, welcome. Also, thanks.")'
+        actions = parse_pyautogui_code(code)
+        assert len(actions) == 1
+        assert actions[0].params["subject"] == "Hello, World"
+        assert actions[0].params["body"] == "Dear user, welcome. Also, thanks."
+
+    def test_send_email_with_parentheses_in_body(self):
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = 'send_email("to@x.com", "Update (v2)", "The new version (v2.1) is ready.")'
+        actions = parse_pyautogui_code(code)
+        assert len(actions) == 1
+        assert actions[0].params["subject"] == "Update (v2)"
+        assert actions[0].params["body"] == "The new version (v2.1) is ready."
+
+    def test_send_email_mixed_with_other_actions(self):
+        """send_email alongside other pyautogui actions in the same code block."""
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = 'pyautogui.click(100, 200)\nsend_email("to@x.com", "Hi", "Body")\npyautogui.press("enter")'
+        actions = parse_pyautogui_code(code)
+        types = [a.action_type for a in actions]
+        assert "click" in types
+        assert "send_email" in types
+        assert "key_press" in types
+
+    def test_send_email_two_recipients_two_calls(self):
+        """Two send_email calls in one code block."""
+        from app.services.cua_action_bridge import parse_pyautogui_code
+
+        code = 'send_email("a@x.com", "Hi A", "Body A")\nsend_email("b@x.com", "Hi B", "Body B")'
+        actions = parse_pyautogui_code(code)
+        emails = [a for a in actions if a.action_type == "send_email"]
+        assert len(emails) == 2
+        assert emails[0].params["to"] == "a@x.com"
+        assert emails[1].params["to"] == "b@x.com"
+
+
+# ---------------------------------------------------------------------------
+# Python string parser unit tests
+# ---------------------------------------------------------------------------
+
+
+class TestParsePythonString:
+    """Direct tests for _parse_python_string helper."""
+
+    def test_simple_double_quoted(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string('"hello world"', 0)
+        assert result == ("hello world", 13)
+
+    def test_simple_single_quoted(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string("'hello'", 0)
+        assert result == ("hello", 7)
+
+    def test_escaped_newline(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string('"line1\\nline2"', 0)
+        assert result is not None
+        assert result[0] == "line1\nline2"
+
+    def test_escaped_tab(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string('"col1\\tcol2"', 0)
+        assert result is not None
+        assert result[0] == "col1\tcol2"
+
+    def test_escaped_quote(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string('"say \\"hi\\""', 0)
+        assert result is not None
+        assert result[0] == 'say "hi"'
+
+    def test_escaped_backslash(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string('"path\\\\to\\\\file"', 0)
+        assert result is not None
+        assert result[0] == "path\\to\\file"
+
+    def test_triple_double_quoted(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string('"""multi\nline\nstring"""', 0)
+        assert result is not None
+        assert result[0] == "multi\nline\nstring"
+
+    def test_triple_single_quoted(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string("'''multi\nline'''", 0)
+        assert result is not None
+        assert result[0] == "multi\nline"
+
+    def test_empty_string(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string('""', 0)
+        assert result == ("", 2)
+
+    def test_literal_newline_in_single_quoted(self):
+        """LLM sometimes generates literal newlines in single-quoted strings."""
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string('"hello\nworld"', 0)
+        assert result is not None
+        assert result[0] == "hello\nworld"
+
+    def test_non_quote_start_returns_none(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string("hello", 0)
+        assert result is None
+
+    def test_offset_position(self):
+        from app.services.cua_action_bridge import _parse_python_string
+
+        result = _parse_python_string('xxx"value"yyy', 3)
+        assert result is not None
+        assert result[0] == "value"
+        assert result[1] == 10
+
+
+# ---------------------------------------------------------------------------
+# _parse_send_email_call unit tests
+# ---------------------------------------------------------------------------
+
+
+class TestParseSendEmailCall:
+    """Direct tests for _parse_send_email_call helper."""
+
+    def test_basic_call(self):
+        from app.services.cua_action_bridge import _parse_send_email_call
+
+        code = '"to@x.com", "Subject", "Body")'
+        result = _parse_send_email_call(code, 0)
+        assert result == ("to@x.com", "Subject", "Body")
+
+    def test_multiline_body(self):
+        from app.services.cua_action_bridge import _parse_send_email_call
+
+        code = '"to@x.com", "Sub", "Line1\\nLine2\\nLine3")'
+        result = _parse_send_email_call(code, 0)
+        assert result is not None
+        assert result[2] == "Line1\nLine2\nLine3"
+
+    def test_missing_args_returns_none(self):
+        from app.services.cua_action_bridge import _parse_send_email_call
+
+        code = '"to@x.com", "Subject")'
+        result = _parse_send_email_call(code, 0)
+        assert result is None
+
+    def test_extra_whitespace(self):
+        from app.services.cua_action_bridge import _parse_send_email_call
+
+        code = '  "to@x.com" ,  "Sub" ,  "Body"  )'
+        result = _parse_send_email_call(code, 0)
+        assert result == ("to@x.com", "Sub", "Body")
+
 
 # ---------------------------------------------------------------------------
 # Email identity in CUAExecutor
