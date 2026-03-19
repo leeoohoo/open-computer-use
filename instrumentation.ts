@@ -19,11 +19,17 @@ export async function register() {
 
       console.log('✅ Machine cleanup service started successfully');
 
+      // Start background status checker (runs every 60s to populate uptime history)
+      const { startStatusChecker, stopStatusChecker } = await import("@/lib/services/status-checker");
+      startStatusChecker();
+      console.log('✅ Status checker started successfully');
+
       // Graceful shutdown handling
       const shutdown = () => {
         console.log('🛑 Shutting down services...');
         try {
           cleanupService.stop();
+          stopStatusChecker();
           console.log('✅ Services shut down successfully');
         } catch (error) {
           console.error('❌ Error during shutdown:', error);

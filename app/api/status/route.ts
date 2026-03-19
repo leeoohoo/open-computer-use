@@ -93,7 +93,7 @@ export async function GET() {
     }),
   ])
 
-  // Persist checks to database (fire-and-forget, don't block response)
+  // Persist checks to database
   const supabase = createServiceClient()
   if (supabase) {
     const now = new Date().toISOString()
@@ -104,8 +104,12 @@ export async function GET() {
       message: c.message || null,
       checked_at: now,
     }))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(supabase as any).from("status_checks").insert(rows).then(() => {})
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from("status_checks").insert(rows)
+    } catch (e) {
+      console.error("[Status] Failed to persist checks:", e)
+    }
   }
 
   const allOperational = checks.every((c) => c.status === "operational")

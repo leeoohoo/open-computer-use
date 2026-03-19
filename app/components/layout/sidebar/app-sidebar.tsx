@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/sidebar"
 import { useUser } from "@/lib/user-store/provider"
 import {
-  ChatTeardropText,
   UsersThree,
   Desktop,
   Plus,
@@ -22,7 +21,7 @@ import {
   VideoCamera,
   Ghost,
 } from "@phosphor-icons/react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { DialogCollaborativeAuth } from "../../collaborative/dialog-collaborative-auth"
 import { CoastyIcon } from "@/components/icons/coasty"
@@ -36,6 +35,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from "@/components/ui/hover-card"
 
 // ─── Easter egg: Konami-lite sequence detector ─────────────────────
 function useSecretSequence(sequence: string, onActivate: () => void) {
@@ -65,23 +69,389 @@ function useSecretSequence(sequence: string, onActivate: () => void) {
   }, [sequence, onActivate])
 }
 
+// ─── Hover info type ───────────────────────────────────────────────
+type HoverInfo = {
+  description: string
+  detail: string
+  visual: "history" | "swarms" | "guide" | "machines" | "workforce" | "credentials"
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  MINI UI DEMO VISUALS — each tells the story of its feature
+// ═══════════════════════════════════════════════════════════════════
+
+// Task History: A mini chat list where you see past conversations
+// and one gets selected + resumed
+function HistoryVisual() {
+  const rows = [
+    { title: "Research competitors", time: "2h ago", width: "w-16" },
+    { title: "Fill out invoice form", time: "5h ago", width: "w-20" },
+    { title: "Book flights to NYC", time: "1d ago", width: "w-14" },
+    { title: "Scrape pricing data", time: "2d ago", width: "w-[4.5rem]" },
+  ]
+  return (
+    <div className="w-full h-full flex flex-col px-2.5 py-2 gap-[5px]">
+      {rows.map((row, i) => (
+        <div
+          key={i}
+          className={cn(
+            "shv-row flex items-center gap-2 px-2 py-[5px] rounded-md border transition-all",
+            i === 1
+              ? "border-foreground/20 bg-foreground/[0.06] shv-selected"
+              : "border-transparent"
+          )}
+          style={{ animationDelay: `${i * 0.08}s` }}
+        >
+          {/* Avatar dot */}
+          <div className={cn(
+            "w-[18px] h-[18px] rounded-full border-[1.5px] flex items-center justify-center shrink-0",
+            i === 1 ? "border-foreground/40 bg-foreground/10" : "border-foreground/15 bg-foreground/[0.04]"
+          )}>
+            <div className={cn("w-1.5 h-1.5 rounded-full", i === 1 ? "bg-foreground/50" : "bg-foreground/15")} />
+          </div>
+          {/* Text lines */}
+          <div className="flex-1 min-w-0 flex flex-col gap-[2px]">
+            <div className={cn("h-[5px] rounded-full", row.width, i === 1 ? "bg-foreground/35" : "bg-foreground/12")} />
+            <div className={cn("h-[3px] w-8 rounded-full", i === 1 ? "bg-foreground/20" : "bg-foreground/8")} />
+          </div>
+          {/* Resume button appears on selected row */}
+          {i === 1 && (
+            <div className="shv-resume shrink-0 px-1.5 py-[2px] rounded text-[6px] font-bold border border-foreground/25 text-foreground/50 tracking-wide">
+              RESUME
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Swarm Runs: Multiple parallel terminals/browsers each doing work
+// with progress bars, converging into a result
+function SwarmsVisual() {
+  const agents = [
+    { label: "A1", progress: 85, delay: "0s" },
+    { label: "A2", progress: 60, delay: "0.15s" },
+    { label: "A3", progress: 95, delay: "0.3s" },
+  ]
+  return (
+    <div className="w-full h-full flex flex-col px-3 py-2 gap-1.5">
+      {/* Agent windows */}
+      <div className="flex gap-1.5 flex-1">
+        {agents.map((a, i) => (
+          <div
+            key={i}
+            className="shv-row flex-1 flex flex-col rounded border border-foreground/10 overflow-hidden"
+            style={{ animationDelay: a.delay }}
+          >
+            {/* Window header */}
+            <div className="flex items-center gap-1 px-1.5 py-[3px] border-b border-foreground/8 bg-foreground/[0.03]">
+              <div className="w-1 h-1 rounded-full bg-foreground/20" />
+              <div className="w-1 h-1 rounded-full bg-foreground/20" />
+              <span className="text-[5px] font-bold text-foreground/30 ml-auto tracking-wider">{a.label}</span>
+            </div>
+            {/* Terminal content */}
+            <div className="flex-1 p-1 flex flex-col justify-end gap-[2px]">
+              <div className="h-[2px] w-full bg-foreground/8 rounded-full" />
+              <div className="h-[2px] w-3/4 bg-foreground/6 rounded-full" />
+              <div className="h-[2px] w-1/2 bg-foreground/10 rounded-full shv-typing" />
+            </div>
+            {/* Progress bar */}
+            <div className="h-[3px] bg-foreground/[0.05]">
+              <div
+                className="h-full bg-foreground/25 rounded-r-full shv-progress"
+                style={{ ["--progress" as string]: `${a.progress}%`, animationDelay: `${0.3 + i * 0.2}s` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* Converging result */}
+      <div className="flex items-center gap-1.5 shv-fade-up" style={{ animationDelay: "0.6s" }}>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-foreground/15 to-foreground/15" />
+        <div className="px-2 py-[2px] rounded-full border border-foreground/15 bg-foreground/[0.04] text-[5px] font-bold text-foreground/35 tracking-widest">
+          RESULT
+        </div>
+        <div className="flex-1 h-px bg-gradient-to-l from-transparent via-foreground/15 to-foreground/15" />
+      </div>
+    </div>
+  )
+}
+
+// Guide: A mini docs page with TOC sidebar, reading progress, and
+// sections being checked off as you learn
+function GuideVisual() {
+  const sections = [
+    { w: "w-10", done: true },
+    { w: "w-8", done: true },
+    { w: "w-12", done: false },
+    { w: "w-9", done: false },
+  ]
+  return (
+    <div className="w-full h-full flex px-2.5 py-2 gap-2">
+      {/* Mini TOC sidebar */}
+      <div className="w-12 flex flex-col gap-[5px] pt-1 shv-row" style={{ animationDelay: "0s" }}>
+        {sections.map((s, i) => (
+          <div key={i} className="flex items-center gap-1">
+            <div className={cn(
+              "w-[6px] h-[6px] rounded-full border shrink-0 flex items-center justify-center",
+              s.done ? "border-foreground/30 bg-foreground/15 shv-check" : "border-foreground/12"
+            )} style={{ animationDelay: `${0.3 + i * 0.25}s` }}>
+              {s.done && <div className="w-[2px] h-[2px] rounded-full bg-foreground/50" />}
+            </div>
+            <div className={cn("h-[3px] rounded-full", s.w, s.done ? "bg-foreground/20" : "bg-foreground/8")} />
+          </div>
+        ))}
+      </div>
+      {/* Divider */}
+      <div className="w-px bg-foreground/8 self-stretch" />
+      {/* Content area */}
+      <div className="flex-1 flex flex-col gap-1.5 shv-row" style={{ animationDelay: "0.1s" }}>
+        {/* Progress bar */}
+        <div className="h-[2px] w-full bg-foreground/8 rounded-full overflow-hidden">
+          <div className="h-full bg-foreground/25 rounded-full shv-progress" style={{ ["--progress" as string]: "50%" , animationDelay: "0.4s" }} />
+        </div>
+        {/* Content blocks */}
+        <div className="flex flex-col gap-1">
+          <div className="h-[4px] w-3/4 bg-foreground/15 rounded-full" />
+          <div className="h-[3px] w-full bg-foreground/8 rounded-full" />
+          <div className="h-[3px] w-5/6 bg-foreground/8 rounded-full" />
+        </div>
+        <div className="flex flex-col gap-1 mt-0.5">
+          <div className="h-[4px] w-1/2 bg-foreground/12 rounded-full" />
+          <div className="h-[3px] w-full bg-foreground/6 rounded-full" />
+          <div className="h-[3px] w-2/3 bg-foreground/6 rounded-full" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// My Computers: Dashboard with machine cards showing status,
+// one running with a live indicator, one being launched
+function MachinesVisual() {
+  return (
+    <div className="w-full h-full flex flex-col px-2.5 py-2 gap-1.5">
+      {/* Machine cards */}
+      {[
+        { name: "Cloud VM", os: "Ubuntu", status: "running" as const },
+        { name: "My Desktop", os: "macOS", status: "connected" as const },
+        { name: "Dev Server", os: "Ubuntu", status: "stopped" as const },
+      ].map((m, i) => (
+        <div
+          key={i}
+          className="shv-row flex items-center gap-2 px-2 py-[5px] rounded-md border border-foreground/8 bg-foreground/[0.02]"
+          style={{ animationDelay: `${i * 0.1}s` }}
+        >
+          {/* Machine icon */}
+          <div className="w-[18px] h-[14px] rounded-[2px] border border-foreground/15 bg-foreground/[0.04] flex items-center justify-center shrink-0">
+            <div className="w-2 h-[5px] rounded-[1px] bg-foreground/10" />
+          </div>
+          {/* Info */}
+          <div className="flex-1 min-w-0 flex flex-col">
+            <div className="text-[6px] font-bold text-foreground/40 leading-none tracking-wide">{m.name}</div>
+            <div className="text-[5px] text-foreground/20 leading-none mt-[1px]">{m.os}</div>
+          </div>
+          {/* Status */}
+          <div className="flex items-center gap-1 shrink-0">
+            <div className={cn(
+              "w-[5px] h-[5px] rounded-full",
+              m.status === "running" && "bg-emerald-500/60 shv-pulse-dot",
+              m.status === "connected" && "bg-blue-500/50 shv-pulse-dot",
+              m.status === "stopped" && "bg-foreground/15",
+            )} />
+            <span className={cn(
+              "text-[5px] font-semibold tracking-wide uppercase",
+              m.status === "stopped" ? "text-foreground/20" : "text-foreground/35"
+            )}>
+              {m.status}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Workforce: A mini timeline showing scheduled tasks at different
+// times, one currently executing with animated progress
+function WorkforceVisual() {
+  const tasks = [
+    { time: "9 AM", label: "Send report", x: "left-[10%]", w: "w-[25%]", done: true },
+    { time: "1 PM", label: "Scrape data", x: "left-[40%]", w: "w-[20%]", active: true },
+    { time: "6 PM", label: "Backup DB", x: "left-[72%]", w: "w-[22%]", upcoming: true },
+  ]
+  return (
+    <div className="w-full h-full flex flex-col justify-center px-3 py-2 gap-2">
+      {/* Time axis */}
+      <div className="relative h-[2px] w-full bg-foreground/10 rounded-full">
+        {/* Progress so far */}
+        <div className="absolute left-0 top-0 h-full bg-foreground/20 rounded-full shv-progress" style={{ ["--progress" as string]: "55%", animationDelay: "0.2s" }} />
+        {/* Time markers */}
+        {["0%", "33%", "66%", "100%"].map((pos, i) => (
+          <div key={i} className="absolute top-1/2 -translate-y-1/2 w-[3px] h-[3px] rounded-full bg-foreground/15" style={{ left: pos }} />
+        ))}
+      </div>
+      {/* Task blocks on the timeline */}
+      <div className="relative h-10">
+        {tasks.map((t, i) => (
+          <div
+            key={i}
+            className={cn(
+              "shv-row absolute top-0 flex flex-col rounded border px-1.5 py-[3px]",
+              t.x, t.w,
+              t.done && "border-foreground/12 bg-foreground/[0.04]",
+              t.active && "border-foreground/20 bg-foreground/[0.06]",
+              t.upcoming && "border-dashed border-foreground/10 bg-transparent",
+            )}
+            style={{ animationDelay: `${0.1 + i * 0.15}s` }}
+          >
+            <span className={cn("text-[5px] font-bold tracking-wide", t.done ? "text-foreground/25" : "text-foreground/40")}>{t.time}</span>
+            <span className={cn("text-[5px] truncate", t.done ? "text-foreground/15" : "text-foreground/25")}>{t.label}</span>
+            {t.active && (
+              <div className="h-[2px] w-full bg-foreground/10 rounded-full mt-[2px] overflow-hidden">
+                <div className="h-full bg-foreground/30 rounded-full shv-progress" style={{ ["--progress" as string]: "60%", animationDelay: "0.5s" }} />
+              </div>
+            )}
+            {t.done && (
+              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-background border border-foreground/15 flex items-center justify-center shv-check" style={{ animationDelay: "0.5s" }}>
+                <svg width="5" height="5" viewBox="0 0 10 10"><path d="M2 5.5L4 7.5L8 3" stroke="currentColor" strokeWidth="1.5" fill="none" className="text-foreground/40" /></svg>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      {/* Repeat indicator */}
+      <div className="flex items-center gap-1 self-end shv-fade-up" style={{ animationDelay: "0.6s" }}>
+        <svg width="8" height="8" viewBox="0 0 16 16" className="text-foreground/20">
+          <path d="M2 8a6 6 0 0110.5-4M14 8a6 6 0 01-10.5 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+          <path d="M13 1v3.5h-3.5M3 15v-3.5h3.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span className="text-[5px] font-semibold text-foreground/20 tracking-widest">REPEATS DAILY</span>
+      </div>
+    </div>
+  )
+}
+
+// Credentials: A mini login form being auto-filled by the agent
+// password dots appear one by one, then a success checkmark
+function CredentialsVisual() {
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center px-4 py-2 gap-2">
+      {/* Mini login form */}
+      <div className="w-full flex flex-col gap-1.5 shv-row" style={{ animationDelay: "0s" }}>
+        {/* URL bar */}
+        <div className="flex items-center gap-1 px-2 py-[3px] rounded border border-foreground/10 bg-foreground/[0.03]">
+          <svg width="6" height="6" viewBox="0 0 16 16" className="text-foreground/20 shrink-0">
+            <rect x="2" y="6" width="12" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.5" fill="none" />
+            <path d="M5 6V4.5a3 3 0 016 0V6" stroke="currentColor" strokeWidth="1.5" fill="none" />
+          </svg>
+          <div className="h-[3px] w-16 bg-foreground/10 rounded-full" />
+        </div>
+        {/* Username field */}
+        <div className="flex flex-col gap-[2px]">
+          <span className="text-[5px] font-bold text-foreground/25 tracking-wide px-0.5">EMAIL</span>
+          <div className="flex items-center px-2 py-[4px] rounded border border-foreground/10 bg-foreground/[0.02]">
+            <div className="shv-type-text flex items-center gap-[1px]">
+              {Array.from("user@mail.co").map((char, i) => (
+                <span
+                  key={i}
+                  className="text-[6px] text-foreground/40 font-mono shv-type-char"
+                  style={{ animationDelay: `${0.3 + i * 0.04}s` }}
+                >
+                  {char}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+        {/* Password field */}
+        <div className="flex flex-col gap-[2px]">
+          <span className="text-[5px] font-bold text-foreground/25 tracking-wide px-0.5">PASSWORD</span>
+          <div className="flex items-center px-2 py-[4px] rounded border border-foreground/10 bg-foreground/[0.02]">
+            <div className="flex items-center gap-[3px]">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-[4px] h-[4px] rounded-full bg-foreground/30 shv-type-char"
+                  style={{ animationDelay: `${0.8 + i * 0.06}s` }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Auto-filled indicator */}
+      <div className="flex items-center gap-1.5 shv-fade-up" style={{ animationDelay: "1.4s" }}>
+        <div className="w-3 h-3 rounded-full border border-foreground/20 flex items-center justify-center bg-foreground/[0.05]">
+          <svg width="6" height="6" viewBox="0 0 10 10"><path d="M2 5.5L4 7.5L8 3" stroke="currentColor" strokeWidth="1.5" fill="none" className="text-foreground/50" /></svg>
+        </div>
+        <span className="text-[6px] font-semibold text-foreground/30 tracking-wide">Auto-filled by Coasty</span>
+      </div>
+    </div>
+  )
+}
+
+const visualComponents: Record<string, React.FC> = {
+  history: HistoryVisual,
+  swarms: SwarmsVisual,
+  guide: GuideVisual,
+  machines: MachinesVisual,
+  workforce: WorkforceVisual,
+  credentials: CredentialsVisual,
+}
+
+// ─── Nav hover card content ────────────────────────────────────────
+function NavHoverContent({
+  label,
+  info,
+}: {
+  label: string
+  info: HoverInfo
+}) {
+  const Visual = visualComponents[info.visual]
+
+  return (
+    <div className="flex flex-col overflow-hidden -m-4">
+      {/* Visual demo area */}
+      <div className="relative h-[120px] w-full bg-muted/50 border-b border-border/40 overflow-hidden rounded-t-md">
+        {Visual && <Visual />}
+      </div>
+      {/* Text area */}
+      <div className="p-3.5 pt-3">
+        <h4 className="text-[13px] font-semibold text-foreground leading-tight">{label}</h4>
+        <p className="text-[11px] text-foreground/45 mt-0.5 leading-tight">{info.description}</p>
+        <p className="text-[11.5px] text-foreground/60 mt-2 leading-relaxed">
+          {info.detail}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 // ─── Nav button ────────────────────────────────────────────────────
 function NavButton({
   icon,
   label,
+  tooltip: tooltipText,
   onClick,
   variant = "default",
   id,
   isActive,
   href,
+  accentColor,
+  hoverInfo,
 }: {
   icon: React.ReactNode
   label: string
+  tooltip?: string
   onClick?: () => void
   variant?: "default" | "primary"
   id?: string
   isActive?: boolean
   href?: string
+  accentColor?: string
+  hoverInfo?: HoverInfo
 }) {
   const { open, isMobile } = useSidebar()
   const expanded = isMobile || open
@@ -89,30 +459,32 @@ function NavButton({
   const content = (
     <span
       className={cn(
-        "group/btn relative flex w-full items-center rounded-lg transition-all duration-200",
+        "group/btn relative flex w-full items-center rounded-lg transition-all duration-150",
         "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-        expanded ? "gap-2.5 px-2.5 py-2" : "justify-center p-2",
+        expanded ? "gap-2.5 px-2.5 py-[7px]" : "justify-center p-2",
         variant === "primary"
-          ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+          ? cn(
+              "bg-sidebar-primary text-sidebar-primary-foreground",
+              "shadow-sm hover:shadow-md hover:brightness-110 active:scale-[0.98]"
+            )
           : isActive
             ? "bg-sidebar-accent text-sidebar-accent-foreground"
-            : "text-foreground/60 hover:text-foreground hover:bg-sidebar-accent/50"
+            : "text-foreground/50 hover:text-foreground hover:bg-sidebar-accent/50"
       )}
     >
-      {/* Active indicator bar */}
       {isActive && variant !== "primary" && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r-full bg-sidebar-primary transition-all" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-4 rounded-r-full bg-sidebar-primary" />
       )}
       <span className={cn(
-        "shrink-0 flex items-center justify-center w-4 h-4 transition-transform duration-200",
-        variant !== "primary" && "group-hover/btn:scale-110"
+        "shrink-0 flex items-center justify-center w-4 h-4 transition-colors duration-150",
+        isActive && accentColor
       )}>
         {icon}
       </span>
       {expanded && (
         <span className={cn(
-          "truncate text-[13px] font-medium transition-colors",
-          isActive && "text-foreground"
+          "truncate text-[13px] font-medium",
+          isActive && "font-semibold text-foreground"
         )}>
           {label}
         </span>
@@ -120,7 +492,7 @@ function NavButton({
     </span>
   )
 
-  const wrapper = href ? (
+  const linkOrButton = href ? (
     <Link id={id} href={href} className="block w-full" onClick={onClick}>
       {content}
     </Link>
@@ -130,25 +502,50 @@ function NavButton({
     </button>
   )
 
+  // Collapsed: simple tooltip
   if (!expanded) {
     return (
       <Tooltip>
-        <TooltipTrigger asChild>{wrapper}</TooltipTrigger>
+        <TooltipTrigger asChild>{linkOrButton}</TooltipTrigger>
         <TooltipContent side="right" sideOffset={8}>
-          {label}
+          <div className="flex flex-col">
+            <span className="font-medium text-[12px]">{label}</span>
+            {tooltipText && (
+              <span className="text-[10.5px] text-muted-foreground font-normal">{tooltipText}</span>
+            )}
+          </div>
         </TooltipContent>
       </Tooltip>
     )
   }
 
-  return wrapper
+  // Expanded with hoverInfo: visual hover card
+  if (hoverInfo && variant !== "primary") {
+    return (
+      <HoverCard openDelay={400} closeDelay={200}>
+        <HoverCardTrigger asChild>
+          {linkOrButton}
+        </HoverCardTrigger>
+        <HoverCardContent
+          side="right"
+          align="start"
+          sideOffset={16}
+          className="w-64 p-4 border border-border/50 shadow-xl rounded-xl"
+        >
+          <NavHoverContent label={label} info={hoverInfo} />
+        </HoverCardContent>
+      </HoverCard>
+    )
+  }
+
+  return linkOrButton
 }
 
 // ─── Section label ─────────────────────────────────────────────────
 function SectionLabel({ children, expanded }: { children: React.ReactNode; expanded: boolean }) {
-  if (!expanded) return null
+  if (!expanded) return <div className="mx-auto my-1 w-4 h-px bg-sidebar-border/20 rounded-full" />
   return (
-    <div className="text-[10px] font-semibold text-foreground/40 uppercase tracking-[0.08em] mb-1 px-2.5 select-none">
+    <div className="text-[10px] font-semibold text-foreground/30 uppercase tracking-[0.08em] mb-1 px-2.5 select-none">
       {children}
     </div>
   )
@@ -156,7 +553,6 @@ function SectionLabel({ children, expanded }: { children: React.ReactNode; expan
 
 // ─── Credits ring (mini SVG donut) ─────────────────────────────────
 function CreditsRing({ balance, className }: { balance: number; className?: string }) {
-  // Show a ring that fills based on credits (cap at 1000 for visual)
   const pct = Math.min(balance / 1000, 1)
   const r = 8
   const circ = 2 * Math.PI * r
@@ -186,6 +582,7 @@ export function AppSidebar() {
   const { setOpenMobile, open, isMobile: isMobileSidebar } = useSidebar()
   const expanded = isMobileSidebar || open
   const { user } = useUser()
+  const pathname = usePathname()
 
   const [isCollaborativeAuthDialogOpen, setIsCollaborativeAuthDialogOpen] = useState(false)
   const [isReferralPopupOpen, setIsReferralPopupOpen] = useState(false)
@@ -200,7 +597,6 @@ export function AppSidebar() {
   const [avatarWobble, setAvatarWobble] = useState(false)
   const avatarHoverTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-  // Easter egg 1: Logo click counter → spin + party
   useEffect(() => {
     if (logoClicks >= 7) {
       setPartyMode(true)
@@ -212,14 +608,12 @@ export function AppSidebar() {
     }
   }, [logoClicks])
 
-  // Easter egg 2: Type "coast" → rainbow mode
   const [rainbowMode, setRainbowMode] = useState(false)
   useSecretSequence("coast", useCallback(() => {
     setRainbowMode(true)
     setTimeout(() => setRainbowMode(false), 4000)
   }, []))
 
-  // Easter egg 3: Random ghost appearance (~5% chance per mount)
   useEffect(() => {
     if (Math.random() < 0.05) {
       setShowGhost(true)
@@ -233,7 +627,10 @@ export function AppSidebar() {
     }
   }
 
-  // Get time-based greeting
+  const closeMobileIfNeeded = () => {
+    if (isMobile) setOpenMobile(false)
+  }
+
   const getGreeting = () => {
     const h = new Date().getHours()
     if (h < 5) return "Night owl"
@@ -241,6 +638,11 @@ export function AppSidebar() {
     if (h < 17) return "Good afternoon"
     if (h < 21) return "Good evening"
     return "Night owl"
+  }
+
+  const isItemActive = (href: string) => {
+    if (href === "/") return pathname === "/"
+    return pathname?.startsWith(href) || false
   }
 
   return (
@@ -300,6 +702,7 @@ export function AppSidebar() {
             <NavButton
               icon={<Plus size={16} weight="bold" className="shrink-0" />}
               label="New Task"
+              tooltip="Start a new AI automation"
               onClick={() => handleNavigation(() => router.push("/"))}
               variant="primary"
             />
@@ -317,24 +720,48 @@ export function AppSidebar() {
             <div className="space-y-0.5">
               <NavButton
                 id="sidebar-history-link"
-                icon={<ClockCounterClockwise size={16} className="shrink-0" />}
+                icon={<ClockCounterClockwise size={16} weight="duotone" className="shrink-0" />}
                 label="Task History"
+                tooltip="Review past tasks and resume where you left off"
                 href="/history"
-                onClick={() => { if (isMobile) setOpenMobile(false) }}
+                isActive={isItemActive("/history")}
+                accentColor="text-blue-500"
+                onClick={closeMobileIfNeeded}
+                hoverInfo={{
+                  description: "Your recent tasks",
+                  detail: "Browse and continue past conversations. Every task is saved so you can resume right where you left off.",
+                  visual: "history",
+                }}
               />
               <NavButton
                 id="sidebar-swarms-link"
                 icon={<GitFork size={16} weight="duotone" className="shrink-0" />}
                 label="Swarm Runs"
+                tooltip="Monitor multi-agent parallel workflows"
                 href="/swarms"
-                onClick={() => { if (isMobile) setOpenMobile(false) }}
+                isActive={isItemActive("/swarms")}
+                accentColor="text-violet-500"
+                onClick={closeMobileIfNeeded}
+                hoverInfo={{
+                  description: "Multi-agent workflows",
+                  detail: "Run tasks across multiple machines in parallel. Each agent works independently and results converge automatically.",
+                  visual: "swarms",
+                }}
               />
               <NavButton
                 id="sidebar-guide-link"
-                icon={<BookOpen size={16} className="shrink-0" />}
+                icon={<BookOpen size={16} weight="duotone" className="shrink-0" />}
                 label="Guide"
+                tooltip="Learn how to get the most from Coasty"
                 href="/guide"
-                onClick={() => { if (isMobile) setOpenMobile(false) }}
+                isActive={isItemActive("/guide")}
+                accentColor="text-emerald-500"
+                onClick={closeMobileIfNeeded}
+                hoverInfo={{
+                  description: "Getting started",
+                  detail: "Step-by-step walkthroughs and best practices to help you automate effectively.",
+                  visual: "guide",
+                }}
               />
             </div>
           </div>
@@ -345,24 +772,48 @@ export function AppSidebar() {
             <div className="space-y-0.5">
               <NavButton
                 id="sidebar-machines-link"
-                icon={<Desktop size={16} className="shrink-0" />}
+                icon={<Desktop size={16} weight="duotone" className="shrink-0" />}
                 label="My Computers"
+                tooltip="Manage cloud VMs and local machines"
                 href="/machines"
-                onClick={() => { if (isMobile) setOpenMobile(false) }}
+                isActive={isItemActive("/machines")}
+                accentColor="text-sky-500"
+                onClick={closeMobileIfNeeded}
+                hoverInfo={{
+                  description: "Cloud & local machines",
+                  detail: "Spin up cloud VMs or connect your desktop. Agents run on these machines with full browser and terminal access.",
+                  visual: "machines",
+                }}
               />
               <NavButton
                 id="sidebar-schedules-link"
                 icon={<UsersThree size={16} weight="duotone" className="shrink-0" />}
                 label="Workforce"
+                tooltip="Schedule automated agents and triggers"
                 href="/schedules"
-                onClick={() => { if (isMobile) setOpenMobile(false) }}
+                isActive={isItemActive("/schedules")}
+                accentColor="text-amber-500"
+                onClick={closeMobileIfNeeded}
+                hoverInfo={{
+                  description: "Scheduled automation",
+                  detail: "Set up recurring tasks with cron schedules and agent-to-agent triggers. Your workforce runs while you sleep.",
+                  visual: "workforce",
+                }}
               />
               <NavButton
                 id="sidebar-secrets-link"
-                icon={<Key size={16} className="shrink-0" />}
+                icon={<Key size={16} weight="duotone" className="shrink-0" />}
                 label="Credentials"
+                tooltip="Securely store logins for agent access"
                 href="/secrets"
-                onClick={() => { if (isMobile) setOpenMobile(false) }}
+                isActive={isItemActive("/secrets")}
+                accentColor="text-rose-500"
+                onClick={closeMobileIfNeeded}
+                hoverInfo={{
+                  description: "Secure credential vault",
+                  detail: "Store logins and API keys with encryption. Agents auto-fill credentials without exposing raw values.",
+                  visual: "credentials",
+                }}
               />
             </div>
           </div>
@@ -396,11 +847,11 @@ export function AppSidebar() {
               return (
                 <button
                   className={cn(
-                    "group flex w-full items-center gap-3 rounded-xl border transition-all duration-300",
-                    "hover:shadow-md hover:scale-[1.01] active:scale-[0.99]",
+                    "group flex w-full items-center gap-3 rounded-xl border transition-all duration-200",
+                    "hover:shadow-sm active:scale-[0.99]",
                     "px-3 py-2.5",
                     isLow
-                      ? "border-orange-500/20 bg-orange-500/[0.04] hover:border-orange-500/40"
+                      ? "border-orange-500/20 bg-orange-500/[0.04] hover:border-orange-500/30"
                       : "border-sidebar-border/40 bg-sidebar-accent/20 hover:border-sidebar-primary/20"
                   )}
                   type="button"
@@ -471,7 +922,7 @@ export function AppSidebar() {
             {/* Divider */}
             <div className={cn(
               "mx-auto transition-all",
-              expanded ? "w-[calc(100%-0.5rem)] h-px bg-sidebar-border/20" : "w-5 h-px bg-sidebar-border/15"
+              expanded ? "w-[calc(100%-1.25rem)] h-px bg-sidebar-border/20" : "w-5 h-px bg-sidebar-border/15"
             )} />
 
             {/* Quick links row */}
@@ -601,7 +1052,7 @@ export function AppSidebar() {
         />
       </Sidebar>
 
-      {/* Easter egg: Rainbow wave animation */}
+      {/* ─── Animations ─────────────────────────────────── */}
       <style jsx global>{`
         @keyframes wiggle {
           0%, 100% { transform: rotate(0deg); }
@@ -612,17 +1063,79 @@ export function AppSidebar() {
           75% { transform: rotate(-3deg); }
           90% { transform: rotate(2deg); }
         }
-        .animate-wiggle {
-          animation: wiggle 0.6s ease-in-out;
-        }
+        .animate-wiggle { animation: wiggle 0.6s ease-in-out; }
+
         @keyframes rainbow-shift {
           0% { filter: hue-rotate(0deg); }
           50% { filter: hue-rotate(180deg); }
           100% { filter: hue-rotate(360deg); }
         }
-        .rainbow-wave {
-          animation: rainbow-shift 2s ease-in-out infinite;
+        .rainbow-wave { animation: rainbow-shift 2s ease-in-out infinite; }
+
+        /* ── Hover visual shared animations ── */
+
+        /* Rows slide in from left */
+        @keyframes shv-slide-in {
+          from { opacity: 0; transform: translateX(-8px); }
+          to { opacity: 1; transform: translateX(0); }
         }
+        .shv-row { animation: shv-slide-in 0.35s cubic-bezier(0.25, 1, 0.5, 1) both; }
+
+        /* Fade up */
+        @keyframes shv-fade-up {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .shv-fade-up { animation: shv-fade-up 0.4s ease-out both; }
+
+        /* History: selected row highlight pulse */
+        @keyframes shv-selected-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 transparent; }
+          50% { box-shadow: inset 0 0 0 1px hsl(var(--foreground) / 0.08); }
+        }
+        .shv-selected { animation: shv-selected-pulse 2s ease-in-out infinite 0.5s; }
+
+        /* History: resume button appears */
+        @keyframes shv-resume-in {
+          from { opacity: 0; transform: scale(0.8); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .shv-resume { animation: shv-resume-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both; }
+
+        /* Progress bar fill */
+        @keyframes shv-fill {
+          from { width: 0%; }
+          to { width: var(--progress, 50%); }
+        }
+        .shv-progress { animation: shv-fill 0.8s cubic-bezier(0.25, 1, 0.5, 1) both; }
+
+        /* Terminal typing cursor */
+        @keyframes shv-typing-blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+        .shv-typing { animation: shv-typing-blink 0.8s ease-in-out infinite; }
+
+        /* Pulsing status dot */
+        @keyframes shv-pulse-dot {
+          0%, 100% { opacity: 0.6; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.3); }
+        }
+        .shv-pulse-dot { animation: shv-pulse-dot 2s ease-in-out infinite; }
+
+        /* Check mark pop */
+        @keyframes shv-check-pop {
+          from { opacity: 0; transform: scale(0); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .shv-check { animation: shv-check-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+        /* Character typing reveal */
+        @keyframes shv-char-reveal {
+          from { opacity: 0; transform: translateY(2px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .shv-type-char { animation: shv-char-reveal 0.15s ease-out both; }
       `}</style>
     </>
   )
