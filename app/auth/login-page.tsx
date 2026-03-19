@@ -20,6 +20,343 @@ import { HeaderGoBack } from "../components/header-go-back"
 import { useRouter, useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { CoastyIcon } from "@/components/icons/coasty"
+import { Check } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+/* ── Minimal Computer Animation ── */
+function MiniComputer({ activeStep }: { activeStep: number }) {
+  const allDone = activeStep === 3
+
+  return (
+    <div className="relative w-[240px] xl:w-[280px]">
+      {/* Subtle glow */}
+      <motion.div
+        className="absolute -inset-10 rounded-full blur-[80px] pointer-events-none"
+        animate={{
+          opacity: allDone ? 0.12 : 0.06,
+          background: allDone
+            ? "radial-gradient(circle, rgb(16 185 129 / 0.3), transparent 70%)"
+            : "radial-gradient(circle, rgb(16 185 129 / 0.15), transparent 70%)",
+        }}
+        transition={{ duration: 1 }}
+      />
+
+      {/* Monitor */}
+      <div className="relative rounded-xl border border-border/40 dark:border-border/20 bg-muted/20 dark:bg-neutral-900/50 overflow-hidden">
+        {/* Screen */}
+        <div className="relative h-[120px] xl:h-[140px] p-3">
+          {/* Dots row — window controls */}
+          <div className="flex gap-1.5 mb-4">
+            <div className="w-2 h-2 rounded-full bg-muted-foreground/10" />
+            <div className="w-2 h-2 rounded-full bg-muted-foreground/10" />
+            <div className="w-2 h-2 rounded-full bg-muted-foreground/10" />
+          </div>
+
+          {/* Screen content — changes per step */}
+          <AnimatePresence mode="wait">
+            {activeStep === 0 && (
+              <motion.div
+                key="typing"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-2.5"
+              >
+                <div className="h-2 w-3/4 rounded-full bg-muted-foreground/8" />
+                <div className="flex items-center gap-1">
+                  <div className="h-2 w-1/2 rounded-full bg-emerald-500/20" />
+                  <motion.div
+                    className="w-[2px] h-3 rounded-full bg-emerald-500/60"
+                    animate={{ opacity: [1, 0] }}
+                    transition={{ duration: 0.6, repeat: Infinity }}
+                  />
+                </div>
+                <div className="h-2 w-1/3 rounded-full bg-muted-foreground/5" />
+              </motion.div>
+            )}
+
+            {activeStep === 1 && (
+              <motion.div
+                key="browsing"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-3"
+              >
+                {/* URL bar */}
+                <div className="h-5 rounded-md bg-muted-foreground/5 flex items-center px-2">
+                  <div className="h-1.5 w-24 rounded-full bg-muted-foreground/10" />
+                </div>
+                {/* Content skeleton */}
+                <div className="grid grid-cols-2 gap-2">
+                  {[0, 1, 2, 3].map((i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.12 }}
+                      className="h-10 rounded-md bg-muted-foreground/[0.04]"
+                    />
+                  ))}
+                </div>
+                {/* Cursor */}
+                <motion.div
+                  className="absolute w-3 h-3"
+                  animate={{
+                    left: ["30%", "60%", "45%"],
+                    top: ["50%", "65%", "55%"],
+                  }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <svg viewBox="0 0 16 16" className="w-3 h-3 text-foreground/70 drop-shadow-sm">
+                    <path d="M1 1l5.5 14 2.2-5.3L14 7.5z" fill="currentColor" />
+                  </svg>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {activeStep === 2 && (
+              <motion.div
+                key="working"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-2"
+              >
+                {/* Table rows filling in */}
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -4 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.3 }}
+                    className="flex gap-2"
+                  >
+                    <div className="h-2 flex-1 rounded-full bg-muted-foreground/8" />
+                    <div className="h-2 w-12 rounded-full bg-muted-foreground/6" />
+                    <div className="h-2 w-8 rounded-full bg-emerald-500/15" />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+
+            {allDone && (
+              <motion.div
+                key="done"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex flex-col items-center justify-center h-full -mt-4"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <Check className="size-8 text-emerald-500/60" strokeWidth={2} />
+                </motion.div>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-xs text-muted-foreground/40 mt-2"
+                >
+                  Complete
+                </motion.p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Stand */}
+      <div className="flex flex-col items-center">
+        <div className="w-12 h-3 bg-gradient-to-b from-border/20 to-transparent dark:from-border/10" />
+        <div className="w-20 h-[2px] rounded-full bg-border/30 dark:bg-border/15" />
+      </div>
+    </div>
+  )
+}
+
+/* ── Left Brand Panel ── */
+function LeftBrandPanel() {
+  const [activeStep, setActiveStep] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % (FLOW_STEPS.length + 1))
+    }, 2800)
+    return () => clearInterval(timer)
+  }, [])
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="hidden lg:flex flex-1 flex-col justify-center items-start px-16 xl:px-24 max-w-2xl"
+    >
+      <div className="mb-6">
+        <CoastyIcon className="size-8" />
+      </div>
+
+      <MiniComputer activeStep={activeStep} />
+
+      <h1 className="mt-6 text-foreground text-3xl xl:text-4xl font-medium tracking-tight leading-[1.25]">
+        You set the goal.
+        <br />
+        <span className="text-muted-foreground/50">We handle the rest.</span>
+      </h1>
+
+      <div className="mt-8">
+        <AgentFlowVisual activeStep={activeStep} />
+      </div>
+    </motion.div>
+  )
+}
+
+/* ── Minimal Agent Flow ── */
+const FLOW_STEPS = [
+  { label: "You describe the task", sub: "\"Research our top 5 competitors\"" },
+  { label: "Agent takes control", sub: "Browses, clicks, types autonomously" },
+  { label: "Work delivered", sub: "Spreadsheet with 5 full competitor profiles" },
+]
+
+function AgentFlowVisual({ activeStep }: { activeStep: number }) {
+  // When activeStep === FLOW_STEPS.length, all are complete before resetting
+  const allDone = activeStep === FLOW_STEPS.length
+
+  return (
+    <div className="relative w-full max-w-[400px]">
+      {/* Steps */}
+      <div className="space-y-4">
+        {FLOW_STEPS.map((step, i) => {
+          const isComplete = allDone || i < activeStep
+          const isCurrent = !allDone && i === activeStep
+
+          return (
+            <div key={step.label} className="flex gap-4">
+              {/* Indicator column */}
+              <div className="flex flex-col items-center">
+                <motion.div
+                  className="relative flex items-center justify-center w-8 h-8 rounded-full border-2 shrink-0"
+                  animate={{
+                    borderColor: isComplete
+                      ? "rgb(16 185 129)"
+                      : isCurrent
+                        ? "rgb(16 185 129 / 0.5)"
+                        : "rgb(128 128 128 / 0.15)",
+                    backgroundColor: isComplete
+                      ? "rgb(16 185 129 / 0.1)"
+                      : "transparent",
+                  }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <AnimatePresence mode="wait">
+                    {isComplete ? (
+                      <motion.div
+                        key="check"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      >
+                        <Check className="size-4 text-emerald-500" strokeWidth={3} />
+                      </motion.div>
+                    ) : (
+                      <motion.span
+                        key="num"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className={cn(
+                          "text-sm font-medium tabular-nums",
+                          isCurrent ? "text-emerald-500" : "text-muted-foreground/30"
+                        )}
+                      >
+                        {i + 1}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Pulse ring on current */}
+                  {isCurrent && (
+                    <motion.div
+                      className="absolute inset-0 rounded-full border-2 border-emerald-500/30"
+                      animate={{ scale: [1, 1.5], opacity: [0.4, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
+                    />
+                  )}
+                </motion.div>
+
+                {/* Connector line */}
+                {i < FLOW_STEPS.length - 1 && (
+                  <div className="w-[2px] flex-1 mt-2 mb-0 bg-border/30 dark:bg-border/15 relative overflow-hidden rounded-full min-h-[16px]">
+                    <motion.div
+                      className="absolute inset-x-0 top-0 bg-emerald-500/50 rounded-full"
+                      animate={{ height: isComplete ? "100%" : "0%" }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Text */}
+              <div className="pt-1.5 pb-0.5 min-w-0">
+                <motion.p
+                  className="text-[15px] font-medium leading-tight"
+                  animate={{
+                    color: isCurrent || isComplete
+                      ? "var(--foreground)"
+                      : "var(--muted-foreground)",
+                    opacity: isCurrent || isComplete ? 1 : 0.35,
+                  }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {step.label}
+                </motion.p>
+                <AnimatePresence>
+                  {(isCurrent || isComplete) && (
+                    <motion.p
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      className="text-[13px] text-muted-foreground/60 mt-1 leading-snug"
+                    >
+                      {step.sub}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Completion summary — fades in when all steps done */}
+      <AnimatePresence>
+        {allDone && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-5 flex items-center gap-3 text-emerald-600 dark:text-emerald-400"
+          >
+            <div className="h-px flex-1 bg-emerald-500/20" />
+            <span className="text-[13px] font-medium">Done in 8 minutes</span>
+            <div className="h-px flex-1 bg-emerald-500/20" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 type AuthView = "sign-in" | "sign-up" | "magic-link" | "forgot-password"
 
@@ -298,44 +635,7 @@ export default function LoginPage() {
 
       <main className="relative flex flex-1 flex-col lg:flex-row items-center lg:justify-center z-10 py-4 sm:py-10">
         {/* Left brand panel — visible on lg+ */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="hidden lg:flex flex-1 flex-col justify-center items-start px-16 xl:px-24 max-w-2xl"
-        >
-          <div className="mb-8">
-            <CoastyIcon className="size-10" />
-          </div>
-          <h1 className="text-foreground text-5xl xl:text-6xl font-medium tracking-tight leading-[1.2]">
-            You set the goal.
-            <br />
-            <span className="text-muted-foreground">We handle the rest.</span>
-          </h1>
-          <p className="text-muted-foreground mt-6 text-lg leading-relaxed max-w-md">
-            Coasty deploys AI agents that browse, click, type, and navigate
-            like a teammate sitting at a real computer — so you can focus
-            on the work that actually needs you.
-          </p>
-          <div className="mt-12 flex flex-col gap-4 text-sm text-muted-foreground/70">
-            {[
-              "Agents run in isolated VMs — your data never leaks",
-              "Every action recorded with screenshots you can review",
-              "Set it once, schedule it forever — runs while you sleep",
-            ].map((feature, i) => (
-              <motion.div
-                key={feature}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.4 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                className="flex items-center gap-3"
-              >
-                <div className="h-px w-5 bg-border" />
-                <span>{feature}</span>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        <LeftBrandPanel />
 
         {/* Right form panel */}
         <div className="flex flex-none lg:flex-1 items-center justify-center w-full lg:max-w-xl px-4 sm:px-6 lg:px-16">
