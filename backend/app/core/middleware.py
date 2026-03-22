@@ -45,7 +45,7 @@ class InternalAPIKeyMiddleware(BaseHTTPMiddleware):
     If INTERNAL_API_KEY is empty the middleware is a no-op (backward compat for dev).
     """
 
-    _SKIP_PATHS = frozenset(["/", "/api/health", "/docs", "/redoc", "/openapi.json"])
+    _SKIP_PATHS = frozenset(["/", "/api/health", "/api/osworld/health", "/docs", "/redoc", "/openapi.json"])
 
     async def dispatch(self, request: Request, call_next):
         key = settings.INTERNAL_API_KEY
@@ -63,6 +63,26 @@ class InternalAPIKeyMiddleware(BaseHTTPMiddleware):
         # WebSocket upgrades (Electron) use their own auth handshake
         if request.headers.get("upgrade", "").lower() == "websocket":
             return await _safe_call_next(call_next, request)
+
+        # OSWorld routes use their own dedicated API key (X-OSWorld-Key header)
+        if request.url.path.startswith("/api/osworld/"):
+            osworld_key = settings.OSWORLD_API_KEY
+            if osworld_key:
+                provided = request.headers.get("X-OSWorld-Key", "")
+                if provided and hmac.compare_digest(provided, osworld_key):
+                    return await _safe_call_next(call_next, request)
+                # Also accept Authorization: Bearer <osworld_key> for convenience
+                auth_header = request.headers.get("Authorization", "")
+                if auth_header.startswith("Bearer "):
+                    token = auth_header[7:]
+                    if hmac.compare_digest(token, osworld_key):
+                        return await _safe_call_next(call_next, request)
+                logger.warning(f"Rejected OSWorld request to {request.url.path} — invalid X-OSWorld-Key")
+                return JSONResponse(
+                    status_code=403,
+                    content={"error": "Forbidden — invalid or missing OSWorld API key"},
+                )
+            # If OSWORLD_API_KEY is not set, fall through to normal auth below
 
         # Path 1: internal shared key (server-to-server from Next.js proxy)
         provided_key = request.headers.get("X-Internal-Key", "")

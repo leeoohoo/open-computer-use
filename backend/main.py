@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent / "app"))
 
 from app.core.config import settings
 from app.core.logging import setup_logging
-from app.api.routes import chat, chats, health, models, search, vm_control, screenshots, billing, file_operations, electron_bridge, schedules, swarm
+from app.api.routes import chat, chats, health, models, search, vm_control, screenshots, billing, file_operations, electron_bridge, schedules, swarm, osworld
 from app.core.middleware import InternalAPIKeyMiddleware, RateLimitMiddleware, CSRFMiddleware
 from app.core.exceptions import setup_exception_handlers
 
@@ -182,6 +182,7 @@ app.include_router(electron_bridge.router, prefix="/api/electron", tags=["electr
 app.include_router(chats.router, prefix="/api/chats", tags=["chats"])
 app.include_router(schedules.router, prefix="/api/schedules", tags=["schedules"])
 app.include_router(swarm.router, prefix="/api/swarm", tags=["swarm"])
+app.include_router(osworld.router, prefix="/api/osworld", tags=["osworld"])
 
 # Root endpoint
 @app.get("/")
