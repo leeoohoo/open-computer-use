@@ -15,6 +15,7 @@ interface PendingApproval {
 
 interface RemoteApprovalProps {
   machineId: string | null
+  isElectronMachine?: boolean
 }
 
 // Commands that are likely safe (informational about the context)
@@ -58,25 +59,33 @@ function formatParams(params: any): string | null {
   return parts.length > 0 ? parts.join(" | ") : null
 }
 
-export function RemoteApproval({ machineId }: RemoteApprovalProps) {
+export function RemoteApproval({ machineId, isElectronMachine }: RemoteApprovalProps) {
   const [approvals, setApprovals] = useState<PendingApproval[]>([])
   const [responding, setResponding] = useState<string | null>(null)
   const [expanded, setExpanded] = useState(true)
+  const [authFailed, setAuthFailed] = useState(false)
 
-  // Poll for pending approvals (works for any Electron machine; endpoint
-  // returns empty for non-Electron machines or non-existent IDs)
+  // Only poll for Electron machines — cloud VMs don't use this approval flow
   useEffect(() => {
-    if (!machineId) {
+    if (!machineId || !isElectronMachine || authFailed) {
       setApprovals([])
       return
     }
 
+    let active = true
+
     const fetchApprovals = async () => {
+      if (!active) return
       try {
         const res = await fetch(`/api/electron/machines/${machineId}/approvals`)
+        if (!active) return
         if (res.ok) {
           const data = await res.json()
           setApprovals(data.approvals || [])
+        } else if (res.status === 401 || res.status === 403) {
+          // Stop polling on auth failure to avoid log spam
+          setAuthFailed(true)
+          setApprovals([])
         }
       } catch {
         // Ignore network errors
@@ -84,8 +93,13 @@ export function RemoteApproval({ machineId }: RemoteApprovalProps) {
     }
 
     fetchApprovals()
-    const interval = setInterval(fetchApprovals, 2000)
-    return () => clearInterval(interval)
+    const interval = setInterval(fetchApprovals, 3000)
+    return () => { active = false; clearInterval(interval) }
+  }, [machineId, isElectronMachine, authFailed])
+
+  // Reset auth failure when machine changes
+  useEffect(() => {
+    setAuthFailed(false)
   }, [machineId])
 
   const respond = useCallback(async (approvalId: string, approved: boolean, reason?: string) => {

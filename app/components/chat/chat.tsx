@@ -315,6 +315,7 @@ export function Chat() {
   // Fetch subscription tier + machine limits for swarm gating
   const [userTier, setUserTier] = useState<string | null>(null)
   const [maxSwarmMachines, setMaxSwarmMachines] = useState(2)
+  const [machinesList, setMachinesList] = useState<any[]>([])
   useEffect(() => {
     if (!user?.id) return
     fetch("/api/machines")
@@ -322,9 +323,9 @@ export function Chat() {
       .then((data) => {
         if (data?.subscriptionTier) setUserTier(data.subscriptionTier)
         else setUserTier("free")
-        // Swarm limit = 3x persistent machine limit, capped at 10
         const planMax = data?.limits?.max_machines || 1
         setMaxSwarmMachines(Math.min(planMax * 3, 10))
+        setMachinesList(data?.machines || [])
       })
       .catch(() => { setUserTier("free"); setMaxSwarmMachines(3) })
   }, [user?.id])
@@ -1080,7 +1081,7 @@ export function Chat() {
         )} */}
         {/* Show inline active swarm banner only when not in fullscreen swarm mode */}
         {showOnboarding && !swarmFullscreen && <ActiveSwarmBanner onSwarmDetected={handleActiveSwarmDetected} />}
-        <RemoteApproval machineId={selectedVMId} />
+        <RemoteApproval machineId={selectedVMId} isElectronMachine={machinesList.some((m: any) => m.id === selectedVMId && m.settings?.provider === 'electron')} />
         <ChatInput {...chatInputProps} />
 
         {/* Task templates — reduces friction to first task completion */}

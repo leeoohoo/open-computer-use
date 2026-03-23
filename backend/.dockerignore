@@ -61,3 +61,6 @@ docs/
 # Scripts
 run_backend.bat
 run_backend.sh
+
+# Not needed for backend build
+OSWorld/

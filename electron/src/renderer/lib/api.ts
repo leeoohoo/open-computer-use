@@ -1,6 +1,13 @@
 import { parseSSEStream, SSECallbacks } from './sse-parser'
 
-/** In dev, vite proxies /api → backend. In production, use the full URL. */
+/**
+ * Get the base URL for API calls.
+ *
+ * In dev, Vite proxies /api → backend. In production, use the full backend
+ * URL from config. All Electron HTTP calls go through the Next.js proxy
+ * path (/api/electron/proxy/) which accepts Bearer tokens and forwards
+ * to the Python backend with X-Internal-Key.
+ */
 async function getApiBase(): Promise<string> {
   // @ts-ignore import.meta.env is injected by vite
   if (import.meta?.env?.DEV) return ''
@@ -9,6 +16,9 @@ async function getApiBase(): Promise<string> {
 
 /**
  * Send a chat message to the backend and stream the response.
+ *
+ * Uses /api/electron/proxy/chat/ so the Next.js proxy handles Bearer
+ * token verification and forwards to the Python backend.
  */
 export async function sendChatMessage(
   params: {
@@ -24,13 +34,12 @@ export async function sendChatMessage(
   const apiBase = await getApiBase()
   const token = await window.coasty.getToken()
 
-  const response = await fetch(`${apiBase}/api/chat/`, {
+  const response = await fetch(`${apiBase}/api/electron/proxy/chat/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'text/event-stream',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      'X-User-ID': params.userId,
     },
     body: JSON.stringify({
       messages: params.messages,

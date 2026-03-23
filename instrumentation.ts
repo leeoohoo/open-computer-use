@@ -2,7 +2,7 @@ export async function register() {
   // Only run on server side
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     // Track services for graceful shutdown
-    let cleanupService: { stop: () => void } | null = null;
+    let cleanupService: { start: () => void; stop: () => void } | null = null;
     let stopStatusChecker: (() => void) | null = null;
 
     // --- Machine cleanup service (requires Supabase service role) ---
