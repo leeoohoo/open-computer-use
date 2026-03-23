@@ -54,6 +54,10 @@ export interface MachineSettings {
   customSoftware?: string[];
   isLocal?: boolean;
   provider?: 'azure' | 'aws' | 'docker' | 'local' | 'electron';
+  // Electron machine metadata
+  platform?: string;   // win32, darwin, linux
+  hostname?: string;
+  username?: string;
   ports?: {
     vnc?: number;
     websocket?: number;

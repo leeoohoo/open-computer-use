@@ -36,6 +36,8 @@ export class WebSocketBridge {
   private state: ConnectionState = 'disconnected'
   private intentionalClose = false
   private approvalManager: ApprovalManager
+  // Remote approval tracking: approval_id → { resolve }
+  private pendingRemoteApprovals = new Map<string, { resolve: (result: { approved: boolean; reason?: string }) => void }>()
 
   constructor(backendUrl: string, token: string, machineId: string, userId: string, approvalManager: ApprovalManager) {
     this.backendUrl = backendUrl
@@ -105,9 +107,29 @@ export class WebSocketBridge {
             }
           } else {
             console.log(`[WS Bridge] Requesting approval: ${command}`)
-            const { approved, reason } = await this.approvalManager.requestApproval(command, parameters)
+
+            // Notify backend about the pending approval so the web/phone UI
+            // can also show the prompt and respond remotely.
+            const approvalId = `approval_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+            this.send({
+              type: 'approval_request',
+              data: { id: approvalId, command, parameters },
+            })
+
+            // Race: local Electron overlay approval vs remote web/phone approval.
+            // The approval manager handles local UI; we also listen for a
+            // 'approval_response' message from the backend (sent by the web UI).
+            const localPromise = this.approvalManager.requestApproval(command, parameters)
+            const remotePromise = this.waitForRemoteApproval(approvalId)
+
+            const { approved, reason } = await Promise.race([localPromise, remotePromise])
+
+            // Cancel the local approval prompt if remote won the race (and vice versa)
+            this.approvalManager.cancelAll()
+            this.clearRemoteApproval(approvalId)
+
             if (approved) {
-              console.log(`[WS Bridge] User approved: ${command}`)
+              console.log(`[WS Bridge] Approved: ${command}`)
               try {
                 const result = await this.executor.executeCommand(command, parameters)
                 this.send({ type: 'result', data: result })
@@ -119,13 +141,18 @@ export class WebSocketBridge {
               }
             } else {
               const msg = reason ? `Action denied by user: ${reason}` : 'Action denied by user'
-              console.log(`[WS Bridge] User denied: ${command} — ${msg}`)
+              console.log(`[WS Bridge] Denied: ${command} — ${msg}`)
               this.send({
                 type: 'result',
                 data: { success: false, error: msg },
               })
             }
           }
+        } else if (message.type === 'approval_response') {
+          // Remote approval response from web/phone UI (forwarded by backend)
+          const { id, approved, reason } = message.data || {}
+          console.log(`[WS Bridge] Remote approval response: ${id} → ${approved ? 'approved' : 'denied'}`)
+          this.resolveRemoteApproval(id, { approved: !!approved, reason })
         } else if (message.type === 'ping') {
           this.send({ type: 'heartbeat' })
         } else if (message.type === 'auth_success') {
@@ -147,6 +174,9 @@ export class WebSocketBridge {
     this.ws.on('close', (code, reason) => {
       console.log(`[WS Bridge] Disconnected: ${code} ${reason}`)
       this.stopHeartbeat()
+      // Cancel all pending approvals (local + remote) so promises don't hang
+      this.approvalManager.cancelAll()
+      this.cancelAllRemoteApprovals()
 
       if (!this.intentionalClose) {
         this.setState('disconnected')
@@ -165,6 +195,7 @@ export class WebSocketBridge {
     this.stopHeartbeat()
     this.clearReconnectTimer()
     this.approvalManager.cancelAll()
+    this.cancelAllRemoteApprovals()
     this.ws?.close()
     this.ws = null
     this.setState('disconnected')
@@ -177,6 +208,50 @@ export class WebSocketBridge {
       this.disconnect()
       this.connect()
     }
+  }
+
+  /** Wait for a remote approval response from the backend (web/phone UI).
+   *  Includes a 120-second timeout to prevent indefinite hangs. */
+  private waitForRemoteApproval(approvalId: string): Promise<{ approved: boolean; reason?: string }> {
+    return new Promise((resolve) => {
+      const timer = setTimeout(() => {
+        this.pendingRemoteApprovals.delete(approvalId)
+        resolve({ approved: false, reason: 'Remote approval timed out' })
+      }, 120_000)
+
+      this.pendingRemoteApprovals.set(approvalId, {
+        resolve: (result) => {
+          clearTimeout(timer)
+          resolve(result)
+        },
+      })
+    })
+  }
+
+  /** Resolve a pending remote approval promise. */
+  private resolveRemoteApproval(approvalId: string, result: { approved: boolean; reason?: string }): void {
+    const pending = this.pendingRemoteApprovals.get(approvalId)
+    if (pending) {
+      this.pendingRemoteApprovals.delete(approvalId)
+      pending.resolve(result)
+    }
+  }
+
+  /** Clear a remote approval by resolving it as denied (e.g. when local won the race). */
+  private clearRemoteApproval(approvalId: string): void {
+    const pending = this.pendingRemoteApprovals.get(approvalId)
+    if (pending) {
+      this.pendingRemoteApprovals.delete(approvalId)
+      pending.resolve({ approved: false, reason: 'Superseded by local approval' })
+    }
+  }
+
+  /** Cancel all pending remote approvals (e.g. on disconnect). */
+  private cancelAllRemoteApprovals(): void {
+    for (const [id, pending] of this.pendingRemoteApprovals) {
+      pending.resolve({ approved: false, reason: 'Disconnected' })
+    }
+    this.pendingRemoteApprovals.clear()
   }
 
   private send(data: any): void {

@@ -1,7 +1,6 @@
 import { desktopCapturer, screen } from 'electron'
 import { hideForScreenshot, showAfterScreenshot } from './window-manager'
 
-const MAX_WIDTH = 1280
 const JPEG_QUALITY = 70
 
 export async function captureScreenshot(): Promise<any> {
@@ -31,18 +30,12 @@ export async function captureScreenshot(): Promise<any> {
       throw new Error('Empty screenshot — check Screen Recording permission')
     }
 
-    // Resize to max 1280px wide and compress to JPEG to keep WebSocket
-    // payloads small (~100-200 KB instead of 5-10 MB uncompressed PNG)
-    let image = thumbnail
-    if (thumbSize.width > MAX_WIDTH) {
-      const scale = MAX_WIDTH / thumbSize.width
-      image = thumbnail.resize({
-        width: MAX_WIDTH,
-        height: Math.round(thumbSize.height * scale),
-      })
-    }
-
-    const base64 = image.toJPEG(JPEG_QUALITY).toString('base64')
+    // Send at full logical resolution — do NOT resize here.
+    // The backend's detect_screen_resolution() reads the image dimensions to
+    // learn the actual screen size, then GroundAgent.resize_coordinates()
+    // scales from grounding space (1280x720) to screen space. Pre-resizing
+    // to 1280 defeated that scaling and caused inaccurate clicks on Windows.
+    const base64 = thumbnail.toJPEG(JPEG_QUALITY).toString('base64')
 
     showAfterScreenshot()
 

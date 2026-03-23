@@ -34,7 +34,8 @@ import {
   Trash2,
   Loader2,
   X,
-  RefreshCw
+  RefreshCw,
+  Monitor
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
@@ -68,9 +69,10 @@ interface FileExplorerProps {
   machineId?: string
   userId?: string
   className?: string
+  isElectron?: boolean
 }
 
-export function FileExplorer({ machineId, userId, className }: FileExplorerProps) {
+export function FileExplorer({ machineId, userId, className, isElectron }: FileExplorerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [currentPath, setCurrentPath] = useState("/home/desktop")
   const [files, setFiles] = useState<FileNode[]>([])
@@ -86,14 +88,14 @@ export function FileExplorer({ machineId, userId, className }: FileExplorerProps
   const [historyIndex, setHistoryIndex] = useState(-1)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  // Initial load
+  // Initial load — skip for Electron machines (no remote file system)
   useEffect(() => {
-    if (machineId && navigationHistory.length === 0) {
+    if (machineId && !isElectron && navigationHistory.length === 0) {
       // Start at /home/desktop/Desktop which is the default desktop directory
       // Only load once to prevent loops
       loadDirectory("/home/desktop/Desktop")
     }
-  }, [machineId])
+  }, [machineId, isElectron])
 
   // Get file icon with better colors
   const getFileIcon = (node: FileNode, size: 'sm' | 'md' | 'lg' = 'sm') => {
@@ -566,6 +568,20 @@ export function FileExplorer({ machineId, userId, className }: FileExplorerProps
             <Folder className="h-12 w-12 text-gray-400 dark:text-zinc-600 mx-auto mb-3" />
             <p className="text-sm text-gray-600 dark:text-zinc-400">No machine connected</p>
             <p className="text-xs text-gray-500 dark:text-zinc-500 mt-1">Connect to a virtual machine to browse files</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (isElectron) {
+    return (
+      <div className={cn("w-full h-full p-2", className)}>
+        <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800">
+          <div className="text-center">
+            <Monitor className="h-12 w-12 text-gray-400 dark:text-zinc-600 mx-auto mb-3" />
+            <p className="text-sm text-gray-600 dark:text-zinc-400">Local Computer</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-500 mt-1 max-w-[220px]">File browsing is available on cloud machines. Your local files are managed directly on your computer.</p>
           </div>
         </div>
       </div>

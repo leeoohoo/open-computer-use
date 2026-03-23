@@ -53,12 +53,12 @@ export const Suggestions = memo(function Suggestions({
     () => (
       <motion.div
         key="suggestions-grid"
-        className="flex w-full max-w-full flex-nowrap justify-start gap-2 overflow-x-auto px-2 md:mx-auto md:max-w-2xl md:flex-wrap md:justify-center md:pl-0"
+        className="flex w-full max-w-full flex-nowrap justify-start gap-1.5 overflow-x-auto px-1 md:mx-auto md:max-w-2xl md:flex-wrap md:justify-center md:px-0"
         initial="initial"
         animate="animate"
         variants={{
-          initial: { opacity: 0, y: 10, filter: "blur(4px)" },
-          animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+          initial: { opacity: 0, y: 6 },
+          animate: { opacity: 1, y: 0 },
         }}
         transition={TRANSITION_SUGGESTIONS}
         style={{
@@ -69,19 +69,20 @@ export const Suggestions = memo(function Suggestions({
           <MotionPromptSuggestion
             key={suggestion.label}
             onClick={() => handleCategoryClick(suggestion)}
-            className="capitalize"
+            className="capitalize rounded-xl border-border/40 bg-neutral-100/80 dark:bg-neutral-800/60 hover:bg-neutral-200/80 dark:hover:bg-neutral-700/60 text-muted-foreground hover:text-foreground transition-colors duration-200"
+            variant="outline"
             initial="initial"
             animate="animate"
             transition={{
               ...TRANSITION_SUGGESTIONS,
-              delay: index * 0.02,
+              delay: index * 0.03,
             }}
             variants={{
-              initial: { opacity: 0, scale: 0.8 },
-              animate: { opacity: 1, scale: 1 },
+              initial: { opacity: 0, y: 4 },
+              animate: { opacity: 1, y: 0 },
             }}
           >
-            <suggestion.icon className="size-4" />
+            <suggestion.icon className="size-3.5 opacity-60" />
             {suggestion.label}
           </MotionPromptSuggestion>
         ))}
@@ -93,18 +94,14 @@ export const Suggestions = memo(function Suggestions({
   const suggestionsList = useMemo(
     () => (
       <motion.div
-        className="flex w-full flex-col space-y-1 px-2"
+        className="flex w-full flex-col gap-0.5 rounded-2xl bg-neutral-100/80 dark:bg-neutral-800/50 border border-border/30 p-1.5 backdrop-blur-sm md:mx-auto md:max-w-2xl"
         key={activeCategoryData?.label}
         initial="initial"
         animate="animate"
         variants={{
-          initial: { opacity: 0, y: 10, filter: "blur(4px)" },
-          animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-          exit: {
-            opacity: 0,
-            y: -10,
-            filter: "blur(4px)",
-          },
+          initial: { opacity: 0, y: 6 },
+          animate: { opacity: 1, y: 0 },
+          exit: { opacity: 0, y: -6 },
         }}
         transition={TRANSITION_SUGGESTIONS}
       >
@@ -114,16 +111,16 @@ export const Suggestions = memo(function Suggestions({
             highlight={activeCategoryData.highlight}
             type="button"
             onClick={() => handleSuggestionClick(suggestion)}
-            className="block h-full text-left"
+            className="block h-full text-left rounded-xl hover:bg-neutral-200/70 dark:hover:bg-neutral-700/50 transition-colors duration-150"
             initial="initial"
             animate="animate"
             variants={{
-              initial: { opacity: 0, y: -10 },
-              animate: { opacity: 1, y: 0 },
+              initial: { opacity: 0, x: -4 },
+              animate: { opacity: 1, x: 0 },
             }}
             transition={{
               ...TRANSITION_SUGGESTIONS,
-              delay: index * 0.05,
+              delay: index * 0.04,
             }}
           >
             {suggestion}

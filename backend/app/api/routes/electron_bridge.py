@@ -14,21 +14,28 @@ import json
 import logging
 import time
 import asyncio
-from typing import Optional
+from typing import Optional, Dict, Any
 from datetime import datetime, timezone
+from collections import defaultdict
 
 import httpx
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query, Request, Depends, HTTPException
 
 from app.services.vm_control import vm_control_service
-from app.services.ws_adapter import FastAPIWebSocketAdapter
+from app.services.ws_adapter import FastAPIWebSocketAdapter, _AdapterState
 from app.services.database import DatabaseService
-from app.services.auth import validate_user
+from app.services.auth import validate_user, get_verified_user_id
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 db_service = DatabaseService()
+
+# ── Remote approval system ──────────────────────────────────────────────
+# When an Electron app requests user approval for a command, the request
+# is stored here so the web/phone UI can poll for it and respond.
+# Structure: { machine_id: { approval_id: { command, parameters, status, ... } } }
+_pending_remote_approvals: Dict[str, Dict[str, Dict[str, Any]]] = defaultdict(dict)
 
 
 @router.websocket("/ws")
@@ -200,11 +207,11 @@ async def electron_websocket(
     })
 
     try:
-        # 10. Keep connection alive.
+        # 10. Keep connection alive with periodic pings.
         # CRITICAL: We must NOT consume messages here — execute_command()
         # handles all command/response traffic via the stored adapter.
-        # We only need to keep this coroutine alive so FastAPI doesn't
-        # close the WebSocket. We periodically send pings to detect drops.
+        # Approval requests from the Electron app arrive interleaved with
+        # command results and are handled in vm_control's recv() loop.
         while True:
             await asyncio.sleep(30)
             try:
@@ -388,6 +395,9 @@ async def _cleanup_electron_connection(machine_id: str, own_adapter=None):
     if task:
         task.cancel()
 
+    # Clear any pending remote approvals for this machine
+    _pending_remote_approvals.pop(machine_id, None)
+
     # Update DB status
     try:
         if db_service.client:
@@ -396,3 +406,234 @@ async def _cleanup_electron_connection(machine_id: str, own_adapter=None):
             }).eq("id", machine_id).execute()
     except Exception as e:
         logger.error(f"Failed to update Electron machine status: {e}")
+
+
+# ── REST endpoints ──────────────────────────────────────────────────────
+
+
+@router.get("/machines")
+async def list_electron_machines(user_id: str = Depends(get_verified_user_id)):
+    """Return connection status for the user's Electron machines.
+
+    For each Electron machine in the database, check whether an active
+    WebSocket connection exists in vm_control_service.  This lets the
+    web/phone UI show online/offline status without a WebSocket ping.
+    """
+    machines: list[Dict[str, Any]] = []
+
+    try:
+        if not db_service.client:
+            raise HTTPException(status_code=500, detail="Database unavailable")
+
+        result = (
+            db_service.client.table("user_machines")
+            .select("id, display_name, status, settings, last_active_at")
+            .eq("user_id", user_id)
+            .execute()
+        )
+
+        for row in result.data or []:
+            settings_data = row.get("settings") or {}
+            if isinstance(settings_data, str):
+                try:
+                    settings_data = json.loads(settings_data)
+                except json.JSONDecodeError:
+                    settings_data = {}
+
+            if settings_data.get("provider") != "electron":
+                continue
+
+            machine_id = row["id"]
+            ws = vm_control_service.connections.get(machine_id)
+            session = vm_control_service.session_data.get(machine_id, {})
+            is_connected = ws is not None and ws.state == _AdapterState.OPEN
+
+            machines.append({
+                "id": machine_id,
+                "displayName": row.get("display_name", "Local Desktop"),
+                "connected": is_connected,
+                "platform": settings_data.get("platform", "unknown"),
+                "hostname": settings_data.get("hostname", ""),
+                "username": settings_data.get("username", ""),
+                "lastActiveAt": row.get("last_active_at"),
+                "systemInfo": session.get("system_info") if is_connected else None,
+            })
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to list Electron machines: {e}")
+        raise HTTPException(status_code=500, detail="Failed to list machines")
+
+    return {"machines": machines}
+
+
+@router.get("/machines/{machine_id}/health")
+async def electron_machine_health(
+    machine_id: str,
+    user_id: str = Depends(get_verified_user_id),
+):
+    """Check whether an Electron machine is online and ready.
+
+    Unlike the generic agent-health endpoint (which opens a WebSocket to
+    the VM), this simply checks whether the Electron app's inbound
+    WebSocket is present and open in vm_control_service.
+    """
+    # Verify ownership
+    session = vm_control_service.session_data.get(machine_id, {})
+    if session.get("user_id") and session["user_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Not your machine")
+
+    ws = vm_control_service.connections.get(machine_id)
+    is_connected = ws is not None and ws.state == _AdapterState.OPEN
+
+    return {
+        "agentReady": is_connected,
+        "connected": is_connected,
+        "isElectron": True,
+    }
+
+
+# ── Remote Approval endpoints ───────────────────────────────────────────
+
+
+@router.get("/machines/{machine_id}/approvals")
+async def get_pending_approvals(
+    machine_id: str,
+    user_id: str = Depends(get_verified_user_id),
+):
+    """Return pending approval requests for a machine.
+
+    The web/phone UI polls this endpoint to show approval prompts
+    remotely (instead of requiring the user to be at the Electron app).
+    """
+    # Verify ownership via session or DB
+    session = vm_control_service.session_data.get(machine_id, {})
+    if session.get("user_id") and session["user_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Not your machine")
+
+    approvals = list(_pending_remote_approvals.get(machine_id, {}).values())
+    # Only return pending ones
+    pending = [a for a in approvals if a.get("status") == "pending"]
+    return {"approvals": pending}
+
+
+@router.post("/machines/{machine_id}/approvals/{approval_id}/respond")
+async def respond_to_approval(
+    machine_id: str,
+    approval_id: str,
+    request: Request,
+    user_id: str = Depends(get_verified_user_id),
+):
+    """Respond to a pending approval request from the web/phone UI.
+
+    Body: { "approved": true/false, "reason": "optional deny reason" }
+    """
+    session = vm_control_service.session_data.get(machine_id, {})
+    if session.get("user_id") and session["user_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Not your machine")
+
+    body = await request.json()
+    approved = body.get("approved", False)
+    reason = body.get("reason")
+
+    machine_approvals = _pending_remote_approvals.get(machine_id, {})
+    approval = machine_approvals.get(approval_id)
+    if not approval:
+        raise HTTPException(status_code=404, detail="Approval not found or already handled")
+
+    if approval["status"] != "pending":
+        raise HTTPException(status_code=409, detail="Approval already responded to")
+
+    approval["status"] = "approved" if approved else "denied"
+    approval["reason"] = reason
+    approval["responded_at"] = time.time()
+    logger.info(f"Remote approval {approval_id} for {machine_id}: {approval['status']}")
+
+    # Forward the response to the Electron app via WebSocket so the
+    # local approval prompt can be dismissed and execution can proceed.
+    ws = vm_control_service.connections.get(machine_id)
+    if ws is not None:
+        try:
+            await ws.send(json.dumps({
+                "type": "approval_response",
+                "data": {
+                    "id": approval_id,
+                    "approved": approved,
+                    "reason": reason,
+                },
+            }))
+        except Exception as e:
+            logger.warning(f"Failed to forward approval response to Electron: {e}")
+
+    # Signal the waiting coroutine (if used internally)
+    event: asyncio.Event = approval.get("_event")
+    if event:
+        event.set()
+
+    return {"ok": True, "status": approval["status"]}
+
+
+def create_remote_approval(machine_id: str, approval_id: str, command: str, parameters: Any) -> Dict[str, Any]:
+    """Register a new remote approval request and return its record.
+
+    Called from the Electron bridge's command dispatch to enable remote
+    approval when the Electron overlay is not in focus / user is away.
+    """
+    record: Dict[str, Any] = {
+        "id": approval_id,
+        "command": command,
+        "parameters": _sanitize_params(parameters),
+        "status": "pending",
+        "created_at": time.time(),
+        "_event": asyncio.Event(),
+    }
+    _pending_remote_approvals[machine_id][approval_id] = record
+    return record
+
+
+async def wait_for_remote_approval(machine_id: str, approval_id: str, timeout: float = 120.0) -> Dict[str, Any]:
+    """Wait until the remote approval is responded to, or timeout.
+
+    Returns { "approved": bool, "reason": str | None }.
+    """
+    machine_approvals = _pending_remote_approvals.get(machine_id)
+    if not machine_approvals:
+        return {"approved": False, "reason": "Approval not found"}
+
+    record = machine_approvals.get(approval_id)
+    if not record:
+        return {"approved": False, "reason": "Approval not found"}
+
+    event: asyncio.Event = record.get("_event")
+    if not event:
+        return {"approved": False, "reason": "Approval record corrupted"}
+
+    try:
+        await asyncio.wait_for(event.wait(), timeout=timeout)
+    except asyncio.TimeoutError:
+        record["status"] = "timeout"
+
+    # Clean up — use the same reference to avoid pop-on-empty-dict
+    machine_approvals.pop(approval_id, None)
+    # Remove machine entry if empty
+    if not machine_approvals:
+        _pending_remote_approvals.pop(machine_id, None)
+
+    return {
+        "approved": record.get("status") == "approved",
+        "reason": record.get("reason"),
+    }
+
+
+def _sanitize_params(params: Any) -> Any:
+    """Remove large binary data from parameters before storing for remote approval."""
+    if not isinstance(params, dict):
+        return params
+    sanitized = {}
+    for k, v in params.items():
+        if isinstance(v, str) and len(v) > 1000:
+            sanitized[k] = v[:200] + f"... ({len(v)} chars)"
+        else:
+            sanitized[k] = v
+    return sanitized

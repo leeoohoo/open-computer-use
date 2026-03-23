@@ -4,17 +4,7 @@ import { ElectronAuth } from './auth'
 import { WebSocketBridge } from './ws-bridge'
 import { ApprovalManager } from './approval-manager'
 
-/**
- * Helper: make an authenticated fetch to the Python backend via the
- * Next.js proxy at /api/electron/proxy/...
- *
- * When COASTY_BACKEND_URL points to the Next.js frontend (e.g. coasty.ai),
- * Electron's REST calls must go through the proxy route which verifies the
- * Bearer token and forwards to the Python backend with X-Internal-Key.
- *
- * Paths like "/api/chats/create" are rewritten to
- * "/api/electron/proxy/chats/create".
- */
+/** Helper: make an authenticated fetch to the Python backend. */
 async function backendFetch(
   backendUrl: string,
   path: string,
@@ -22,11 +12,7 @@ async function backendFetch(
   options: { method?: string; body?: any } = {},
 ): Promise<any> {
   const token = await auth.getAccessToken()
-
-  // Rewrite /api/... to /api/electron/proxy/... so the Next.js catch-all
-  // proxy handles auth + forwarding to the Python backend.
-  const proxyPath = path.replace(/^\/api\//, '/api/electron/proxy/')
-  const url = `${backendUrl}${proxyPath}`
+  const url = `${backendUrl}${path}`
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

@@ -362,6 +362,9 @@ export function ChatInput({
   const [isMachineBusy, setIsMachineBusy] = useState(false)
   const [isStoppingMachine, setIsStoppingMachine] = useState(false)
 
+  // Derive isElectronMachine from currentMachine to avoid stale state
+  const isElectronMachine = currentMachine?.settings?.provider === 'electron'
+
   // Reset agentReady and busy state whenever VM selection changes
   useEffect(() => {
     setAgentReady(false)
@@ -382,6 +385,16 @@ export function ChatInput({
               setMachineStatus(machine.status)
               setMachineName(machine.displayName)
               setCurrentMachine(machine)
+
+              const isElectron = machine.settings?.provider === 'electron'
+
+              if (isElectron) {
+                // Electron machines: check live connection status via backend
+                const isConnected = (machine as any).electronConnected === true
+                setAgentReady(isConnected)
+                setShowVMStatusBar(false)
+                return
+              }
 
               // Show status bar for creating, starting states
               if (machine.status === "creating" || machine.status === "starting") {
@@ -422,6 +435,7 @@ export function ChatInput({
       setCurrentMachine(null)
       setShowVMStatusBar(false)
       setAgentReady(false)
+
     }
   }, [selectedVMId, isUserAuthenticated, showVMStatusBar])
   
@@ -452,8 +466,13 @@ export function ChatInput({
       return false
     }
     
-    console.log(`VM Status Check - ID: ${selectedVMId}, Status: ${machineStatus}`)
-    
+    console.log(`VM Status Check - ID: ${selectedVMId}, Status: ${machineStatus}, Electron: ${isElectronMachine}`)
+
+    // Electron machines: no startup needed — just check if connected
+    if (isElectronMachine) {
+      return agentReady // true if Electron app is connected, false if offline
+    }
+
     if (machineStatus === "running") {
       if (!agentReady) {
         setShowVMStatusBar(true)
@@ -626,7 +645,7 @@ export function ChatInput({
     // Send message - VM ID is already being sent through use-chat-core
     onSend()
 
-  }, [isSubmitting, onSend, status, stop, isUserAuthenticated, onAuthRequired, selectedVMId, machineStatus, agentReady, startVMIfNeeded, checkMachineBusy, swarmMode])
+  }, [isSubmitting, onSend, status, stop, isUserAuthenticated, onAuthRequired, selectedVMId, machineStatus, agentReady, startVMIfNeeded, checkMachineBusy, swarmMode, isElectronMachine])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -672,7 +691,9 @@ export function ChatInput({
           return
         }
 
-        const machineReady = machineStatus === "running" && agentReady
+        // Electron: check agentReady directly (no startup sequence)
+        // Cloud: check running + agentReady
+        const machineReady = isElectronMachine ? agentReady : (machineStatus === "running" && agentReady)
         if (!machineReady) {
           return
         }
@@ -681,7 +702,7 @@ export function ChatInput({
         handleSend()
       }
     },
-    [isSubmitting, status, value, isUserAuthenticated, onAuthRequired, handleSend, stop, selectedVMId, machineStatus, agentReady, isMachineBusy, forceStopAndSend, swarmMode]
+    [isSubmitting, status, value, isUserAuthenticated, onAuthRequired, handleSend, stop, selectedVMId, machineStatus, agentReady, isMachineBusy, forceStopAndSend, swarmMode, isElectronMachine]
   )
 
   const handlePaste = useCallback(
@@ -774,41 +795,7 @@ export function ChatInput({
                   className="h-9 min-w-0 flex-shrink"
                 />
               )}
-              {/* Connect to Desktop - opens noVNC in new tab */}
-              {selectedVMId && selectedVMId !== "none" && !swarmMode && machineStatus === "running" && agentReady && currentMachine?.publicIpAddress && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      type="button"
-                      onClick={() => {
-                        const websocketPort = currentMachine.websocketPort || 6080
-                        const encodedPassword = encodeURIComponent(currentMachine.vncPassword)
-                        const url = `http://${currentMachine.publicIpAddress}:${websocketPort}/vnc.html?autoconnect=1&resize=scale&password=${encodedPassword}`
-                        window.open(url, '_blank')
-                      }}
-                      className="border-border dark:bg-secondary h-9 rounded-full border bg-transparent px-2.5 sm:px-3"
-                      aria-label="Connect to desktop"
-                    >
-                      <Monitor className="size-4 flex-shrink-0" weight="duotone" />
-                      <span className="hidden sm:inline text-xs ml-1.5">{machineName ? `${machineName}'s screen` : "Desktop"}</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-[200px] text-center">
-                    Watch your agent work on a separate screen. Just don't touch anything or it gets stage fright!
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {/* File upload feature - only show when VM is selected and not in swarm mode */}
-              {selectedVMId && selectedVMId !== "none" && !swarmMode && (
-                <ButtonVMFileUpload
-                  onFileUpload={onFileUpload}
-                  isUserAuthenticated={isUserAuthenticated}
-                  vmName={machineName || undefined}
-                />
-              )}
-              {/* Swarm mode toggle */}
+              {/* Swarm mode toggle — next to machine selector */}
               {onSwarmModeChange && (
                 <div className="flex items-center gap-1">
                   {isSwarmLocked ? (
@@ -1046,6 +1033,40 @@ export function ChatInput({
                     </>
                   )}
                 </div>
+              )}
+              {/* Connect to Desktop - opens noVNC in new tab */}
+              {selectedVMId && selectedVMId !== "none" && !swarmMode && machineStatus === "running" && agentReady && currentMachine?.publicIpAddress && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      type="button"
+                      onClick={() => {
+                        const websocketPort = currentMachine.websocketPort || 6080
+                        const encodedPassword = encodeURIComponent(currentMachine.vncPassword)
+                        const url = `http://${currentMachine.publicIpAddress}:${websocketPort}/vnc.html?autoconnect=1&resize=scale&password=${encodedPassword}`
+                        window.open(url, '_blank')
+                      }}
+                      className="border-border dark:bg-secondary h-9 rounded-full border bg-transparent px-2.5 sm:px-3"
+                      aria-label="Connect to desktop"
+                    >
+                      <Monitor className="size-4 flex-shrink-0" weight="duotone" />
+                      <span className="hidden sm:inline text-xs ml-1.5">{machineName ? `${machineName}'s screen` : "Desktop"}</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[200px] text-center">
+                    Watch your agent work on a separate screen. Just don't touch anything or it gets stage fright!
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              {/* File upload feature - only show when VM is selected and not in swarm mode */}
+              {selectedVMId && selectedVMId !== "none" && !swarmMode && (
+                <ButtonVMFileUpload
+                  onFileUpload={onFileUpload}
+                  isUserAuthenticated={isUserAuthenticated}
+                  vmName={machineName || undefined}
+                />
               )}
             </div>
             <PromptInputAction

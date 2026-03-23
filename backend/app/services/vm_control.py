@@ -480,7 +480,25 @@ class VMControlService:
                         
                         # Process command response
                         logger.debug(f"Received response from {machine_id}: {result.get('type')}")
-                        
+
+                        if result.get("type") == "approval_request":
+                            # Electron app is requesting user approval for a command.
+                            # Store in the remote approvals dict so the web UI can
+                            # poll for it and respond.
+                            from app.api.routes.electron_bridge import create_remote_approval
+                            req_data = result.get("data", {})
+                            create_remote_approval(
+                                machine_id,
+                                req_data.get("id", ""),
+                                req_data.get("command", ""),
+                                req_data.get("parameters"),
+                            )
+                            logger.info(f"Remote approval registered: {req_data.get('id')} for {req_data.get('command')}")
+                            continue  # Keep waiting for the actual command result
+
+                        if result.get("type") == "heartbeat":
+                            continue  # Skip heartbeat messages while waiting
+
                         if result.get("type") == "result":
                             command_result = result.get("data", {})
                             # Track successful command

@@ -165,7 +165,23 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
   const { messages: persistedMessages } = useMessages()
   const { streamingMessages, lastUpdate: streamingLastUpdate } = useChatStreaming()
   const [activeTab, setActiveTab] = useState<'activity' | 'files'>('activity')
-  
+  const [isElectronMachine, setIsElectronMachine] = useState(false)
+
+  // Detect if the selected machine is an Electron (local) machine
+  useEffect(() => {
+    if (!selectedVMId) {
+      setIsElectronMachine(false)
+      return
+    }
+    fetch("/api/machines")
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        const machine = (data?.machines || []).find((m: any) => m.id === selectedVMId)
+        setIsElectronMachine(machine?.settings?.provider === 'electron')
+      })
+      .catch(() => setIsElectronMachine(false))
+  }, [selectedVMId])
+
   // Use streaming messages if available, fallback to persisted
   const messages = streamingMessages.length > 0 ? streamingMessages : persistedMessages
   
@@ -2456,6 +2472,7 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                     <FileExplorer
                       machineId={selectedVMId || undefined}
                       userId={currentUserId || undefined}
+                      isElectron={isElectronMachine}
                       className="flex-1 min-h-0"
                     />
                   </motion.div>
