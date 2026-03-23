@@ -179,8 +179,9 @@ function AccountMenu({ onClose, updateStatus }: { onClose: () => void; updateSta
   const { user, signOut } = useAuthStore()
   const [credits, setCredits] = React.useState<number | null>(null)
   const [runtime, setRuntime] = React.useState<number | null>(null)
+  const [appVersion, setAppVersion] = React.useState('...')
 
-  // Fetch credit balance on mount
+  // Fetch credit balance and app version on mount
   React.useEffect(() => {
     window.coasty.getCredits().then((res) => {
       if (res.success) {
@@ -188,6 +189,7 @@ function AccountMenu({ onClose, updateStatus }: { onClose: () => void; updateSta
         setRuntime(res.estimated_runtime_minutes ?? 0)
       }
     }).catch(() => {})
+    window.coasty.getAppVersion().then(setAppVersion).catch(() => {})
   }, [])
 
   return (
@@ -281,7 +283,7 @@ function AccountMenu({ onClose, updateStatus }: { onClose: () => void; updateSta
           <MenuLink
             icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>}
             label="About"
-            desc="Coasty Desktop v1.0.0"
+            desc={`Coasty Desktop v${appVersion}`}
             url="https://coasty.ai"
             onClose={onClose}
           />
@@ -713,33 +715,26 @@ export function Overlay() {
               </div>
             )}
 
-            {/* Update banner */}
-            {updateStatus === 'ready' && (
-              <div className="px-3 pt-1 flex-shrink-0">
+            {/* Input area */}
+            <div className="px-3 pb-3 pt-1 flex-shrink-0">
+              {/* Update banner — compact inline bar above the input */}
+              {updateStatus === 'ready' && (
                 <button
                   onClick={() => window.coasty.installUpdate()}
-                  className="group w-full flex items-center gap-2.5 px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-950/50 to-emerald-900/30 border border-emerald-700/30 hover:border-emerald-600/50 transition-all duration-300"
+                  className="group w-full flex items-center gap-2 px-3 py-1.5 mb-1.5 rounded-lg bg-emerald-950/40 border border-emerald-700/30 hover:border-emerald-600/50 transition-all"
                 >
                   <div className="relative flex-shrink-0">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500/15 flex items-center justify-center">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400 group-hover:animate-bounce">
+                    <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400">
                         <line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
                       </svg>
                     </div>
                     <div className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping" />
                   </div>
-                  <div className="flex-1 min-w-0 text-left">
-                    <span className="text-[11px] font-medium text-emerald-300">Update available</span>
-                  </div>
-                  <span className="text-[10px] font-medium text-emerald-500 group-hover:text-emerald-300 transition-colors">
-                    Restart
-                  </span>
+                  <span className="text-[10px] font-medium text-emerald-400 flex-1 text-left">Update ready</span>
+                  <span className="text-[9px] font-medium text-emerald-600 group-hover:text-emerald-300 transition-colors">Restart</span>
                 </button>
-              </div>
-            )}
-
-            {/* Input area */}
-            <div className="px-3 pb-3 pt-1 flex-shrink-0">
+              )}
               {connectionState !== 'connected' && (
                 <div className="mb-1.5 flex items-center justify-center gap-2">
                   <span className="text-[10px] text-yellow-500">

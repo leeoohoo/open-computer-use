@@ -134,6 +134,9 @@ app.whenReady().then(async () => {
   // Register IPC handlers
   registerIpcHandlers(auth, () => wsBridge, (bridge) => { wsBridge = bridge }, BACKEND_URL, approvalManager)
 
+  // App version — exposed to renderer for display
+  ipcMain.handle('app:get-version', () => app.getVersion())
+
   // Window mode control — renderer requests mode changes
   ipcMain.handle('window:set-mode', async (_event, mode: string) => {
     setWindowMode(mode as 'auth' | 'compact' | 'expanded')
