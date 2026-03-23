@@ -27,9 +27,8 @@ async function proxyToBackend(
 
   const { path } = await params
   let backendPath = `/api/${path.join("/")}`
-  // Preserve trailing slash from original request — FastAPI requires it
-  // for routes defined with @router.post("/") and will 307 redirect without it,
-  // which can drop POST bodies in some runtimes.
+  // Preserve trailing slash from the original request — FastAPI requires it
+  // for routes defined as @router.post("/") and will 307 redirect without it.
   if (req.nextUrl.pathname.endsWith("/")) {
     backendPath += "/"
   }
@@ -45,49 +44,78 @@ async function proxyToBackend(
     "Content-Type": req.headers.get("Content-Type") || "application/json",
     "X-User-ID": user.id,
     ...(INTERNAL_API_KEY && { "X-Internal-Key": INTERNAL_API_KEY }),
-    // Forward Accept header for SSE streaming support
     ...(req.headers.get("Accept") && { "Accept": req.headers.get("Accept")! }),
   }
 
-  const fetchOptions: RequestInit = {
-    method: req.method,
-    headers,
-  }
-
-  // Forward body for non-GET requests
+  // Read body once for non-GET requests (needed for potential redirect retry)
+  let bodyString: string | undefined
   if (req.method !== "GET" && req.method !== "HEAD") {
     try {
       const body = await req.json()
       // Enforce verified user_id so clients can't spoof it
       body.user_id = user.id
-      fetchOptions.body = JSON.stringify(body)
+      bodyString = JSON.stringify(body)
     } catch {
       // No body or non-JSON body
     }
   }
 
   try {
-    const response = await fetch(url.toString(), fetchOptions)
+    // Disable automatic redirect following — some Node.js versions drop the
+    // POST body on 307/308 redirects. We handle redirects manually instead.
+    const response = await fetch(url.toString(), {
+      method: req.method,
+      headers,
+      body: bodyString,
+      redirect: "manual",
+    })
 
-    // Stream the response back
-    const responseHeaders = new Headers()
-    response.headers.forEach((value, key) => {
-      // Skip hop-by-hop headers
-      if (!["transfer-encoding", "connection"].includes(key.toLowerCase())) {
-        responseHeaders.set(key, value)
+    // Handle FastAPI's trailing-slash redirects (307/308) manually to ensure
+    // the POST body and auth headers are preserved.
+    if (response.status === 307 || response.status === 308) {
+      const location = response.headers.get("Location")
+      if (location) {
+        // Resolve relative Location against the original URL
+        const redirectUrl = new URL(location, url)
+        // Re-send query params if the redirect URL doesn't have them
+        url.searchParams.forEach((value, key) => {
+          if (!redirectUrl.searchParams.has(key)) {
+            redirectUrl.searchParams.set(key, value)
+          }
+        })
+
+        const redirectResponse = await fetch(redirectUrl.toString(), {
+          method: req.method,
+          headers,
+          body: bodyString,
+          redirect: "manual",
+        })
+
+        return streamResponse(redirectResponse)
       }
-    })
+    }
 
-    return new Response(response.body, {
-      status: response.status,
-      headers: responseHeaders,
-    })
+    return streamResponse(response)
   } catch {
     return NextResponse.json(
       { error: "Failed to connect to backend service" },
       { status: 503 },
     )
   }
+}
+
+/** Stream a backend response back to the client, preserving status and headers. */
+function streamResponse(response: Response) {
+  const responseHeaders = new Headers()
+  response.headers.forEach((value, key) => {
+    if (!["transfer-encoding", "connection"].includes(key.toLowerCase())) {
+      responseHeaders.set(key, value)
+    }
+  })
+  return new Response(response.body, {
+    status: response.status,
+    headers: responseHeaders,
+  })
 }
 
 export const GET = proxyToBackend

@@ -359,6 +359,19 @@ export class ElectronAuth {
     return this.session?.access_token || null
   }
 
+  /** Expose the authenticated Supabase client for direct DB queries.
+   *  Ensures the client has a valid session set before returning. */
+  async getSupabaseClient(): Promise<SupabaseClient> {
+    // Make sure the client has the current session's JWT
+    if (this.session?.access_token) {
+      await this.supabase.auth.setSession({
+        access_token: this.session.access_token,
+        refresh_token: this.session.refresh_token,
+      })
+    }
+    return this.supabase
+  }
+
   getUserId(): string | null {
     return this.session?.user?.id || null
   }
@@ -458,6 +471,14 @@ export class ElectronAuth {
 
       if (this.isAuthenticated()) {
         console.log('[Auth] Restored valid session from disk')
+        // Set the session on the Supabase client so RLS-protected queries work.
+        // Without this, the client has no JWT and all DB queries fail with RLS errors.
+        this.supabase.auth.setSession({
+          access_token: this.session!.access_token,
+          refresh_token: this.session!.refresh_token,
+        }).catch((err) => {
+          console.error('[Auth] Failed to set restored session on Supabase client:', err)
+        })
         this.scheduleRefresh(this.session!)
       } else if (this.session?.refresh_token) {
         console.log('[Auth] Access token expired, refreshing eagerly...')

@@ -3,7 +3,6 @@ export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     // Track services for graceful shutdown
     let cleanupService: { start: () => void; stop: () => void } | null = null;
-    let stopStatusChecker: (() => void) | null = null;
 
     // --- Machine cleanup service (requires Supabase service role) ---
     try {
@@ -19,22 +18,14 @@ export async function register() {
       console.error('❌ Failed to start machine cleanup service:', error);
     }
 
-    // --- Status checker (runs independently — handles missing env vars internally) ---
-    try {
-      const statusChecker = await import("@/lib/services/status-checker");
-      statusChecker.startStatusChecker();
-      stopStatusChecker = statusChecker.stopStatusChecker;
-      console.log('✅ Status checker started successfully');
-    } catch (error) {
-      console.error('❌ Failed to start status checker:', error);
-    }
+    // Status check persistence is handled by the backend (periodic_status_check
+    // in main.py), so no frontend status checker is needed.
 
     // Graceful shutdown handling
     const shutdown = () => {
       console.log('🛑 Shutting down services...');
       try {
         cleanupService?.stop();
-        stopStatusChecker?.();
         console.log('✅ Services shut down successfully');
       } catch (error) {
         console.error('❌ Error during shutdown:', error);

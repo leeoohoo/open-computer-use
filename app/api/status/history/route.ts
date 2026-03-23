@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createServiceClient } from "@/lib/supabase/service"
+import { createClient } from "@supabase/supabase-js"
 
 interface DayStatus {
   date: string // YYYY-MM-DD
@@ -16,10 +16,18 @@ interface ServiceHistory {
 }
 
 export async function GET() {
-  const supabase = createServiceClient()
-  if (!supabase) {
-    return NextResponse.json({ error: "Supabase not configured" }, { status: 500 })
+  // Read-only — uses anon key since RLS allows public SELECT on status_checks
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !anonKey) {
+    return NextResponse.json(
+      { services: [], has_data: false },
+      { headers: { "Cache-Control": "public, max-age=300, s-maxage=300" } }
+    )
   }
+  const supabase = createClient(url, anonKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  })
 
   // Fetch last 90 days of checks
   const ninetyDaysAgo = new Date()

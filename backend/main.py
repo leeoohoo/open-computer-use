@@ -78,27 +78,106 @@ async def lifespan(app: FastAPI):
     # Start task scheduler for automated/recurring tasks
     scheduler_task = asyncio.create_task(task_scheduler.start())
 
-    # Start status health check poller (records service health every 5 min)
+    # Start status health check poller — runs checks directly on the backend
+    # and persists to status_checks table using the backend's Supabase credentials.
+    # This eliminates the need for SUPABASE_SERVICE_ROLE in the frontend container.
     import httpx
     status_check_task = None
     async def periodic_status_check():
-        """Poll /api/status/cron every 5 minutes to record service health."""
-        frontend_url = settings.CORS_ORIGINS[0] if isinstance(settings.CORS_ORIGINS, list) and settings.CORS_ORIGINS else "http://localhost:3000"
-        cron_secret = getattr(settings, "CRON_SECRET", None) or ""
-        await asyncio.sleep(30)  # Wait 30s for frontend to be ready
+        """Run service health checks every 60s and persist to status_checks."""
+        await asyncio.sleep(30)  # Wait for services to be ready
+
+        supabase_url = settings.SUPABASE_URL
+        supabase_key = settings.SUPABASE_SERVICE_ROLE or settings.SUPABASE_ANON_KEY
+        if not supabase_url or not supabase_key:
+            logger.warning("Status checker: Supabase not configured, skipping")
+            return
+
+        from supabase import create_client
+        db = create_client(supabase_url, settings.SUPABASE_SERVICE_ROLE or supabase_key)
+
         while True:
             try:
-                async with httpx.AsyncClient(timeout=15) as client:
-                    headers = {}
-                    if cron_secret:
-                        headers["Authorization"] = f"Bearer {cron_secret}"
-                    await client.get(f"{frontend_url}/api/status/cron", headers=headers)
-                logger.debug("Status health check recorded")
+                from datetime import datetime, timezone
+                now = datetime.now(timezone.utc).isoformat()
+                checks = []
+
+                async def check(name, fn):
+                    import time
+                    start = time.monotonic()
+                    try:
+                        await fn()
+                        latency = int((time.monotonic() - start) * 1000)
+                        checks.append({"service_name": name, "status": "operational", "latency": latency, "message": None, "checked_at": now})
+                    except Exception as e:
+                        checks.append({"service_name": name, "status": "outage", "latency": None, "message": str(e)[:200], "checked_at": now})
+
+                # Website — check frontend is responding
+                async def check_website():
+                    frontend_url = settings.CORS_ORIGINS[0] if isinstance(settings.CORS_ORIGINS, list) and settings.CORS_ORIGINS else "http://localhost:3000"
+                    async with httpx.AsyncClient(timeout=5) as c:
+                        r = await c.get(f"{frontend_url}/api/health")
+                        if r.status_code >= 500:
+                            raise Exception(f"HTTP {r.status_code}")
+
+                # AI Backend — self-check
+                async def check_backend():
+                    pass  # If this code is running, the backend is up
+
+                # Database
+                async def check_database():
+                    async with httpx.AsyncClient(timeout=5) as c:
+                        r = await c.get(f"{supabase_url}/rest/v1/", headers={"apikey": supabase_key})
+                        if r.status_code >= 500:
+                            raise Exception(f"HTTP {r.status_code}")
+
+                # Authentication
+                async def check_auth():
+                    async with httpx.AsyncClient(timeout=5) as c:
+                        r = await c.get(f"{supabase_url}/auth/v1/health", headers={"apikey": supabase_key})
+                        if not r.is_success:
+                            raise Exception(f"HTTP {r.status_code}")
+
+                # AI Models (Bedrock)
+                async def check_models():
+                    if settings.AWS_ACCESS_KEY_ID and settings.AWS_REGION:
+                        import boto3
+                        client = boto3.client("bedrock", region_name=settings.AWS_REGION,
+                                              aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                                              aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+                        await asyncio.to_thread(client.list_foundation_models, byProvider="anthropic")
+                    # If not configured, consider it operational (not an error)
+
+                # File Storage
+                async def check_storage():
+                    async with httpx.AsyncClient(timeout=5) as c:
+                        r = await c.get(f"{supabase_url}/storage/v1/bucket",
+                                        headers={"apikey": supabase_key, "Authorization": f"Bearer {supabase_key}"})
+                        if r.status_code >= 500:
+                            raise Exception(f"HTTP {r.status_code}")
+
+                await asyncio.gather(
+                    check("Website", check_website),
+                    check("AI Backend", check_backend),
+                    check("Database", check_database),
+                    check("Authentication", check_auth),
+                    check("AI Models", check_models),
+                    check("File Storage", check_storage),
+                )
+
+                # Persist to status_checks table
+                if checks:
+                    try:
+                        db.table("status_checks").insert(checks).execute()
+                        logger.debug(f"Status checks recorded: {len(checks)} services")
+                    except Exception as e:
+                        logger.debug(f"Failed to persist status checks: {e}")
+
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.debug(f"Status health check failed (non-critical): {e}")
-            await asyncio.sleep(300)  # 5 minutes
+                logger.debug(f"Status check cycle failed: {e}")
+            await asyncio.sleep(60)  # Every 60 seconds
 
     status_check_task = asyncio.create_task(periodic_status_check())
 

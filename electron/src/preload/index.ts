@@ -40,6 +40,22 @@ contextBridge.exposeInMainWorld('coasty', {
   // Credits / Billing
   getCredits: () => ipcRenderer.invoke('credits:get-balance'),
 
+  // Chat SSE streaming (routed through main process to avoid CORS)
+  sendChatMessage: (params: {
+    requestId: string
+    messages: Array<{ role: string; content: string }>
+    chatId: string
+    userId: string
+    machineId: string
+    model?: string
+  }) => ipcRenderer.invoke('chat:send-message', params),
+  abortChat: (requestId: string) => ipcRenderer.invoke('chat:abort', requestId),
+  onChatSSEEvent: (callback: (data: { requestId: string; type: string; data: string }) => void) => {
+    const handler = (_event: any, data: any) => callback(data)
+    ipcRenderer.on('chat:sse-event', handler)
+    return () => ipcRenderer.removeListener('chat:sse-event', handler)
+  },
+
   // Window mode control
   setWindowMode: (mode: string) => ipcRenderer.invoke('window:set-mode', mode),
   onWindowModeChanged: (callback: (mode: string) => void) => {
@@ -152,6 +168,22 @@ export interface CoastyAPI {
     estimated_runtime_minutes?: number
     error?: string
   }>
+
+  // Chat SSE streaming (routed through main process)
+  sendChatMessage: (params: {
+    requestId: string
+    messages: Array<{ role: string; content: string }>
+    chatId: string
+    userId: string
+    machineId: string
+    model?: string
+  }) => Promise<{ success: boolean; error?: string; aborted?: boolean }>
+  abortChat: (requestId: string) => Promise<{ success: boolean }>
+  onChatSSEEvent: (callback: (data: {
+    requestId: string
+    type: string
+    data: string
+  }) => void) => () => void
 
   setWindowMode: (mode: string) => Promise<void>
   onWindowModeChanged: (callback: (mode: string) => void) => () => void

@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { createServiceClient } from "@/lib/supabase/service"
 
 const PYTHON_BACKEND_URL =
   process.env.PYTHON_BACKEND_URL || "http://127.0.0.1:8001"
@@ -44,26 +43,15 @@ export async function GET() {
 
     // 3. Database (Supabase)
     checkService("Database", async () => {
-      // Try service client first, fall back to REST API ping with anon key
-      const supabase = createServiceClient()
-      if (supabase) {
-        const { error } = await supabase
-          .from("users")
-          .select("id")
-          .limit(1)
-        if (error) throw new Error(error.message)
-      } else {
-        // Service role not available — verify Supabase REST API is reachable
-        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-        if (!url) throw new Error("Supabase URL not configured")
-        const res = await fetch(`${url}/rest/v1/`, {
-          headers: {
-            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
-          },
-          signal: AbortSignal.timeout(5000),
-        })
-        if (res.status >= 500) throw new Error(`HTTP ${res.status}`)
-      }
+      const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+      if (!url) throw new Error("Supabase URL not configured")
+      const res = await fetch(`${url}/rest/v1/`, {
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+        },
+        signal: AbortSignal.timeout(5000),
+      })
+      if (res.status >= 500) throw new Error(`HTTP ${res.status}`)
     }),
 
     // 4. Authentication
@@ -106,24 +94,8 @@ export async function GET() {
     }),
   ])
 
-  // Persist checks to database
-  const supabase = createServiceClient()
-  if (supabase) {
-    const now = new Date().toISOString()
-    const rows = checks.map((c) => ({
-      service_name: c.name,
-      status: c.status,
-      latency: c.latency,
-      message: c.message || null,
-      checked_at: now,
-    }))
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any).from("status_checks").insert(rows)
-    } catch (e) {
-      console.error("[Status] Failed to persist checks:", e)
-    }
-  }
+  // Persistence is handled by the backend's periodic_status_check (main.py).
+  // This endpoint only returns the current live check results.
 
   const allOperational = checks.every((c) => c.status === "operational")
   const hasOutage = checks.some((c) => c.status === "outage")
