@@ -26,7 +26,13 @@ async function proxyToBackend(
   }
 
   const { path } = await params
-  const backendPath = `/api/${path.join("/")}`
+  let backendPath = `/api/${path.join("/")}`
+  // Preserve trailing slash from original request — FastAPI requires it
+  // for routes defined with @router.post("/") and will 307 redirect without it,
+  // which can drop POST bodies in some runtimes.
+  if (req.nextUrl.pathname.endsWith("/")) {
+    backendPath += "/"
+  }
 
   // Build the target URL, preserving query params
   const url = new URL(backendPath, PYTHON_BACKEND_URL)
