@@ -154,3 +154,4 @@ scripts/build-golden-ami.mjs
 OSWorld/*
 backend/app/services/osworld_executor.py
 backend/app/services/osworld_session.py
+campaigns/config.py

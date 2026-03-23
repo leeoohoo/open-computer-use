@@ -76,6 +76,10 @@ class Settings(BaseSettings):
     WORKMAIL_SMTP_PORT: int = Field(default=465)
     WORKMAIL_DOMAIN: str = Field(default="agents.coasty.ai")
 
+    # Campaign email sender (WorkMail account for marketing emails)
+    CAMPAIGN_FROM_EMAIL: str = Field(default="hello@coasty.ai")
+    CAMPAIGN_FROM_PASSWORD: str = Field(default="")
+
     # Redis Cache
     REDIS_URL: str = Field(default="redis://localhost:6379/0")
     CACHE_ENABLED: bool = Field(default=False)

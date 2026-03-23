@@ -56,6 +56,10 @@ class InternalAPIKeyMiddleware(BaseHTTPMiddleware):
         if request.url.path in self._SKIP_PATHS:
             return await _safe_call_next(call_next, request)
 
+        # Email tracking endpoints are public (open pixel, click redirect, unsubscribe)
+        if request.url.path.startswith("/api/t/"):
+            return await _safe_call_next(call_next, request)
+
         # CORS preflight requests never carry auth headers — let them through
         if request.method == "OPTIONS":
             return await _safe_call_next(call_next, request)
@@ -143,7 +147,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return await _safe_call_next(call_next, request)
         if request.url.path.startswith("/api/osworld/"):
             return await _safe_call_next(call_next, request)
-        
+        if request.url.path.startswith("/api/t/"):
+            return await _safe_call_next(call_next, request)
+
         # Get client identifier (IP address or user ID)
         client_id = request.client.host if request.client else "unknown"
         
