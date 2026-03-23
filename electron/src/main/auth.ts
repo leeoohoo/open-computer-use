@@ -108,6 +108,7 @@ export class ElectronAuth {
   private refreshTimer: ReturnType<typeof setTimeout> | null = null
   private pendingCallbackServer: http.Server | null = null
   private pendingSessionPromise: Promise<{ user: User; session: Session }> | null = null
+  private tokenRefreshListeners: Array<(token: string) => void> = []
 
   constructor() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
@@ -350,7 +351,11 @@ export class ElectronAuth {
     return this.session
   }
 
-  getAccessToken(): string | null {
+  async getAccessToken(): Promise<string | null> {
+    // Refresh expired tokens before returning — mirrors getSession() logic
+    if (this.session && !this.isAuthenticated() && this.session.refresh_token) {
+      await this.refreshSessionNow()
+    }
     return this.session?.access_token || null
   }
 
@@ -392,6 +397,17 @@ export class ElectronAuth {
       return false
     }
     return true
+  }
+
+  /** Register a callback that fires whenever the access token is refreshed. */
+  onTokenRefresh(listener: (token: string) => void): void {
+    this.tokenRefreshListeners.push(listener)
+  }
+
+  private notifyTokenRefresh(token: string): void {
+    for (const listener of this.tokenRefreshListeners) {
+      try { listener(token) } catch { /* ignore listener errors */ }
+    }
   }
 
   getMachineId(): string {
@@ -444,7 +460,13 @@ export class ElectronAuth {
         console.log('[Auth] Restored valid session from disk')
         this.scheduleRefresh(this.session!)
       } else if (this.session?.refresh_token) {
-        console.log('[Auth] Access token expired, will refresh on first getSession() call')
+        console.log('[Auth] Access token expired, refreshing eagerly...')
+        // Refresh immediately instead of deferring — getAccessToken() callers
+        // need a valid token and the old "lazy refresh on getSession()" approach
+        // left the token stale since nothing called getSession().
+        this.refreshSessionNow().catch((err) => {
+          console.error('[Auth] Eager refresh failed:', err)
+        })
       } else {
         console.log('[Auth] Stored session fully expired, clearing')
         this.session = null
@@ -489,6 +511,7 @@ export class ElectronAuth {
       this.session = data.session
       this.storeSession(data.session)
       this.scheduleRefresh(data.session)
+      this.notifyTokenRefresh(data.session.access_token)
       console.log('[Auth] Token refreshed successfully')
     } catch (err: any) {
       console.error('[Auth] Refresh error:', err.message)
@@ -516,6 +539,7 @@ export class ElectronAuth {
           this.session = data.session
           this.storeSession(data.session)
           this.scheduleRefresh(data.session)
+          this.notifyTokenRefresh(data.session.access_token)
         }
       } catch {
         this.session = null

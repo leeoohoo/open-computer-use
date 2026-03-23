@@ -124,6 +124,13 @@ app.whenReady().then(async () => {
   auth = new ElectronAuth()
   approvalManager = new ApprovalManager()
 
+  // Propagate refreshed tokens to the WebSocket bridge so reconnects use fresh JWTs
+  auth.onTokenRefresh((token) => {
+    if (wsBridge) {
+      wsBridge.updateToken(token)
+    }
+  })
+
   // Register IPC handlers
   registerIpcHandlers(auth, () => wsBridge, (bridge) => { wsBridge = bridge }, BACKEND_URL, approvalManager)
 

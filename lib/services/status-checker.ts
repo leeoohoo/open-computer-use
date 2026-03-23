@@ -37,11 +37,14 @@ async function runChecks() {
   const backendUrl = process.env.PYTHON_BACKEND_URL || "http://127.0.0.1:8001"
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 
-  if (!supabaseUrl || !supabaseServiceRole) return
+  if (!supabaseUrl) return
 
-  const supabase = createClient(supabaseUrl, supabaseServiceRole, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  })
+  // Service role client for persistence (may be null if not configured)
+  const supabase = supabaseServiceRole
+    ? createClient(supabaseUrl, supabaseServiceRole, {
+        auth: { autoRefreshToken: false, persistSession: false },
+      })
+    : null
 
   const checks = await Promise.all([
     checkService("Website", async () => {
@@ -58,8 +61,17 @@ async function runChecks() {
     }),
 
     checkService("Database", async () => {
-      const { error } = await supabase.from("users").select("id").limit(1)
-      if (error) throw new Error(error.message)
+      if (supabase) {
+        const { error } = await supabase.from("users").select("id").limit(1)
+        if (error) throw new Error(error.message)
+      } else {
+        // Fall back to REST API ping
+        const res = await fetch(`${supabaseUrl}/rest/v1/`, {
+          headers: { apikey: anonKey },
+          signal: AbortSignal.timeout(5000),
+        })
+        if (res.status >= 500) throw new Error(`HTTP ${res.status}`)
+      }
     }),
 
     checkService("Authentication", async () => {
@@ -71,12 +83,13 @@ async function runChecks() {
     }),
 
     checkService("AI Models", async () => {
-      const res = await fetch(`${backendUrl}/api/health`, {
-        signal: AbortSignal.timeout(5000),
+      const res = await fetch(`${backendUrl}/api/ready`, {
+        signal: AbortSignal.timeout(10000),
       })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
-      if (data.status !== "healthy") throw new Error("Backend unhealthy")
+      if (data.models === "error") throw new Error("Model provider unreachable")
+      if (data.status !== "ready" && data.models !== "available")
+        throw new Error(data.status || "Not ready")
     }),
 
     checkService("File Storage", async () => {
@@ -91,10 +104,12 @@ async function runChecks() {
     }),
   ])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any).from("status_checks").insert(checks)
-  if (error) {
-    console.error("[StatusChecker] Failed to insert checks:", error.message)
+  if (supabase) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any).from("status_checks").insert(checks)
+    if (error) {
+      console.error("[StatusChecker] Failed to insert checks:", error.message)
+    }
   }
 }
 
