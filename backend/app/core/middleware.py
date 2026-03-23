@@ -45,7 +45,7 @@ class InternalAPIKeyMiddleware(BaseHTTPMiddleware):
     If INTERNAL_API_KEY is empty the middleware is a no-op (backward compat for dev).
     """
 
-    _SKIP_PATHS = frozenset(["/", "/api/health", "/api/ready", "/api/osworld/health", "/docs", "/redoc", "/openapi.json"])
+    _SKIP_PATHS = frozenset(["/", "/api/health", "/api/ready", "/api/status/history", "/api/osworld/health", "/docs", "/redoc", "/openapi.json"])
 
     async def dispatch(self, request: Request, call_next):
         key = settings.INTERNAL_API_KEY
@@ -139,7 +139,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     
     async def dispatch(self, request: Request, call_next):
         # Skip rate limiting for health checks and OSWorld eval routes
-        if request.url.path in ["/", "/api/health", "/api/ready", "/docs", "/redoc", "/openapi.json"]:
+        if request.url.path in ["/", "/api/health", "/api/ready", "/api/status/history", "/docs", "/redoc", "/openapi.json"]:
             return await _safe_call_next(call_next, request)
         if request.url.path.startswith("/api/osworld/"):
             return await _safe_call_next(call_next, request)
