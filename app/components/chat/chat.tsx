@@ -33,6 +33,7 @@ import Link from "next/link"
 import { ShieldCheck, Search, Bug, Globe, FileText, BarChart3, Mail, Zap, Sparkles, PenTool, MonitorSmartphone, Clipboard, Users, TrendingUp, Eye, FileCode, LayoutGrid, Send, ShoppingCart, MessageCircle, Bot } from "lucide-react"
 import { SwarmPanel } from "./swarm-panel"
 import { ActiveSwarmBanner, type ActiveSwarm } from "./active-swarm-banner"
+import { RemoteApproval } from "./remote-approval"
 
 // ── Task templates by role & use-case (activation metric: first task < 5 min) ──
 // Templates use {url} and {company} tokens — replaced at runtime with onboarding data.
@@ -1079,6 +1080,7 @@ export function Chat() {
         )} */}
         {/* Show inline active swarm banner only when not in fullscreen swarm mode */}
         {showOnboarding && !swarmFullscreen && <ActiveSwarmBanner onSwarmDetected={handleActiveSwarmDetected} />}
+        <RemoteApproval machineId={selectedVMId} />
         <ChatInput {...chatInputProps} />
 
         {/* Task templates — reduces friction to first task completion */}

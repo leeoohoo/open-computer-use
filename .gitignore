@@ -150,3 +150,7 @@ backend/app/cua.py
 backend/app/computer_use_agent/
 scripts/setup-posthog-dashboards.mjs
 scripts/build-golden-ami.mjs
+
+OSWorld/*
+backend/app/services/osworld_executor.py
+backend/app/services/osworld_session.py

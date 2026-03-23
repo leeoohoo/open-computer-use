@@ -107,6 +107,37 @@ export async function GET(request: NextRequest) {
       return s.provider !== 'electron' && !s.isLocal;
     });
 
+    // Fetch live Electron connection status from backend
+    const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || "http://127.0.0.1:8001";
+    const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "";
+    let electronStatusMap: Record<string, boolean> = {};
+    try {
+      const electronRes = await fetch(`${PYTHON_BACKEND_URL}/api/electron/machines`, {
+        headers: {
+          "X-User-ID": userId,
+          ...(INTERNAL_API_KEY && { "X-Internal-Key": INTERNAL_API_KEY }),
+        },
+      });
+      if (electronRes.ok) {
+        const electronData = await electronRes.json();
+        for (const em of electronData.machines || []) {
+          electronStatusMap[em.id] = em.connected;
+        }
+      }
+    } catch {
+      // Non-critical — Electron status will just use DB status
+    }
+
+    // Update Electron machine status based on live connection state
+    for (const m of allDbMachines) {
+      const s = parseSettings(m);
+      if (s.provider === 'electron') {
+        const isConnected = electronStatusMap[m.id] ?? false;
+        (m as any).status = isConnected ? 'running' : 'stopped';
+        (m as any).electronConnected = isConnected;
+      }
+    }
+
     // Get local Docker machines
     const localMachines = await dockerService.getLocalMachines();
     
