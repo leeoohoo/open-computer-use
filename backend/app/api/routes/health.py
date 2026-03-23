@@ -67,7 +67,7 @@ async def readiness_check():
         else:
             checks["database"] = "not_configured"
     except Exception as e:
-        logger.debug(f"Readiness: database check failed: {e}")
+        logger.warning(f"Readiness: database check failed: {e}")
         checks["database"] = "error"
         all_ok = False
 
@@ -78,16 +78,23 @@ async def readiness_check():
         else:
             checks["models"] = "not_configured"
     except Exception as e:
-        logger.debug(f"Readiness: models check failed: {e}")
+        logger.warning(f"Readiness: models check failed: {e}")
         checks["models"] = "error"
         all_ok = False
 
+    status = "ready" if all_ok else "degraded"
+    if not all_ok:
+        logger.warning(f"Readiness check degraded: {checks}")
+
+    # Always return 200 — the body contains the actual status details.
+    # Returning 503 would cause the status page "AI Models" check to show
+    # as outage even when the only issue is "not_configured".
     return JSONResponse(
         content={
-            "status": "ready" if all_ok else "degraded",
+            "status": status,
             **checks,
         },
-        status_code=200 if all_ok else 503,
+        status_code=200,
     )
 
 
