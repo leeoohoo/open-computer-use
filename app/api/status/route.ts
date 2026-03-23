@@ -44,14 +44,26 @@ export async function GET() {
 
     // 3. Database (Supabase)
     checkService("Database", async () => {
+      // Try service client first, fall back to REST API ping with anon key
       const supabase = createServiceClient()
-      if (!supabase) throw new Error("Supabase not configured")
-      // Simple query to verify connectivity
-      const { error } = await supabase
-        .from("users")
-        .select("id")
-        .limit(1)
-      if (error) throw new Error(error.message)
+      if (supabase) {
+        const { error } = await supabase
+          .from("users")
+          .select("id")
+          .limit(1)
+        if (error) throw new Error(error.message)
+      } else {
+        // Service role not available — verify Supabase REST API is reachable
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+        if (!url) throw new Error("Supabase URL not configured")
+        const res = await fetch(`${url}/rest/v1/`, {
+          headers: {
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+          },
+          signal: AbortSignal.timeout(5000),
+        })
+        if (res.status >= 500) throw new Error(`HTTP ${res.status}`)
+      }
     }),
 
     // 4. Authentication
@@ -67,14 +79,15 @@ export async function GET() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
     }),
 
-    // 5. AI Models (shares backend with AI Backend — check /api/health as proxy)
+    // 5. AI Models (readiness check — verifies Bedrock/model provider connectivity)
     checkService("AI Models", async () => {
-      const res = await fetch(`${PYTHON_BACKEND_URL}/api/health`, {
-        signal: AbortSignal.timeout(5000),
+      const res = await fetch(`${PYTHON_BACKEND_URL}/api/ready`, {
+        signal: AbortSignal.timeout(10000),
       })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
-      if (data.status !== "healthy") throw new Error("Backend unhealthy")
+      if (data.models === "error") throw new Error("Model provider unreachable")
+      if (data.status !== "ready" && data.models !== "available")
+        throw new Error(data.status || "Not ready")
     }),
 
     // 6. File Storage (Supabase Storage)

@@ -267,13 +267,13 @@ export function LandingPage() {
           isMobile ? "px-7 pt-8 pb-16" : "px-10 pt-16 pb-24"
         )}>
 
-          {/* Orange sunrise glow — constrained to guide lines with inverted-U mask */}
+          {/* Smooth monochrome sunrise glow — constrained to guide lines with inverted-U mask */}
           <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full relative">
               <div
-                className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 opacity-[0.1] dark:opacity-[0.13] overflow-hidden"
+                className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 opacity-[0.14] dark:opacity-[0.18] overflow-hidden"
                 style={{
-                  background: "linear-gradient(to top, rgb(52,211,153) 0%, rgb(16,185,129) 40%, rgb(5,150,105) 100%)",
+                  background: "linear-gradient(to top, rgba(160,160,160,1) 0%, rgba(120,120,120,1) 40%, rgba(90,90,90,1) 100%)",
                   WebkitMaskImage: "radial-gradient(ellipse 120% 140% at 50% 100%, black 0%, black 40%, transparent 62%)",
                   maskImage: "radial-gradient(ellipse 120% 140% at 50% 100%, black 0%, black 40%, transparent 62%)",
                 }}

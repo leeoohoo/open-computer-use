@@ -1,24 +1,8 @@
 "use client"
 
-import { useState, useCallback, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import {
-  ArrowRight,
-  Video,
-  Play,
-  Search,
-  Bug,
-  TrendingUp,
-  FileText,
-  Mail,
-  ShoppingCart,
-  Users,
-  BarChart3,
-  Globe,
-  Eye,
-  Send,
-  MonitorSmartphone,
-} from "lucide-react"
+import { ArrowRight, Video, Play } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
@@ -34,105 +18,51 @@ const DEMO_VIDEOS = [
 
 const USE_CASES = [
   {
-    label: "Computer-using agent",
-    headline: "automate any browser task - 47 steps done in 8 min",
-    outcome: "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup. No code.",
-    icon: MonitorSmartphone,
-    color: "emerald",
+    label: "Computer agent",
+    headline: "automate any browser task",
+    outcome: "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required.",
   },
   {
     label: "Competitor intel",
-    headline: "spy on 5 competitors - full reports in 8 min",
-    outcome: "5 competitor profiles with pricing, traffic stats, feature matrices, and positioning gaps — exported as a ready-to-share spreadsheet in under 8 minutes.",
-    icon: Search,
-    color: "emerald",
+    headline: "monitor every competitor",
+    outcome: "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report.",
   },
   {
-    label: "QA bug reports",
-    headline: "find bugs before users do - 30 flows tested in 12 min",
-    outcome: "30+ user flows tested, 100% of critical paths covered, every bug screenshotted with repro steps — delivered as a prioritized Notion doc in 12 minutes.",
-    icon: Bug,
-    color: "rose",
+    label: "QA testing",
+    headline: "find bugs before users do",
+    outcome: "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking.",
   },
   {
-    label: "SEO gap analysis",
-    headline: "rank higher on Google - 150 keyword gaps in 15 min",
-    outcome: "150+ keyword gaps identified, 10 high-impact content briefs drafted, competitor backlink sources mapped — full report in 15 minutes.",
-    icon: TrendingUp,
-    color: "blue",
+    label: "SEO analysis",
+    headline: "uncover keyword gaps",
+    outcome: "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy.",
   },
   {
     label: "Data extraction",
-    headline: "scrape any website - 1,000 rows cleaned in 6 min",
-    outcome: "1,000+ product listings scraped with prices, specs, and images — cleaned, de-duped, and exported as structured CSV in 6 minutes.",
-    icon: FileText,
-    color: "violet",
+    headline: "scrape and structure any site",
+    outcome: "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format.",
   },
   {
     label: "Lead generation",
-    headline: "fill your pipeline - 50 qualified leads in 10 min",
-    outcome: "50 qualified decision-makers matching your ICP — with verified titles, companies, LinkedIn URLs, and personalized openers — delivered in 10 minutes.",
-    icon: Users,
-    color: "amber",
+    headline: "fill your sales pipeline",
+    outcome: "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers.",
   },
   {
     label: "Site audit",
-    headline: "fix what's broken - 200 pages audited in 9 min",
-    outcome: "200+ pages scanned, Core Web Vitals scored, 15+ broken links found, accessibility issues ranked by severity — full report with fix priorities in 9 minutes.",
-    icon: BarChart3,
-    color: "emerald",
-  },
-  {
-    label: "Ad intelligence",
-    headline: "steal competitor ad strategies - 25 creatives pulled in 11 min",
-    outcome: "8 competitor landing pages captured, 25+ ad creatives archived, messaging patterns analyzed — side-by-side teardown delivered in 11 minutes.",
-    icon: Eye,
-    color: "blue",
+    headline: "audit every page at scale",
+    outcome: "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority.",
   },
   {
     label: "Email outreach",
-    headline: "book more meetings - 50 personalized emails in 7 min",
-    outcome: "50 personalized cold emails drafted — each referencing the prospect's company, role, and a specific pain point — ready to send in 7 minutes.",
-    icon: Send,
-    color: "violet",
-  },
-  {
-    label: "Design review",
-    headline: "ship pixel-perfect - 12 breakpoints tested in 8 min",
-    outcome: "12 breakpoints tested across mobile, tablet, and desktop — 20+ layout issues screenshotted with CSS fix suggestions — report in 8 minutes.",
-    icon: MonitorSmartphone,
-    color: "rose",
-  },
-  {
-    label: "Price monitoring",
-    headline: "never lose on price - 200 SKUs tracked in 10 min",
-    outcome: "5 competitor price sheets compared across 200+ SKUs — promotions, availability, and margin gaps flagged in a live spreadsheet in 10 minutes.",
-    icon: ShoppingCart,
-    color: "amber",
+    headline: "send personalized outreach",
+    outcome: "Personalized emails referencing each prospect's company, role, and pain points — ready to send.",
   },
   {
     label: "Market research",
-    headline: "validate your market - 40 data points in 14 min",
-    outcome: "$2.4B TAM calculated, 12 key players profiled, 3-year growth trend charted — sourced from 40+ data points, compiled in 14 minutes.",
-    icon: Globe,
-    color: "blue",
-  },
-  {
-    label: "Email campaigns",
-    headline: "stop generic blasts - 100 emails personalized in 9 min",
-    outcome: "3-email nurture sequence written for 100 prospects — each personalized with company context and pain points — campaign-ready in 9 minutes.",
-    icon: Mail,
-    color: "emerald",
+    headline: "validate your market fast",
+    outcome: "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points.",
   },
 ]
-
-const CAROUSEL_COLORS: Record<string, { text: string; bg: string; border: string; glow: string }> = {
-  emerald: { text: "text-emerald-500 dark:text-emerald-400", bg: "bg-emerald-500/10 dark:bg-emerald-400/10", border: "border-emerald-500/20 dark:border-emerald-400/20", glow: "rgba(16,185,129,0.15)" },
-  rose:    { text: "text-rose-500 dark:text-rose-400",       bg: "bg-rose-500/10 dark:bg-rose-400/10",       border: "border-rose-500/20 dark:border-rose-400/20",       glow: "rgba(244,63,94,0.15)" },
-  blue:    { text: "text-blue-500 dark:text-blue-400",       bg: "bg-blue-500/10 dark:bg-blue-400/10",       border: "border-blue-500/20 dark:border-blue-400/20",       glow: "rgba(59,130,246,0.15)" },
-  violet:  { text: "text-violet-500 dark:text-violet-400",   bg: "bg-violet-500/10 dark:bg-violet-400/10",   border: "border-violet-500/20 dark:border-violet-400/20",   glow: "rgba(139,92,246,0.15)" },
-  amber:   { text: "text-amber-500 dark:text-amber-400",     bg: "bg-amber-500/10 dark:bg-amber-400/10",     border: "border-amber-500/20 dark:border-amber-400/20",     glow: "rgba(245,158,11,0.15)" },
-}
 
 export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
   const [activeVideoIndex, setActiveVideoIndex] = useState(0)
@@ -164,7 +94,6 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
   }, [activeIndex])
 
   const activeCase = USE_CASES[activeIndex]
-  const activeColors = CAROUSEL_COLORS[activeCase.color] || CAROUSEL_COLORS.emerald
 
   return (
     <div className="relative w-full max-w-4xl mx-auto">
@@ -172,13 +101,10 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
       <div className={cn("relative z-10 text-center", isMobile ? "mb-10" : "mb-14")}>
         {/* Badge */}
         <div className="flex justify-center mb-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border/40 bg-background/60 backdrop-blur-sm px-4 py-1.5">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 bg-emerald-400" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            </span>
-            <span className="text-xs font-medium text-muted-foreground">
-              Computer-Using Agents · #1 State of the Art · <span className="text-foreground font-semibold">82% OSWorld</span>
+          <div className="inline-flex items-center gap-2.5 rounded-full border border-border/40 bg-card/40 backdrop-blur-sm px-4 py-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+            <span className="h-1 w-1 rounded-full bg-foreground/30" />
+            <span className="text-xs font-medium text-muted-foreground tracking-wide">
+              #1 Computer-Use Agent · <span className="text-foreground font-semibold">82% OSWorld</span>
             </span>
           </div>
         </div>
@@ -186,22 +112,22 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
         {/* Headline */}
         <h1 className={cn(
           "font-bold tracking-tight",
-          isMobile ? "text-4xl leading-[1.25]" : "text-5xl sm:text-6xl lg:text-7xl leading-[1.15]"
+          isMobile ? "text-3xl leading-[1.2]" : "text-4xl sm:text-5xl lg:text-6xl leading-[1.08]"
         )}>
-          <span className="block">Autopilot operations:</span>
-          <span className="relative block text-center">
-            {/* Invisible sizer -reserves height for the tallest headline so layout doesn't shift */}
+          <span className="block text-foreground">Autonomous computer operators</span>
+          <span className="relative block mt-1">
+            {/* Invisible sizer — reserves height for the tallest headline */}
             <span className="invisible block" aria-hidden="true">
               {USE_CASES.reduce((longest, uc) => uc.headline.length > longest.length ? uc.headline : longest, "")}
             </span>
             <AnimatePresence mode="wait">
               <motion.span
                 key={activeIndex}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-                className="absolute inset-x-0 top-0 text-emerald-500 dark:text-emerald-400"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-x-0 top-0 text-muted-foreground/60"
               >
                 {activeCase.headline}
               </motion.span>
@@ -215,42 +141,37 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {/* Pill strip -scrolls to center active pill */}
+          {/* Pill strip */}
           <div className="relative mx-auto max-w-3xl">
             <div
               ref={pillContainerRef}
               className="flex gap-1 py-1 overflow-x-auto no-scrollbar"
               style={{ scrollbarWidth: "none" }}
             >
-              {/* Spacer so first item can center */}
               <div className="shrink-0 w-[calc(50%-2rem)]" />
               {USE_CASES.map((uc, i) => {
                 const isActive = i === activeIndex
-                const colors = CAROUSEL_COLORS[uc.color] || CAROUSEL_COLORS.emerald
-                const Icon = uc.icon
                 return (
                   <button
                     key={uc.label}
                     data-pill-index={i}
                     onClick={() => setActiveIndex(i)}
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium whitespace-nowrap cursor-pointer border shrink-0 transition-all duration-400 ease-out",
+                      "inline-flex items-center rounded-full px-3 py-1 text-[11px] font-medium whitespace-nowrap cursor-pointer border shrink-0 transition-all duration-300 ease-out",
                       isActive
-                        ? cn(colors.bg, colors.border, colors.text)
+                        ? "bg-foreground text-background border-foreground/90 shadow-sm"
                         : "border-transparent text-muted-foreground/35 hover:text-muted-foreground/60"
                     )}
                   >
-                    <Icon className={cn("size-2.5 transition-transform duration-400", isActive && "scale-110")} />
                     {uc.label}
                   </button>
                 )
               })}
-              {/* Spacer so last item can center */}
               <div className="shrink-0 w-[calc(50%-2rem)]" />
             </div>
           </div>
 
-          {/* Outcome text -simple fade */}
+          {/* Outcome text */}
           <div className="mt-5 flex justify-center" style={{ minHeight: isMobile ? "3rem" : "2.5rem" }}>
             <AnimatePresence mode="wait">
               <motion.p
@@ -281,7 +202,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                 "inline-flex items-center gap-2.5 rounded-full font-semibold cursor-pointer bg-foreground text-background",
                 isMobile ? "px-6 py-3 text-sm" : "px-8 py-3.5 text-[15px]"
               )}
-              style={{ boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}
+              style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.06), 0 6px 20px rgba(0,0,0,0.1)" }}
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -292,14 +213,14 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           <a href="https://cal.com/coasty/15min" target="_blank" rel="noopener noreferrer">
             <motion.button
               className={cn(
-                "inline-flex items-center gap-2.5 rounded-full font-semibold cursor-pointer border border-border/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors",
-                isMobile ? "px-6 py-3 text-sm" : "px-8 py-3.5 text-[15px]"
+                "inline-flex items-center gap-2 rounded-full font-medium cursor-pointer text-muted-foreground/70 hover:text-foreground transition-colors duration-300",
+                isMobile ? "px-5 py-3 text-sm" : "px-6 py-3.5 text-[15px]"
               )}
-              whileHover={{ scale: 1.02, y: -1 }}
+              whileHover={{ x: 2 }}
               whileTap={{ scale: 0.98 }}
             >
               <Video className="h-4 w-4" />
-              Talk to Cofounders & Demo
+              Book a demo
             </motion.button>
           </a>
         </div>
@@ -307,20 +228,32 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
 
       {/* ─── Demo Videos ─── */}
       <div className="relative z-10">
-        {/* Screen glow */}
+        {/* Ambient glow beneath video */}
         <div
-          className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-[80%] h-[40%] rounded-full blur-[80px] opacity-[0.07] dark:opacity-[0.12] pointer-events-none"
-          style={{ background: "radial-gradient(ellipse, currentColor 0%, transparent 70%)" }}
+          className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-[60%] h-[40%] rounded-full blur-[100px] opacity-[0.03] dark:opacity-[0.06] pointer-events-none bg-foreground"
         />
 
-        {/* Featured video */}
+        {/* Browser frame */}
         <div className={cn(
-          "relative rounded-xl sm:rounded-2xl overflow-hidden",
-          "border border-border/40 dark:border-border/30",
-          "shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08),0_12px_48px_-8px_rgba(0,0,0,0.1)]",
-          "dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.3),0_12px_48px_-8px_rgba(0,0,0,0.4)]",
-          "ring-1 ring-white/[0.05] dark:ring-white/[0.03]"
+          "relative rounded-xl overflow-hidden",
+          "border border-border/40 dark:border-border/25",
+          "bg-card/30",
+          "shadow-[0_0_0_1px_rgba(0,0,0,0.02),0_2px_4px_rgba(0,0,0,0.03),0_12px_40px_-8px_rgba(0,0,0,0.08)]",
+          "dark:shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_2px_4px_rgba(0,0,0,0.15),0_12px_40px_-8px_rgba(0,0,0,0.35)]",
         )}>
+          {/* Browser chrome bar */}
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/25 bg-card/60 dark:bg-card/40">
+            <div className="flex gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-foreground/[0.08] dark:bg-foreground/[0.12]" />
+              <div className="w-2.5 h-2.5 rounded-full bg-foreground/[0.08] dark:bg-foreground/[0.12]" />
+              <div className="w-2.5 h-2.5 rounded-full bg-foreground/[0.08] dark:bg-foreground/[0.12]" />
+            </div>
+            <div className="flex-1 mx-8">
+              <div className="h-5 rounded-md bg-foreground/[0.04] dark:bg-foreground/[0.06] max-w-[240px] mx-auto" />
+            </div>
+          </div>
+
+          {/* Video content */}
           <AnimatePresence mode="wait">
             {playingVideoId ? (
               <motion.div
@@ -355,23 +288,23 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                     src={`https://img.youtube.com/vi/${DEMO_VIDEOS[activeVideoIndex].id}/maxresdefault.jpg`}
                     alt={`${DEMO_VIDEOS[activeVideoIndex].label} demo`}
                     fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.015]"
                   />
-                  {/* Dark overlay */}
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/35 transition-colors duration-300" />
+                  {/* Subtle overlay */}
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-500" />
 
                   {/* Play button */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <motion.div
                       className={cn(
                         "relative flex items-center justify-center rounded-full",
-                        "bg-white/95 shadow-2xl",
-                        "group-hover:scale-110 transition-transform duration-300",
+                        "bg-white/95 shadow-[0_4px_24px_rgba(0,0,0,0.12)] backdrop-blur-sm",
+                        "group-hover:scale-105 transition-transform duration-500 ease-out",
                         isMobile ? "h-12 w-12" : "h-16 w-16"
                       )}
-                      initial={{ scale: 0.8, opacity: 0 }}
+                      initial={{ scale: 0.9, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 0.3, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      transition={{ delay: 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     >
                       <Play className={cn(
                         "text-neutral-900 fill-neutral-900 ml-[2px]",
@@ -381,13 +314,13 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
 
                     {/* Task label */}
                     <motion.div
-                      className="mt-3 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-sm"
+                      className="mt-3 px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-md"
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5, duration: 0.4 }}
+                      transition={{ delay: 0.4, duration: 0.4 }}
                     >
                       <span className={cn(
-                        "font-medium text-white/90",
+                        "font-medium text-white/85",
                         isMobile ? "text-[10px]" : "text-xs"
                       )}>
                         {DEMO_VIDEOS[activeVideoIndex].task}
@@ -400,7 +333,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           </AnimatePresence>
         </div>
 
-        {/* Video selector strip */}
+        {/* Video selector thumbnails */}
         <div className={cn("mt-3 flex gap-2", isMobile ? "overflow-x-auto px-1 no-scrollbar" : "justify-center")} style={{ scrollbarWidth: "none" }}>
           {DEMO_VIDEOS.map((video, i) => (
             <button
@@ -413,8 +346,8 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
                 "group relative flex-shrink-0 rounded-lg overflow-hidden transition-all duration-300 cursor-pointer",
                 "border-2",
                 i === activeVideoIndex
-                  ? "border-emerald-500/60 dark:border-emerald-400/50 shadow-md"
-                  : "border-transparent hover:border-border/60 opacity-60 hover:opacity-100",
+                  ? "border-foreground/25 shadow-md"
+                  : "border-transparent hover:border-border/40 opacity-50 hover:opacity-90",
                 isMobile ? "w-20 h-12" : "w-28 h-16"
               )}
             >
