@@ -22,12 +22,13 @@ import {
   Ghost,
 } from "@phosphor-icons/react"
 import { useRouter, usePathname } from "next/navigation"
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import { DialogCollaborativeAuth } from "../../collaborative/dialog-collaborative-auth"
 import { CoastyIcon } from "@/components/icons/coasty"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useCredits } from "@/lib/hooks/use-credits"
+import type { UserMachine } from "@/types/machines.types"
 import { ReferralPopup } from "../../referral/referral-popup"
 import Link from "next/link"
 import {
@@ -474,11 +475,11 @@ function NavButton({
       )}
     >
       {isActive && variant !== "primary" && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-4 rounded-r-full bg-sidebar-primary" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-4 rounded-r-full bg-emerald-500" />
       )}
       <span className={cn(
         "shrink-0 flex items-center justify-center w-4 h-4 transition-colors duration-150",
-        isActive && accentColor
+        isActive && "text-emerald-500"
       )}>
         {icon}
       </span>
@@ -552,27 +553,118 @@ function SectionLabel({ children, expanded }: { children: React.ReactNode; expan
   )
 }
 
-// ─── Credits ring (mini SVG donut) ─────────────────────────────────
-function CreditsRing({ balance, className }: { balance: number; className?: string }) {
-  const pct = Math.min(balance / 1000, 1)
-  const r = 8
-  const circ = 2 * Math.PI * r
-  const offset = circ * (1 - pct)
+// ─── Credits sparkline background ───────────────────────────────────
+function CreditsSparkBg({ balance, totalUsed, className }: { balance: number; totalUsed: number; className?: string }) {
+  // Generate a gentle curve representing usage pattern
+  const total = balance + totalUsed
+  const pct = total > 0 ? balance / total : 1
+
+  // Build a smooth sparkline path — 8 points across the width
+  // Simulates a usage curve: starts high, dips with usage, current level at end
+  const w = 200
+  const h = 40
+  const pad = 2
+  const points = 8
+  const values: number[] = []
+  for (let i = 0; i < points; i++) {
+    const t = i / (points - 1)
+    // Curve: starts at ~total level, smoothly transitions to current balance level
+    const base = pct + (1 - pct) * (1 - t) * (0.6 + 0.4 * Math.sin(t * Math.PI))
+    // Add subtle variation
+    const jitter = Math.sin(t * Math.PI * 3) * 0.06 + Math.cos(t * Math.PI * 1.5) * 0.04
+    values.push(Math.min(1, Math.max(0.05, base + jitter)))
+  }
+
+  // Build SVG path with smooth cubic bezier curves
+  const getX = (i: number) => pad + (i / (points - 1)) * (w - pad * 2)
+  const getY = (v: number) => h - pad - v * (h - pad * 2)
+
+  let d = `M ${getX(0)} ${getY(values[0])}`
+  for (let i = 1; i < points; i++) {
+    const cpx1 = getX(i - 1) + (getX(i) - getX(i - 1)) / 3
+    const cpx2 = getX(i) - (getX(i) - getX(i - 1)) / 3
+    d += ` C ${cpx1} ${getY(values[i - 1])}, ${cpx2} ${getY(values[i])}, ${getX(i)} ${getY(values[i])}`
+  }
+
+  // Area fill path (close to bottom)
+  const areaD = d + ` L ${getX(points - 1)} ${h} L ${getX(0)} ${h} Z`
 
   return (
-    <svg className={cn("shrink-0", className)} width="22" height="22" viewBox="0 0 22 22">
-      <circle cx="11" cy="11" r={r} fill="none" stroke="currentColor" strokeWidth="2.5" opacity={0.1} />
-      <circle
-        cx="11" cy="11" r={r}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeDasharray={circ}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        transform="rotate(-90 11 11)"
-        className="transition-all duration-700"
-      />
+    <svg
+      className={cn("absolute inset-0 w-full h-full", className)}
+      viewBox={`0 0 ${w} ${h}`}
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <linearGradient id="spark-fill" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="spark-line" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.1" />
+          <stop offset="50%" stopColor="currentColor" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0.15" />
+        </linearGradient>
+      </defs>
+      <path d={areaD} fill="url(#spark-fill)" />
+      <path d={d} fill="none" stroke="url(#spark-line)" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+// ─── Machines activity bars background ───────────────────────────────
+function MachinesActivityBg({
+  running, stopped, total, className,
+}: { running: number; stopped: number; total: number; className?: string }) {
+  const w = 200
+  const h = 44
+  const bars = 12
+  const barW = 8
+  const gap = (w - bars * barW) / (bars + 1)
+
+  // Generate bar heights: active machines = taller bars, creates a skyline feel
+  const activePct = total > 0 ? running / total : 0
+  const barHeights: number[] = []
+  for (let i = 0; i < bars; i++) {
+    const t = i / (bars - 1)
+    // Wave pattern with activity influence
+    const wave = Math.sin(t * Math.PI * 2.2 + 0.5) * 0.3
+    const peak = Math.exp(-Math.pow((t - 0.65) * 3, 2)) * 0.4
+    const base = 0.15 + activePct * 0.35 + wave * 0.15 + peak
+    barHeights.push(Math.min(0.95, Math.max(0.08, base)))
+  }
+
+  return (
+    <svg
+      className={cn("absolute inset-0 w-full h-full", className)}
+      viewBox={`0 0 ${w} ${h}`}
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <linearGradient id="bar-fill" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0.03" />
+        </linearGradient>
+      </defs>
+      {barHeights.map((h_pct, i) => {
+        const x = gap + i * (barW + gap)
+        const barH = h_pct * (h - 4)
+        const y = h - 2 - barH
+        // Bars toward the right (recent) are slightly brighter
+        const opacity = 0.4 + (i / (bars - 1)) * 0.6
+        return (
+          <rect
+            key={i}
+            x={x}
+            y={y}
+            width={barW}
+            height={barH}
+            rx={2.5}
+            fill="url(#bar-fill)"
+            opacity={opacity}
+          />
+        )
+      })}
     </svg>
   )
 }
@@ -590,6 +682,33 @@ export function AppSidebar() {
 
   const router = useRouter()
   const { credits } = useCredits()
+
+  // ─── Machines state ────────────────────────────────────────────
+  const [sidebarMachines, setSidebarMachines] = useState<UserMachine[]>([])
+
+  useEffect(() => {
+    if (!user) return
+    const fetchMachines = async () => {
+      try {
+        const res = await fetch("/api/machines")
+        if (res.ok) {
+          const data = await res.json()
+          setSidebarMachines(data.machines || [])
+        }
+      } catch { /* silent */ }
+    }
+    fetchMachines()
+    const interval = setInterval(fetchMachines, 15000)
+    return () => clearInterval(interval)
+  }, [user])
+
+  const machineStats = useMemo(() => {
+    const running = sidebarMachines.filter(m => m.status === "running" || (m as any).electronConnected).length
+    const stopped = sidebarMachines.filter(m => m.status === "stopped").length
+    const creating = sidebarMachines.filter(m => ["creating", "starting"].includes(m.status)).length
+    const total = sidebarMachines.length
+    return { running, stopped, creating, total }
+  }, [sidebarMachines])
 
   // ─── Easter egg states ───────────────────────────────────────
   const [logoClicks, setLogoClicks] = useState(0)
@@ -771,21 +890,85 @@ export function AppSidebar() {
           <div className="relative pb-1 mt-1">
             <SectionLabel expanded={expanded}>Infrastructure</SectionLabel>
             <div className="space-y-0.5">
-              <NavButton
-                id="sidebar-machines-link"
-                icon={<Desktop size={16} weight="duotone" className="shrink-0" />}
-                label="My Computers"
-                tooltip="Manage cloud VMs and local machines"
-                href="/machines"
-                isActive={isItemActive("/machines")}
-                accentColor="text-sky-500"
-                onClick={closeMobileIfNeeded}
-                hoverInfo={{
-                  description: "Cloud & local machines",
-                  detail: "Spin up cloud VMs or connect your desktop. Agents run on these machines with full browser and terminal access.",
-                  visual: "machines",
-                }}
-              />
+              {/* My Computers — expanded card */}
+              {expanded ? (
+                <button
+                  id="sidebar-machines-link"
+                  className={cn(
+                    "group relative flex w-full items-center gap-3 rounded-xl border transition-all duration-200 overflow-hidden",
+                    "hover:shadow-sm active:scale-[0.99]",
+                    "px-3 py-2.5",
+                    isItemActive("/machines")
+                      ? "border-foreground/15 bg-foreground/[0.04]"
+                      : "border-sidebar-border/40 bg-sidebar-accent/20 hover:border-foreground/15"
+                  )}
+                  type="button"
+                  onClick={() => {
+                    router.push("/machines")
+                    closeMobileIfNeeded()
+                  }}
+                >
+                  {isItemActive("/machines") && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-4 rounded-r-full bg-emerald-500" />
+                  )}
+                  <MachinesActivityBg
+                    running={machineStats.running}
+                    stopped={machineStats.stopped}
+                    total={machineStats.total}
+                    className={cn("pointer-events-none", isItemActive("/machines") ? "text-emerald-500/80" : "text-foreground/80")}
+                  />
+                  <div className="relative flex flex-col items-start flex-1 min-w-0">
+                    <span className="text-base font-semibold tabular-nums leading-tight text-foreground">
+                      {machineStats.total}
+                    </span>
+                    <span className="text-[10px] text-foreground/40 font-medium">
+                      {machineStats.total === 1 ? "Computer" : "Computers"}
+                      {machineStats.running > 0 && (
+                        <span className="text-emerald-500 ml-1.5">
+                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.4)] align-middle mr-0.5" />
+                          {machineStats.running} active
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                  <span className="relative text-[10px] font-semibold px-2 py-1 rounded-md transition-colors shrink-0 bg-foreground/[0.06] text-foreground/60 group-hover:bg-foreground/[0.1]">
+                    View
+                  </span>
+                </button>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      id="sidebar-machines-link"
+                      className={cn(
+                        "relative flex w-full items-center justify-center p-2 rounded-lg border transition-all duration-200 overflow-hidden",
+                        "hover:shadow-sm",
+                        isItemActive("/machines")
+                          ? "border-foreground/15 bg-foreground/[0.04]"
+                          : "border-sidebar-border/40 bg-sidebar-accent/20 hover:border-foreground/15"
+                      )}
+                      onClick={() => router.push("/machines")}
+                    >
+                      <MachinesActivityBg
+                        running={machineStats.running}
+                        stopped={machineStats.stopped}
+                        total={machineStats.total}
+                        className={cn("pointer-events-none", isItemActive("/machines") ? "text-emerald-500/80" : "text-foreground/80")}
+                      />
+                      <Desktop size={16} weight="duotone" className={isItemActive("/machines") ? "relative text-emerald-500" : "relative text-foreground/60"} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={8}>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold">{machineStats.total}</span>
+                      <span className="text-muted-foreground">{machineStats.total === 1 ? "computer" : "computers"}</span>
+                      {machineStats.running > 0 && (
+                        <span className="text-emerald-500">({machineStats.running} active)</span>
+                      )}
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              )}
               <NavButton
                 id="sidebar-schedules-link"
                 icon={<UsersThree size={16} weight="duotone" className="shrink-0" />}
@@ -843,12 +1026,13 @@ export function AppSidebar() {
             {/* Credits — expanded */}
             {user && expanded && (() => {
               const balance = credits?.balance || 0
+              const totalUsed = credits?.total_used || 0
               const isLow = balance > 0 && balance < 50
 
               return (
                 <button
                   className={cn(
-                    "group flex w-full items-center gap-3 rounded-xl border transition-all duration-200",
+                    "group relative flex w-full items-center gap-3 rounded-xl border transition-all duration-200 overflow-hidden",
                     "hover:shadow-sm active:scale-[0.99]",
                     "px-3 py-2.5",
                     isLow
@@ -861,11 +1045,15 @@ export function AppSidebar() {
                     if (isMobile) setOpenMobile(false)
                   }}
                 >
-                  <CreditsRing
+                  <CreditsSparkBg
                     balance={balance}
-                    className={isLow ? "text-orange-500" : "text-sidebar-primary"}
+                    totalUsed={totalUsed}
+                    className={cn(
+                      "pointer-events-none",
+                      isLow ? "text-orange-500" : "text-sidebar-primary"
+                    )}
                   />
-                  <div className="flex flex-col items-start flex-1 min-w-0">
+                  <div className="relative flex flex-col items-start flex-1 min-w-0">
                     <span className={cn(
                       "text-base font-semibold tabular-nums leading-tight",
                       isLow ? "text-orange-500" : "text-foreground"
@@ -877,7 +1065,7 @@ export function AppSidebar() {
                     </span>
                   </div>
                   <span className={cn(
-                    "text-[10px] font-semibold px-2 py-1 rounded-md transition-colors shrink-0",
+                    "relative text-[10px] font-semibold px-2 py-1 rounded-md transition-colors shrink-0",
                     "bg-sidebar-primary/10 text-sidebar-primary group-hover:bg-sidebar-primary/20"
                   )}>
                     Buy
@@ -892,7 +1080,7 @@ export function AppSidebar() {
                 <TooltipTrigger asChild>
                   <button
                     className={cn(
-                      "flex w-full items-center justify-center p-2 rounded-lg border transition-all duration-200",
+                      "relative flex w-full items-center justify-center p-2 rounded-lg border transition-all duration-200 overflow-hidden",
                       "hover:shadow-sm",
                       (credits?.balance || 0) > 0 && (credits?.balance || 0) < 50
                         ? "border-orange-500/20 bg-orange-500/[0.04]"
@@ -900,10 +1088,11 @@ export function AppSidebar() {
                     )}
                     onClick={() => router.push("/account?section=billing")}
                   >
-                    <CreditsRing
+                    <CreditsSparkBg
                       balance={credits?.balance || 0}
+                      totalUsed={credits?.total_used || 0}
                       className={cn(
-                        "h-4 w-4",
+                        "pointer-events-none",
                         (credits?.balance || 0) > 0 && (credits?.balance || 0) < 50
                           ? "text-orange-500"
                           : "text-sidebar-primary"
