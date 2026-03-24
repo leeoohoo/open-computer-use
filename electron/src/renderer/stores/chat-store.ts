@@ -188,8 +188,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
 
     try {
-      const title = firstMessageContent
-        ? firstMessageContent.slice(0, 60) + (firstMessageContent.length > 60 ? '...' : '')
+      // Strip <file> and <directory> tags so the title is clean text
+      const clean = firstMessageContent
+        ? firstMessageContent
+            .replace(/<file\s[^>]*>[^<]*<\/file>\n?/g, '')
+            .replace(/<directory\s[^>]*>[^<]*<\/directory>\n?/g, '')
+            .trim()
+        : ''
+      const title = clean
+        ? clean.slice(0, 60) + (clean.length > 60 ? '...' : '')
         : 'New Task'
 
       const result = await window.coasty.createChat({ title })

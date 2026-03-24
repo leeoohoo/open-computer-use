@@ -383,12 +383,14 @@ export function Overlay() {
     messages, isStreaming, chatTitle,
     canSend, handleSubmit, handleStop, clearMessages,
   } = useChatSubmit()
+  type FileRef = { path: string; name: string; ext: string; isDirectory: boolean }
 
   const loadChat = useChatStore((s) => s.loadChat)
   const { mode: approvalMode, setMode: setApprovalMode, pendingApprovals } = useApprovalStore()
 
   const isExpanded = mode === 'expanded'
   const [input, setInput] = React.useState('')
+  const [attachedFiles, setAttachedFiles] = React.useState<FileRef[]>([])
   const [opacity, setOpacity] = React.useState(1)
   const [showMenu, setShowMenu] = React.useState(false)
   const [showHistory, setShowHistory] = React.useState(false)
@@ -461,11 +463,26 @@ export function Overlay() {
     window.coasty.setOpacity(next)
   }
 
+  const pickItems = async (directories?: boolean) => {
+    const result = await window.coasty.selectFiles(directories ? { directories: true } : undefined)
+    if (result.success && result.files.length > 0) {
+      setAttachedFiles((prev) => {
+        const existing = new Set(prev.map((f) => f.path))
+        return [...prev, ...result.files.filter((f) => !existing.has(f.path))]
+      })
+    }
+  }
+
+  const removeFile = (path: string) => {
+    setAttachedFiles((prev) => prev.filter((f) => f.path !== path))
+  }
+
   const onSubmit = (e?: React.FormEvent) => {
     e?.preventDefault()
     if (!canSend(input)) return
-    handleSubmit(input)
+    handleSubmit(input, attachedFiles.length > 0 ? attachedFiles : undefined)
     setInput('')
+    setAttachedFiles([])
     // If submitted from compact mode, expand to show the conversation
     if (!isExpanded) {
       toggleExpanded()
@@ -751,8 +768,8 @@ export function Overlay() {
               </div>
             )}
 
-            {/* Input area */}
-            <div className="px-3 pb-3 pt-1 flex-shrink-0">
+            {/* Input area — capped so it never pushes outside the overlay */}
+            <div className="px-3 pb-3 pt-1 flex-shrink-0 max-h-[200px] flex flex-col">
               {/* Update banner — compact inline bar above the input */}
               {updateStatus === 'ready' && (
                 <button
@@ -801,16 +818,73 @@ export function Overlay() {
               )}
 
               <form onSubmit={onSubmit} className="rounded-2xl bg-neutral-800 border border-neutral-700/50 p-2 shadow-lg transition-all duration-300 focus-within:shadow-xl focus-within:border-neutral-600/50">
+                {/* Attached file chips — scrolls when many files */}
+                {attachedFiles.length > 0 && (
+                  <div className="flex flex-wrap gap-1 px-2 pt-1 pb-1.5 max-h-[52px] overflow-y-auto flex-shrink-0">
+                    {attachedFiles.map((f) => (
+                      <span
+                        key={f.path}
+                        title={f.path}
+                        className="group inline-flex items-center gap-1 bg-neutral-700/60 border border-neutral-600/30 rounded-md px-1.5 py-0.5 text-[10px] max-w-[160px]"
+                      >
+                        {f.isDirectory ? (
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 text-blue-400">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" />
+                          </svg>
+                        ) : (
+                          <span className="font-mono font-semibold uppercase text-amber-400 flex-shrink-0">{f.ext || '?'}</span>
+                        )}
+                        <span className="text-neutral-300 truncate">{f.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeFile(f.path)}
+                          className="flex-shrink-0 text-neutral-600 hover:text-red-400 transition-colors ml-0.5"
+                        >
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={onKeyDown}
-                  placeholder="Tell your AI what to do..."
+                  placeholder={attachedFiles.length > 0 ? 'What should I do with these files?' : 'Tell your AI what to do...'}
                   rows={1}
                   disabled={connectionState !== 'connected'}
-                  className="w-full h-[60px] bg-transparent text-sm text-neutral-200 placeholder-neutral-500 resize-none px-3 pt-2 pb-1 outline-none overflow-y-auto disabled:opacity-50"
+                  className={`w-full bg-transparent text-sm text-neutral-200 placeholder-neutral-500 resize-none px-3 pt-2 pb-1 outline-none overflow-y-auto disabled:opacity-50 ${attachedFiles.length > 0 ? 'h-[40px]' : 'h-[60px]'}`}
                 />
-                <div className="flex items-center justify-end px-1 pb-0.5">
+                <div className="flex items-center justify-between px-1 pb-0.5">
+                  <div className="flex items-center gap-0.5">
+                    {/* Attach files */}
+                    <button
+                      type="button"
+                      onClick={() => pickItems()}
+                      disabled={connectionState !== 'connected'}
+                      className="size-8 rounded-full text-neutral-500 hover:text-neutral-300 hover:bg-neutral-700/50 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+                      aria-label="Attach files"
+                      title="Attach files"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
+                      </svg>
+                    </button>
+                    {/* Attach folder */}
+                    <button
+                      type="button"
+                      onClick={() => pickItems(true)}
+                      disabled={connectionState !== 'connected'}
+                      className="size-8 rounded-full text-neutral-500 hover:text-neutral-300 hover:bg-neutral-700/50 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+                      aria-label="Attach folder"
+                      title="Attach folder"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" />
+                      </svg>
+                    </button>
+                  </div>
+
                   {isStreaming ? (
                     <button
                       type="button"

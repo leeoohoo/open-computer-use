@@ -5,7 +5,6 @@ let visible = false
 let loaded: Promise<void> = Promise.resolve()
 // 'full' = task-running intensity, 'ambient' = lighter expanded-overlay glow
 let currentIntensity: 'full' | 'ambient' = 'full'
-let enforcerInterval: ReturnType<typeof setInterval> | null = null
 
 export function initRainbowBorder(): void {
   if (borderWindow && !borderWindow.isDestroyed()) return
@@ -45,9 +44,7 @@ async function showWithIntensity(intensity: 'full' | 'ambient'): Promise<void> {
   if (!visible) {
     visible = true
     win.showInactive()
-    win.setAlwaysOnTop(true, 'screen-saver', 1)
-    win.moveTop()
-    startEnforcer()
+    win.setAlwaysOnTop(true, 'screen-saver', 0)
     win.webContents.executeJavaScript('fadeIn()').catch(() => {})
   }
 }
@@ -56,7 +53,6 @@ export function hideRainbowBorder(): void {
   if (!visible) return
   visible = false
   currentIntensity = 'full'
-  stopEnforcer()
 
   if (!borderWindow || borderWindow.isDestroyed()) return
   borderWindow.hide()
@@ -67,7 +63,6 @@ export function hideAmbientRainbow(): void {
   if (!visible || currentIntensity === 'full') return
   visible = false
   currentIntensity = 'full'
-  stopEnforcer()
 
   if (!borderWindow || borderWindow.isDestroyed()) return
   borderWindow.hide()
@@ -83,8 +78,7 @@ export function hideRainbowForScreenshot(): void {
 export function showRainbowAfterScreenshot(): void {
   if (!visible || !borderWindow || borderWindow.isDestroyed()) return
   // Re-assert z-order — may have been lost while invisible
-  borderWindow.setAlwaysOnTop(true, 'screen-saver', 1)
-  borderWindow.moveTop()
+  borderWindow.setAlwaysOnTop(true, 'screen-saver', 0)
 
   // Smooth fade from 0 → 1 over 300ms (ease-out cubic)
   const win = borderWindow
@@ -103,31 +97,12 @@ export function showRainbowAfterScreenshot(): void {
 }
 
 export function destroyRainbowBorder(): void {
-  stopEnforcer()
   if (borderWindow && !borderWindow.isDestroyed()) {
     borderWindow.destroy()
   }
   borderWindow = null
   visible = false
   loaded = Promise.resolve()
-}
-
-/** Re-assert screen-saver z-order every 2s (Windows drops it for transparent frameless windows). */
-function startEnforcer(): void {
-  if (process.platform !== 'win32') return
-  stopEnforcer()
-  enforcerInterval = setInterval(() => {
-    if (!borderWindow || borderWindow.isDestroyed() || !borderWindow.isVisible()) return
-    borderWindow.setAlwaysOnTop(true, 'screen-saver', 1)
-    borderWindow.moveTop()
-  }, 2000)
-}
-
-function stopEnforcer(): void {
-  if (enforcerInterval) {
-    clearInterval(enforcerInterval)
-    enforcerInterval = null
-  }
 }
 
 function createWindow(): void {
@@ -151,9 +126,8 @@ function createWindow(): void {
     },
   })
 
-  // Use 'screen-saver' level — the highest always-on-top tier.
-  // Bare `alwaysOnTop: true` defaults to 'floating' which other apps easily cover.
-  borderWindow.setAlwaysOnTop(true, 'screen-saver', 1)
+  // Use 'floating' level — above normal apps but below the main overlay ('screen-saver').
+  borderWindow.setAlwaysOnTop(true, 'screen-saver', 0)
   borderWindow.setIgnoreMouseEvents(true)
 
   if (process.platform !== 'win32') {

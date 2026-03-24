@@ -107,6 +107,10 @@ contextBridge.exposeInMainWorld('coasty', {
     return () => ipcRenderer.removeListener('approval-mode-changed', handler)
   },
 
+  // File/folder picker — opens native dialog, returns paths + names
+  selectFiles: (opts?: { directories?: boolean }) =>
+    ipcRenderer.invoke('files:select', opts),
+
   // App lifecycle
   relaunch: () => ipcRenderer.invoke('app:relaunch'),
   getAppVersion: () => ipcRenderer.invoke('app:get-version'),
@@ -220,6 +224,11 @@ export interface CoastyAPI {
     parameters: any
   }) => void) => () => void
   onApprovalModeChanged: (callback: (mode: string) => void) => () => void
+
+  selectFiles: (opts?: { directories?: boolean }) => Promise<{
+    success: boolean
+    files: Array<{ path: string; name: string; ext: string; isDirectory: boolean }>
+  }>
 
   relaunch: () => Promise<void>
   getAppVersion: () => Promise<string>

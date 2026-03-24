@@ -1,5 +1,7 @@
-import { ipcMain } from 'electron'
+import { ipcMain, dialog } from 'electron'
 import * as os from 'os'
+import * as path from 'path'
+import * as fs from 'fs'
 import { ElectronAuth } from './auth'
 import { WebSocketBridge } from './ws-bridge'
 import { ApprovalManager } from './approval-manager'
@@ -494,5 +496,30 @@ export function registerIpcHandlers(
       chatAbortControllers.delete(requestId)
     }
     return { success: true }
+  })
+
+  // File/folder picker — opens native OS dialog, returns selected paths + metadata
+  ipcMain.handle('files:select', async (_event, opts?: { directories?: boolean }) => {
+    const properties: Electron.OpenDialogOptions['properties'] = ['multiSelections']
+    if (opts?.directories) {
+      properties.push('openDirectory')
+    } else {
+      properties.push('openFile')
+    }
+    const result = await dialog.showOpenDialog({ properties })
+    if (result.canceled || result.filePaths.length === 0) {
+      return { success: true, files: [] }
+    }
+    const files = result.filePaths.map((fp) => {
+      let isDir = false
+      try { isDir = fs.statSync(fp).isDirectory() } catch {}
+      return {
+        path: fp,
+        name: path.basename(fp),
+        ext: isDir ? '' : path.extname(fp).replace('.', ''),
+        isDirectory: isDir,
+      }
+    })
+    return { success: true, files }
   })
 }

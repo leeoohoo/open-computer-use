@@ -1,6 +1,14 @@
 import React from 'react'
 import { useChatStore, type ChatSummary } from '../stores/chat-store'
 
+/** Strip <file> and <directory> tags from a preview string */
+function stripFileTags(text: string): string {
+  return text
+    .replace(/<file\s[^>]*>[^<]*<\/file>\n?/g, '')
+    .replace(/<directory\s[^>]*>[^<]*<\/directory>\n?/g, '')
+    .trim()
+}
+
 interface Props {
   onSelectChat: (chatId: string) => void
   onBack: () => void
@@ -62,7 +70,7 @@ function ChatItem({ chat, isActive, onSelect, onDelete }: {
         </div>
         {chat.last_message_preview && (
           <div className="text-[10px] text-neutral-600 truncate mt-0.5 leading-tight">
-            {chat.last_message_preview}
+            {stripFileTags(chat.last_message_preview)}
           </div>
         )}
       </div>
