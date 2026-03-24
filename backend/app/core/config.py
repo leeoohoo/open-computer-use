@@ -69,6 +69,11 @@ class Settings(BaseSettings):
     AZURE_STORAGE_ACCOUNT: Optional[str] = Field(default=None)
     AZURE_STORAGE_KEY: Optional[str] = Field(default=None)
     
+    # AWS EC2 Windows VM Configuration
+    AWS_EC2_WINDOWS_AMI_ID: Optional[str] = Field(default=None)
+    AWS_EC2_WINDOWS_GOLDEN_AMI_ID: Optional[str] = Field(default=None)
+    AWS_EC2_WINDOWS_INSTANCE_TYPE: str = Field(default="t3.small")
+
     # AWS WorkMail (agent email for swarms)
     WORKMAIL_IMAP_HOST: str = Field(default="imap.mail.us-east-1.awsapps.com")
     WORKMAIL_SMTP_HOST: str = Field(default="smtp.mail.us-east-1.awsapps.com")

@@ -1044,7 +1044,8 @@ export function ChatInput({
                       type="button"
                       onClick={() => {
                         const websocketPort = currentMachine.websocketPort || 6080
-                        const encodedPassword = encodeURIComponent(currentMachine.vncPassword)
+                        const vncPw = currentMachine.vncPassword?.substring(0, 8) || ''
+                        const encodedPassword = encodeURIComponent(vncPw)
                         const url = `http://${currentMachine.publicIpAddress}:${websocketPort}/vnc.html?autoconnect=1&resize=scale&password=${encodedPassword}`
                         window.open(url, '_blank')
                       }}

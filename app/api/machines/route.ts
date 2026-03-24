@@ -446,10 +446,12 @@ export async function POST(request: NextRequest) {
 
     // Validate resources against limits and minimum requirements
     const isAws = provider === 'aws';
-    const isDesktop = isAws && body.desktopEnabled;
+    const osType = (body as any).osType || 'linux';
+    const isWindows = osType === 'windows';
+    const isDesktop = isWindows || (isAws && body.desktopEnabled);
     const requestedCpu = isAws ? 2 : (body.cpuCores || 1);
     const requestedMemory = isDesktop ? 2 : (isAws ? 0.5 : (body.memoryGb || 3));
-    const requestedStorage = body.storageGb || (isDesktop ? 16 : (isAws ? 8 : 10));
+    const requestedStorage = body.storageGb || (isWindows ? 30 : (isDesktop ? 16 : (isAws ? 8 : 10)));
 
     // Enforce minimum requirements (only for Azure)
     if (!isAws && (requestedCpu < 1 || requestedMemory < 1)) {
@@ -473,11 +475,33 @@ export async function POST(request: NextRequest) {
     // Generate the container/instance name
     const uniqueId = `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
     const containerName = `vm-${userId.substring(0, 8)}-${uniqueId}`.toLowerCase().replace(/[^a-z0-9-]/g, '');
-    // Generate VNC password for Azure and AWS desktop machines
-    const needsVnc = !isAws || isDesktop;
-    const vncPassword = needsVnc
-      ? (Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 8))
-      : '';
+    // Generate VNC password for Azure, AWS desktop, and Windows machines
+    const needsVnc = !isAws || isDesktop || isWindows;
+    let vncPassword = '';
+    if (needsVnc) {
+      if (isWindows) {
+        // Windows Server requires password complexity: uppercase + lowercase + digit + special char.
+        // IMPORTANT: Only use special chars that are safe in PowerShell double quotes,
+        // batch files, URLs, and registry values. Avoid: $ (PS variable), % (batch var),
+        // & (batch separator), ! (batch delayed expansion), ` (PS escape), ' " (quotes).
+        const lower = 'abcdefghijkmnpqrstuvwxyz';
+        const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        const digits = '23456789';
+        const special = '-_=+';
+        const all = lower + upper + digits + special;
+        // Start with one from each category to guarantee complexity
+        let pw = lower[Math.floor(Math.random() * lower.length)]
+               + upper[Math.floor(Math.random() * upper.length)]
+               + digits[Math.floor(Math.random() * digits.length)]
+               + special[Math.floor(Math.random() * special.length)];
+        // Fill remaining 12 chars randomly
+        for (let i = 0; i < 12; i++) pw += all[Math.floor(Math.random() * all.length)];
+        // Shuffle
+        vncPassword = pw.split('').sort(() => Math.random() - 0.5).join('');
+      } else {
+        vncPassword = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 8);
+      }
+    }
 
     // First, create a placeholder in the database so it appears immediately
     const placeholderData = {
@@ -495,7 +519,7 @@ export async function POST(request: NextRequest) {
       storage_gb: requestedStorage,
       gpu_enabled: false,
       settings: isAws
-        ? { provider: 'aws' as const, sshUsername: 'ubuntu', desktopEnabled: isDesktop }
+        ? { provider: 'aws' as const, sshUsername: isWindows ? 'Administrator' : 'ubuntu', desktopEnabled: isDesktop, osType }
         : {},
     };
 
@@ -525,14 +549,15 @@ export async function POST(request: NextRequest) {
     if (isAws) {
       // AWS EC2 creation flow
       const awsService = getAwsEc2Service();
-      const awsInstanceType = isDesktop ? 't4g.small' : 't4g.nano';
+      const awsInstanceType = isWindows ? 't3.small' : (isDesktop ? 't4g.small' : 't4g.nano');
 
       (async () => {
         try {
           // Check if user has a previous machine snapshot to restore from
           // Only restore if user explicitly opted in (restoreFromSnapshot !== false)
+          // Never restore Linux snapshots onto Windows machines (different arch + OS)
           let snapshotAmiId: string | undefined;
-          if (body.restoreFromSnapshot !== false) {
+          if (body.restoreFromSnapshot !== false && !isWindows) {
             try {
               const latestSnapshot = await awsService.findLatestUserSnapshot(userId);
               if (latestSnapshot) {
@@ -552,8 +577,9 @@ export async function POST(request: NextRequest) {
             name: containerName,
             storageGb: requestedStorage,
             desktopEnabled: isDesktop,
-            vncPassword: isDesktop ? vncPassword : undefined,
+            vncPassword: (isDesktop || isWindows) ? vncPassword : undefined,
             snapshotAmiId,
+            osType: isWindows ? 'windows' : 'linux',
           });
 
           console.log(`AWS EC2 instance created: ${result.instanceId}`);
@@ -580,15 +606,16 @@ export async function POST(request: NextRequest) {
             .update({
               settings: {
                 provider: 'aws',
+                osType,
                 awsInstanceId: result.instanceId,
                 awsRegion: process.env.AWS_REGION || 'us-east-1',
                 awsKeyPairName: result.keyPairName,
                 sshPrivateKey: result.privateKeyPem,
-                sshUsername: 'ubuntu',
+                sshUsername: isWindows ? 'Administrator' : 'ubuntu',
                 awsInstanceType,
                 desktopEnabled: isDesktop,
                 desktopInitStatus: isDesktop ? 'installing' as const : undefined,
-                agent_port: isDesktop ? 8080 : undefined,
+                agent_port: (isDesktop || isWindows) ? 8080 : undefined,
                 ...(snapshotAmiId && {
                   restoredFromSnapshot: snapshotAmiId,
                   restoredAt: new Date().toISOString(),
@@ -597,7 +624,7 @@ export async function POST(request: NextRequest) {
                   email_identity: emailIdentitySettings,
                 }),
               },
-              ssh_port: 22,
+              ssh_port: isWindows ? undefined : 22,
             })
             .eq("id", machineId);
 

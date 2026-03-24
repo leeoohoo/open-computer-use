@@ -626,6 +626,7 @@ class SwarmExecutor:
                     connection_info.get("session_id"),
                     connection_info.get("user_id"),
                     connection_info.get("vnc_password"),
+                    os_type=connection_info.get("os_type", "linux"),
                 )
 
             # Wait until the VM screen is actually ready (not black/blank).

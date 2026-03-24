@@ -239,7 +239,8 @@ async def get_machine_connection_info(machine_id: str, user_id: str) -> Optional
                 "email_identity": email_identity,
             }
 
-        # Azure machine
+        # Cloud machine (Azure or AWS)
+        os_type = settings.get("osType", "linux")
         return {
             "public_ip": machine.get("public_ip_address"),
             "agent_port": machine.get("ai_agent_port", 8080),
@@ -249,6 +250,7 @@ async def get_machine_connection_info(machine_id: str, user_id: str) -> Optional
             "vnc_password": machine.get("vnc_password"),  # Include password for authentication
             "is_local": False,
             "email_identity": email_identity,
+            "os_type": os_type,
         }
     except Exception as e:
         logger.error(f"Error getting machine connection info: {str(e)}")
@@ -379,7 +381,8 @@ async def chat_endpoint(
                     agent_port,
                     connection_info.get("session_id"),
                     connection_info.get("user_id"),
-                    connection_info.get("vnc_password")  # Pass the password
+                    connection_info.get("vnc_password"),  # Pass the password
+                    os_type=connection_info.get("os_type", "linux"),  # Platform for action routing
                 )
                 if not connected:
                     logger.warning(f"Failed to connect to VM {chat_request.machine_id}")

@@ -10,8 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { CircleNotch, Cpu, Memory, HardDrives, Lightning, Plus, Desktop, Laptop, WifiHigh, WifiSlash } from "@phosphor-icons/react"
+import { CircleNotch, Plus, Desktop, Laptop, WifiHigh, WifiSlash } from "@phosphor-icons/react"
 import { MacMiniIcon } from "@/components/icons/mac-mini"
+import { WindowsIcon, AppleIcon, LinuxIcon } from "@/components/icons/platform-icons"
 import { cn } from "@/lib/utils"
 import type { UserMachine } from "@/types/machines.types"
 import { CreateMachineDialog } from "@/app/components/machines/create-machine-dialog"
@@ -104,14 +105,33 @@ function StatusBadge({ status }: { status: DisplayStatus }) {
   )
 }
 
-function getPlatformIcon(platform?: string) {
-  // Return appropriate icon based on platform
-  switch (platform) {
-    case 'darwin': return '🍎'
-    case 'win32': return '🪟'
-    case 'linux': return '🐧'
-    default: return null
+function OsTag({ machine }: { machine: UserMachine }) {
+  const platform = machine.settings?.platform
+  const osType = machine.settings?.osType
+  const provider = machine.settings?.provider
+
+  let Icon: typeof WindowsIcon | null = null
+  let label = ""
+
+  if (platform === "win32" || osType === "windows") {
+    Icon = WindowsIcon
+    label = "Win"
+  } else if (platform === "darwin") {
+    Icon = AppleIcon
+    label = "Mac"
+  } else if (platform === "linux" || osType === "linux" || provider === "aws" || provider === "azure" || provider === "docker") {
+    Icon = LinuxIcon
+    label = "Linux"
   }
+
+  if (!Icon) return null
+
+  return (
+    <span className="inline-flex items-center gap-1 rounded-md border border-border/40 bg-foreground/[0.03] px-1.5 py-0.5 ml-1.5 shrink-0">
+      <Icon className="h-2.5 w-2.5 text-muted-foreground/70" />
+      <span className="text-[10px] font-medium text-muted-foreground/80">{label}</span>
+    </span>
+  )
 }
 
 export function VMSelector({
@@ -245,7 +265,7 @@ export function VMSelector({
             ) : (
               <MacMiniIcon className="h-5 w-5 shrink-0" />
             )}
-            <span className="truncate max-w-[60px] sm:max-w-none">
+            <span className="truncate max-w-[60px] sm:max-w-[160px]">
               {selectedMachine.displayName}
             </span>
             <span className="hidden sm:flex">
@@ -263,7 +283,7 @@ export function VMSelector({
           </div>
         )}
       </SelectTrigger>
-      <SelectContent className="w-[calc(100vw-2rem)] sm:min-w-[280px] sm:max-w-[360px]">
+      <SelectContent className="w-[calc(100vw-2rem)] max-w-[320px] sm:min-w-[280px] sm:max-w-[360px] overflow-hidden">
 
         {/* ── Cloud Machines ── */}
         <SelectGroup>
@@ -283,38 +303,14 @@ export function VMSelector({
             </div>
           </SelectItem>
           {cloudMachines.map((machine) => (
-            <SelectItem key={machine.id} value={machine.id} className="py-2">
-              <div className="flex flex-col gap-1.5 w-full">
-                <div className="flex items-center gap-2 w-full">
-                  <MacMiniIcon className="h-5 w-5 shrink-0" />
-                  <span className="text-sm font-medium truncate flex-1">
-                    {machine.displayName}
-                    {machine.settings?.provider === 'docker' && (
-                      <span className="ml-1 text-xs text-blue-500">🐳</span>
-                    )}
-                  </span>
-                  <StatusBadge status={getDisplayStatus(machine)} />
-                </div>
-                <div className="flex items-center gap-3 ml-6 text-[10px] text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Cpu className="h-3 w-3" />
-                    <span>{machine.cpuCores} vCPU</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Memory className="h-3 w-3" />
-                    <span>{machine.memoryGb}GB RAM</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <HardDrives className="h-3 w-3" />
-                    <span>{machine.storageGb}GB</span>
-                  </div>
-                  {machine.gpuEnabled && (
-                    <div className="flex items-center gap-1 text-primary">
-                      <Lightning className="h-3 w-3" />
-                      <span>GPU</span>
-                    </div>
-                  )}
-                </div>
+            <SelectItem key={machine.id} value={machine.id} className="py-2 [&>span]:min-w-0 [&>span]:overflow-hidden">
+              <div className="flex items-center gap-2 min-w-0 overflow-hidden">
+                <MacMiniIcon className="h-5 w-5 shrink-0" />
+                <span className="text-sm font-medium truncate flex-1 min-w-0">
+                  {machine.displayName}
+                </span>
+                <OsTag machine={machine} />
+                <StatusBadge status={getDisplayStatus(machine)} />
               </div>
             </SelectItem>
           ))}
@@ -335,15 +331,14 @@ export function VMSelector({
             {electronMachines.map((machine) => {
               const displayStatus = getDisplayStatus(machine)
               const isOnline = displayStatus === 'online'
-              const platformIcon = getPlatformIcon(machine.settings?.platform as string)
               return (
                 <SelectItem
                   key={machine.id}
                   value={machine.id}
-                  className="py-2"
+                  className="py-2 [&>span]:min-w-0 [&>span]:overflow-hidden"
                   disabled={!isOnline}
                 >
-                  <div className="flex items-center gap-2 w-full">
+                  <div className="flex items-center gap-2 min-w-0 overflow-hidden">
                     <div className="relative shrink-0">
                       <Laptop className="h-5 w-5" weight="duotone" />
                       {isOnline ? (
@@ -353,14 +348,12 @@ export function VMSelector({
                       )}
                     </div>
                     <span className={cn(
-                      "text-sm font-medium truncate flex-1",
+                      "text-sm font-medium truncate flex-1 min-w-0",
                       !isOnline && "text-muted-foreground"
                     )}>
                       {machine.displayName}
-                      {platformIcon && (
-                        <span className="ml-1 text-xs">{platformIcon}</span>
-                      )}
                     </span>
+                    <OsTag machine={machine} />
                     <StatusBadge status={displayStatus} />
                   </div>
                 </SelectItem>

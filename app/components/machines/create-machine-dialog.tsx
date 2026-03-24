@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Loader2, Clock, Monitor, ArrowRight, History, Plus } from "lucide-react";
+import { LinuxIcon, WindowsIcon } from "@/components/icons/platform-icons";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -55,6 +56,7 @@ export function CreateMachineDialog({
   const { isFreeTier, loading: subscriptionLoading } = useSubscription();
   const [creating, setCreating] = useState(false);
   const [displayName, setDisplayName] = useState("");
+  const [osType, setOsType] = useState<'linux' | 'windows'>('linux');
   const [desktopEnabled, setDesktopEnabled] = useState(true);
   const [storageGb, setStorageGb] = useState(16);
   const [limits, setLimits] = useState<MachineLimits | null>(null);
@@ -138,12 +140,14 @@ export function CreateMachineDialog({
 
     setCreating(true);
 
-    // Store the values
+    // Store the values — Windows always uses desktop mode and needs more storage
+    const isWindows = osType === 'windows';
     const machineConfig = {
       displayName: displayName.trim(),
       provider: 'aws' as const,
-      storageGb,
-      desktopEnabled,
+      osType,
+      storageGb: isWindows ? Math.max(storageGb, 30) : storageGb,
+      desktopEnabled: isWindows ? true : desktopEnabled,
       restoreFromSnapshot: snapshotAvailable ? restoreFromSnapshot : false,
     };
 
@@ -157,17 +161,21 @@ export function CreateMachineDialog({
 
       // Show immediate success and close dialog
       const restoring = snapshotAvailable && restoreFromSnapshot;
-      toast.success(restoring ? "Restoring machine from snapshot!" : "Machine creation started!", {
+      const osLabel = isWindows ? "Windows" : "Ubuntu";
+      toast.success(restoring ? "Restoring machine from snapshot!" : `${osLabel} machine creation started!`, {
         description: restoring
           ? "Your previous desktop state is being restored. Ready in ~30 seconds."
-          : desktopEnabled
-            ? "Your desktop is launching. Ready in ~30 seconds."
-            : "Your cloud machine is launching. SSH key will be available once ready.",
+          : isWindows
+            ? "Your Windows desktop is launching. Ready in ~2 minutes."
+            : desktopEnabled
+              ? "Your desktop is launching. Ready in ~30 seconds."
+              : "Your cloud machine is launching. SSH key will be available once ready.",
         duration: 5000,
       });
 
       // Reset form for next time
       setDisplayName("");
+      setOsType('linux');
       setDesktopEnabled(true);
       setStorageGb(16);
       setCreating(false);
@@ -284,14 +292,55 @@ export function CreateMachineDialog({
             )}
           </div>
 
+          {/* OS Selection */}
+          <div className="space-y-2">
+            <Label>Operating System</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => { setOsType('linux'); setStorageGb(16); }}
+                className={`flex items-center gap-3 rounded-lg border p-3 text-left transition-colors ${
+                  osType === 'linux'
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-border bg-muted/30 hover:bg-muted/50"
+                }`}
+              >
+                <LinuxIcon className="h-5 w-5 shrink-0 text-foreground/70" />
+                <div className="text-xs space-y-0.5">
+                  <p className="font-medium text-foreground">Linux (Ubuntu)</p>
+                  <p className="text-muted-foreground">Ubuntu 22.04 desktop</p>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setOsType('windows'); setStorageGb(30); setDesktopEnabled(true); setRestoreFromSnapshot(false); }}
+                className={`flex items-center gap-3 rounded-lg border p-3 text-left transition-colors ${
+                  osType === 'windows'
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-border bg-muted/30 hover:bg-muted/50"
+                }`}
+              >
+                <WindowsIcon className="h-4.5 w-4.5 shrink-0 text-foreground/70" />
+                <div className="text-xs space-y-0.5">
+                  <p className="font-medium text-foreground">Windows Server</p>
+                  <p className="text-muted-foreground">Windows Server desktop</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
           {/* Machine Info */}
           <div className="flex items-center gap-3 rounded-lg border p-3 bg-muted/30">
             <Monitor className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <p className="text-xs text-muted-foreground">Ubuntu desktop, accessible via browser. Ready in ~30 seconds.</p>
+            <p className="text-xs text-muted-foreground">
+              {osType === 'windows'
+                ? "Windows Server desktop with Chrome. Accessible via browser."
+                : "Ubuntu desktop, accessible via browser. Ready in ~30 seconds."}
+            </p>
           </div>
 
-          {/* Snapshot restore choice */}
-          {snapshotAvailable && (
+          {/* Snapshot restore choice — only for matching OS (Linux snapshots can't restore to Windows) */}
+          {snapshotAvailable && osType === 'linux' && (
             <div className="space-y-2">
               <Label>Machine State</Label>
               <div className="grid grid-cols-2 gap-2">

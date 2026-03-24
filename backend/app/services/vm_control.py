@@ -62,7 +62,8 @@ class VMControlService:
         agent_port: int = 8080,  # Default WebSocket port (8081 for localhost)
         session_id: Optional[str] = None,
         user_id: Optional[str] = None,
-        vnc_password: Optional[str] = None  # Add password parameter
+        vnc_password: Optional[str] = None,  # Add password parameter
+        os_type: Optional[str] = None  # 'linux' or 'windows' — stored in session_data for platform routing
     ) -> bool:
         """
         Establish WebSocket connection to VM agent with auto-reconnect and heartbeat
@@ -158,7 +159,8 @@ class VMControlService:
                         "public_ip": public_ip,
                         "agent_port": agent_port,
                         "vnc_password": vnc_password,  # Store password for reconnection
-                        "connected_at": time.time()
+                        "connected_at": time.time(),
+                        "os_type": os_type or "linux",  # Platform for action routing (linux/windows)
                     }
                     
                     # Start heartbeat task

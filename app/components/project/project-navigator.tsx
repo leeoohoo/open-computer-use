@@ -694,8 +694,9 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
       const protocol = 'http:'
       const websocketPort = machine.websocketPort || 6080
 
-      // Properly encode the password for URL
-      const encodedPassword = encodeURIComponent(machine.vncPassword)
+      // VNC protocol truncates passwords to 8 characters
+      const vncPw = machine.vncPassword?.substring(0, 8) || ''
+      const encodedPassword = encodeURIComponent(vncPw)
 
       const url = `${protocol}//${machine.publicIpAddress}:${websocketPort}/vnc.html?autoconnect=1&resize=scale&password=${encodedPassword}`
 

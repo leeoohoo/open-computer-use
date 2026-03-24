@@ -155,3 +155,4 @@ OSWorld/*
 backend/app/services/osworld_executor.py
 backend/app/services/osworld_session.py
 campaigns/config.py
+scripts/build-windows-golden-ami.mjs

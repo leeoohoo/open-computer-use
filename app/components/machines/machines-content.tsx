@@ -309,7 +309,7 @@ export function MachinesContent() {
               <AppleIcon className="h-3.5 w-3.5" />
             </div>
             <p className="text-sm text-muted-foreground truncate">
-              Skip the VM — run AI agents on <span className="font-medium text-foreground">your own computer</span> with the native app
+              Skip the VM — run AI agents on <span className="font-medium text-foreground">your own computer</span> with the native app. Control your desktop from your phone.
             </p>
           </div>
           <Link
