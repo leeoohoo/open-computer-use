@@ -76,6 +76,7 @@ contextBridge.exposeInMainWorld('coasty', {
   // Auto-update
   getUpdateStatus: () => ipcRenderer.invoke('update:get-status'),
   getUpdateVersion: () => ipcRenderer.invoke('update:get-version'),
+  checkForUpdates: () => ipcRenderer.invoke('update:check'),
   installUpdate: () => ipcRenderer.invoke('update:install'),
   onUpdateStatusChanged: (callback: (status: string) => void) => {
     const handler = (_event: any, status: string) => callback(status)
@@ -195,6 +196,7 @@ export interface CoastyAPI {
 
   getUpdateStatus: () => Promise<string>
   getUpdateVersion: () => Promise<string | null>
+  checkForUpdates: () => Promise<void>
   installUpdate: () => Promise<void>
   onUpdateStatusChanged: (callback: (status: string) => void) => () => void
 

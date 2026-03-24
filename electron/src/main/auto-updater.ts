@@ -71,6 +71,10 @@ export function initAutoUpdater(): void {
   }, 4 * 60 * 60 * 1000)
 }
 
+export function checkForUpdates(): void {
+  autoUpdater.checkForUpdates().catch(() => {})
+}
+
 export function quitAndInstall(): void {
   autoUpdater.quitAndInstall()
 }

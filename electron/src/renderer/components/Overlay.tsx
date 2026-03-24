@@ -175,11 +175,12 @@ function MenuLink({ icon, label, desc, url, onClose }: {
 }
 
 /** Account menu panel shown in the expanded area */
-function AccountMenu({ onClose, updateStatus }: { onClose: () => void; updateStatus: string }) {
+function AccountMenu({ onClose, updateStatus: initialUpdateStatus }: { onClose: () => void; updateStatus: string }) {
   const { user, signOut } = useAuthStore()
   const [credits, setCredits] = React.useState<number | null>(null)
   const [runtime, setRuntime] = React.useState<number | null>(null)
   const [appVersion, setAppVersion] = React.useState('...')
+  const [localUpdateStatus, setLocalUpdateStatus] = React.useState(initialUpdateStatus)
 
   // Fetch credit balance and app version on mount
   React.useEffect(() => {
@@ -191,6 +192,17 @@ function AccountMenu({ onClose, updateStatus }: { onClose: () => void; updateSta
     }).catch(() => {})
     window.coasty.getAppVersion().then(setAppVersion).catch(() => {})
   }, [])
+
+  // Sync update status changes while menu is open
+  React.useEffect(() => {
+    const cleanup = window.coasty.onUpdateStatusChanged(setLocalUpdateStatus)
+    return cleanup
+  }, [])
+
+  const handleCheckForUpdates = () => {
+    setLocalUpdateStatus('checking')
+    window.coasty.checkForUpdates()
+  }
 
   return (
     <div className="flex flex-col flex-1 min-h-0 animate-chat-reveal">
@@ -229,8 +241,8 @@ function AccountMenu({ onClose, updateStatus }: { onClose: () => void; updateSta
           )}
         </button>
 
-        {/* Update banner */}
-        {updateStatus === 'ready' && (
+        {/* Update section */}
+        {localUpdateStatus === 'ready' ? (
           <button
             onClick={() => window.coasty.installUpdate()}
             className="w-full rounded-lg bg-emerald-950/40 border border-emerald-800/40 px-3 py-2.5 hover:bg-emerald-950/60 transition-colors group"
@@ -246,6 +258,30 @@ function AccountMenu({ onClose, updateStatus }: { onClose: () => void; updateSta
                 <div className="text-[10px] text-emerald-600">Restart to apply</div>
               </div>
               <span className="text-[10px] font-medium text-emerald-500 group-hover:text-emerald-400">Restart</span>
+            </div>
+          </button>
+        ) : (
+          <button
+            onClick={handleCheckForUpdates}
+            disabled={localUpdateStatus === 'checking' || localUpdateStatus === 'downloading'}
+            className="w-full rounded-lg bg-neutral-800/50 border border-neutral-700/40 px-3 py-2.5 hover:bg-neutral-800/70 transition-colors group disabled:opacity-50"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-6 h-6 rounded-full bg-neutral-700/40 flex items-center justify-center flex-shrink-0">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`text-neutral-400 ${localUpdateStatus === 'checking' ? 'animate-spin' : ''}`}>
+                  <path d="M21 12a9 9 0 11-6.219-8.56" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <div className="text-xs font-medium text-neutral-300">
+                  {localUpdateStatus === 'checking' ? 'Checking...' :
+                   localUpdateStatus === 'downloading' ? 'Downloading update...' :
+                   localUpdateStatus === 'available' ? 'Downloading update...' :
+                   localUpdateStatus === 'error' ? 'Check failed — tap to retry' :
+                   'Check for updates'}
+                </div>
+                <div className="text-[10px] text-neutral-600">v{appVersion}</div>
+              </div>
             </div>
           </button>
         )}

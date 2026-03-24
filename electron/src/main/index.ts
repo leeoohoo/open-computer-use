@@ -4,7 +4,7 @@ import { ElectronAuth } from './auth'
 import { WebSocketBridge } from './ws-bridge'
 import { registerIpcHandlers } from './ipc-handlers'
 import { setMainWindow, setWindowMode, setWindowOpacity, getWindowOpacity } from './window-manager'
-import { initAutoUpdater, getUpdateStatus, getUpdateVersion, quitAndInstall } from './auto-updater'
+import { initAutoUpdater, getUpdateStatus, getUpdateVersion, checkForUpdates, quitAndInstall } from './auto-updater'
 import {
   checkAllPermissions,
   requestAccessibility,
@@ -181,6 +181,7 @@ app.whenReady().then(async () => {
   // Auto-update IPC
   ipcMain.handle('update:get-status', () => getUpdateStatus())
   ipcMain.handle('update:get-version', () => getUpdateVersion())
+  ipcMain.handle('update:check', () => checkForUpdates())
   ipcMain.handle('update:install', () => quitAndInstall())
 
   // Launch on system startup (only in packaged builds)
