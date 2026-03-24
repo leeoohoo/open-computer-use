@@ -5,6 +5,7 @@ let visible = false
 let loaded: Promise<void> = Promise.resolve()
 // 'full' = task-running intensity, 'ambient' = lighter expanded-overlay glow
 let currentIntensity: 'full' | 'ambient' = 'full'
+let enforcerInterval: ReturnType<typeof setInterval> | null = null
 
 export function initRainbowBorder(): void {
   if (borderWindow && !borderWindow.isDestroyed()) return
@@ -44,6 +45,9 @@ async function showWithIntensity(intensity: 'full' | 'ambient'): Promise<void> {
   if (!visible) {
     visible = true
     win.showInactive()
+    win.setAlwaysOnTop(true, 'screen-saver', 1)
+    win.moveTop()
+    startEnforcer()
     win.webContents.executeJavaScript('fadeIn()').catch(() => {})
   }
 }
@@ -52,6 +56,7 @@ export function hideRainbowBorder(): void {
   if (!visible) return
   visible = false
   currentIntensity = 'full'
+  stopEnforcer()
 
   if (!borderWindow || borderWindow.isDestroyed()) return
   borderWindow.hide()
@@ -62,32 +67,67 @@ export function hideAmbientRainbow(): void {
   if (!visible || currentIntensity === 'full') return
   visible = false
   currentIntensity = 'full'
+  stopEnforcer()
 
   if (!borderWindow || borderWindow.isDestroyed()) return
   borderWindow.hide()
 }
 
+/** Hide for screenshot — instant opacity snap to 0 (must not appear in capture). */
 export function hideRainbowForScreenshot(): void {
   if (!borderWindow || borderWindow.isDestroyed() || !borderWindow.isVisible()) return
-  // Snap opacity off immediately (CSS fadeOut is too slow for screenshot timing)
-  borderWindow.webContents.executeJavaScript("wrap.classList.remove('on')").catch(() => {})
-  borderWindow.hide()
+  borderWindow.setOpacity(0)
 }
 
+/** Restore after screenshot with a smooth fade-in via native opacity. */
 export function showRainbowAfterScreenshot(): void {
   if (!visible || !borderWindow || borderWindow.isDestroyed()) return
-  // Show the window with wrap still invisible, then fade in smoothly
-  borderWindow.showInactive()
-  borderWindow.webContents.executeJavaScript('fadeIn()').catch(() => {})
+  // Re-assert z-order — may have been lost while invisible
+  borderWindow.setAlwaysOnTop(true, 'screen-saver', 1)
+  borderWindow.moveTop()
+
+  // Smooth fade from 0 → 1 over 300ms (ease-out cubic)
+  const win = borderWindow
+  const DURATION = 300
+  const STEP = 16 // ~60fps
+  const steps = Math.ceil(DURATION / STEP)
+  let step = 0
+  const timer = setInterval(() => {
+    step++
+    if (!win || win.isDestroyed()) { clearInterval(timer); return }
+    const t = Math.min(step / steps, 1)
+    const eased = 1 - Math.pow(1 - t, 3) // ease-out cubic
+    win.setOpacity(eased)
+    if (t >= 1) clearInterval(timer)
+  }, STEP)
 }
 
 export function destroyRainbowBorder(): void {
+  stopEnforcer()
   if (borderWindow && !borderWindow.isDestroyed()) {
     borderWindow.destroy()
   }
   borderWindow = null
   visible = false
   loaded = Promise.resolve()
+}
+
+/** Re-assert screen-saver z-order every 2s (Windows drops it for transparent frameless windows). */
+function startEnforcer(): void {
+  if (process.platform !== 'win32') return
+  stopEnforcer()
+  enforcerInterval = setInterval(() => {
+    if (!borderWindow || borderWindow.isDestroyed() || !borderWindow.isVisible()) return
+    borderWindow.setAlwaysOnTop(true, 'screen-saver', 1)
+    borderWindow.moveTop()
+  }, 2000)
+}
+
+function stopEnforcer(): void {
+  if (enforcerInterval) {
+    clearInterval(enforcerInterval)
+    enforcerInterval = null
+  }
 }
 
 function createWindow(): void {
@@ -98,7 +138,6 @@ function createWindow(): void {
     frame: false,
     transparent: true,
     thickFrame: false,
-    alwaysOnTop: true,
     skipTaskbar: true,
     resizable: false,
     movable: false,
@@ -112,6 +151,9 @@ function createWindow(): void {
     },
   })
 
+  // Use 'screen-saver' level — the highest always-on-top tier.
+  // Bare `alwaysOnTop: true` defaults to 'floating' which other apps easily cover.
+  borderWindow.setAlwaysOnTop(true, 'screen-saver', 1)
   borderWindow.setIgnoreMouseEvents(true)
 
   if (process.platform !== 'win32') {
