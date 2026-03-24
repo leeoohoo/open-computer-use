@@ -741,12 +741,25 @@ export function Overlay() {
                     {connectionState === 'connecting' ? 'Connecting to backend...' : 'Not connected to backend'}
                   </span>
                   {connectionState !== 'connecting' && (
-                    <button
-                      onClick={reconnect}
-                      className="text-[10px] font-medium text-brand-400 hover:text-brand-300 transition-colors"
-                    >
-                      Reconnect
-                    </button>
+                    <>
+                      <button
+                        onClick={reconnect}
+                        className="text-[10px] font-medium text-brand-400 hover:text-brand-300 transition-colors"
+                      >
+                        Reconnect
+                      </button>
+                      {connectionState === 'error' && (
+                        <>
+                          <span className="text-[10px] text-neutral-600">|</span>
+                          <button
+                            onClick={() => signOut()}
+                            className="text-[10px] font-medium text-red-400 hover:text-red-300 transition-colors"
+                          >
+                            Sign in again
+                          </button>
+                        </>
+                      )}
+                    </>
                   )}
                 </div>
               )}

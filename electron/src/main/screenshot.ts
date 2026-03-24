@@ -1,10 +1,12 @@
 import { desktopCapturer, screen } from 'electron'
 import { hideForScreenshot, showAfterScreenshot } from './window-manager'
+import { hideRainbowForScreenshot, showRainbowAfterScreenshot } from './rainbow-border'
 
 const JPEG_QUALITY = 70
 
 export async function captureScreenshot(): Promise<any> {
-  // Hide the overlay so it doesn't appear in the screenshot
+  // Hide the overlay and rainbow border so they don't appear in the screenshot
+  hideRainbowForScreenshot()
   await hideForScreenshot()
 
   try {
@@ -38,6 +40,7 @@ export async function captureScreenshot(): Promise<any> {
     const base64 = thumbnail.toJPEG(JPEG_QUALITY).toString('base64')
 
     showAfterScreenshot()
+    showRainbowAfterScreenshot()
 
     return {
       success: true,
@@ -48,6 +51,7 @@ export async function captureScreenshot(): Promise<any> {
   } catch (error: any) {
     // Always re-show the overlay even if screenshot fails
     showAfterScreenshot()
+    showRainbowAfterScreenshot()
     return {
       success: false,
       error: `Screenshot failed: ${error.message}`,

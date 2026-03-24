@@ -3,6 +3,7 @@ import { BrowserWindow, screen } from 'electron'
 import * as os from 'os'
 import { LocalExecutor } from './local-executor'
 import { ApprovalManager } from './approval-manager'
+import { showRainbowBorder, hideRainbowBorder, initRainbowBorder } from './rainbow-border'
 
 export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error'
 
@@ -38,6 +39,8 @@ export class WebSocketBridge {
   private approvalManager: ApprovalManager
   // Remote approval tracking: approval_id → { resolve }
   private pendingRemoteApprovals = new Map<string, { resolve: (result: { approved: boolean; reason?: string }) => void }>()
+  // Rainbow border: on for the entire task, off on task_end / disconnect
+  private rainbowActive = false
 
   constructor(backendUrl: string, token: string, machineId: string, userId: string, approvalManager: ApprovalManager) {
     this.backendUrl = backendUrl
@@ -46,6 +49,20 @@ export class WebSocketBridge {
     this.userId = userId
     this.executor = new LocalExecutor()
     this.approvalManager = approvalManager
+  }
+
+  /** Turn on the rainbow aura for the duration of the task. */
+  private startRainbow(): void {
+    if (this.rainbowActive) return
+    this.rainbowActive = true
+    showRainbowBorder()
+  }
+
+  /** Turn off the rainbow (task_end / disconnect). */
+  private stopRainbow(): void {
+    if (!this.rainbowActive) return
+    this.rainbowActive = false
+    hideRainbowBorder()
   }
 
   getState(): ConnectionState {
@@ -86,6 +103,9 @@ export class WebSocketBridge {
         if (message.type === 'command') {
           const { command, parameters } = message.data
           console.log(`[WS Bridge] Received command: ${command}`)
+
+          // Keep rainbow aura on for the whole task — each command resets the idle timer
+          this.startRainbow()
 
           // Check approval mode before executing
           if (this.approvalManager.isDenyAll()) {
@@ -130,6 +150,7 @@ export class WebSocketBridge {
 
             if (approved) {
               console.log(`[WS Bridge] Approved: ${command}`)
+              this.startRainbow()
               try {
                 const result = await this.executor.executeCommand(command, parameters)
                 this.send({ type: 'result', data: result })
@@ -148,6 +169,9 @@ export class WebSocketBridge {
               })
             }
           }
+        } else if (message.type === 'task_end') {
+          console.log('[WS Bridge] Task ended')
+          this.stopRainbow()
         } else if (message.type === 'approval_response') {
           // Remote approval response from web/phone UI (forwarded by backend)
           const { id, approved, reason } = message.data || {}
@@ -160,6 +184,8 @@ export class WebSocketBridge {
           this.reconnectAttempts = 0
           this.setState('connected')
           this.startHeartbeat()
+          // Pre-create rainbow border so first show is instant
+          initRainbowBorder()
         } else if (message.type === 'auth_failed') {
           console.error('[WS Bridge] Authentication failed:', message.reason)
           this.setState('error')
@@ -174,6 +200,7 @@ export class WebSocketBridge {
     this.ws.on('close', (code, reason) => {
       console.log(`[WS Bridge] Disconnected: ${code} ${reason}`)
       this.stopHeartbeat()
+      this.stopRainbow()
       // Cancel all pending approvals (local + remote) so promises don't hang
       this.approvalManager.cancelAll()
       this.cancelAllRemoteApprovals()
@@ -193,6 +220,7 @@ export class WebSocketBridge {
   disconnect(): void {
     this.intentionalClose = true
     this.stopHeartbeat()
+    this.stopRainbow()
     this.clearReconnectTimer()
     this.approvalManager.cancelAll()
     this.cancelAllRemoteApprovals()

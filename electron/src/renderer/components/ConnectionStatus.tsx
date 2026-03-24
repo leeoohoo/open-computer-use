@@ -1,5 +1,6 @@
 import React from 'react'
 import { useConnectionStore } from '../stores/connection-store'
+import { useAuthStore } from '../stores/auth-store'
 
 const STATUS_CONFIG = {
   connected: { color: 'bg-emerald-500', label: 'Connected' },
@@ -10,6 +11,7 @@ const STATUS_CONFIG = {
 
 export function ConnectionStatus() {
   const { state, connect, disconnect } = useConnectionStore()
+  const { signOut } = useAuthStore()
   const config = STATUS_CONFIG[state]
 
   return (
@@ -18,12 +20,22 @@ export function ConnectionStatus() {
       <span className="text-xs text-neutral-400">{config.label}</span>
 
       {state === 'disconnected' || state === 'error' ? (
-        <button
-          onClick={connect}
-          className="text-xs text-brand-400 hover:text-brand-300 ml-2"
-        >
-          Reconnect
-        </button>
+        <>
+          <button
+            onClick={connect}
+            className="text-xs text-brand-400 hover:text-brand-300 ml-2"
+          >
+            Reconnect
+          </button>
+          {state === 'error' && (
+            <button
+              onClick={() => signOut()}
+              className="text-xs text-red-400 hover:text-red-300 ml-1"
+            >
+              Sign in again
+            </button>
+          )}
+        </>
       ) : state === 'connected' ? (
         <button
           onClick={disconnect}

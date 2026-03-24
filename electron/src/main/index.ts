@@ -12,6 +12,7 @@ import {
   openAccessibilitySettings,
 } from './permissions'
 import { ApprovalManager } from './approval-manager'
+import { destroyRainbowBorder } from './rainbow-border'
 
 // Prevent multiple instances — second instance just focuses the existing window.
 // This also avoids GPU cache lock conflicts on Windows.
@@ -201,4 +202,5 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
   wsBridge?.disconnect()
+  destroyRainbowBorder()
 })

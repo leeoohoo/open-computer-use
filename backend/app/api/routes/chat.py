@@ -822,6 +822,17 @@ async def chat_endpoint(
                     except Exception as usage_err:
                         logger.error(f"Failed to save LLM usage: {usage_err}")
 
+                # Notify Electron app that the task has ended so it can
+                # hide the rainbow aura.  Fire-and-forget — a failure here
+                # must not break cleanup.
+                try:
+                    ws = vm_control_service.connections.get(machine_id)
+                    session = vm_control_service.session_data.get(machine_id, {})
+                    if ws and session.get("is_electron"):
+                        await ws.send(json.dumps({"type": "task_end"}))
+                except Exception:
+                    pass
+
                 # Release per-machine execution lock
                 if execution_lock is not None and execution_lock.locked():
                     vm_control_service.execution_owners.pop(machine_id, None)
