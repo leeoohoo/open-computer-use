@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent / "app"))
 
 from app.core.config import settings
 from app.core.logging import setup_logging
-from app.api.routes import chat, chats, health, models, search, vm_control, screenshots, billing, file_operations, electron_bridge, schedules, swarm, osworld, email_tracking
+from app.api.routes import chat, chats, health, models, search, vm_control, screenshots, billing, file_operations, electron_bridge, schedules, swarm, osworld, email_tracking, auto_blog
 from app.core.middleware import InternalAPIKeyMiddleware, RateLimitMiddleware, CSRFMiddleware
 from app.core.exceptions import setup_exception_handlers
 
@@ -77,6 +77,10 @@ async def lifespan(app: FastAPI):
 
     # Start task scheduler for automated/recurring tasks
     scheduler_task = asyncio.create_task(task_scheduler.start())
+
+    # Start auto-blog engine — generates 50 SEO posts daily at 4 AM UTC
+    from app.services.auto_blog import auto_blog_engine
+    auto_blog_task = asyncio.create_task(auto_blog_engine.start())
 
     # Start status health check poller — runs checks directly on the backend
     # and persists to status_checks table using the backend's Supabase credentials.
@@ -203,6 +207,12 @@ async def lifespan(app: FastAPI):
             await cleanup_task
         except asyncio.CancelledError:
             pass
+    if auto_blog_task:
+        auto_blog_task.cancel()
+        try:
+            await auto_blog_task
+        except asyncio.CancelledError:
+            pass
     await cache_service.close()
     analytics.flush()
 
@@ -263,6 +273,7 @@ app.include_router(schedules.router, prefix="/api/schedules", tags=["schedules"]
 app.include_router(swarm.router, prefix="/api/swarm", tags=["swarm"])
 app.include_router(osworld.router, prefix="/api/osworld", tags=["osworld"])
 app.include_router(email_tracking.router, prefix="/api/t", tags=["email-tracking"])
+app.include_router(auto_blog.router, tags=["auto-blog"])
 
 # Root endpoint
 @app.get("/")

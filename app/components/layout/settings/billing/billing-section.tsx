@@ -1,18 +1,53 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { toast } from "sonner"
 import { useCredits } from "@/lib/hooks/use-credits"
 import { useUser } from "@/lib/user-store/provider"
-import { ShoppingCart, ArrowUp, CheckCircle, XCircle, Spinner, CreditCard, Receipt, Coins } from "@phosphor-icons/react"
+import {
+  ShoppingCart,
+  ArrowUp,
+  CheckCircle,
+  XCircle,
+  Spinner,
+  CreditCard,
+  Receipt,
+  Coins,
+  TrendUp,
+  TrendDown,
+  CalendarBlank,
+  Lightning,
+  Clock,
+  ChartLine,
+  Funnel,
+  Export,
+} from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
-import { Check, Zap, ArrowRight, Clock, HardDrive } from "lucide-react"
+import {
+  Check,
+  Zap,
+  ArrowRight,
+  HardDrive,
+  ChevronDown,
+  Activity,
+  Wallet,
+  ArrowUpRight,
+  ArrowDownRight,
+} from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
-import { RunFeedbackBar } from "@/app/components/chat/run-feedback-bar"
+import { motion } from "framer-motion"
+
+// ─── Plan & Package Data ────────────────────────────────────────────────────
 
 const subscriptionPlans = [
   {
@@ -114,9 +149,11 @@ const additionalCreditPackages = [
   },
 ]
 
+// ─── Types ──────────────────────────────────────────────────────────────────
+
 interface Transaction {
   id: string
-  type: "purchase" | "usage" | "refund" | "bonus" | "subscription"
+  type: "purchase" | "usage" | "refund" | "bonus" | "subscription" | "subscription_grant" | "subscription_renewal" | "subscription_reactivation"
   amount: number
   balance_after: number
   created_at: string
@@ -133,6 +170,570 @@ interface UserSubscription {
   created_at?: string
 }
 
+type TimeRange = "7d" | "30d" | "90d" | "all"
+type TransactionFilter = "all" | "purchase" | "usage" | "refund" | "bonus" | "subscription"
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function getTimeRangeDate(range: TimeRange): Date | null {
+  if (range === "all") return null
+  const now = new Date()
+  const days = range === "7d" ? 7 : range === "30d" ? 30 : 90
+  return new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
+}
+
+function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
+function formatShortDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  })
+}
+
+function formatRelativeDate(dateString: string) {
+  const now = new Date()
+  const date = new Date(dateString)
+  const diffMs = now.getTime() - date.getTime()
+  const diffMin = Math.floor(diffMs / 60000)
+  const diffHr = Math.floor(diffMin / 60)
+  const diffDay = Math.floor(diffHr / 24)
+
+  if (diffMin < 1) return "Just now"
+  if (diffMin < 60) return `${diffMin}m ago`
+  if (diffHr < 24) return `${diffHr}h ago`
+  if (diffDay < 7) return `${diffDay}d ago`
+  return formatShortDate(dateString)
+}
+
+// ─── Custom SVG Chart ───────────────────────────────────────────────────────
+
+interface ChartDataPoint {
+  date: string
+  earned: number
+  spent: number
+  balance: number
+}
+
+function formatAxisValue(value: number): string {
+  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`
+  if (value >= 1000) return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`
+  return value.toLocaleString()
+}
+
+function computeNiceTicks(maxVal: number, count: number): number[] {
+  if (maxVal <= 0) return [0]
+  const rough = maxVal / count
+  const mag = Math.pow(10, Math.floor(Math.log10(rough)))
+  const residual = rough / mag
+  const nice = residual <= 1.5 ? 1 : residual <= 3 ? 2 : residual <= 7 ? 5 : 10
+  const step = nice * mag
+  const ticks: number[] = []
+  for (let v = 0; v <= maxVal + step * 0.01; v += step) {
+    ticks.push(Math.round(v))
+  }
+  return ticks
+}
+
+// Build a smooth cubic bezier spline through points
+function buildSmoothPath(pts: { x: number; y: number }[]): string {
+  if (pts.length < 2) return pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ")
+  let d = `M ${pts[0].x} ${pts[0].y}`
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(i - 1, 0)]
+    const p1 = pts[i]
+    const p2 = pts[i + 1]
+    const p3 = pts[Math.min(i + 2, pts.length - 1)]
+    const tension = 0.3
+    const cp1x = p1.x + (p2.x - p0.x) * tension
+    const cp1y = p1.y + (p2.y - p0.y) * tension
+    const cp2x = p2.x - (p3.x - p1.x) * tension
+    const cp2y = p2.y - (p3.y - p1.y) * tension
+    d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`
+  }
+  return d
+}
+
+function UsageChart({
+  data,
+  height = 240,
+  chartView = "area",
+}: {
+  data: ChartDataPoint[]
+  height?: number
+  chartView?: "area" | "bar"
+}) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+
+  if (data.length === 0) {
+    return (
+      <div
+        className="flex flex-col items-center justify-center text-muted-foreground/30 gap-2"
+        style={{ height }}
+      >
+        <ChartLine className="h-8 w-8" weight="thin" />
+        <span className="text-xs">No activity in this period</span>
+      </div>
+    )
+  }
+
+  const vbW = 640
+  const vbH = height
+  const padding = { top: 20, right: 20, bottom: 36, left: 54 }
+  const chartH = vbH - padding.top - padding.bottom
+  const chartW = vbW - padding.left - padding.right
+
+  const maxVal = Math.max(...data.map((d) => Math.max(d.earned, d.spent, 1)), 1)
+
+  // ── Shared axis rendering ──
+  const renderYAxis = (ticks: number[], axisMax: number) =>
+    ticks.map((tick) => {
+      const y = padding.top + chartH - (tick / axisMax) * chartH
+      return (
+        <g key={tick}>
+          <line
+            x1={padding.left}
+            x2={vbW - padding.right}
+            y1={y}
+            y2={y}
+            stroke="currentColor"
+            strokeOpacity={tick === 0 ? 0.08 : 0.04}
+            strokeWidth={0.5}
+          />
+          <text
+            x={padding.left - 10}
+            y={y + 3.5}
+            textAnchor="end"
+            fontSize={9.5}
+            fill="currentColor"
+            fillOpacity={0.3}
+            fontFamily="system-ui, -apple-system, sans-serif"
+            fontWeight={300}
+          >
+            {formatAxisValue(tick)}
+          </text>
+        </g>
+      )
+    })
+
+  const renderXAxis = () => {
+    const step = Math.max(1, Math.ceil(data.length / 8))
+    return data.map((d, i) => {
+      if (i % step !== 0 && i !== data.length - 1) return null
+      const x = chartView === "bar"
+        ? padding.left + (i + 0.5) * (chartW / data.length)
+        : padding.left + (i / Math.max(data.length - 1, 1)) * chartW
+      return (
+        <text
+          key={i}
+          x={x}
+          y={vbH - 10}
+          textAnchor="middle"
+          fontSize={9}
+          fill="currentColor"
+          fillOpacity={0.28}
+          fontFamily="system-ui, -apple-system, sans-serif"
+          fontWeight={300}
+        >
+          {formatShortDate(d.date)}
+        </text>
+      )
+    })
+  }
+
+  const renderTooltip = (leftPct: number, topPx: number, d: ChartDataPoint, showBalance: boolean) => (
+    <div
+      className="absolute z-20 pointer-events-none"
+      style={{ left: `${leftPct}%`, top: topPx, transform: "translateX(-50%)" }}
+    >
+      <div className="bg-popover/95 backdrop-blur-md border border-border/40 rounded-xl shadow-xl shadow-black/5 px-3.5 py-2.5 text-xs space-y-1.5 min-w-[130px]">
+        <div className="font-medium text-foreground/70 text-[10px] uppercase tracking-wider">
+          {formatShortDate(d.date)}
+        </div>
+        {showBalance && (
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-indigo-500" />
+              <span className="text-muted-foreground/70">Balance</span>
+            </div>
+            <span className="font-semibold text-foreground tabular-nums">{d.balance.toLocaleString()}</span>
+          </div>
+        )}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="text-muted-foreground/70">Earned</span>
+          </div>
+          <span className="font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">+{d.earned.toLocaleString()}</span>
+        </div>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-rose-500" />
+            <span className="text-muted-foreground/70">Used</span>
+          </div>
+          <span className="font-semibold text-rose-500 dark:text-rose-400 tabular-nums">-{d.spent.toLocaleString()}</span>
+        </div>
+      </div>
+    </div>
+  )
+
+  // ── Bar chart ──
+  if (chartView === "bar") {
+    const ticks = computeNiceTicks(maxVal, 4)
+    const axisMax = ticks[ticks.length - 1] || maxVal
+    const barGroupWidth = chartW / data.length
+    const barW = Math.min(barGroupWidth * 0.32, 14)
+    const gap = Math.max(barW * 0.2, 1.5)
+
+    return (
+      <div className="relative" style={{ height }}>
+        <svg viewBox={`0 0 ${vbW} ${vbH}`} preserveAspectRatio="xMidYMid meet" className="w-full h-full">
+          <defs>
+            <linearGradient id="barEarnedGrad" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stopColor="rgb(16, 185, 129)" stopOpacity={0.7} />
+              <stop offset="100%" stopColor="rgb(52, 211, 153)" stopOpacity={0.9} />
+            </linearGradient>
+            <linearGradient id="barSpentGrad" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stopColor="rgb(225, 29, 72)" stopOpacity={0.5} />
+              <stop offset="100%" stopColor="rgb(251, 113, 133)" stopOpacity={0.7} />
+            </linearGradient>
+          </defs>
+
+          {renderYAxis(ticks, axisMax)}
+
+          {data.map((d, i) => {
+            const cx = padding.left + (i + 0.5) * barGroupWidth
+            const earnedH = (d.earned / axisMax) * chartH
+            const spentH = (d.spent / axisMax) * chartH
+            const isHovered = hoveredIndex === i
+
+            return (
+              <g
+                key={i}
+                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                className="cursor-pointer"
+              >
+                <rect x={cx - barGroupWidth / 2} y={padding.top} width={barGroupWidth} height={chartH} fill="transparent" />
+                {isHovered && (
+                  <rect x={cx - barGroupWidth / 2} y={padding.top} width={barGroupWidth} height={chartH} fill="currentColor" fillOpacity={0.015} rx={4} />
+                )}
+                {/* Earned */}
+                <rect
+                  x={cx - gap / 2 - barW}
+                  y={padding.top + chartH - earnedH}
+                  width={barW}
+                  height={Math.max(earnedH, 0)}
+                  rx={barW / 3}
+                  fill="url(#barEarnedGrad)"
+                  fillOpacity={isHovered ? 1 : 0.7}
+                  style={{ transition: "fill-opacity 0.15s ease" }}
+                />
+                {/* Spent */}
+                <rect
+                  x={cx + gap / 2}
+                  y={padding.top + chartH - spentH}
+                  width={barW}
+                  height={Math.max(spentH, 0)}
+                  rx={barW / 3}
+                  fill="url(#barSpentGrad)"
+                  fillOpacity={isHovered ? 1 : 0.6}
+                  style={{ transition: "fill-opacity 0.15s ease" }}
+                />
+              </g>
+            )
+          })}
+
+          {renderXAxis()}
+        </svg>
+
+        {hoveredIndex !== null && data[hoveredIndex] && renderTooltip(
+          ((padding.left + (hoveredIndex + 0.5) * barGroupWidth) / vbW) * 100,
+          6,
+          data[hoveredIndex],
+          false,
+        )}
+      </div>
+    )
+  }
+
+  // ── Area chart (default) ──
+  const maxBalance = Math.max(...data.map((d) => d.balance), 1)
+  const balanceTicks = computeNiceTicks(maxBalance, 4)
+  const balanceAxisMax = balanceTicks[balanceTicks.length - 1] || maxBalance
+
+  const points = data.map((d, i) => ({
+    x: padding.left + (i / Math.max(data.length - 1, 1)) * chartW,
+    y: padding.top + chartH - (d.balance / balanceAxisMax) * chartH,
+  }))
+
+  const smoothLine = buildSmoothPath(points)
+  const lastPt = points[points.length - 1]
+  const firstPt = points[0]
+  const smoothArea = `${smoothLine} L ${lastPt.x} ${padding.top + chartH} L ${firstPt.x} ${padding.top + chartH} Z`
+
+  return (
+    <div className="relative" style={{ height }}>
+      <svg viewBox={`0 0 ${vbW} ${vbH}`} preserveAspectRatio="xMidYMid meet" className="w-full h-full">
+        <defs>
+          <linearGradient id="areaGradFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgb(99, 102, 241)" stopOpacity={0.2} />
+            <stop offset="60%" stopColor="rgb(99, 102, 241)" stopOpacity={0.06} />
+            <stop offset="100%" stopColor="rgb(99, 102, 241)" stopOpacity={0} />
+          </linearGradient>
+          <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="rgb(129, 140, 248)" />
+            <stop offset="50%" stopColor="rgb(99, 102, 241)" />
+            <stop offset="100%" stopColor="rgb(79, 70, 229)" />
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {renderYAxis(balanceTicks, balanceAxisMax)}
+
+        {/* Area fill */}
+        <path d={smoothArea} fill="url(#areaGradFill)" />
+
+        {/* Glow line (subtle) */}
+        <path
+          d={smoothLine}
+          fill="none"
+          stroke="rgb(99, 102, 241)"
+          strokeWidth={4}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeOpacity={0.08}
+          filter="url(#glow)"
+        />
+
+        {/* Main line */}
+        <path
+          d={smoothLine}
+          fill="none"
+          stroke="url(#lineGrad)"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeOpacity={0.85}
+        />
+
+        {/* Hover interaction layer */}
+        {points.map((p, i) => (
+          <g
+            key={i}
+            onMouseEnter={() => setHoveredIndex(i)}
+            onMouseLeave={() => setHoveredIndex(null)}
+            className="cursor-pointer"
+          >
+            <rect
+              x={p.x - chartW / data.length / 2}
+              y={padding.top}
+              width={chartW / data.length}
+              height={chartH}
+              fill="transparent"
+            />
+            {hoveredIndex === i && (
+              <>
+                <line
+                  x1={p.x} x2={p.x}
+                  y1={p.y} y2={padding.top + chartH}
+                  stroke="rgb(99, 102, 241)"
+                  strokeOpacity={0.12}
+                  strokeWidth={1}
+                  strokeDasharray="3 3"
+                />
+                {/* Outer glow ring */}
+                <circle cx={p.x} cy={p.y} r={8} fill="rgb(99, 102, 241)" fillOpacity={0.08} />
+                {/* Dot */}
+                <circle cx={p.x} cy={p.y} r={4} fill="rgb(99, 102, 241)" stroke="white" strokeWidth={2} />
+              </>
+            )}
+          </g>
+        ))}
+
+        {renderXAxis()}
+      </svg>
+
+      {hoveredIndex !== null && data[hoveredIndex] && renderTooltip(
+        (points[hoveredIndex].x / vbW) * 100,
+        Math.max((points[hoveredIndex].y / vbH) * height - 12, 0),
+        data[hoveredIndex],
+        true,
+      )}
+    </div>
+  )
+}
+
+// ─── Stat Card ──────────────────────────────────────────────────────────────
+
+function StatCard({
+  label,
+  value,
+  subtext,
+  icon: Icon,
+  trend,
+  trendLabel,
+  accent = "default",
+}: {
+  label: string
+  value: string
+  subtext?: string
+  icon: React.ElementType
+  trend?: "up" | "down" | "neutral"
+  trendLabel?: string
+  accent?: "default" | "green" | "red" | "blue" | "purple"
+}) {
+  const accentMap = {
+    default: { icon: "text-foreground/50", bg: "bg-foreground/[0.04]" },
+    green: { icon: "text-emerald-500", bg: "bg-emerald-500/[0.08]" },
+    red: { icon: "text-rose-500", bg: "bg-rose-500/[0.08]" },
+    blue: { icon: "text-blue-500", bg: "bg-blue-500/[0.08]" },
+    purple: { icon: "text-indigo-500", bg: "bg-indigo-500/[0.08]" },
+  }
+  const a = accentMap[accent]
+
+  return (
+    <div className="rounded-xl border border-border/40 bg-card/30 p-4 flex flex-col h-[120px]">
+      <div className="flex items-center justify-between mb-auto">
+        <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+          {label}
+        </span>
+        <div className={cn("h-7 w-7 rounded-lg flex items-center justify-center", a.bg)}>
+          <Icon className={cn("h-3.5 w-3.5", a.icon)} />
+        </div>
+      </div>
+      <div>
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[22px] font-bold tracking-tight text-foreground leading-none">
+            {value}
+          </span>
+          {subtext && (
+            <span className="text-[11px] text-muted-foreground/50 leading-none">{subtext}</span>
+          )}
+        </div>
+        <div className="h-4 mt-1.5">
+          {trend && trendLabel ? (
+            <div className="flex items-center gap-1">
+              {trend === "up" ? (
+                <ArrowUpRight className="h-3 w-3 text-emerald-500" />
+              ) : trend === "down" ? (
+                <ArrowDownRight className="h-3 w-3 text-rose-500" />
+              ) : (
+                <Activity className="h-3 w-3 text-muted-foreground/40" />
+              )}
+              <span
+                className={cn(
+                  "text-[10px] leading-none",
+                  trend === "up"
+                    ? "text-emerald-600 dark:text-emerald-500"
+                    : trend === "down"
+                    ? "text-rose-600 dark:text-rose-500"
+                    : "text-muted-foreground/50"
+                )}
+              >
+                {trendLabel}
+              </span>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Transaction Row ────────────────────────────────────────────────────────
+
+function TransactionRow({ transaction, isLast }: { transaction: Transaction; isLast: boolean }) {
+  const isPositive = transaction.amount > 0
+
+  const typeConfig: Record<string, { icon: React.ElementType; color: string; label: string }> = {
+    purchase: { icon: ShoppingCart, color: "text-green-500 bg-green-500/10", label: "Credit Purchase" },
+    usage: { icon: Activity, color: "text-blue-500 bg-blue-500/10", label: "Agent Usage" },
+    refund: { icon: ArrowDownRight, color: "text-amber-500 bg-amber-500/10", label: "Refund" },
+    bonus: { icon: Lightning, color: "text-purple-500 bg-purple-500/10", label: "Bonus Reward" },
+    subscription: { icon: CreditCard, color: "text-indigo-500 bg-indigo-500/10", label: "Subscription" },
+    subscription_grant: { icon: Zap, color: "text-indigo-500 bg-indigo-500/10", label: "Subscription Grant" },
+    subscription_renewal: { icon: Clock, color: "text-indigo-500 bg-indigo-500/10", label: "Renewal Credits" },
+    subscription_reactivation: { icon: CheckCircle, color: "text-green-500 bg-green-500/10", label: "Reactivation" },
+  }
+
+  const config = typeConfig[transaction.type] || {
+    icon: Coins,
+    color: "text-muted-foreground bg-muted",
+    label: transaction.type,
+  }
+  const Icon = config.icon
+
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-3 px-4 py-3 hover:bg-muted/20 transition-colors",
+        !isLast && "border-b border-border/30"
+      )}
+    >
+      <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg shrink-0", config.color)}>
+        <Icon className="h-3.5 w-3.5" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-foreground truncate">
+            {config.label}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 mt-0.5">
+          <span className="text-[11px] text-muted-foreground/50">
+            {formatRelativeDate(transaction.created_at)}
+          </span>
+          {transaction.usage_description && (
+            <>
+              <span className="text-muted-foreground/20">·</span>
+              <span className="text-[11px] text-muted-foreground/50 truncate">
+                {transaction.usage_description}
+              </span>
+            </>
+          )}
+        </div>
+      </div>
+      <div className="text-right shrink-0">
+        <div
+          className={cn(
+            "text-sm font-semibold tabular-nums",
+            isPositive
+              ? "text-green-600 dark:text-green-500"
+              : "text-red-500 dark:text-red-400"
+          )}
+        >
+          {isPositive ? "+" : ""}
+          {transaction.amount.toLocaleString()}
+        </div>
+        {transaction.price_paid ? (
+          <div className="text-[11px] text-muted-foreground/40 tabular-nums">
+            ${transaction.price_paid}
+          </div>
+        ) : (
+          <div className="text-[11px] text-muted-foreground/30 tabular-nums">
+            bal {transaction.balance_after?.toLocaleString()}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Main Component ─────────────────────────────────────────────────────────
+
 export function BillingSection() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -144,16 +745,18 @@ export function BillingSection() {
   const [subscription, setSubscription] = useState<UserSubscription | null>(null)
   const [loadingSubscription, setLoadingSubscription] = useState(true)
   const [subscribingPlan, setSubscribingPlan] = useState<string | null>(null)
+  const [selectedPlan, setSelectedPlan] = useState(2)
+
+  // Chart & filter state
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d")
+  const [typeFilter, setTypeFilter] = useState<TransactionFilter>("all")
   const [showAllTransactions, setShowAllTransactions] = useState(false)
-  const [allTransactions, setAllTransactions] = useState<Transaction[]>([])
-  const [loadingAllTransactions, setLoadingAllTransactions] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState(2) // default to Plus
+  const [chartView, setChartView] = useState<"area" | "bar">("area")
 
   // Fetch subscription status
   useEffect(() => {
     const fetchSubscription = async () => {
       if (!user) return
-
       try {
         const response = await fetch("/api/subscription/status")
         if (response.ok) {
@@ -166,7 +769,6 @@ export function BillingSection() {
         setLoadingSubscription(false)
       }
     }
-
     fetchSubscription()
   }, [user])
 
@@ -179,26 +781,24 @@ export function BillingSection() {
     if (success === "true") {
       toast.success("Payment successful! Your credits have been added.")
       refetchCredits()
-      window.history.replaceState({}, '', window.location.pathname)
+      window.history.replaceState({}, "", window.location.pathname)
     } else if (subscriptionSuccess === "true") {
       toast.success("Subscription activated successfully!")
       refetchCredits()
       window.location.reload()
     } else if (canceled === "true") {
       toast.error("Payment was canceled. No charges were made.")
-      window.history.replaceState({}, '', window.location.pathname)
+      window.history.replaceState({}, "", window.location.pathname)
     }
   }, [searchParams, refetchCredits])
 
-  // Fetch transaction history
+  // Fetch all transactions (up to 500 for chart)
   useEffect(() => {
     const fetchTransactions = async () => {
       if (!user) return
-
       try {
-        const response = await fetch("/api/credits/history?limit=5")
+        const response = await fetch("/api/credits/history?limit=500")
         if (!response.ok) throw new Error("Failed to fetch transactions")
-
         const data = await response.json()
         setTransactions(data.transactions)
       } catch (error) {
@@ -207,66 +807,131 @@ export function BillingSection() {
         setLoadingTransactions(false)
       }
     }
-
     fetchTransactions()
   }, [user])
 
-  // Fetch all transactions when View All is clicked
-  const fetchAllTransactions = async () => {
-    if (!user || allTransactions.length > 0) return
+  // ─── Computed data ──────────────────────────────────────────────────────
 
-    try {
-      setLoadingAllTransactions(true)
-      const response = await fetch("/api/credits/history?limit=100")
-      if (!response.ok) throw new Error("Failed to fetch all transactions")
-
-      const data = await response.json()
-      setAllTransactions(data.transactions)
-    } catch (error) {
-      console.error("Error fetching all transactions:", error)
-      toast.error("Failed to load all transactions")
-    } finally {
-      setLoadingAllTransactions(false)
+  const filteredTransactions = useMemo(() => {
+    let filtered = [...transactions]
+    const rangeDate = getTimeRangeDate(timeRange)
+    if (rangeDate) {
+      filtered = filtered.filter((t) => new Date(t.created_at) >= rangeDate)
     }
-  }
-
-  const handleToggleViewAll = async () => {
-    if (!showAllTransactions && allTransactions.length === 0) {
-      await fetchAllTransactions()
+    if (typeFilter !== "all") {
+      filtered = filtered.filter((t) => {
+        if (typeFilter === "subscription") {
+          return t.type.startsWith("subscription")
+        }
+        return t.type === typeFilter
+      })
     }
-    setShowAllTransactions(!showAllTransactions)
-  }
+    return filtered
+  }, [transactions, timeRange, typeFilter])
+
+  const chartData = useMemo<ChartDataPoint[]>(() => {
+    const rangeDate = getTimeRangeDate(timeRange)
+    const relevant = rangeDate
+      ? transactions.filter((t) => new Date(t.created_at) >= rangeDate)
+      : transactions
+
+    if (relevant.length === 0) return []
+
+    // Group by day
+    const dayMap = new Map<string, { earned: number; spent: number; balance: number }>()
+    // Sort ascending for balance tracking
+    const sorted = [...relevant].sort(
+      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    )
+
+    for (const t of sorted) {
+      const day = new Date(t.created_at).toISOString().split("T")[0]
+      const existing = dayMap.get(day) || { earned: 0, spent: 0, balance: 0 }
+      if (t.amount > 0) {
+        existing.earned += t.amount
+      } else {
+        existing.spent += Math.abs(t.amount)
+      }
+      existing.balance = t.balance_after
+      dayMap.set(day, existing)
+    }
+
+    // Fill gaps for smoother chart
+    const days = Array.from(dayMap.keys()).sort()
+    if (days.length === 0) return []
+
+    const result: ChartDataPoint[] = []
+    const start = new Date(days[0])
+    const end = new Date(days[days.length - 1])
+    let lastBalance = dayMap.get(days[0])?.balance || 0
+
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const key = d.toISOString().split("T")[0]
+      const entry = dayMap.get(key)
+      if (entry) {
+        lastBalance = entry.balance
+        result.push({ date: key, ...entry })
+      } else {
+        result.push({ date: key, earned: 0, spent: 0, balance: lastBalance })
+      }
+    }
+
+    return result
+  }, [transactions, timeRange])
+
+  const stats = useMemo(() => {
+    const rangeDate = getTimeRangeDate(timeRange)
+    const relevant = rangeDate
+      ? transactions.filter((t) => new Date(t.created_at) >= rangeDate)
+      : transactions
+
+    const totalEarned = relevant.filter((t) => t.amount > 0).reduce((sum, t) => sum + t.amount, 0)
+    const totalSpent = relevant.filter((t) => t.amount < 0).reduce((sum, t) => sum + Math.abs(t.amount), 0)
+    const netChange = totalEarned - totalSpent
+    const avgDailyUsage =
+      relevant.length > 0
+        ? totalSpent / Math.max(chartData.length, 1)
+        : 0
+
+    // Estimate days remaining at current rate
+    const currentBalance = credits?.balance || 0
+    const daysRemaining = avgDailyUsage > 0 ? Math.floor(currentBalance / avgDailyUsage) : null
+
+    // Usage sessions count
+    const usageSessions = relevant.filter((t) => t.type === "usage").length
+
+    return { totalEarned, totalSpent, netChange, avgDailyUsage, daysRemaining, usageSessions }
+  }, [transactions, timeRange, chartData, credits])
+
+  // Subscription plan info
+  const activePlan = subscription
+    ? subscriptionPlans.find((p) => p.tier === subscription.tier)
+    : null
+
+  const creditUsagePercent = activePlan
+    ? Math.min(
+        100,
+        ((activePlan.monthlyCredits - (credits?.balance || 0)) / activePlan.monthlyCredits) * 100
+      )
+    : 0
+
+  // ─── Actions ────────────────────────────────────────────────────────────
 
   const handleSubscribe = async (planId: string, tier: string, price: number) => {
     if (!user) {
       toast.error("Please sign in to subscribe")
       return
     }
-
     try {
       setSubscribingPlan(planId)
-
       const response = await fetch("/api/subscription/checkout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          planId,
-          tier,
-          price,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId, tier, price }),
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to create subscription checkout")
-      }
-
+      if (!response.ok) throw new Error("Failed to create subscription checkout")
       const { url } = await response.json()
-
-      if (url) {
-        window.location.href = url
-      }
+      if (url) window.location.href = url
     } catch (error) {
       console.error("Error creating subscription checkout:", error)
       toast.error("Failed to start subscription checkout. Please try again.")
@@ -280,36 +945,20 @@ export function BillingSection() {
       toast.error("Please sign in to purchase credits")
       return
     }
-
     if (!subscription || subscription.status !== "active") {
       toast.error("You need an active subscription to purchase additional credits")
       return
     }
-
     try {
       setPurchasingPackage(packageId)
-
       const response = await fetch("/api/credits/checkout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          packageId,
-          credits,
-          price,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ packageId, credits, price }),
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to create checkout session")
-      }
-
+      if (!response.ok) throw new Error("Failed to create checkout session")
       const { url } = await response.json()
-
-      if (url) {
-        window.location.href = url
-      }
+      if (url) window.location.href = url
     } catch (error) {
       console.error("Error creating checkout session:", error)
       toast.error("Failed to start checkout. Please try again.")
@@ -320,87 +969,150 @@ export function BillingSection() {
 
   const handleManageSubscription = async () => {
     try {
-      const response = await fetch("/api/subscription/portal", {
-        method: "POST",
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to create portal session")
-      }
-
+      const response = await fetch("/api/subscription/portal", { method: "POST" })
+      if (!response.ok) throw new Error("Failed to create portal session")
       const { url } = await response.json()
-
-      if (url) {
-        window.location.href = url
-      }
+      if (url) window.location.href = url
     } catch (error) {
       console.error("Error creating portal session:", error)
       toast.error("Failed to open subscription management. Please try again.")
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
-  }
-
-  const getTransactionIcon = (type: string) => {
-    switch (type) {
-      case "purchase":
-        return <ShoppingCart className="h-4 w-4 text-green-500" />
-      case "usage":
-        return <ArrowUp className="h-4 w-4 text-blue-500" />
-      case "refund":
-        return <XCircle className="h-4 w-4 text-yellow-500" />
-      case "bonus":
-        return <CheckCircle className="h-4 w-4 text-purple-500" />
-      default:
-        return <Coins className="h-4 w-4" />
-    }
-  }
+  const handleExportCSV = useCallback(() => {
+    if (filteredTransactions.length === 0) return
+    const headers = "Date,Type,Amount,Balance After,Description,Price Paid"
+    const rows = filteredTransactions.map((t) =>
+      [
+        new Date(t.created_at).toISOString(),
+        t.type,
+        t.amount,
+        t.balance_after,
+        `"${(t.usage_description || "").replace(/"/g, '""')}"`,
+        t.price_paid || "",
+      ].join(",")
+    )
+    const csv = [headers, ...rows].join("\n")
+    const blob = new Blob([csv], { type: "text/csv" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `coasty-transactions-${timeRange}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success("Transactions exported")
+  }, [filteredTransactions, timeRange])
 
   const plan = subscriptionPlans[selectedPlan]
 
+  // ─── Animation helpers ──────────────────────────────────────────────────
+
+  const fadeUp = (delay: number) => ({
+    initial: { opacity: 0, y: 12 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] as const },
+  })
+
+  // ─── Render ─────────────────────────────────────────────────────────────
+
   return (
     <div className="space-y-8">
-      {/* Current Balance */}
-      <div className="rounded-xl border border-primary/20 bg-gradient-to-b from-primary/[0.04] to-transparent p-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <CoastyIcon className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-muted-foreground">Current Balance</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-foreground">
-                {creditsLoading ? (
-                  <Spinner className="h-7 w-7 animate-spin text-primary" />
-                ) : (
-                  (credits?.balance || 0).toLocaleString()
-                )}
-              </span>
-              <span className="text-sm text-muted-foreground">credits</span>
-            </div>
-          </div>
-          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <CoastyIcon className="h-6 w-6 text-primary" />
-          </div>
-        </div>
 
-        {/* Feedback bar — earn credits by sharing feedback */}
-        <div className="mt-4 pt-4 border-t border-primary/10">
-          <RunFeedbackBar feedbackType="run" />
-        </div>
+      {/* ─── Overview Cards ──────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {[
+          <StatCard
+            key="balance"
+            label="Balance"
+            value={creditsLoading ? "..." : (credits?.balance || 0).toLocaleString()}
+            subtext="credits"
+            icon={Wallet}
+            accent="purple"
+            trend={stats.netChange > 0 ? "up" : stats.netChange < 0 ? "down" : "neutral"}
+            trendLabel={stats.daysRemaining !== null ? `~${stats.daysRemaining}d at current rate` : undefined}
+          />,
+          <StatCard
+            key="earned"
+            label="Earned"
+            value={`+${stats.totalEarned.toLocaleString()}`}
+            subtext={timeRange === "all" ? "all time" : `last ${timeRange.replace("d", " days")}`}
+            icon={TrendUp}
+            accent="green"
+          />,
+          <StatCard
+            key="used"
+            label="Used"
+            value={stats.totalSpent.toLocaleString()}
+            subtext={`${stats.usageSessions} sessions`}
+            icon={Activity}
+            accent="red"
+            trend={stats.avgDailyUsage > 0 ? "neutral" : undefined}
+            trendLabel={stats.avgDailyUsage > 0 ? `~${Math.round(stats.avgDailyUsage)}/day avg` : undefined}
+          />,
+          <StatCard
+            key="plan"
+            label="Plan"
+            value={activePlan?.name || "Free"}
+            subtext={activePlan ? `$${activePlan.price}/mo` : "No plan"}
+            icon={CoastyIcon}
+            accent="blue"
+            trend={subscription?.cancel_at_period_end ? "down" : undefined}
+            trendLabel={subscription?.cancel_at_period_end ? "Canceling" : undefined}
+          />,
+        ].map((card, i) => (
+          <motion.div key={i} {...fadeUp(i * 0.06)}>
+            {card}
+          </motion.div>
+        ))}
       </div>
 
-      {/* Subscription Plans */}
+      {/* ─── Usage Progress (subscribed users) ───────────────────────────── */}
+      {activePlan && (
+        <motion.div {...fadeUp(0.25)} className="rounded-xl border border-border/40 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Zap className="h-3.5 w-3.5 text-primary" />
+              <span className="text-sm font-medium">Monthly Credit Usage</span>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {(credits?.balance || 0).toLocaleString()} / {activePlan.monthlyCredits.toLocaleString()} remaining
+            </span>
+          </div>
+          <div className="relative h-2 w-full rounded-full bg-muted/60 overflow-hidden">
+            <motion.div
+              className={cn(
+                "absolute inset-y-0 left-0 rounded-full",
+                creditUsagePercent > 90
+                  ? "bg-red-500"
+                  : creditUsagePercent > 70
+                  ? "bg-amber-500"
+                  : "bg-primary"
+              )}
+              initial={{ width: 0 }}
+              animate={{ width: `${creditUsagePercent}%` }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            />
+          </div>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-[11px] text-muted-foreground/50">
+              {Math.round(creditUsagePercent)}% used this period
+            </span>
+            {subscription?.current_period_end && (
+              <span className="text-[11px] text-muted-foreground/50">
+                Renews {formatDate(subscription.current_period_end)}
+              </span>
+            )}
+          </div>
+        </motion.div>
+      )}
+
+      {/* ─── Subscription / Plans / Buy Credits ──────────────────────────── */}
       {!subscription || subscription.status !== "active" ? (
-        <div>
+        <motion.div {...fadeUp(0.3)}>
           <h4 className="text-base font-semibold mb-1">Choose Your Plan</h4>
-          <p className="text-sm text-muted-foreground mb-6">Subscribe to unlock AI features and get monthly credits</p>
+          <p className="text-sm text-muted-foreground mb-6">
+            Subscribe to unlock AI features and get monthly credits
+          </p>
 
           {/* Plan pills */}
           <div className="flex items-center justify-center gap-2 mb-6">
@@ -416,10 +1128,14 @@ export function BillingSection() {
                 )}
               >
                 {p.name}
-                <span className={cn(
-                  "text-xs font-normal",
-                  selectedPlan === i ? "text-primary-foreground/70" : "text-muted-foreground/60"
-                )}>
+                <span
+                  className={cn(
+                    "text-xs font-normal",
+                    selectedPlan === i
+                      ? "text-primary-foreground/70"
+                      : "text-muted-foreground/60"
+                  )}
+                >
                   ${p.price}
                 </span>
                 {p.popular && selectedPlan !== i && (
@@ -434,36 +1150,65 @@ export function BillingSection() {
 
           {/* Savings pill */}
           {(() => {
-            const humanCost = plan.price === 9 ? 1000 : plan.price === 19 ? 1500 : plan.price === 50 ? 3000 : 5000
+            const humanCost =
+              plan.price === 9
+                ? 1000
+                : plan.price === 19
+                ? 1500
+                : plan.price === 50
+                ? 3000
+                : 5000
             const moneySaved = (humanCost - plan.price).toLocaleString()
-            const timeSaved = plan.price === 9 ? "3-6 hrs" : plan.price === 19 ? "6-12 hrs" : plan.price === 50 ? "18-24 hrs" : "24-36 hrs"
-            const multiplier = plan.price === 9 ? "111x" : plan.price === 19 ? "79x" : plan.price === 50 ? "60x" : "50x"
+            const timeSaved =
+              plan.price === 9
+                ? "3-6 hrs"
+                : plan.price === 19
+                ? "6-12 hrs"
+                : plan.price === 50
+                ? "18-24 hrs"
+                : "24-36 hrs"
+            const multiplier =
+              plan.price === 9
+                ? "111x"
+                : plan.price === 19
+                ? "79x"
+                : plan.price === 50
+                ? "60x"
+                : "50x"
             return (
               <div className="flex justify-center mb-6">
                 <div className="inline-flex items-center gap-3 rounded-full border border-border bg-muted/40 px-4 py-2">
                   <span className="text-xs text-muted-foreground">
-                    Save <span className="font-semibold text-foreground">${moneySaved}/mo</span> vs human
+                    Save{" "}
+                    <span className="font-semibold text-foreground">
+                      ${moneySaved}/mo
+                    </span>{" "}
+                    vs human
                   </span>
                   <span className="h-3 w-px bg-border" />
                   <span className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground">{timeSaved}</span> saved monthly
+                    <span className="font-semibold text-foreground">{timeSaved}</span>{" "}
+                    saved monthly
                   </span>
                   <span className="h-3 w-px bg-border" />
                   <span className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground">{multiplier}</span> cheaper
+                    <span className="font-semibold text-foreground">{multiplier}</span>{" "}
+                    cheaper
                   </span>
                 </div>
               </div>
             )
           })()}
 
-          {/* Plan card + features */}
-          <div className={cn(
-            "relative rounded-xl border p-6",
-            plan.popular
-              ? "border-primary/30 bg-gradient-to-b from-primary/[0.06] to-primary/[0.02] shadow-sm shadow-primary/10"
-              : "border-border"
-          )}>
+          {/* Plan card */}
+          <div
+            className={cn(
+              "relative rounded-xl border p-6",
+              plan.popular
+                ? "border-primary/30 bg-gradient-to-b from-primary/[0.06] to-primary/[0.02] shadow-sm shadow-primary/10"
+                : "border-border"
+            )}
+          >
             {plan.popular && (
               <div className="absolute -top-2.5 left-4">
                 <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-medium text-primary-foreground">
@@ -476,28 +1221,36 @@ export function BillingSection() {
               <div>
                 <div className="flex items-center gap-2">
                   <CoastyIcon className="h-5 w-5 text-primary" />
-                  <h3 className="text-sm font-semibold text-primary">Coasty {plan.name}</h3>
+                  <h3 className="text-sm font-semibold text-primary">
+                    Coasty {plan.name}
+                  </h3>
                 </div>
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-4xl font-semibold tracking-tight text-foreground">${plan.price}</span>
+                  <span className="text-4xl font-semibold tracking-tight text-foreground">
+                    ${plan.price}
+                  </span>
                   <span className="text-sm text-muted-foreground">/month</span>
                 </div>
-                <p className="mt-1.5 text-sm text-muted-foreground">{plan.description}</p>
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                  {plan.description}
+                </p>
               </div>
             </div>
 
             <div className="mb-3 flex items-center gap-2 rounded-lg bg-primary/[0.08] border border-primary/10 px-3 py-2">
               <Zap className="h-3.5 w-3.5 text-primary flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">
-                {plan.monthlyCredits.toLocaleString()} credits<span className="text-muted-foreground font-normal">/month</span>
+                {plan.monthlyCredits.toLocaleString()} credits
+                <span className="text-muted-foreground font-normal">/month</span>
               </span>
             </div>
 
-            {/* Machines highlight */}
             <div className="mb-5 flex items-center gap-2 rounded-lg bg-violet-500/[0.08] border border-violet-500/15 px-3 py-2">
               <HardDrive className="h-3.5 w-3.5 text-violet-500 flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">
-                {plan.id === "lite" ? "1 VM (deleted after inactivity)" : `${plan.machines} always-on VM${plan.machines > 1 ? "s" : ""}`}
+                {plan.id === "lite"
+                  ? "1 VM (deleted after inactivity)"
+                  : `${plan.machines} always-on VM${plan.machines > 1 ? "s" : ""}`}
               </span>
             </div>
 
@@ -533,11 +1286,11 @@ export function BillingSection() {
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       ) : (
         <>
-          {/* Active Subscription */}
-          <div className="rounded-xl border border-green-500/20 bg-gradient-to-b from-green-500/[0.04] to-transparent p-5">
+          {/* Active Subscription Card */}
+          <motion.div {...fadeUp(0.3)} className="rounded-xl border border-green-500/20 bg-gradient-to-b from-green-500/[0.04] to-transparent p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -545,16 +1298,15 @@ export function BillingSection() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-foreground">
-                    {(() => {
-                      const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier)
-                      return activePlan?.name || "Active Plan"
-                    })()}
+                    {activePlan?.name || "Active Plan"}
                   </h4>
                   <p className="text-xs text-muted-foreground">
-                    ${(() => {
-                      const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier)
-                      return activePlan?.price || 0
-                    })()}/month
+                    ${activePlan?.price || 0}/month
+                    {activePlan && (
+                      <span className="text-muted-foreground/50">
+                        {" · "}{activePlan.monthlyCredits} credits/mo
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>
@@ -575,41 +1327,49 @@ export function BillingSection() {
                 {subscription.cancel_at_period_end ? (
                   <>
                     <XCircle className="h-3 w-3 text-yellow-600" />
-                    <span className="text-yellow-600">Cancels {subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : 'N/A'}</span>
+                    <span className="text-yellow-600">
+                      Cancels{" "}
+                      {subscription.current_period_end
+                        ? new Date(subscription.current_period_end).toLocaleDateString()
+                        : "N/A"}
+                    </span>
                   </>
                 ) : (
                   <>
                     <CheckCircle className="h-3 w-3 text-green-500" />
-                    <span className="text-green-600">Renews {subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : 'N/A'}</span>
+                    <span className="text-green-600">
+                      Renews{" "}
+                      {subscription.current_period_end
+                        ? new Date(subscription.current_period_end).toLocaleDateString()
+                        : "N/A"}
+                    </span>
                   </>
                 )}
               </div>
             </div>
 
-            {/* Plan features collapsible */}
             <details className="mt-3 group">
               <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors flex items-center gap-1">
                 View plan features
                 <ArrowRight className="h-3 w-3 transition-transform group-open:rotate-90" />
               </summary>
               <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {(() => {
-                  const activePlan = subscriptionPlans.find(p => p.tier === subscription.tier)
-                  return activePlan?.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-start gap-2">
-                      <Check className="h-3 w-3 text-green-500 mt-0.5" />
-                      <span className="text-xs text-muted-foreground">{feature}</span>
-                    </div>
-                  )) || []
-                })()}
+                {activePlan?.features.map((feature, idx) => (
+                  <div key={idx} className="flex items-start gap-2">
+                    <Check className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span className="text-xs text-muted-foreground">{feature}</span>
+                  </div>
+                )) || []}
               </div>
             </details>
-          </div>
+          </motion.div>
 
           {/* Additional Credits */}
-          <div>
+          <motion.div {...fadeUp(0.4)}>
             <h4 className="text-base font-semibold mb-1">Need More Credits?</h4>
-            <p className="text-sm text-muted-foreground mb-4">Purchase additional credits anytime</p>
+            <p className="text-sm text-muted-foreground mb-4">
+              Purchase additional credits anytime
+            </p>
             <div className="grid gap-3 sm:grid-cols-3">
               {additionalCreditPackages.map((pkg) => (
                 <div
@@ -617,24 +1377,37 @@ export function BillingSection() {
                   className="rounded-xl border border-border p-4 hover:border-primary/30 hover:shadow-sm transition-all duration-200"
                 >
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-foreground">{pkg.name}</span>
-                    <span className="text-lg font-bold text-foreground">${pkg.price}</span>
+                    <span className="text-sm font-medium text-foreground">
+                      {pkg.name}
+                    </span>
+                    <span className="text-lg font-bold text-foreground">
+                      ${pkg.price}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1.5 mb-3">
                     <Zap className="h-3.5 w-3.5 text-primary" />
-                    <span className="text-sm font-medium text-primary">{pkg.credits.toLocaleString()} credits</span>
+                    <span className="text-sm font-medium text-primary">
+                      {pkg.credits.toLocaleString()} credits
+                    </span>
                     {pkg.savings && (
-                      <Badge variant="secondary" className="text-[10px] bg-green-500/10 text-green-600 border-green-500/20 ml-1">
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] bg-green-500/10 text-green-600 border-green-500/20 ml-1"
+                      >
                         {pkg.savings}
                       </Badge>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground mb-3">{pkg.description}</p>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    {pkg.description}
+                  </p>
                   <Button
                     size="sm"
                     className="w-full hover:bg-primary hover:text-primary-foreground"
                     variant="outline"
-                    onClick={() => handlePurchaseCredits(pkg.id, pkg.credits, pkg.price)}
+                    onClick={() =>
+                      handlePurchaseCredits(pkg.id, pkg.credits, pkg.price)
+                    }
                     disabled={purchasingPackage === pkg.id}
                   >
                     {purchasingPackage === pkg.id ? (
@@ -652,89 +1425,185 @@ export function BillingSection() {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </>
       )}
 
-      {/* Transactions */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="text-base font-semibold">
-            {showAllTransactions ? "Transaction History" : "Recent Transactions"}
-          </h4>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs"
-            onClick={handleToggleViewAll}
-            disabled={loadingAllTransactions}
-          >
-            {loadingAllTransactions ? (
-              <Spinner className="mr-1 h-3 w-3 animate-spin" />
-            ) : (
-              <Receipt className="mr-1 h-3 w-3" />
-            )}
-            {loadingAllTransactions ? "Loading..." : showAllTransactions ? "Show Less" : "View All"}
-          </Button>
+      {/* ─── Usage Chart ─────────────────────────────────────────────────── */}
+      <motion.div {...fadeUp(0.45)} className="rounded-xl border border-border/30 bg-card/20 overflow-hidden">
+        <div className="flex items-center justify-between px-5 pt-5 pb-1">
+          <div className="flex items-center gap-2.5">
+            <div className="h-7 w-7 rounded-lg bg-indigo-500/[0.08] flex items-center justify-center">
+              <ChartLine className="h-3.5 w-3.5 text-indigo-500" weight="bold" />
+            </div>
+            <span className="text-sm font-semibold">Credit Activity</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Chart view toggle */}
+            <div className="flex items-center rounded-lg bg-muted/30 p-0.5">
+              {(["area", "bar"] as const).map((view) => (
+                <button
+                  key={view}
+                  onClick={() => setChartView(view)}
+                  className={cn(
+                    "px-2 py-1 text-[10px] font-medium rounded-md transition-all duration-150 capitalize",
+                    chartView === view
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground/40 hover:text-muted-foreground/70"
+                  )}
+                >
+                  {view}
+                </button>
+              ))}
+            </div>
+            {/* Time range pills */}
+            <div className="flex items-center rounded-lg bg-muted/30 p-0.5">
+              {(["7d", "30d", "90d", "all"] as TimeRange[]).map((range) => (
+                <button
+                  key={range}
+                  onClick={() => setTimeRange(range)}
+                  className={cn(
+                    "px-2.5 py-1 text-[10px] font-medium rounded-md transition-all duration-150",
+                    timeRange === range
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground/40 hover:text-muted-foreground/70"
+                  )}
+                >
+                  {range === "all" ? "All" : range}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className={cn(
-          "rounded-xl border border-border overflow-hidden",
-          showAllTransactions && "max-h-[500px] overflow-y-auto"
-        )}>
-          {(loadingTransactions || loadingAllTransactions) ? (
-            <div className="flex justify-center py-8">
-              <Spinner className="h-5 w-5 animate-spin text-muted-foreground" />
+        {/* Legend */}
+        <div className="flex items-center gap-5 px-5 pb-1 pt-1">
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-indigo-500/70" />
+            <span className="text-[10px] text-muted-foreground/40 font-medium">Balance</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-emerald-500/70" />
+            <span className="text-[10px] text-muted-foreground/40 font-medium">Earned</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-rose-500/70" />
+            <span className="text-[10px] text-muted-foreground/40 font-medium">Used</span>
+          </div>
+        </div>
+
+        <div className="px-1 pb-3">
+          {loadingTransactions ? (
+            <div className="flex items-center justify-center h-[240px]">
+              <Spinner className="h-5 w-5 animate-spin text-muted-foreground/20" />
             </div>
-          ) : transactions.length === 0 ? (
-            <div className="text-center py-8 text-sm text-muted-foreground">
-              No transactions yet
+          ) : (
+            <UsageChart data={chartData} height={240} chartView={chartView} />
+          )}
+        </div>
+      </motion.div>
+
+      {/* ─── Transaction History ──────────────────────────────────────────── */}
+      <motion.div {...fadeUp(0.55)}>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Receipt className="h-4 w-4 text-muted-foreground/50" weight="bold" />
+            <span className="text-sm font-semibold">Transactions</span>
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
+              {filteredTransactions.length}
+            </Badge>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Type filter */}
+            <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as TransactionFilter)}>
+              <SelectTrigger size="sm" className="h-7 text-[11px] gap-1.5 min-w-0 w-auto">
+                <Funnel className="h-3 w-3 text-muted-foreground/50" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All types</SelectItem>
+                <SelectItem value="usage">Usage</SelectItem>
+                <SelectItem value="purchase">Purchases</SelectItem>
+                <SelectItem value="subscription">Subscription</SelectItem>
+                <SelectItem value="bonus">Bonuses</SelectItem>
+                <SelectItem value="refund">Refunds</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Export */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-[11px] px-2"
+              onClick={handleExportCSV}
+              disabled={filteredTransactions.length === 0}
+            >
+              <Export className="h-3 w-3 mr-1" />
+              Export
+            </Button>
+          </div>
+        </div>
+
+        <div
+          className={cn(
+            "rounded-xl border border-border/40 overflow-hidden",
+            showAllTransactions && "max-h-[500px] overflow-y-auto"
+          )}
+        >
+          {loadingTransactions ? (
+            <div className="flex justify-center py-12">
+              <Spinner className="h-5 w-5 animate-spin text-muted-foreground/30" />
+            </div>
+          ) : filteredTransactions.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+              <div className="h-10 w-10 rounded-xl bg-muted/50 flex items-center justify-center mb-3">
+                <Receipt className="h-5 w-5 text-muted-foreground/30" />
+              </div>
+              <p className="text-sm text-muted-foreground/60">No transactions found</p>
+              <p className="text-xs text-muted-foreground/40 mt-1">
+                {typeFilter !== "all"
+                  ? "Try changing the filter"
+                  : "Transactions will appear here as you use Coasty"}
+              </p>
             </div>
           ) : (
             <div>
-              {(showAllTransactions ? (allTransactions.length > 0 ? allTransactions : transactions) : transactions.slice(0, 5)).map((transaction, i, arr) => (
-                <div
-                  key={transaction.id}
-                  className={cn(
-                    "flex items-center justify-between px-4 py-3",
-                    i < arr.length - 1 && "border-b border-border",
-                    i % 2 === 1 && "bg-muted/20"
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    {getTransactionIcon(transaction.type)}
-                    <div>
-                      <div className="text-sm font-medium capitalize">{transaction.type}</div>
-                      <div className="text-xs text-muted-foreground">{formatDate(transaction.created_at)}</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className={cn(
-                      "text-sm font-medium",
-                      transaction.amount > 0 ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500"
-                    )}>
-                      {transaction.amount > 0 ? "+" : ""}{transaction.amount.toLocaleString()} credits
-                    </div>
-                    {transaction.price_paid && (
-                      <div className="text-xs text-muted-foreground">${transaction.price_paid}</div>
-                    )}
-                  </div>
-                </div>
-              ))}
+              {(showAllTransactions ? filteredTransactions : filteredTransactions.slice(0, 8)).map(
+                (transaction, i, arr) => (
+                  <TransactionRow
+                    key={transaction.id}
+                    transaction={transaction}
+                    isLast={i === arr.length - 1}
+                  />
+                )
+              )}
             </div>
           )}
         </div>
-        {!showAllTransactions && transactions.length >= 5 && (
-          <p className="text-xs text-muted-foreground text-center mt-2">
-            Showing recent 5 transactions
-          </p>
+
+        {/* Show more / less */}
+        {filteredTransactions.length > 8 && (
+          <div className="flex justify-center mt-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-muted-foreground/50 hover:text-muted-foreground"
+              onClick={() => setShowAllTransactions(!showAllTransactions)}
+            >
+              {showAllTransactions
+                ? "Show less"
+                : `Show all ${filteredTransactions.length} transactions`}
+              <ChevronDown
+                className={cn(
+                  "h-3 w-3 ml-1 transition-transform",
+                  showAllTransactions && "rotate-180"
+                )}
+              />
+            </Button>
+          </div>
         )}
-        {showAllTransactions && allTransactions.length > 0 && (
-          <p className="text-xs text-muted-foreground text-center mt-2">
-            Showing all {allTransactions.length} transactions
-          </p>
-        )}
-      </div>
+      </motion.div>
+
     </div>
   )
 }

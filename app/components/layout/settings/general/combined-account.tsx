@@ -9,11 +9,19 @@ import { useChats } from "@/lib/chat-store/chats/provider"
 import { useMessages } from "@/lib/chat-store/messages/provider"
 import { clearAllIndexedDBStores } from "@/lib/chat-store/persist"
 import { useUser } from "@/lib/user-store/provider"
-import { SignOut } from "@phosphor-icons/react"
+import { SignOut, Envelope, CalendarBlank, Spinner } from "@phosphor-icons/react"
 import { CoastyIcon } from "@/components/icons/coasty"
 import { useRouter } from "next/navigation"
-import { Building2, Globe, User, Check } from "lucide-react"
+import { Building2, Globe, User, Check, Camera, Shield } from "lucide-react"
 import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
+
+const fadeUp = (delay: number) => ({
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.35, delay, ease: [0.22, 1, 0.36, 1] as const },
+})
 
 export function CombinedAccount() {
   const { user, signOut, updateUser, isLoading } = useUser()
@@ -76,116 +84,202 @@ export function CombinedAccount() {
 
   if (!user) return null
 
+  const memberSince = user.created_at
+    ? new Date(user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })
+    : null
+
   return (
-    <div className="space-y-6">
-      {/* Profile Section */}
-      <div>
-        <h3 className="mb-3 text-sm font-medium">Profile</h3>
-        <div className="flex items-center space-x-4 mb-4">
-          <div className="bg-muted flex items-center justify-center overflow-hidden rounded-full">
-            {user?.profile_image ? (
-              <Avatar className="size-12">
-                <AvatarImage src={user.profile_image} className="object-cover" />
-                <AvatarFallback className="bg-transparent"><CoastyIcon className="size-6 text-primary" /></AvatarFallback>
-              </Avatar>
-            ) : (
-              <CoastyIcon className="size-8 text-primary" />
-            )}
-          </div>
-          <div>
-            <h4 className="text-sm font-medium">{user?.display_name}</h4>
-            <p className="text-muted-foreground text-sm">{user?.email}</p>
-          </div>
+    <div className="space-y-8">
+
+      {/* ─── Profile Card ────────────────────────────────────────────── */}
+      <motion.div {...fadeUp(0)} className="rounded-xl border border-border/30 bg-card/20 overflow-hidden">
+        {/* Banner */}
+        <div className="h-20 bg-gradient-to-br from-primary/[0.08] via-primary/[0.04] to-transparent relative">
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: "radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)",
+            backgroundSize: "24px 24px",
+          }} />
         </div>
 
-        <div className="space-y-3">
+        <div className="px-5 pb-5">
+          {/* Avatar overlapping banner */}
+          <div className="flex items-end gap-4 -mt-8">
+            <div className="relative group">
+              <div className="h-16 w-16 rounded-2xl border-[3px] border-background bg-muted overflow-hidden shadow-sm flex items-center justify-center">
+                {user?.profile_image ? (
+                  <Avatar className="h-full w-full rounded-none">
+                    <AvatarImage src={user.profile_image} className="object-cover" />
+                    <AvatarFallback className="bg-transparent rounded-none">
+                      <CoastyIcon className="h-7 w-7 text-primary" />
+                    </AvatarFallback>
+                  </Avatar>
+                ) : (
+                  <CoastyIcon className="h-7 w-7 text-primary" />
+                )}
+              </div>
+              <div className="absolute inset-0 rounded-2xl bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer">
+                <Camera className="h-4 w-4 text-white drop-shadow" />
+              </div>
+            </div>
+            <div className="pb-1 min-w-0">
+              <h3 className="text-base font-semibold truncate">
+                {user?.display_name || user?.email?.split("@")[0] || "User"}
+              </h3>
+              <div className="flex items-center gap-3 mt-0.5">
+                <div className="flex items-center gap-1 text-muted-foreground/50">
+                  <Envelope className="h-3 w-3" />
+                  <span className="text-xs truncate">{user?.email}</span>
+                </div>
+                {memberSince && (
+                  <div className="flex items-center gap-1 text-muted-foreground/40">
+                    <CalendarBlank className="h-3 w-3" />
+                    <span className="text-[11px]">{memberSince}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ─── Edit Profile ────────────────────────────────────────────── */}
+      <motion.div {...fadeUp(0.1)} className="space-y-4">
+        <div className="flex items-center gap-2">
+          <div className="h-6 w-6 rounded-md bg-foreground/[0.04] flex items-center justify-center">
+            <User className="h-3 w-3 text-muted-foreground/50" />
+          </div>
+          <h3 className="text-sm font-semibold">Profile Details</h3>
+        </div>
+
+        <div className="rounded-xl border border-border/30 bg-card/20 p-5 space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="account-name" className="text-xs font-medium text-muted-foreground">
-              Name
+            <Label htmlFor="account-name" className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+              Display Name
             </Label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/30" />
               <Input
                 id="account-name"
                 type="text"
                 placeholder="Your name"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="h-9 rounded-lg bg-background/50 pl-10 text-sm"
+                className="h-10 rounded-lg bg-background/50 pl-9 text-sm border-border/40 focus:border-primary/30 transition-colors"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="account-company" className="text-xs font-medium text-muted-foreground">
+              <Label htmlFor="account-company" className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">
                 Company
               </Label>
               <div className="relative">
-                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40" />
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/30" />
                 <Input
                   id="account-company"
                   type="text"
                   placeholder="Your company"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  className="h-9 rounded-lg bg-background/50 pl-10 text-sm"
+                  className="h-10 rounded-lg bg-background/50 pl-9 text-sm border-border/40 focus:border-primary/30 transition-colors"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="account-website" className="text-xs font-medium text-muted-foreground">
+              <Label htmlFor="account-website" className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">
                 Website
               </Label>
               <div className="relative">
-                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40" />
+                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/30" />
                 <Input
                   id="account-website"
                   type="text"
                   placeholder="yoursite.com"
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
-                  className="h-9 rounded-lg bg-background/50 pl-10 text-sm"
+                  className="h-10 rounded-lg bg-background/50 pl-9 text-sm border-border/40 focus:border-primary/30 transition-colors"
                 />
               </div>
             </div>
           </div>
 
           {hasChanges && (
-            <div className="flex justify-end pt-1">
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="flex justify-end pt-1"
+            >
               <Button
                 size="sm"
                 onClick={handleSave}
                 disabled={isSaving || isLoading}
-                className="flex items-center gap-1.5"
+                className="rounded-lg gap-1.5 px-4"
               >
-                <Check className="size-3.5" />
-                {isSaving ? "Saving..." : "Save changes"}
+                {isSaving ? (
+                  <>
+                    <Spinner className="h-3.5 w-3.5 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-3.5 w-3.5" />
+                    Save changes
+                  </>
+                )}
               </Button>
-            </div>
+            </motion.div>
           )}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="h-px bg-border" />
-
-      {/* Account Management Section */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-sm font-medium">Account Management</h3>
-          <p className="text-muted-foreground text-xs">Log out on this device</p>
+      {/* ─── Account Actions ─────────────────────────────────────────── */}
+      <motion.div {...fadeUp(0.2)} className="space-y-4">
+        <div className="flex items-center gap-2">
+          <div className="h-6 w-6 rounded-md bg-foreground/[0.04] flex items-center justify-center">
+            <Shield className="h-3 w-3 text-muted-foreground/50" />
+          </div>
+          <h3 className="text-sm font-semibold">Account</h3>
         </div>
-        <Button
-          variant="default"
-          size="sm"
-          className="flex items-center gap-2"
-          onClick={handleSignOut}
-        >
-          <SignOut className="size-4" />
-          <span>Sign out</span>
-        </Button>
-      </div>
+
+        <div className="rounded-xl border border-border/30 bg-card/20 divide-y divide-border/20">
+          {/* Email row */}
+          <div className="flex items-center justify-between px-5 py-4">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-muted/50 flex items-center justify-center">
+                <Envelope className="h-3.5 w-3.5 text-muted-foreground/50" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Email</p>
+                <p className="text-xs text-muted-foreground/50">{user?.email}</p>
+              </div>
+            </div>
+            <span className="text-[10px] font-medium text-muted-foreground/30 uppercase tracking-wider">Verified</span>
+          </div>
+
+          {/* Sign out row */}
+          <div className="flex items-center justify-between px-5 py-4">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-rose-500/[0.06] flex items-center justify-center">
+                <SignOut className="h-3.5 w-3.5 text-rose-500/70" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Sign out</p>
+                <p className="text-xs text-muted-foreground/50">Log out of this device</p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-lg text-xs hover:bg-rose-500/5 hover:text-rose-600 hover:border-rose-500/20 transition-colors"
+              onClick={handleSignOut}
+            >
+              Sign out
+            </Button>
+          </div>
+        </div>
+      </motion.div>
     </div>
   )
 }

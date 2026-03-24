@@ -100,14 +100,22 @@ function SidebarNavItem({
 
 function ComingSoonPlaceholder({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted/60 ring-1 ring-border/30 mb-5">
-        <Icon className="h-5 w-5 text-muted-foreground/40" />
+    <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+      <div className="relative mb-6">
+        <div className="absolute inset-0 rounded-2xl bg-primary/[0.04] blur-xl scale-150" />
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-muted/40 ring-1 ring-border/20">
+          <Icon className="h-6 w-6 text-muted-foreground/30" />
+        </div>
       </div>
-      <p className="text-sm font-medium text-foreground/60 mb-1">{label}</p>
-      <p className="text-xs text-muted-foreground/40 max-w-[200px] leading-relaxed">
-        This section is being built and will be available soon
+      <p className="text-sm font-semibold text-foreground/50 mb-1.5">{label}</p>
+      <p className="text-xs text-muted-foreground/35 max-w-[220px] leading-relaxed">
+        We&apos;re building this section. It will be available in a future update.
       </p>
+      <div className="mt-4 flex items-center gap-1.5">
+        <span className="h-1 w-1 rounded-full bg-primary/40 animate-pulse" />
+        <span className="h-1 w-1 rounded-full bg-primary/30 animate-pulse [animation-delay:0.2s]" />
+        <span className="h-1 w-1 rounded-full bg-primary/20 animate-pulse [animation-delay:0.4s]" />
+      </div>
     </div>
   )
 }
@@ -157,7 +165,13 @@ function AccountContent() {
   function renderSectionContent(padded = false) {
     const cls = padded ? "p-6" : ""
     if (activeConfig?.component === "feedback") {
-      return <FeedbackForm authUserId={user?.id} onClose={() => {}} />
+      return (
+        <div className={padded ? "p-6" : ""}>
+          <div className="rounded-xl border border-border/30 bg-card/20 overflow-hidden">
+            <FeedbackForm authUserId={user?.id} onClose={() => {}} />
+          </div>
+        </div>
+      )
     }
     if (activeConfig?.component === "about") {
       return (
@@ -167,29 +181,32 @@ function AccountContent() {
       )
     }
     if (activeConfig?.component === "social") {
+      const socialLinks = [
+        { href: "https://x.com/llmhub_dev", icon: XIcon, label: "Follow us on X", sub: "@llmhub_dev", external: true, accent: "bg-foreground/[0.04]" },
+        { href: "https://github.com/coasty-ai", icon: GithubLogoIcon, label: "Star us on GitHub", sub: "coasty-ai", external: true, accent: "bg-foreground/[0.04]" },
+        { href: "mailto:founders@coasty.ai", icon: Mail, label: "Contact Us", sub: "founders@coasty.ai", external: false, accent: "bg-primary/[0.06]" },
+      ]
       return (
-        <div className={padded ? "p-6 space-y-2" : "space-y-2"}>
-          {[
-            { href: "https://x.com/llmhub_dev", icon: XIcon, label: "Follow us on X", sub: "@llmhub_dev", external: true },
-            { href: "https://github.com/coasty-ai", icon: GithubLogoIcon, label: "Star us on GitHub", sub: "coasty-ai", external: true },
-            { href: "mailto:founders@coasty.ai", icon: Mail, label: "Contact Us", sub: "founders@coasty.ai", external: false },
-          ].map(({ href, icon: Icon, label, sub, external }) => (
-            <a
-              key={href}
-              href={href}
-              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              className="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-muted/40 transition-colors"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/60 ring-1 ring-border/30 shrink-0">
-                <Icon className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium leading-tight">{label}</p>
-                <p className="text-xs text-muted-foreground/60 mt-0.5">{sub}</p>
-              </div>
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/60 transition-colors shrink-0" />
-            </a>
-          ))}
+        <div className={padded ? "p-6 space-y-3" : "space-y-3"}>
+          <div className="rounded-xl border border-border/30 bg-card/20 divide-y divide-border/20 overflow-hidden">
+            {socialLinks.map(({ href, icon: Icon, label, sub, external, accent }) => (
+              <a
+                key={href}
+                href={href}
+                {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className="group flex items-center gap-4 px-5 py-4 hover:bg-muted/20 transition-colors"
+              >
+                <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${accent}`}>
+                  <Icon className="h-4 w-4 text-muted-foreground/60" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium leading-tight">{label}</p>
+                  <p className="text-xs text-muted-foreground/40 mt-0.5">{sub}</p>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/20 group-hover:text-muted-foreground/50 transition-colors shrink-0" />
+              </a>
+            ))}
+          </div>
         </div>
       )
     }
