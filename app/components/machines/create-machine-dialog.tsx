@@ -322,8 +322,8 @@ export function CreateMachineDialog({
               >
                 <WindowsIcon className="h-4.5 w-4.5 shrink-0 text-foreground/70" />
                 <div className="text-xs space-y-0.5">
-                  <p className="font-medium text-foreground">Windows Server</p>
-                  <p className="text-muted-foreground">Windows Server desktop</p>
+                  <p className="font-medium text-foreground">Windows Server <span className="text-[10px] font-medium text-amber-500 bg-amber-500/10 px-1 py-0.5 rounded">BETA</span></p>
+                  <p className="text-muted-foreground">Windows desktop — expect bugs</p>
                 </div>
               </button>
             </div>
@@ -334,7 +334,7 @@ export function CreateMachineDialog({
             <Monitor className="h-4 w-4 shrink-0 text-muted-foreground" />
             <p className="text-xs text-muted-foreground">
               {osType === 'windows'
-                ? "Windows Server desktop with Chrome. Accessible via browser."
+                ? "Windows desktop with Chrome (beta). Ready in ~2 minutes."
                 : "Ubuntu desktop, accessible via browser. Ready in ~30 seconds."}
             </p>
           </div>

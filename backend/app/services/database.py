@@ -631,12 +631,12 @@ class DatabaseService:
                 .maybe_single()
                 .execute()
             )
-            return response.data
+            return response.data if response else None
 
         except Exception as e:
             logger.error(f"Failed to get machine {machine_id}: {str(e)}")
             return None
-    
+
     async def get_machine_session(self, machine_id: str, session_id: str) -> Optional[Dict]:
         """Get active machine session"""
         if not self.client:
@@ -652,7 +652,7 @@ class DatabaseService:
                 .maybe_single()
                 .execute()
             )
-            return response.data
+            return response.data if response else None
 
         except Exception as e:
             logger.error(f"Failed to get machine session: {str(e)}")

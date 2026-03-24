@@ -150,46 +150,61 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         if request.url.path.startswith("/api/t/"):
             return await _safe_call_next(call_next, request)
 
+        # Skip rate limiting for WebSocket upgrade requests — the initial HTTP
+        # upgrade must not be blocked, or the entire WS channel is dead.
+        if request.headers.get("upgrade", "").lower() == "websocket":
+            return await _safe_call_next(call_next, request)
+
+        # Skip rate limiting for internal server-to-server calls (Next.js → backend).
+        # These carry X-Internal-Key and would otherwise exhaust the user's quota
+        # since each frontend poll triggers 1+ internal backend fetches.
+        internal_key = request.headers.get("X-Internal-Key")
+        if internal_key and internal_key == settings.INTERNAL_API_KEY:
+            return await _safe_call_next(call_next, request)
+
         # Get client identifier (IP address or user ID)
         client_id = request.client.host if request.client else "unknown"
-        
+
         # Check if user ID is in headers
         if "X-User-ID" in request.headers:
             client_id = request.headers["X-User-ID"]
-        
+
         now = datetime.now()
         minute_ago = now - timedelta(minutes=1)
         hour_ago = now - timedelta(hours=1)
-        
-        # Clean old requests
-        self.requests[client_id] = [
-            req_time for req_time in self.requests[client_id]
-            if req_time > minute_ago
-        ]
-        self.hourly_requests[client_id] = [
-            req_time for req_time in self.hourly_requests[client_id]
-            if req_time > hour_ago
-        ]
-        
+
+        # Clean old requests and evict empty buckets to prevent memory leak
+        recent = [t for t in self.requests[client_id] if t > minute_ago]
+        if recent:
+            self.requests[client_id] = recent
+        else:
+            self.requests.pop(client_id, None)
+
+        hourly = [t for t in self.hourly_requests[client_id] if t > hour_ago]
+        if hourly:
+            self.hourly_requests[client_id] = hourly
+        else:
+            self.hourly_requests.pop(client_id, None)
+
         # Check rate limits
-        if len(self.requests[client_id]) >= settings.RATE_LIMIT_PER_MINUTE:
+        if len(self.requests.get(client_id, [])) >= settings.RATE_LIMIT_PER_MINUTE:
             logger.warning(f"Rate limit exceeded for {client_id} (per minute)")
             return JSONResponse(
                 status_code=429,
                 content={"error": "Rate limit exceeded. Please wait before making more requests."}
             )
-        
-        if len(self.hourly_requests[client_id]) >= settings.RATE_LIMIT_PER_HOUR:
+
+        if len(self.hourly_requests.get(client_id, [])) >= settings.RATE_LIMIT_PER_HOUR:
             logger.warning(f"Rate limit exceeded for {client_id} (per hour)")
             return JSONResponse(
                 status_code=429,
                 content={"error": "Hourly rate limit exceeded. Please wait before making more requests."}
             )
-        
+
         # Record the request
-        self.requests[client_id].append(now)
-        self.hourly_requests[client_id].append(now)
-        
+        self.requests.setdefault(client_id, []).append(now)
+        self.hourly_requests.setdefault(client_id, []).append(now)
+
         # Process the request
         return await _safe_call_next(call_next, request)
 

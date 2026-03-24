@@ -48,6 +48,8 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
   useEffect(() => {
     fetchMachineData();
 
+    // Poll while machine is transitioning. The condition is checked inside the
+    // callback (not in deps) so state changes don't cascade-restart the interval.
     const interval = setInterval(() => {
       if (machine && (
         ['creating', 'starting', 'stopping'].includes(machine.status) ||
@@ -55,10 +57,11 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
       )) {
         fetchMachineData();
       }
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
-  }, [machineId, machine?.status, machine?.settings?.desktopInitStatus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [machineId]);
 
   const fetchMachineData = async () => {
     try {

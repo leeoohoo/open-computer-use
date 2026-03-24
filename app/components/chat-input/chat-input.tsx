@@ -426,7 +426,7 @@ export function ChatInput({
       }
 
       fetchMachineStatus()
-      // Poll for status updates every 3 seconds when showing status bar, 10 seconds otherwise
+      // Poll for status updates — 3s when actively provisioning, 10s otherwise
       const interval = setInterval(fetchMachineStatus, showVMStatusBar ? 3000 : 10000)
       return () => clearInterval(interval)
     } else {
@@ -437,7 +437,12 @@ export function ChatInput({
       setAgentReady(false)
 
     }
-  }, [selectedVMId, isUserAuthenticated, showVMStatusBar])
+    // NOTE: showVMStatusBar intentionally excluded from deps — it only affects
+    // the polling interval, not whether we should poll. Including it caused a
+    // cascade: fetch → setState → showVMStatusBar changes → effect re-runs →
+    // immediate fetch → repeat, exhausting the hourly rate limit on login.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedVMId, isUserAuthenticated])
   
 
   // Start VM if it's stopped

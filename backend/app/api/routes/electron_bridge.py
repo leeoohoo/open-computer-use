@@ -137,7 +137,7 @@ async def electron_websocket(
                     .maybe_single()
                     .execute()
                 )
-                if any_owner.data and any_owner.data.get("user_id") != user_id:
+                if any_owner and any_owner.data and any_owner.data.get("user_id") != user_id:
                     logger.warning(f"Electron WS: machine {machine_id} belongs to another user (not {user_id})")
                     await websocket.send_json({"type": "auth_failed", "reason": "Machine belongs to another user"})
                     await websocket.close(code=4003, reason="Machine ownership mismatch")

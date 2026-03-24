@@ -56,17 +56,32 @@ export function MachinesContent() {
     fetchMachines();
   }, []);
 
+  // Single shared poll for ALL transitioning machines instead of one interval per machine.
+  // Cleans up on unmount; restarts only when the set of transitioning IDs changes.
   useEffect(() => {
-    const transitioningMachines = machines.filter(m =>
-      ["creating", "starting", "stopping", "deleting"].includes(m.status)
-    );
+    const transitioningIds = machines
+      .filter(m => ["creating", "starting", "stopping", "deleting"].includes(m.status))
+      .map(m => m.id);
 
-    transitioningMachines.forEach(machine => {
-      if (!statusPollingIntervals.has(machine.id)) {
-        pollMachineStatus(machine.id);
+    if (transitioningIds.length === 0) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch("/api/machines");
+        if (!response.ok) return;
+        const data: MachinesData = await response.json();
+        setMachines(data.machines);
+        setLimits(data.limits);
+        setUsage(data.usage);
+      } catch (error) {
+        console.error("Error polling machine status:", error);
       }
-    });
-  }, [machines.length]);
+    }, 5000);
+
+    return () => clearInterval(interval);
+    // Only restart when the set of transitioning machine IDs actually changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [machines.filter(m => ["creating", "starting", "stopping", "deleting"].includes(m.status)).map(m => m.id).join(",")]);
 
   useEffect(() => {
     return () => {
@@ -166,20 +181,22 @@ export function MachinesContent() {
       clearTimeout(fastPollingTimeout);
     }
 
+    // Brief fast-poll to pick up the new machine, then the shared
+    // transitioning-machine interval (5s) takes over.
     let pollCount = 0;
     const fastPoll = async () => {
       pollCount++;
       await fetchMachines();
 
-      if (pollCount < 15) {
-        const timeout = setTimeout(fastPoll, 2000);
+      if (pollCount < 4) {
+        const timeout = setTimeout(fastPoll, 3000);
         setFastPollingTimeout(timeout);
       } else {
         setFastPollingTimeout(null);
       }
     };
 
-    const timeout = setTimeout(fastPoll, 1000);
+    const timeout = setTimeout(fastPoll, 2000);
     setFastPollingTimeout(timeout);
   };
 
