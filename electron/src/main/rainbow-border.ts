@@ -3,16 +3,29 @@ import { BrowserWindow, screen } from 'electron'
 let borderWindow: BrowserWindow | null = null
 let visible = false
 let loaded: Promise<void> = Promise.resolve()
+// 'full' = task-running intensity, 'ambient' = lighter expanded-overlay glow
+let currentIntensity: 'full' | 'ambient' = 'full'
 
 export function initRainbowBorder(): void {
   if (borderWindow && !borderWindow.isDestroyed()) return
   createWindow()
 }
 
+/** Show at full intensity (task running). */
 export async function showRainbowBorder(): Promise<void> {
-  if (visible) return
-  visible = true
+  currentIntensity = 'full'
+  await showWithIntensity('full')
+}
 
+/** Show a lighter ambient glow (overlay expanded). */
+export async function showAmbientRainbow(): Promise<void> {
+  // Don't downgrade if a task is already running at full intensity
+  if (visible && currentIntensity === 'full') return
+  currentIntensity = 'ambient'
+  await showWithIntensity('ambient')
+}
+
+async function showWithIntensity(intensity: 'full' | 'ambient'): Promise<void> {
   if (!borderWindow || borderWindow.isDestroyed()) {
     createWindow()
   }
@@ -23,13 +36,32 @@ export async function showRainbowBorder(): Promise<void> {
 
   const { x, y, width, height } = screen.getPrimaryDisplay().bounds
   win.setBounds({ x, y, width, height })
-  win.showInactive()
-  win.webContents.executeJavaScript('fadeIn()').catch(() => {})
+
+  // Set intensity before fading in (or update if already visible)
+  const opacityVal = intensity === 'ambient' ? 0.35 : 1.0
+  win.webContents.executeJavaScript('setIntensity(' + opacityVal + ')').catch(() => {})
+
+  if (!visible) {
+    visible = true
+    win.showInactive()
+    win.webContents.executeJavaScript('fadeIn()').catch(() => {})
+  }
 }
 
 export function hideRainbowBorder(): void {
   if (!visible) return
   visible = false
+  currentIntensity = 'full'
+
+  if (!borderWindow || borderWindow.isDestroyed()) return
+  borderWindow.hide()
+}
+
+/** Hide only the ambient glow (when collapsing overlay). Does nothing if a task is running. */
+export function hideAmbientRainbow(): void {
+  if (!visible || currentIntensity === 'full') return
+  visible = false
+  currentIntensity = 'full'
 
   if (!borderWindow || borderWindow.isDestroyed()) return
   borderWindow.hide()
@@ -37,12 +69,16 @@ export function hideRainbowBorder(): void {
 
 export function hideRainbowForScreenshot(): void {
   if (!borderWindow || borderWindow.isDestroyed() || !borderWindow.isVisible()) return
+  // Snap opacity off immediately (CSS fadeOut is too slow for screenshot timing)
+  borderWindow.webContents.executeJavaScript("wrap.classList.remove('on')").catch(() => {})
   borderWindow.hide()
 }
 
 export function showRainbowAfterScreenshot(): void {
   if (!visible || !borderWindow || borderWindow.isDestroyed()) return
+  // Show the window with wrap still invisible, then fade in smoothly
   borderWindow.showInactive()
+  borderWindow.webContents.executeJavaScript('fadeIn()').catch(() => {})
 }
 
 export function destroyRainbowBorder(): void {
@@ -115,7 +151,7 @@ const GLOW_HTML = `<!DOCTYPE html>
 <style>
   *{margin:0;padding:0}
   html,body{width:100vw;height:100vh;overflow:hidden;background:transparent}
-  #wrap{position:fixed;inset:0;opacity:0;transition:opacity .4s ease-out}
+  #wrap{position:fixed;inset:0;opacity:0;transition:opacity .6s ease-out}
   #wrap.on{opacity:1}
   canvas{width:100vw;height:100vh;display:block}
 </style>
@@ -144,7 +180,7 @@ const GLOW_HTML = `<!DOCTYPE html>
     return ((Math.sin(i * 127.1 + 311.7) * 43758.5453) % 1 + 1) % 1;
   }
 
-  var NUM = 14;
+  var NUM = 18;
   var blobs = [];
   for (var i = 0; i < NUM; i++) {
     var r1 = sr(i), r2 = sr(i+97), r3 = sr(i+199), r4 = sr(i+307);
@@ -154,18 +190,23 @@ const GLOW_HTML = `<!DOCTYPE html>
       speed: (0.012 + r1 * 0.022) * (r2 > 0.5 ? 1 : -1),
       wobbleAmp: 0.008 + r3 * 0.025,
       wobbleFreq: 0.25 + r4 * 0.55,
-      // Varied radii: some large ambient, some small bright
-      radius: (60 + r1 * 115),  // in half-res pixels (120-350 in screen px)
+      // Larger radii for wider, more visible glow
+      radius: (100 + r1 * 160),  // in half-res pixels (200-520 in screen px)
       pulseFreq: 0.25 + r2 * 0.6,
-      pulseAmp: 0.15 + r3 * 0.1,
-      alpha: 0.07 + r4 * 0.16,
+      pulseAmp: 0.18 + r3 * 0.14,
+      alpha: 0.18 + r4 * 0.24,
       hueBase: (i / NUM) * 360,
+      // Per-blob hue drift speed so colors diverge over time
+      hueDrift: 4 + r2 * 18,  // 4–22 deg/sec (was fixed 6)
+      // Secondary hue offset that oscillates — creates color shimmer
+      hueOscAmp: 20 + r3 * 40,  // ±20–60 deg swing
+      hueOscFreq: 0.15 + r4 * 0.35,
     });
   }
 
   // Convert perimeter parameter t ∈ [0,1] to (x,y) in half-res coords.
   // Offset pushes blob center outside the viewport edge.
-  var OFFSET = 10; // half-res pixels (20 screen px)
+  var OFFSET = 30; // half-res pixels (60 screen px) — pushes glow further inward
   function perimPt(t) {
     t = ((t % 1) + 1) % 1;
     var P = 2 * (W + H);
@@ -175,6 +216,10 @@ const GLOW_HTML = `<!DOCTYPE html>
     if (d < 2 * W + H)  return { x: W - (d - W - H), y: H + OFFSET };
     return                      { x: -OFFSET,          y: H - (d - 2*W - H) };
   }
+
+  // Global intensity multiplier (1.0 = full task mode, 0.35 = ambient overlay glow)
+  var intensity = 1.0;
+  window.setIntensity = function(v) { intensity = v; };
 
   var running = false;
   var lastTs = 0;
@@ -186,8 +231,8 @@ const GLOW_HTML = `<!DOCTYPE html>
     ctx.clearRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'lighter';
 
-    // Subtle breathing: global intensity oscillation
-    var breathe = 0.88 + 0.12 * Math.sin(time * 1.1);
+    // Breathing: global intensity oscillation
+    var breathe = 0.78 + 0.22 * Math.sin(time * 1.1);
 
     for (var i = 0; i < NUM; i++) {
       var b = blobs[i];
@@ -197,15 +242,20 @@ const GLOW_HTML = `<!DOCTYPE html>
       var p = perimPt(t);
       var r = b.radius * (1 + b.pulseAmp * Math.sin(time * b.pulseFreq));
 
-      // Slow global hue rotation so colors drift over time
-      var hue = (b.hueBase + time * 6) % 360;
-      var a = b.alpha * breathe;
+      // Per-blob hue: base + individual drift + oscillating shimmer
+      var hue = (b.hueBase + time * b.hueDrift
+                + Math.sin(time * b.hueOscFreq) * b.hueOscAmp) % 360;
+      if (hue < 0) hue += 360;
+      // Secondary hue for gradient edge — shifted 30–60° for richer color transitions
+      var hue2 = (hue + 30 + r * 0.15) % 360;
+      var a = b.alpha * breathe * intensity;
 
       var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
-      grad.addColorStop(0,   'hsla(' + hue + ',78%,62%,' + (a).toFixed(3) + ')');
-      grad.addColorStop(0.35,'hsla(' + hue + ',72%,56%,' + (a * 0.6).toFixed(3) + ')');
-      grad.addColorStop(0.7, 'hsla(' + hue + ',65%,52%,' + (a * 0.2).toFixed(3) + ')');
-      grad.addColorStop(1,   'hsla(' + hue + ',60%,48%,0)');
+      grad.addColorStop(0,   'hsla(' + hue + ',92%,67%,' + (a).toFixed(3) + ')');
+      grad.addColorStop(0.2, 'hsla(' + hue + ',88%,62%,' + (a * 0.8).toFixed(3) + ')');
+      grad.addColorStop(0.45,'hsla(' + hue2 + ',82%,57%,' + (a * 0.4).toFixed(3) + ')');
+      grad.addColorStop(0.75,'hsla(' + hue2 + ',74%,52%,' + (a * 0.12).toFixed(3) + ')');
+      grad.addColorStop(1,   'hsla(' + hue2 + ',65%,48%,0)');
 
       ctx.fillStyle = grad;
       // Only fill the region this blob covers (perf optimisation)

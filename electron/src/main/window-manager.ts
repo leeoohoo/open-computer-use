@@ -23,6 +23,7 @@ let animTimer: ReturnType<typeof setInterval> | null = null
 let inPostAuthTransition = false
 let enforcerInterval: ReturnType<typeof setInterval> | null = null
 let isHiddenForScreenshot = false
+let savedOpacityBeforeScreenshot = 1
 
 /** Smoothly animate window bounds from current to target. */
 function animateBounds(win: BrowserWindow, target: Electron.Rectangle): void {
@@ -266,20 +267,41 @@ export async function hideForScreenshot(): Promise<void> {
   const win = mainWindow
   if (!win || win.isDestroyed() || !win.isVisible()) return
   isHiddenForScreenshot = true
+  savedOpacityBeforeScreenshot = win.getOpacity()
   win.hide()
   // Wait for OS to finish hiding and repaint the desktop
   await new Promise((resolve) => setTimeout(resolve, 150))
 }
 
-/** Show the overlay window after screenshot capture (without stealing focus). */
+/** Show the overlay window after screenshot capture with a smooth fade-in. */
 export function showAfterScreenshot(): void {
   const win = mainWindow
   if (!win || win.isDestroyed()) return
   isHiddenForScreenshot = false
+
+  // Start fully transparent, then fade in over 300ms
+  const targetOpacity = savedOpacityBeforeScreenshot
+  win.setOpacity(0)
   win.showInactive()
+
   // Re-assert topmost after show — showInactive() doesn't restore z-order on Windows
   if (currentMode !== 'auth') {
     win.setAlwaysOnTop(true, 'screen-saver', 1)
     win.moveTop()
   }
+
+  // Smooth fade-in
+  const FADE_DURATION = 300
+  const FADE_STEP = 16 // ~60fps
+  const steps = Math.ceil(FADE_DURATION / FADE_STEP)
+  let step = 0
+  const fadeTimer = setInterval(() => {
+    step++
+    if (win.isDestroyed()) { clearInterval(fadeTimer); return }
+    const t = Math.min(step / steps, 1)
+    // Ease-out cubic for a natural feel
+    const eased = 1 - Math.pow(1 - t, 3)
+    win.setOpacity(eased * targetOpacity)
+    if (t >= 1) clearInterval(fadeTimer)
+  }, FADE_STEP)
 }

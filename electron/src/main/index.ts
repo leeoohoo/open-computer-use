@@ -12,7 +12,7 @@ import {
   openAccessibilitySettings,
 } from './permissions'
 import { ApprovalManager } from './approval-manager'
-import { destroyRainbowBorder } from './rainbow-border'
+import { destroyRainbowBorder, showAmbientRainbow, hideAmbientRainbow } from './rainbow-border'
 
 // Prevent multiple instances — second instance just focuses the existing window.
 // This also avoids GPU cache lock conflicts on Windows.
@@ -141,6 +141,12 @@ app.whenReady().then(async () => {
   // Window mode control — renderer requests mode changes
   ipcMain.handle('window:set-mode', async (_event, mode: string) => {
     setWindowMode(mode as 'auth' | 'compact' | 'expanded')
+    // Show a subtle ambient rainbow when overlay is expanded, hide when collapsed
+    if (mode === 'expanded') {
+      showAmbientRainbow()
+    } else if (mode === 'compact') {
+      hideAmbientRainbow()
+    }
   })
 
   // Window opacity control
