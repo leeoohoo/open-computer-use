@@ -38,6 +38,8 @@ const blogDropdownItems = [
 
 const navItems = [
   { href: "/agent-swarms", label: "Agent Swarms", external: true },
+  { href: "/compare", label: "Compare", external: true },
+  { href: "/results", label: "Demos", external: true },
   { href: "/pricing", label: "Pricing", external: true },
   { href: "/download", label: "Download", external: true },
 ]
