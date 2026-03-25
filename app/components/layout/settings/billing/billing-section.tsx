@@ -605,7 +605,7 @@ function StatCard({
   const a = accentMap[accent]
 
   return (
-    <div className="rounded-xl border border-border/40 bg-card/30 p-4 flex flex-col h-[120px]">
+    <div className="rounded-xl border border-border/40 bg-card/30 p-4 flex flex-col min-h-[120px]">
       <div className="flex items-center justify-between mb-auto">
         <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">
           {label}
@@ -1069,9 +1069,9 @@ export function BillingSection() {
       {/* ─── Usage Progress (subscribed users) ───────────────────────────── */}
       {activePlan && (
         <motion.div {...fadeUp(0.25)} className="rounded-xl border border-border/40 p-4">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-3">
             <div className="flex items-center gap-2">
-              <Zap className="h-3.5 w-3.5 text-primary" />
+              <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
               <span className="text-sm font-medium">Monthly Credit Usage</span>
             </div>
             <span className="text-xs text-muted-foreground">
@@ -1115,7 +1115,7 @@ export function BillingSection() {
           </p>
 
           {/* Plan pills */}
-          <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="flex items-center justify-center gap-2 mb-6 flex-wrap">
             {subscriptionPlans.map((p, i) => (
               <button
                 key={p.name}
@@ -1177,7 +1177,7 @@ export function BillingSection() {
                 : "50x"
             return (
               <div className="flex justify-center mb-6">
-                <div className="inline-flex items-center gap-3 rounded-full border border-border bg-muted/40 px-4 py-2">
+                <div className="inline-flex items-center gap-3 rounded-full border border-border bg-muted/40 px-4 py-2 flex-wrap justify-center">
                   <span className="text-xs text-muted-foreground">
                     Save{" "}
                     <span className="font-semibold text-foreground">
@@ -1185,12 +1185,12 @@ export function BillingSection() {
                     </span>{" "}
                     vs human
                   </span>
-                  <span className="h-3 w-px bg-border" />
+                  <span className="h-3 w-px bg-border hidden sm:block" />
                   <span className="text-xs text-muted-foreground">
                     <span className="font-semibold text-foreground">{timeSaved}</span>{" "}
                     saved monthly
                   </span>
-                  <span className="h-3 w-px bg-border" />
+                  <span className="h-3 w-px bg-border hidden sm:block" />
                   <span className="text-xs text-muted-foreground">
                     <span className="font-semibold text-foreground">{multiplier}</span>{" "}
                     cheaper
@@ -1291,9 +1291,9 @@ export function BillingSection() {
         <>
           {/* Active Subscription Card */}
           <motion.div {...fadeUp(0.3)} className="rounded-xl border border-green-500/20 bg-gradient-to-b from-green-500/[0.04] to-transparent p-5">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
                   <CheckCircle className="h-5 w-5 text-green-500" />
                 </div>
                 <div>
@@ -1314,7 +1314,7 @@ export function BillingSection() {
                 size="sm"
                 variant="outline"
                 onClick={handleManageSubscription}
-                className="hover:bg-primary hover:text-primary-foreground"
+                className="hover:bg-primary hover:text-primary-foreground w-full sm:w-auto"
               >
                 <CreditCard className="mr-1.5 h-3.5 w-3.5" />
                 Manage
@@ -1431,9 +1431,9 @@ export function BillingSection() {
 
       {/* ─── Usage Chart ─────────────────────────────────────────────────── */}
       <motion.div {...fadeUp(0.45)} className="rounded-xl border border-border/30 bg-card/20 overflow-hidden">
-        <div className="flex items-center justify-between px-5 pt-5 pb-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 pt-5 pb-1">
           <div className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-lg bg-indigo-500/[0.08] flex items-center justify-center">
+            <div className="h-7 w-7 rounded-lg bg-indigo-500/[0.08] flex items-center justify-center shrink-0">
               <ChartLine className="h-3.5 w-3.5 text-indigo-500" weight="bold" />
             </div>
             <span className="text-sm font-semibold">Credit Activity</span>
@@ -1477,7 +1477,7 @@ export function BillingSection() {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-5 px-5 pb-1 pt-1">
+        <div className="flex items-center gap-3 sm:gap-5 px-5 pb-1 pt-1 flex-wrap">
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-indigo-500/70" />
             <span className="text-[10px] text-muted-foreground/40 font-medium">Balance</span>
@@ -1505,9 +1505,9 @@ export function BillingSection() {
 
       {/* ─── Transaction History ──────────────────────────────────────────── */}
       <motion.div {...fadeUp(0.55)}>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2">
-            <Receipt className="h-4 w-4 text-muted-foreground/50" weight="bold" />
+            <Receipt className="h-4 w-4 text-muted-foreground/50 shrink-0" weight="bold" />
             <span className="text-sm font-semibold">Transactions</span>
             <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
               {filteredTransactions.length}

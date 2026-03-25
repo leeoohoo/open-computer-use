@@ -9,10 +9,7 @@ interface QuickStartExampleTasksProps {
   isDisabled: boolean
 }
 
-const exampleTasks = [
-  "Build a Bloomberg terminal with live market data",
-  "Build a playable Snake game in the browser",
-]
+const exampleTasks: string[] = []
 
 export function QuickStartExampleTasks({
   onSelectTask,

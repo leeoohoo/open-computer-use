@@ -17,7 +17,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { Caveat } from "next/font/google"
 import dynamic from "next/dynamic"
 import { redirect } from "next/navigation"
-import { useEffect, useMemo, useState, useRef, useCallback } from "react"
+import React, { useEffect, useMemo, useState, useRef, useCallback } from "react"
 import { useChatCore } from "./use-chat-core"
 import { InsufficientCreditsModal } from "@/app/components/credits/insufficient-credits-modal"
 import { useChatOperations } from "./use-chat-operations"
@@ -31,6 +31,7 @@ import { Switch } from "@/components/ui/switch"
 import { QuickStartGuide } from "./quick-start-guide"
 import Link from "next/link"
 import { ShieldCheck, Search, Bug, Globe, FileText, BarChart3, Mail, Zap, Sparkles, PenTool, MonitorSmartphone, Clipboard, Users, TrendingUp, Eye, FileCode, LayoutGrid, Send, ShoppingCart, MessageCircle, Bot } from "lucide-react"
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card"
 import { SwarmPanel } from "./swarm-panel"
 import { ActiveSwarmBanner, type ActiveSwarm } from "./active-swarm-banner"
 import { RemoteApproval } from "./remote-approval"
@@ -106,11 +107,195 @@ const USE_CASE_TEMPLATES: Record<string, TaskTemplate[]> = {
 }
 
 const TASK_COLORS: Record<string, { icon: string; bg: string; border: string; hover: string }> = {
-  blue:    { icon: "text-blue-500 dark:text-blue-400",    bg: "bg-blue-500/[0.08] dark:bg-blue-400/[0.08]",    border: "border-blue-500/15 dark:border-blue-400/15",    hover: "hover:bg-blue-500/[0.13] dark:hover:bg-blue-400/[0.13] hover:border-blue-500/25 dark:hover:border-blue-400/25" },
-  violet:  { icon: "text-violet-500 dark:text-violet-400",  bg: "bg-violet-500/[0.08] dark:bg-violet-400/[0.08]",  border: "border-violet-500/15 dark:border-violet-400/15",  hover: "hover:bg-violet-500/[0.13] dark:hover:bg-violet-400/[0.13] hover:border-violet-500/25 dark:hover:border-violet-400/25" },
-  emerald: { icon: "text-emerald-500 dark:text-emerald-400", bg: "bg-emerald-500/[0.08] dark:bg-emerald-400/[0.08]", border: "border-emerald-500/15 dark:border-emerald-400/15", hover: "hover:bg-emerald-500/[0.13] dark:hover:bg-emerald-400/[0.13] hover:border-emerald-500/25 dark:hover:border-emerald-400/25" },
-  rose:    { icon: "text-rose-500 dark:text-rose-400",    bg: "bg-rose-500/[0.08] dark:bg-rose-400/[0.08]",    border: "border-rose-500/15 dark:border-rose-400/15",    hover: "hover:bg-rose-500/[0.13] dark:hover:bg-rose-400/[0.13] hover:border-rose-500/25 dark:hover:border-rose-400/25" },
-  amber:   { icon: "text-amber-500 dark:text-amber-400",   bg: "bg-amber-500/[0.08] dark:bg-amber-400/[0.08]",   border: "border-amber-500/15 dark:border-amber-400/15",   hover: "hover:bg-amber-500/[0.13] dark:hover:bg-amber-400/[0.13] hover:border-amber-500/25 dark:hover:border-amber-400/25" },
+  blue:    { icon: "text-neutral-500 dark:text-neutral-400",  bg: "bg-neutral-500/[0.06] dark:bg-neutral-400/[0.06]",  border: "border-neutral-300/40 dark:border-neutral-600/40",  hover: "hover:bg-neutral-500/[0.10] dark:hover:bg-neutral-400/[0.10] hover:border-neutral-300/60 dark:hover:border-neutral-600/60" },
+  violet:  { icon: "text-neutral-500 dark:text-neutral-400",  bg: "bg-neutral-500/[0.06] dark:bg-neutral-400/[0.06]",  border: "border-neutral-300/40 dark:border-neutral-600/40",  hover: "hover:bg-neutral-500/[0.10] dark:hover:bg-neutral-400/[0.10] hover:border-neutral-300/60 dark:hover:border-neutral-600/60" },
+  emerald: { icon: "text-neutral-500 dark:text-neutral-400",  bg: "bg-neutral-500/[0.06] dark:bg-neutral-400/[0.06]",  border: "border-neutral-300/40 dark:border-neutral-600/40",  hover: "hover:bg-neutral-500/[0.10] dark:hover:bg-neutral-400/[0.10] hover:border-neutral-300/60 dark:hover:border-neutral-600/60" },
+  rose:    { icon: "text-neutral-500 dark:text-neutral-400",  bg: "bg-neutral-500/[0.06] dark:bg-neutral-400/[0.06]",  border: "border-neutral-300/40 dark:border-neutral-600/40",  hover: "hover:bg-neutral-500/[0.10] dark:hover:bg-neutral-400/[0.10] hover:border-neutral-300/60 dark:hover:border-neutral-600/60" },
+  amber:   { icon: "text-neutral-500 dark:text-neutral-400",  bg: "bg-neutral-500/[0.06] dark:bg-neutral-400/[0.06]",  border: "border-neutral-300/40 dark:border-neutral-600/40",  hover: "hover:bg-neutral-500/[0.10] dark:hover:bg-neutral-400/[0.10] hover:border-neutral-300/60 dark:hover:border-neutral-600/60" },
+}
+
+// ── Task hover visual components ─────────────────────────────────────
+// Animated mini-previews shown on hover, matching the sidebar pattern
+
+function TaskVisualSearch() {
+  const results = [
+    { title: "Competitor A", w: "w-14", delay: "0s" },
+    { title: "Competitor B", w: "w-18", delay: "0.08s" },
+    { title: "Competitor C", w: "w-12", delay: "0.16s" },
+    { title: "Pricing data", w: "w-16", delay: "0.24s" },
+  ]
+  return (
+    <div className="w-full h-full flex flex-col px-3 py-2 gap-1">
+      {/* Search bar */}
+      <div className="thv-row flex items-center gap-1.5 px-2 py-[4px] rounded border border-foreground/10 bg-foreground/[0.03]" style={{ animationDelay: "0s" }}>
+        <svg width="7" height="7" viewBox="0 0 16 16" className="text-foreground/25 shrink-0">
+          <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5" fill="none" />
+          <path d="M10 10l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        <div className="flex items-center gap-[1px]">
+          {Array.from("competitors").map((c, i) => (
+            <span key={i} className="text-[5px] text-foreground/35 font-mono thv-type-char" style={{ animationDelay: `${0.2 + i * 0.03}s` }}>{c}</span>
+          ))}
+        </div>
+      </div>
+      {/* Results */}
+      {results.map((r, i) => (
+        <div key={i} className="thv-row flex items-center gap-2 px-2 py-[4px] rounded border border-foreground/8" style={{ animationDelay: `${0.5 + i * 0.1}s` }}>
+          <div className="w-[14px] h-[14px] rounded bg-foreground/[0.06] border border-foreground/10 shrink-0" />
+          <div className="flex-1 flex flex-col gap-[2px]">
+            <div className={cn("h-[4px] rounded-full bg-foreground/15", r.w)} />
+            <div className="h-[2px] w-20 rounded-full bg-foreground/8" />
+          </div>
+        </div>
+      ))}
+      {/* Export row */}
+      <div className="flex items-center gap-1.5 self-center mt-0.5 thv-fade-up" style={{ animationDelay: "1s" }}>
+        <div className="px-2 py-[2px] rounded-full border border-foreground/15 bg-foreground/[0.04] text-[5px] font-bold text-foreground/30 tracking-widest">EXPORT CSV</div>
+      </div>
+    </div>
+  )
+}
+
+function TaskVisualBrowse() {
+  return (
+    <div className="w-full h-full flex flex-col px-3 py-2 gap-1.5">
+      {/* Browser chrome */}
+      <div className="thv-row flex flex-col rounded border border-foreground/10 overflow-hidden flex-1" style={{ animationDelay: "0s" }}>
+        {/* Tab bar */}
+        <div className="flex items-center gap-1 px-1.5 py-[3px] border-b border-foreground/8 bg-foreground/[0.03]">
+          <div className="w-1 h-1 rounded-full bg-foreground/20" />
+          <div className="w-1 h-1 rounded-full bg-foreground/20" />
+          <div className="w-1 h-1 rounded-full bg-foreground/20" />
+          <div className="ml-1 h-[3px] w-16 rounded-full bg-foreground/10" />
+        </div>
+        {/* Page content loading */}
+        <div className="flex-1 p-2 flex flex-col gap-1.5">
+          <div className="h-[5px] w-3/4 rounded-full bg-foreground/12 thv-row" style={{ animationDelay: "0.2s" }} />
+          <div className="h-[3px] w-full rounded-full bg-foreground/8 thv-row" style={{ animationDelay: "0.3s" }} />
+          <div className="h-[3px] w-5/6 rounded-full bg-foreground/8 thv-row" style={{ animationDelay: "0.4s" }} />
+          <div className="h-8 w-full rounded bg-foreground/[0.04] border border-foreground/8 mt-1 thv-row" style={{ animationDelay: "0.5s" }} />
+        </div>
+      </div>
+      {/* Click indicator */}
+      <div className="flex items-center gap-2 thv-fade-up" style={{ animationDelay: "0.7s" }}>
+        <svg width="8" height="8" viewBox="0 0 16 16" className="text-foreground/25">
+          <path d="M4 1v10l3-3h6" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinejoin="round" />
+        </svg>
+        <div className="flex-1 h-px bg-foreground/10" />
+        <span className="text-[5px] font-bold text-foreground/25 tracking-widest">SCREENSHOT</span>
+      </div>
+    </div>
+  )
+}
+
+function TaskVisualData() {
+  const rows = [
+    { cells: ["w-8", "w-6", "w-10"], delay: "0.2s" },
+    { cells: ["w-10", "w-8", "w-6"], delay: "0.3s" },
+    { cells: ["w-6", "w-10", "w-8"], delay: "0.4s" },
+    { cells: ["w-8", "w-8", "w-10"], delay: "0.5s" },
+  ]
+  return (
+    <div className="w-full h-full flex flex-col px-3 py-2 gap-1">
+      {/* Table header */}
+      <div className="thv-row flex items-center gap-3 px-1.5 py-[3px] border-b border-foreground/12" style={{ animationDelay: "0.1s" }}>
+        <div className="h-[3px] w-8 rounded-full bg-foreground/20" />
+        <div className="h-[3px] w-6 rounded-full bg-foreground/20" />
+        <div className="h-[3px] w-10 rounded-full bg-foreground/20" />
+      </div>
+      {/* Rows filling in */}
+      {rows.map((r, i) => (
+        <div key={i} className="thv-row flex items-center gap-3 px-1.5 py-[3px]" style={{ animationDelay: r.delay }}>
+          {r.cells.map((w, j) => (
+            <div key={j} className={cn("h-[3px] rounded-full bg-foreground/10", w)} />
+          ))}
+        </div>
+      ))}
+      {/* Progress bar */}
+      <div className="mt-auto flex items-center gap-1.5 thv-fade-up" style={{ animationDelay: "0.8s" }}>
+        <div className="flex-1 h-[3px] bg-foreground/[0.06] rounded-full overflow-hidden">
+          <div className="h-full bg-foreground/20 rounded-full thv-progress" style={{ ["--progress" as string]: "75%", animationDelay: "0.9s" }} />
+        </div>
+        <span className="text-[5px] font-bold text-foreground/25 tracking-wider">75%</span>
+      </div>
+    </div>
+  )
+}
+
+function TaskVisualAutomate() {
+  const steps = [
+    { label: "Navigate", done: true, delay: "0.1s" },
+    { label: "Fill form", active: true, delay: "0.3s" },
+    { label: "Submit", upcoming: true, delay: "0.5s" },
+  ]
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center px-3 py-2 gap-2">
+      {/* Steps */}
+      <div className="flex items-center gap-1 w-full">
+        {steps.map((s, i) => (
+          <React.Fragment key={i}>
+            <div
+              className={cn(
+                "thv-row flex-1 flex flex-col items-center gap-1 px-1 py-1.5 rounded border",
+                s.done && "border-foreground/15 bg-foreground/[0.05]",
+                s.active && "border-foreground/20 bg-foreground/[0.07]",
+                s.upcoming && "border-dashed border-foreground/10",
+              )}
+              style={{ animationDelay: s.delay }}
+            >
+              <div className={cn(
+                "w-3 h-3 rounded-full border flex items-center justify-center",
+                s.done && "border-foreground/25 bg-foreground/10",
+                s.active && "border-foreground/30 bg-foreground/[0.08] thv-pulse-dot",
+                s.upcoming && "border-foreground/10",
+              )}>
+                {s.done && <svg width="5" height="5" viewBox="0 0 10 10"><path d="M2 5.5L4 7.5L8 3" stroke="currentColor" strokeWidth="1.5" fill="none" className="text-foreground/50" /></svg>}
+                {s.active && <div className="w-1 h-1 rounded-full bg-foreground/40" />}
+              </div>
+              <span className={cn("text-[5px] font-bold tracking-wide", s.upcoming ? "text-foreground/20" : "text-foreground/35")}>{s.label}</span>
+            </div>
+            {i < steps.length - 1 && (
+              <div className="w-3 h-px bg-foreground/10 shrink-0" />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+      {/* Active indicator */}
+      <div className="flex items-center gap-1.5 thv-fade-up" style={{ animationDelay: "0.7s" }}>
+        <div className="w-1.5 h-1.5 rounded-full bg-foreground/30 thv-pulse-dot" />
+        <span className="text-[5px] font-semibold text-foreground/25 tracking-widest">RUNNING</span>
+      </div>
+    </div>
+  )
+}
+
+// Map task labels to their visual component
+function getTaskVisual(label: string): React.FC {
+  const l = label.toLowerCase()
+  if (l.includes("competitor") || l.includes("lead") || l.includes("seo") || l.includes("review") || l.includes("comparison") || l.includes("benchmark") || l.includes("vendor") || l.includes("pricing")) return TaskVisualSearch
+  if (l.includes("bug") || l.includes("performance") || l.includes("audit") || l.includes("responsive") || l.includes("qa")) return TaskVisualBrowse
+  if (l.includes("export") || l.includes("data") || l.includes("scrape") || l.includes("extract") || l.includes("market") || l.includes("invoice")) return TaskVisualData
+  return TaskVisualAutomate
+}
+
+// Hover preview descriptions per task type
+function getTaskDescription(label: string): string {
+  const l = label.toLowerCase()
+  if (l.includes("competitor")) return "Opens competitor websites, compares pricing & features, builds a structured report"
+  if (l.includes("lead")) return "Searches LinkedIn for prospects, grabs contact info, exports a ready-to-use CSV"
+  if (l.includes("pitch")) return "Researches your market & competition, outlines a 10-slide investor deck"
+  if (l.includes("bug")) return "Walks through every user flow, screenshots each step, flags issues by priority"
+  if (l.includes("performance")) return "Checks page speed, SEO, accessibility & broken links, delivers a scored report"
+  if (l.includes("api") || l.includes("documentation")) return "Extracts every endpoint, method & response, exports a Postman-ready JSON"
+  if (l.includes("seo")) return "Searches target keywords, maps your ranking gaps, suggests content to close them"
+  if (l.includes("spy") || l.includes("competitor ads")) return "Screenshots competitor pages & ads, delivers a messaging teardown"
+  if (l.includes("trending") || l.includes("content idea")) return "Scans Google, Reddit & HN for trending topics, delivers 10 hooks"
+  if (l.includes("export") || l.includes("data")) return "Navigates your pages, extracts structured data, cleans & formats as CSV"
+  if (l.includes("market")) return "Researches TAM, growth rates & key players with sourced data"
+  if (l.includes("review")) return "Gathers reviews from G2, Capterra & Reddit, categorizes praise vs complaints"
+  if (l.includes("responsive") || l.includes("design")) return "Tests at mobile, tablet & desktop breakpoints, flags every layout issue"
+  if (l.includes("enter") || l.includes("record")) return "Opens your app, enters each record one by one, confirms saves"
+  return "Opens your site, executes the task step by step, delivers results"
 }
 
 function getTaskTemplates(
@@ -1099,32 +1284,88 @@ export function Chat() {
                 {taskTemplates.map((t, i) => {
                   const Icon = t.icon
                   const colors = TASK_COLORS[t.color] || TASK_COLORS.blue
+                  const Visual = getTaskVisual(t.label)
+                  const description = getTaskDescription(t.label)
                   return (
-                    <motion.button
-                      key={t.label}
-                      type="button"
-                      onClick={() => handleCollaborativeInputChange(t.prompt)}
-                      initial={{ opacity: 0, scale: 0.92 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.35 + i * 0.04, duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
-                      className={cn(
-                        "group inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-all duration-200 cursor-pointer",
-                        colors.border,
-                        colors.hover,
-                        "bg-card/40",
-                      )}
-                    >
-                      <Icon className={cn("size-3", colors.icon)} />
-                      <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors duration-200">
-                        {t.label}
-                      </span>
-                    </motion.button>
+                    <HoverCard key={t.label} openDelay={300} closeDelay={150}>
+                      <HoverCardTrigger asChild>
+                        <motion.button
+                          type="button"
+                          onClick={() => handleCollaborativeInputChange(t.prompt)}
+                          initial={{ opacity: 0, scale: 0.92 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.35 + i * 0.04, duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+                          className={cn(
+                            "group inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-all duration-200 cursor-pointer",
+                            colors.border,
+                            colors.hover,
+                            "bg-card/40",
+                          )}
+                        >
+                          <Icon className={cn("size-3", colors.icon)} />
+                          <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                            {t.label}
+                          </span>
+                        </motion.button>
+                      </HoverCardTrigger>
+                      <HoverCardContent
+                        side="top"
+                        align="center"
+                        sideOffset={10}
+                        className="w-64 p-0 border border-border/50 shadow-xl rounded-xl overflow-hidden"
+                      >
+                        <div className="flex flex-col">
+                          {/* Animated visual demo */}
+                          <div className="relative h-[120px] w-full bg-muted/50 border-b border-border/40 overflow-hidden">
+                            <Visual />
+                          </div>
+                          {/* Text info */}
+                          <div className="p-3.5 pt-3">
+                            <h4 className="text-[13px] font-semibold text-foreground leading-tight">{t.label}</h4>
+                            <p className="text-[11.5px] text-foreground/50 mt-1.5 leading-relaxed">{description}</p>
+                          </div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
                   )
                 })}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Task hover visual animations */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes thv-slide-in {
+            from { opacity: 0; transform: translateX(-8px); }
+            to { opacity: 1; transform: translateX(0); }
+          }
+          .thv-row { animation: thv-slide-in 0.35s cubic-bezier(0.25, 1, 0.5, 1) both; }
+
+          @keyframes thv-fade-up {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .thv-fade-up { animation: thv-fade-up 0.4s ease-out both; }
+
+          @keyframes thv-fill {
+            from { width: 0%; }
+            to { width: var(--progress, 50%); }
+          }
+          .thv-progress { animation: thv-fill 0.8s cubic-bezier(0.25, 1, 0.5, 1) both; }
+
+          @keyframes thv-char-reveal {
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .thv-type-char { animation: thv-char-reveal 0.15s ease-out both; }
+
+          @keyframes thv-pulse-dot {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+          }
+          .thv-pulse-dot { animation: thv-pulse-dot 2s ease-in-out infinite; }
+        ` }} />
       </motion.div>
     </div>
   )

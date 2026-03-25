@@ -69,7 +69,7 @@ export const Suggestions = memo(function Suggestions({
           <MotionPromptSuggestion
             key={suggestion.label}
             onClick={() => handleCategoryClick(suggestion)}
-            className="capitalize rounded-xl border-border/40 bg-neutral-100/80 dark:bg-neutral-800/60 hover:bg-neutral-200/80 dark:hover:bg-neutral-700/60 text-muted-foreground hover:text-foreground transition-colors duration-200"
+            className="capitalize rounded-xl border-neutral-200/60 dark:border-neutral-700/40 bg-neutral-100/60 dark:bg-neutral-800/40 hover:bg-neutral-200/60 dark:hover:bg-neutral-700/40 text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-200"
             variant="outline"
             initial="initial"
             animate="animate"
@@ -82,7 +82,7 @@ export const Suggestions = memo(function Suggestions({
               animate: { opacity: 1, y: 0 },
             }}
           >
-            <suggestion.icon className="size-3.5 opacity-60" />
+            <suggestion.icon className="size-3.5 opacity-50" strokeWidth={1.5} />
             {suggestion.label}
           </MotionPromptSuggestion>
         ))}
@@ -94,7 +94,7 @@ export const Suggestions = memo(function Suggestions({
   const suggestionsList = useMemo(
     () => (
       <motion.div
-        className="flex w-full flex-col gap-0.5 rounded-2xl bg-neutral-100/80 dark:bg-neutral-800/50 border border-border/30 p-1.5 backdrop-blur-sm md:mx-auto md:max-w-2xl"
+        className="flex w-full flex-col gap-0.5 rounded-2xl bg-neutral-100/60 dark:bg-neutral-800/40 border border-neutral-200/50 dark:border-neutral-700/30 p-1.5 backdrop-blur-sm md:mx-auto md:max-w-2xl"
         key={activeCategoryData?.label}
         initial="initial"
         animate="animate"
@@ -111,7 +111,7 @@ export const Suggestions = memo(function Suggestions({
             highlight={activeCategoryData.highlight}
             type="button"
             onClick={() => handleSuggestionClick(suggestion)}
-            className="block h-full text-left rounded-xl hover:bg-neutral-200/70 dark:hover:bg-neutral-700/50 transition-colors duration-150"
+            className="block h-full text-left rounded-xl hover:bg-neutral-200/50 dark:hover:bg-neutral-700/30 transition-colors duration-150"
             initial="initial"
             animate="animate"
             variants={{
