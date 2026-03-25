@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Menu, X, ArrowRight, ChevronDown, Search, Bug, TrendingUp, FileText, Mail, ShoppingCart, Users, BarChart3, Globe, Eye, Send, MonitorSmartphone } from "lucide-react"
+import { Menu, X, ArrowRight, ChevronDown, Search, Bug, TrendingUp, FileText, Mail, ShoppingCart, Users, BarChart3, Globe, Eye, Send, MonitorSmartphone, Monitor, Keyboard, GitCompare, BookOpen, Newspaper } from "lucide-react"
 import Image from "next/image"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { cn } from "@/lib/utils"
@@ -25,13 +25,21 @@ const useCaseDropdownItems = [
   { slug: "email-campaigns", label: "Email Campaigns", icon: Mail, stat: "100", statLabel: "personalized emails per campaign" },
 ]
 
+const blogDropdownItems = [
+  { href: "/blog", label: "All Posts", icon: Newspaper, stat: "50+", statLabel: "articles published weekly" },
+  { href: "/computer-use", label: "Computer Use", icon: Monitor, stat: "82%", statLabel: "OSWorld benchmark score" },
+  { href: "/compare", label: "Compare", icon: GitCompare, stat: "10", statLabel: "competitors analyzed" },
+  { href: "/computer-use/data-entry", label: "Data Entry", icon: Keyboard, stat: "10x", statLabel: "faster than manual" },
+  { href: "/computer-use/web-scraping", label: "Web Scraping", icon: Globe, stat: "1,000+", statLabel: "pages per session" },
+  { href: "/computer-use/job-applications", label: "Job Applications", icon: Send, stat: "50+", statLabel: "applications per session" },
+  { href: "/results", label: "Demos & Results", icon: Eye, stat: "20+", statLabel: "real case studies" },
+  { href: "/guide", label: "Guide", icon: BookOpen, stat: "12", statLabel: "use case walkthroughs" },
+]
+
 const navItems = [
   { href: "/agent-swarms", label: "Agent Swarms", external: true },
-  { href: "/results", label: "Demos", external: true },
   { href: "/pricing", label: "Pricing", external: true },
-  { href: "/guide", label: "Guide", external: true },
   { href: "/download", label: "Download", external: true },
-  { href: "/blog", label: "Blog", external: true }
 ]
 
 export function LandingHeader({
@@ -45,6 +53,10 @@ export function LandingHeader({
   const [useCasesOpen, setUseCasesOpen] = useState(false)
   const [hoveredUseCase, setHoveredUseCase] = useState<number>(0)
   const [mobileUseCasesOpen, setMobileUseCasesOpen] = useState(false)
+  const [blogOpen, setBlogOpen] = useState(false)
+  const [hoveredBlogItem, setHoveredBlogItem] = useState<number>(0)
+  const [mobileBlogOpen, setMobileBlogOpen] = useState(false)
+  const blogDropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const dropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -381,6 +393,125 @@ export function LandingHeader({
                     </li>
                   )
                 })}
+
+                {/* Blog & Resources Dropdown */}
+                <li
+                  className="relative"
+                  onMouseEnter={() => {
+                    if (blogDropdownTimeoutRef.current) clearTimeout(blogDropdownTimeoutRef.current)
+                    setBlogOpen(true)
+                  }}
+                  onMouseLeave={() => {
+                    blogDropdownTimeoutRef.current = setTimeout(() => setBlogOpen(false), 150)
+                  }}
+                >
+                  <Link
+                    href="/blog"
+                    className={cn(
+                      "relative flex items-center gap-1 whitespace-nowrap px-3 py-1.5 text-[13px] font-medium tracking-[-0.006em] rounded-lg transition-colors duration-200",
+                      (currentPath.startsWith("/blog") || currentPath.startsWith("/computer-use") || currentPath.startsWith("/compare"))
+                        ? "text-foreground"
+                        : "text-muted-foreground/60 hover:text-foreground"
+                    )}
+                  >
+                    Blog
+                    <ChevronDown className={cn("h-3 w-3 transition-transform duration-200", blogOpen && "rotate-180")} />
+                    {(currentPath.startsWith("/blog") || currentPath.startsWith("/computer-use") || currentPath.startsWith("/compare")) && (
+                      <motion.span
+                        layoutId="nav-indicator"
+                        className="absolute bottom-0 left-3 right-3 h-px bg-foreground/40"
+                        transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                      />
+                    )}
+                  </Link>
+
+                  <AnimatePresence>
+                    {blogOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 4, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[520px] rounded-xl border border-border/30 bg-background/95 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)] p-1.5"
+                      >
+                        <div className="flex gap-1.5">
+                          {/* Left: item list */}
+                          <div className="flex-1 min-w-0">
+                            <div className="grid grid-cols-2 gap-0.5">
+                              {blogDropdownItems.map((item, i) => {
+                                const Icon = item.icon
+                                const isHovered = hoveredBlogItem === i
+                                return (
+                                  <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => setBlogOpen(false)}
+                                    onMouseEnter={() => setHoveredBlogItem(i)}
+                                    className={cn(
+                                      "flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition-colors duration-100",
+                                      isHovered ? "bg-foreground/[0.06]" : "hover:bg-foreground/[0.03]"
+                                    )}
+                                  >
+                                    <Icon className={cn(
+                                      "size-3.5 shrink-0 transition-colors duration-100",
+                                      isHovered ? "text-foreground/70" : "text-muted-foreground/40"
+                                    )} />
+                                    <span className={cn(
+                                      "text-[12px] font-medium transition-colors duration-100 truncate",
+                                      isHovered ? "text-foreground" : "text-muted-foreground/60"
+                                    )}>
+                                      {item.label}
+                                    </span>
+                                  </Link>
+                                )
+                              })}
+                            </div>
+                            <div className="mt-1 pt-1 border-t border-border/15">
+                              <Link
+                                href="/blog"
+                                onClick={() => setBlogOpen(false)}
+                                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-foreground/[0.04] transition-colors duration-150 text-[11px] font-medium text-muted-foreground/40 hover:text-foreground"
+                              >
+                                View all posts
+                                <ArrowRight className="h-2.5 w-2.5" />
+                              </Link>
+                            </div>
+                          </div>
+
+                          {/* Right: preview panel */}
+                          <div className="w-[160px] shrink-0 rounded-lg bg-foreground/[0.03] dark:bg-foreground/[0.04] p-4 flex flex-col items-center justify-center relative overflow-hidden">
+                            {(() => {
+                              const hItem = blogDropdownItems[hoveredBlogItem]
+                              const HIcon = hItem.icon
+                              return (
+                                <>
+                                  <HIcon className="absolute -right-4 -bottom-4 size-28 text-foreground/[0.04] dark:text-foreground/[0.05]" strokeWidth={0.8} />
+                                  <AnimatePresence mode="wait">
+                                    <motion.div
+                                      key={hoveredBlogItem}
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      exit={{ opacity: 0 }}
+                                      transition={{ duration: 0.12 }}
+                                      className="relative text-center"
+                                    >
+                                      <span className="text-3xl font-bold tracking-tight text-foreground/85">
+                                        {hItem.stat}
+                                      </span>
+                                      <p className="text-[10px] font-medium text-muted-foreground/40 mt-1 leading-tight">
+                                        {hItem.statLabel}
+                                      </p>
+                                    </motion.div>
+                                  </AnimatePresence>
+                                </>
+                              )
+                            })()}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </li>
               </ul>
 
               {/* Desktop CTA */}
@@ -550,6 +681,62 @@ export function LandingHeader({
                       </motion.div>
                     )
                   })}
+
+                  {/* Mobile Blog Accordion */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navItems.length * 0.03 + 0.03, duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <button
+                      onClick={() => setMobileBlogOpen(!mobileBlogOpen)}
+                      className={cn(
+                        "flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl transition-all duration-150 text-[15px] font-medium tracking-[-0.006em]",
+                        (currentPath.startsWith("/blog") || currentPath.startsWith("/computer-use") || currentPath.startsWith("/compare"))
+                          ? "text-foreground bg-foreground/[0.04]"
+                          : "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/[0.03]"
+                      )}
+                    >
+                      Blog & Resources
+                      <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", mobileBlogOpen && "rotate-180")} />
+                    </button>
+                    <AnimatePresence>
+                      {mobileBlogOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="grid grid-cols-2 gap-0.5 px-1.5 py-1.5">
+                            {blogDropdownItems.map((item) => {
+                              const Icon = item.icon
+                              return (
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
+                                  onClick={closeMobileMenu}
+                                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-foreground/[0.04] transition-colors duration-150"
+                                >
+                                  <Icon className="size-3.5 shrink-0 text-muted-foreground/40" />
+                                  <span className="text-[13px] font-medium text-muted-foreground/60">{item.label}</span>
+                                </Link>
+                              )
+                            })}
+                          </div>
+                          <Link
+                            href="/blog"
+                            onClick={closeMobileMenu}
+                            className="flex items-center justify-center gap-1.5 px-3 py-2 mx-1.5 mb-1 rounded-lg hover:bg-foreground/[0.04] text-[12px] font-medium text-muted-foreground/50"
+                          >
+                            View all posts
+                            <ArrowRight className="h-3 w-3" />
+                          </Link>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
 
                   {/* Divider */}
                   <div className="my-1.5 mx-3.5 border-t border-border/20" />

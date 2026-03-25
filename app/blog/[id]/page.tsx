@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { LandingHeader } from "@/app/components/landing/landing-header"
+import { GuideLines } from "@/app/components/landing/guide-lines"
 import { LandingFooter } from "@/app/components/landing/landing-footer"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
@@ -11,6 +12,7 @@ import { useState, useEffect } from "react"
 import { InternalLinks } from "@/components/seo/internal-links"
 import type { BlogPost } from "@/lib/blog/types"
 import type { ContentBlock } from "@/lib/blog/types"
+import { FeaturedThumbnail } from "@/components/blog/post-thumbnail"
 
 export default function BlogPostPage() {
   const params = useParams()
@@ -38,7 +40,8 @@ export default function BlogPostPage() {
     new Date(date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background">
+      <GuideLines />
       <LandingHeader />
 
       <main className="pt-32 sm:pt-36 pb-24">
@@ -99,9 +102,15 @@ export default function BlogPostPage() {
               </motion.div>
             </div>
 
-            {/* Divider */}
+            {/* Hero thumbnail */}
             <div className="max-w-3xl mx-auto px-7 sm:px-10 mb-12">
-              <div className="border-t border-border/30" />
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.08 }}
+              >
+                <FeaturedThumbnail postId={post.id} />
+              </motion.div>
             </div>
 
             {/* Article content */}

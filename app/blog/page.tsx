@@ -9,6 +9,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { useState, useEffect } from "react"
 import type { BlogPostListItem } from "@/lib/blog/types"
+import { PostThumbnail, FeaturedThumbnail } from "@/components/blog/post-thumbnail"
 
 const fade = {
   hidden: { opacity: 0, y: 24 },
@@ -124,30 +125,33 @@ export default function BlogPage() {
               transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <Link href={`/blog/${featured.id}`}>
-                <div className="group rounded-2xl overflow-hidden border border-border/40 bg-card hover:border-border/60 transition-all duration-300 p-8 sm:p-10">
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40">
-                        {featured.category}
-                      </span>
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-foreground/30 bg-foreground/5 px-2 py-0.5 rounded-full">
-                        Featured
-                      </span>
+                <div className="group rounded-2xl overflow-hidden border border-border/40 bg-card hover:border-border/60 transition-all duration-300">
+                  <FeaturedThumbnail postId={featured.id} />
+                  <div className="p-8 sm:p-10">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40">
+                          {featured.category}
+                        </span>
+                        <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-foreground/30 bg-foreground/5 px-2 py-0.5 rounded-full">
+                          Featured
+                        </span>
+                      </div>
+                      <ArrowUpRight className="h-4 w-4 text-muted-foreground/20 group-hover:text-foreground/50 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                     </div>
-                    <ArrowUpRight className="h-4 w-4 text-muted-foreground/20 group-hover:text-foreground/50 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                  </div>
-                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 group-hover:text-foreground/70 transition-colors duration-200">
-                    {featured.title}
-                  </h2>
-                  <p className="text-muted-foreground text-base sm:text-lg leading-relaxed mb-6 max-w-2xl">
-                    {featured.excerpt}
-                  </p>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground/50">
-                    <span>{featured.author}</span>
-                    <span className="text-muted-foreground/20">|</span>
-                    <span>{formatDate(featured.date)}</span>
-                    <span className="text-muted-foreground/20">|</span>
-                    <span>{featured.read_time}</span>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 group-hover:text-foreground/70 transition-colors duration-200">
+                      {featured.title}
+                    </h2>
+                    <p className="text-muted-foreground text-base sm:text-lg leading-relaxed mb-6 max-w-2xl">
+                      {featured.excerpt}
+                    </p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground/50">
+                      <span>{featured.author}</span>
+                      <span className="text-muted-foreground/20">|</span>
+                      <span>{formatDate(featured.date)}</span>
+                      <span className="text-muted-foreground/20">|</span>
+                      <span>{featured.read_time}</span>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -168,25 +172,28 @@ export default function BlogPage() {
                   variants={fade}
                 >
                   <Link href={`/blog/${post.id}`}>
-                    <div className="h-full rounded-xl overflow-hidden border border-border/30 bg-card hover:border-border/60 transition-colors duration-300 flex flex-col p-5 sm:p-6 group">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40">
-                          {post.category}
-                        </span>
-                        <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground/20 group-hover:text-foreground/50 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                      </div>
-                      <h3 className="font-semibold text-foreground group-hover:text-foreground/70 transition-colors duration-200 mb-2 line-clamp-2 leading-snug">
-                        {post.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground/70 leading-relaxed mb-4 line-clamp-3 flex-1">
-                        {post.excerpt}
-                      </p>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground/40 mt-auto pt-4 border-t border-border/20">
-                        <span>{post.author}</span>
-                        <span className="text-muted-foreground/15">|</span>
-                        <span>{formatDate(post.date)}</span>
-                        <span className="text-muted-foreground/15">|</span>
-                        <span>{post.read_time}</span>
+                    <div className="h-full rounded-xl overflow-hidden border border-border/30 bg-card hover:border-border/60 transition-colors duration-300 flex flex-col group">
+                      <PostThumbnail postId={post.id} />
+                      <div className="flex flex-col flex-1 p-5 sm:p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40">
+                            {post.category}
+                          </span>
+                          <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground/20 group-hover:text-foreground/50 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                        </div>
+                        <h3 className="font-semibold text-foreground group-hover:text-foreground/70 transition-colors duration-200 mb-2 line-clamp-2 leading-snug">
+                          {post.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground/70 leading-relaxed mb-4 line-clamp-3 flex-1">
+                          {post.excerpt}
+                        </p>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground/40 mt-auto pt-4 border-t border-border/20">
+                          <span>{post.author}</span>
+                          <span className="text-muted-foreground/15">|</span>
+                          <span>{formatDate(post.date)}</span>
+                          <span className="text-muted-foreground/15">|</span>
+                          <span>{post.read_time}</span>
+                        </div>
                       </div>
                     </div>
                   </Link>

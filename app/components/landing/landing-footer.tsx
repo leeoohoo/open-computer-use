@@ -10,6 +10,7 @@ const footerColumns: { title: string; links: { href: string; label: string; exte
   {
     title: "Product",
     links: [
+      { href: "/computer-use", label: "Computer Use" },
       { href: "/guide", label: "Guide" },
       { href: "/download", label: "Download" },
       { href: "/pricing", label: "Pricing" },
@@ -20,9 +21,10 @@ const footerColumns: { title: string; links: { href: string; label: string; exte
   {
     title: "Resources",
     links: [
-      { href: "/use-cases", label: "Use Cases" },
       { href: "/blog", label: "Blog" },
+      { href: "/use-cases", label: "Use Cases" },
       { href: "/results", label: "Demos" },
+      { href: "/compare", label: "Compare" },
     ],
   },
   {
