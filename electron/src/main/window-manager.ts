@@ -145,6 +145,10 @@ export function setWindowMode(mode: WindowMode): void {
     win.setResizable(true)
     win.setMinimumSize(MIN_EXPANDED_WIDTH, MIN_EXPANDED_HEIGHT)
   } else {
+    // Reset minimum size BEFORE setting bounds so the window can shrink
+    // to compact pill dimensions (360×56). On macOS the window server
+    // enforces minimumSize even when resizable is false.
+    win.setMinimumSize(0, 0)
     win.setResizable(false)
   }
 
