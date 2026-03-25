@@ -1,12 +1,11 @@
 import {
-  BookOpenText,
-  Brain,
-  Code,
-  Lightbulb,
-  Notepad,
-  PaintBrush,
-  Sparkle,
-} from "@phosphor-icons/react/dist/ssr"
+  FileText,
+  Code2,
+  Search,
+  PenTool,
+  Wrench,
+  GraduationCap,
+} from "lucide-react"
 
 export const NON_AUTH_DAILY_MESSAGE_LIMIT = 5
 export const AUTH_DAILY_MESSAGE_LIMIT = 100
@@ -38,7 +37,7 @@ export const SUGGESTIONS = [
       "Get the latest EV market data and summarize key trends",
       "Research and summarize current climate policy changes globally",
     ],
-    icon: Notepad,
+    icon: FileText,
   },
   {
     label: "Code",
@@ -50,7 +49,7 @@ export const SUGGESTIONS = [
       "Write a SQL query to analyze user engagement metrics",
       "Implement a debounce function in JavaScript with examples",
     ],
-    icon: Code,
+    icon: Code2,
   },
   {
     label: "Research",
@@ -62,7 +61,7 @@ export const SUGGESTIONS = [
       "Research latest AI regulations and analyze their impact",
       "Investigate renewable energy costs vs fossil fuels with current data",
     ],
-    icon: BookOpenText,
+    icon: Search,
   },
   {
     label: "Create",
@@ -74,7 +73,7 @@ export const SUGGESTIONS = [
       "Design a color scheme and typography for modern web app",
       "Build a content calendar for tech blog with trending topics",
     ],
-    icon: Sparkle,
+    icon: PenTool,
   },
   {
     label: "Solve",
@@ -86,7 +85,7 @@ export const SUGGESTIONS = [
       "Resolve CORS error in Next.js API route",
       "Troubleshoot Docker container networking problem",
     ],
-    icon: Brain,
+    icon: Wrench,
   },
   {
     label: "Learn",
@@ -98,7 +97,7 @@ export const SUGGESTIONS = [
       "Clarify WebSockets vs Server-Sent Events with use cases",
       "Compare SQL vs NoSQL databases with decision matrix",
     ],
-    icon: Lightbulb,
+    icon: GraduationCap,
   },
 ]
 

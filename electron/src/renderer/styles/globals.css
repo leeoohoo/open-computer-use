@@ -141,6 +141,22 @@ html, body {
   -webkit-app-region: no-drag;
 }
 
+/* ── Resize handle bar — subtle pill at bottom center ── */
+.resize-handle-bar {
+  width: 36px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.10);
+  margin-bottom: 6px;
+  transition: background 0.2s ease, width 0.2s ease;
+}
+
+.resize-handle-bar:hover,
+.resize-handle-bar.resize-active {
+  background: rgba(255, 255, 255, 0.25);
+  width: 48px;
+}
+
 /* Markdown prose styles */
 .markdown-prose h1 {
   font-size: 1.5rem;

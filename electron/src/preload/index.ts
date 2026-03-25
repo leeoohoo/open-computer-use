@@ -73,6 +73,19 @@ contextBridge.exposeInMainWorld('coasty', {
     return () => ipcRenderer.removeListener('window-opacity-changed', handler)
   },
 
+  // Window size
+  getWindowSize: () => ipcRenderer.invoke('window:get-size'),
+  onWindowSizeChanged: (callback: (size: { width: number; height: number }) => void) => {
+    const handler = (_event: any, size: { width: number; height: number }) => callback(size)
+    ipcRenderer.on('window-size-changed', handler)
+    return () => ipcRenderer.removeListener('window-size-changed', handler)
+  },
+
+  // Custom resize for frameless transparent windows — main process polls cursor
+  getWindowBounds: () => ipcRenderer.invoke('window:get-bounds'),
+  startResize: (edge: string) => ipcRenderer.invoke('window:start-resize', edge),
+  stopResize: () => ipcRenderer.invoke('window:stop-resize'),
+
   // Auto-update
   getUpdateStatus: () => ipcRenderer.invoke('update:get-status'),
   getUpdateVersion: () => ipcRenderer.invoke('update:get-version'),
@@ -197,6 +210,12 @@ export interface CoastyAPI {
   setOpacity: (value: number) => Promise<void>
   getOpacity: () => Promise<number>
   onOpacityChanged: (callback: (value: number) => void) => () => void
+
+  getWindowSize: () => Promise<{ width: number; height: number }>
+  onWindowSizeChanged: (callback: (size: { width: number; height: number }) => void) => () => void
+  getWindowBounds: () => Promise<{ x: number; y: number; width: number; height: number }>
+  startResize: (edge: string) => Promise<void>
+  stopResize: () => Promise<void>
 
   getUpdateStatus: () => Promise<string>
   getUpdateVersion: () => Promise<string | null>

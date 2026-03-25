@@ -12,7 +12,7 @@ import {
   listBrowserTabs, openBrowserTab, closeBrowserTab, switchBrowserTab,
 } from './browser-automation'
 import {
-  desktopClick, desktopDoubleClick, desktopType,
+  desktopClick, desktopClickWithModifiers, desktopDoubleClick, desktopType,
   desktopKeyPress, desktopKeyCombo, desktopScroll, desktopDrag,
 } from './desktop-automation'
 import { hideForScreenshot, showAfterScreenshot } from './window-manager'
@@ -122,6 +122,7 @@ export class LocalExecutor {
 
     // Desktop mouse — hide overlay so clicks don't hit it
     this.handlers.set('click', this.withOverlayHidden((p) => desktopClick(p)))
+    this.handlers.set('click_with_modifiers', this.withOverlayHidden((p) => desktopClickWithModifiers(p)))
     this.handlers.set('double_click', this.withOverlayHidden((p) => desktopDoubleClick(p)))
 
     // Desktop keyboard — hide overlay so it can't steal focus

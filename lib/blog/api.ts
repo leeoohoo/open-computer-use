@@ -1,10 +1,17 @@
 import { createServiceClient } from "@/lib/supabase/service"
 import type { BlogPost, BlogPostListItem, SeoPage } from "./types"
+import type { SupabaseClient } from "@supabase/supabase-js"
+
+// The typed Database doesn't include blog_posts/seo_pages yet,
+// so we cast to an untyped client for these dynamic tables.
+function getClient(): SupabaseClient | null {
+  return createServiceClient() as SupabaseClient | null
+}
 
 // --- Blog Posts ---
 
 export async function getBlogPosts(): Promise<BlogPostListItem[]> {
-  const supabase = createServiceClient()
+  const supabase = getClient()
   if (!supabase) return []
 
   const { data, error } = await supabase
@@ -18,11 +25,11 @@ export async function getBlogPosts(): Promise<BlogPostListItem[]> {
     return []
   }
 
-  return data ?? []
+  return (data ?? []) as BlogPostListItem[]
 }
 
 export async function getBlogPost(id: string): Promise<BlogPost | null> {
-  const supabase = createServiceClient()
+  const supabase = getClient()
   if (!supabase) return null
 
   const { data, error } = await supabase
@@ -37,11 +44,11 @@ export async function getBlogPost(id: string): Promise<BlogPost | null> {
     return null
   }
 
-  return data
+  return (data as BlogPost) ?? null
 }
 
 export async function getAllBlogPostIds(): Promise<string[]> {
-  const supabase = createServiceClient()
+  const supabase = getClient()
   if (!supabase) return []
 
   const { data, error } = await supabase
@@ -51,16 +58,16 @@ export async function getAllBlogPostIds(): Promise<string[]> {
     .order("date", { ascending: false })
 
   if (error) return []
-  return (data ?? []).map((p) => p.id)
+  return (data ?? []).map((p: any) => p.id)
 }
 
 export async function upsertBlogPost(post: Omit<BlogPost, "created_at" | "updated_at">): Promise<{ success: boolean; error?: string }> {
-  const supabase = createServiceClient()
+  const supabase = getClient()
   if (!supabase) return { success: false, error: "Supabase not configured" }
 
   const { error } = await supabase
     .from("blog_posts")
-    .upsert(post, { onConflict: "id" })
+    .upsert(post as any, { onConflict: "id" })
 
   if (error) return { success: false, error: error.message }
   return { success: true }
@@ -69,7 +76,7 @@ export async function upsertBlogPost(post: Omit<BlogPost, "created_at" | "update
 // --- SEO Pages ---
 
 export async function getSeoPages(): Promise<SeoPage[]> {
-  const supabase = createServiceClient()
+  const supabase = getClient()
   if (!supabase) return []
 
   const { data, error } = await supabase
@@ -83,11 +90,11 @@ export async function getSeoPages(): Promise<SeoPage[]> {
     return []
   }
 
-  return data ?? []
+  return (data ?? []) as SeoPage[]
 }
 
 export async function getSeoPage(slug: string): Promise<SeoPage | null> {
-  const supabase = createServiceClient()
+  const supabase = getClient()
   if (!supabase) return null
 
   const { data, error } = await supabase
@@ -98,11 +105,11 @@ export async function getSeoPage(slug: string): Promise<SeoPage | null> {
     .single()
 
   if (error) return null
-  return data
+  return (data as SeoPage) ?? null
 }
 
 export async function getAllSeoPageSlugs(): Promise<string[]> {
-  const supabase = createServiceClient()
+  const supabase = getClient()
   if (!supabase) return []
 
   const { data, error } = await supabase
@@ -111,16 +118,16 @@ export async function getAllSeoPageSlugs(): Promise<string[]> {
     .eq("published", true)
 
   if (error) return []
-  return (data ?? []).map((p) => p.slug)
+  return (data ?? []).map((p: any) => p.slug)
 }
 
 export async function upsertSeoPage(page: Omit<SeoPage, "created_at" | "updated_at">): Promise<{ success: boolean; error?: string }> {
-  const supabase = createServiceClient()
+  const supabase = getClient()
   if (!supabase) return { success: false, error: "Supabase not configured" }
 
   const { error } = await supabase
     .from("seo_pages")
-    .upsert(page, { onConflict: "slug" })
+    .upsert(page as any, { onConflict: "slug" })
 
   if (error) return { success: false, error: error.message }
   return { success: true }

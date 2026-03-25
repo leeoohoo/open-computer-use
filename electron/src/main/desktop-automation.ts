@@ -91,6 +91,122 @@ CGEvent(mouseEventSource: nil, mouseType: ${upType}, mouseCursorPosition: pt, mo
   }
 }
 
+export async function desktopClickWithModifiers(params: {
+  x: number
+  y: number
+  button?: string
+  hold_keys?: string[]
+  clicks?: number
+}): Promise<any> {
+  try {
+    const { x, y, button = 'left', hold_keys = [], clicks = 1 } = params
+    const keys = normalizeKeysForPlatform(hold_keys)
+
+    if (process.platform === 'win32') {
+      // Use keybd_event to hold modifiers, mouse_event to click, then release
+      const vkKeys = keys.map(k => ({
+        vk: VK_CODES[k.toLowerCase()] || k.toUpperCase().charCodeAt(0),
+        isModifier: true,
+      }))
+      const downFlags = button === 'right' ? '0x08' : '0x02'
+      const upFlags = button === 'right' ? '0x10' : '0x04'
+      const lines = [
+        'Add-Type -AssemblyName System.Windows.Forms',
+        'Add-Type @"',
+        'using System;',
+        'using System.Runtime.InteropServices;',
+        'public class ModClickOps {',
+        '    [DllImport("user32.dll")]',
+        '    public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);',
+        '    [DllImport("user32.dll")]',
+        '    public static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);',
+        '    public const uint KEYEVENTF_KEYUP = 0x02;',
+        '}',
+        '"@',
+      ]
+      // Press modifier keys down
+      for (const k of vkKeys) {
+        lines.push(`[ModClickOps]::keybd_event(${k.vk}, 0, 0, 0)`)
+      }
+      lines.push('Start-Sleep -Milliseconds 50')
+      // Move cursor and click
+      lines.push(`[System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(${x}, ${y})`)
+      lines.push('Start-Sleep -Milliseconds 30')
+      for (let i = 0; i < clicks; i++) {
+        lines.push(`[ModClickOps]::mouse_event(${downFlags}, 0, 0, 0, 0)`)
+        lines.push(`[ModClickOps]::mouse_event(${upFlags}, 0, 0, 0, 0)`)
+        if (i < clicks - 1) lines.push('Start-Sleep -Milliseconds 50')
+      }
+      // Release modifier keys
+      lines.push('Start-Sleep -Milliseconds 30')
+      for (const k of [...vkKeys].reverse()) {
+        lines.push(`[ModClickOps]::keybd_event(${k.vk}, 0, [ModClickOps]::KEYEVENTF_KEYUP, 0)`)
+      }
+      await runPowershell(lines.join('\n'))
+    } else if (process.platform === 'linux') {
+      const parts: string[] = []
+      for (const key of keys) {
+        const mapped = KEY_MAP_XDOTOOL[key.toLowerCase()] || MODIFIER_MAP_XDOTOOL[key.toLowerCase()] || key
+        parts.push(`xdotool keydown ${mapped}`)
+      }
+      const xdoBtn = button === 'right' ? 3 : button === 'middle' ? 2 : 1
+      parts.push(`xdotool mousemove --sync ${x} ${y}`)
+      if (clicks >= 2) {
+        parts.push(`xdotool click --repeat ${clicks} --delay 80 ${xdoBtn}`)
+      } else {
+        parts.push(`xdotool click ${xdoBtn}`)
+      }
+      for (const key of keys) {
+        const mapped = KEY_MAP_XDOTOOL[key.toLowerCase()] || MODIFIER_MAP_XDOTOOL[key.toLowerCase()] || key
+        parts.push(`xdotool keyup ${mapped}`)
+      }
+      await runBash(parts.join(' && '))
+    } else if (process.platform === 'darwin') {
+      // Build CGEvent flags for modifiers
+      const flagMap: Record<string, string> = {
+        shift: '.maskShift', cmd: '.maskCommand', command: '.maskCommand',
+        option: '.maskAlternate', alt: '.maskAlternate',
+        ctrl: '.maskControl', control: '.maskControl', fn: '.maskSecondaryFn',
+      }
+      const flags = keys
+        .map(k => flagMap[k.toLowerCase()])
+        .filter(Boolean)
+      const flagExpr = flags.length > 0
+        ? `CGEventFlags([${flags.join(', ')}])`
+        : 'CGEventFlags(rawValue: 0)'
+      const downType = button === 'right' ? '.rightMouseDown' : '.leftMouseDown'
+      const upType = button === 'right' ? '.rightMouseUp' : '.leftMouseUp'
+      const btn = button === 'right' ? '.right' : '.left'
+
+      let swiftCode = `
+import Cocoa
+let pt = CGPoint(x: ${x}, y: ${y})
+let flags = ${flagExpr}
+`
+      for (let i = 0; i < clicks; i++) {
+        const clickState = i + 1
+        swiftCode += `
+let down${i} = CGEvent(mouseEventSource: nil, mouseType: ${downType}, mouseCursorPosition: pt, mouseButton: ${btn})
+down${i}?.flags = flags
+down${i}?.setIntegerValueField(.mouseEventClickState, value: ${clickState})
+down${i}?.post(tap: .cghidEventTap)
+usleep(30000)
+let up${i} = CGEvent(mouseEventSource: nil, mouseType: ${upType}, mouseCursorPosition: pt, mouseButton: ${btn})
+up${i}?.flags = flags
+up${i}?.setIntegerValueField(.mouseEventClickState, value: ${clickState})
+up${i}?.post(tap: .cghidEventTap)
+`
+        if (i < clicks - 1) swiftCode += 'usleep(50000)\n'
+      }
+      await runSwift(swiftCode)
+    }
+
+    return { success: true, message: `Clicked at (${x}, ${y}) with modifiers [${keys.join(', ')}]` }
+  } catch (error: any) {
+    return { success: false, error: error.message }
+  }
+}
+
 export async function desktopDoubleClick(params: {
   x: number
   y: number
@@ -531,29 +647,68 @@ export async function desktopDrag(params: {
     const { x1, y1, x2, y2, hold_keys = [] } = params
 
     if (process.platform === 'win32') {
-      // Windows: move to start, mousedown, move to end, mouseup
-      await runPowershell(`
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-public class DragOps {
-    [DllImport("user32.dll")]
-    public static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
-    public const int MOUSEEVENTF_LEFTDOWN = 0x02;
-    public const int MOUSEEVENTF_LEFTUP = 0x04;
-    public const int MOUSEEVENTF_ABSOLUTE = 0x8000;
-    public const int MOUSEEVENTF_MOVE = 0x0001;
-}
-"@
-[System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(${x1}, ${y1})
-Start-Sleep -Milliseconds 100
-[DragOps]::mouse_event([DragOps]::MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-Start-Sleep -Milliseconds 50
-[System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(${x2}, ${y2})
-Start-Sleep -Milliseconds 100
-[DragOps]::mouse_event([DragOps]::MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
-`)
+      // Windows: hold modifiers, move to start via MOUSEEVENTF_MOVE|ABSOLUTE,
+      // mousedown, move through midpoint to end, mouseup, release modifiers.
+      // MOUSEEVENTF_ABSOLUTE uses normalized 0-65535 coords mapped to screen size.
+      const xm = Math.round((x1 + x2) / 2), ym = Math.round((y1 + y2) / 2)
+      const modVks = hold_keys.map(k => VK_CODES[k.toLowerCase()] || k.toUpperCase().charCodeAt(0))
+
+      const lines = [
+        'Add-Type -AssemblyName System.Windows.Forms',
+        'Add-Type @"',
+        'using System;',
+        'using System.Runtime.InteropServices;',
+        'public class DragOps {',
+        '    [DllImport("user32.dll")]',
+        '    public static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);',
+        '    [DllImport("user32.dll")]',
+        '    public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);',
+        '    [DllImport("user32.dll")]',
+        '    public static extern int GetSystemMetrics(int nIndex);',
+        '    public const int MOUSEEVENTF_MOVE = 0x0001;',
+        '    public const int MOUSEEVENTF_LEFTDOWN = 0x02;',
+        '    public const int MOUSEEVENTF_LEFTUP = 0x04;',
+        '    public const int MOUSEEVENTF_ABSOLUTE = 0x8000;',
+        '    public const uint KEYEVENTF_KEYUP = 0x02;',
+        '}',
+        '"@',
+        // Screen dimensions for absolute coordinate normalization
+        '$sw = [DragOps]::GetSystemMetrics(0)',
+        '$sh = [DragOps]::GetSystemMetrics(1)',
+      ]
+
+      // Helper function to convert pixel coords to normalized absolute coords
+      const absCoord = (px: number, py: number) =>
+        `[int](${px} * 65536 / $sw + 0.5), [int](${py} * 65536 / $sh + 0.5)`
+
+      // Press modifier keys down
+      for (const vk of modVks) {
+        lines.push(`[DragOps]::keybd_event(${vk}, 0, 0, 0)`)
+      }
+      if (modVks.length > 0) lines.push('Start-Sleep -Milliseconds 50')
+
+      // Move to start position (generates WM_MOUSEMOVE)
+      lines.push(`[DragOps]::mouse_event([DragOps]::MOUSEEVENTF_MOVE -bor [DragOps]::MOUSEEVENTF_ABSOLUTE, ${absCoord(x1, y1)}, 0, 0)`)
+      lines.push('Start-Sleep -Milliseconds 100')
+      // Mouse down at start
+      lines.push('[DragOps]::mouse_event([DragOps]::MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)')
+      lines.push('Start-Sleep -Milliseconds 50')
+      // Move through midpoint (smooth drag, generates WM_MOUSEMOVE)
+      lines.push(`[DragOps]::mouse_event([DragOps]::MOUSEEVENTF_MOVE -bor [DragOps]::MOUSEEVENTF_ABSOLUTE, ${absCoord(xm, ym)}, 0, 0)`)
+      lines.push('Start-Sleep -Milliseconds 50')
+      // Move to end position
+      lines.push(`[DragOps]::mouse_event([DragOps]::MOUSEEVENTF_MOVE -bor [DragOps]::MOUSEEVENTF_ABSOLUTE, ${absCoord(x2, y2)}, 0, 0)`)
+      lines.push('Start-Sleep -Milliseconds 100')
+      // Mouse up at end
+      lines.push('[DragOps]::mouse_event([DragOps]::MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)')
+
+      // Release modifier keys in reverse
+      if (modVks.length > 0) lines.push('Start-Sleep -Milliseconds 30')
+      for (const vk of [...modVks].reverse()) {
+        lines.push(`[DragOps]::keybd_event(${vk}, 0, [DragOps]::KEYEVENTF_KEYUP, 0)`)
+      }
+
+      await runPowershell(lines.join('\n'))
     } else if (process.platform === 'linux') {
       const parts: string[] = []
       for (const key of hold_keys) {

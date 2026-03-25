@@ -3,7 +3,7 @@ import { join } from 'path'
 import { ElectronAuth } from './auth'
 import { WebSocketBridge } from './ws-bridge'
 import { registerIpcHandlers } from './ipc-handlers'
-import { setMainWindow, setWindowMode, setWindowOpacity, getWindowOpacity } from './window-manager'
+import { setMainWindow, setWindowMode, setWindowOpacity, getWindowOpacity, getWindowSize, getWindowBounds, startResize, stopResize } from './window-manager'
 import { initAutoUpdater, getUpdateStatus, getUpdateVersion, checkForUpdates, quitAndInstall } from './auto-updater'
 import {
   checkAllPermissions,
@@ -155,6 +155,24 @@ app.whenReady().then(async () => {
   })
   ipcMain.handle('window:get-opacity', async () => {
     return getWindowOpacity()
+  })
+
+  // Window size query
+  ipcMain.handle('window:get-size', async () => {
+    return getWindowSize()
+  })
+
+  // Window bounds for custom resize
+  ipcMain.handle('window:get-bounds', async () => {
+    return getWindowBounds()
+  })
+
+  // Custom resize for frameless transparent windows — main process polls cursor
+  ipcMain.handle('window:start-resize', async (_event, edge: string) => {
+    startResize(edge)
+  })
+  ipcMain.handle('window:stop-resize', async () => {
+    stopResize()
   })
 
   // Action approval IPC

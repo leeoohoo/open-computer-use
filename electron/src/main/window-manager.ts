@@ -4,8 +4,8 @@ export type WindowMode = 'auth' | 'compact' | 'expanded'
 
 const MODE_CONFIG = {
   auth:     { width: 400, height: 500, alwaysOnTop: false, skipTaskbar: false },
-  compact:  { width: 360, height: 56,  alwaysOnTop: true,  skipTaskbar: true },
-  expanded: { width: 400, height: 520, alwaysOnTop: true,  skipTaskbar: true },
+  compact:  { width: 360, height: 56,  alwaysOnTop: true,  skipTaskbar: false },
+  expanded: { width: 520, height: 680, alwaysOnTop: true,  skipTaskbar: false },
 }
 
 const ANIM_DURATION = 320 // ms – longer for a relaxed, natural feel
@@ -16,14 +16,20 @@ function easeOutQuint(t: number): number {
   return 1 - Math.pow(1 - t, 5)
 }
 
+const MIN_EXPANDED_WIDTH = 400
+const MIN_EXPANDED_HEIGHT = 520
+
 let mainWindow: BrowserWindow | null = null
 let currentMode: WindowMode = 'auth'
 let savedPosition: { x: number; y: number } | null = null
+let savedExpandedSize: { width: number; height: number } | null = null
 let animTimer: ReturnType<typeof setInterval> | null = null
 let inPostAuthTransition = false
 let enforcerInterval: ReturnType<typeof setInterval> | null = null
 let isHiddenForScreenshot = false
 let savedOpacityBeforeScreenshot = 1
+let intendedOpacity = 1  // The user's actual desired opacity (not mid-fade)
+let screenshotFadeTimer: ReturnType<typeof setInterval> | null = null
 
 /** Smoothly animate window bounds from current to target. */
 function animateBounds(win: BrowserWindow, target: Electron.Rectangle): void {
@@ -97,6 +103,15 @@ export function setMainWindow(win: BrowserWindow): void {
     }
   })
 
+  // Track size when the user resizes in expanded mode
+  win.on('resize', () => {
+    if (currentMode === 'expanded' && !win.isDestroyed()) {
+      const [w, h] = win.getSize()
+      savedExpandedSize = { width: w, height: h }
+      win.webContents.send('window-size-changed', { width: w, height: h })
+    }
+  })
+
   // Re-assert always-on-top when the window loses focus (Windows drops it for
   // transparent frameless windows when another app is clicked).
   // During the post-auth transition, use 'floating' level to beat the browser.
@@ -119,12 +134,19 @@ export function setWindowMode(mode: WindowMode): void {
 
   const prev = currentMode
   currentMode = mode
-  const cfg = MODE_CONFIG[mode]
+  let cfg = MODE_CONFIG[mode]
 
   // Configure always-on-top, taskbar visibility, and workspace visibility
   win.setAlwaysOnTop(cfg.alwaysOnTop, cfg.alwaysOnTop ? 'screen-saver' : undefined)
   win.setSkipTaskbar(cfg.skipTaskbar)
-  win.setResizable(false)
+
+  // Enable resizing only in expanded mode with minimum bounds
+  if (mode === 'expanded') {
+    win.setResizable(true)
+    win.setMinimumSize(MIN_EXPANDED_WIDTH, MIN_EXPANDED_HEIGHT)
+  } else {
+    win.setResizable(false)
+  }
 
   // Start/stop the periodic topmost enforcer based on mode
   if (cfg.alwaysOnTop) {
@@ -161,15 +183,24 @@ export function setWindowMode(mode: WindowMode): void {
     }
   } else {
     // expanded: center-align with compact pill (grows downward from same center)
+    // Use saved expanded size if available, otherwise scale to screen
+    const screenH = display.workAreaSize.height
+    const defaultW = Math.max(cfg.width, Math.round(screenW * 0.34))
+    const defaultH = Math.max(cfg.height, Math.round(screenH * 0.65))
+    const expandW = savedExpandedSize?.width ?? defaultW
+    const expandH = savedExpandedSize?.height ?? defaultH
+
     if (savedPosition) {
       const compactW = MODE_CONFIG.compact.width
       const centerX = savedPosition.x + Math.round(compactW / 2)
-      x = centerX - Math.round(cfg.width / 2)
+      x = centerX - Math.round(expandW / 2)
       y = savedPosition.y
     } else {
-      x = workX + Math.round((screenW - cfg.width) / 2)
+      x = workX + Math.round((screenW - expandW) / 2)
       y = workY + 16
     }
+
+    cfg = { ...cfg, width: expandW, height: expandH }
   }
 
   // Clamp to screen bounds
@@ -232,11 +263,91 @@ export function setWindowMode(mode: WindowMode): void {
   }
 }
 
+/** Get current window size. */
+export function getWindowSize(): { width: number; height: number } {
+  const win = mainWindow
+  if (!win || win.isDestroyed()) return { width: 400, height: 520 }
+  const [width, height] = win.getSize()
+  return { width, height }
+}
+
+/** Get current window bounds (position + size). */
+export function getWindowBounds(): Electron.Rectangle {
+  const win = mainWindow
+  if (!win || win.isDestroyed()) return { x: 0, y: 0, width: 400, height: 520 }
+  return win.getBounds()
+}
+
+let resizeTimer: ReturnType<typeof setInterval> | null = null
+let resizeEdge: string | null = null
+let resizeStartCursor: { x: number; y: number } | null = null
+let resizeStartBounds: Electron.Rectangle | null = null
+
+/**
+ * Begin a resize drag. The main process polls cursor position via
+ * screen.getCursorScreenPoint() so that resizing works even when
+ * the cursor leaves the transparent frameless window.
+ */
+export function startResize(edge: string): void {
+  const win = mainWindow
+  if (!win || win.isDestroyed() || currentMode !== 'expanded') return
+
+  resizeEdge = edge
+  resizeStartCursor = screen.getCursorScreenPoint()
+  resizeStartBounds = win.getBounds()
+
+  // Poll at ~60fps
+  if (resizeTimer) clearInterval(resizeTimer)
+  resizeTimer = setInterval(() => {
+    if (!win || win.isDestroyed() || !resizeEdge || !resizeStartCursor || !resizeStartBounds) {
+      stopResize()
+      return
+    }
+
+    const cursor = screen.getCursorScreenPoint()
+    const dx = cursor.x - resizeStartCursor.x
+    const dy = cursor.y - resizeStartCursor.y
+
+    let { x, y, width, height } = resizeStartBounds
+
+    if (resizeEdge.includes('right')) {
+      width = Math.max(MIN_EXPANDED_WIDTH, width + dx)
+    }
+    if (resizeEdge.includes('bottom')) {
+      height = Math.max(MIN_EXPANDED_HEIGHT, height + dy)
+    }
+    if (resizeEdge.includes('left')) {
+      const newWidth = Math.max(MIN_EXPANDED_WIDTH, width - dx)
+      x = x + (width - newWidth)
+      width = newWidth
+    }
+    if (resizeEdge.includes('top')) {
+      const newHeight = Math.max(MIN_EXPANDED_HEIGHT, height - dy)
+      y = y + (height - newHeight)
+      height = newHeight
+    }
+
+    win.setBounds({ x, y, width, height })
+  }, 16)
+}
+
+/** Stop the resize drag. */
+export function stopResize(): void {
+  if (resizeTimer) {
+    clearInterval(resizeTimer)
+    resizeTimer = null
+  }
+  resizeEdge = null
+  resizeStartCursor = null
+  resizeStartBounds = null
+}
+
 /** Set overlay opacity (0.15 – 1.0). Notifies renderer so UI can reflect. */
 export function setWindowOpacity(value: number): void {
   const win = mainWindow
   if (!win || win.isDestroyed()) return
   const clamped = Math.max(0.15, Math.min(1, value))
+  intendedOpacity = clamped
   win.setOpacity(clamped)
   win.webContents.send('window-opacity-changed', clamped)
 }
@@ -267,7 +378,16 @@ export async function hideForScreenshot(): Promise<void> {
   const win = mainWindow
   if (!win || win.isDestroyed() || !win.isVisible()) return
   isHiddenForScreenshot = true
-  savedOpacityBeforeScreenshot = win.getOpacity()
+
+  // Use the user's intended opacity, not the live value which may be mid-fade
+  savedOpacityBeforeScreenshot = intendedOpacity
+
+  // Cancel any in-progress fade-in from a previous screenshot cycle
+  if (screenshotFadeTimer) {
+    clearInterval(screenshotFadeTimer)
+    screenshotFadeTimer = null
+  }
+
   win.hide()
   // Wait for OS to finish hiding and repaint the desktop
   await new Promise((resolve) => setTimeout(resolve, 150))
@@ -278,6 +398,12 @@ export function showAfterScreenshot(): void {
   const win = mainWindow
   if (!win || win.isDestroyed()) return
   isHiddenForScreenshot = false
+
+  // Cancel any in-progress fade from a previous cycle
+  if (screenshotFadeTimer) {
+    clearInterval(screenshotFadeTimer)
+    screenshotFadeTimer = null
+  }
 
   // Start fully transparent, then fade in over 300ms
   const targetOpacity = savedOpacityBeforeScreenshot
@@ -295,13 +421,12 @@ export function showAfterScreenshot(): void {
   const FADE_STEP = 16 // ~60fps
   const steps = Math.ceil(FADE_DURATION / FADE_STEP)
   let step = 0
-  const fadeTimer = setInterval(() => {
+  screenshotFadeTimer = setInterval(() => {
     step++
-    if (win.isDestroyed()) { clearInterval(fadeTimer); return }
+    if (win.isDestroyed()) { clearInterval(screenshotFadeTimer!); screenshotFadeTimer = null; return }
     const t = Math.min(step / steps, 1)
-    // Ease-out cubic for a natural feel
     const eased = 1 - Math.pow(1 - t, 3)
     win.setOpacity(eased * targetOpacity)
-    if (t >= 1) clearInterval(fadeTimer)
+    if (t >= 1) { clearInterval(screenshotFadeTimer!); screenshotFadeTimer = null }
   }, FADE_STEP)
 }

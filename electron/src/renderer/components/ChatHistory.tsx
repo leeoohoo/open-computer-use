@@ -122,17 +122,18 @@ export function ChatHistory({ onSelectChat, onBack }: Props) {
       <div className="flex items-center gap-2 px-3 py-2 border-b border-neutral-800/50">
         <button
           onClick={onBack}
-          className="p-1 rounded-lg hover:bg-neutral-800/60 text-neutral-400 hover:text-neutral-200 transition-colors"
+          className="flex items-center gap-1.5 px-2 py-1 -ml-1 rounded-lg hover:bg-neutral-800/60 text-neutral-400 hover:text-neutral-200 transition-colors"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
+          <span className="text-[11px] font-medium">Back</span>
         </button>
-        <span className="text-xs font-medium text-neutral-300">Chat History</span>
         <div className="flex-1" />
+        <span className="text-[11px] font-medium text-neutral-500">Chat History</span>
         <button
           onClick={() => loadChatList()}
-          className="p-1 rounded-lg hover:bg-neutral-800/60 text-neutral-500 hover:text-neutral-300 transition-colors"
+          className="p-1 rounded-lg hover:bg-neutral-800/60 text-neutral-500 hover:text-neutral-300 transition-colors ml-1"
           title="Refresh"
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
