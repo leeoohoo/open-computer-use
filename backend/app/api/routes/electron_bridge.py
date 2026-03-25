@@ -212,10 +212,21 @@ async def electron_websocket(
         # handles all command/response traffic via the stored adapter.
         # Approval requests from the Electron app arrive interleaved with
         # command results and are handled in vm_control's recv() loop.
+        #
+        # IMPORTANT: Pings must go through the adapter (not the raw
+        # websocket) AND must respect the per-machine command lock to
+        # avoid concurrent writes that corrupt WebSocket frames.
         while True:
             await asyncio.sleep(30)
             try:
-                await websocket.send_json({"type": "ping"})
+                # Skip ping if a command is actively executing — the
+                # command traffic itself acts as a heartbeat, and writing
+                # to the socket concurrently corrupts frames.
+                cmd_lock = vm_control_service.command_locks.get(machine_id)
+                if cmd_lock and cmd_lock.locked():
+                    logger.debug(f"Skipping Electron ping for {machine_id} — command in progress")
+                    continue
+                await adapter.send(json.dumps({"type": "ping"}))
             except Exception:
                 logger.info(f"Electron ping failed, connection lost: {machine_id}")
                 break
@@ -385,10 +396,24 @@ async def _cleanup_electron_connection(machine_id: str, own_adapter=None):
 
     logger.info(f"Cleaning up Electron connection: {machine_id}")
 
-    # Remove from vm_control_service
+    # Remove the WebSocket connection object — it's dead.
     vm_control_service.connections.pop(machine_id, None)
-    vm_control_service.session_data.pop(machine_id, None)
     vm_control_service.last_successful_command.pop(machine_id, None)
+
+    # IMPORTANT: Keep session_data alive so that ensure_connection() can
+    # still identify this machine as Electron and wait for its reconnect
+    # loop instead of attempting an outbound WebSocket connection.
+    # The session_data will be overwritten when the Electron app reconnects,
+    # or cleaned up if the machine is explicitly removed.
+    # Only remove session_data if no execution is in progress.
+    exec_lock = vm_control_service.execution_locks.get(machine_id)
+    if exec_lock and exec_lock.locked():
+        logger.info(
+            f"Preserving session_data for {machine_id} — execution in progress, "
+            f"Electron will reconnect"
+        )
+    else:
+        vm_control_service.session_data.pop(machine_id, None)
 
     # Cancel heartbeat if any
     task = vm_control_service.heartbeat_tasks.pop(machine_id, None)

@@ -357,7 +357,8 @@ async def chat_endpoint(
             # Electron connections are already established via the /api/electron/ws endpoint.
             # If the connection isn't present yet (app still reconnecting after a
             # brief drop), wait up to 20s for it instead of failing immediately.
-            if chat_request.machine_id not in vm_control_service.connections:
+            ws = vm_control_service.connections.get(chat_request.machine_id)
+            if ws is None:
                 logger.info(f"Electron connection not present for {chat_request.machine_id}, waiting for reconnect...")
                 reconnected = await vm_control_service._wait_for_electron_reconnect(
                     chat_request.machine_id
@@ -367,6 +368,24 @@ async def chat_endpoint(
                         status_code=503,
                         detail="Electron desktop app is not connected. Please ensure the app is running."
                     )
+                ws = vm_control_service.connections.get(chat_request.machine_id)
+
+            # Validate the connection is actually alive with a quick health check.
+            # The adapter tracks its own state — if it's marked CLOSED, the socket
+            # is dead and we need to wait for the Electron app to reconnect.
+            from app.services.ws_adapter import _AdapterState
+            if ws is not None and getattr(ws, 'state', None) != _AdapterState.OPEN:
+                logger.warning(f"Electron connection for {chat_request.machine_id} is stale (state={getattr(ws, 'state', 'unknown')}), waiting for reconnect...")
+                vm_control_service.connections.pop(chat_request.machine_id, None)
+                reconnected = await vm_control_service._wait_for_electron_reconnect(
+                    chat_request.machine_id
+                )
+                if not reconnected:
+                    raise HTTPException(
+                        status_code=503,
+                        detail="Electron desktop app connection is stale. Please restart the app or check your network."
+                    )
+
             logger.info(f"Using existing Electron connection for {chat_request.machine_id}")
         else:
             try:

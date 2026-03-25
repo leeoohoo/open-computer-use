@@ -678,7 +678,19 @@ class VMControlService:
         # Reset reconnect attempts
         if machine_id in self.reconnect_attempts:
             del self.reconnect_attempts[machine_id]
-        
+
+        # Clean up health metrics and tracking dicts to prevent memory leaks
+        if machine_id in self.connection_health:
+            del self.connection_health[machine_id]
+        if machine_id in self.last_successful_command:
+            del self.last_successful_command[machine_id]
+        if machine_id in self.execution_locks:
+            del self.execution_locks[machine_id]
+        if machine_id in self.execution_owners:
+            del self.execution_owners[machine_id]
+        if machine_id in self.cancellation_events:
+            del self.cancellation_events[machine_id]
+
         logger.info(f"✓ Disconnected from machine {machine_id}")
     
     async def disconnect_all(self):
