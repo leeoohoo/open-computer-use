@@ -1,0 +1,404 @@
+{
+  "common": {
+    "startFree": "免费开始",
+    "bookDemo": "预约演示",
+    "tryCoastyFree": "免费试用 Coasty",
+    "learnMore": "了解更多",
+    "watchSession": "观看会话",
+    "compareAllPlans": "比较所有方案和功能",
+    "allRightsReserved": "保留所有权利。",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "recommended": "推荐",
+    "month": "月",
+    "creditsPerMonth": "{count} 积分/月",
+    "agentsInParallel": "{count} 个智能体并行"
+  },
+
+  "header": {
+    "useCases": "使用场景",
+    "blog": "博客",
+    "agentSwarms": "智能体集群",
+    "compare": "对比",
+    "demos": "演示",
+    "pricing": "价格",
+    "download": "下载",
+    "signIn": "登录",
+    "getStarted": "立即开始",
+    "useCaseItems": {
+      "competitorIntel": "竞争对手情报",
+      "qaBugReports": "QA 缺陷报告",
+      "seoGapAnalysis": "SEO 差距分析",
+      "dataExtraction": "数据提取",
+      "leadGeneration": "潜在客户开发",
+      "siteAudit": "网站审计",
+      "adIntelligence": "广告情报",
+      "emailOutreach": "邮件外联",
+      "designReview": "设计评审",
+      "priceMonitoring": "价格监控",
+      "marketResearch": "市场调研",
+      "emailCampaigns": "邮件营销"
+    },
+    "useCaseStats": {
+      "competitorIntel": "已交付 {stat} 份竞争对手档案",
+      "qaBugReports": "每次运行测试 {stat} 个用户流程",
+      "seoGapAnalysis": "已识别 {stat} 个关键词差距",
+      "dataExtraction": "每次运行提取 {stat} 行数据",
+      "leadGeneration": "每次运行获取 {stat} 个合格线索",
+      "siteAudit": "每次运行审计 {stat} 个页面",
+      "adIntelligence": "已抓取 {stat} 个广告创意",
+      "emailOutreach": "已撰写 {stat} 封个性化邮件",
+      "designReview": "每页测试 {stat} 个断点",
+      "priceMonitoring": "每次运行比较 {stat} 个 SKU",
+      "marketResearch": "已采集 {stat} 个数据点",
+      "emailCampaigns": "每次营销发送 {stat} 封个性化邮件"
+    },
+    "blogItems": {
+      "allPosts": "所有文章",
+      "computerUse": "计算机使用",
+      "compare": "对比",
+      "dataEntry": "数据录入",
+      "webScraping": "网页抓取",
+      "jobApplications": "求职申请",
+      "demosResults": "演示与结果",
+      "guide": "指南"
+    },
+    "blogStats": {
+      "allPosts": "每周发布 {stat} 篇文章",
+      "computerUse": "OSWorld 基准分数 {stat}",
+      "compare": "已分析 {stat} 个竞争对手",
+      "dataEntry": "比手动快 {stat}",
+      "webScraping": "每次会话处理 {stat} 个页面",
+      "jobApplications": "每次会话投递 {stat} 份申请",
+      "demosResults": "{stat} 个真实案例研究",
+      "guide": "{stat} 个使用场景教程"
+    }
+  },
+
+  "hero": {
+    "badge": "#1 计算机使用智能体 · {score} OSWorld",
+    "headline": "自主计算机操作员",
+    "useCases": {
+      "computerAgent": {
+        "label": "计算机智能体",
+        "headline": "自动化任何浏览器任务",
+        "outcome": "一个控制真实计算机的 AI 智能体——浏览、点击、输入，交付完成的工作。无需任何设置。"
+      },
+      "competitorIntel": {
+        "label": "竞争对手情报",
+        "headline": "监控每一个竞争对手",
+        "outcome": "完整的竞争对手档案，包括定价、功能和定位差距——导出为可直接分享的报告。"
+      },
+      "qaTesting": {
+        "label": "QA 测试",
+        "headline": "在用户之前发现缺陷",
+        "outcome": "端到端测试关键用户流程，每个缺陷都附带截图、复现步骤和严重性分级。"
+      },
+      "seoAnalysis": {
+        "label": "SEO 分析",
+        "headline": "挖掘关键词差距",
+        "outcome": "识别关键词差距、起草内容简报、映射竞争对手外链来源——可执行的 SEO 策略。"
+      },
+      "dataExtraction": {
+        "label": "数据提取",
+        "headline": "抓取并结构化任何网站",
+        "outcome": "结构化数据抓取、清洗、去重，并导出为 CSV——支持任何网站、任何格式。"
+      },
+      "leadGeneration": {
+        "label": "潜在客户开发",
+        "headline": "填满您的销售管道",
+        "outcome": "匹配您理想客户画像的合格决策者，包含已验证的职位、公司和个性化开场白。"
+      },
+      "siteAudit": {
+        "label": "网站审计",
+        "headline": "大规模审计每个页面",
+        "outcome": "扫描页面、评估核心 Web 指标、发现失效链接、按修复优先级排列无障碍问题。"
+      },
+      "emailOutreach": {
+        "label": "邮件外联",
+        "headline": "发送个性化外联邮件",
+        "outcome": "个性化邮件引用每位潜在客户的公司、职位和痛点——随时可发送。"
+      },
+      "marketResearch": {
+        "label": "市场调研",
+        "headline": "快速验证您的市场",
+        "outcome": "计算总可寻址市场、分析主要参与者、绘制增长趋势——来自数十个数据源。"
+      }
+    },
+    "demoVideos": {
+      "marketing": { "label": "营销", "task": "在 Reddit 上自主推广您的产品" },
+      "goToMarket": { "label": "市场推广", "task": "寻找潜在客户并发送个性化邮件" },
+      "qaTesting": { "label": "QA 测试", "task": "测试每个结账流程并报告缺陷" },
+      "jobApplication": { "label": "求职申请", "task": "查找职位、定制简历并投递" },
+      "formFilling": { "label": "表单填写", "task": "为您填写 YC S26 申请表" },
+      "socialMedia": { "label": "社交媒体", "task": "在 Hacker News 上发帖并参与评论互动" }
+    }
+  },
+
+  "stats": {
+    "osworld": { "value": "82%", "label": "OSWorld 基准测试", "sublabel": "全球排名第一的计算机使用智能体" },
+    "tools": { "value": "50+", "label": "智能体可使用的工具", "sublabel": "浏览器、终端、桌面、文件" },
+    "schedule": { "value": "24/7", "label": "定时自动运行", "sublabel": "自动化任何重复性任务" },
+    "setup": { "value": "0", "label": "无需设置", "sublabel": "无需 API、无需集成、无需代码" }
+  },
+
+  "whyCoasty": {
+    "sectionLabel": "为什么选择 Coasty",
+    "title": "不是聊天机器人，也不是 RPA 脚本。",
+    "worksLikeHuman": {
+      "title": "像人一样工作",
+      "description": "看、点击、输入、导航——和您一模一样"
+    },
+    "noScripts": {
+      "title": "无需脚本或设置",
+      "description": "用自然语言输入，直接获得结果"
+    },
+    "handlesUnexpected": {
+      "title": "应对意外情况",
+      "description": "自适应验证码、弹窗和布局变化"
+    },
+    "runsInIsolation": {
+      "title": "隔离运行",
+      "description": "每个会话使用独立沙盒 VM——数据不会泄露"
+    }
+  },
+
+  "howItWorks": {
+    "title": "工作原理",
+    "step1": {
+      "title": "描述您的任务",
+      "description": "用自然语言，就这么简单。",
+      "placeholder": "在 LinkedIn 上调研 100 个线索..."
+    },
+    "step2": {
+      "title": "观看智能体工作",
+      "description": "打开浏览器、点击、输入、导航"
+    },
+    "step3": {
+      "title": "任务完成",
+      "description": "每个操作都有截图记录",
+      "results": {
+        "taskCompleted": "任务已完成",
+        "leadsFound": "找到 12 个线索",
+        "addedToCrm": "已添加到 CRM"
+      }
+    }
+  },
+
+  "benchmark": {
+    "title": "全球基准测试排名第一",
+    "subtitle": "OSWorld 得分 82%——这是针对使用真实计算机的 AI 智能体最难的基准测试",
+    "agenticFramework": "智能体框架",
+    "foundationModel": "基础模型"
+  },
+
+  "comparison": {
+    "title": "为什么选择 Coasty 自动化？",
+    "subtitle": "同样的任务，团队需要数小时——Coasty 几分钟就能完成，全天候运行。",
+    "manual": {
+      "title": "手动操作",
+      "subtitle": "您或您的团队手工完成"
+    },
+    "coasty": {
+      "title": "Coasty AI 智能体",
+      "subtitle": "排名第一的计算机使用智能体"
+    },
+    "rows": {
+      "timePerTask": "每项任务耗时",
+      "availability": "可用性",
+      "setupTime": "设置时间",
+      "errorRate": "错误率",
+      "scaling": "扩展性",
+      "auditTrail": "审计追踪"
+    },
+    "manualValues": {
+      "timePerTask": "数小时到数天",
+      "availability": "仅工作时间",
+      "setupTime": "学习工具、编写流程文档",
+      "errorRate": "人为失误",
+      "scaling": "做更多 = 花更多时间",
+      "auditTrail": "无"
+    },
+    "coastyValues": {
+      "timePerTask": "几分钟",
+      "availability": "全天候，每天运行",
+      "setupTime": "60 秒",
+      "errorRate": "自动纠错",
+      "scaling": "无限任务并行运行",
+      "auditTrail": "每次点击都有记录和截图"
+    },
+    "bottomBar": {
+      "automateTasksThat": "自动化那些需要",
+      "hoursManually": "数小时手动操作的任务",
+      "startingAt": "起步价"
+    }
+  },
+
+  "demo": {
+    "title": "观看智能体实际操作",
+    "subtitle": "真实任务。真实浏览器。每次点击都有记录。",
+    "sessions": {
+      "reddit": {
+        "title": "Coasty 在 Reddit 上",
+        "description": "观看 Coasty 自主运行营销活动——调研竞争对手、分析趋势并构建策略方案。",
+        "tag": "营销"
+      },
+      "prospects": {
+        "title": "寻找潜在客户",
+        "description": "Coasty 寻找并调研潜在客户，收集关键信息以撰写个性化外联内容。",
+        "tag": "市场推广"
+      },
+      "qa": {
+        "title": "QA 自我测试",
+        "description": "Coasty 对自己的产品进行质量保证——导航流程、发现缺陷并自主报告问题。",
+        "tag": "QA 测试"
+      },
+      "email": {
+        "title": "代您发送邮件",
+        "description": "从撰写到发送——AI 智能体完全自主地起草并发送邮件。",
+        "tag": "沟通"
+      },
+      "job": {
+        "title": "求职申请",
+        "description": "Coasty 找到匹配的职位、定制您的简历并提交申请——全部自主完成。",
+        "tag": "求职申请"
+      },
+      "hackernews": {
+        "title": "在 Hacker News 上发帖",
+        "description": "Coasty 在 Hacker News 上创建并发布博文——撰写内容并自主提交。",
+        "tag": "社交媒体"
+      }
+    }
+  },
+
+  "features": {
+    "title": "为真实计算机任务而构建",
+    "selfCorrecting": {
+      "title": "自动纠错",
+      "description": "检测错误，自动尝试替代路径"
+    },
+    "auditTrail": {
+      "title": "完整审计追踪",
+      "description": "每次点击都有截图记录"
+    },
+    "schedule": {
+      "title": "全天候定时运行",
+      "description": "支持定时任务——每小时、每天、每周"
+    },
+    "sandboxed": {
+      "title": "沙盒安全隔离",
+      "description": "每个会话使用独立 VM，用后即销毁"
+    },
+    "benchmark": {
+      "title": "OSWorld 排名第一",
+      "description": "82%——有史以来最高分"
+    },
+    "swarms": {
+      "title": "智能体集群",
+      "description": "跨多台机器并行拆分任务"
+    }
+  },
+
+  "pricing": {
+    "title": "免费开始，按需扩展",
+    "subtitle": "无需信用卡。您的 AI 智能体 60 秒内即可就绪。",
+    "plans": {
+      "free": {
+        "name": "免费版",
+        "description": "试用排名第一的计算机使用智能体",
+        "cta": "免费开始"
+      },
+      "lite": {
+        "name": "Lite",
+        "description": "轻量日常自动化",
+        "cta": "获取 Lite"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "每日任务自动化",
+        "cta": "获取 Starter"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "扩展复杂工作流",
+        "cta": "获取 Plus",
+        "badge": "最受欢迎"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "无限量重度自动化",
+        "cta": "获取 Pro"
+      }
+    },
+    "vmTemporary": "1 个临时 VM（2小时）",
+    "vmDeletedAfterInactivity": "1 个 VM（不活跃后删除）",
+    "vmAlwaysOn": "{count} 个常驻 VM",
+    "vmAlwaysOnPlural": "{count} 个常驻 VM",
+    "bargain": {
+      "title": "同样的工作，人工成本为 {oldPrice}",
+      "description": "一名虚拟助理每月费用为 $2,000–$4,000。兼职员工更贵。Coasty 以 $0 起步完成同样的工作，全天候运行——完美一致、完整审计追踪、零培训时间。"
+    }
+  },
+
+  "faq": {
+    "title": "常见问题",
+    "subtitle": "开始之前您需要了解的一切",
+    "items": {
+      "whatIsCoasty": {
+        "question": "什么是 Coasty？",
+        "answer": "Coasty 是全球最优秀的计算机使用 AI 智能体。您只需描述一个任务——调研线索、测试网站、填写表单、发布社交媒体——Coasty 就会打开真实浏览器，导航应用、点击按钮、输入文字，端到端完成任务。无需 API、无需集成、无需编写代码。"
+      },
+      "howDifferent": {
+        "question": "这和 ChatGPT 或其他 AI 工具有什么不同？",
+        "answer": "ChatGPT 生成文本。Coasty 使用计算机。它不是告诉您该怎么做——而是打开浏览器、导航到网站、点击按钮、填写表单，并交付完成的工作。这就是「获得指导」和「让任务直接完成」之间的区别。"
+      },
+      "whatTasks": {
+        "question": "Coasty 可以自动化哪些任务？",
+        "answer": "任何您能在计算机上完成的任务。网络调研、潜在客户开发、数据录入、表单填写、QA 测试、社交媒体发布、邮件外联、发票处理、竞争分析、招聘——只要涉及浏览器或桌面应用，Coasty 都能胜任。"
+      },
+      "whatAreCredits": {
+        "question": "什么是积分？如何使用？",
+        "answer": "积分在智能体执行任务时消耗。任务越长越复杂，消耗的积分越多。付费方案包含每月积分额度，您也可以随时购买额外的积分包。"
+      },
+      "localComputer": {
+        "question": "Coasty 能在我自己的电脑上运行吗？",
+        "answer": "可以。我们的桌面应用以轻量级浮窗形式运行在您的电脑上，直接控制您本地的浏览器和应用程序。或者，任务也可以在隔离的云端机器上运行——由您选择。"
+      },
+      "dataSafe": {
+        "question": "我的数据安全吗？",
+        "answer": "每个任务都在隔离的沙盒环境中运行。会话之间不会有数据泄露。您的凭据保持私密，每个操作都有截图记录在完整的审计追踪中，您可以随时查看。"
+      }
+    }
+  },
+
+  "footer": {
+    "tagline": "AI 驱动的计算机使用。",
+    "tagline2": "用智能代理自动化任何工作流。",
+    "columns": {
+      "product": "产品",
+      "resources": "资源",
+      "company": "公司",
+      "legal": "法律"
+    },
+    "links": {
+      "computerUse": "计算机使用",
+      "guide": "指南",
+      "download": "下载",
+      "pricing": "价格",
+      "agentSwarms": "智能体集群",
+      "status": "状态",
+      "blog": "博客",
+      "useCases": "使用场景",
+      "demos": "演示",
+      "compare": "对比",
+      "talkToCofounders": "与联合创始人交流与演示",
+      "contact": "联系我们",
+      "privacy": "隐私政策",
+      "terms": "服务条款"
+    }
+  },
+
+  "languageSwitcher": {
+    "label": "语言"
+  }
+}

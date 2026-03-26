@@ -1,0 +1,404 @@
+{
+  "common": {
+    "startFree": "Comece Grátis",
+    "bookDemo": "Agendar uma demo",
+    "tryCoastyFree": "Experimente o Coasty grátis",
+    "learnMore": "Saiba mais",
+    "watchSession": "Assistir sessão",
+    "compareAllPlans": "Compare todos os planos e recursos",
+    "allRightsReserved": "Todos os direitos reservados.",
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "recommended": "Recomendado",
+    "month": "mês",
+    "creditsPerMonth": "{count} créditos/mês",
+    "agentsInParallel": "{count} agentes em paralelo"
+  },
+
+  "header": {
+    "useCases": "Casos de Uso",
+    "blog": "Blog",
+    "agentSwarms": "Enxame de Agentes",
+    "compare": "Comparar",
+    "demos": "Demos",
+    "pricing": "Preços",
+    "download": "Download",
+    "signIn": "Entrar",
+    "getStarted": "Começar",
+    "useCaseItems": {
+      "competitorIntel": "Inteligência Competitiva",
+      "qaBugReports": "Relatórios de Bugs QA",
+      "seoGapAnalysis": "Análise de Gaps SEO",
+      "dataExtraction": "Extração de Dados",
+      "leadGeneration": "Geração de Leads",
+      "siteAudit": "Auditoria de Site",
+      "adIntelligence": "Inteligência de Anúncios",
+      "emailOutreach": "Prospecção por E-mail",
+      "designReview": "Revisão de Design",
+      "priceMonitoring": "Monitoramento de Preços",
+      "marketResearch": "Pesquisa de Mercado",
+      "emailCampaigns": "Campanhas de E-mail"
+    },
+    "useCaseStats": {
+      "competitorIntel": "{stat} perfis de concorrentes entregues",
+      "qaBugReports": "{stat} fluxos de usuário testados por execução",
+      "seoGapAnalysis": "{stat} gaps de palavras-chave identificados",
+      "dataExtraction": "{stat} linhas extraídas por execução",
+      "leadGeneration": "{stat} leads qualificados por execução",
+      "siteAudit": "{stat} páginas auditadas por execução",
+      "adIntelligence": "{stat} criativos de anúncios capturados",
+      "emailOutreach": "{stat} e-mails personalizados redigidos",
+      "designReview": "{stat} breakpoints testados por página",
+      "priceMonitoring": "{stat} SKUs comparados por execução",
+      "marketResearch": "{stat} pontos de dados coletados",
+      "emailCampaigns": "{stat} e-mails personalizados por campanha"
+    },
+    "blogItems": {
+      "allPosts": "Todos os Posts",
+      "computerUse": "Uso de Computador",
+      "compare": "Comparar",
+      "dataEntry": "Entrada de Dados",
+      "webScraping": "Web Scraping",
+      "jobApplications": "Candidaturas de Emprego",
+      "demosResults": "Demos e Resultados",
+      "guide": "Guia"
+    },
+    "blogStats": {
+      "allPosts": "{stat} artigos publicados semanalmente",
+      "computerUse": "{stat} pontuação no benchmark OSWorld",
+      "compare": "{stat} concorrentes analisados",
+      "dataEntry": "{stat} mais rápido que manual",
+      "webScraping": "{stat} páginas por sessão",
+      "jobApplications": "{stat} candidaturas por sessão",
+      "demosResults": "{stat} estudos de caso reais",
+      "guide": "{stat} tutoriais de casos de uso"
+    }
+  },
+
+  "hero": {
+    "badge": "#1 Agente de Uso de Computador · {score} OSWorld",
+    "headline": "Operadores de computador autônomos",
+    "useCases": {
+      "computerAgent": {
+        "label": "Agente de computador",
+        "headline": "automatize qualquer tarefa no navegador",
+        "outcome": "Um agente de IA que controla um computador real — navega, clica, digita e entrega o trabalho pronto. Sem configuração necessária."
+      },
+      "competitorIntel": {
+        "label": "Inteligência competitiva",
+        "headline": "monitore todos os concorrentes",
+        "outcome": "Perfis completos de concorrentes com preços, recursos e lacunas de posicionamento — exportados como relatório pronto para compartilhar."
+      },
+      "qaTesting": {
+        "label": "Testes QA",
+        "headline": "encontre bugs antes dos usuários",
+        "outcome": "Fluxos críticos de usuário testados de ponta a ponta, cada bug capturado com passos de reprodução e classificação de severidade."
+      },
+      "seoAnalysis": {
+        "label": "Análise SEO",
+        "headline": "descubra gaps de palavras-chave",
+        "outcome": "Gaps de palavras-chave identificados, briefings de conteúdo redigidos, fontes de backlinks de concorrentes mapeadas — estratégia SEO acionável."
+      },
+      "dataExtraction": {
+        "label": "Extração de dados",
+        "headline": "extraia e estruture qualquer site",
+        "outcome": "Dados estruturados extraídos, limpos, deduplicados e exportados como CSV — de qualquer site, qualquer formato."
+      },
+      "leadGeneration": {
+        "label": "Geração de leads",
+        "headline": "preencha seu pipeline de vendas",
+        "outcome": "Decisores qualificados correspondendo ao seu ICP com cargos verificados, empresas e aberturas de prospecção personalizadas."
+      },
+      "siteAudit": {
+        "label": "Auditoria de site",
+        "headline": "audite cada página em escala",
+        "outcome": "Páginas escaneadas, Core Web Vitals pontuados, links quebrados encontrados, problemas de acessibilidade classificados por prioridade de correção."
+      },
+      "emailOutreach": {
+        "label": "Prospecção por e-mail",
+        "headline": "envie prospecção personalizada",
+        "outcome": "E-mails personalizados referenciando a empresa, cargo e dores de cada prospect — prontos para enviar."
+      },
+      "marketResearch": {
+        "label": "Pesquisa de mercado",
+        "headline": "valide seu mercado rapidamente",
+        "outcome": "TAM calculado, principais players perfilados, tendências de crescimento mapeadas — coletados de dezenas de fontes de dados."
+      }
+    },
+    "demoVideos": {
+      "marketing": { "label": "Marketing", "task": "Divulgue seu produto no Reddit de forma autônoma" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Encontre prospects e envie e-mails personalizados" },
+      "qaTesting": { "label": "Testes QA", "task": "Teste todos os fluxos de checkout e reporte bugs" },
+      "jobApplication": { "label": "Candidatura", "task": "Encontre vagas, adapte o currículo e candidate-se" },
+      "formFilling": { "label": "Preenchimento de Formulários", "task": "Preencha a aplicação do YC S26 para você" },
+      "socialMedia": { "label": "Redes Sociais", "task": "Publique no Hacker News e interaja com comentários" }
+    }
+  },
+
+  "stats": {
+    "osworld": { "value": "82%", "label": "Benchmark OSWorld", "sublabel": "#1 agente de uso de computador no mundo" },
+    "tools": { "value": "50+", "label": "Ferramentas que o agente pode usar", "sublabel": "Navegador, terminal, desktop, arquivos" },
+    "schedule": { "value": "24/7", "label": "Executa por agendamento", "sublabel": "Automatize qualquer tarefa recorrente" },
+    "setup": { "value": "0", "label": "Configuração necessária", "sublabel": "Sem APIs, sem integrações, sem código" }
+  },
+
+  "whyCoasty": {
+    "sectionLabel": "Por que Coasty",
+    "title": "Não é um chatbot. Não é um script RPA.",
+    "worksLikeHuman": {
+      "title": "Funciona como um humano",
+      "description": "Vê, clica, digita, navega — exatamente como você"
+    },
+    "noScripts": {
+      "title": "Sem scripts ou configuração",
+      "description": "Português simples na entrada, resultados na saída"
+    },
+    "handlesUnexpected": {
+      "title": "Lida com o inesperado",
+      "description": "Adapta-se a CAPTCHAs, popups, mudanças de layout"
+    },
+    "runsInIsolation": {
+      "title": "Executa em isolamento",
+      "description": "VM isolada por sessão — nada vaza"
+    }
+  },
+
+  "howItWorks": {
+    "title": "Como funciona",
+    "step1": {
+      "title": "Descreva sua tarefa",
+      "description": "Em português simples. Só isso.",
+      "placeholder": "Pesquise 100 leads no LinkedIn..."
+    },
+    "step2": {
+      "title": "Assista o agente trabalhar",
+      "description": "Abre o navegador, clica, digita, navega"
+    },
+    "step3": {
+      "title": "Tarefa concluída",
+      "description": "Cada ação registrada com capturas de tela",
+      "results": {
+        "taskCompleted": "Tarefa concluída",
+        "leadsFound": "12 leads encontrados",
+        "addedToCrm": "Adicionados ao CRM"
+      }
+    }
+  },
+
+  "benchmark": {
+    "title": "Classificado #1 no mundo",
+    "subtitle": "82% no OSWorld — o benchmark mais difícil para agentes de IA que usam computadores reais",
+    "agenticFramework": "Framework Agêntico",
+    "foundationModel": "Modelo Base"
+  },
+
+  "comparison": {
+    "title": "Por que automatizar com Coasty?",
+    "subtitle": "As mesmas tarefas que levam horas para uma equipe — Coasty completa em minutos, 24 horas por dia.",
+    "manual": {
+      "title": "Fazendo Manualmente",
+      "subtitle": "Você ou sua equipe, à mão"
+    },
+    "coasty": {
+      "title": "Coasty Agente IA",
+      "subtitle": "#1 agente de uso de computador"
+    },
+    "rows": {
+      "timePerTask": "Tempo por tarefa",
+      "availability": "Disponibilidade",
+      "setupTime": "Tempo de configuração",
+      "errorRate": "Taxa de erros",
+      "scaling": "Escalabilidade",
+      "auditTrail": "Trilha de auditoria"
+    },
+    "manualValues": {
+      "timePerTask": "Horas a dias",
+      "availability": "Apenas horário comercial",
+      "setupTime": "Aprender ferramentas, criar SOPs",
+      "errorRate": "Erros humanos",
+      "scaling": "Fazer mais = gastar mais tempo",
+      "auditTrail": "Nenhuma"
+    },
+    "coastyValues": {
+      "timePerTask": "Minutos",
+      "availability": "24/7, todos os dias",
+      "setupTime": "60 segundos",
+      "errorRate": "Autocorreção",
+      "scaling": "Execute tarefas ilimitadas em paralelo",
+      "auditTrail": "Cada clique registrado + capturas de tela"
+    },
+    "bottomBar": {
+      "automateTasksThat": "Automatize tarefas que levam",
+      "hoursManually": "horas manualmente",
+      "startingAt": "A partir de"
+    }
+  },
+
+  "demo": {
+    "title": "Veja o agente em ação",
+    "subtitle": "Tarefas reais. Navegadores reais. Cada clique gravado.",
+    "sessions": {
+      "reddit": {
+        "title": "Coasty no Reddit",
+        "description": "Veja o Coasty executar autonomamente uma campanha de marketing — pesquisando concorrentes, analisando tendências e construindo uma apresentação estratégica.",
+        "tag": "Marketing"
+      },
+      "prospects": {
+        "title": "Encontrando Clientes em Potencial",
+        "description": "Coasty encontra e pesquisa clientes em potencial, reunindo detalhes-chave para criar prospecção personalizada.",
+        "tag": "Go-to-Market"
+      },
+      "qa": {
+        "title": "Testando a Si Mesmo com QA",
+        "description": "Coasty executa garantia de qualidade em seu próprio produto — navegando fluxos, encontrando bugs e reportando problemas autonomamente.",
+        "tag": "Testes QA"
+      },
+      "email": {
+        "title": "Enviando um E-mail em Seu Nome",
+        "description": "Da composição ao envio — um agente de IA redige e entrega um e-mail inteiramente por conta própria.",
+        "tag": "Comunicação"
+      },
+      "job": {
+        "title": "Candidatando-se a uma Vaga",
+        "description": "Coasty encontra uma vaga compatível, adapta seu currículo e envia a candidatura — tudo por conta própria.",
+        "tag": "Candidatura"
+      },
+      "hackernews": {
+        "title": "Publicando no Hacker News",
+        "description": "Coasty cria e publica um post no Hacker News — escrevendo o conteúdo e enviando autonomamente.",
+        "tag": "Redes Sociais"
+      }
+    }
+  },
+
+  "features": {
+    "title": "Feito para tarefas reais no computador",
+    "selfCorrecting": {
+      "title": "Autocorreção",
+      "description": "Detecta erros, tenta caminhos alternativos"
+    },
+    "auditTrail": {
+      "title": "Trilha de Auditoria Completa",
+      "description": "Cada clique registrado com capturas de tela"
+    },
+    "schedule": {
+      "title": "Agendamento 24/7",
+      "description": "Executa por cron — horária, diária, semanalmente"
+    },
+    "sandboxed": {
+      "title": "Isolado e Seguro",
+      "description": "VM isolada por sessão, destruída após o uso"
+    },
+    "benchmark": {
+      "title": "#1 no OSWorld",
+      "description": "82% — maior pontuação já registrada"
+    },
+    "swarms": {
+      "title": "Enxame de Agentes",
+      "description": "Divida tarefas entre máquinas em paralelo"
+    }
+  },
+
+  "pricing": {
+    "title": "Comece grátis, escale quando quiser",
+    "subtitle": "Sem cartão de crédito. Seu agente de IA estará pronto em 60 segundos.",
+    "plans": {
+      "free": {
+        "name": "Grátis",
+        "description": "Experimente o #1 agente de uso de computador",
+        "cta": "Comece Grátis"
+      },
+      "lite": {
+        "name": "Lite",
+        "description": "Automação leve diária",
+        "cta": "Obter Lite"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Automatize tarefas todos os dias",
+        "cta": "Obter Starter"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Escale fluxos de trabalho complexos",
+        "cta": "Obter Plus",
+        "badge": "Mais Popular"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Automação pesada ilimitada",
+        "cta": "Obter Pro"
+      }
+    },
+    "vmTemporary": "1 VM temporária (2h)",
+    "vmDeletedAfterInactivity": "1 VM (excluída após inatividade)",
+    "vmAlwaysOn": "{count} VM sempre ativa",
+    "vmAlwaysOnPlural": "{count} VMs sempre ativas",
+    "bargain": {
+      "title": "O mesmo trabalho custa {oldPrice} com mão de obra manual",
+      "description": "Um assistente virtual custa $2.000–$4.000/mês. Uma contratação meio período custa mais. Coasty faz o mesmo trabalho 24/7 a partir de $0 — com consistência perfeita, trilhas de auditoria completas e zero tempo de treinamento."
+    }
+  },
+
+  "faq": {
+    "title": "Perguntas frequentes",
+    "subtitle": "Tudo o que você precisa saber antes de começar",
+    "items": {
+      "whatIsCoasty": {
+        "question": "O que é o Coasty?",
+        "answer": "Coasty é o melhor agente de IA de uso de computador do mundo. Você descreve uma tarefa — pesquisar leads, testar um site, preencher formulários, postar em redes sociais — e o Coasty abre um navegador real, navega por aplicativos, clica em botões, digita texto e completa a tarefa de ponta a ponta. Sem APIs, sem integrações, sem código necessário."
+      },
+      "howDifferent": {
+        "question": "Como isso é diferente do ChatGPT ou outras ferramentas de IA?",
+        "answer": "O ChatGPT gera texto. O Coasty usa um computador. Ele não diz o que fazer — ele abre um navegador, navega até o site, clica nos botões, preenche os formulários e entrega o trabalho concluído. É a diferença entre receber instruções e ter a tarefa feita por você."
+      },
+      "whatTasks": {
+        "question": "Quais tarefas o Coasty pode automatizar?",
+        "answer": "Qualquer tarefa que você pode fazer em um computador. Pesquisa web, geração de leads, entrada de dados, preenchimento de formulários, testes QA, postagem em redes sociais, prospecção por e-mail, processamento de faturas, análise competitiva, recrutamento — se envolve um navegador ou aplicativo desktop, o Coasty pode fazer."
+      },
+      "whatAreCredits": {
+        "question": "O que são créditos e como são utilizados?",
+        "answer": "Créditos são consumidos conforme o agente trabalha nas tarefas. Tarefas mais longas e complexas usam mais créditos. Planos pagos incluem créditos mensais, e você também pode comprar pacotes de créditos adicionais a qualquer momento."
+      },
+      "localComputer": {
+        "question": "O Coasty pode rodar no meu próprio computador?",
+        "answer": "Sim. Nosso aplicativo desktop funciona como uma sobreposição leve na sua máquina, controlando seu navegador e aplicativos locais diretamente. Alternativamente, as tarefas rodam em máquinas isoladas na nuvem — você escolhe."
+      },
+      "dataSafe": {
+        "question": "Meus dados estão seguros?",
+        "answer": "Cada tarefa roda em um ambiente sandbox isolado. Nada vaza entre sessões. Suas credenciais permanecem privadas, e cada ação é registrada com capturas de tela em uma trilha de auditoria completa que você pode revisar a qualquer momento."
+      }
+    }
+  },
+
+  "footer": {
+    "tagline": "Uso de computador com IA.",
+    "tagline2": "Automatize qualquer fluxo de trabalho com agentes inteligentes.",
+    "columns": {
+      "product": "Produto",
+      "resources": "Recursos",
+      "company": "Empresa",
+      "legal": "Legal"
+    },
+    "links": {
+      "computerUse": "Uso de Computador",
+      "guide": "Guia",
+      "download": "Download",
+      "pricing": "Preços",
+      "agentSwarms": "Enxame de Agentes",
+      "status": "Status",
+      "blog": "Blog",
+      "useCases": "Casos de Uso",
+      "demos": "Demos",
+      "compare": "Comparar",
+      "talkToCofounders": "Fale com os Cofundadores e Demo",
+      "contact": "Contato",
+      "privacy": "Privacidade",
+      "terms": "Termos"
+    }
+  },
+
+  "languageSwitcher": {
+    "label": "Idioma"
+  }
+}

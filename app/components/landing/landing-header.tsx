@@ -9,39 +9,40 @@ import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
 import { useTheme } from "next-themes"
+import { useTranslations } from "next-intl"
 
-const useCaseDropdownItems = [
-  { slug: "competitor-intel", label: "Competitor Intel", icon: Search, stat: "5", statLabel: "competitor profiles delivered" },
-  { slug: "qa-bug-reports", label: "QA Bug Reports", icon: Bug, stat: "30+", statLabel: "user flows tested per run" },
-  { slug: "seo-gap-analysis", label: "SEO Gap Analysis", icon: TrendingUp, stat: "150+", statLabel: "keyword gaps identified" },
-  { slug: "data-extraction", label: "Data Extraction", icon: FileText, stat: "1,000+", statLabel: "rows extracted per run" },
-  { slug: "lead-generation", label: "Lead Generation", icon: Users, stat: "50", statLabel: "qualified leads per run" },
-  { slug: "site-audit", label: "Site Audit", icon: BarChart3, stat: "200+", statLabel: "pages audited per run" },
-  { slug: "ad-intelligence", label: "Ad Intelligence", icon: Eye, stat: "25+", statLabel: "ad creatives captured" },
-  { slug: "email-outreach", label: "Email Outreach", icon: Send, stat: "50", statLabel: "personalized emails drafted" },
-  { slug: "design-review", label: "Design Review", icon: MonitorSmartphone, stat: "12", statLabel: "breakpoints tested per page" },
-  { slug: "price-monitoring", label: "Price Monitoring", icon: ShoppingCart, stat: "200+", statLabel: "SKUs compared per run" },
-  { slug: "market-research", label: "Market Research", icon: Globe, stat: "40+", statLabel: "data points sourced" },
-  { slug: "email-campaigns", label: "Email Campaigns", icon: Mail, stat: "100", statLabel: "personalized emails per campaign" },
+const useCaseDropdownDef = [
+  { slug: "competitor-intel", labelKey: "competitorIntel", icon: Search, stat: "5", statKey: "competitorIntel" },
+  { slug: "qa-bug-reports", labelKey: "qaBugReports", icon: Bug, stat: "30+", statKey: "qaBugReports" },
+  { slug: "seo-gap-analysis", labelKey: "seoGapAnalysis", icon: TrendingUp, stat: "150+", statKey: "seoGapAnalysis" },
+  { slug: "data-extraction", labelKey: "dataExtraction", icon: FileText, stat: "1,000+", statKey: "dataExtraction" },
+  { slug: "lead-generation", labelKey: "leadGeneration", icon: Users, stat: "50", statKey: "leadGeneration" },
+  { slug: "site-audit", labelKey: "siteAudit", icon: BarChart3, stat: "200+", statKey: "siteAudit" },
+  { slug: "ad-intelligence", labelKey: "adIntelligence", icon: Eye, stat: "25+", statKey: "adIntelligence" },
+  { slug: "email-outreach", labelKey: "emailOutreach", icon: Send, stat: "50", statKey: "emailOutreach" },
+  { slug: "design-review", labelKey: "designReview", icon: MonitorSmartphone, stat: "12", statKey: "designReview" },
+  { slug: "price-monitoring", labelKey: "priceMonitoring", icon: ShoppingCart, stat: "200+", statKey: "priceMonitoring" },
+  { slug: "market-research", labelKey: "marketResearch", icon: Globe, stat: "40+", statKey: "marketResearch" },
+  { slug: "email-campaigns", labelKey: "emailCampaigns", icon: Mail, stat: "100", statKey: "emailCampaigns" },
 ]
 
-const blogDropdownItems = [
-  { href: "/blog", label: "All Posts", icon: Newspaper, stat: "50+", statLabel: "articles published weekly" },
-  { href: "/computer-use", label: "Computer Use", icon: Monitor, stat: "82%", statLabel: "OSWorld benchmark score" },
-  { href: "/compare", label: "Compare", icon: GitCompare, stat: "10", statLabel: "competitors analyzed" },
-  { href: "/computer-use/data-entry", label: "Data Entry", icon: Keyboard, stat: "10x", statLabel: "faster than manual" },
-  { href: "/computer-use/web-scraping", label: "Web Scraping", icon: Globe, stat: "1,000+", statLabel: "pages per session" },
-  { href: "/computer-use/job-applications", label: "Job Applications", icon: Send, stat: "50+", statLabel: "applications per session" },
-  { href: "/results", label: "Demos & Results", icon: Eye, stat: "20+", statLabel: "real case studies" },
-  { href: "/guide", label: "Guide", icon: BookOpen, stat: "12", statLabel: "use case walkthroughs" },
+const blogDropdownDef = [
+  { href: "/blog", labelKey: "allPosts", icon: Newspaper, stat: "50+", statKey: "allPosts" },
+  { href: "/computer-use", labelKey: "computerUse", icon: Monitor, stat: "82%", statKey: "computerUse" },
+  { href: "/compare", labelKey: "compare", icon: GitCompare, stat: "10", statKey: "compare" },
+  { href: "/computer-use/data-entry", labelKey: "dataEntry", icon: Keyboard, stat: "10x", statKey: "dataEntry" },
+  { href: "/computer-use/web-scraping", labelKey: "webScraping", icon: Globe, stat: "1,000+", statKey: "webScraping" },
+  { href: "/computer-use/job-applications", labelKey: "jobApplications", icon: Send, stat: "50+", statKey: "jobApplications" },
+  { href: "/results", labelKey: "demosResults", icon: Eye, stat: "20+", statKey: "demosResults" },
+  { href: "/guide", labelKey: "guide", icon: BookOpen, stat: "12", statKey: "guide" },
 ]
 
-const navItems = [
-  { href: "/agent-swarms", label: "Agent Swarms", external: true },
-  { href: "/compare", label: "Compare", external: true },
-  { href: "/results", label: "Demos", external: true },
-  { href: "/pricing", label: "Pricing", external: true },
-  { href: "/download", label: "Download", external: true },
+const navItemsDef = [
+  { href: "/agent-swarms", labelKey: "agentSwarms", external: true },
+  { href: "/compare", labelKey: "compare", external: true },
+  { href: "/results", labelKey: "demos", external: true },
+  { href: "/pricing", labelKey: "pricing", external: true },
+  { href: "/download", labelKey: "download", external: true },
 ]
 
 export function LandingHeader({
@@ -63,6 +64,7 @@ export function LandingHeader({
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [currentPath, setCurrentPath] = useState("")
+  const t = useTranslations("header")
 
   useEffect(() => {
     setMounted(true)
@@ -95,7 +97,7 @@ export function LandingHeader({
       setScrolled(window.scrollY > 10)
 
       if (currentPath === '/' || currentPath === '') {
-        const sections = navItems.filter(item => !item.external).map(item => item.href.substring(2))
+        const sections = navItemsDef.filter(item => !item.external).map(item => item.href.substring(2))
         const scrollPosition = window.scrollY + 100
 
         for (let i = sections.length - 1; i >= 0; i--) {
@@ -238,7 +240,7 @@ export function LandingHeader({
                         : "text-muted-foreground/60 hover:text-foreground"
                     )}
                   >
-                    Use Cases
+                    {t("useCases")}
                     <ChevronDown className={cn("h-3 w-3 transition-transform duration-200", useCasesOpen && "rotate-180")} />
                     {currentPath.startsWith("/use-cases") && (
                       <motion.span
@@ -262,7 +264,7 @@ export function LandingHeader({
                           {/* Left: use case list */}
                           <div className="flex-1 min-w-0">
                             <div className="grid grid-cols-2 gap-0.5">
-                              {useCaseDropdownItems.map((uc, i) => {
+                              {useCaseDropdownDef.map((uc, i) => {
                                 const Icon = uc.icon
                                 const isHovered = hoveredUseCase === i
                                 return (
@@ -284,7 +286,7 @@ export function LandingHeader({
                                       "text-[12px] font-medium transition-colors duration-100 truncate",
                                       isHovered ? "text-foreground" : "text-muted-foreground/60"
                                     )}>
-                                      {uc.label}
+                                      {t(`useCaseItems.${uc.labelKey}`)}
                                     </span>
                                   </Link>
                                 )
@@ -305,7 +307,7 @@ export function LandingHeader({
                           {/* Right: preview panel */}
                           <div className="w-[160px] shrink-0 rounded-lg bg-foreground/[0.03] dark:bg-foreground/[0.04] p-4 flex flex-col items-center justify-center relative overflow-hidden">
                             {(() => {
-                              const huc = useCaseDropdownItems[hoveredUseCase]
+                              const huc = useCaseDropdownDef[hoveredUseCase]
                               const HIcon = huc.icon
                               return (
                                 <>
@@ -323,7 +325,7 @@ export function LandingHeader({
                                         {huc.stat}
                                       </span>
                                       <p className="text-[10px] font-medium text-muted-foreground/40 mt-1 leading-tight">
-                                        {huc.statLabel}
+                                        {t(`useCaseStats.${huc.statKey}`, { stat: huc.stat })}
                                       </p>
                                     </motion.div>
                                   </AnimatePresence>
@@ -337,13 +339,13 @@ export function LandingHeader({
                   </AnimatePresence>
                 </li>
 
-                {navItems.map((item) => {
+                {navItemsDef.map((item) => {
                   const isActive = item.external
                     ? currentPath === item.href
                     : (currentPath === '/' || currentPath === '') && activeSection === item.href.substring(2)
 
                   return (
-                    <li key={item.label} className="relative">
+                    <li key={item.labelKey} className="relative">
                       {item.external ? (
                         <Link
                           href={item.href}
@@ -354,7 +356,7 @@ export function LandingHeader({
                               : "text-muted-foreground/60 hover:text-foreground"
                           )}
                         >
-                          {item.label}
+                          {t(item.labelKey)}
                           {isActive && (
                             <motion.span
                               layoutId="nav-indicator"
@@ -378,7 +380,7 @@ export function LandingHeader({
                               : "text-muted-foreground/60 hover:text-foreground"
                           )}
                         >
-                          {item.label}
+                          {t(item.labelKey)}
                           {isActive && (
                             <motion.span
                               layoutId="nav-indicator"
@@ -416,7 +418,7 @@ export function LandingHeader({
                         : "text-muted-foreground/60 hover:text-foreground"
                     )}
                   >
-                    Blog
+                    {t("blog")}
                     <ChevronDown className={cn("h-3 w-3 transition-transform duration-200", blogOpen && "rotate-180")} />
                     {(currentPath.startsWith("/blog") || currentPath.startsWith("/computer-use") || currentPath.startsWith("/compare")) && (
                       <motion.span
@@ -440,7 +442,7 @@ export function LandingHeader({
                           {/* Left: item list */}
                           <div className="flex-1 min-w-0">
                             <div className="grid grid-cols-2 gap-0.5">
-                              {blogDropdownItems.map((item, i) => {
+                              {blogDropdownDef.map((item, i) => {
                                 const Icon = item.icon
                                 const isHovered = hoveredBlogItem === i
                                 return (
@@ -462,7 +464,7 @@ export function LandingHeader({
                                       "text-[12px] font-medium transition-colors duration-100 truncate",
                                       isHovered ? "text-foreground" : "text-muted-foreground/60"
                                     )}>
-                                      {item.label}
+                                      {t(`blogItems.${item.labelKey}`)}
                                     </span>
                                   </Link>
                                 )
@@ -483,7 +485,7 @@ export function LandingHeader({
                           {/* Right: preview panel */}
                           <div className="w-[160px] shrink-0 rounded-lg bg-foreground/[0.03] dark:bg-foreground/[0.04] p-4 flex flex-col items-center justify-center relative overflow-hidden">
                             {(() => {
-                              const hItem = blogDropdownItems[hoveredBlogItem]
+                              const hItem = blogDropdownDef[hoveredBlogItem]
                               const HIcon = hItem.icon
                               return (
                                 <>
@@ -501,7 +503,7 @@ export function LandingHeader({
                                         {hItem.stat}
                                       </span>
                                       <p className="text-[10px] font-medium text-muted-foreground/40 mt-1 leading-tight">
-                                        {hItem.statLabel}
+                                        {t(`blogStats.${hItem.statKey}`, { stat: hItem.stat })}
                                       </p>
                                     </motion.div>
                                   </AnimatePresence>
@@ -535,7 +537,7 @@ export function LandingHeader({
                     scrolled ? "px-3.5 py-1.5" : "px-4 py-2"
                   )}
                 >
-                  Get Started
+                  {t("getStarted")}
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
@@ -603,7 +605,7 @@ export function LandingHeader({
                           : "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/[0.03]"
                       )}
                     >
-                      Use Cases
+                      {t("useCases")}
                       <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", mobileUseCasesOpen && "rotate-180")} />
                     </button>
                     <AnimatePresence>
@@ -616,7 +618,7 @@ export function LandingHeader({
                           className="overflow-hidden"
                         >
                           <div className="grid grid-cols-2 gap-0.5 px-1.5 py-1.5">
-                            {useCaseDropdownItems.map((uc) => {
+                            {useCaseDropdownDef.map((uc) => {
                               const Icon = uc.icon
                               return (
                                 <Link
@@ -626,7 +628,7 @@ export function LandingHeader({
                                   className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-foreground/[0.04] transition-colors duration-150"
                                 >
                                   <Icon className="size-3.5 shrink-0 text-muted-foreground/40" />
-                                  <span className="text-[13px] font-medium text-muted-foreground/60">{uc.label}</span>
+                                  <span className="text-[13px] font-medium text-muted-foreground/60">{t(`useCaseItems.${uc.labelKey}`)}</span>
                                 </Link>
                               )
                             })}
@@ -644,7 +646,7 @@ export function LandingHeader({
                     </AnimatePresence>
                   </motion.div>
 
-                  {navItems.map((item, index) => {
+                  {navItemsDef.map((item, index) => {
                     const isActive = item.external
                       ? currentPath === item.href
                       : (currentPath === '/' || currentPath === '') && activeSection === item.href.substring(2)
@@ -658,7 +660,7 @@ export function LandingHeader({
 
                     return (
                       <motion.div
-                        key={item.label}
+                        key={item.labelKey}
                         initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.03, duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -669,7 +671,7 @@ export function LandingHeader({
                             className={linkClasses}
                             onClick={closeMobileMenu}
                           >
-                            {item.label}
+                            {t(item.labelKey)}
                           </Link>
                         ) : (
                           <a
@@ -677,7 +679,7 @@ export function LandingHeader({
                             onClick={(e) => handleNavClick(e, item.href, item.external)}
                             className={linkClasses}
                           >
-                            {item.label}
+                            {t(item.labelKey)}
                           </a>
                         )}
                       </motion.div>
@@ -688,7 +690,7 @@ export function LandingHeader({
                   <motion.div
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: navItems.length * 0.03 + 0.03, duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ delay: navItemsDef.length * 0.03 + 0.03, duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <button
                       onClick={() => setMobileBlogOpen(!mobileBlogOpen)}
@@ -699,7 +701,7 @@ export function LandingHeader({
                           : "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/[0.03]"
                       )}
                     >
-                      Blog & Resources
+                      {t("blog")}
                       <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", mobileBlogOpen && "rotate-180")} />
                     </button>
                     <AnimatePresence>
@@ -712,7 +714,7 @@ export function LandingHeader({
                           className="overflow-hidden"
                         >
                           <div className="grid grid-cols-2 gap-0.5 px-1.5 py-1.5">
-                            {blogDropdownItems.map((item) => {
+                            {blogDropdownDef.map((item) => {
                               const Icon = item.icon
                               return (
                                 <Link
@@ -722,7 +724,7 @@ export function LandingHeader({
                                   className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-foreground/[0.04] transition-colors duration-150"
                                 >
                                   <Icon className="size-3.5 shrink-0 text-muted-foreground/40" />
-                                  <span className="text-[13px] font-medium text-muted-foreground/60">{item.label}</span>
+                                  <span className="text-[13px] font-medium text-muted-foreground/60">{t(`blogItems.${item.labelKey}`)}</span>
                                 </Link>
                               )
                             })}
@@ -747,7 +749,7 @@ export function LandingHeader({
                   <motion.div
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: navItems.length * 0.03 + 0.05, duration: 0.2 }}
+                    transition={{ delay: navItemsDef.length * 0.03 + 0.05, duration: 0.2 }}
                     className="px-1 pb-1"
                   >
                     <Link
@@ -755,7 +757,7 @@ export function LandingHeader({
                       onClick={closeMobileMenu}
                       className="flex items-center justify-center gap-2 w-full rounded-xl h-11 text-[15px] font-semibold tracking-[-0.006em] bg-foreground text-background hover:opacity-90 active:scale-[0.99] transition-all duration-150"
                     >
-                      Get Started
+                      {t("getStarted")}
                       <ArrowRight className="h-3.5 w-3.5" />
                     </Link>
                   </motion.div>

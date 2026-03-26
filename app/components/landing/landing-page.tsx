@@ -8,6 +8,7 @@ import { CoastyIcon } from "@/components/icons/coasty"
 import Link from "next/link"
 import { useState, useEffect, useCallback } from "react"
 import { captureUtmParams } from "@/lib/posthog/analytics"
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
 import { useSearchParams } from "next/navigation"
@@ -25,176 +26,33 @@ const handwriting = Caveat({
   weight: ["600"],
 })
 
-const pricingPlans = [
-  {
-    name: "Free",
-    price: "$0",
-    period: "month",
-    description: "Try the #1 computer-use agent",
-    credits: 0,
-    machines: 0,
-    swarm: 0,
-    features: [
-      "1 temporary VM (2hr)",
-      "Coasty Computer Agent",
-      "Basic search",
-      "Sandboxed, E2E encrypted",
-      "No credit card required",
-    ],
-    limitations: [],
-    cta: "Start Free",
-    highlighted: false,
-  },
-  {
-    name: "Lite",
-    price: "$9",
-    period: "month",
-    description: "Light daily automation",
-    credits: 100,
-    machines: 1,
-    swarm: 2,
-    features: [
-      "1 VM (deleted after inactivity)",
-      "Coasty Computer Agent",
-      "2 agents in parallel",
-      "Basic search",
-      "Standard support (real humans)",
-    ],
-    limitations: [],
-    cta: "Get Lite",
-    highlighted: false,
-  },
-  {
-    name: "Starter",
-    price: "$19",
-    period: "month",
-    description: "Automate tasks every day",
-    credits: 200,
-    machines: 1,
-    swarm: 3,
-    features: [
-      "1 always-on VM",
-      "Coasty Computer Agent",
-      "3 agents in parallel",
-      "Advanced search & extraction",
-      "Standard support (real humans)",
-    ],
-    limitations: [],
-    cta: "Get Starter",
-    highlighted: false,
-  },
-  {
-    name: "Plus",
-    price: "$50",
-    period: "month",
-    description: "Scale complex workflows",
-    credits: 600,
-    machines: 2,
-    swarm: 6,
-    features: [
-      "2 always-on VMs",
-      "Coasty Computer Agent",
-      "6 agents in parallel",
-      "Advanced search & extraction",
-      "Priority support, 24hr response",
-    ],
-    limitations: [],
-    cta: "Go Plus",
-    highlighted: true,
-    badge: "Most Popular",
-  },
-  {
-    name: "Pro",
-    price: "$100",
-    period: "month",
-    description: "Unlimited heavy automation",
-    credits: 1500,
-    machines: 3,
-    swarm: 9,
-    features: [
-      "3 always-on VMs",
-      "Coasty Computer Agent",
-      "9 agents in parallel",
-      "Advanced search & extraction",
-      "Premium support, 12hr response",
-    ],
-    limitations: [],
-    cta: "Get Pro",
-    highlighted: false,
-  },
+const PLAN_KEYS = ["free", "lite", "starter", "plus", "pro"] as const
+const PLAN_DATA = [
+  { key: "free" as const, price: "$0", credits: 0, machines: 0, swarm: 0, highlighted: false },
+  { key: "lite" as const, price: "$9", credits: 100, machines: 1, swarm: 2, highlighted: false },
+  { key: "starter" as const, price: "$19", credits: 200, machines: 1, swarm: 3, highlighted: false },
+  { key: "plus" as const, price: "$50", credits: 600, machines: 2, swarm: 6, highlighted: true },
+  { key: "pro" as const, price: "$100", credits: 1500, machines: 3, swarm: 9, highlighted: false },
 ]
 
-const demoChatSessions = [
-  {
-    title: "Coasty on Reddit",
-    chatId: "373c1f67-afec-4bd6-adda-3809ecdbdd75",
-    description: "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
-    tag: "Marketing",
-  },
-  {
-    title: "Finding Prospective Customers",
-    chatId: "425d3c49-3a06-41e5-9859-aa00c5b12f3d",
-    description: "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
-    tag: "Go-to-Market",
-  },
-  {
-    title: "QA Testing Itself",
-    chatId: "7ee3e942-c5dd-4e49-93b6-353bb5273b7e",
-    description: "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-    tag: "QA Testing",
-  },
-  {
-    title: "Sending an Email on Your Behalf",
-    chatId: "60a0722b-fb98-43d6-a4e7-951d80a22363",
-    description: "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-    tag: "Communication",
-  },
-  {
-    title: "Applying to a Job",
-    chatId: "4ac6f3d2-c273-4a07-bf98-b986d1cbfb88",
-    description: "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-    tag: "Job Application",
-  },
-  {
-    title: "Posting on Hacker News",
-    chatId: "d181de46-b41d-4b87-9648-0374b2b7ec1c",
-    description: "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-    tag: "Social Media",
-  },
+const DEMO_SESSION_DATA = [
+  { key: "reddit" as const, chatId: "373c1f67-afec-4bd6-adda-3809ecdbdd75" },
+  { key: "prospects" as const, chatId: "425d3c49-3a06-41e5-9859-aa00c5b12f3d" },
+  { key: "qa" as const, chatId: "7ee3e942-c5dd-4e49-93b6-353bb5273b7e" },
+  { key: "email" as const, chatId: "60a0722b-fb98-43d6-a4e7-951d80a22363" },
+  { key: "job" as const, chatId: "4ac6f3d2-c273-4a07-bf98-b986d1cbfb88" },
+  { key: "hackernews" as const, chatId: "d181de46-b41d-4b87-9648-0374b2b7ec1c" },
 ]
 
-const faqs = [
-  {
-    question: "What is Coasty?",
-    answer: "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
-  },
-  {
-    question: "How is this different from ChatGPT or other AI tools?",
-    answer: "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
-  },
-  {
-    question: "What tasks can Coasty automate?",
-    answer: "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
-  },
-  {
-    question: "What are credits and how are they used?",
-    answer: "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
-  },
-  {
-    question: "Can Coasty run on my own computer?",
-    answer: "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
-  },
-  {
-    question: "Is my data safe?",
-    answer: "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
-  },
-]
+const FAQ_KEYS = ["whatIsCoasty", "howDifferent", "whatTasks", "whatAreCredits", "localComputer", "dataSafe"] as const
 
 export function LandingPage() {
   const [selectedFaq, setSelectedFaq] = useState<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { resolvedTheme } = useTheme()
+  const t = useTranslations()
+  const tc = useTranslations("common")
 
   const searchParams = useSearchParams()
 
@@ -317,12 +175,9 @@ export function LandingPage() {
               "grid text-center",
               isMobile ? "grid-cols-2 gap-6" : "grid-cols-4 gap-0"
             )}>
-              {[
-                { value: "82%", label: "OSWorld benchmark", sublabel: "#1 computer-use agent globally" },
-                { value: "50+", label: "Tools the agent can use", sublabel: "Browser, terminal, desktop, files" },
-                { value: "24/7", label: "Runs on schedule", sublabel: "Automate any recurring task" },
-                { value: "0", label: "Setup required", sublabel: "No APIs, no integrations, no code" },
-              ].map((stat, i) => (
+              {(["osworld", "tools", "schedule", "setup"] as const).map((key, i) => {
+                const stat = { value: t(`stats.${key}.value`), label: t(`stats.${key}.label`), sublabel: t(`stats.${key}.sublabel`) }
+                return (
                 <div key={stat.label} className={cn(
                   !isMobile && i > 0 && "border-l border-border/30"
                 )}>
@@ -335,7 +190,8 @@ export function LandingPage() {
                   <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
                   <div className="text-xs text-muted-foreground/50 mt-0.5">{stat.sublabel}</div>
                 </div>
-              ))}
+                )
+              })}
             </motion.div>
           </motion.div>
         </section>
@@ -379,13 +235,13 @@ export function LandingPage() {
                 "text-muted-foreground/60 font-medium uppercase tracking-[0.15em] mb-3",
                 isMobile ? "text-[10px]" : "text-xs"
               )}>
-                Why Coasty
+                {t("whyCoasty.sectionLabel")}
               </p>
               <h2 className={cn(
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Not a chatbot. Not an RPA script.
+                {t("whyCoasty.title")}
               </h2>
             </motion.div>
 
@@ -423,9 +279,9 @@ export function LandingPage() {
                   </div>
                 </div>
                 <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
-                  Works like a human
+                  {t("whyCoasty.worksLikeHuman.title")}
                 </p>
-                <p className="text-sm text-muted-foreground/50 mt-0.5">Sees, clicks, types, navigates — exactly like you</p>
+                <p className="text-sm text-muted-foreground/50 mt-0.5">{t("whyCoasty.worksLikeHuman.description")}</p>
               </motion.div>
 
               {/* No scripts or setup — plain english → done visual */}
@@ -454,9 +310,9 @@ export function LandingPage() {
                   </div>
                 </div>
                 <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
-                  No scripts or setup
+                  {t("whyCoasty.noScripts.title")}
                 </p>
-                <p className="text-sm text-muted-foreground/50 mt-0.5">Plain English in, results out</p>
+                <p className="text-sm text-muted-foreground/50 mt-0.5">{t("whyCoasty.noScripts.description")}</p>
               </motion.div>
 
               {/* Handles the unexpected — CAPTCHA → adapts → success */}
@@ -486,9 +342,9 @@ export function LandingPage() {
                   </div>
                 </div>
                 <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
-                  Handles the unexpected
+                  {t("whyCoasty.handlesUnexpected.title")}
                 </p>
-                <p className="text-sm text-muted-foreground/50 mt-0.5">Adapts to CAPTCHAs, popups, layout changes</p>
+                <p className="text-sm text-muted-foreground/50 mt-0.5">{t("whyCoasty.handlesUnexpected.description")}</p>
               </motion.div>
 
               {/* Runs in isolation — sandboxed VM visual */}
@@ -507,9 +363,9 @@ export function LandingPage() {
                   </div>
                 </div>
                 <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
-                  Runs in isolation
+                  {t("whyCoasty.runsInIsolation.title")}
                 </p>
-                <p className="text-sm text-muted-foreground/50 mt-0.5">Sandboxed VM per session — nothing leaks</p>
+                <p className="text-sm text-muted-foreground/50 mt-0.5">{t("whyCoasty.runsInIsolation.description")}</p>
               </motion.div>
             </div>
           </motion.div>
@@ -534,7 +390,7 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                How it works
+                {t("howItWorks.title")}
               </h2>
             </motion.div>
 
@@ -572,9 +428,9 @@ export function LandingPage() {
                 </div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">1</span>
-                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>Describe your task</p>
+                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step1.title")}</p>
                 </div>
-                <p className="text-sm text-muted-foreground/50 pl-7">Plain English. That&apos;s it.</p>
+                <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step1.description")}</p>
               </motion.div>
 
               {/* Step 2: Agent works — mini browser with actions */}
@@ -624,9 +480,9 @@ export function LandingPage() {
                 </div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">2</span>
-                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>Watch the agent work</p>
+                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step2.title")}</p>
                 </div>
-                <p className="text-sm text-muted-foreground/50 pl-7">Opens browser, clicks, types, navigates</p>
+                <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step2.description")}</p>
               </motion.div>
 
               {/* Step 3: Done — results appearing */}
@@ -637,7 +493,7 @@ export function LandingPage() {
                 <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-28")}>
                   <div className="w-full max-w-[200px] space-y-2">
                     {/* Result items appearing */}
-                    {["Task completed", "12 leads found", "Added to CRM"].map((text, i) => (
+                    {[t("howItWorks.step3.results.taskCompleted"), t("howItWorks.step3.results.leadsFound"), t("howItWorks.step3.results.addedToCrm")].map((text, i) => (
                       <div
                         key={text}
                         className="flex items-center gap-2 rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] px-2.5 py-1.5"
@@ -656,9 +512,9 @@ export function LandingPage() {
                 </div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">3</span>
-                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>Task complete</p>
+                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step3.title")}</p>
                 </div>
-                <p className="text-sm text-muted-foreground/50 pl-7">Every action logged with screenshots</p>
+                <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step3.description")}</p>
               </motion.div>
             </div>
           </motion.div>
@@ -683,13 +539,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Benchmarked #1 worldwide
+                {t("benchmark.title")}
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                82% on OSWorld — the hardest benchmark for AI agents that use real computers
+                {t("benchmark.subtitle")}
               </p>
             </motion.div>
 
@@ -697,11 +553,11 @@ export function LandingPage() {
             <motion.div variants={itemVariants} className="flex items-center justify-center gap-4 sm:gap-6 mb-4">
               <div className="flex items-center gap-1.5">
                 <div className="h-2.5 w-2.5 rounded-full bg-sky-500/70" />
-                <span className="text-xs text-muted-foreground">Agentic Framework</span>
+                <span className="text-xs text-muted-foreground">{t("benchmark.agenticFramework")}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />
-                <span className="text-xs text-muted-foreground">Foundation Model</span>
+                <span className="text-xs text-muted-foreground">{t("benchmark.foundationModel")}</span>
               </div>
             </motion.div>
 
@@ -874,13 +730,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Why automate with Coasty?
+                {t("comparison.title")}
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                The same tasks that take a team hours — Coasty completes in minutes, around the clock.
+                {t("comparison.subtitle")}
               </p>
             </motion.div>
 
@@ -897,20 +753,15 @@ export function LandingPage() {
                         <Users className="h-5 w-5 text-muted-foreground/60" />
                       </div>
                       <div>
-                        <h3 className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Doing It Manually</h3>
-                        <p className="text-xs text-muted-foreground/50 mt-0.5">You or your team, by hand</p>
+                        <h3 className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>{t("comparison.manual.title")}</h3>
+                        <p className="text-xs text-muted-foreground/50 mt-0.5">{t("comparison.manual.subtitle")}</p>
                       </div>
                     </div>
                   </div>
                   <div className={cn(isMobile ? "px-5 py-4" : "px-8 py-6")}>
-                    {[
-                      { label: "Time per task", value: "Hours to days", negative: true },
-                      { label: "Availability", value: "Business hours only", negative: true },
-                      { label: "Setup time", value: "Learn tools, write SOPs", negative: true },
-                      { label: "Error rate", value: "Human mistakes", negative: true },
-                      { label: "Scaling", value: "Do more = spend more time", negative: true },
-                      { label: "Audit trail", value: "None", negative: true },
-                    ].map((row) => (
+                    {(["timePerTask", "availability", "setupTime", "errorRate", "scaling", "auditTrail"] as const).map((key) => {
+                      const row = { label: t(`comparison.rows.${key}`), value: t(`comparison.manualValues.${key}`), negative: true }
+                      return (
                       <div key={row.label} className={cn(
                         "flex items-center justify-between py-3",
                         "border-b border-border/10 last:border-0"
@@ -921,7 +772,8 @@ export function LandingPage() {
                           {row.negative && <X className="h-3.5 w-3.5 text-destructive/40" />}
                         </div>
                       </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
 
@@ -947,22 +799,17 @@ export function LandingPage() {
                           )}
                         </div>
                         <div>
-                          <h3 className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Coasty AI Agent</h3>
-                          <p className="text-xs text-muted-foreground/50 mt-0.5">#1 computer-use agent</p>
+                          <h3 className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>{t("comparison.coasty.title")}</h3>
+                          <p className="text-xs text-muted-foreground/50 mt-0.5">{t("comparison.coasty.subtitle")}</p>
                         </div>
                       </div>
-                      <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-1 text-[10px] font-semibold text-primary uppercase tracking-wider">Recommended</span>
+                      <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-1 text-[10px] font-semibold text-primary uppercase tracking-wider">{tc("recommended")}</span>
                     </div>
                   </div>
                   <div className={cn("relative", isMobile ? "px-5 py-4" : "px-8 py-6")}>
-                    {[
-                      { label: "Time per task", value: "Minutes" },
-                      { label: "Availability", value: "24/7, every day" },
-                      { label: "Setup time", value: "60 seconds" },
-                      { label: "Error rate", value: "Self-correcting" },
-                      { label: "Scaling", value: "Run unlimited tasks in parallel" },
-                      { label: "Audit trail", value: "Every click logged + screenshots" },
-                    ].map((row) => (
+                    {(["timePerTask", "availability", "setupTime", "errorRate", "scaling", "auditTrail"] as const).map((key) => {
+                      const row = { label: t(`comparison.rows.${key}`), value: t(`comparison.coastyValues.${key}`) }
+                      return (
                       <div key={row.label} className={cn(
                         "flex items-center justify-between py-3",
                         "border-b border-primary/8 last:border-0"
@@ -973,7 +820,8 @@ export function LandingPage() {
                           <Check className="h-3.5 w-3.5 text-primary" />
                         </div>
                       </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
               </div>
@@ -985,11 +833,11 @@ export function LandingPage() {
                 isMobile ? "px-4 py-2.5" : "px-6 py-3"
               )}>
                 <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
-                  Automate tasks that take <span className="font-bold text-foreground">hours manually</span>
+                  {t("comparison.bottomBar.automateTasksThat")} <span className="font-bold text-foreground">{t("comparison.bottomBar.hoursManually")}</span>
                 </span>
                 <span className="h-4 w-px bg-border/50" />
                 <span className={cn("text-muted-foreground", isMobile ? "text-xs" : "text-sm")}>
-                  Starting at <span className="font-bold text-primary">$0/mo</span>
+                  {t("comparison.bottomBar.startingAt")} <span className="font-bold text-primary">$0/mo</span>
                 </span>
               </div>
             </motion.div>
@@ -1015,13 +863,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Watch the agent in action
+                {t("demo.title")}
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Real tasks. Real browsers. Every click recorded.
+                {t("demo.subtitle")}
               </p>
             </motion.div>
 
@@ -1032,7 +880,7 @@ export function LandingPage() {
                 isMobile ? "grid-cols-1" : "grid-cols-2"
               )}
             >
-              {demoChatSessions.map((demo) => (
+              {DEMO_SESSION_DATA.map((demo) => (
                 <Link
                   key={demo.chatId}
                   href={`/share/${demo.chatId}`}
@@ -1054,7 +902,7 @@ export function LandingPage() {
                       <div className="flex items-center justify-between">
                         <span className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-muted-foreground/70">
                           <span className="h-1 w-1 rounded-full bg-emerald-500" />
-                          {demo.tag}
+                          {t(`demo.sessions.${demo.key}.tag`)}
                         </span>
                         <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
                       </div>
@@ -1064,19 +912,19 @@ export function LandingPage() {
                         "font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors duration-200",
                         isMobile ? "text-lg" : "text-xl"
                       )}>
-                        {demo.title}
+                        {t(`demo.sessions.${demo.key}.title`)}
                       </h3>
 
                       {/* Description */}
                       <p className="text-sm text-muted-foreground leading-relaxed flex-1">
-                        {demo.description}
+                        {t(`demo.sessions.${demo.key}.description`)}
                       </p>
 
                       {/* Footer */}
                       <div className="flex items-center gap-2 pt-2">
                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60">
                           <Play className="h-3 w-3" />
-                          <span>Watch session</span>
+                          <span>{tc("watchSession")}</span>
                         </div>
                       </div>
                     </div>
@@ -1106,7 +954,7 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Built for real computer tasks
+                {t("features.title")}
               </h2>
             </motion.div>
 
@@ -1137,8 +985,8 @@ export function LandingPage() {
                     </div>
                   </div>
                 </div>
-                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Self-Correcting</p>
-                <p className="text-xs text-muted-foreground/50 mt-0.5">Detects errors, retries alternative paths</p>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>{t("features.selfCorrecting.title")}</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">{t("features.selfCorrecting.description")}</p>
               </motion.div>
 
               {/* Audit Trail — screenshot stack visual */}
@@ -1168,8 +1016,8 @@ export function LandingPage() {
                     ))}
                   </div>
                 </div>
-                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Full Audit Trail</p>
-                <p className="text-xs text-muted-foreground/50 mt-0.5">Every click logged with screenshots</p>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>{t("features.auditTrail.title")}</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">{t("features.auditTrail.description")}</p>
               </motion.div>
 
               {/* Schedule — clock with ticks visual */}
@@ -1199,8 +1047,8 @@ export function LandingPage() {
                     </div>
                   </div>
                 </div>
-                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Schedule 24/7</p>
-                <p className="text-xs text-muted-foreground/50 mt-0.5">Runs on cron — hourly, daily, weekly</p>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>{t("features.schedule.title")}</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">{t("features.schedule.description")}</p>
               </motion.div>
 
               {/* Sandboxed — VM isolation visual */}
@@ -1225,8 +1073,8 @@ export function LandingPage() {
                     </div>
                   </div>
                 </div>
-                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Sandboxed & Secure</p>
-                <p className="text-xs text-muted-foreground/50 mt-0.5">Isolated VM per session, destroyed after</p>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>{t("features.sandboxed.title")}</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">{t("features.sandboxed.description")}</p>
               </motion.div>
 
               {/* #1 Benchmark — bar chart visual */}
@@ -1250,8 +1098,8 @@ export function LandingPage() {
                     </div>
                   </div>
                 </div>
-                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>#1 on OSWorld</p>
-                <p className="text-xs text-muted-foreground/50 mt-0.5">82% — highest score ever recorded</p>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>{t("features.benchmark.title")}</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">{t("features.benchmark.description")}</p>
               </motion.div>
 
               {/* Swarms — parallel bars visual */}
@@ -1278,8 +1126,8 @@ export function LandingPage() {
                     ))}
                   </div>
                 </div>
-                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>Agent Swarms</p>
-                <p className="text-xs text-muted-foreground/50 mt-0.5">Split tasks across machines in parallel</p>
+                <p className={cn("font-semibold text-foreground", isMobile ? "text-sm" : "text-base")}>{t("features.swarms.title")}</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">{t("features.swarms.description")}</p>
               </motion.div>
             </div>
           </motion.div>
@@ -1305,13 +1153,13 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Start free, scale when ready
+                {t("pricing.title")}
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                No credit card. Your AI agent is ready in 60 seconds.
+                {t("pricing.subtitle")}
               </p>
             </motion.div>
 
@@ -1320,9 +1168,9 @@ export function LandingPage() {
               "grid gap-3",
               isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-5"
             )}>
-              {pricingPlans.map((plan) => (
+              {PLAN_DATA.map((plan) => (
                 <motion.div
-                  key={plan.name}
+                  key={plan.key}
                   variants={itemVariants}
                   className={cn(
                     "relative rounded-xl border p-5 flex flex-col",
@@ -1331,19 +1179,19 @@ export function LandingPage() {
                       : "border-border/50"
                   )}
                 >
-                  {plan.badge && (
+                  {plan.highlighted && (
                     <span className="absolute -top-2.5 left-4 rounded-full bg-foreground text-background px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
-                      {plan.badge}
+                      {t(`pricing.plans.${plan.key}.badge`)}
                     </span>
                   )}
 
                   <div className="mb-4">
-                    <h3 className="text-sm font-semibold text-foreground">{plan.name}</h3>
+                    <h3 className="text-sm font-semibold text-foreground">{t(`pricing.plans.${plan.key}.name`)}</h3>
                     <div className="mt-2 flex items-baseline gap-1">
                       <span className="text-3xl font-bold tracking-tight">{plan.price}</span>
-                      <span className="text-sm text-muted-foreground">/{plan.period}</span>
+                      <span className="text-sm text-muted-foreground">/{tc("month")}</span>
                     </div>
-                    <p className="mt-1.5 text-xs text-muted-foreground">{plan.description}</p>
+                    <p className="mt-1.5 text-xs text-muted-foreground">{t(`pricing.plans.${plan.key}.description`)}</p>
                   </div>
 
                   {/* Key details */}
@@ -1351,20 +1199,20 @@ export function LandingPage() {
                     {plan.credits > 0 && (
                     <div className="flex items-center gap-2 text-sm">
                       <Zap className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-                      <span className="text-muted-foreground">{plan.credits.toLocaleString()} credits/mo</span>
+                      <span className="text-muted-foreground">{tc("creditsPerMonth", { count: plan.credits.toLocaleString() })}</span>
                     </div>
                     )}
                     <div className="flex items-center gap-2 text-sm">
                       <HardDrive className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                       <span className="text-muted-foreground">
-                        {plan.machines === 0 ? "1 temporary VM (2hr)" : plan.name === "Lite" ? "1 VM (deleted after inactivity)" : `${plan.machines} always-on VM${plan.machines > 1 ? "s" : ""}`}
+                        {plan.machines === 0 ? t("pricing.vmTemporary") : plan.key === "lite" ? t("pricing.vmDeletedAfterInactivity") : plan.machines > 1 ? t("pricing.vmAlwaysOnPlural", { count: plan.machines }) : t("pricing.vmAlwaysOn", { count: plan.machines })}
                       </span>
                     </div>
                     {plan.swarm > 0 && (
                       <div className="flex items-center gap-2 text-sm">
                         <Bot className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                         <span className="text-muted-foreground">
-                          {plan.swarm} agents in parallel
+                          {tc("agentsInParallel", { count: plan.swarm })}
                         </span>
                       </div>
                     )}
@@ -1377,7 +1225,7 @@ export function LandingPage() {
                     asChild
                   >
                     <Link href={plan.price === "$0" ? "/auth" : "/pricing"}>
-                      {plan.price === "$0" ? "Start Free" : plan.cta}
+                      {plan.price === "$0" ? tc("startFree") : t(`pricing.plans.${plan.key}.cta`)}
                       <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                     </Link>
                   </Button>
@@ -1395,14 +1243,13 @@ export function LandingPage() {
                   "font-bold tracking-tight",
                   isMobile ? "text-xl" : "text-2xl sm:text-3xl"
                 )}>
-                  The same work costs <span className="text-muted-foreground line-through decoration-muted-foreground/40">$8,000/mo</span> with manual labor
+                  {t("pricing.bargain.title", { oldPrice: "" })}<span className="text-muted-foreground line-through decoration-muted-foreground/40">$8,000/mo</span>
                 </p>
                 <p className={cn(
                   "text-muted-foreground mt-3 leading-relaxed",
                   isMobile ? "text-xs" : "text-sm"
                 )}>
-                  A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more.
-                  Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time.
+                  {t("pricing.bargain.description")}
                 </p>
                 <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
                   <Link href="/auth">
@@ -1414,7 +1261,7 @@ export function LandingPage() {
                       whileHover={{ scale: 1.02, y: -1 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      Start Free
+                      {tc("startFree")}
                       <ArrowRight className="h-3.5 w-3.5" />
                     </motion.button>
                   </Link>
@@ -1422,7 +1269,7 @@ export function LandingPage() {
                     href="/pricing"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
                   >
-                    Compare all plans &amp; features
+                    {tc("compareAllPlans")}
                   </Link>
                 </div>
               </div>
@@ -1449,18 +1296,18 @@ export function LandingPage() {
                 "font-bold tracking-tight",
                 isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
               )}>
-                Frequently asked questions
+                {t("faq.title")}
               </h2>
               <p className={cn(
                 "text-muted-foreground mt-4 max-w-lg mx-auto",
                 isMobile ? "text-sm" : "text-base"
               )}>
-                Everything you need to know before getting started
+                {t("faq.subtitle")}
               </p>
             </motion.div>
             
             <div className="space-y-4">
-              {faqs.map((faq, index) => (
+              {FAQ_KEYS.map((faqKey, index) => (
                 <motion.div
                   key={index}
                   variants={itemVariants}
@@ -1474,7 +1321,7 @@ export function LandingPage() {
                     <CardHeader>
                       <div className="flex justify-between items-center">
                         <CardTitle className={cn("pr-4", isMobile ? "text-base" : "text-lg")}>
-                          {faq.question}
+                          {t(`faq.items.${faqKey}.question`)}
                         </CardTitle>
                         <motion.div
                           animate={{ rotate: selectedFaq === index ? 90 : 0 }}
@@ -1492,7 +1339,7 @@ export function LandingPage() {
                             transition={{ duration: 0.3 }}
                           >
                             <CardDescription className="mt-4 text-base">
-                              {faq.answer}
+                              {t(`faq.items.${faqKey}.answer`)}
                             </CardDescription>
                           </motion.div>
                         )}

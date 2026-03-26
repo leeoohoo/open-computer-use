@@ -1,0 +1,404 @@
+{
+  "common": {
+    "startFree": "無料で始める",
+    "bookDemo": "デモを予約",
+    "tryCoastyFree": "Coastyを無料で試す",
+    "learnMore": "詳しく見る",
+    "watchSession": "セッションを見る",
+    "compareAllPlans": "すべてのプランと機能を比較",
+    "allRightsReserved": "All rights reserved.",
+    "privacy": "プライバシー",
+    "terms": "利用規約",
+    "recommended": "おすすめ",
+    "month": "月",
+    "creditsPerMonth": "{count} クレジット/月",
+    "agentsInParallel": "{count} エージェント並列実行"
+  },
+
+  "header": {
+    "useCases": "ユースケース",
+    "blog": "ブログ",
+    "agentSwarms": "エージェントスウォーム",
+    "compare": "比較",
+    "demos": "デモ",
+    "pricing": "料金",
+    "download": "ダウンロード",
+    "signIn": "ログイン",
+    "getStarted": "始める",
+    "useCaseItems": {
+      "competitorIntel": "競合インテリジェンス",
+      "qaBugReports": "QAバグレポート",
+      "seoGapAnalysis": "SEOギャップ分析",
+      "dataExtraction": "データ抽出",
+      "leadGeneration": "リード獲得",
+      "siteAudit": "サイト監査",
+      "adIntelligence": "広告インテリジェンス",
+      "emailOutreach": "メールアウトリーチ",
+      "designReview": "デザインレビュー",
+      "priceMonitoring": "価格モニタリング",
+      "marketResearch": "市場調査",
+      "emailCampaigns": "メールキャンペーン"
+    },
+    "useCaseStats": {
+      "competitorIntel": "{stat} 件の競合プロフィールを提供",
+      "qaBugReports": "{stat} 件のユーザーフローを1回でテスト",
+      "seoGapAnalysis": "{stat} 件のキーワードギャップを特定",
+      "dataExtraction": "{stat} 行を1回で抽出",
+      "leadGeneration": "{stat} 件の適格リードを1回で獲得",
+      "siteAudit": "{stat} ページを1回で監査",
+      "adIntelligence": "{stat} 件の広告クリエイティブをキャプチャ",
+      "emailOutreach": "{stat} 通のパーソナライズメールを作成",
+      "designReview": "{stat} ブレークポイントをページごとにテスト",
+      "priceMonitoring": "{stat} SKUを1回で比較",
+      "marketResearch": "{stat} 件のデータポイントを収集",
+      "emailCampaigns": "{stat} 通のパーソナライズメールをキャンペーンごとに送信"
+    },
+    "blogItems": {
+      "allPosts": "すべての記事",
+      "computerUse": "コンピュータ操作",
+      "compare": "比較",
+      "dataEntry": "データ入力",
+      "webScraping": "Webスクレイピング",
+      "jobApplications": "求人応募",
+      "demosResults": "デモと結果",
+      "guide": "ガイド"
+    },
+    "blogStats": {
+      "allPosts": "{stat} 記事を毎週公開",
+      "computerUse": "{stat} OSWorldベンチマークスコア",
+      "compare": "{stat} 社の競合を分析",
+      "dataEntry": "手動より{stat}高速",
+      "webScraping": "セッションあたり{stat}ページ",
+      "jobApplications": "セッションあたり{stat}件の応募",
+      "demosResults": "{stat} 件の実際のケーススタディ",
+      "guide": "{stat} 件のユースケースウォークスルー"
+    }
+  },
+
+  "hero": {
+    "badge": "#1 コンピュータ操作エージェント · {score} OSWorld",
+    "headline": "自律型コンピュータオペレーター",
+    "useCases": {
+      "computerAgent": {
+        "label": "コンピュータエージェント",
+        "headline": "あらゆるブラウザタスクを自動化",
+        "outcome": "実際のコンピュータを操作するAIエージェント — ブラウジング、クリック、入力、そして完成した作業を提供。セットアップ不要。"
+      },
+      "competitorIntel": {
+        "label": "競合インテリジェンス",
+        "headline": "すべての競合を監視",
+        "outcome": "価格、機能、ポジショニングのギャップを含む完全な競合プロフィール — すぐに共有できるレポートとしてエクスポート。"
+      },
+      "qaTesting": {
+        "label": "QAテスト",
+        "headline": "ユーザーより先にバグを発見",
+        "outcome": "重要なユーザーフローをエンドツーエンドでテスト、すべてのバグを再現手順と重要度ランキング付きでスクリーンショット。"
+      },
+      "seoAnalysis": {
+        "label": "SEO分析",
+        "headline": "キーワードギャップを発見",
+        "outcome": "キーワードギャップの特定、コンテンツブリーフの作成、競合の被リンク元のマッピング — 実行可能なSEO戦略。"
+      },
+      "dataExtraction": {
+        "label": "データ抽出",
+        "headline": "あらゆるサイトをスクレイピングして構造化",
+        "outcome": "構造化データのスクレイピング、クリーニング、重複排除、CSVエクスポート — どんなウェブサイトでも、どんな形式でも。"
+      },
+      "leadGeneration": {
+        "label": "リード獲得",
+        "headline": "営業パイプラインを充実させる",
+        "outcome": "ICPに一致する適格な意思決定者の、検証済み役職、企業情報、パーソナライズされたアウトリーチオープナー付き。"
+      },
+      "siteAudit": {
+        "label": "サイト監査",
+        "headline": "大規模にすべてのページを監査",
+        "outcome": "ページスキャン、Core Web Vitalsスコアリング、リンク切れ検出、修正優先度順のアクセシビリティ問題ランキング。"
+      },
+      "emailOutreach": {
+        "label": "メールアウトリーチ",
+        "headline": "パーソナライズされたアウトリーチを送信",
+        "outcome": "各見込み客の企業、役職、課題を参照したパーソナライズメール — すぐに送信可能。"
+      },
+      "marketResearch": {
+        "label": "市場調査",
+        "headline": "市場を素早く検証",
+        "outcome": "TAMの算出、主要プレーヤーのプロフィール、成長トレンドのチャート化 — 多数のデータポイントから収集。"
+      }
+    },
+    "demoVideos": {
+      "marketing": { "label": "マーケティング", "task": "Redditで自律的に製品をマーケティング" },
+      "goToMarket": { "label": "Go-to-Market", "task": "見込み客を見つけてパーソナライズメールを送信" },
+      "qaTesting": { "label": "QAテスト", "task": "すべてのチェックアウトフローをテストしバグを報告" },
+      "jobApplication": { "label": "求人応募", "task": "求人を探し、履歴書を調整して応募" },
+      "formFilling": { "label": "フォーム入力", "task": "YC S26の応募フォームを代行入力" },
+      "socialMedia": { "label": "ソーシャルメディア", "task": "Hacker Newsに投稿してコメントに対応" }
+    }
+  },
+
+  "stats": {
+    "osworld": { "value": "82%", "label": "OSWorldベンチマーク", "sublabel": "世界No.1のコンピュータ操作エージェント" },
+    "tools": { "value": "50+", "label": "エージェントが使えるツール", "sublabel": "ブラウザ、ターミナル、デスクトップ、ファイル" },
+    "schedule": { "value": "24/7", "label": "スケジュール実行", "sublabel": "繰り返しタスクを自動化" },
+    "setup": { "value": "0", "label": "セットアップ不要", "sublabel": "API不要、連携不要、コード不要" }
+  },
+
+  "whyCoasty": {
+    "sectionLabel": "Coastyを選ぶ理由",
+    "title": "チャットボットではない。RPAスクリプトでもない。",
+    "worksLikeHuman": {
+      "title": "人間のように動作",
+      "description": "見る、クリック、入力、ナビゲート — あなたと全く同じように"
+    },
+    "noScripts": {
+      "title": "スクリプトもセットアップも不要",
+      "description": "日本語で指示するだけ、結果が出る"
+    },
+    "handlesUnexpected": {
+      "title": "予期しない事態にも対応",
+      "description": "CAPTCHA、ポップアップ、レイアウト変更に適応"
+    },
+    "runsInIsolation": {
+      "title": "隔離環境で実行",
+      "description": "セッションごとにサンドボックスVM — 情報漏洩なし"
+    }
+  },
+
+  "howItWorks": {
+    "title": "使い方",
+    "step1": {
+      "title": "タスクを説明する",
+      "description": "自然な言葉で。それだけ。",
+      "placeholder": "LinkedInで100件のリードを調査..."
+    },
+    "step2": {
+      "title": "エージェントの作業を見る",
+      "description": "ブラウザを開き、クリック、入力、ナビゲート"
+    },
+    "step3": {
+      "title": "タスク完了",
+      "description": "すべてのアクションをスクリーンショット付きで記録",
+      "results": {
+        "taskCompleted": "タスク完了",
+        "leadsFound": "12件のリードを発見",
+        "addedToCrm": "CRMに追加済み"
+      }
+    }
+  },
+
+  "benchmark": {
+    "title": "世界No.1のベンチマーク",
+    "subtitle": "OSWorldで82% — 実際のコンピュータを使用するAIエージェント向け最難関ベンチマーク",
+    "agenticFramework": "エージェンティックフレームワーク",
+    "foundationModel": "基盤モデル"
+  },
+
+  "comparison": {
+    "title": "なぜCoastyで自動化するのか？",
+    "subtitle": "チームが何時間もかかる同じタスクを、Coastyは数分で24時間365日完了します。",
+    "manual": {
+      "title": "手動で行う場合",
+      "subtitle": "あなたやチームが手作業で"
+    },
+    "coasty": {
+      "title": "Coasty AIエージェント",
+      "subtitle": "No.1コンピュータ操作エージェント"
+    },
+    "rows": {
+      "timePerTask": "タスクあたりの時間",
+      "availability": "稼働時間",
+      "setupTime": "セットアップ時間",
+      "errorRate": "エラー率",
+      "scaling": "スケーリング",
+      "auditTrail": "監査証跡"
+    },
+    "manualValues": {
+      "timePerTask": "数時間〜数日",
+      "availability": "営業時間のみ",
+      "setupTime": "ツールの学習、SOP作成",
+      "errorRate": "ヒューマンエラー",
+      "scaling": "増やす＝時間がかかる",
+      "auditTrail": "なし"
+    },
+    "coastyValues": {
+      "timePerTask": "数分",
+      "availability": "24時間365日",
+      "setupTime": "60秒",
+      "errorRate": "自己修正",
+      "scaling": "無制限のタスクを並列実行",
+      "auditTrail": "すべてのクリックを記録＋スクリーンショット"
+    },
+    "bottomBar": {
+      "automateTasksThat": "手動で",
+      "hoursManually": "何時間もかかるタスクを自動化",
+      "startingAt": "料金"
+    }
+  },
+
+  "demo": {
+    "title": "エージェントの動作を見る",
+    "subtitle": "実際のタスク。実際のブラウザ。すべてのクリックを記録。",
+    "sessions": {
+      "reddit": {
+        "title": "CoastyでReddit",
+        "description": "Coastyが自律的にマーケティングキャンペーンを実行する様子をご覧ください — 競合調査、トレンド分析、戦略デッキの作成。",
+        "tag": "マーケティング"
+      },
+      "prospects": {
+        "title": "見込み客の発見",
+        "description": "Coastyが見込み客を見つけて調査し、パーソナライズされたアウトリーチに必要な主要情報を収集します。",
+        "tag": "Go-to-Market"
+      },
+      "qa": {
+        "title": "自社製品のQAテスト",
+        "description": "Coastyが自社製品の品質保証を実行 — フローのナビゲーション、バグの検出、問題の自律的レポート。",
+        "tag": "QAテスト"
+      },
+      "email": {
+        "title": "代行メール送信",
+        "description": "作成から送信まで — AIエージェントが完全に自動でメールを作成して配信します。",
+        "tag": "コミュニケーション"
+      },
+      "job": {
+        "title": "求人への応募",
+        "description": "Coastyがマッチする求人を見つけ、履歴書を調整し、応募を提出 — すべて自動で。",
+        "tag": "求人応募"
+      },
+      "hackernews": {
+        "title": "Hacker Newsへの投稿",
+        "description": "CoastyがHacker Newsにブログ記事を作成・公開 — コンテンツの執筆と自律的な投稿。",
+        "tag": "ソーシャルメディア"
+      }
+    }
+  },
+
+  "features": {
+    "title": "実際のコンピュータタスクのために構築",
+    "selfCorrecting": {
+      "title": "自己修正",
+      "description": "エラーを検出し、代替パスで再試行"
+    },
+    "auditTrail": {
+      "title": "完全な監査証跡",
+      "description": "すべてのクリックをスクリーンショット付きで記録"
+    },
+    "schedule": {
+      "title": "24時間365日スケジュール",
+      "description": "cronで実行 — 毎時、毎日、毎週"
+    },
+    "sandboxed": {
+      "title": "サンドボックスで安全",
+      "description": "セッションごとに隔離されたVM、終了後に破棄"
+    },
+    "benchmark": {
+      "title": "OSWorld No.1",
+      "description": "82% — 過去最高スコア"
+    },
+    "swarms": {
+      "title": "エージェントスウォーム",
+      "description": "タスクを複数マシンで並列分割"
+    }
+  },
+
+  "pricing": {
+    "title": "無料で始めて、準備ができたらスケール",
+    "subtitle": "クレジットカード不要。AIエージェントが60秒で準備完了。",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "description": "No.1コンピュータ操作エージェントを試す",
+        "cta": "無料で始める"
+      },
+      "lite": {
+        "name": "Lite",
+        "description": "軽量な日常自動化",
+        "cta": "Liteを始める"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "毎日のタスクを自動化",
+        "cta": "Starterを始める"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "複雑なワークフローをスケール",
+        "cta": "Plusにする",
+        "badge": "人気No.1"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "無制限のヘビー自動化",
+        "cta": "Proを始める"
+      }
+    },
+    "vmTemporary": "一時VM 1台（2時間）",
+    "vmDeletedAfterInactivity": "VM 1台（非アクティブ時に削除）",
+    "vmAlwaysOn": "常時稼働VM {count}台",
+    "vmAlwaysOnPlural": "常時稼働VM {count}台",
+    "bargain": {
+      "title": "同じ作業を手動で行うと{oldPrice}かかります",
+      "description": "バーチャルアシスタントの費用は月額$2,000〜$4,000。パートタイム雇用はさらに高額。Coastyは同じ作業を$0から24時間365日実行 — 完璧な一貫性、完全な監査証跡、トレーニング時間ゼロ。"
+    }
+  },
+
+  "faq": {
+    "title": "よくある質問",
+    "subtitle": "始める前に知っておきたいことすべて",
+    "items": {
+      "whatIsCoasty": {
+        "question": "Coastyとは何ですか？",
+        "answer": "Coastyは世界最高のコンピュータ操作AIエージェントです。タスクを説明するだけで — リード調査、ウェブサイトテスト、フォーム入力、SNS投稿 — Coastyが実際のブラウザを開き、アプリを操作し、ボタンをクリックし、テキストを入力し、タスクをエンドツーエンドで完了します。API不要、連携不要、コード不要。"
+      },
+      "howDifferent": {
+        "question": "ChatGPTや他のAIツールとの違いは？",
+        "answer": "ChatGPTはテキストを生成します。Coastyはコンピュータを操作します。何をすべきか教えるのではなく — ブラウザを開き、ウェブサイトに移動し、ボタンをクリックし、フォームを入力し、完了した作業を届けます。指示をもらうのと、タスクを代行してもらうのとの違いです。"
+      },
+      "whatTasks": {
+        "question": "Coastyはどんなタスクを自動化できますか？",
+        "answer": "コンピュータでできるタスクなら何でも。Web調査、リード獲得、データ入力、フォーム入力、QAテスト、SNS投稿、メールアウトリーチ、請求書処理、競合分析、採用活動 — ブラウザやデスクトップアプリを使うタスクなら、Coastyが対応します。"
+      },
+      "whatAreCredits": {
+        "question": "クレジットとは何ですか？どう使われますか？",
+        "answer": "クレジットはエージェントがタスクに取り組む際に消費されます。長く複雑なタスクほど多くのクレジットを使用します。有料プランには月間クレジットが含まれ、追加のクレジットパックをいつでも購入できます。"
+      },
+      "localComputer": {
+        "question": "Coastyは自分のコンピュータで実行できますか？",
+        "answer": "はい。デスクトップアプリがマシン上の軽量オーバーレイとして動作し、ローカルのブラウザやアプリケーションを直接制御します。または、隔離されたクラウドマシンでタスクを実行することも可能です — お好みで選べます。"
+      },
+      "dataSafe": {
+        "question": "データは安全ですか？",
+        "answer": "すべてのタスクは隔離されたサンドボックス環境で実行されます。セッション間で情報が漏洩することはありません。認証情報はプライベートに保たれ、すべてのアクションはスクリーンショット付きの完全な監査証跡として記録され、いつでも確認できます。"
+      }
+    }
+  },
+
+  "footer": {
+    "tagline": "AI搭載のコンピュータ操作。",
+    "tagline2": "インテリジェントエージェントであらゆるワークフローを自動化。",
+    "columns": {
+      "product": "製品",
+      "resources": "リソース",
+      "company": "会社",
+      "legal": "法的情報"
+    },
+    "links": {
+      "computerUse": "コンピュータ操作",
+      "guide": "ガイド",
+      "download": "ダウンロード",
+      "pricing": "料金",
+      "agentSwarms": "エージェントスウォーム",
+      "status": "ステータス",
+      "blog": "ブログ",
+      "useCases": "ユースケース",
+      "demos": "デモ",
+      "compare": "比較",
+      "talkToCofounders": "共同創業者と話す・デモ",
+      "contact": "お問い合わせ",
+      "privacy": "プライバシー",
+      "terms": "利用規約"
+    }
+  },
+
+  "languageSwitcher": {
+    "label": "言語"
+  }
+}

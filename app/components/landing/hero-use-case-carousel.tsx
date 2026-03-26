@@ -6,63 +6,22 @@ import { ArrowRight, Video, Play } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
-const DEMO_VIDEOS = [
-  { id: "icxgLDephHE", label: "Marketing", task: "Market your product on Reddit autonomously" },
-  { id: "qTvmGfg3HVw", label: "Go-to-Market", task: "Find prospects and send personalized emails" },
-  { id: "Wbo2o74hVIo", label: "QA Testing", task: "Test every checkout flow and report bugs" },
-  { id: "mH-csaCa508", label: "Job Application", task: "Find roles, tailor resume, and apply" },
-  { id: "AnHJuRMLCnE", label: "Form Filling", task: "Fill out the YC S26 application for you" },
-  { id: "A_OvNh51Npg", label: "Social Media", task: "Post on Hacker News and engage with comments" },
+const DEMO_VIDEO_IDS = [
+  "icxgLDephHE", "qTvmGfg3HVw", "Wbo2o74hVIo",
+  "mH-csaCa508", "AnHJuRMLCnE", "A_OvNh51Npg",
 ]
 
-const USE_CASES = [
-  {
-    label: "Computer agent",
-    headline: "automate any browser task",
-    outcome: "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required.",
-  },
-  {
-    label: "Competitor intel",
-    headline: "monitor every competitor",
-    outcome: "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report.",
-  },
-  {
-    label: "QA testing",
-    headline: "find bugs before users do",
-    outcome: "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking.",
-  },
-  {
-    label: "SEO analysis",
-    headline: "uncover keyword gaps",
-    outcome: "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy.",
-  },
-  {
-    label: "Data extraction",
-    headline: "scrape and structure any site",
-    outcome: "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format.",
-  },
-  {
-    label: "Lead generation",
-    headline: "fill your sales pipeline",
-    outcome: "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers.",
-  },
-  {
-    label: "Site audit",
-    headline: "audit every page at scale",
-    outcome: "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority.",
-  },
-  {
-    label: "Email outreach",
-    headline: "send personalized outreach",
-    outcome: "Personalized emails referencing each prospect's company, role, and pain points — ready to send.",
-  },
-  {
-    label: "Market research",
-    headline: "validate your market fast",
-    outcome: "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points.",
-  },
-]
+const DEMO_VIDEO_KEYS = [
+  "marketing", "goToMarket", "qaTesting",
+  "jobApplication", "formFilling", "socialMedia",
+] as const
+
+const USE_CASE_KEYS = [
+  "computerAgent", "competitorIntel", "qaTesting", "seoAnalysis",
+  "dataExtraction", "leadGeneration", "siteAudit", "emailOutreach", "marketResearch",
+] as const
 
 export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
   const [activeVideoIndex, setActiveVideoIndex] = useState(0)
@@ -71,6 +30,21 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
   const [isPaused, setIsPaused] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const pillContainerRef = useRef<HTMLDivElement>(null)
+  const t = useTranslations("hero")
+  const tc = useTranslations("common")
+
+  // Build translated arrays
+  const DEMO_VIDEOS = DEMO_VIDEO_IDS.map((id, i) => ({
+    id,
+    label: t(`demoVideos.${DEMO_VIDEO_KEYS[i]}.label`),
+    task: t(`demoVideos.${DEMO_VIDEO_KEYS[i]}.task`),
+  }))
+
+  const USE_CASES = USE_CASE_KEYS.map((key) => ({
+    label: t(`useCases.${key}.label`),
+    headline: t(`useCases.${key}.headline`),
+    outcome: t(`useCases.${key}.outcome`),
+  }))
 
   // Auto-rotate carousel
   useEffect(() => {
@@ -104,7 +78,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           <div className="inline-flex items-center gap-2.5 rounded-full border border-border/40 bg-card/40 backdrop-blur-sm px-4 py-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
             <span className="h-1 w-1 rounded-full bg-foreground/30" />
             <span className="text-xs font-medium text-muted-foreground tracking-wide">
-              #1 Computer-Use Agent · <span className="text-foreground font-semibold">82% OSWorld</span>
+              {t("badge", { score: "82%" }).split("82%")[0]}<span className="text-foreground font-semibold">82% OSWorld</span>
             </span>
           </div>
         </div>
@@ -114,7 +88,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           "font-bold tracking-tight",
           isMobile ? "text-3xl leading-[1.2]" : "text-4xl sm:text-5xl lg:text-6xl leading-[1.08]"
         )}>
-          <span className="block text-foreground">Autonomous computer operators</span>
+          <span className="block text-foreground">{t("headline")}</span>
           <span className="relative block mt-1">
             {/* Invisible sizer — reserves height for the tallest headline */}
             <span className="invisible block" aria-hidden="true">
@@ -206,7 +180,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
             >
-              Try Coasty free
+              {tc("tryCoastyFree")}
               <ArrowRight className="h-4 w-4" />
             </motion.button>
           </Link>
@@ -220,7 +194,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
               whileTap={{ scale: 0.98 }}
             >
               <Video className="h-4 w-4" />
-              Book a demo
+              {tc("bookDemo")}
             </motion.button>
           </a>
         </div>

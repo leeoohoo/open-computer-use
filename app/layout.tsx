@@ -17,6 +17,9 @@ import { LayoutClient } from "./layout-client"
 import { PostHogProvider } from "@/lib/posthog/provider"
 import { PostHogPageView } from "@/lib/posthog/page-view"
 import { SEOSchemas } from "./seo-schemas"
+import { NextIntlClientProvider } from "next-intl"
+import { getLocale, getMessages } from "next-intl/server"
+import { rtlLocales, type Locale } from "@/i18n/config"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -156,9 +159,12 @@ export default async function RootLayout({
 }>) {
   const isDev = process.env.NODE_ENV === "development"
   const userProfile = await getUserProfile()
+  const locale = await getLocale()
+  const messages = await getMessages()
+  const dir = rtlLocales.includes(locale as Locale) ? "rtl" : "ltr"
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} dir={dir} suppressHydrationWarning>
       <head>
         {/* iOS / Capacitor meta tags */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -377,38 +383,40 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <PostHogProvider>
-          <PostHogPageView />
-          <TanstackQueryProvider>
-            <LayoutClient />
-            <UserProvider initialUser={userProfile}>
-              <ModelProvider>
-                <ChatsProvider userId={userProfile?.id}>
-                  <ChatSessionProvider>
-                    <UserPreferencesProvider
-                      userId={userProfile?.id}
-                      initialPreferences={userProfile?.preferences}
-                    >
-                      <TooltipProvider
-                        delayDuration={200}
-                        skipDelayDuration={500}
+        <NextIntlClientProvider messages={messages}>
+          <PostHogProvider>
+            <PostHogPageView />
+            <TanstackQueryProvider>
+              <LayoutClient />
+              <UserProvider initialUser={userProfile}>
+                <ModelProvider>
+                  <ChatsProvider userId={userProfile?.id}>
+                    <ChatSessionProvider>
+                      <UserPreferencesProvider
+                        userId={userProfile?.id}
+                        initialPreferences={userProfile?.preferences}
                       >
-                        <ThemeProvider
-                          attribute="class"
-                          defaultTheme="system"
-                          enableSystem={true}
-                          disableTransitionOnChange
+                        <TooltipProvider
+                          delayDuration={200}
+                          skipDelayDuration={500}
                         >
-                          {children}
-                        </ThemeProvider>
-                      </TooltipProvider>
-                    </UserPreferencesProvider>
-                  </ChatSessionProvider>
-                </ChatsProvider>
-              </ModelProvider>
-            </UserProvider>
-          </TanstackQueryProvider>
-        </PostHogProvider>
+                          <ThemeProvider
+                            attribute="class"
+                            defaultTheme="system"
+                            enableSystem={true}
+                            disableTransitionOnChange
+                          >
+                            {children}
+                          </ThemeProvider>
+                        </TooltipProvider>
+                      </UserPreferencesProvider>
+                    </ChatSessionProvider>
+                  </ChatsProvider>
+                </ModelProvider>
+              </UserProvider>
+            </TanstackQueryProvider>
+          </PostHogProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   )

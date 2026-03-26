@@ -1,9 +1,42 @@
 import { updateSession } from "@/utils/supabase/middleware"
 import { NextResponse, type NextRequest } from "next/server"
 import { validateCsrfToken } from "./lib/csrf"
+import { locales, defaultLocale, type Locale } from "./i18n/config"
+
+function detectLocaleFromHeader(request: NextRequest): Locale {
+  const acceptLanguage = request.headers.get("accept-language")
+  if (!acceptLanguage) return defaultLocale
+
+  const preferred = acceptLanguage
+    .split(",")
+    .map((part) => {
+      const [lang, q] = part.trim().split(";q=")
+      return { lang: lang.trim().split("-")[0].toLowerCase(), q: q ? parseFloat(q) : 1 }
+    })
+    .sort((a, b) => b.q - a.q)
+
+  for (const { lang } of preferred) {
+    if (locales.includes(lang as Locale)) {
+      return lang as Locale
+    }
+  }
+  return defaultLocale
+}
 
 export async function middleware(request: NextRequest) {
   const response = await updateSession(request)
+
+  // Auto-detect locale from Accept-Language if no cookie is set
+  if (!request.cookies.get("NEXT_LOCALE")?.value) {
+    const detected = detectLocaleFromHeader(request)
+    if (detected !== defaultLocale) {
+      response.cookies.set("NEXT_LOCALE", detected, {
+        path: "/",
+        maxAge: 365 * 24 * 60 * 60, // 1 year
+        sameSite: "lax",
+      })
+    }
+  }
 
   // CSRF protection for state-changing requests
   if (["POST", "PUT", "PATCH", "DELETE"].includes(request.method)) {
