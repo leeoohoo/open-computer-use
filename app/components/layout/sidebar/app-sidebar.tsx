@@ -10,16 +10,17 @@ import {
 } from "@/components/ui/sidebar"
 import { useUser } from "@/lib/user-store/provider"
 import {
-  UsersThree,
-  Desktop,
-  Plus,
-  Gift,
-  Key,
-  GitFork,
-  ClockCounterClockwise,
-  BookOpen,
-  VideoCamera,
-} from "@phosphor-icons/react"
+  IconPlus,
+  IconClockPlay,
+  IconBinaryTree,
+  IconBook2,
+  IconDeviceDesktop,
+  IconCalendarClock,
+  IconShieldLock,
+  IconVideo,
+  IconGift,
+  IconKey,
+} from "@tabler/icons-react"
 import { useRouter, usePathname } from "next/navigation"
 import { useState, useEffect, useCallback, useRef, useMemo, type ReactNode } from "react"
 import { DialogCollaborativeAuth } from "../../collaborative/dialog-collaborative-auth"
@@ -466,32 +467,34 @@ function NavButton({
   const content = (
     <span
       className={cn(
-        "group/btn relative flex w-full items-center rounded-lg transition-all duration-150",
-        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+        "group/btn relative flex w-full items-center rounded-lg transition-all duration-200 ease-out",
+        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring/50",
         expanded ? "gap-2.5 px-2.5 py-[7px]" : "justify-center p-2",
         variant === "primary"
           ? cn(
               "bg-sidebar-primary text-sidebar-primary-foreground",
-              "shadow-sm hover:shadow-md hover:brightness-110 active:scale-[0.98]"
+              "shadow-[0_1px_2px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.1)]",
+              "hover:shadow-[0_2px_8px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.12)]",
+              "hover:brightness-[1.08] active:brightness-95 active:scale-[0.98]"
             )
           : isActive
-            ? "bg-sidebar-accent text-sidebar-accent-foreground"
-            : "text-foreground/50 hover:text-foreground hover:bg-sidebar-accent/50"
+            ? "bg-sidebar-accent/80 text-sidebar-accent-foreground"
+            : "text-foreground/45 hover:text-foreground/80 hover:bg-sidebar-accent/40"
       )}
     >
       {isActive && variant !== "primary" && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-4 rounded-r-full bg-emerald-500" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-3.5 rounded-r-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.3)]" />
       )}
       <span className={cn(
-        "shrink-0 flex items-center justify-center w-4 h-4 transition-colors duration-150",
-        isActive && "text-emerald-500"
+        "shrink-0 flex items-center justify-center w-4 h-4 transition-colors duration-200",
+        isActive ? "text-emerald-500" : variant !== "primary" && "group-hover/btn:text-foreground/70"
       )}>
         {icon}
       </span>
       {expanded && (
         <span className={cn(
-          "truncate text-[13px] font-medium",
-          isActive && "font-semibold text-foreground"
+          "truncate text-[12.5px] tracking-[-0.01em]",
+          isActive ? "font-semibold text-foreground" : "font-medium"
         )}>
           {label}
         </span>
@@ -569,9 +572,9 @@ function NavButton({
 
 // ─── Section label ─────────────────────────────────────────────────
 function SectionLabel({ children, expanded }: { children: React.ReactNode; expanded: boolean }) {
-  if (!expanded) return <div className="mx-auto my-1 w-4 h-px bg-sidebar-border/20 rounded-full" />
+  if (!expanded) return <div className="mx-auto my-1.5 w-3 h-px bg-sidebar-border/15 rounded-full" />
   return (
-    <div className="text-[10px] font-semibold text-foreground/30 uppercase tracking-[0.08em] mb-1 px-2.5 select-none">
+    <div className="text-[9.5px] font-semibold text-foreground/25 uppercase tracking-[0.1em] mb-1.5 px-2.5 select-none">
       {children}
     </div>
   )
@@ -905,7 +908,7 @@ function CredentialsLivePopup({ secrets }: { secrets: { id: string; name: string
           {recent.map((s) => (
             <div key={s.id} className="flex items-center gap-2 px-2 py-1.5 rounded-md">
               <div className="w-5 h-5 rounded bg-foreground/[0.06] border border-foreground/[0.08] flex items-center justify-center shrink-0">
-                <Key size={10} weight="duotone" className="text-rose-500/70 dark:text-rose-400/70" />
+                <IconKey size={10} stroke={1.5} className="text-rose-500/70 dark:text-rose-400/70" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[11px] text-popover-foreground/70 truncate font-medium">{s.name || s.service}</p>
@@ -1152,14 +1155,14 @@ export function AppSidebar() {
         variant="sidebar"
         collapsible="icon"
         style={{
-          "--sidebar-width": "14rem",
+          "--sidebar-width": "13.5rem",
         } as React.CSSProperties}
       >
         {/* ─── Header ─────────────────────────────────────── */}
-        <SidebarHeader className="p-0">
+        <SidebarHeader className="p-0 border-b border-sidebar-border/10">
           <div className={cn(
-            "flex items-center min-h-[52px]",
-            expanded ? "px-3 py-2.5" : "justify-center py-2.5"
+            "flex items-center min-h-[48px]",
+            expanded ? "px-3 py-2" : "justify-center py-2"
           )}>
             <button
               onClick={() => {
@@ -1168,9 +1171,9 @@ export function AppSidebar() {
               }}
               className={cn(
                 "flex items-center rounded-lg transition-all duration-200 ease-out",
-                "hover:bg-sidebar-accent/50",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                expanded ? "gap-2.5 flex-1 min-w-0 p-1.5" : "p-2 justify-center"
+                "hover:bg-sidebar-accent/30",
+                "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring/50",
+                expanded ? "gap-2 flex-1 min-w-0 p-1.5" : "p-2 justify-center"
               )}
               title="Coasty"
             >
@@ -1181,7 +1184,7 @@ export function AppSidebar() {
                 <CoastyIcon className="h-6 w-6 text-sidebar-primary" />
               </div>
               {expanded && (
-                <span className="text-sm font-semibold text-foreground leading-normal truncate">
+                <span className="text-[13px] font-semibold text-foreground tracking-[-0.01em] leading-normal truncate">
                   Coasty
                 </span>
               )}
@@ -1192,15 +1195,15 @@ export function AppSidebar() {
         {/* ─── Content ────────────────────────────────────── */}
         <SidebarContent
           className={cn(
-            "pt-1 overflow-y-auto overflow-x-hidden",
-            expanded ? "px-2.5" : "px-1.5",
+            "pt-2 overflow-y-auto overflow-x-hidden",
+            expanded ? "px-2" : "px-1.5",
             rainbowMode && "rainbow-wave"
           )}
         >
           {/* New Task */}
-          <div className={cn("relative", expanded ? "pb-2 mb-0.5" : "pb-1 mb-0.5")}>
+          <div className={cn("relative", expanded ? "pb-1.5 mb-1" : "pb-1 mb-0.5")}>
             <NavButton
-              icon={<Plus size={16} weight="bold" className="shrink-0" />}
+              icon={<IconPlus size={15} stroke={2} className="shrink-0" />}
               label="New Task"
               tooltip="Start a new AI automation"
               onClick={() => handleNavigation(() => router.push("/"))}
@@ -1210,8 +1213,10 @@ export function AppSidebar() {
 
           {/* Divider */}
           <div className={cn(
-            "mx-auto mb-2 transition-all",
-            expanded ? "w-[calc(100%-1.25rem)] h-px bg-sidebar-border/30" : "w-5 h-px bg-sidebar-border/20"
+            "mx-auto mb-2.5 transition-all",
+            expanded
+              ? "w-[calc(100%-1rem)] h-px bg-gradient-to-r from-transparent via-sidebar-border/25 to-transparent"
+              : "w-4 h-px bg-sidebar-border/15"
           )} />
 
           {/* Activity */}
@@ -1220,7 +1225,7 @@ export function AppSidebar() {
             <div className="space-y-0.5">
               <NavButton
                 id="sidebar-history-link"
-                icon={<ClockCounterClockwise size={16} weight="duotone" className="shrink-0" />}
+                icon={<IconClockPlay size={16} stroke={1.5} className="shrink-0" />}
                 label="Task History"
                 tooltip="Review past tasks and resume where you left off"
                 href="/history"
@@ -1236,7 +1241,7 @@ export function AppSidebar() {
               />
               <NavButton
                 id="sidebar-swarms-link"
-                icon={<GitFork size={16} weight="duotone" className="shrink-0" />}
+                icon={<IconBinaryTree size={16} stroke={1.5} className="shrink-0" />}
                 label="Swarm Runs"
                 tooltip="Monitor multi-agent parallel workflows"
                 href="/swarms"
@@ -1252,7 +1257,7 @@ export function AppSidebar() {
               />
               <NavButton
                 id="sidebar-guide-link"
-                icon={<BookOpen size={16} weight="duotone" className="shrink-0" />}
+                icon={<IconBook2 size={16} stroke={1.5} className="shrink-0" />}
                 label="Guide"
                 tooltip="Learn how to get the most from Coasty"
                 href="/guide"
@@ -1269,7 +1274,7 @@ export function AppSidebar() {
           </div>
 
           {/* Infrastructure */}
-          <div className="relative pb-1 mt-1">
+          <div className="relative pb-1 mt-2">
             <SectionLabel expanded={expanded}>Infrastructure</SectionLabel>
             <div className="space-y-0.5">
               {/* My Computers — expanded card */}
@@ -1277,12 +1282,12 @@ export function AppSidebar() {
                 <button
                   id="sidebar-machines-link"
                   className={cn(
-                    "group relative flex w-full items-center gap-3 rounded-xl border transition-all duration-200 overflow-hidden",
-                    "hover:shadow-sm active:scale-[0.99]",
-                    "px-3 py-2.5",
+                    "group relative flex w-full items-center gap-3 rounded-lg border transition-all duration-200 overflow-hidden",
+                    "hover:shadow-[0_1px_4px_rgba(0,0,0,0.06)] active:scale-[0.995]",
+                    "px-3 py-2",
                     isItemActive("/machines")
-                      ? "border-foreground/15 bg-foreground/[0.04]"
-                      : "border-sidebar-border/40 bg-sidebar-accent/20 hover:border-foreground/15"
+                      ? "border-emerald-500/20 bg-emerald-500/[0.04]"
+                      : "border-sidebar-border/30 bg-sidebar-accent/15 hover:border-sidebar-border/50"
                   )}
                   type="button"
                   onClick={() => {
@@ -1291,29 +1296,29 @@ export function AppSidebar() {
                   }}
                 >
                   {isItemActive("/machines") && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-4 rounded-r-full bg-emerald-500" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-3.5 rounded-r-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.3)]" />
                   )}
                   <MachinesActivityBg
                     running={machineStats.running}
                     stopped={machineStats.stopped}
                     total={machineStats.total}
-                    className={cn("pointer-events-none", isItemActive("/machines") ? "text-emerald-500/80" : "text-foreground/80")}
+                    className={cn("pointer-events-none", isItemActive("/machines") ? "text-emerald-500/60" : "text-foreground/50")}
                   />
                   <div className="relative flex flex-col items-start flex-1 min-w-0">
-                    <span className="text-base font-semibold tabular-nums leading-tight text-foreground">
+                    <span className="text-[15px] font-semibold tabular-nums leading-tight text-foreground">
                       {machineStats.total}
                     </span>
-                    <span className="text-[10px] text-foreground/40 font-medium">
+                    <span className="text-[9.5px] text-foreground/35 font-medium">
                       {machineStats.total === 1 ? "Computer" : "Computers"}
                       {machineStats.running > 0 && (
-                        <span className="text-emerald-500 ml-1.5">
-                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.4)] align-middle mr-0.5" />
+                        <span className="text-emerald-500/80 ml-1">
+                          <span className="inline-block h-1 w-1 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.4)] align-middle mr-0.5" />
                           {machineStats.running} active
                         </span>
                       )}
                     </span>
                   </div>
-                  <span className="relative text-[10px] font-semibold px-2 py-1 rounded-md transition-colors shrink-0 bg-foreground/[0.06] text-foreground/60 group-hover:bg-foreground/[0.1]">
+                  <span className="relative text-[9.5px] font-medium px-2 py-0.5 rounded transition-colors shrink-0 bg-foreground/[0.05] text-foreground/40 group-hover:bg-foreground/[0.08] group-hover:text-foreground/60">
                     View
                   </span>
                 </button>
@@ -1324,10 +1329,10 @@ export function AppSidebar() {
                       id="sidebar-machines-link"
                       className={cn(
                         "relative flex w-full items-center justify-center p-2 rounded-lg border transition-all duration-200 overflow-hidden",
-                        "hover:shadow-sm",
+                        "hover:shadow-[0_1px_4px_rgba(0,0,0,0.06)]",
                         isItemActive("/machines")
-                          ? "border-foreground/15 bg-foreground/[0.04]"
-                          : "border-sidebar-border/40 bg-sidebar-accent/20 hover:border-foreground/15"
+                          ? "border-emerald-500/20 bg-emerald-500/[0.04]"
+                          : "border-sidebar-border/30 bg-sidebar-accent/15 hover:border-sidebar-border/50"
                       )}
                       onClick={() => router.push("/machines")}
                     >
@@ -1337,7 +1342,7 @@ export function AppSidebar() {
                         total={machineStats.total}
                         className={cn("pointer-events-none", isItemActive("/machines") ? "text-emerald-500/80" : "text-foreground/80")}
                       />
-                      <Desktop size={16} weight="duotone" className={isItemActive("/machines") ? "relative text-emerald-500" : "relative text-foreground/60"} />
+                      <IconDeviceDesktop size={16} stroke={1.5} className={isItemActive("/machines") ? "relative text-emerald-500" : "relative text-foreground/60"} />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right" sideOffset={8}>
@@ -1353,7 +1358,7 @@ export function AppSidebar() {
               )}
               <NavButton
                 id="sidebar-schedules-link"
-                icon={<UsersThree size={16} weight="duotone" className="shrink-0" />}
+                icon={<IconCalendarClock size={16} stroke={1.5} className="shrink-0" />}
                 label="Workforce"
                 tooltip="Schedule automated agents and triggers"
                 href="/schedules"
@@ -1369,7 +1374,7 @@ export function AppSidebar() {
               />
               <NavButton
                 id="sidebar-secrets-link"
-                icon={<Key size={16} weight="duotone" className="shrink-0" />}
+                icon={<IconShieldLock size={16} stroke={1.5} className="shrink-0" />}
                 label="Credentials"
                 tooltip="Securely store logins for agent access"
                 href="/secrets"
@@ -1507,8 +1512,8 @@ export function AppSidebar() {
         </SidebarContent>
 
         {/* ─── Footer ─────────────────────────────────────── */}
-        <SidebarFooter className="relative pt-0">
-          <div className={cn("space-y-1", expanded ? "p-2.5 pt-1" : "p-1.5 pt-1")}>
+        <SidebarFooter className="relative pt-0 border-t border-sidebar-border/10">
+          <div className={cn("space-y-1", expanded ? "p-2 pt-2" : "p-1.5 pt-1.5")}>
 
             {/* Credits */}
             {user && (() => {
@@ -1523,12 +1528,12 @@ export function AppSidebar() {
                     {expanded ? (
                       <button
                         className={cn(
-                          "group relative flex w-full items-center gap-3 rounded-xl border transition-all duration-200 overflow-hidden",
-                          "hover:shadow-sm active:scale-[0.99]",
-                          "px-3 py-2.5",
+                          "group relative flex w-full items-center gap-3 rounded-lg border transition-all duration-200 overflow-hidden",
+                          "hover:shadow-[0_1px_4px_rgba(0,0,0,0.06)] active:scale-[0.995]",
+                          "px-3 py-2",
                           isLow
-                            ? "border-orange-500/20 bg-orange-500/[0.04] hover:border-orange-500/30"
-                            : "border-sidebar-border/40 bg-sidebar-accent/20 hover:border-sidebar-primary/20"
+                            ? "border-orange-500/20 bg-orange-500/[0.03] hover:border-orange-500/30"
+                            : "border-sidebar-border/30 bg-sidebar-accent/15 hover:border-sidebar-border/50"
                         )}
                         type="button"
                         onClick={() => {
@@ -1541,23 +1546,23 @@ export function AppSidebar() {
                           totalUsed={totalUsed}
                           className={cn(
                             "pointer-events-none",
-                            isLow ? "text-orange-500" : "text-sidebar-primary"
+                            isLow ? "text-orange-500" : "text-sidebar-primary/60"
                           )}
                         />
                         <div className="relative flex flex-col items-start flex-1 min-w-0">
                           <span className={cn(
-                            "text-base font-semibold tabular-nums leading-tight",
+                            "text-[15px] font-semibold tabular-nums leading-tight",
                             isLow ? "text-orange-500" : "text-foreground"
                           )}>
                             {balance.toLocaleString()}
                           </span>
-                          <span className="text-[10px] text-foreground/40 font-medium">
-                            {isLow ? "Credits — Running low" : "Credits"}
+                          <span className="text-[9.5px] text-foreground/35 font-medium">
+                            {isLow ? "Credits — Running low" : "Credits remaining"}
                           </span>
                         </div>
                         <span className={cn(
-                          "relative text-[10px] font-semibold px-2 py-1 rounded-md transition-colors shrink-0",
-                          "bg-sidebar-primary/10 text-sidebar-primary group-hover:bg-sidebar-primary/20"
+                          "relative text-[9.5px] font-medium px-2 py-0.5 rounded transition-colors shrink-0",
+                          "bg-sidebar-primary/8 text-sidebar-primary/80 group-hover:bg-sidebar-primary/15"
                         )}>
                           Buy
                         </span>
@@ -1566,10 +1571,10 @@ export function AppSidebar() {
                       <button
                         className={cn(
                           "relative flex w-full items-center justify-center p-2 rounded-lg border transition-all duration-200 overflow-hidden",
-                          "hover:shadow-sm",
+                          "hover:shadow-[0_1px_4px_rgba(0,0,0,0.06)]",
                           isLow
-                            ? "border-orange-500/20 bg-orange-500/[0.04]"
-                            : "border-sidebar-border/40 bg-sidebar-accent/20"
+                            ? "border-orange-500/20 bg-orange-500/[0.03]"
+                            : "border-sidebar-border/30 bg-sidebar-accent/15"
                         )}
                         onClick={() => router.push("/account?section=billing")}
                       >
@@ -1601,36 +1606,30 @@ export function AppSidebar() {
               )
             })()}
 
-            {/* Divider */}
-            <div className={cn(
-              "mx-auto transition-all",
-              expanded ? "w-[calc(100%-1.25rem)] h-px bg-sidebar-border/20" : "w-5 h-px bg-sidebar-border/15"
-            )} />
-
             {/* Quick links row */}
             {expanded ? (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5">
                 <a
                   href="https://cal.com/coasty/15min"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    "flex-1 flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-[11px] font-medium transition-all duration-200",
-                    "text-foreground/50 hover:text-foreground hover:bg-sidebar-accent/50"
+                    "flex-1 flex items-center justify-center gap-1.5 rounded py-1 text-[10.5px] font-medium transition-all duration-200",
+                    "text-foreground/35 hover:text-foreground/60 hover:bg-sidebar-accent/30"
                   )}
                 >
-                  <VideoCamera size={14} weight="duotone" />
+                  <IconVideo size={13} stroke={1.5} />
                   <span>Talk to us</span>
                 </a>
                 {user && (
                   <Link
                     href="/referral"
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-[11px] font-medium transition-all duration-200",
-                      "text-foreground/50 hover:text-foreground hover:bg-sidebar-accent/50"
+                      "flex-1 flex items-center justify-center gap-1.5 rounded py-1 text-[10.5px] font-medium transition-all duration-200",
+                      "text-foreground/35 hover:text-foreground/60 hover:bg-sidebar-accent/30"
                     )}
                   >
-                    <Gift size={14} weight="duotone" />
+                    <IconGift size={13} stroke={1.5} />
                     <span>Invite & Earn</span>
                   </Link>
                 )}
@@ -1645,7 +1644,7 @@ export function AppSidebar() {
                       rel="noopener noreferrer"
                       className="flex w-full items-center justify-center p-2 rounded-lg hover:bg-sidebar-accent/50 transition-colors"
                     >
-                      <VideoCamera size={16} weight="duotone" className="shrink-0 text-foreground/50" />
+                      <IconVideo size={16} stroke={1.5} className="shrink-0 text-foreground/50" />
                     </a>
                   </TooltipTrigger>
                   <TooltipContent side="right" sideOffset={8}>Talk to us</TooltipContent>
@@ -1657,7 +1656,7 @@ export function AppSidebar() {
                         href="/referral"
                         className="flex w-full items-center justify-center p-2 rounded-lg hover:bg-sidebar-accent/50 transition-colors"
                       >
-                        <Gift size={16} weight="duotone" className="shrink-0 text-foreground/50" />
+                        <IconGift size={16} stroke={1.5} className="shrink-0 text-foreground/50" />
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent side="right" sideOffset={8}>Invite & Earn</TooltipContent>
@@ -1678,24 +1677,24 @@ export function AppSidebar() {
                   setAvatarWobble(false)
                 }}
                 className={cn(
-                  "flex items-center gap-2.5 px-2 py-2 w-full rounded-xl transition-all duration-200 ease-out",
-                  "hover:bg-sidebar-accent/60"
+                  "flex items-center gap-2.5 px-2 py-1.5 w-full rounded-lg transition-all duration-200 ease-out",
+                  "hover:bg-sidebar-accent/30"
                 )}
               >
                 <Avatar className={cn(
-                  "h-8 w-8 flex-shrink-0 ring-2 ring-sidebar-border/30 transition-all",
+                  "h-7 w-7 flex-shrink-0 ring-1 ring-sidebar-border/20 transition-all",
                   avatarWobble && "animate-wiggle"
                 )}>
                   <AvatarImage src={user?.profile_image || undefined} />
-                  <AvatarFallback className="bg-sidebar-accent text-foreground text-xs font-semibold">
+                  <AvatarFallback className="bg-sidebar-accent/60 text-foreground text-[10px] font-semibold">
                     {(user?.display_name || user?.email || "U")[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col min-w-0 flex-1 text-left">
-                  <span className="text-[13px] font-medium truncate text-foreground">
+                  <span className="text-[12px] font-medium truncate text-foreground/80">
                     {user?.display_name || user?.email?.split("@")[0] || "User"}
                   </span>
-                  <span className="text-[10px] text-foreground/40 truncate">
+                  <span className="text-[9.5px] text-foreground/30 truncate">
                     {getGreeting()}
                   </span>
                 </div>
@@ -1705,11 +1704,11 @@ export function AppSidebar() {
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => router.push("/account")}
-                    className="flex w-full items-center justify-center p-1.5 rounded-lg hover:bg-sidebar-accent/50 transition-all duration-200"
+                    className="flex w-full items-center justify-center p-1.5 rounded-lg hover:bg-sidebar-accent/30 transition-all duration-200"
                   >
-                    <Avatar className="h-7 w-7 flex-shrink-0 ring-2 ring-sidebar-border/30">
+                    <Avatar className="h-6 w-6 flex-shrink-0 ring-1 ring-sidebar-border/20">
                       <AvatarImage src={user?.profile_image || undefined} />
-                      <AvatarFallback className="bg-sidebar-accent text-foreground text-[10px] font-semibold">
+                      <AvatarFallback className="bg-sidebar-accent/60 text-foreground text-[9px] font-semibold">
                         {(user?.display_name || user?.email || "U")[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
