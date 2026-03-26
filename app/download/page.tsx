@@ -17,6 +17,7 @@ import {
   Check,
   Loader2,
   ShieldAlert,
+  Smartphone,
 } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
@@ -25,7 +26,7 @@ import { cn } from "@/lib/utils"
 
 import { LandingHeader } from "@/app/components/landing/landing-header"
 import { LandingFooter } from "@/app/components/landing/landing-footer"
-import { OverlayDemo } from "@/app/components/download/overlay-demo"
+import Image from "next/image"
 import { motion } from "framer-motion"
 
 type Platform = "windows" | "mac"
@@ -136,6 +137,7 @@ export default function DownloadPage() {
     { icon: Terminal, label: "Terminal access" },
     { icon: FolderOpen, label: "File operations" },
     { icon: RefreshCw, label: "Auto-updates" },
+    { icon: Smartphone, label: "Control from anywhere" },
   ]
 
   function getDownloadButton(platform: Platform, variant: "hero" | "card") {
@@ -222,7 +224,7 @@ export default function DownloadPage() {
                 )}
               >
                 <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  Download Coasty Desktop
+                  Let Coasty Run Your Computer
                 </span>
               </h1>
               <p
@@ -233,8 +235,9 @@ export default function DownloadPage() {
                     : "mt-6 text-lg sm:text-xl max-w-2xl"
                 )}
               >
-                Run AI agents directly on your machine. Full browser, desktop,
-                and terminal automation with a native experience.
+                Your AI assistant that takes the wheel. Automate your browser,
+                desktop, and terminal — or control your computer from anywhere
+                through our web interface.
               </p>
               {version && (
                 <div className="flex justify-center mt-4">
@@ -254,10 +257,19 @@ export default function DownloadPage() {
                 See it in action
               </h3>
               <p className="text-center text-sm text-muted-foreground mb-8 max-w-md mx-auto">
-                A lightweight overlay that floats on your desktop. Expand it to
-                chat, collapse it to a pill — always one click away.
+                A lightweight overlay that floats on your desktop. Control it
+                locally or remotely from any browser — your computer, your way.
               </p>
-              <OverlayDemo />
+              <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl shadow-2xl shadow-primary/10 border border-white/10">
+                <Image
+                  src="/demo-screenshot.png"
+                  alt="Coasty desktop app running on Windows and macOS"
+                  width={1456}
+                  height={816}
+                  className="w-full h-auto"
+                  priority
+                />
+              </div>
             </motion.div>
 
             {/* Recommended download */}
@@ -463,7 +475,7 @@ export default function DownloadPage() {
             {/* CTA */}
             <motion.div variants={itemVariants} className="text-center mb-12">
               <p className="text-muted-foreground mb-4">
-                Prefer the browser?
+                Want to control your machine from anywhere?
               </p>
               <Button variant="outline" size="lg" className="rounded-3xl" asChild>
                 <Link href="/auth">

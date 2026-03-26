@@ -303,7 +303,7 @@ function UsageChart({
             y1={y}
             y2={y}
             stroke="currentColor"
-            strokeOpacity={tick === 0 ? 0.08 : 0.04}
+            strokeOpacity={tick === 0 ? 0.15 : 0.08}
             strokeWidth={0.5}
           />
           <text
@@ -312,9 +312,9 @@ function UsageChart({
             textAnchor="end"
             fontSize={9.5}
             fill="currentColor"
-            fillOpacity={0.3}
+            fillOpacity={0.5}
             fontFamily="system-ui, -apple-system, sans-serif"
-            fontWeight={300}
+            fontWeight={400}
           >
             {formatAxisValue(tick)}
           </text>
@@ -337,9 +337,9 @@ function UsageChart({
           textAnchor="middle"
           fontSize={9}
           fill="currentColor"
-          fillOpacity={0.28}
+          fillOpacity={0.5}
           fontFamily="system-ui, -apple-system, sans-serif"
-          fontWeight={300}
+          fontWeight={400}
         >
           {formatShortDate(d.date)}
         </text>
@@ -396,12 +396,12 @@ function UsageChart({
         <svg viewBox={`0 0 ${vbW} ${vbH}`} preserveAspectRatio="xMidYMid meet" className="w-full h-full">
           <defs>
             <linearGradient id="barEarnedGrad" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stopColor="rgb(16, 185, 129)" stopOpacity={0.7} />
-              <stop offset="100%" stopColor="rgb(52, 211, 153)" stopOpacity={0.9} />
+              <stop offset="0%" stopColor="rgb(16, 185, 129)" stopOpacity={0.85} />
+              <stop offset="100%" stopColor="rgb(52, 211, 153)" stopOpacity={1} />
             </linearGradient>
             <linearGradient id="barSpentGrad" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stopColor="rgb(225, 29, 72)" stopOpacity={0.5} />
-              <stop offset="100%" stopColor="rgb(251, 113, 133)" stopOpacity={0.7} />
+              <stop offset="0%" stopColor="rgb(225, 29, 72)" stopOpacity={0.75} />
+              <stop offset="100%" stopColor="rgb(251, 113, 133)" stopOpacity={0.95} />
             </linearGradient>
           </defs>
 
@@ -422,7 +422,7 @@ function UsageChart({
               >
                 <rect x={cx - barGroupWidth / 2} y={padding.top} width={barGroupWidth} height={chartH} fill="transparent" />
                 {isHovered && (
-                  <rect x={cx - barGroupWidth / 2} y={padding.top} width={barGroupWidth} height={chartH} fill="currentColor" fillOpacity={0.015} rx={4} />
+                  <rect x={cx - barGroupWidth / 2} y={padding.top} width={barGroupWidth} height={chartH} fill="currentColor" fillOpacity={0.04} rx={4} />
                 )}
                 {/* Earned */}
                 <rect
@@ -432,7 +432,7 @@ function UsageChart({
                   height={Math.max(earnedH, 0)}
                   rx={barW / 3}
                   fill="url(#barEarnedGrad)"
-                  fillOpacity={isHovered ? 1 : 0.7}
+                  fillOpacity={isHovered ? 1 : 0.85}
                   style={{ transition: "fill-opacity 0.15s ease" }}
                 />
                 {/* Spent */}
@@ -443,7 +443,7 @@ function UsageChart({
                   height={Math.max(spentH, 0)}
                   rx={barW / 3}
                   fill="url(#barSpentGrad)"
-                  fillOpacity={isHovered ? 1 : 0.6}
+                  fillOpacity={isHovered ? 1 : 0.8}
                   style={{ transition: "fill-opacity 0.15s ease" }}
                 />
               </g>
@@ -482,10 +482,11 @@ function UsageChart({
     <div className="relative" style={{ height }}>
       <svg viewBox={`0 0 ${vbW} ${vbH}`} preserveAspectRatio="xMidYMid meet" className="w-full h-full">
         <defs>
-          <linearGradient id="areaGradFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgb(99, 102, 241)" stopOpacity={0.2} />
-            <stop offset="60%" stopColor="rgb(99, 102, 241)" stopOpacity={0.06} />
-            <stop offset="100%" stopColor="rgb(99, 102, 241)" stopOpacity={0} />
+          <linearGradient id="fadeMask" gradientUnits="userSpaceOnUse" x1="0" y1={padding.top} x2="0" y2={padding.top + chartH}>
+            <stop offset="0%" stopColor="white" />
+            <stop offset="50%" stopColor="white" stopOpacity={0.5} />
+            <stop offset="85%" stopColor="white" stopOpacity={0.1} />
+            <stop offset="100%" stopColor="white" stopOpacity={0} />
           </linearGradient>
           <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stopColor="rgb(129, 140, 248)" />
@@ -504,17 +505,20 @@ function UsageChart({
         {renderYAxis(balanceTicks, balanceAxisMax)}
 
         {/* Area fill */}
-        <path d={smoothArea} fill="url(#areaGradFill)" />
+        <mask id="areaMask">
+          <rect x={padding.left} y={padding.top} width={chartW} height={chartH} fill="url(#fadeMask)" />
+        </mask>
+        <path d={smoothArea} fill="#818cf8" opacity={0.35} mask="url(#areaMask)" />
 
-        {/* Glow line (subtle) */}
+        {/* Glow line */}
         <path
           d={smoothLine}
           fill="none"
           stroke="rgb(99, 102, 241)"
-          strokeWidth={4}
+          strokeWidth={5}
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeOpacity={0.08}
+          strokeOpacity={0.2}
           filter="url(#glow)"
         />
 
@@ -523,10 +527,10 @@ function UsageChart({
           d={smoothLine}
           fill="none"
           stroke="url(#lineGrad)"
-          strokeWidth={2}
+          strokeWidth={2.5}
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeOpacity={0.85}
+          strokeOpacity={1}
         />
 
         {/* Hover interaction layer */}
@@ -550,14 +554,14 @@ function UsageChart({
                   x1={p.x} x2={p.x}
                   y1={p.y} y2={padding.top + chartH}
                   stroke="rgb(99, 102, 241)"
-                  strokeOpacity={0.12}
+                  strokeOpacity={0.3}
                   strokeWidth={1}
                   strokeDasharray="3 3"
                 />
                 {/* Outer glow ring */}
-                <circle cx={p.x} cy={p.y} r={8} fill="rgb(99, 102, 241)" fillOpacity={0.08} />
+                <circle cx={p.x} cy={p.y} r={8} fill="rgb(99, 102, 241)" fillOpacity={0.18} />
                 {/* Dot */}
-                <circle cx={p.x} cy={p.y} r={4} fill="rgb(99, 102, 241)" stroke="white" strokeWidth={2} />
+                <circle cx={p.x} cy={p.y} r={4.5} fill="rgb(99, 102, 241)" stroke="white" strokeWidth={2} />
               </>
             )}
           </g>
@@ -1479,16 +1483,16 @@ export function BillingSection() {
         {/* Legend */}
         <div className="flex items-center gap-3 sm:gap-5 px-5 pb-1 pt-1 flex-wrap">
           <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-indigo-500/70" />
-            <span className="text-[10px] text-muted-foreground/40 font-medium">Balance</span>
+            <span className="h-2 w-2 rounded-full bg-indigo-500" />
+            <span className="text-[10px] text-muted-foreground/60 font-medium">Balance</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500/70" />
-            <span className="text-[10px] text-muted-foreground/40 font-medium">Earned</span>
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="text-[10px] text-muted-foreground/60 font-medium">Earned</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-rose-500/70" />
-            <span className="text-[10px] text-muted-foreground/40 font-medium">Used</span>
+            <span className="h-2 w-2 rounded-full bg-rose-500" />
+            <span className="text-[10px] text-muted-foreground/60 font-medium">Used</span>
           </div>
         </div>
 

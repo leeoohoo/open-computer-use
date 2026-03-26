@@ -323,7 +323,7 @@ function AccountContent() {
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-[220px] flex-shrink-0 flex flex-col overflow-y-auto border-r border-border/30"
+          className="relative w-[220px] flex-shrink-0 flex flex-col overflow-y-auto"
         >
           {/* User profile */}
           <div className="px-4 pt-7 pb-5">

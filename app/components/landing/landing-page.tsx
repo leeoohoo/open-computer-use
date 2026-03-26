@@ -15,10 +15,7 @@ import { LandingHeader } from "./landing-header"
 import { LandingFooter } from "./landing-footer"
 import { HeroUseCaseCarousel } from "./hero-use-case-carousel"
 import { GuideLines, SectionDivider as SharedSectionDivider } from "./guide-lines"
-// HeroMachineDemo removed
-// MockChatDemo moved out of hero — still available for other sections
-// import { MockChatDemo } from "./mock-chat-demo"
-// import { MockVMDisplay } from "./mock-vm-display"
+import { DottedGlowBackground } from "@/components/ui/dotted-glow-background"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { Caveat } from "next/font/google"
@@ -267,17 +264,25 @@ export function LandingPage() {
           isMobile ? "px-7 pt-8 pb-16" : "px-10 pt-16 pb-24"
         )}>
 
-          {/* Smooth monochrome sunrise glow — constrained to guide lines with inverted-U mask */}
+          {/* Dotted glow background — clipped to guide lines */}
           <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full relative">
-              <div
-                className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 opacity-[0.14] dark:opacity-[0.18] overflow-hidden"
-                style={{
-                  background: "linear-gradient(to top, rgba(160,160,160,1) 0%, rgba(120,120,120,1) 40%, rgba(90,90,90,1) 100%)",
-                  WebkitMaskImage: "radial-gradient(ellipse 120% 140% at 50% 100%, black 0%, black 40%, transparent 62%)",
-                  maskImage: "radial-gradient(ellipse 120% 140% at 50% 100%, black 0%, black 40%, transparent 62%)",
-                }}
-              />
+            <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
+              <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden">
+                <DottedGlowBackground
+                  className="[mask-image:radial-gradient(ellipse_80%_70%_at_50%_40%,black_0%,transparent_100%)]"
+                  opacity={0.6}
+                  gap={14}
+                  radius={1.4}
+                  colorLightVar="--color-neutral-400"
+                  glowColorLightVar="--color-neutral-500"
+                  colorDarkVar="--color-neutral-500"
+                  glowColorDarkVar="--color-sky-800"
+                  backgroundOpacity={0}
+                  speedMin={0.3}
+                  speedMax={1.4}
+                  speedScale={0.8}
+                />
+              </div>
             </div>
           </div>
 

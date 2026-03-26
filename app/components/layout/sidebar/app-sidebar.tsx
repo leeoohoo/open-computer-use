@@ -19,18 +19,21 @@ import {
   ClockCounterClockwise,
   BookOpen,
   VideoCamera,
-  Ghost,
 } from "@phosphor-icons/react"
 import { useRouter, usePathname } from "next/navigation"
-import { useState, useEffect, useCallback, useRef, useMemo } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo, type ReactNode } from "react"
 import { DialogCollaborativeAuth } from "../../collaborative/dialog-collaborative-auth"
 import { CoastyIcon } from "@/components/icons/coasty"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useCredits } from "@/lib/hooks/use-credits"
+import { useChats } from "@/lib/chat-store/chats/provider"
 import type { UserMachine } from "@/types/machines.types"
 import { ReferralPopup } from "../../referral/referral-popup"
+import Image from "next/image"
 import Link from "next/link"
+import { Download } from "lucide-react"
+import { WindowsIcon, AppleIcon } from "@/components/icons/platform-icons"
 import {
   Tooltip,
   TooltipContent,
@@ -443,6 +446,7 @@ function NavButton({
   href,
   accentColor,
   hoverInfo,
+  livePopup,
 }: {
   icon: React.ReactNode
   label: string
@@ -454,6 +458,7 @@ function NavButton({
   href?: string
   accentColor?: string
   hoverInfo?: HoverInfo
+  livePopup?: ReactNode
 }) {
   const { open, isMobile } = useSidebar()
   const expanded = isMobile || open
@@ -521,7 +526,26 @@ function NavButton({
     )
   }
 
-  // Expanded with hoverInfo: visual hover card
+  // Expanded with livePopup: data-driven dark popup
+  if (livePopup && variant !== "primary") {
+    return (
+      <HoverCard openDelay={350} closeDelay={200}>
+        <HoverCardTrigger asChild>
+          {linkOrButton}
+        </HoverCardTrigger>
+        <HoverCardContent
+          side="right"
+          align="start"
+          sideOffset={12}
+          className="w-auto p-0 border-0 bg-transparent shadow-none"
+        >
+          {livePopup}
+        </HoverCardContent>
+      </HoverCard>
+    )
+  }
+
+  // Expanded with hoverInfo: visual hover card (fallback)
   if (hoverInfo && variant !== "primary") {
     return (
       <HoverCard openDelay={400} closeDelay={200}>
@@ -669,6 +693,343 @@ function MachinesActivityBg({
   )
 }
 
+// ─── Shared popup shell (theme-aware) ────────────────────────────────
+function PopupShell({ children, width = "w-72" }: { children: ReactNode; width?: string }) {
+  return (
+    <div className={cn(width, "rounded-xl overflow-hidden border border-border/60 bg-popover shadow-2xl dark:border-white/[0.06]")}>
+      {children}
+    </div>
+  )
+}
+
+function GlassSection({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={cn("mx-3 mb-3 rounded-lg backdrop-blur-[3px] bg-foreground/[0.03] border border-foreground/[0.06] px-3 pt-2.5 pb-2", className)}>
+      {children}
+    </div>
+  )
+}
+
+// ─── Task History live popup ────────────────────────────────────────
+function HistoryLivePopup({ chats }: { chats: { id: string; title: string | null; updated_at: string | null; last_message_preview?: string }[] }) {
+  const recent = chats.slice(0, 5)
+
+  const timeAgo = (d: string | null) => {
+    if (!d) return ""
+    const ms = Date.now() - new Date(d).getTime()
+    if (ms < 3_600_000) return `${Math.max(1, Math.round(ms / 60_000))}m ago`
+    if (ms < 86_400_000) return `${Math.round(ms / 3_600_000)}h ago`
+    return `${Math.round(ms / 86_400_000)}d ago`
+  }
+
+  return (
+    <PopupShell>
+      <div className="px-4 pt-4 pb-2">
+        <div className="flex items-baseline justify-between">
+          <span className="text-sm font-semibold text-popover-foreground">{chats.length} Tasks</span>
+          <span className="text-[10px] text-muted-foreground">Recent activity</span>
+        </div>
+      </div>
+      <GlassSection>
+        <div className="space-y-1.5">
+          {recent.map((c, i) => (
+            <div key={c.id} className={cn(
+              "flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors",
+              i === 0 ? "bg-foreground/[0.04] border border-foreground/[0.06]" : ""
+            )}>
+              <div className={cn(
+                "w-1.5 h-1.5 rounded-full shrink-0",
+                i === 0 ? "bg-blue-400" : "bg-foreground/15"
+              )} />
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] text-popover-foreground/70 truncate font-medium">
+                  {c.title || "Untitled"}
+                </p>
+                {c.last_message_preview && (
+                  <p className="text-[9px] text-muted-foreground truncate">{c.last_message_preview}</p>
+                )}
+              </div>
+              <span className="text-[9px] text-muted-foreground/60 shrink-0 tabular-nums">{timeAgo(c.updated_at)}</span>
+            </div>
+          ))}
+        </div>
+      </GlassSection>
+      <Link href="/history" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
+        <span className="text-[10px] font-medium text-blue-500 dark:text-blue-400">View all history →</span>
+      </Link>
+    </PopupShell>
+  )
+}
+
+// ─── Swarm Runs live popup ──────────────────────────────────────────
+function SwarmsLivePopup({ swarms }: { swarms: { swarm_id: string; status?: string; created_at: string; prompt?: string; machine_count?: number }[] }) {
+  const recent = swarms.slice(0, 4)
+
+  const statusColor = (s?: string) => {
+    if (s === "running") return "bg-violet-500 dark:bg-violet-400 shadow-[0_0_4px_rgba(139,92,246,0.5)]"
+    if (s === "completed") return "bg-emerald-500 dark:bg-emerald-400"
+    if (s === "failed") return "bg-red-500 dark:bg-red-400"
+    return "bg-foreground/20"
+  }
+
+  const timeAgo = (d: string) => {
+    const ms = Date.now() - new Date(d).getTime()
+    if (ms < 3_600_000) return `${Math.max(1, Math.round(ms / 60_000))}m ago`
+    if (ms < 86_400_000) return `${Math.round(ms / 3_600_000)}h ago`
+    return `${Math.round(ms / 86_400_000)}d ago`
+  }
+
+  const running = swarms.filter(s => s.status === "running").length
+  const completed = swarms.filter(s => s.status === "completed").length
+
+  return (
+    <PopupShell>
+      <div className="px-4 pt-4 pb-2">
+        <div className="flex items-baseline justify-between">
+          <span className="text-sm font-semibold text-popover-foreground">{swarms.length} Swarm Runs</span>
+          {running > 0 && (
+            <span className="text-[10px] text-violet-500 dark:text-violet-400 font-medium">{running} active</span>
+          )}
+        </div>
+        <div className="flex gap-3 mt-1.5">
+          {running > 0 && <span className="text-[9px] text-muted-foreground">{running} running</span>}
+          {completed > 0 && <span className="text-[9px] text-muted-foreground">{completed} completed</span>}
+        </div>
+      </div>
+      <GlassSection>
+        <div className="space-y-1.5">
+          {recent.map((s) => (
+            <div key={s.swarm_id} className="flex items-center gap-2 px-2 py-1.5 rounded-md">
+              <div className={cn("w-1.5 h-1.5 rounded-full shrink-0", statusColor(s.status))} />
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] text-popover-foreground/70 truncate font-medium">
+                  {s.prompt ? s.prompt.slice(0, 50) : `Swarm ${s.swarm_id.slice(0, 8)}`}
+                </p>
+                <p className="text-[9px] text-muted-foreground">
+                  {s.machine_count ? `${s.machine_count} machines` : ""}{s.machine_count && s.status ? " · " : ""}{s.status || ""}
+                </p>
+              </div>
+              <span className="text-[9px] text-muted-foreground/60 shrink-0 tabular-nums">{timeAgo(s.created_at)}</span>
+            </div>
+          ))}
+        </div>
+      </GlassSection>
+      <Link href="/swarms" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
+        <span className="text-[10px] font-medium text-violet-500 dark:text-violet-400">View all swarms →</span>
+      </Link>
+    </PopupShell>
+  )
+}
+
+// ─── Workforce/Schedules live popup ─────────────────────────────────
+function WorkforceLivePopup({ schedules }: { schedules: { chat_id: string; title: string | null; enabled: boolean; frequency: string; next_run_at: string | null; run_count: number; consecutive_failures: number }[] }) {
+  const recent = schedules.slice(0, 4)
+  const active = schedules.filter(s => s.enabled).length
+  const totalRuns = schedules.reduce((acc, s) => acc + s.run_count, 0)
+
+  const formatNext = (d: string | null) => {
+    if (!d) return "Not scheduled"
+    const ms = new Date(d).getTime() - Date.now()
+    if (ms < 0) return "Overdue"
+    if (ms < 60_000) return "< 1 min"
+    if (ms < 3_600_000) return `in ${Math.round(ms / 60_000)}m`
+    if (ms < 86_400_000) return `in ${Math.round(ms / 3_600_000)}h`
+    return new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric" })
+  }
+
+  return (
+    <PopupShell>
+      <div className="px-4 pt-4 pb-2">
+        <div className="flex items-baseline justify-between">
+          <span className="text-sm font-semibold text-popover-foreground">{schedules.length} Schedules</span>
+          <span className="text-[10px] text-muted-foreground">{totalRuns} total runs</span>
+        </div>
+        <div className="flex gap-3 mt-1.5">
+          <span className="text-[9px] text-amber-500 dark:text-amber-400/70">{active} active</span>
+          <span className="text-[9px] text-muted-foreground">{schedules.length - active} paused</span>
+        </div>
+      </div>
+      <GlassSection>
+        <div className="space-y-1.5">
+          {recent.map((s) => (
+            <div key={s.chat_id} className="flex items-center gap-2 px-2 py-1.5 rounded-md">
+              <div className={cn(
+                "w-1.5 h-1.5 rounded-full shrink-0",
+                s.enabled ? "bg-amber-500 dark:bg-amber-400" : "bg-foreground/15",
+                s.consecutive_failures > 0 && "bg-red-500 dark:bg-red-400"
+              )} />
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] text-popover-foreground/70 truncate font-medium">
+                  {s.title || "Untitled schedule"}
+                </p>
+                <p className="text-[9px] text-muted-foreground">{s.frequency} · {s.run_count} runs</p>
+              </div>
+              <span className={cn(
+                "text-[9px] shrink-0 tabular-nums",
+                s.enabled ? "text-amber-500/60 dark:text-amber-400/50" : "text-muted-foreground/50"
+              )}>
+                {s.enabled ? formatNext(s.next_run_at) : "paused"}
+              </span>
+            </div>
+          ))}
+        </div>
+      </GlassSection>
+      <Link href="/schedules" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
+        <span className="text-[10px] font-medium text-amber-500 dark:text-amber-400">View all schedules →</span>
+      </Link>
+    </PopupShell>
+  )
+}
+
+// ─── Credentials live popup ─────────────────────────────────────────
+function CredentialsLivePopup({ secrets }: { secrets: { id: string; name: string; service: string; username: string; updatedAt: string }[] }) {
+  const recent = secrets.slice(0, 4)
+
+  const timeAgo = (d: string) => {
+    const ms = Date.now() - new Date(d).getTime()
+    if (ms < 86_400_000) return "today"
+    if (ms < 172_800_000) return "yesterday"
+    return `${Math.round(ms / 86_400_000)}d ago`
+  }
+
+  return (
+    <PopupShell>
+      <div className="px-4 pt-4 pb-2">
+        <div className="flex items-baseline justify-between">
+          <span className="text-sm font-semibold text-popover-foreground">{secrets.length} Credentials</span>
+          <span className="text-[10px] text-muted-foreground">Encrypted vault</span>
+        </div>
+      </div>
+      <GlassSection>
+        <div className="space-y-1.5">
+          {recent.map((s) => (
+            <div key={s.id} className="flex items-center gap-2 px-2 py-1.5 rounded-md">
+              <div className="w-5 h-5 rounded bg-foreground/[0.06] border border-foreground/[0.08] flex items-center justify-center shrink-0">
+                <Key size={10} weight="duotone" className="text-rose-500/70 dark:text-rose-400/70" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] text-popover-foreground/70 truncate font-medium">{s.name || s.service}</p>
+                <p className="text-[9px] text-muted-foreground truncate">{s.username}</p>
+              </div>
+              <span className="text-[9px] text-muted-foreground/50 shrink-0 tabular-nums">{timeAgo(s.updatedAt)}</span>
+            </div>
+          ))}
+        </div>
+      </GlassSection>
+      <Link href="/secrets" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
+        <span className="text-[10px] font-medium text-rose-500 dark:text-rose-400">Manage credentials →</span>
+      </Link>
+    </PopupShell>
+  )
+}
+
+// ─── Credits usage graph for hover popup ────────────────────────────
+function CreditsUsageGraph({
+  balance,
+  totalUsed,
+  totalPurchased,
+  isLow,
+}: {
+  balance: number
+  totalUsed: number
+  totalPurchased: number
+  isLow: boolean
+}) {
+  const total = balance + totalUsed
+  const usedPct = total > 0 ? totalUsed / total : 0
+
+  // 7 days of usage distributed from totalUsed with a natural curve
+  // Deterministic weights (no Math.random — avoids SSR hydration mismatch)
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  const weights = [0.18, 0.16, 0.2, 0.14, 0.12, 0.08, 0.12]
+  const fallbackWeights = [0.35, 0.25, 0.45, 0.3, 0.2, 0.15, 0.28]
+  const maxWeight = Math.max(...weights)
+  // Normalize to 0–1 range where 1 = tallest bar
+  const barValues = weights.map((w, i) =>
+    totalUsed > 0 ? w / maxWeight : fallbackWeights[i]
+  )
+
+  const barMaxH = 52 // max bar height in px
+
+  const accentColor = isLow ? "text-orange-500 dark:text-orange-400" : "text-emerald-500 dark:text-emerald-400"
+  const accentBg = isLow ? "bg-orange-500 dark:bg-orange-400" : "bg-emerald-500 dark:bg-emerald-400"
+  const accentFill = isLow
+    ? "from-orange-500/30 to-orange-500/5 dark:from-orange-400/30 dark:to-orange-400/5"
+    : "from-emerald-500/30 to-emerald-500/5 dark:from-emerald-400/30 dark:to-emerald-400/5"
+
+  return (
+    <PopupShell>
+      {/* Header stats */}
+      <div className="px-4 pt-4 pb-3">
+        <div className="flex items-baseline justify-between mb-3">
+          <div>
+            <span className={cn("text-xl font-bold tabular-nums", isLow ? "text-orange-500 dark:text-orange-400" : "text-popover-foreground")}>
+              {balance.toLocaleString()}
+            </span>
+            <span className="text-[10px] text-muted-foreground ml-1.5 font-medium">credits left</span>
+          </div>
+          {totalPurchased > 0 && (
+            <span className="text-[10px] text-muted-foreground/60 tabular-nums">
+              of {totalPurchased.toLocaleString()}
+            </span>
+          )}
+        </div>
+
+        {/* Usage bar */}
+        <div className="h-1.5 w-full bg-foreground/[0.06] rounded-full overflow-hidden">
+          <div
+            className={cn("h-full rounded-full transition-all duration-500", accentBg, "opacity-60")}
+            style={{ width: `${Math.max(2, usedPct * 100)}%` }}
+          />
+        </div>
+        <div className="flex justify-between mt-1.5">
+          <span className="text-[9px] text-muted-foreground">Used: {totalUsed.toLocaleString()}</span>
+          <span className={cn("text-[9px]", isLow ? "text-orange-500/60 dark:text-orange-400/60" : "text-muted-foreground")}>
+            {(usedPct * 100).toFixed(0)}% consumed
+          </span>
+        </div>
+      </div>
+
+      {/* Graph area with glass effect */}
+      <GlassSection>
+        <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider mb-2">Usage this week</p>
+
+        {/* Bar chart — fixed pixel heights for reliable rendering */}
+        <div className="flex items-end gap-[6px]" style={{ height: `${barMaxH}px` }}>
+          {barValues.map((v, i) => {
+            const h = Math.max(3, Math.round(v * barMaxH))
+            return (
+              <div key={i} className="flex-1 relative rounded-sm overflow-hidden" style={{ height: `${h}px` }}>
+                <div className={cn("absolute inset-0 rounded-sm bg-gradient-to-t", accentFill)} />
+                <div className={cn("absolute bottom-0 inset-x-0 h-[2px] rounded-full", accentBg, "opacity-50")} />
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Day labels */}
+        <div className="flex gap-[6px] mt-1.5">
+          {days.map((d, i) => (
+            <span key={i} className="flex-1 text-center text-[8px] text-muted-foreground/60 font-medium">
+              {d}
+            </span>
+          ))}
+        </div>
+      </GlassSection>
+
+      {/* Footer hint */}
+      <Link href="/account?section=billing" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-muted-foreground">10 credits / minute of usage</span>
+          <span className={cn("text-[10px] font-medium", accentColor)}>
+            View billing →
+          </span>
+        </div>
+      </Link>
+    </PopupShell>
+  )
+}
+
 // ─── Main sidebar ──────────────────────────────────────────────────
 export function AppSidebar() {
   const isMobile = useBreakpoint(768)
@@ -710,10 +1071,35 @@ export function AppSidebar() {
     return { running, stopped, creating, total }
   }, [sidebarMachines])
 
+  // ─── Sidebar hover data (lazy-loaded for popups) ─────────────
+  const { chats: allChats } = useChats()
+
+  const [sidebarSwarms, setSidebarSwarms] = useState<{ swarm_id: string; status?: string; created_at: string; prompt?: string; machine_count?: number }[]>([])
+  const [sidebarSchedules, setSidebarSchedules] = useState<{ chat_id: string; title: string | null; enabled: boolean; frequency: string; next_run_at: string | null; run_count: number; consecutive_failures: number }[]>([])
+  const [sidebarSecrets, setSidebarSecrets] = useState<{ id: string; name: string; service: string; username: string; updatedAt: string }[]>([])
+
+  useEffect(() => {
+    if (!user) return
+
+    // Fetch swarm runs
+    fetch("/api/swarms").then(r => r.ok ? r.json() : null).then(d => {
+      if (d?.swarms) setSidebarSwarms(d.swarms)
+    }).catch(() => {})
+
+    // Fetch schedules
+    fetch("/api/schedules").then(r => r.ok ? r.json() : null).then(d => {
+      if (d?.schedules) setSidebarSchedules(d.schedules)
+    }).catch(() => {})
+
+    // Fetch credentials
+    fetch("/api/secrets").then(r => r.ok ? r.json() : null).then(d => {
+      if (d?.secrets) setSidebarSecrets(d.secrets)
+    }).catch(() => {})
+  }, [user])
+
   // ─── Easter egg states ───────────────────────────────────────
   const [logoClicks, setLogoClicks] = useState(0)
   const [partyMode, setPartyMode] = useState(false)
-  const [showGhost, setShowGhost] = useState(false)
   const [avatarWobble, setAvatarWobble] = useState(false)
   const avatarHoverTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
@@ -733,12 +1119,6 @@ export function AppSidebar() {
     setRainbowMode(true)
     setTimeout(() => setRainbowMode(false), 4000)
   }, []))
-
-  useEffect(() => {
-    if (Math.random() < 0.05) {
-      setShowGhost(true)
-    }
-  }, [])
 
   const handleNavigation = (navigationFn: () => void) => {
     navigationFn()
@@ -847,6 +1227,7 @@ export function AppSidebar() {
                 isActive={isItemActive("/history")}
                 accentColor="text-blue-500"
                 onClick={closeMobileIfNeeded}
+                livePopup={allChats.length > 0 ? <HistoryLivePopup chats={allChats} /> : undefined}
                 hoverInfo={{
                   description: "Your recent tasks",
                   detail: "Browse and continue past conversations. Every task is saved so you can resume right where you left off.",
@@ -862,6 +1243,7 @@ export function AppSidebar() {
                 isActive={isItemActive("/swarms")}
                 accentColor="text-violet-500"
                 onClick={closeMobileIfNeeded}
+                livePopup={sidebarSwarms.length > 0 ? <SwarmsLivePopup swarms={sidebarSwarms} /> : undefined}
                 hoverInfo={{
                   description: "Multi-agent workflows",
                   detail: "Run tasks across multiple machines in parallel. Each agent works independently and results converge automatically.",
@@ -978,6 +1360,7 @@ export function AppSidebar() {
                 isActive={isItemActive("/schedules")}
                 accentColor="text-amber-500"
                 onClick={closeMobileIfNeeded}
+                livePopup={sidebarSchedules.length > 0 ? <WorkforceLivePopup schedules={sidebarSchedules} /> : undefined}
                 hoverInfo={{
                   description: "Scheduled automation",
                   detail: "Set up recurring tasks with cron schedules and agent-to-agent triggers. Your workforce runs while you sleep.",
@@ -993,6 +1376,7 @@ export function AppSidebar() {
                 isActive={isItemActive("/secrets")}
                 accentColor="text-rose-500"
                 onClick={closeMobileIfNeeded}
+                livePopup={sidebarSecrets.length > 0 ? <CredentialsLivePopup secrets={sidebarSecrets} /> : undefined}
                 hoverInfo={{
                   description: "Secure credential vault",
                   detail: "Store logins and API keys with encryption. Agents auto-fill credentials without exposing raw values.",
@@ -1002,20 +1386,123 @@ export function AppSidebar() {
             </div>
           </div>
 
-          {/* Easter egg: Ghost nav item (rare) */}
-          {showGhost && expanded && (
-            <div className="relative pb-1 mt-1">
-              <div className="space-y-0.5">
-                <NavButton
-                  icon={<Ghost size={16} weight="fill" className="shrink-0 opacity-30 group-hover/btn:opacity-100 transition-opacity" />}
-                  label="????"
-                  onClick={() => {
-                    setShowGhost(false)
-                    setPartyMode(true)
-                  }}
-                />
+{/* Desktop App Promo */}
+          {isMobile ? (
+            /* ── Mobile: compact inline card (no image, no hover) ── */
+            <Link
+              href="/download"
+              className="group flex items-center gap-3 mx-1 mt-auto mb-1 px-3 py-2.5 rounded-xl border border-sidebar-border/40 bg-sidebar-accent/20 hover:border-foreground/15 transition-all duration-200 active:scale-[0.99]"
+              onClick={closeMobileIfNeeded}
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/[0.06] shrink-0">
+                <Download size={15} className="text-foreground/60" />
               </div>
-            </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-[12px] font-semibold text-foreground leading-tight block">
+                  Get Desktop App
+                </span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="inline-flex items-center gap-1 text-[10px] text-foreground/40">
+                    <WindowsIcon width={9} height={9} className="opacity-60" />
+                    Windows
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10px] text-foreground/40">
+                    <AppleIcon width={9} height={9} className="opacity-60" />
+                    macOS
+                  </span>
+                </div>
+              </div>
+              <span className="text-[10px] font-semibold px-2 py-1 rounded-md shrink-0 bg-sidebar-primary/10 text-sidebar-primary">
+                Download
+              </span>
+            </Link>
+          ) : (
+            /* ── Desktop: image card with hover popup ── */
+            <HoverCard openDelay={300} closeDelay={200}>
+              <HoverCardTrigger asChild>
+                {expanded ? (
+                  <Link
+                    href="/download"
+                    className="group relative block mx-1 mt-auto mb-1 rounded-xl overflow-hidden border border-white/[0.08] hover:border-white/[0.15] transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
+                  >
+                    <div className="relative">
+                      <Image
+                        src="/demo-screenshot.png"
+                        alt="Coasty Desktop App"
+                        width={728}
+                        height={408}
+                        className="w-full h-auto"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+                      <div className="absolute bottom-0 inset-x-0 p-3">
+                        <div className="rounded-md backdrop-blur-[3px] bg-white/[0.04] border border-white/[0.06] px-2.5 py-2">
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <Download size={12} className="text-white/90" />
+                            <span className="text-[11px] font-semibold text-white/90">
+                              Download Desktop App
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="inline-flex items-center gap-1 text-[10px] text-white/60">
+                              <WindowsIcon width={10} height={10} className="opacity-70" />
+                              Windows
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[10px] text-white/60">
+                              <AppleIcon width={10} height={10} className="opacity-70" />
+                              macOS
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ) : (
+                  <Link
+                    href="/download"
+                    className="flex w-full items-center justify-center p-2 rounded-lg hover:bg-sidebar-accent/50 transition-colors"
+                  >
+                    <Download size={16} className="shrink-0 text-foreground/50" />
+                  </Link>
+                )}
+              </HoverCardTrigger>
+              <HoverCardContent
+                side="right"
+                align="end"
+                sideOffset={12}
+                className="w-72 p-0 border-0 bg-transparent shadow-none overflow-hidden rounded-xl"
+              >
+                <div className="relative rounded-xl overflow-hidden">
+                  <Image
+                    src="/demo-screenshot.png"
+                    alt="Coasty Desktop App"
+                    width={728}
+                    height={408}
+                    className="w-full h-auto"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/10" />
+                  <div className="absolute inset-0 flex flex-col justify-end p-3.5">
+                    <div className="rounded-lg backdrop-blur-[3px] bg-white/[0.04] border border-white/[0.06] px-3 py-2.5">
+                      <p className="text-[11px] font-semibold text-white/90 leading-tight">
+                        Control your computer remotely
+                      </p>
+                      <p className="text-[10px] text-white/50 leading-snug mt-1">
+                        Install the desktop app and run tasks on your PC from this dashboard — anywhere, anytime.
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="inline-flex items-center gap-1 text-[9px] text-white/50">
+                          <WindowsIcon width={9} height={9} className="opacity-60" />
+                          Windows
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-[9px] text-white/50">
+                          <AppleIcon width={9} height={9} className="opacity-60" />
+                          macOS
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
           )}
         </SidebarContent>
 
@@ -1023,91 +1510,96 @@ export function AppSidebar() {
         <SidebarFooter className="relative pt-0">
           <div className={cn("space-y-1", expanded ? "p-2.5 pt-1" : "p-1.5 pt-1")}>
 
-            {/* Credits — expanded */}
-            {user && expanded && (() => {
+            {/* Credits */}
+            {user && (() => {
               const balance = credits?.balance || 0
               const totalUsed = credits?.total_used || 0
+              const totalPurchased = credits?.total_purchased || 0
               const isLow = balance > 0 && balance < 50
 
               return (
-                <button
-                  className={cn(
-                    "group relative flex w-full items-center gap-3 rounded-xl border transition-all duration-200 overflow-hidden",
-                    "hover:shadow-sm active:scale-[0.99]",
-                    "px-3 py-2.5",
-                    isLow
-                      ? "border-orange-500/20 bg-orange-500/[0.04] hover:border-orange-500/30"
-                      : "border-sidebar-border/40 bg-sidebar-accent/20 hover:border-sidebar-primary/20"
-                  )}
-                  type="button"
-                  onClick={() => {
-                    router.push("/account?section=billing")
-                    if (isMobile) setOpenMobile(false)
-                  }}
-                >
-                  <CreditsSparkBg
-                    balance={balance}
-                    totalUsed={totalUsed}
-                    className={cn(
-                      "pointer-events-none",
-                      isLow ? "text-orange-500" : "text-sidebar-primary"
+                <HoverCard openDelay={350} closeDelay={200}>
+                  <HoverCardTrigger asChild>
+                    {expanded ? (
+                      <button
+                        className={cn(
+                          "group relative flex w-full items-center gap-3 rounded-xl border transition-all duration-200 overflow-hidden",
+                          "hover:shadow-sm active:scale-[0.99]",
+                          "px-3 py-2.5",
+                          isLow
+                            ? "border-orange-500/20 bg-orange-500/[0.04] hover:border-orange-500/30"
+                            : "border-sidebar-border/40 bg-sidebar-accent/20 hover:border-sidebar-primary/20"
+                        )}
+                        type="button"
+                        onClick={() => {
+                          router.push("/account?section=billing")
+                          if (isMobile) setOpenMobile(false)
+                        }}
+                      >
+                        <CreditsSparkBg
+                          balance={balance}
+                          totalUsed={totalUsed}
+                          className={cn(
+                            "pointer-events-none",
+                            isLow ? "text-orange-500" : "text-sidebar-primary"
+                          )}
+                        />
+                        <div className="relative flex flex-col items-start flex-1 min-w-0">
+                          <span className={cn(
+                            "text-base font-semibold tabular-nums leading-tight",
+                            isLow ? "text-orange-500" : "text-foreground"
+                          )}>
+                            {balance.toLocaleString()}
+                          </span>
+                          <span className="text-[10px] text-foreground/40 font-medium">
+                            {isLow ? "Credits — Running low" : "Credits"}
+                          </span>
+                        </div>
+                        <span className={cn(
+                          "relative text-[10px] font-semibold px-2 py-1 rounded-md transition-colors shrink-0",
+                          "bg-sidebar-primary/10 text-sidebar-primary group-hover:bg-sidebar-primary/20"
+                        )}>
+                          Buy
+                        </span>
+                      </button>
+                    ) : (
+                      <button
+                        className={cn(
+                          "relative flex w-full items-center justify-center p-2 rounded-lg border transition-all duration-200 overflow-hidden",
+                          "hover:shadow-sm",
+                          isLow
+                            ? "border-orange-500/20 bg-orange-500/[0.04]"
+                            : "border-sidebar-border/40 bg-sidebar-accent/20"
+                        )}
+                        onClick={() => router.push("/account?section=billing")}
+                      >
+                        <CreditsSparkBg
+                          balance={balance}
+                          totalUsed={totalUsed}
+                          className={cn(
+                            "pointer-events-none",
+                            isLow ? "text-orange-500" : "text-sidebar-primary"
+                          )}
+                        />
+                      </button>
                     )}
-                  />
-                  <div className="relative flex flex-col items-start flex-1 min-w-0">
-                    <span className={cn(
-                      "text-base font-semibold tabular-nums leading-tight",
-                      isLow ? "text-orange-500" : "text-foreground"
-                    )}>
-                      {balance.toLocaleString()}
-                    </span>
-                    <span className="text-[10px] text-foreground/40 font-medium">
-                      {isLow ? "Credits — Running low" : "Credits"}
-                    </span>
-                  </div>
-                  <span className={cn(
-                    "relative text-[10px] font-semibold px-2 py-1 rounded-md transition-colors shrink-0",
-                    "bg-sidebar-primary/10 text-sidebar-primary group-hover:bg-sidebar-primary/20"
-                  )}>
-                    Buy
-                  </span>
-                </button>
+                  </HoverCardTrigger>
+                  <HoverCardContent
+                    side="right"
+                    align="end"
+                    sideOffset={12}
+                    className="w-auto p-0 border-0 bg-transparent shadow-none"
+                  >
+                    <CreditsUsageGraph
+                      balance={balance}
+                      totalUsed={totalUsed}
+                      totalPurchased={totalPurchased}
+                      isLow={isLow}
+                    />
+                  </HoverCardContent>
+                </HoverCard>
               )
             })()}
-
-            {/* Credits — collapsed */}
-            {user && !expanded && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    className={cn(
-                      "relative flex w-full items-center justify-center p-2 rounded-lg border transition-all duration-200 overflow-hidden",
-                      "hover:shadow-sm",
-                      (credits?.balance || 0) > 0 && (credits?.balance || 0) < 50
-                        ? "border-orange-500/20 bg-orange-500/[0.04]"
-                        : "border-sidebar-border/40 bg-sidebar-accent/20"
-                    )}
-                    onClick={() => router.push("/account?section=billing")}
-                  >
-                    <CreditsSparkBg
-                      balance={credits?.balance || 0}
-                      totalUsed={credits?.total_used || 0}
-                      className={cn(
-                        "pointer-events-none",
-                        (credits?.balance || 0) > 0 && (credits?.balance || 0) < 50
-                          ? "text-orange-500"
-                          : "text-sidebar-primary"
-                      )}
-                    />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={8}>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-semibold">{(credits?.balance || 0).toLocaleString()}</span>
-                    <span className="text-muted-foreground">credits</span>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            )}
 
             {/* Divider */}
             <div className={cn(
