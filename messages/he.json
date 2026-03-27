@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "התחל בחינם",
+    "bookDemo": "הזמן הדגמה",
+    "tryCoastyFree": "נסה את Coasty בחינם",
+    "learnMore": "למד עוד",
+    "watchSession": "צפה בהפעלה",
+    "compareAllPlans": "השווה את כל התוכניות והתכונות",
+    "allRightsReserved": "כל הזכויות שמורות.",
+    "privacy": "פרטיות",
+    "terms": "תנאים",
+    "recommended": "מומלץ",
+    "month": "חודש",
+    "creditsPerMonth": "{count} קרדיטים/חודש",
+    "agentsInParallel": "{count} סוכנים במקביל"
   },
 
   "header": {
-    "useCases": "Use Cases",
-    "blog": "Blog",
-    "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "useCases": "שימושים",
+    "blog": "בלוג",
+    "agentSwarms": "נחילי סוכנים",
+    "compare": "השוואה",
+    "demos": "הדגמות",
+    "pricing": "תמחור",
+    "download": "הורדה",
+    "signIn": "התחבר",
+    "getStarted": "התחל",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "מודיעין תחרותי",
+      "qaBugReports": "דוחות באגים QA",
+      "seoGapAnalysis": "ניתוח פערי SEO",
+      "dataExtraction": "חילוץ נתונים",
+      "leadGeneration": "יצירת לידים",
+      "siteAudit": "ביקורת אתר",
+      "adIntelligence": "מודיעין פרסומי",
+      "emailOutreach": "אימייל outreach",
+      "designReview": "סקירת עיצוב",
+      "priceMonitoring": "ניטור מחירים",
+      "marketResearch": "מחקר שוק",
+      "emailCampaigns": "קמפיינים באימייל"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} פרופילי מתחרים סופקו",
+      "qaBugReports": "{stat} זרימות משתמש נבדקו להרצה",
+      "seoGapAnalysis": "{stat} פערי מילות מפתח זוהו",
+      "dataExtraction": "{stat} שורות חולצו להרצה",
+      "leadGeneration": "{stat} לידים מוסמכים להרצה",
+      "siteAudit": "{stat} דפים נבדקו להרצה",
+      "adIntelligence": "{stat} קריאייטיבים פרסומיים נלכדו",
+      "emailOutreach": "{stat} אימיילים מותאמים אישית נוסחו",
+      "designReview": "{stat} breakpoints נבדקו לדף",
+      "priceMonitoring": "{stat} מק\"טים הושוו להרצה",
+      "marketResearch": "{stat} נקודות נתונים נאספו",
+      "emailCampaigns": "{stat} אימיילים מותאמים אישית לקמפיין"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
-      "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "allPosts": "כל הפוסטים",
+      "computerUse": "שימוש במחשב",
+      "compare": "השוואה",
+      "dataEntry": "הזנת נתונים",
+      "webScraping": "Web scraping",
+      "jobApplications": "מועמדויות לעבודה",
+      "demosResults": "הדגמות ותוצאות",
+      "guide": "מדריך"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} מאמרים מתפרסמים שבועית",
+      "computerUse": "{stat} ציון benchmark של OSWorld",
+      "compare": "{stat} מתחרים נותחו",
+      "dataEntry": "{stat} מהיר יותר מעבודה ידנית",
+      "webScraping": "{stat} דפים להפעלה",
+      "jobApplications": "{stat} מועמדויות להפעלה",
+      "demosResults": "{stat} מקרי בוחן אמיתיים",
+      "guide": "{stat} הדרכות לשימושים"
     }
   },
 
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "headline": "מפעילי מחשב אוטונומיים",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "סוכן מחשב",
+        "headline": "אוטומט כל משימת דפדפן",
+        "outcome": "סוכן AI ששולט במחשב אמיתי — גולש, לוחץ, מקליד ומספק עבודה מוגמרת. ללא צורך בהגדרה."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "מודיעין תחרותי",
+        "headline": "עקוב אחר כל מתחרה",
+        "outcome": "פרופילי מתחרים מלאים עם תמחור, תכונות ופערי מיצוב — מיוצאים כדוח מוכן לשיתוף."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "בדיקות QA",
+        "headline": "מצא באגים לפני המשתמשים",
+        "outcome": "זרימות משתמש קריטיות נבדקו end-to-end, כל באג צולם עם שלבי שחזור ודירוג חומרה."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "ניתוח SEO",
+        "headline": "חשוף פערי מילות מפתח",
+        "outcome": "פערי מילות מפתח זוהו, תקצירי תוכן נוסחו, מקורות backlinks של מתחרים מופו — אסטרטגיית SEO מעשית."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "חילוץ נתונים",
+        "headline": "סרוק ומבנה כל אתר",
+        "outcome": "נתונים מובנים שנסרקו, נוקו, בוטלו כפילויות ויוצאו כ-CSV — מכל אתר, בכל פורמט."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "יצירת לידים",
+        "headline": "מלא את צינור המכירות שלך",
+        "outcome": "מקבלי החלטות מוסמכים התואמים ל-ICP שלך עם תפקידים מאומתים, חברות ופתיחות outreach מותאמות אישית."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "ביקורת אתר",
+        "headline": "בדוק כל דף בקנה מידה",
+        "outcome": "דפים נסרקו, Core Web Vitals דורגו, קישורים שבורים נמצאו, בעיות נגישות דורגו לפי עדיפות תיקון."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "אימייל outreach",
+        "headline": "שלח outreach מותאם אישית",
+        "outcome": "אימיילים מותאמים אישית המתייחסים לחברה, תפקיד ונקודות כאב של כל prospect — מוכנים לשליחה."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "מחקר שוק",
+        "headline": "אמת את השוק שלך במהירות",
+        "outcome": "TAM חושב, שחקנים מרכזיים פרופלו, מגמות צמיחה מופו — ממעשרות נקודות נתונים."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "שיווק", "task": "שווק את המוצר שלך ב-Reddit באופן אוטונומי" },
+      "goToMarket": { "label": "Go-to-Market", "task": "מצא prospects ושלח אימיילים מותאמים אישית" },
+      "qaTesting": { "label": "בדיקות QA", "task": "בדוק כל זרימת checkout ודווח על באגים" },
+      "jobApplication": { "label": "מועמדות לעבודה", "task": "מצא תפקידים, התאם קורות חיים והגש מועמדות" },
+      "formFilling": { "label": "מילוי טפסים", "task": "מלא את הבקשה של YC S26 עבורך" },
+      "socialMedia": { "label": "מדיה חברתית", "task": "פרסם ב-Hacker News והגב לתגובות" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "Benchmark של OSWorld", "sublabel": "#1 computer-use agent בעולם" },
+    "tools": { "value": "50+", "label": "כלים שהסוכן יכול להשתמש בהם", "sublabel": "דפדפן, טרמינל, שולחן עבודה, קבצים" },
+    "schedule": { "value": "24/7", "label": "פועל לפי לוח זמנים", "sublabel": "אוטומט כל משימה חוזרת" },
+    "setup": { "value": "0", "label": "הגדרה נדרשת", "sublabel": "ללא APIs, ללא אינטגרציות, ללא קוד" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "למה Coasty",
+    "title": "לא צ'אטבוט. לא סקריפט RPA.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "עובד כמו בן אדם",
+      "description": "רואה, לוחץ, מקליד, מנווט — בדיוק כמוך"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "ללא סקריפטים או הגדרה",
+      "description": "עברית פשוטה פנימה, תוצאות החוצה"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "מתמודד עם הבלתי צפוי",
+      "description": "מסתגל ל-CAPTCHAs, חלונות קופצים, שינויי תצוגה"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "פועל בבידוד",
+      "description": "VM מבודד לכל הפעלה — שום דבר לא דולף"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "איך זה עובד",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "תאר את המשימה שלך",
+      "description": "עברית פשוטה. זהו.",
+      "placeholder": "חקור 100 לידים ב-LinkedIn..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "צפה בסוכן עובד",
+      "description": "פותח דפדפן, לוחץ, מקליד, מנווט"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "משימה הושלמה",
+      "description": "כל פעולה מתועדת עם צילומי מסך",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "משימה הושלמה",
+        "leadsFound": "12 לידים נמצאו",
+        "addedToCrm": "נוספו ל-CRM"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "מדורג #1 בעולם",
+    "subtitle": "82% ב-OSWorld — ה-benchmark הקשה ביותר לסוכני AI שמשתמשים במחשבים אמיתיים",
+    "agenticFramework": "מסגרת סוכנית",
+    "foundationModel": "מודל בסיס"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "למה לאוטומט עם Coasty?",
+    "subtitle": "אותן משימות שלוקחות לצוות שעות — Coasty משלים בדקות, מסביב לשעון.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "לעשות ידנית",
+      "subtitle": "אתה או הצוות שלך, ביד"
     },
     "coasty": {
       "title": "Coasty AI Agent",
       "subtitle": "#1 computer-use agent"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "זמן למשימה",
+      "availability": "זמינות",
+      "setupTime": "זמן הגדרה",
+      "errorRate": "שיעור שגיאות",
+      "scaling": "סקלינג",
+      "auditTrail": "מעקב ביקורת"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "שעות עד ימים",
+      "availability": "שעות עסקים בלבד",
+      "setupTime": "ללמוד כלים, לכתוב SOPs",
+      "errorRate": "טעויות אנושיות",
+      "scaling": "יותר עבודה = יותר זמן",
+      "auditTrail": "אין"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "דקות",
+      "availability": "24/7, כל יום",
+      "setupTime": "60 שניות",
+      "errorRate": "מתקן עצמית",
+      "scaling": "הרץ משימות ללא הגבלה במקביל",
+      "auditTrail": "כל לחיצה מתועדת + צילומי מסך"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "אוטומט משימות שלוקחות",
+      "hoursManually": "שעות ידנית",
+      "startingAt": "החל מ"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "צפה בסוכן בפעולה",
+    "subtitle": "משימות אמיתיות. דפדפנים אמיתיים. כל לחיצה מוקלטת.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
-        "tag": "Marketing"
+        "title": "Coasty ב-Reddit",
+        "description": "צפה ב-Coasty מנהל באופן אוטונומי קמפיין שיווקי — חוקר מתחרים, מנתח מגמות ובונה מצגת אסטרטגיה.",
+        "tag": "שיווק"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "מציאת לקוחות פוטנציאליים",
+        "description": "Coasty מוצא וחוקר לקוחות פוטנציאליים, אוסף פרטים מרכזיים ליצירת outreach מותאם אישית.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "בדיקות QA עצמיות",
+        "description": "Coasty מריץ אבטחת איכות על המוצר שלו — מנווט בזרימות, תופס באגים ומדווח על בעיות באופן אוטונומי.",
+        "tag": "בדיקות QA"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "שליחת אימייל בשמך",
+        "description": "מחיבור ועד שליחה — סוכן AI מנסח ומספק אימייל לגמרי בעצמו.",
+        "tag": "תקשורת"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "הגשת מועמדות לעבודה",
+        "description": "Coasty מוצא תפקיד מתאים, מתאים את קורות החיים שלך ומגיש את המועמדות — הכל בעצמו.",
+        "tag": "מועמדות לעבודה"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "פרסום ב-Hacker News",
+        "description": "Coasty יוצר ומפרסם פוסט בלוג ב-Hacker News — כותב את התוכן ומגיש אותו באופן אוטונומי.",
+        "tag": "מדיה חברתית"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "נבנה למשימות מחשב אמיתיות",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "מתקן עצמית",
+      "description": "מזהה שגיאות, מנסה נתיבים חלופיים"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "מעקב ביקורת מלא",
+      "description": "כל לחיצה מתועדת עם צילומי מסך"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "תזמון 24/7",
+      "description": "פועל על cron — שעתי, יומי, שבועי"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "מבודד ומאובטח",
+      "description": "VM מבודד להפעלה, מושמד לאחר מכן"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 ב-OSWorld",
+      "description": "82% — הציון הגבוה ביותר שנרשם אי פעם"
     },
     "swarms": {
-      "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "title": "נחילי סוכנים",
+      "description": "חלק משימות בין מכונות במקביל"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "התחל בחינם, תגדיל כשתהיה מוכן",
+    "subtitle": "ללא כרטיס אשראי. סוכן ה-AI שלך מוכן ב-60 שניות.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "נסה את סוכן ה-computer-use מספר 1",
+        "cta": "התחל בחינם"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "אוטומציה יומית קלה",
+        "cta": "קבל Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "אוטומט משימות כל יום",
+        "cta": "קבל Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "הגדל תהליכי עבודה מורכבים",
+        "cta": "בחר Plus",
+        "badge": "הכי פופולרי"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "אוטומציה כבדה ללא הגבלה",
+        "cta": "קבל Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "VM זמני 1 (שעתיים)",
+    "vmDeletedAfterInactivity": "VM 1 (נמחק לאחר חוסר פעילות)",
+    "vmAlwaysOn": "{count} VM פעיל תמיד",
+    "vmAlwaysOnPlural": "{count} VMs פעילים תמיד",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "אותה עבודה עולה {oldPrice} בעבודה ידנית",
+      "description": "עוזר וירטואלי עולה $2,000–$4,000/חודש. עובד חלקי עולה יותר. Coasty עושה את אותה עבודה 24/7 החל מ-$0 — עם עקביות מושלמת, מעקב ביקורת מלא ואפס זמן הכשרה."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "שאלות נפוצות",
+    "subtitle": "כל מה שאתה צריך לדעת לפני שמתחילים",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "מה זה Coasty?",
+        "answer": "Coasty הוא סוכן ה-computer-use AI הטוב בעולם. אתה מתאר משימה — חקור לידים, בדוק אתר, מלא טפסים, פרסם ברשתות חברתיות — ו-Coasty פותח דפדפן אמיתי, מנווט באפליקציות, לוחץ על כפתורים, מקליד טקסט ומשלים את המשימה מתחילה ועד סוף. ללא APIs, ללא אינטגרציות, ללא קוד."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "איך זה שונה מ-ChatGPT או כלי AI אחרים?",
+        "answer": "ChatGPT מייצר טקסט. Coasty משתמש במחשב. הוא לא אומר לך מה לעשות — הוא פותח דפדפן, מנווט לאתר, לוחץ על הכפתורים, ממלא את הטפסים ומספק את העבודה המוגמרת. זה ההבדל בין לקבל הוראות לבין שמישהו עושה את המשימה בשבילך."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "אילו משימות Coasty יכול לאוטומט?",
+        "answer": "כל משימה שאתה יכול לעשות על מחשב. מחקר ברשת, יצירת לידים, הזנת נתונים, מילוי טפסים, בדיקות QA, פרסום ברשתות חברתיות, אימייל outreach, עיבוד חשבוניות, ניתוח תחרותי, גיוס — אם זה כולל דפדפן או אפליקציית שולחן עבודה, Coasty יכול לעשות את זה."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "מה הם קרדיטים ואיך משתמשים בהם?",
+        "answer": "קרדיטים נצרכים כשהסוכן עובד על משימות. משימות ארוכות ומורכבות יותר צורכות יותר קרדיטים. תוכניות בתשלום כוללות קרדיטים חודשיים, ואתה יכול גם לרכוש חבילות קרדיטים נוספות בכל עת."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "האם Coasty יכול לרוץ על המחשב שלי?",
+        "answer": "כן. אפליקציית שולחן העבודה שלנו רצה כשכבת-על קלה על המחשב שלך, שולטת בדפדפן המקומי ובאפליקציות שלך ישירות. לחלופין, משימות רצות על מכונות ענן מבודדות — הבחירה שלך."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "האם הנתונים שלי בטוחים?",
+        "answer": "כל משימה רצה בסביבת sandbox מבודדת. שום דבר לא דולף בין הפעלות. ההרשאות שלך נשארות פרטיות, וכל פעולה מתועדת עם צילומי מסך במעקב ביקורת מלא שאתה יכול לסקור בכל עת."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "שימוש במחשב מונע AI.",
+    "tagline2": "אוטומט כל תהליך עבודה עם סוכנים חכמים.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "מוצר",
+      "resources": "משאבים",
+      "company": "חברה",
+      "legal": "משפטי"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
-      "agentSwarms": "Agent Swarms",
-      "status": "Status",
-      "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "computerUse": "שימוש במחשב",
+      "guide": "מדריך",
+      "download": "הורדה",
+      "pricing": "תמחור",
+      "agentSwarms": "נחילי סוכנים",
+      "status": "סטטוס",
+      "blog": "בלוג",
+      "useCases": "שימושים",
+      "demos": "הדגמות",
+      "compare": "השוואה",
+      "talkToCofounders": "דבר עם המייסדים והדגמה",
+      "contact": "צור קשר",
+      "privacy": "פרטיות",
+      "terms": "תנאים"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "שפה"
   }
 }

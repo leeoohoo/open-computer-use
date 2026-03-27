@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "Ucretsiz Basla",
+    "bookDemo": "Demo rezerve et",
+    "tryCoastyFree": "Coasty'yi ucretsiz dene",
+    "learnMore": "Daha fazla bilgi",
+    "watchSession": "Oturumu izle",
+    "compareAllPlans": "Tum planlari ve ozellikleri karsilastir",
+    "allRightsReserved": "Tum haklari saklidir.",
+    "privacy": "Gizlilik",
+    "terms": "Sartlar",
+    "recommended": "Onerilen",
+    "month": "ay",
+    "creditsPerMonth": "{count} kredi/ay",
+    "agentsInParallel": "{count} paralel ajan"
   },
 
   "header": {
-    "useCases": "Use Cases",
+    "useCases": "Kullanim Alanlari",
     "blog": "Blog",
-    "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "agentSwarms": "Ajan Suruleri",
+    "compare": "Karsilastir",
+    "demos": "Demolar",
+    "pricing": "Fiyatlandirma",
+    "download": "Indir",
+    "signIn": "Giris yap",
+    "getStarted": "Basla",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "Rakip Istihbarati",
+      "qaBugReports": "QA Hata Raporlari",
+      "seoGapAnalysis": "SEO Bosluk Analizi",
+      "dataExtraction": "Veri Cikarimi",
+      "leadGeneration": "Potansiyel Musteri Olusturma",
+      "siteAudit": "Site Denetimi",
+      "adIntelligence": "Reklam Istihbarati",
+      "emailOutreach": "E-posta Erisimi",
+      "designReview": "Tasarim Incelemesi",
+      "priceMonitoring": "Fiyat Izleme",
+      "marketResearch": "Pazar Arastirmasi",
+      "emailCampaigns": "E-posta Kampanyalari"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} rakip profili teslim edildi",
+      "qaBugReports": "{stat} kullanici akisi calisma basina test edildi",
+      "seoGapAnalysis": "{stat} anahtar kelime boslugu belirlendi",
+      "dataExtraction": "{stat} satir calisma basina cikarildi",
+      "leadGeneration": "{stat} nitelikli potansiyel musteri calisma basina",
+      "siteAudit": "{stat} sayfa calisma basina denetlendi",
+      "adIntelligence": "{stat} reklam kreatifi yakalandi",
+      "emailOutreach": "{stat} kisisellestirilmis e-posta taslagi olusturuldu",
+      "designReview": "{stat} kirilma noktasi sayfa basina test edildi",
+      "priceMonitoring": "{stat} SKU calisma basina karsilastirildi",
+      "marketResearch": "{stat} veri noktasi toplandi",
+      "emailCampaigns": "{stat} kisisellestirilmis e-posta kampanya basina"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
+      "allPosts": "Tum Yazilar",
+      "computerUse": "Bilgisayar Kullanimi",
+      "compare": "Karsilastir",
+      "dataEntry": "Veri Girisi",
       "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "jobApplications": "Is Basvurulari",
+      "demosResults": "Demolar ve Sonuclar",
+      "guide": "Rehber"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} makale haftalik yayinlandi",
+      "computerUse": "{stat} OSWorld benchmark puani",
+      "compare": "{stat} rakip analiz edildi",
+      "dataEntry": "{stat} manualden daha hizli",
+      "webScraping": "{stat} sayfa oturum basina",
+      "jobApplications": "{stat} basvuru oturum basina",
+      "demosResults": "{stat} gercek vaka calismasi",
+      "guide": "{stat} kullanim alani kilavuzu"
     }
   },
 
   "hero": {
-    "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "badge": "#1 Computer-Use Ajani · {score} OSWorld",
+    "headline": "Otonom bilgisayar operatorleri",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "Bilgisayar ajani",
+        "headline": "herhangi bir tarayici gorevini otomatiklestir",
+        "outcome": "Gercek bir bilgisayari kontrol eden bir AI ajani — gozatar, tiklar, yazar ve bitirmis isi teslim eder. Kurulum gerektirmez."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Rakip istihbarati",
+        "headline": "her rakibi izle",
+        "outcome": "Fiyatlandirma, ozellikler ve konumlandirma bosluklari ile eksiksiz rakip profilleri — paylasilmaya hazir rapor olarak disari aktarilir."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "QA testi",
+        "headline": "hatalari kullanicilardan once bul",
+        "outcome": "Kritik kullanici akislari uctan uca test edilir, her hata yeniden uretim adimlari ve ciddiyet derecesi ile ekran goruntusu alinir."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "SEO analizi",
+        "headline": "anahtar kelime bosluklarini ortaya cikar",
+        "outcome": "Anahtar kelime bosluklari belirlendi, icerik ozetleri hazirlandi, rakip geri baglanti kaynaklari haritalandi — uygulanabilir SEO stratejisi."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Veri cikarimi",
+        "headline": "herhangi bir siteyi kaziyip yapilandir",
+        "outcome": "Yapilandirilmis veri kazindi, temizlendi, tekillestirildi ve CSV olarak disari aktarildi — herhangi bir web sitesinden, herhangi bir formattan."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Potansiyel musteri olusturma",
+        "headline": "satis hattinizi doldurun",
+        "outcome": "ICP'nize uyan nitelikli karar vericiler, dogrulanmis unvanlar, sirketler ve kisisellestirilmis erisim aciclari ile."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Site denetimi",
+        "headline": "her sayfayi olcekte denetle",
+        "outcome": "Sayfalar tarandi, Core Web Vitals puanlandi, kirik baglantilar bulundu, erisilebilirlik sorunlari duzeltme onceligne gore siralandi."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "E-posta erisimi",
+        "headline": "kisisellestirilmis erisim gonder",
+        "outcome": "Her potansiyel musterinin sirketine, rolune ve sorunlarina atifta bulunan kisisellestirilmis e-postalar — gondermeye hazir."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Pazar arastirmasi",
+        "headline": "pazarinizi hizla dogrulayin",
+        "outcome": "TAM hesaplandi, kilit oyuncular profillendi, buyume egilimi cizelgelendi — duzinelerce veri noktasindan elde edildi."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Pazarlama", "task": "Urununu Reddit'te otonom olarak pazarla" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Potansiyel musterileri bul ve kisisellestirilmis e-postalar gonder" },
+      "qaTesting": { "label": "QA Testi", "task": "Her odeme akisini test et ve hatalari raporla" },
+      "jobApplication": { "label": "Is Basvurusu", "task": "Rolleri bul, ozgecmisi uyarla ve basvur" },
+      "formFilling": { "label": "Form Doldurma", "task": "YC S26 basvurusunu sizin icin doldurun" },
+      "socialMedia": { "label": "Sosyal Medya", "task": "Hacker News'de yayinla ve yorumlarla etkilesime gir" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "Kuresel #1 computer-use ajani" },
+    "tools": { "value": "50+", "label": "Ajanin kullanabilecegi araclar", "sublabel": "Tarayici, terminal, masaustu, dosyalar" },
+    "schedule": { "value": "24/7", "label": "Zamanlamaya gore calisir", "sublabel": "Herhangi bir tekrarlayan gorevi otomatiklestir" },
+    "setup": { "value": "0", "label": "Kurulum gerekli", "sublabel": "API yok, entegrasyon yok, kod yok" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Neden Coasty",
+    "title": "Bir chatbot degil. Bir RPA komut dosyasi degil.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Insan gibi calisir",
+      "description": "Gorur, tiklar, yazar, gezinir — aynen senin gibi"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Komut dosyasi veya kurulum yok",
+      "description": "Duz Turkce girer, sonuclar cikar"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Beklenmedik durumlarla basa cikar",
+      "description": "CAPTCHA'lara, popup'lara, duzlem degisikliklerine uyum saglar"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Izole ortamda calisir",
+      "description": "Oturum basina sandbox VM — hicbir sey sizamaz"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Nasil calisir",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Gorevini tanimla",
+      "description": "Duz Turkce. Hepsi bu.",
+      "placeholder": "LinkedIn'de 100 potansiyel musteri arastir..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Ajanin calismasini izle",
+      "description": "Tarayici acar, tiklar, yazar, gezinir"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Gorev tamamlandi",
+      "description": "Her islem ekran goruntuleriyle kaydedildi",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Gorev tamamlandi",
+        "leadsFound": "12 potansiyel musteri bulundu",
+        "addedToCrm": "CRM'e eklendi"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "Dunya capinda #1 benchmark",
+    "subtitle": "OSWorld'de %82 — gercek bilgisayar kullanan AI ajanlari icin en zor benchmark",
+    "agenticFramework": "Ajantik Cerceve",
+    "foundationModel": "Temel Model"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Neden Coasty ile otomatiklestirmelisiniz?",
+    "subtitle": "Bir ekibin saatler harcadigi ayni gorevler — Coasty dakikalar icinde, 7/24 tamamlar.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Manuel Olarak Yapmak",
+      "subtitle": "Siz veya ekibiniz, elle"
     },
     "coasty": {
-      "title": "Coasty AI Agent",
-      "subtitle": "#1 computer-use agent"
+      "title": "Coasty AI Ajani",
+      "subtitle": "#1 computer-use ajani"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "Gorev basina sure",
+      "availability": "Erisilebilirlik",
+      "setupTime": "Kurulum suresi",
+      "errorRate": "Hata orani",
+      "scaling": "Olcekleme",
+      "auditTrail": "Denetim izi"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Saatlerden gunlere",
+      "availability": "Sadece mesai saatleri",
+      "setupTime": "Araclari ogren, SOP'lar yaz",
+      "errorRate": "Insan hatalari",
+      "scaling": "Daha fazla yap = daha fazla zaman harca",
+      "auditTrail": "Yok"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Dakikalar",
+      "availability": "7/24, her gun",
+      "setupTime": "60 saniye",
+      "errorRate": "Kendini duzeltir",
+      "scaling": "Sinirsiz gorevi paralel calistir",
+      "auditTrail": "Her tiklama kaydedildi + ekran goruntuleri"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "Manuel olarak",
+      "hoursManually": "saatler suren gorevleri otomatiklestir",
+      "startingAt": "Baslayan fiyat"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Ajani is basinda izle",
+    "subtitle": "Gercek gorevler. Gercek tarayicilar. Her tiklama kaydedildi.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
-        "tag": "Marketing"
+        "title": "Reddit'te Coasty",
+        "description": "Coasty'nin otonom olarak bir pazarlama kampanyasi yurutmesini izleyin — rakipleri arastiriyor, trendleri analiz ediyor ve strateji sunumu olusturuyor.",
+        "tag": "Pazarlama"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Potansiyel Musteriler Bulma",
+        "description": "Coasty potansiyel musterileri buluyor ve arastiriyor, kisisellestirilmis erisim hazirlmak icin onemli detaylari topluyor.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "Kendini QA Test Etme",
+        "description": "Coasty kendi urunu uzerinde kalite guvence calismasi yapiyor — akislarda geziniyor, hatalari yakaliyor ve sorunlari otonom olarak raporluyor.",
+        "tag": "QA Testi"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "Sizin Adiniza E-posta Gonderme",
+        "description": "Yazmaktan gondermeye — bir AI ajani tamamen kendi basina bir e-posta hazirlayip teslim ediyor.",
+        "tag": "Iletisim"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Ise Basvurma",
+        "description": "Coasty uygun bir rol buluyor, ozgecmisinizi uyarliyor ve basvuruyu gonderiyor — hepsi kendi basina.",
+        "tag": "Is Basvurusu"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "Hacker News'de Yayinlama",
+        "description": "Coasty Hacker News'de bir blog yazisi olusturup yayinliyor — icerigi yaziyor ve otonom olarak gonderiyor.",
+        "tag": "Sosyal Medya"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Gercek bilgisayar gorevleri icin insa edildi",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Kendini Duzeltir",
+      "description": "Hatalari tespit eder, alternatif yollar dener"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Tam Denetim Izi",
+      "description": "Her tiklama ekran goruntuleriyle kaydedildi"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "7/24 Zamanla",
+      "description": "Cron ile calisir — saatlik, gunluk, haftalik"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Sandbox ve Guvenli",
+      "description": "Oturum basina izole VM, sonrasinda yok edilir"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "OSWorld'de #1",
+      "description": "%82 — simdiye kadar kaydedilen en yuksek puan"
     },
     "swarms": {
-      "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "title": "Ajan Suruleri",
+      "description": "Gorevleri makineler arasinda paralel olarak bol"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Ucretsiz basla, hazir olunca olcekle",
+    "subtitle": "Kredi karti gereksiz. AI ajaniniz 60 saniyede hazir.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "#1 computer-use ajanini dene",
+        "cta": "Ucretsiz Basla"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Hafif gunluk otomasyon",
+        "cta": "Lite'i Al"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Her gun gorevleri otomatiklestir",
+        "cta": "Starter'i Al"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "Karmasik is akislarini olcekle",
+        "cta": "Plus'a Gec",
+        "badge": "En Populer"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Sinirsiz agir otomasyon",
+        "cta": "Pro'yu Al"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 gecici VM (2 saat)",
+    "vmDeletedAfterInactivity": "1 VM (etkinsizlik sonrasi silindi)",
+    "vmAlwaysOn": "{count} her zaman acik VM",
+    "vmAlwaysOnPlural": "{count} her zaman acik VM",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Ayni is manuel iscilikle {oldPrice} tutar",
+      "description": "Sanal asistan aylik $2.000–$4.000'dir. Yari zamanli calisan daha pahaliya mal olur. Coasty ayni isi 7/24 $0'dan baslayarak yapar — mukemmel tutarlilik, tam denetim izleri ve sifir egitim suresiyle."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Sikca sorulan sorular",
+    "subtitle": "Baslamadan once bilmeniz gereken her sey",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Coasty nedir?",
+        "answer": "Coasty dunyanin en iyi computer-use AI ajanidir. Bir gorevi tanimlarsiniz — potansiyel musterileri arastir, bir web sitesini test et, formlari doldur, sosyal medyada yayinla — ve Coasty gercek bir tarayici acar, uygulamalarda gezinir, dumelere tiklar, metin yazar ve gorevi uctan uca tamamlar. API yok, entegrasyon yok, kod gerekmez."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Bu ChatGPT veya diger AI araclarindan nasil farkli?",
+        "answer": "ChatGPT metin uretir. Coasty bilgisayar kullanir. Size ne yapmaniz gerektigini soylemez — tarayici acar, web sitesine gider, dumelere tiklar, formlari doldurur ve bitirmis isi teslim eder. Talimat almakla gorevinin sizin icin yapilmasi arasindaki farktir."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Coasty hangi gorevleri otomatiklestirebilir?",
+        "answer": "Bilgisayarda yapabildiginiz herhangi bir gorevi. Web arastirmasi, potansiyel musteri olusturma, veri girisi, form doldurma, QA testi, sosyal medya yayini, e-posta erisimi, fatura isleme, rekabet analizi, ise alim — bir tarayici veya masaustu uygulamasi iceriyorsa, Coasty yapabilir."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Krediler nedir ve nasil kullanilir?",
+        "answer": "Krediler, ajan gorevler uzerinde calisirken tuketilir. Daha uzun, daha karmasik gorevler daha fazla kredi kullanir. Ucretli planlar aylik krediler icerir ve istediginiz zaman ek kredi paketleri satin alabilirsiniz."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Coasty kendi bilgisayarimda calisabilir mi?",
+        "answer": "Evet. Masaustu uygulamamiz makinenizde hafif bir katman olarak calisir, yerel tarayicinizi ve uygulamalarinizi dogrudan kontrol eder. Alternatif olarak, gorevler izole bulut makinelerinde calisir — secim sizin."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Verilerim guvende mi?",
+        "answer": "Her gorev izole bir sandbox ortaminda calisir. Oturumlar arasinda hicbir sey sizamaz. Kimlik bilgileriniz gizli kalir ve her islem, istediginiz zaman inceleyebileceginiz tam bir denetim izinde ekran goruntuleriyle kaydedilir."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "AI destekli bilgisayar kullanimi.",
+    "tagline2": "Akilli ajanlarla herhangi bir is akisini otomatiklestirin.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "Urun",
+      "resources": "Kaynaklar",
+      "company": "Sirket",
+      "legal": "Yasal"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
-      "agentSwarms": "Agent Swarms",
-      "status": "Status",
+      "computerUse": "Bilgisayar Kullanimi",
+      "guide": "Rehber",
+      "download": "Indir",
+      "pricing": "Fiyatlandirma",
+      "agentSwarms": "Ajan Suruleri",
+      "status": "Durum",
       "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "useCases": "Kullanim Alanlari",
+      "demos": "Demolar",
+      "compare": "Karsilastir",
+      "talkToCofounders": "Kurucu ortaklarla konusun ve demo",
+      "contact": "Iletisim",
+      "privacy": "Gizlilik",
+      "terms": "Sartlar"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Dil"
   }
 }

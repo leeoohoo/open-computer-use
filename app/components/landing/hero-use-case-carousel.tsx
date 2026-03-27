@@ -72,9 +72,9 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
   return (
     <div className="relative w-full max-w-4xl mx-auto">
       {/* ─── Hero text ─── */}
-      <div className={cn("relative z-10 text-center", isMobile ? "mb-10" : "mb-14")}>
+      <div className={cn("relative z-10 text-center", isMobile ? "mb-6" : "mb-14")}>
         {/* Badge */}
-        <div className="flex justify-center mb-8">
+        <div className={cn("flex justify-center", isMobile ? "mb-5" : "mb-8")}>
           <div className="inline-flex items-center gap-2.5 rounded-full border border-border/40 bg-card/40 backdrop-blur-sm px-4 py-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
             <span className="h-1 w-1 rounded-full bg-foreground/30" />
             <span className="text-xs font-medium text-muted-foreground tracking-wide">
@@ -111,7 +111,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
 
         {/* ─── Use Case Carousel ─── */}
         <div
-          className={cn(isMobile ? "mt-6" : "mt-10")}
+          className={cn(isMobile ? "mt-4" : "mt-10")}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -146,7 +146,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
           </div>
 
           {/* Outcome text */}
-          <div className="mt-5 flex justify-center" style={{ minHeight: isMobile ? "3rem" : "2.5rem" }}>
+          <div className={cn(isMobile ? "mt-3" : "mt-5", "flex justify-center")} style={{ minHeight: isMobile ? "3rem" : "2.5rem" }}>
             <AnimatePresence mode="wait">
               <motion.p
                 key={activeIndex}
@@ -168,7 +168,7 @@ export function HeroUseCaseCarousel({ isMobile }: { isMobile: boolean }) {
         {/* CTAs */}
         <div className={cn(
           "flex items-center justify-center gap-3",
-          isMobile ? "mt-8 flex-col" : "mt-10"
+          isMobile ? "mt-5 flex-col" : "mt-10"
         )}>
           <Link href="/auth">
             <motion.button

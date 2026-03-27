@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "Začít zdarma",
+    "bookDemo": "Rezervovat demo",
+    "tryCoastyFree": "Vyzkoušejte Coasty zdarma",
+    "learnMore": "Zjistit více",
+    "watchSession": "Sledovat relaci",
+    "compareAllPlans": "Porovnat všechny plány a funkce",
+    "allRightsReserved": "Všechna práva vyhrazena.",
+    "privacy": "Soukromí",
+    "terms": "Podmínky",
+    "recommended": "Doporučeno",
+    "month": "měsíc",
+    "creditsPerMonth": "{count} kreditů/měs.",
+    "agentsInParallel": "{count} agentů paralelně"
   },
 
   "header": {
-    "useCases": "Use Cases",
+    "useCases": "Případy užití",
     "blog": "Blog",
-    "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "agentSwarms": "Roje agentů",
+    "compare": "Porovnat",
+    "demos": "Ukázky",
+    "pricing": "Ceník",
+    "download": "Stáhnout",
+    "signIn": "Přihlásit se",
+    "getStarted": "Začít",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "Analýza konkurence",
+      "qaBugReports": "QA hlášení chyb",
+      "seoGapAnalysis": "SEO analýza mezer",
+      "dataExtraction": "Extrakce dat",
+      "leadGeneration": "Generování leadů",
+      "siteAudit": "Audit webu",
+      "adIntelligence": "Reklamní zpravodajství",
+      "emailOutreach": "E-mailový outreach",
+      "designReview": "Kontrola designu",
+      "priceMonitoring": "Sledování cen",
+      "marketResearch": "Průzkum trhu",
+      "emailCampaigns": "E-mailové kampaně"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} profilů konkurentů doručeno",
+      "qaBugReports": "{stat} uživatelských toků otestováno za běh",
+      "seoGapAnalysis": "{stat} mezer v klíčových slovech identifikováno",
+      "dataExtraction": "{stat} řádků extrahováno za běh",
+      "leadGeneration": "{stat} kvalifikovaných leadů za běh",
+      "siteAudit": "{stat} stránek auditováno za běh",
+      "adIntelligence": "{stat} reklamních kreativ zachyceno",
+      "emailOutreach": "{stat} personalizovaných e-mailů sestaveno",
+      "designReview": "{stat} breakpointů otestováno na stránku",
+      "priceMonitoring": "{stat} SKU porovnáno za běh",
+      "marketResearch": "{stat} datových bodů získáno",
+      "emailCampaigns": "{stat} personalizovaných e-mailů na kampaň"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
-      "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "allPosts": "Všechny příspěvky",
+      "computerUse": "Používání počítače",
+      "compare": "Porovnat",
+      "dataEntry": "Zadávání dat",
+      "webScraping": "Web scraping",
+      "jobApplications": "Žádosti o práci",
+      "demosResults": "Ukázky a výsledky",
+      "guide": "Průvodce"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} článků publikováno týdně",
+      "computerUse": "{stat} skóre v benchmarku OSWorld",
+      "compare": "{stat} konkurentů analyzováno",
+      "dataEntry": "{stat} rychlejší než manuálně",
+      "webScraping": "{stat} stránek za relaci",
+      "jobApplications": "{stat} žádostí za relaci",
+      "demosResults": "{stat} skutečných případových studií",
+      "guide": "{stat} návodů pro případy užití"
     }
   },
 
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "headline": "Autonomní operátoři počítačů",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "Počítačový agent",
+        "headline": "automatizujte jakýkoli úkol v prohlížeči",
+        "outcome": "AI agent, který ovládá skutečný počítač — prohlíží, kliká, píše a doručuje hotovou práci. Žádné nastavení není potřeba."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Analýza konkurence",
+        "headline": "sledujte každého konkurenta",
+        "outcome": "Kompletní profily konkurentů s cenami, funkcemi a mezerami v pozicování — exportováno jako sdílitelný report."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "QA testování",
+        "headline": "najděte chyby dříve než uživatelé",
+        "outcome": "Kritické uživatelské toky otestovány end-to-end, každá chyba zachycena screenshotem s kroky reprodukce a hodnocením závažnosti."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "SEO analýza",
+        "headline": "odhalte mezery v klíčových slovech",
+        "outcome": "Identifikované mezery v klíčových slovech, připravené obsahové briefy, zmapované zdroje zpětných odkazů konkurence — akční SEO strategie."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Extrakce dat",
+        "headline": "scrapujte a strukturujte jakýkoli web",
+        "outcome": "Strukturovaná data scrapovaná, vyčištěná, deduplikovaná a exportovaná jako CSV — z jakéhokoli webu, jakéhokoli formátu."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Generování leadů",
+        "headline": "naplňte svůj obchodní pipeline",
+        "outcome": "Kvalifikovaní rozhodovatelé odpovídající vašemu ICP s ověřenými tituly, společnostmi a personalizovanými úvodními texty."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Audit webu",
+        "headline": "auditujte každou stránku ve velkém",
+        "outcome": "Stránky proskenovány, Core Web Vitals ohodnoceny, nefunkční odkazy nalezeny, problémy s přístupností seřazeny podle priority opravy."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "E-mailový outreach",
+        "headline": "odesílejte personalizovaný outreach",
+        "outcome": "Personalizované e-maily odkazující na společnost, roli a problémy každého prospektu — připravené k odeslání."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Průzkum trhu",
+        "headline": "validujte svůj trh rychle",
+        "outcome": "TAM vypočítán, klíčoví hráči profilováni, růstové trendy zmapovány — čerpáno z desítek datových bodů."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Marketing", "task": "Autonomně propagujte svůj produkt na Reddit" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Najděte prospekty a odešlete personalizované e-maily" },
+      "qaTesting": { "label": "QA testování", "task": "Otestujte každý nákupní tok a nahlaste chyby" },
+      "jobApplication": { "label": "Žádost o práci", "task": "Najděte pozice, upravte životopis a přihlaste se" },
+      "formFilling": { "label": "Vyplňování formulářů", "task": "Vyplňte za vás přihlášku YC S26" },
+      "socialMedia": { "label": "Sociální média", "task": "Publikujte na Hacker News a reagujte na komentáře" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "Benchmark OSWorld", "sublabel": "#1 computer-use agent na světě" },
+    "tools": { "value": "50+", "label": "Nástrojů, které agent umí použít", "sublabel": "Prohlížeč, terminál, plocha, soubory" },
+    "schedule": { "value": "24/7", "label": "Běží podle plánu", "sublabel": "Automatizujte jakýkoli opakující se úkol" },
+    "setup": { "value": "0", "label": "Potřebné nastavení", "sublabel": "Žádné API, žádné integrace, žádný kód" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Proč Coasty",
+    "title": "Není to chatbot. Není to RPA skript.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Pracuje jako člověk",
+      "description": "Vidí, kliká, píše, naviguje — přesně jako vy"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Žádné skripty ani nastavení",
+      "description": "Vstup v běžné češtině, výstup ve výsledcích"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Zvládá neočekávané",
+      "description": "Přizpůsobí se CAPTCHA, vyskakovacím oknům, změnám rozložení"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Běží v izolaci",
+      "description": "Sandboxovaný VM na relaci — nic neunikne"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Jak to funguje",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Popište svůj úkol",
+      "description": "Běžná čeština. To je vše.",
+      "placeholder": "Prozkoumejte 100 leadů na LinkedIn..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Sledujte agenta při práci",
+      "description": "Otevírá prohlížeč, kliká, píše, naviguje"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Úkol dokončen",
+      "description": "Každá akce zaznamenána se screenshoty",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Úkol dokončen",
+        "leadsFound": "12 leadů nalezeno",
+        "addedToCrm": "Přidáno do CRM"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "Hodnocen jako #1 na světě",
+    "subtitle": "82 % v OSWorld — nejtěžší benchmark pro AI agenty používající skutečné počítače",
+    "agenticFramework": "Agentický framework",
+    "foundationModel": "Základní model"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Proč automatizovat s Coasty?",
+    "subtitle": "Stejné úkoly, které týmu zaberou hodiny — Coasty dokončí za minuty, nepřetržitě.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Manuální práce",
+      "subtitle": "Vy nebo váš tým, ručně"
     },
     "coasty": {
       "title": "Coasty AI Agent",
       "subtitle": "#1 computer-use agent"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "Čas na úkol",
+      "availability": "Dostupnost",
+      "setupTime": "Čas nastavení",
+      "errorRate": "Chybovost",
+      "scaling": "Škálování",
+      "auditTrail": "Auditní stopa"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Hodiny až dny",
+      "availability": "Pouze pracovní doba",
+      "setupTime": "Naučit se nástroje, psát SOP",
+      "errorRate": "Lidské chyby",
+      "scaling": "Více práce = více času",
+      "auditTrail": "Žádná"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Minuty",
+      "availability": "24/7, každý den",
+      "setupTime": "60 sekund",
+      "errorRate": "Samoopravující se",
+      "scaling": "Spusťte neomezené úkoly paralelně",
+      "auditTrail": "Každý klik zaznamenán + screenshoty"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "Automatizujte úkoly, které zaberou",
+      "hoursManually": "hodiny manuálně",
+      "startingAt": "Počínaje od"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Sledujte agenta v akci",
+    "subtitle": "Skutečné úkoly. Skutečné prohlížeče. Každý klik zaznamenán.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
+        "title": "Coasty na Reddit",
+        "description": "Sledujte, jak Coasty autonomně vede marketingovou kampaň — zkoumá konkurenty, analyzuje trendy a sestavuje strategický dokument.",
         "tag": "Marketing"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Hledání potenciálních zákazníků",
+        "description": "Coasty nachází a zkoumá potenciální zákazníky, shromažďuje klíčové detaily pro vytvoření personalizovaného oslovení.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "QA testování sebe sama",
+        "description": "Coasty provádí kontrolu kvality vlastního produktu — prochází toky, zachytává chyby a autonomně hlásí problémy.",
+        "tag": "QA testování"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "Odeslání e-mailu vaším jménem",
+        "description": "Od sestavení po odeslání — AI agent napíše a doručí e-mail zcela samostatně.",
+        "tag": "Komunikace"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Přihláška na pozici",
+        "description": "Coasty najde odpovídající pozici, upraví váš životopis a odešle přihlášku — vše zcela samostatně.",
+        "tag": "Žádost o práci"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "Publikování na Hacker News",
+        "description": "Coasty vytvoří a publikuje blog post na Hacker News — napíše obsah a autonomně ho odešle.",
+        "tag": "Sociální média"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Vytvořeno pro skutečné počítačové úkoly",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Samoopravující se",
+      "description": "Detekuje chyby, zkouší alternativní cesty"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Kompletní auditní stopa",
+      "description": "Každý klik zaznamenán se screenshoty"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "Plánování 24/7",
+      "description": "Běží na cronu — hodinově, denně, týdně"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Sandboxované a bezpečné",
+      "description": "Izolovaný VM na relaci, poté zničen"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 v OSWorld",
+      "description": "82 % — nejvyšší kdy zaznamenané skóre"
     },
     "swarms": {
-      "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "title": "Roje agentů",
+      "description": "Rozdělte úkoly mezi stroje paralelně"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Začněte zdarma, škálujte když budete připraveni",
+    "subtitle": "Žádná kreditní karta. Váš AI agent je připraven za 60 sekund.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "Vyzkoušejte #1 computer-use agenta",
+        "cta": "Začít zdarma"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Lehká denní automatizace",
+        "cta": "Získat Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Automatizujte úkoly každý den",
+        "cta": "Získat Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "Škálujte složité pracovní postupy",
+        "cta": "Přejít na Plus",
+        "badge": "Nejoblíbenější"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Neomezená náročná automatizace",
+        "cta": "Získat Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 dočasný VM (2 hod.)",
+    "vmDeletedAfterInactivity": "1 VM (smazán po nečinnosti)",
+    "vmAlwaysOn": "{count} stále zapnutý VM",
+    "vmAlwaysOnPlural": "{count} stále zapnuté VM",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Stejná práce stojí {oldPrice} při manuální práci",
+      "description": "Virtuální asistent stojí $2 000–$4 000/měs. Částečný úvazek stojí více. Coasty odvede stejnou práci 24/7 od $0 — s dokonalou konzistencí, kompletní auditní stopou a nulovým časem na zaškolení."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Často kladené otázky",
+    "subtitle": "Vše, co potřebujete vědět, než začnete",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Co je Coasty?",
+        "answer": "Coasty je nejlepší computer-use AI agent na světě. Popíšete úkol — průzkum leadů, testování webu, vyplňování formulářů, publikování na sociálních sítích — a Coasty otevře skutečný prohlížeč, naviguje v aplikacích, kliká na tlačítka, píše text a dokončí úkol od začátku do konce. Žádné API, žádné integrace, žádný kód."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Jak se to liší od ChatGPT nebo jiných AI nástrojů?",
+        "answer": "ChatGPT generuje text. Coasty používá počítač. Neříká vám, co dělat — otevře prohlížeč, přejde na web, klikne na tlačítka, vyplní formuláře a doručí hotovou práci. Je to rozdíl mezi dostáváním instrukcí a mít úkol hotový za vás."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Jaké úkoly může Coasty automatizovat?",
+        "answer": "Jakýkoli úkol, který můžete udělat na počítači. Webový průzkum, generování leadů, zadávání dat, vyplňování formulářů, QA testování, publikování na sociálních sítích, e-mailový outreach, zpracování faktur, analýza konkurence, nábor — pokud to zahrnuje prohlížeč nebo desktopovou aplikaci, Coasty to zvládne."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Co jsou kredity a jak se používají?",
+        "answer": "Kredity se spotřebovávají, když agent pracuje na úkolech. Delší a složitější úkoly spotřebují více kreditů. Placené plány zahrnují měsíční kredity a kdykoli si můžete dokoupit další balíčky kreditů."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Může Coasty běžet na mém vlastním počítači?",
+        "answer": "Ano. Naše desktopová aplikace běží jako lehký overlay na vašem stroji, přímo ovládá váš lokální prohlížeč a aplikace. Alternativně úkoly běží na izolovaných cloudových strojích — je to na vás."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Jsou moje data v bezpečí?",
+        "answer": "Každý úkol běží v izolovaném sandboxovém prostředí. Nic neuniká mezi relacemi. Vaše přihlašovací údaje zůstávají soukromé a každá akce je zaznamenána se screenshoty v kompletní auditní stopě, kterou si můžete kdykoli prohlédnout."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "Používání počítače poháněné AI.",
+    "tagline2": "Automatizujte jakýkoli pracovní postup s inteligentními agenty.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "Produkt",
+      "resources": "Zdroje",
+      "company": "Společnost",
+      "legal": "Právní"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
-      "agentSwarms": "Agent Swarms",
-      "status": "Status",
+      "computerUse": "Používání počítače",
+      "guide": "Průvodce",
+      "download": "Stáhnout",
+      "pricing": "Ceník",
+      "agentSwarms": "Roje agentů",
+      "status": "Stav",
       "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "useCases": "Případy užití",
+      "demos": "Ukázky",
+      "compare": "Porovnat",
+      "talkToCofounders": "Mluvte se spoluzakladateli a demo",
+      "contact": "Kontakt",
+      "privacy": "Soukromí",
+      "terms": "Podmínky"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Jazyk"
   }
 }

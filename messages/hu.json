@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "Kezdd ingyen",
+    "bookDemo": "Foglalj demót",
+    "tryCoastyFree": "Próbáld ki a Coasty-t ingyen",
+    "learnMore": "Tudj meg többet",
+    "watchSession": "Nézd meg a munkamenetet",
+    "compareAllPlans": "Hasonlítsd össze az összes csomagot és funkciót",
+    "allRightsReserved": "Minden jog fenntartva.",
+    "privacy": "Adatvédelem",
+    "terms": "Feltételek",
+    "recommended": "Ajánlott",
+    "month": "hónap",
+    "creditsPerMonth": "{count} kredit/hó",
+    "agentsInParallel": "{count} ügynök párhuzamosan"
   },
 
   "header": {
-    "useCases": "Use Cases",
+    "useCases": "Felhasználási esetek",
     "blog": "Blog",
-    "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "agentSwarms": "Ügynökrajok",
+    "compare": "Összehasonlítás",
+    "demos": "Demók",
+    "pricing": "Árak",
+    "download": "Letöltés",
+    "signIn": "Bejelentkezés",
+    "getStarted": "Kezdés",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "Versenytárs-elemzés",
+      "qaBugReports": "QA hibajelentések",
+      "seoGapAnalysis": "SEO réselemzés",
+      "dataExtraction": "Adatkinyerés",
+      "leadGeneration": "Lead generálás",
+      "siteAudit": "Weboldal audit",
+      "adIntelligence": "Hirdetési intelligencia",
+      "emailOutreach": "E-mail outreach",
+      "designReview": "Design felülvizsgálat",
+      "priceMonitoring": "Árfigyelés",
+      "marketResearch": "Piackutatás",
+      "emailCampaigns": "E-mail kampányok"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} versenytárs-profil elkészítve",
+      "qaBugReports": "{stat} felhasználói folyamat tesztelve futásonként",
+      "seoGapAnalysis": "{stat} kulcsszó-rés azonosítva",
+      "dataExtraction": "{stat} sor kinyerve futásonként",
+      "leadGeneration": "{stat} minősített lead futásonként",
+      "siteAudit": "{stat} oldal auditálva futásonként",
+      "adIntelligence": "{stat} hirdetési kreatív rögzítve",
+      "emailOutreach": "{stat} személyre szabott e-mail megírva",
+      "designReview": "{stat} breakpoint tesztelve oldalanként",
+      "priceMonitoring": "{stat} cikkszám összehasonlítva futásonként",
+      "marketResearch": "{stat} adatpont begyűjtve",
+      "emailCampaigns": "{stat} személyre szabott e-mail kampányonként"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
-      "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "allPosts": "Összes bejegyzés",
+      "computerUse": "Számítógép-használat",
+      "compare": "Összehasonlítás",
+      "dataEntry": "Adatbevitel",
+      "webScraping": "Web scraping",
+      "jobApplications": "Álláspályázatok",
+      "demosResults": "Demók és eredmények",
+      "guide": "Útmutató"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} cikk megjelenik hetente",
+      "computerUse": "{stat} OSWorld benchmark pontszám",
+      "compare": "{stat} versenytárs elemezve",
+      "dataEntry": "{stat} gyorsabb mint kézzel",
+      "webScraping": "{stat} oldal munkamenetenként",
+      "jobApplications": "{stat} pályázat munkamenetenként",
+      "demosResults": "{stat} valós esettanulmány",
+      "guide": "{stat} felhasználási eset bemutató"
     }
   },
 
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "headline": "Autonóm számítógép-operátorok",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "Számítógépes ügynök",
+        "headline": "automatizálj bármilyen böngészőfeladatot",
+        "outcome": "Egy AI ügynök, ami valódi számítógépet irányít — böngészik, kattint, gépel és kész munkát szállít. Nincs szükség beállításra."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Versenytárs-elemzés",
+        "headline": "figyeld minden versenytársad",
+        "outcome": "Teljes versenytárs-profilok árazással, funkciókkal és pozícionálási résekkel — megosztásra kész jelentésként exportálva."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "QA tesztelés",
+        "headline": "találd meg a hibákat a felhasználók előtt",
+        "outcome": "Kritikus felhasználói folyamatok end-to-end tesztelve, minden hiba képernyőképpel, reprodukciós lépésekkel és súlyossági besorolással."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "SEO elemzés",
+        "headline": "fedezd fel a kulcsszó-réseket",
+        "outcome": "Kulcsszó-rések azonosítva, tartalom-briefek elkészítve, versenytársak backlink-forrásai feltérképezve — megvalósítható SEO stratégia."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Adatkinyerés",
+        "headline": "scrapelj és strukturálj bármilyen oldalt",
+        "outcome": "Strukturált adatok scrapelve, megtisztítva, deduplikálva és CSV-ként exportálva — bármely weboldalról, bármilyen formátumban."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Lead generálás",
+        "headline": "töltsd fel az értékesítési csővezetéked",
+        "outcome": "Minősített döntéshozók az ICP-dnek megfelelően, ellenőrzött beosztásokkal, cégekkel és személyre szabott megkeresési nyitómondatokkal."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Weboldal audit",
+        "headline": "auditálj minden oldalt nagy léptékben",
+        "outcome": "Oldalak átvizsgálva, Core Web Vitals pontozva, törött linkek megtalálva, akadálymentesítési problémák javítási prioritás szerint rangsorolva."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "E-mail outreach",
+        "headline": "küldj személyre szabott outreach-et",
+        "outcome": "Személyre szabott e-mailek, amelyek hivatkoznak az egyes prospect cégére, beosztására és fájdalompontjaira — küldésre készen."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Piackutatás",
+        "headline": "validáld piacodat gyorsan",
+        "outcome": "TAM kiszámítva, kulcsszereplők profilozva, növekedési trendek feltérképezve — tucatnyi adatpontból merítve."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Marketing", "task": "Marketingeld termékedet a Reddit-en autonóm módon" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Találj prospekteket és küldj személyre szabott e-maileket" },
+      "qaTesting": { "label": "QA tesztelés", "task": "Tesztelj minden checkout-folyamatot és jelents hibákat" },
+      "jobApplication": { "label": "Álláspályázat", "task": "Találj pozíciókat, szabd testre az önéletrajzod és jelentkezz" },
+      "formFilling": { "label": "Űrlapkitöltés", "task": "Töltsd ki a YC S26 jelentkezést helyetted" },
+      "socialMedia": { "label": "Közösségi média", "task": "Posztolj a Hacker News-ra és reagálj a kommentekre" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use ügynök világszerte" },
+    "tools": { "value": "50+", "label": "Eszköz, amit az ügynök használhat", "sublabel": "Böngésző, terminál, asztal, fájlok" },
+    "schedule": { "value": "24/7", "label": "Ütemezetten fut", "sublabel": "Automatizálj bármilyen ismétlődő feladatot" },
+    "setup": { "value": "0", "label": "Szükséges beállítás", "sublabel": "Nincs API, nincs integráció, nincs kód" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Miért Coasty",
+    "title": "Nem chatbot. Nem RPA szkript.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Úgy dolgozik, mint egy ember",
+      "description": "Lát, kattint, gépel, navigál — pont mint te"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Nincs szkript vagy beállítás",
+      "description": "Egyszerű magyar nyelv be, eredmények ki"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Kezeli a váratlant",
+      "description": "Alkalmazkodik a CAPTCHA-khoz, felugró ablakokhoz, elrendezés-változásokhoz"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Izoláltan fut",
+      "description": "Sandbox VM munkamenetenként — semmi nem szivárog ki"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Hogyan működik",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Írd le a feladatod",
+      "description": "Egyszerű magyar nyelv. Ennyi.",
+      "placeholder": "Kutatj 100 leadet a LinkedIn-en..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Nézd, ahogy az ügynök dolgozik",
+      "description": "Böngészőt nyit, kattint, gépel, navigál"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Feladat kész",
+      "description": "Minden művelet naplózva képernyőképekkel",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Feladat kész",
+        "leadsFound": "12 lead találva",
+        "addedToCrm": "Hozzáadva a CRM-hez"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "Benchmarkolt #1 világszerte",
+    "subtitle": "82% az OSWorld-ön — a legnehezebb benchmark valódi számítógépeket használó AI ügynökök számára",
+    "agenticFramework": "Ügynöki keretrendszer",
+    "foundationModel": "Alapmodell"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Miért automatizálj Coasty-val?",
+    "subtitle": "Ugyanazok a feladatok, amik egy csapatnak órákba telnek — a Coasty percek alatt elvégzi, éjjel-nappal.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Kézi végrehajtás",
+      "subtitle": "Te vagy a csapatod, kézzel"
     },
     "coasty": {
       "title": "Coasty AI Agent",
-      "subtitle": "#1 computer-use agent"
+      "subtitle": "#1 computer-use ügynök"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "Idő feladatonként",
+      "availability": "Elérhetőség",
+      "setupTime": "Beállítási idő",
+      "errorRate": "Hibaarány",
+      "scaling": "Skálázás",
+      "auditTrail": "Audit nyomvonal"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Óráktól napokig",
+      "availability": "Csak munkaidőben",
+      "setupTime": "Eszközök megtanulása, SOP-k írása",
+      "errorRate": "Emberi hibák",
+      "scaling": "Több munka = több idő",
+      "auditTrail": "Nincs"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Percek",
+      "availability": "24/7, minden nap",
+      "setupTime": "60 másodperc",
+      "errorRate": "Önjavító",
+      "scaling": "Korlátlan feladat futtatása párhuzamosan",
+      "auditTrail": "Minden kattintás naplózva + képernyőképek"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "Automatizáld a feladatokat, amik",
+      "hoursManually": "órákat vesznek igénybe kézzel",
+      "startingAt": "Már"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Nézd az ügynököt működés közben",
+    "subtitle": "Valódi feladatok. Valódi böngészők. Minden kattintás rögzítve.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
+        "title": "Coasty a Reddit-en",
+        "description": "Nézd, ahogy a Coasty autonóm módon futtat egy marketingkampányt — kutatja a versenytársakat, elemzi a trendeket és stratégiai dokumentumot készít.",
         "tag": "Marketing"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Potenciális ügyfelek keresése",
+        "description": "A Coasty megtalálja és kutatja a potenciális ügyfeleket, összegyűjtve a kulcsfontosságú adatokat a személyre szabott megkereséshez.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "QA tesztelés saját magán",
+        "description": "A Coasty minőségbiztosítást futtat saját termékén — folyamatokban navigál, hibákat talál és autonóm módon jelenti a problémákat.",
+        "tag": "QA tesztelés"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "E-mail küldése a nevedben",
+        "description": "A megfogalmazástól a küldésig — egy AI ügynök megírja és elküldi az e-mailt teljesen önállóan.",
+        "tag": "Kommunikáció"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Álláspályázat benyújtása",
+        "description": "A Coasty megtalálja a megfelelő pozíciót, testreszabja az önéletrajzod és benyújtja a pályázatot — mindezt önállóan.",
+        "tag": "Álláspályázat"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "Posztolás a Hacker News-ra",
+        "description": "A Coasty létrehoz és közzétesz egy blogbejegyzést a Hacker News-on — megírja a tartalmat és autonóm módon benyújtja.",
+        "tag": "Közösségi média"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Valódi számítógépes feladatokra tervezve",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Önjavító",
+      "description": "Felismeri a hibákat, alternatív utakat próbál"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Teljes audit nyomvonal",
+      "description": "Minden kattintás naplózva képernyőképekkel"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "Ütemezés 24/7",
+      "description": "Cron-on fut — óránként, naponta, hetente"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Sandbox-olt és biztonságos",
+      "description": "Izolált VM munkamenetenként, utána megsemmisítve"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 az OSWorld-ön",
+      "description": "82% — a valaha rögzített legmagasabb pontszám"
     },
     "swarms": {
-      "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "title": "Ügynökrajok",
+      "description": "Oszd el a feladatokat gépek között párhuzamosan"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Kezdd ingyen, skálázz amikor készen állsz",
+    "subtitle": "Nincs szükség bankkártyára. Az AI ügynököd 60 másodperc alatt kész.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "Próbáld ki az #1 computer-use ügynököt",
+        "cta": "Kezdd ingyen"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Könnyű napi automatizálás",
+        "cta": "Lite beszerzése"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Automatizálj feladatokat minden nap",
+        "cta": "Starter beszerzése"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "Skálázz összetett munkafolyamatokat",
+        "cta": "Plus választása",
+        "badge": "Legnépszerűbb"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Korlátlan nehéz automatizálás",
+        "cta": "Pro beszerzése"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 ideiglenes VM (2 óra)",
+    "vmDeletedAfterInactivity": "1 VM (inaktivitás után törölve)",
+    "vmAlwaysOn": "{count} mindig bekapcsolt VM",
+    "vmAlwaysOnPlural": "{count} mindig bekapcsolt VM",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Ugyanez a munka {oldPrice}-ba kerül kézi munkával",
+      "description": "Egy virtuális asszisztens $2 000–$4 000/hó. Egy részmunkaidős alkalmazott még többe kerül. A Coasty ugyanazt a munkát végzi 24/7, $0-tól indulva — tökéletes konzisztenciával, teljes audit nyomvonallal és nulla betanulási idővel."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Gyakran ismételt kérdések",
+    "subtitle": "Minden, amit tudnod kell a kezdés előtt",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Mi az a Coasty?",
+        "answer": "A Coasty a világ legjobb computer-use AI ügynöke. Leírsz egy feladatot — kutass leadeket, tesztelj egy weboldalt, tölts ki űrlapokat, posztolj közösségi médiában — és a Coasty megnyit egy valódi böngészőt, alkalmazásokban navigál, gombokra kattint, szöveget gépel és elvégzi a feladatot elejétől a végéig. Nincs API, nincs integráció, nincs kód."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Miben különbözik ez a ChatGPT-től vagy más AI eszközöktől?",
+        "answer": "A ChatGPT szöveget generál. A Coasty számítógépet használ. Nem mondja meg, mit csinálj — megnyitja a böngészőt, elnavigál a weboldalra, rákattint a gombokra, kitölti az űrlapokat és kiszállítja a kész munkát. Ez a különbség az utasítások kapása és a feladat elvégeztetése között."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Milyen feladatokat tud automatizálni a Coasty?",
+        "answer": "Bármilyen feladatot, amit számítógépen tudsz csinálni. Webkutatás, lead generálás, adatbevitel, űrlapkitöltés, QA tesztelés, közösségi média posztolás, e-mail outreach, számlafeldolgozás, versenytárs-elemzés, toborzás — ha böngészőt vagy asztali alkalmazást igényel, a Coasty meg tudja csinálni."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Mik azok a kreditek és hogyan használják őket?",
+        "answer": "A kreditek felhasználódnak, ahogy az ügynök feladatokon dolgozik. Hosszabb, összetettebb feladatok több kreditet használnak. A fizetős csomagok havi krediteket tartalmaznak, és bármikor vásárolhatsz további kreditcsomagokat."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Futhat a Coasty a saját gépemen?",
+        "answer": "Igen. Asztali alkalmazásunk könnyű overlay-ként fut a gépeden, közvetlenül irányítva a helyi böngésződet és alkalmazásaidat. Alternatívaként a feladatok izolált felhőgépeken futnak — te döntöd el."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Biztonságban vannak az adataim?",
+        "answer": "Minden feladat izolált sandbox környezetben fut. Semmi nem szivárog ki a munkamenetek között. A hitelesítő adataid privátok maradnak, és minden művelet naplózva van képernyőképekkel egy teljes audit nyomvonalban, amit bármikor áttekinthetsz."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "AI-vezérelt számítógép-használat.",
+    "tagline2": "Automatizálj bármilyen munkafolyamatot intelligens ügynökökkel.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "Termék",
+      "resources": "Erőforrások",
+      "company": "Vállalat",
+      "legal": "Jogi"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
-      "agentSwarms": "Agent Swarms",
-      "status": "Status",
+      "computerUse": "Számítógép-használat",
+      "guide": "Útmutató",
+      "download": "Letöltés",
+      "pricing": "Árak",
+      "agentSwarms": "Ügynökrajok",
+      "status": "Állapot",
       "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "useCases": "Felhasználási esetek",
+      "demos": "Demók",
+      "compare": "Összehasonlítás",
+      "talkToCofounders": "Beszélj a társalapítókkal és demó",
+      "contact": "Kapcsolat",
+      "privacy": "Adatvédelem",
+      "terms": "Feltételek"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Nyelv"
   }
 }

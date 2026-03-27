@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "Borja gratis",
+    "bookDemo": "Boka en demo",
+    "tryCoastyFree": "Prova Coasty gratis",
+    "learnMore": "Las mer",
+    "watchSession": "Se session",
+    "compareAllPlans": "Jamfor alla planer och funktioner",
+    "allRightsReserved": "Alla rattigheter forbehallna.",
+    "privacy": "Integritet",
+    "terms": "Villkor",
+    "recommended": "Rekommenderad",
+    "month": "manad",
+    "creditsPerMonth": "{count} krediter/man",
+    "agentsInParallel": "{count} agenter parallellt"
   },
 
   "header": {
-    "useCases": "Use Cases",
-    "blog": "Blog",
-    "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
+    "useCases": "Anvandningsfall",
+    "blog": "Blogg",
+    "agentSwarms": "Agentsvarm",
+    "compare": "Jamfor",
     "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "pricing": "Priser",
+    "download": "Ladda ner",
+    "signIn": "Logga in",
+    "getStarted": "Kom igang",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "Konkurrentinformation",
+      "qaBugReports": "QA-buggrapporter",
+      "seoGapAnalysis": "SEO-gapanalys",
+      "dataExtraction": "Dataextraktion",
+      "leadGeneration": "Leadgenerering",
+      "siteAudit": "Webbplatsrevision",
+      "adIntelligence": "Annonsinformation",
+      "emailOutreach": "E-postutskick",
+      "designReview": "Designgranskning",
+      "priceMonitoring": "Prisovervakning",
+      "marketResearch": "Marknadsunderskning",
+      "emailCampaigns": "E-postkampanjer"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} konkurrentprofiler levererade",
+      "qaBugReports": "{stat} anvandarfloden testade per korning",
+      "seoGapAnalysis": "{stat} nyckelordsluckor identifierade",
+      "dataExtraction": "{stat} rader extraherade per korning",
+      "leadGeneration": "{stat} kvalificerade leads per korning",
+      "siteAudit": "{stat} sidor granskade per korning",
+      "adIntelligence": "{stat} annonskreativ fangade",
+      "emailOutreach": "{stat} personliga e-postmeddelanden utkastade",
+      "designReview": "{stat} brytpunkter testade per sida",
+      "priceMonitoring": "{stat} SKU:er jamforda per korning",
+      "marketResearch": "{stat} datapunkter insamlade",
+      "emailCampaigns": "{stat} personliga e-postmeddelanden per kampanj"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
+      "allPosts": "Alla inlagg",
+      "computerUse": "Datoranvandning",
+      "compare": "Jamfor",
+      "dataEntry": "Dataregistrering",
       "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
+      "jobApplications": "Jobbansokningar",
+      "demosResults": "Demos och resultat",
       "guide": "Guide"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} artiklar publicerade varje vecka",
+      "computerUse": "{stat} OSWorld-benchmarkpoang",
+      "compare": "{stat} konkurrenter analyserade",
+      "dataEntry": "{stat} snabbare an manuellt",
+      "webScraping": "{stat} sidor per session",
+      "jobApplications": "{stat} ansokningar per session",
+      "demosResults": "{stat} riktiga fallstudier",
+      "guide": "{stat} anvandningsfallsgenomgangar"
     }
   },
 
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "headline": "Autonoma datoroperatorer",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "Datoragent",
+        "headline": "automatisera vilken webblasaruppgift som helst",
+        "outcome": "En AI-agent som styr en riktig dator — surfar, klickar, skriver och levererar fardigt arbete. Ingen installation kravs."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Konkurrentinformation",
+        "headline": "overvaka alla konkurrenter",
+        "outcome": "Kompletta konkurrentprofiler med priser, funktioner och positioneringsluckor — exporterade som en delningsredo rapport."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "QA-testning",
+        "headline": "hitta buggar fore anvandarna",
+        "outcome": "Kritiska anvandarfloden testade anda-till-anda, varje bugg skarmdumpad med reproduktionssteg och allvarlighetsgradering."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "SEO-analys",
+        "headline": "upptack nyckelordsluckor",
+        "outcome": "Nyckelordsluckor identifierade, innehallsbriefingar utkastade, konkurrenters backlankkallor kartlagda — handlingsbar SEO-strategi."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Dataextraktion",
+        "headline": "skrapa och strukturera vilken webbplats som helst",
+        "outcome": "Strukturerad data skrapad, rensad, deduplicerad och exporterad som CSV — fran vilken webbplats som helst, vilket format som helst."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Leadgenerering",
+        "headline": "fyll din forsaljningspipeline",
+        "outcome": "Kvalificerade beslutsfattare som matchar din ICP med verifierade titlar, foretag och personliga kontaktoppnare."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Webbplatsrevision",
+        "headline": "granska varje sida i stor skala",
+        "outcome": "Sidor skannade, Core Web Vitals poangbedomda, trasiga lankar hittade, tillganglighetsproblem rangordnade efter fixeringsprioritet."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "E-postutskick",
+        "headline": "skicka personlig kontakt",
+        "outcome": "Personliga e-postmeddelanden som refererar till varje prospekts foretag, roll och smartpunkter — redo att skicka."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Marknadsunderskning",
+        "headline": "validera din marknad snabbt",
+        "outcome": "TAM beraknad, nyckelaktorer profilerade, tillvaxttrender kartlagda — hamtade fran dussintal datapunkter."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Marknadsforing", "task": "Marknadfor din produkt pa Reddit autonomt" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Hitta prospekt och skicka personliga e-postmeddelanden" },
+      "qaTesting": { "label": "QA-testning", "task": "Testa varje kassaflode och rapportera buggar" },
+      "jobApplication": { "label": "Jobbanskan", "task": "Hitta roller, anpassa CV:t och ansok" },
+      "formFilling": { "label": "Formularifyllning", "task": "Fyll i YC S26-ansokan at dig" },
+      "socialMedia": { "label": "Sociala medier", "task": "Publicera pa Hacker News och engagera med kommentarer" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "OSWorld-benchmark", "sublabel": "#1 computer-use agent globalt" },
+    "tools": { "value": "50+", "label": "Verktyg agenten kan anvanda", "sublabel": "Webblasare, terminal, skrivbord, filer" },
+    "schedule": { "value": "24/7", "label": "Kor enligt schema", "sublabel": "Automatisera vilken aterkommande uppgift som helst" },
+    "setup": { "value": "0", "label": "Installation kravs", "sublabel": "Inga API:er, inga integrationer, ingen kod" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Varfor Coasty",
+    "title": "Inte en chatbot. Inte ett RPA-skript.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Fungerar som en manniska",
+      "description": "Ser, klickar, skriver, navigerar — precis som du"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Inga skript eller installation",
+      "description": "Vanligt sprak in, resultat ut"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Hanterar det ovanetade",
+      "description": "Anpassar sig till CAPTCHA:er, popup-fonster, layoutandringar"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Kor i isolering",
+      "description": "Sandladeformad VM per session — inget lacker"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Sa har fungerar det",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Beskriv din uppgift",
+      "description": "Vanligt sprak. Det ar allt.",
+      "placeholder": "Undersok 100 leads pa LinkedIn..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Se agenten arbeta",
+      "description": "Oppnar webblasare, klickar, skriver, navigerar"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Uppgift slutford",
+      "description": "Varje handling loggad med skarmdumpar",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Uppgift slutford",
+        "leadsFound": "12 leads hittade",
+        "addedToCrm": "Tillagd i CRM"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "Benchmarkad #1 i varlden",
+    "subtitle": "82% pa OSWorld — det svaraste benchmarket for AI-agenter som anvander riktiga datorer",
+    "agenticFramework": "Agentiskt ramverk",
+    "foundationModel": "Grundmodell"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Varfor automatisera med Coasty?",
+    "subtitle": "Samma uppgifter som tar ett team timmar — Coasty slutfor pa minuter, dygnet runt.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Gora det manuellt",
+      "subtitle": "Du eller ditt team, for hand"
     },
     "coasty": {
-      "title": "Coasty AI Agent",
+      "title": "Coasty AI-agent",
       "subtitle": "#1 computer-use agent"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "Tid per uppgift",
+      "availability": "Tillganglighet",
+      "setupTime": "Installationstid",
+      "errorRate": "Felfrekvens",
+      "scaling": "Skalning",
+      "auditTrail": "Revisionslogg"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Timmar till dagar",
+      "availability": "Bara kontorstid",
+      "setupTime": "Lar dig verktygen, skriv rutiner",
+      "errorRate": "Manskliga misstag",
+      "scaling": "Gor mer = anvand mer tid",
+      "auditTrail": "Ingen"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Minuter",
+      "availability": "24/7, varje dag",
+      "setupTime": "60 sekunder",
+      "errorRate": "Sjalvkorrigerande",
+      "scaling": "Kor obegransade uppgifter parallellt",
+      "auditTrail": "Varje klick loggat + skarmdumpar"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "Automatisera uppgifter som tar",
+      "hoursManually": "timmar manuellt",
+      "startingAt": "Fran"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Se agenten i aktion",
+    "subtitle": "Riktiga uppgifter. Riktiga webblasare. Varje klick inspelat.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
-        "tag": "Marketing"
+        "title": "Coasty pa Reddit",
+        "description": "Se Coasty autonomt kora en marknadsforingskampanj — undersoka konkurrenter, analysera trender och bygga en strategipresentation.",
+        "tag": "Marknadsforing"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Hitta potentiella kunder",
+        "description": "Coasty hittar och undersoker potentiella kunder, samlar nyckeldetaljer for att skapa personlig kontakt.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "QA-testar sig sjalv",
+        "description": "Coasty kor kvalitetssakring pa sin egen produkt — navigerar floden, fangar buggar och rapporterar problem autonomt.",
+        "tag": "QA-testning"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "Skickar ett e-postmeddelande a dina vagnar",
+        "description": "Fran att skriva till att skicka — en AI-agent utkastar och levererar ett e-postmeddelande helt pa egen hand.",
+        "tag": "Kommunikation"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Ansoker om ett jobb",
+        "description": "Coasty hittar en matchande roll, anpassar ditt CV och skickar in ansokan — allt pa egen hand.",
+        "tag": "Jobbanskan"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "Publicerar pa Hacker News",
+        "description": "Coasty skapar och publicerar ett blogginlagg pa Hacker News — skriver innehallet och skickar in det autonomt.",
+        "tag": "Sociala medier"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Byggt for riktiga datoruppgifter",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Sjalvkorrigerande",
+      "description": "Upptacker fel, provar alternativa vagar"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Fullstandig revisionslogg",
+      "description": "Varje klick loggat med skarmdumpar"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "Schemalag 24/7",
+      "description": "Kor pa cron — varje timme, dagligen, veckovis"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Sandlada och sakert",
+      "description": "Isolerad VM per session, forstord efterat"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 pa OSWorld",
+      "description": "82% — hogsta poangen nagonsin registrerad"
     },
     "swarms": {
-      "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "title": "Agentsvarm",
+      "description": "Dela uppgifter over maskiner parallellt"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Borja gratis, skala nar du ar redo",
+    "subtitle": "Inget kreditkort. Din AI-agent ar redo pa 60 sekunder.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "Prova #1 computer-use agent",
+        "cta": "Borja gratis"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Latt daglig automatisering",
+        "cta": "Valj Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Automatisera uppgifter varje dag",
+        "cta": "Valj Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "Skala komplexa arbetsfloden",
+        "cta": "Valj Plus",
+        "badge": "Mest popular"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Obegransad tung automatisering",
+        "cta": "Valj Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 tillfallig VM (2 tim)",
+    "vmDeletedAfterInactivity": "1 VM (raderad efter inaktivitet)",
+    "vmAlwaysOn": "{count} alltid-pa VM",
+    "vmAlwaysOnPlural": "{count} alltid-pa VM:ar",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Samma arbete kostar {oldPrice} med manuell arbetskraft",
+      "description": "En virtuell assistent kostar $2 000–$4 000/man. En deltidsanstallning kostar mer. Coasty gor samma arbete 24/7 fran $0 — med perfekt konsistens, fullstandiga revisionsloggar och noll utbildningstid."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Vanliga fragor",
+    "subtitle": "Allt du behover veta innan du borjar",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Vad ar Coasty?",
+        "answer": "Coasty ar varldens basta computer-use AI-agent. Du beskriver en uppgift — undersok leads, testa en webbplats, fyll i formular, publicera pa sociala medier — och Coasty oppnar en riktig webblasare, navigerar appar, klickar pa knappar, skriver text och slutfor uppgiften anda-till-anda. Inga API:er, inga integrationer, ingen kod kravs."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Hur ar detta annorlunda fran ChatGPT eller andra AI-verktyg?",
+        "answer": "ChatGPT genererar text. Coasty anvander en dator. Den beratter inte for dig vad du ska gora — den oppnar en webblasare, navigerar till webbplatsen, klickar pa knapparna, fyller i formularen och levererar det fardiga arbetet. Det ar skillnaden mellan att fa instruktioner och att fa uppgiften gjord at dig."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Vilka uppgifter kan Coasty automatisera?",
+        "answer": "Vilken uppgift som helst som du kan gora pa en dator. Webbundersokningar, leadgenerering, dataregistrering, formularifyllning, QA-testning, publicering pa sociala medier, e-postutskick, fakturabearbetning, konkurrensanalys, rekrytering — om det involverar en webblasare eller skrivbordsapp kan Coasty gora det."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Vad ar krediter och hur anvands de?",
+        "answer": "Krediter forbrukas nar agenten arbetar med uppgifter. Langre, mer komplexa uppgifter anvander fler krediter. Betalplaner inkluderar manatliga krediter, och du kan aven kopa extra kreditpaket nar som helst."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Kan Coasty kora pa min egen dator?",
+        "answer": "Ja. Var skrivbordsapp kor som ett latt overlagg pa din maskin och styr din lokala webblasare och applikationer direkt. Alternativt kor uppgifter pa isolerade molnmaskiner — ditt val."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Ar mina data sakra?",
+        "answer": "Varje uppgift kor i en isolerad sandlademiljo. Inget lacker mellan sessioner. Dina uppgifter forblir privata, och varje handling loggas med skarmdumpar i en fullstandig revisionslogg du kan granska nar som helst."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "AI-driven datoranvandning.",
+    "tagline2": "Automatisera vilket arbetsflode som helst med intelligenta agenter.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "Produkt",
+      "resources": "Resurser",
+      "company": "Foretag",
+      "legal": "Juridiskt"
     },
     "links": {
-      "computerUse": "Computer Use",
+      "computerUse": "Datoranvandning",
       "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
-      "agentSwarms": "Agent Swarms",
+      "download": "Ladda ner",
+      "pricing": "Priser",
+      "agentSwarms": "Agentsvarm",
       "status": "Status",
-      "blog": "Blog",
-      "useCases": "Use Cases",
+      "blog": "Blogg",
+      "useCases": "Anvandningsfall",
       "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "compare": "Jamfor",
+      "talkToCofounders": "Prata med grundare och demo",
+      "contact": "Kontakt",
+      "privacy": "Integritet",
+      "terms": "Villkor"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Sprak"
   }
 }

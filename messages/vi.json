@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "Bat dau mien phi",
+    "bookDemo": "Dat lich demo",
+    "tryCoastyFree": "Dung thu Coasty mien phi",
+    "learnMore": "Tim hieu them",
+    "watchSession": "Xem phien lam viec",
+    "compareAllPlans": "So sanh tat ca goi & tinh nang",
+    "allRightsReserved": "Moi quyen duoc bao luu.",
+    "privacy": "Quyen rieng tu",
+    "terms": "Dieu khoan",
+    "recommended": "Duoc de xuat",
+    "month": "thang",
+    "creditsPerMonth": "{count} tin chi/thang",
+    "agentsInParallel": "{count} tac tu song song"
   },
 
   "header": {
-    "useCases": "Use Cases",
+    "useCases": "Truong hop su dung",
     "blog": "Blog",
-    "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "agentSwarms": "Bay tac tu",
+    "compare": "So sanh",
+    "demos": "Demo",
+    "pricing": "Gia",
+    "download": "Tai xuong",
+    "signIn": "Dang nhap",
+    "getStarted": "Bat dau",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "Tinh bao doi thu",
+      "qaBugReports": "Bao cao loi QA",
+      "seoGapAnalysis": "Phan tich khoang trong SEO",
+      "dataExtraction": "Trich xuat du lieu",
+      "leadGeneration": "Tao khach hang tiem nang",
+      "siteAudit": "Kiem toan trang web",
+      "adIntelligence": "Tinh bao quang cao",
+      "emailOutreach": "Tiep can qua email",
+      "designReview": "Danh gia thiet ke",
+      "priceMonitoring": "Theo doi gia",
+      "marketResearch": "Nghien cuu thi truong",
+      "emailCampaigns": "Chien dich email"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} ho so doi thu duoc cung cap",
+      "qaBugReports": "{stat} luong nguoi dung duoc kiem thu moi lan chay",
+      "seoGapAnalysis": "{stat} khoang trong tu khoa duoc xac dinh",
+      "dataExtraction": "{stat} dong duoc trich xuat moi lan chay",
+      "leadGeneration": "{stat} khach hang tiem nang chat luong moi lan chay",
+      "siteAudit": "{stat} trang duoc kiem toan moi lan chay",
+      "adIntelligence": "{stat} mau quang cao duoc thu thap",
+      "emailOutreach": "{stat} email ca nhan hoa duoc soan",
+      "designReview": "{stat} diem ngat duoc kiem thu moi trang",
+      "priceMonitoring": "{stat} SKU duoc so sanh moi lan chay",
+      "marketResearch": "{stat} diem du lieu duoc thu thap",
+      "emailCampaigns": "{stat} email ca nhan hoa moi chien dich"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
+      "allPosts": "Tat ca bai viet",
+      "computerUse": "Su dung may tinh",
+      "compare": "So sanh",
+      "dataEntry": "Nhap du lieu",
       "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "jobApplications": "Ung tuyen viec lam",
+      "demosResults": "Demo & Ket qua",
+      "guide": "Huong dan"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} bai viet duoc xuat ban hang tuan",
+      "computerUse": "{stat} diem benchmark OSWorld",
+      "compare": "{stat} doi thu duoc phan tich",
+      "dataEntry": "{stat} nhanh hon so voi thu cong",
+      "webScraping": "{stat} trang moi phien",
+      "jobApplications": "{stat} don ung tuyen moi phien",
+      "demosResults": "{stat} nghien cuu tinh huong thuc te",
+      "guide": "{stat} huong dan truong hop su dung"
     }
   },
 
   "hero": {
-    "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "badge": "Tac tu Computer-Use #1 · {score} OSWorld",
+    "headline": "Nha dieu hanh may tinh tu dong",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "Tac tu may tinh",
+        "headline": "tu dong hoa bat ky tac vu trinh duyet nao",
+        "outcome": "Mot tac tu AI dieu khien may tinh that — duyet web, nhan chuot, go phim va hoan thanh cong viec. Khong can thiet lap."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Tinh bao doi thu",
+        "headline": "theo doi moi doi thu canh tranh",
+        "outcome": "Ho so doi thu day du voi gia ca, tinh nang va khoang trong vi the — xuat duoi dang bao cao san sang chia se."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "Kiem thu QA",
+        "headline": "tim loi truoc nguoi dung",
+        "outcome": "Cac luong nguoi dung quan trong duoc kiem thu toan dien, moi loi duoc chup man hinh voi buoc tai tao va xep hang muc do nghiem trong."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "Phan tich SEO",
+        "headline": "kham pha khoang trong tu khoa",
+        "outcome": "Khoang trong tu khoa duoc xac dinh, tom tat noi dung duoc soan, nguon backlink doi thu duoc lap ban do — chien luoc SEO co the hanh dong."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Trich xuat du lieu",
+        "headline": "scrape va cau truc bat ky trang web nao",
+        "outcome": "Du lieu co cau truc duoc scrape, lam sach, loai bo trung lap va xuat duoi dang CSV — tu bat ky trang web nao, bat ky dinh dang nao."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Tao khach hang tiem nang",
+        "headline": "lap day kenh ban hang cua ban",
+        "outcome": "Nguoi ra quyet dinh chat luong phu hop voi ICP cua ban voi chuc danh da xac minh, cong ty va cau mo dau tiep can ca nhan hoa."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Kiem toan trang web",
+        "headline": "kiem toan moi trang o quy mo lon",
+        "outcome": "Trang duoc quet, Core Web Vitals duoc cham diem, lien ket hong duoc tim, van de tiep can duoc xep hang theo uu tien sua chua."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "Tiep can qua email",
+        "headline": "gui tiep can ca nhan hoa",
+        "outcome": "Email ca nhan hoa tham chieu cong ty, vai tro va diem dau cua moi khach hang tiem nang — san sang gui."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Nghien cuu thi truong",
+        "headline": "xac thuc thi truong cua ban nhanh chong",
+        "outcome": "TAM duoc tinh toan, cac doanh nghiep chu chot duoc lap ho so, xu huong tang truong duoc bieu do — thu thap tu hang chuc diem du lieu."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Tiep thi", "task": "Tiep thi san pham cua ban tren Reddit tu dong" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Tim khach hang tiem nang va gui email ca nhan hoa" },
+      "qaTesting": { "label": "Kiem thu QA", "task": "Kiem thu moi luong thanh toan va bao cao loi" },
+      "jobApplication": { "label": "Ung tuyen viec lam", "task": "Tim vi tri, tuy chinh so yeu ly lich va nop don" },
+      "formFilling": { "label": "Dien bieu mau", "task": "Dien don ung tuyen YC S26 cho ban" },
+      "socialMedia": { "label": "Mang xa hoi", "task": "Dang bai tren Hacker News va tuong tac voi binh luan" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "Benchmark OSWorld", "sublabel": "Tac tu computer-use #1 toan cau" },
+    "tools": { "value": "50+", "label": "Cong cu tac tu co the su dung", "sublabel": "Trinh duyet, terminal, desktop, tep" },
+    "schedule": { "value": "24/7", "label": "Chay theo lich trinh", "sublabel": "Tu dong hoa bat ky tac vu dinh ky nao" },
+    "setup": { "value": "0", "label": "Thiet lap can thiet", "sublabel": "Khong API, khong tich hop, khong ma" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Tai sao Coasty",
+    "title": "Khong phai chatbot. Khong phai script RPA.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Hoat dong nhu con nguoi",
+      "description": "Nhin, nhan chuot, go phim, dieu huong — chinh xac nhu ban"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Khong can script hay thiet lap",
+      "description": "Nhap ngon ngu tu nhien, nhan ket qua"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Xu ly tinh huong bat ngo",
+      "description": "Thich ung voi CAPTCHA, popup, thay doi bo cuc"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Chay trong moi truong cach ly",
+      "description": "VM sandbox moi phien — khong co gi bi ro ri"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Cach hoat dong",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Mo ta tac vu cua ban",
+      "description": "Ngon ngu tu nhien. Chi vay thoi.",
+      "placeholder": "Nghien cuu 100 khach hang tiem nang tren LinkedIn..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Xem tac tu lam viec",
+      "description": "Mo trinh duyet, nhan chuot, go phim, dieu huong"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Tac vu hoan thanh",
+      "description": "Moi hanh dong duoc ghi lai voi anh chup man hinh",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Tac vu hoan thanh",
+        "leadsFound": "Tim thay 12 khach hang tiem nang",
+        "addedToCrm": "Da them vao CRM"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "Benchmark #1 toan cau",
+    "subtitle": "82% tren OSWorld — benchmark kho nhat danh cho tac tu AI su dung may tinh that",
+    "agenticFramework": "Khung Tac tu",
+    "foundationModel": "Mo hinh nen tang"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Tai sao tu dong hoa voi Coasty?",
+    "subtitle": "Cung nhung tac vu mat hang gio cho doi ngu — Coasty hoan thanh trong vai phut, suot ngay dem.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Lam thu cong",
+      "subtitle": "Ban hoac doi ngu cua ban, bang tay"
     },
     "coasty": {
-      "title": "Coasty AI Agent",
-      "subtitle": "#1 computer-use agent"
+      "title": "Tac tu AI Coasty",
+      "subtitle": "Tac tu computer-use #1"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "Thoi gian moi tac vu",
+      "availability": "Kha dung",
+      "setupTime": "Thoi gian thiet lap",
+      "errorRate": "Ti le loi",
+      "scaling": "Mo rong",
+      "auditTrail": "Nhat ky kiem toan"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Hang gio den hang ngay",
+      "availability": "Chi gio lam viec",
+      "setupTime": "Hoc cong cu, viet SOP",
+      "errorRate": "Loi cua con nguoi",
+      "scaling": "Lam nhieu hon = ton nhieu thoi gian hon",
+      "auditTrail": "Khong co"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Phut",
+      "availability": "24/7, moi ngay",
+      "setupTime": "60 giay",
+      "errorRate": "Tu sua loi",
+      "scaling": "Chay khong gioi han tac vu song song",
+      "auditTrail": "Moi cu nhan chuot duoc ghi lai + anh chup man hinh"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "Tu dong hoa cac tac vu mat",
+      "hoursManually": "hang gio lam thu cong",
+      "startingAt": "Bat dau tu"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Xem tac tu hanh dong",
+    "subtitle": "Tac vu thuc. Trinh duyet thuc. Moi cu nhan chuot duoc ghi lai.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
-        "tag": "Marketing"
+        "title": "Coasty tren Reddit",
+        "description": "Xem Coasty tu dong chay chien dich tiep thi — nghien cuu doi thu, phan tich xu huong va xay dung ban trinh bay chien luoc.",
+        "tag": "Tiep thi"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Tim kiem khach hang tiem nang",
+        "description": "Coasty tim va nghien cuu khach hang tiem nang, thu thap thong tin quan trong de tao tiep can ca nhan hoa.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "Tu kiem thu QA",
+        "description": "Coasty chay dam bao chat luong tren chinh san pham cua minh — dieu huong cac luong, bat loi va bao cao van de tu dong.",
+        "tag": "Kiem thu QA"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "Gui email thay ban",
+        "description": "Tu soan den gui — mot tac tu AI soan va gui email hoan toan tu dong.",
+        "tag": "Giao tiep"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Nop don ung tuyen",
+        "description": "Coasty tim vi tri phu hop, tuy chinh so yeu ly lich cua ban va nop don — tat ca tu dong.",
+        "tag": "Ung tuyen viec lam"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "Dang bai tren Hacker News",
+        "description": "Coasty tao va xuat ban bai blog tren Hacker News — viet noi dung va gui tu dong.",
+        "tag": "Mang xa hoi"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Duoc xay dung cho tac vu may tinh thuc te",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Tu sua loi",
+      "description": "Phat hien loi, thu cac duong di thay the"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Nhat ky kiem toan day du",
+      "description": "Moi cu nhan chuot duoc ghi lai voi anh chup man hinh"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "Lap lich 24/7",
+      "description": "Chay voi cron — hang gio, hang ngay, hang tuan"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Sandbox & Bao mat",
+      "description": "VM cach ly moi phien, bi huy sau do"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 tren OSWorld",
+      "description": "82% — diem cao nhat tung duoc ghi nhan"
     },
     "swarms": {
-      "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "title": "Bay tac tu",
+      "description": "Chia tac vu tren nhieu may song song"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Bat dau mien phi, mo rong khi san sang",
+    "subtitle": "Khong can the tin dung. Tac tu AI cua ban san sang trong 60 giay.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "Dung thu tac tu computer-use #1",
+        "cta": "Bat dau mien phi"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Tu dong hoa hang ngay nhe",
+        "cta": "Chon Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Tu dong hoa tac vu moi ngay",
+        "cta": "Chon Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "Mo rong quy trinh phuc tap",
+        "cta": "Chon Plus",
+        "badge": "Pho bien nhat"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Tu dong hoa nang khong gioi han",
+        "cta": "Chon Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 VM tam thoi (2 gio)",
+    "vmDeletedAfterInactivity": "1 VM (xoa sau khi khong hoat dong)",
+    "vmAlwaysOn": "{count} VM luon bat",
+    "vmAlwaysOnPlural": "{count} VM luon bat",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Cung cong viec ton {oldPrice} voi lao dong thu cong",
+      "description": "Tro ly ao ton $2.000–$4.000/thang. Nhan vien ban thoi gian con dat hon. Coasty lam cung cong viec 24/7 bat dau tu $0 — voi su nhat quan hoan hao, nhat ky kiem toan day du va khong can thoi gian dao tao."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Cau hoi thuong gap",
+    "subtitle": "Tat ca nhung gi ban can biet truoc khi bat dau",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Coasty la gi?",
+        "answer": "Coasty la tac tu AI computer-use tot nhat the gioi. Ban mo ta tac vu — nghien cuu khach hang tiem nang, kiem thu trang web, dien bieu mau, dang bai tren mang xa hoi — va Coasty mo trinh duyet thuc, dieu huong ung dung, nhan nut, go van ban va hoan thanh tac vu tu dau den cuoi. Khong API, khong tich hop, khong can ma."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Day khac gi so voi ChatGPT hoac cac cong cu AI khac?",
+        "answer": "ChatGPT tao van ban. Coasty su dung may tinh. No khong noi cho ban lam gi — no mo trinh duyet, dieu huong den trang web, nhan cac nut, dien bieu mau va giao cong viec da hoan thanh. Do la su khac biet giua nhan huong dan va co nguoi lam tac vu cho ban."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Coasty co the tu dong hoa nhung tac vu nao?",
+        "answer": "Bat ky tac vu nao ban co the lam tren may tinh. Nghien cuu web, tao khach hang tiem nang, nhap du lieu, dien bieu mau, kiem thu QA, dang mang xa hoi, tiep can email, xu ly hoa don, phan tich canh tranh, tuyen dung — neu lien quan den trinh duyet hoac ung dung desktop, Coasty co the lam duoc."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Tin chi la gi va duoc su dung nhu the nao?",
+        "answer": "Tin chi duoc tieu thu khi tac tu lam viec tren cac tac vu. Tac vu dai hon, phuc tap hon su dung nhieu tin chi hon. Cac goi tra phi bao gom tin chi hang thang, va ban cung co the mua them goi tin chi bat cu luc nao."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Coasty co the chay tren may tinh cua toi khong?",
+        "answer": "Co. Ung dung desktop cua chung toi chay nhu mot lop phu nhe tren may cua ban, dieu khien trinh duyet va ung dung cuc bo cua ban truc tiep. Ngoai ra, tac vu chay tren may dam may cach ly — tuy ban chon."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Du lieu cua toi co an toan khong?",
+        "answer": "Moi tac vu chay trong moi truong sandbox cach ly. Khong co gi ro ri giua cac phien. Thong tin dang nhap cua ban van rieng tu, va moi hanh dong duoc ghi lai voi anh chup man hinh trong nhat ky kiem toan day du ma ban co the xem lai bat cu luc nao."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "Su dung may tinh ho tro boi AI.",
+    "tagline2": "Tu dong hoa bat ky quy trinh lam viec nao voi tac tu thong minh.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "San pham",
+      "resources": "Tai nguyen",
+      "company": "Cong ty",
+      "legal": "Phap ly"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
-      "agentSwarms": "Agent Swarms",
-      "status": "Status",
+      "computerUse": "Su dung may tinh",
+      "guide": "Huong dan",
+      "download": "Tai xuong",
+      "pricing": "Gia",
+      "agentSwarms": "Bay tac tu",
+      "status": "Trang thai",
       "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "useCases": "Truong hop su dung",
+      "demos": "Demo",
+      "compare": "So sanh",
+      "talkToCofounders": "Noi chuyen voi dong sang lap & Demo",
+      "contact": "Lien he",
+      "privacy": "Quyen rieng tu",
+      "terms": "Dieu khoan"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Ngon ngu"
   }
 }

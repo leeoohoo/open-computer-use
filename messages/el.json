@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "Ξεκινήστε δωρεάν",
+    "bookDemo": "Κλείστε ένα demo",
+    "tryCoastyFree": "Δοκιμάστε το Coasty δωρεάν",
+    "learnMore": "Μάθετε περισσότερα",
+    "watchSession": "Δείτε τη συνεδρία",
+    "compareAllPlans": "Συγκρίνετε όλα τα πλάνα και τις δυνατότητες",
+    "allRightsReserved": "Με επιφύλαξη παντός δικαιώματος.",
+    "privacy": "Απόρρητο",
+    "terms": "Όροι",
+    "recommended": "Προτεινόμενο",
+    "month": "μήνα",
+    "creditsPerMonth": "{count} πιστώσεις/μήνα",
+    "agentsInParallel": "{count} agents παράλληλα"
   },
 
   "header": {
-    "useCases": "Use Cases",
+    "useCases": "Περιπτώσεις χρήσης",
     "blog": "Blog",
-    "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "agentSwarms": "Σμήνη agents",
+    "compare": "Σύγκριση",
+    "demos": "Επιδείξεις",
+    "pricing": "Τιμολόγηση",
+    "download": "Λήψη",
+    "signIn": "Σύνδεση",
+    "getStarted": "Ξεκινήστε",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "Ανάλυση ανταγωνισμού",
+      "qaBugReports": "QA αναφορές σφαλμάτων",
+      "seoGapAnalysis": "SEO ανάλυση κενών",
+      "dataExtraction": "Εξαγωγή δεδομένων",
+      "leadGeneration": "Δημιουργία leads",
+      "siteAudit": "Έλεγχος ιστοσελίδας",
+      "adIntelligence": "Πληροφορίες διαφημίσεων",
+      "emailOutreach": "E-mail outreach",
+      "designReview": "Αξιολόγηση σχεδίασης",
+      "priceMonitoring": "Παρακολούθηση τιμών",
+      "marketResearch": "Έρευνα αγοράς",
+      "emailCampaigns": "Καμπάνιες e-mail"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} προφίλ ανταγωνιστών παραδόθηκαν",
+      "qaBugReports": "{stat} ροές χρηστών δοκιμάστηκαν ανά εκτέλεση",
+      "seoGapAnalysis": "{stat} κενά λέξεων-κλειδιών εντοπίστηκαν",
+      "dataExtraction": "{stat} γραμμές εξήχθησαν ανά εκτέλεση",
+      "leadGeneration": "{stat} πιστοποιημένα leads ανά εκτέλεση",
+      "siteAudit": "{stat} σελίδες ελέγχθηκαν ανά εκτέλεση",
+      "adIntelligence": "{stat} διαφημιστικά δημιουργικά καταγράφηκαν",
+      "emailOutreach": "{stat} εξατομικευμένα e-mail συντάχθηκαν",
+      "designReview": "{stat} breakpoints δοκιμάστηκαν ανά σελίδα",
+      "priceMonitoring": "{stat} SKU συγκρίθηκαν ανά εκτέλεση",
+      "marketResearch": "{stat} σημεία δεδομένων συλλέχθηκαν",
+      "emailCampaigns": "{stat} εξατομικευμένα e-mail ανά καμπάνια"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
-      "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "allPosts": "Όλα τα άρθρα",
+      "computerUse": "Χρήση υπολογιστή",
+      "compare": "Σύγκριση",
+      "dataEntry": "Εισαγωγή δεδομένων",
+      "webScraping": "Web scraping",
+      "jobApplications": "Αιτήσεις εργασίας",
+      "demosResults": "Επιδείξεις και αποτελέσματα",
+      "guide": "Οδηγός"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} άρθρα δημοσιεύονται εβδομαδιαία",
+      "computerUse": "{stat} βαθμολογία benchmark OSWorld",
+      "compare": "{stat} ανταγωνιστές αναλύθηκαν",
+      "dataEntry": "{stat} ταχύτερα από χειροκίνητα",
+      "webScraping": "{stat} σελίδες ανά συνεδρία",
+      "jobApplications": "{stat} αιτήσεις ανά συνεδρία",
+      "demosResults": "{stat} πραγματικές μελέτες περιπτώσεων",
+      "guide": "{stat} αναλυτικοί οδηγοί χρήσης"
     }
   },
 
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "headline": "Αυτόνομοι χειριστές υπολογιστών",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "Agent υπολογιστή",
+        "headline": "αυτοματοποιήστε οποιαδήποτε εργασία browser",
+        "outcome": "Ένας AI agent που ελέγχει έναν πραγματικό υπολογιστή — περιηγείται, κάνει κλικ, πληκτρολογεί και παραδίδει ολοκληρωμένη εργασία. Δεν απαιτείται ρύθμιση."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Ανάλυση ανταγωνισμού",
+        "headline": "παρακολουθήστε κάθε ανταγωνιστή",
+        "outcome": "Πλήρη προφίλ ανταγωνιστών με τιμολόγηση, χαρακτηριστικά και κενά τοποθέτησης — εξαγωγή ως έτοιμη αναφορά."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "QA δοκιμές",
+        "headline": "βρείτε σφάλματα πριν τους χρήστες",
+        "outcome": "Κρίσιμες ροές χρηστών δοκιμασμένες end-to-end, κάθε σφάλμα με screenshot, βήματα αναπαραγωγής και κατάταξη σοβαρότητας."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "SEO ανάλυση",
+        "headline": "ανακαλύψτε κενά λέξεων-κλειδιών",
+        "outcome": "Κενά λέξεων-κλειδιών εντοπισμένα, briefs περιεχομένου συνταγμένα, πηγές backlinks ανταγωνιστών χαρτογραφημένες — εφαρμόσιμη στρατηγική SEO."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Εξαγωγή δεδομένων",
+        "headline": "κάντε scrape και δομήστε οποιοδήποτε site",
+        "outcome": "Δομημένα δεδομένα scrape, καθαρισμένα, αποδιπλωμένα και εξαγμένα ως CSV — από οποιοδήποτε site, οποιαδήποτε μορφή."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Δημιουργία leads",
+        "headline": "γεμίστε τη σωλήνωση πωλήσεών σας",
+        "outcome": "Πιστοποιημένοι αποφασίζοντες που ταιριάζουν στο ICP σας με επαληθευμένους τίτλους, εταιρείες και εξατομικευμένα εισαγωγικά μηνύματα."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Έλεγχος ιστοσελίδας",
+        "headline": "ελέγξτε κάθε σελίδα σε κλίμακα",
+        "outcome": "Σελίδες σαρωμένες, Core Web Vitals βαθμολογημένα, σπασμένοι σύνδεσμοι βρεθέντες, ζητήματα προσβασιμότητας κατηγοριοποιημένα κατά προτεραιότητα."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "E-mail outreach",
+        "headline": "στείλτε εξατομικευμένο outreach",
+        "outcome": "Εξατομικευμένα e-mail που αναφέρουν την εταιρεία, τον ρόλο και τα σημεία πόνου κάθε prospect — έτοιμα για αποστολή."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Έρευνα αγοράς",
+        "headline": "επικυρώστε την αγορά σας γρήγορα",
+        "outcome": "TAM υπολογισμένο, βασικοί παίκτες προφίλ, τάσεις ανάπτυξης χαρτογραφημένες — από δεκάδες σημεία δεδομένων."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Marketing", "task": "Προωθήστε αυτόνομα το προϊόν σας στο Reddit" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Βρείτε prospects και στείλτε εξατομικευμένα e-mail" },
+      "qaTesting": { "label": "QA δοκιμές", "task": "Δοκιμάστε κάθε ροή checkout και αναφέρετε σφάλματα" },
+      "jobApplication": { "label": "Αίτηση εργασίας", "task": "Βρείτε θέσεις, προσαρμόστε το βιογραφικό και υποβάλετε αίτηση" },
+      "formFilling": { "label": "Συμπλήρωση φορμών", "task": "Συμπληρώστε την αίτηση YC S26 για εσάς" },
+      "socialMedia": { "label": "Κοινωνικά δίκτυα", "task": "Δημοσιεύστε στο Hacker News και αλληλεπιδράστε με σχόλια" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "Benchmark OSWorld", "sublabel": "#1 computer-use agent παγκοσμίως" },
+    "tools": { "value": "50+", "label": "Εργαλεία που μπορεί να χρησιμοποιήσει ο agent", "sublabel": "Browser, τερματικό, επιφάνεια εργασίας, αρχεία" },
+    "schedule": { "value": "24/7", "label": "Εκτελείται σε πρόγραμμα", "sublabel": "Αυτοματοποιήστε οποιαδήποτε επαναλαμβανόμενη εργασία" },
+    "setup": { "value": "0", "label": "Απαιτούμενη ρύθμιση", "sublabel": "Χωρίς API, χωρίς ενσωματώσεις, χωρίς κώδικα" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Γιατί Coasty",
+    "title": "Δεν είναι chatbot. Δεν είναι RPA script.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Δουλεύει σαν άνθρωπος",
+      "description": "Βλέπει, κάνει κλικ, πληκτρολογεί, πλοηγείται — ακριβώς όπως εσείς"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Χωρίς scripts ή ρύθμιση",
+      "description": "Απλά ελληνικά μέσα, αποτελέσματα έξω"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Διαχειρίζεται το απρόσμενο",
+      "description": "Προσαρμόζεται σε CAPTCHAs, popups, αλλαγές διάταξης"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Εκτελείται σε απομόνωση",
+      "description": "Sandboxed VM ανά συνεδρία — τίποτα δεν διαρρέει"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Πώς λειτουργεί",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Περιγράψτε την εργασία σας",
+      "description": "Απλά ελληνικά. Αυτό είναι όλο.",
+      "placeholder": "Ερευνήστε 100 leads στο LinkedIn..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Παρακολουθήστε τον agent να εργάζεται",
+      "description": "Ανοίγει browser, κάνει κλικ, πληκτρολογεί, πλοηγείται"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Εργασία ολοκληρωμένη",
+      "description": "Κάθε ενέργεια καταγεγραμμένη με screenshots",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Εργασία ολοκληρωμένη",
+        "leadsFound": "12 leads βρέθηκαν",
+        "addedToCrm": "Προστέθηκαν στο CRM"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "Αξιολογημένο ως #1 παγκοσμίως",
+    "subtitle": "82% στο OSWorld — το δυσκολότερο benchmark για AI agents που χρησιμοποιούν πραγματικούς υπολογιστές",
+    "agenticFramework": "Agentικό framework",
+    "foundationModel": "Θεμελιώδες μοντέλο"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Γιατί να αυτοματοποιήσετε με Coasty;",
+    "subtitle": "Οι ίδιες εργασίες που χρειάζονται ώρες σε μια ομάδα — το Coasty τις ολοκληρώνει σε λεπτά, όλο το 24ωρο.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Χειροκίνητη εκτέλεση",
+      "subtitle": "Εσείς ή η ομάδα σας, με το χέρι"
     },
     "coasty": {
       "title": "Coasty AI Agent",
       "subtitle": "#1 computer-use agent"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "Χρόνος ανά εργασία",
+      "availability": "Διαθεσιμότητα",
+      "setupTime": "Χρόνος ρύθμισης",
+      "errorRate": "Ποσοστό σφαλμάτων",
+      "scaling": "Κλιμάκωση",
+      "auditTrail": "Ιχνός ελέγχου"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Ώρες έως ημέρες",
+      "availability": "Μόνο εργάσιμες ώρες",
+      "setupTime": "Μάθηση εργαλείων, γραφή SOP",
+      "errorRate": "Ανθρώπινα λάθη",
+      "scaling": "Περισσότερη δουλειά = περισσότερος χρόνος",
+      "auditTrail": "Κανένα"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Λεπτά",
+      "availability": "24/7, κάθε μέρα",
+      "setupTime": "60 δευτερόλεπτα",
+      "errorRate": "Αυτοδιόρθωση",
+      "scaling": "Εκτελέστε απεριόριστες εργασίες παράλληλα",
+      "auditTrail": "Κάθε κλικ καταγεγραμμένο + screenshots"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "Αυτοματοποιήστε εργασίες που χρειάζονται",
+      "hoursManually": "ώρες χειροκίνητα",
+      "startingAt": "Από μόλις"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Δείτε τον agent σε δράση",
+    "subtitle": "Πραγματικές εργασίες. Πραγματικοί browsers. Κάθε κλικ καταγεγραμμένο.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
+        "title": "Coasty στο Reddit",
+        "description": "Δείτε το Coasty να εκτελεί αυτόνομα μια καμπάνια marketing — ερευνώντας ανταγωνιστές, αναλύοντας τάσεις και δημιουργώντας ένα στρατηγικό έγγραφο.",
         "tag": "Marketing"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Εύρεση δυνητικών πελατών",
+        "description": "Το Coasty βρίσκει και ερευνά δυνητικούς πελάτες, συλλέγοντας βασικές λεπτομέρειες για εξατομικευμένη προσέγγιση.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "QA δοκιμή του εαυτού του",
+        "description": "Το Coasty εκτελεί ποιοτικό έλεγχο στο δικό του προϊόν — πλοηγείται σε ροές, εντοπίζει σφάλματα και αναφέρει ζητήματα αυτόνομα.",
+        "tag": "QA δοκιμές"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "Αποστολή e-mail εκ μέρους σας",
+        "description": "Από τη σύνταξη μέχρι την αποστολή — ένας AI agent συντάσσει και παραδίδει ένα e-mail εντελώς μόνος του.",
+        "tag": "Επικοινωνία"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Υποβολή αίτησης εργασίας",
+        "description": "Το Coasty βρίσκει μια κατάλληλη θέση, προσαρμόζει το βιογραφικό σας και υποβάλλει την αίτηση — όλα μόνο του.",
+        "tag": "Αίτηση εργασίας"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "Δημοσίευση στο Hacker News",
+        "description": "Το Coasty δημιουργεί και δημοσιεύει ένα blog post στο Hacker News — γράφοντας το περιεχόμενο και υποβάλλοντάς το αυτόνομα.",
+        "tag": "Κοινωνικά δίκτυα"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Κατασκευασμένο για πραγματικές εργασίες υπολογιστή",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Αυτοδιόρθωση",
+      "description": "Ανιχνεύει σφάλματα, δοκιμάζει εναλλακτικές διαδρομές"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Πλήρες ιχνός ελέγχου",
+      "description": "Κάθε κλικ καταγεγραμμένο με screenshots"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "Προγραμματισμός 24/7",
+      "description": "Εκτελείται σε cron — ωριαία, ημερήσια, εβδομαδιαία"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Sandboxed και ασφαλές",
+      "description": "Απομονωμένο VM ανά συνεδρία, καταστρέφεται μετά"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 στο OSWorld",
+      "description": "82% — η υψηλότερη βαθμολογία που καταγράφηκε ποτέ"
     },
     "swarms": {
-      "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "title": "Σμήνη agents",
+      "description": "Διαμοιράστε εργασίες σε μηχανήματα παράλληλα"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Ξεκινήστε δωρεάν, κλιμακώστε όταν είστε έτοιμοι",
+    "subtitle": "Χωρίς πιστωτική κάρτα. Ο AI agent σας είναι έτοιμος σε 60 δευτερόλεπτα.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "Δοκιμάστε τον #1 computer-use agent",
+        "cta": "Ξεκινήστε δωρεάν"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Ελαφριά ημερήσια αυτοματοποίηση",
+        "cta": "Αποκτήστε Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Αυτοματοποιήστε εργασίες κάθε μέρα",
+        "cta": "Αποκτήστε Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "Κλιμακώστε σύνθετες ροές εργασίας",
+        "cta": "Επιλέξτε Plus",
+        "badge": "Πιο δημοφιλές"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Απεριόριστη βαριά αυτοματοποίηση",
+        "cta": "Αποκτήστε Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 προσωρινό VM (2 ώρες)",
+    "vmDeletedAfterInactivity": "1 VM (διαγράφεται μετά από αδράνεια)",
+    "vmAlwaysOn": "{count} πάντα-ενεργό VM",
+    "vmAlwaysOnPlural": "{count} πάντα-ενεργά VM",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Η ίδια εργασία κοστίζει {oldPrice} με χειρωνακτική εργασία",
+      "description": "Ένας εικονικός βοηθός κοστίζει $2.000–$4.000/μήνα. Μια μερική πρόσληψη κοστίζει περισσότερο. Το Coasty κάνει την ίδια δουλειά 24/7 από $0 — με τέλεια συνέπεια, πλήρη ιχνηλασιμότητα και μηδενικό χρόνο εκπαίδευσης."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Συχνές ερωτήσεις",
+    "subtitle": "Όλα όσα πρέπει να γνωρίζετε πριν ξεκινήσετε",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Τι είναι το Coasty;",
+        "answer": "Το Coasty είναι ο καλύτερος computer-use AI agent στον κόσμο. Περιγράφετε μια εργασία — έρευνα leads, δοκιμή ιστοσελίδας, συμπλήρωση φορμών, δημοσίευση στα κοινωνικά δίκτυα — και το Coasty ανοίγει έναν πραγματικό browser, πλοηγείται σε εφαρμογές, κάνει κλικ σε κουμπιά, πληκτρολογεί κείμενο και ολοκληρώνει την εργασία end-to-end. Χωρίς API, χωρίς ενσωματώσεις, χωρίς κώδικα."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Πώς διαφέρει αυτό από το ChatGPT ή άλλα εργαλεία AI;",
+        "answer": "Το ChatGPT παράγει κείμενο. Το Coasty χρησιμοποιεί υπολογιστή. Δεν σας λέει τι να κάνετε — ανοίγει browser, πλοηγείται στην ιστοσελίδα, κάνει κλικ στα κουμπιά, συμπληρώνει τις φόρμες και παραδίδει ολοκληρωμένη εργασία. Είναι η διαφορά μεταξύ του να λαμβάνετε οδηγίες και του να σας γίνεται η δουλειά."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Ποιες εργασίες μπορεί να αυτοματοποιήσει το Coasty;",
+        "answer": "Οποιαδήποτε εργασία μπορείτε να κάνετε σε υπολογιστή. Έρευνα web, δημιουργία leads, εισαγωγή δεδομένων, συμπλήρωση φορμών, QA δοκιμές, δημοσίευση στα κοινωνικά δίκτυα, e-mail outreach, επεξεργασία τιμολογίων, ανάλυση ανταγωνισμού, προσλήψεις — αν περιλαμβάνει browser ή desktop εφαρμογή, το Coasty μπορεί να το κάνει."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Τι είναι οι πιστώσεις και πώς χρησιμοποιούνται;",
+        "answer": "Οι πιστώσεις καταναλώνονται καθώς ο agent εργάζεται σε εργασίες. Μεγαλύτερες, πιο σύνθετες εργασίες χρησιμοποιούν περισσότερες πιστώσεις. Τα πληρωμένα πλάνα περιλαμβάνουν μηνιαίες πιστώσεις και μπορείτε επίσης να αγοράσετε επιπλέον πακέτα πιστώσεων οποτεδήποτε."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Μπορεί το Coasty να τρέξει στον δικό μου υπολογιστή;",
+        "answer": "Ναι. Η desktop εφαρμογή μας τρέχει ως ελαφρύ overlay στο μηχάνημά σας, ελέγχοντας απευθείας τον τοπικό browser και τις εφαρμογές σας. Εναλλακτικά, οι εργασίες εκτελούνται σε απομονωμένα cloud μηχανήματα — δική σας επιλογή."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Είναι ασφαλή τα δεδομένα μου;",
+        "answer": "Κάθε εργασία εκτελείται σε απομονωμένο sandbox περιβάλλον. Τίποτα δεν διαρρέει μεταξύ συνεδριών. Τα διαπιστευτήριά σας παραμένουν ιδιωτικά και κάθε ενέργεια καταγράφεται με screenshots σε πλήρες ιχνός ελέγχου που μπορείτε να ελέγξετε οποτεδήποτε."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "Χρήση υπολογιστή με AI.",
+    "tagline2": "Αυτοματοποιήστε οποιαδήποτε ροή εργασίας με ευφυείς agents.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "Προϊόν",
+      "resources": "Πόροι",
+      "company": "Εταιρεία",
+      "legal": "Νομικά"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
-      "agentSwarms": "Agent Swarms",
-      "status": "Status",
+      "computerUse": "Χρήση υπολογιστή",
+      "guide": "Οδηγός",
+      "download": "Λήψη",
+      "pricing": "Τιμολόγηση",
+      "agentSwarms": "Σμήνη agents",
+      "status": "Κατάσταση",
       "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "useCases": "Περιπτώσεις χρήσης",
+      "demos": "Επιδείξεις",
+      "compare": "Σύγκριση",
+      "talkToCofounders": "Μιλήστε με τους συνιδρυτές και demo",
+      "contact": "Επικοινωνία",
+      "privacy": "Απόρρητο",
+      "terms": "Όροι"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Γλώσσα"
   }
 }

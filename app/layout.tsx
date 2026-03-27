@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next"
+import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import "./mobile-performance.css"
@@ -30,14 +30,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 })
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: "cover",
-}
 
 export const metadata: Metadata = {
   title: {
@@ -159,23 +151,22 @@ export default async function RootLayout({
 }>) {
   const isDev = process.env.NODE_ENV === "development"
   const userProfile = await getUserProfile()
-  const locale = await getLocale()
-  const messages = await getMessages()
+
+  let locale = "en"
+  let messages = {}
+  try {
+    locale = await getLocale()
+    messages = await getMessages()
+  } catch {
+    // Fallback to English if i18n fails (e.g. during static generation)
+    const fallback = await import("../messages/en.json")
+    messages = fallback.default
+  }
   const dir = rtlLocales.includes(locale as Locale) ? "rtl" : "ltr"
 
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <head>
-        {/* iOS / Capacitor meta tags */}
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Coasty" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180.png" />
-        <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167.png" />
-        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
         {!isDev ? (
           <Script
             async
@@ -383,7 +374,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <PostHogProvider>
             <PostHogPageView />
             <TanstackQueryProvider>

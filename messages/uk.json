@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "Почати безкоштовно",
+    "bookDemo": "Замовити демо",
+    "tryCoastyFree": "Спробуйте Coasty безкоштовно",
+    "learnMore": "Дізнатися більше",
+    "watchSession": "Переглянути сесію",
+    "compareAllPlans": "Порівняти всі плани та функції",
+    "allRightsReserved": "Усі права захищені.",
+    "privacy": "Конфіденційність",
+    "terms": "Умови",
+    "recommended": "Рекомендовано",
+    "month": "місяць",
+    "creditsPerMonth": "{count} кредитів/міс.",
+    "agentsInParallel": "{count} агентів паралельно"
   },
 
   "header": {
-    "useCases": "Use Cases",
-    "blog": "Blog",
+    "useCases": "Застосування",
+    "blog": "Блог",
     "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "compare": "Порівняти",
+    "demos": "Демо",
+    "pricing": "Ціни",
+    "download": "Завантажити",
+    "signIn": "Увійти",
+    "getStarted": "Розпочати",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "Аналіз конкурентів",
+      "qaBugReports": "QA-звіти про помилки",
+      "seoGapAnalysis": "Аналіз прогалин SEO",
+      "dataExtraction": "Витяг даних",
+      "leadGeneration": "Генерація лідів",
+      "siteAudit": "Аудит сайту",
+      "adIntelligence": "Аналіз реклами",
+      "emailOutreach": "Email-аутріч",
+      "designReview": "Огляд дизайну",
+      "priceMonitoring": "Моніторинг цін",
+      "marketResearch": "Дослідження ринку",
+      "emailCampaigns": "Email-кампанії"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} профілів конкурентів доставлено",
+      "qaBugReports": "{stat} користувацьких потоків протестовано за запуск",
+      "seoGapAnalysis": "{stat} прогалин у ключових словах виявлено",
+      "dataExtraction": "{stat} рядків витягнуто за запуск",
+      "leadGeneration": "{stat} кваліфікованих лідів за запуск",
+      "siteAudit": "{stat} сторінок перевірено за запуск",
+      "adIntelligence": "{stat} рекламних креативів захоплено",
+      "emailOutreach": "{stat} персоналізованих листів складено",
+      "designReview": "{stat} брейкпоінтів протестовано на сторінку",
+      "priceMonitoring": "{stat} SKU порівняно за запуск",
+      "marketResearch": "{stat} точок даних зібрано",
+      "emailCampaigns": "{stat} персоналізованих листів на кампанію"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
-      "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "allPosts": "Усі статті",
+      "computerUse": "Використання комп'ютера",
+      "compare": "Порівняти",
+      "dataEntry": "Введення даних",
+      "webScraping": "Web scraping",
+      "jobApplications": "Подання заявок на роботу",
+      "demosResults": "Демо та результати",
+      "guide": "Посібник"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} статей щотижня",
+      "computerUse": "{stat} бал бенчмарку OSWorld",
+      "compare": "{stat} конкурентів проаналізовано",
+      "dataEntry": "{stat} швидше за ручне введення",
+      "webScraping": "{stat} сторінок за сесію",
+      "jobApplications": "{stat} заявок за сесію",
+      "demosResults": "{stat} реальних кейсів",
+      "guide": "{stat} покрокових інструкцій"
     }
   },
 
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "headline": "Автономні оператори комп'ютерів",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "Комп'ютерний агент",
+        "headline": "автоматизуйте будь-яке завдання в браузері",
+        "outcome": "AI-агент, який керує справжнім комп'ютером — переглядає, натискає, друкує та доставляє готову роботу. Без налаштувань."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Аналіз конкурентів",
+        "headline": "моніторте кожного конкурента",
+        "outcome": "Повні профілі конкурентів з цінами, функціями та прогалинами в позиціонуванні — експортовані як готовий звіт."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "QA-тестування",
+        "headline": "знайдіть помилки раніше за користувачів",
+        "outcome": "Критичні користувацькі потоки протестовані наскрізно, кожна помилка зі скріншотом, кроками відтворення та класифікацією серйозності."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "SEO-аналіз",
+        "headline": "відкрийте прогалини в ключових словах",
+        "outcome": "Прогалини в ключових словах виявлені, контент-брифи підготовлені, джерела зворотних посилань конкурентів змаповані — дієва SEO-стратегія."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Витяг даних",
+        "headline": "скрейпте та структуруйте будь-який сайт",
+        "outcome": "Структуровані дані витягнуті, очищені, дедупліковані та експортовані як CSV — з будь-якого сайту, будь-якого формату."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Генерація лідів",
+        "headline": "наповніть свою воронку продажів",
+        "outcome": "Кваліфіковані особи, що приймають рішення, відповідні вашому ICP, з верифікованими посадами, компаніями та персоналізованими аутріч-відкриттями."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Аудит сайту",
+        "headline": "перевірте кожну сторінку масштабно",
+        "outcome": "Сторінки проскановані, Core Web Vitals оцінені, непрацюючі посилання знайдені, проблеми доступності ранжовані за пріоритетом виправлення."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "Email-аутріч",
+        "headline": "надсилайте персоналізований аутріч",
+        "outcome": "Персоналізовані листи з посиланням на компанію, посаду та болючі точки кожного проспекта — готові до відправки."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Дослідження ринку",
+        "headline": "швидко валідуйте свій ринок",
+        "outcome": "TAM розрахований, ключові гравці профільовані, тренди зростання відображені — з десятків точок даних."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Маркетинг", "task": "Просувайте свій продукт на Reddit автономно" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Знайдіть проспектів і надішліть персоналізовані листи" },
+      "qaTesting": { "label": "QA-тестування", "task": "Протестуйте кожен потік оплати та повідомте про помилки" },
+      "jobApplication": { "label": "Заявка на роботу", "task": "Знайдіть вакансії, адаптуйте резюме та подайте заявку" },
+      "formFilling": { "label": "Заповнення форм", "task": "Заповніть заявку YC S26 за вас" },
+      "socialMedia": { "label": "Соціальні мережі", "task": "Опублікуйте на Hacker News та взаємодійте з коментарями" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "Бенчмарк OSWorld", "sublabel": "#1 agent computer-use у світі" },
+    "tools": { "value": "50+", "label": "Інструментів доступних агенту", "sublabel": "Браузер, термінал, робочий стіл, файли" },
+    "schedule": { "value": "24/7", "label": "Працює за розкладом", "sublabel": "Автоматизуйте будь-яке повторюване завдання" },
+    "setup": { "value": "0", "label": "Потрібне налаштування", "sublabel": "Без API, без інтеграцій, без коду" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Чому Coasty",
+    "title": "Не чатбот. Не RPA-скрипт.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Працює як людина",
+      "description": "Бачить, натискає, друкує, навігує — точно як ви"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Без скриптів і налаштувань",
+      "description": "Простою мовою вводите, результати отримуєте"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Справляється з несподіванками",
+      "description": "Адаптується до CAPTCHA, спливаючих вікон, змін макету"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Працює в ізоляції",
+      "description": "Ізольована VM на сесію — нічого не витікає"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Як це працює",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Опишіть своє завдання",
+      "description": "Простою мовою. Це все.",
+      "placeholder": "Знайти 100 лідів на LinkedIn..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Спостерігайте за роботою агента",
+      "description": "Відкриває браузер, натискає, друкує, навігує"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Завдання виконано",
+      "description": "Кожна дія зафіксована зі скріншотами",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Завдання виконано",
+        "leadsFound": "Знайдено 12 лідів",
+        "addedToCrm": "Додано до CRM"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "Бенчмарк #1 у світі",
+    "subtitle": "82% на OSWorld — найскладніший бенчмарк для AI-агентів, що використовують справжні комп'ютери",
+    "agenticFramework": "Агентний фреймворк",
+    "foundationModel": "Базова модель"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Чому автоматизувати з Coasty?",
+    "subtitle": "Ті самі завдання, що займають у команди години — Coasty виконує за хвилини, цілодобово.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Робити вручну",
+      "subtitle": "Ви або ваша команда, вручну"
     },
     "coasty": {
       "title": "Coasty AI Agent",
-      "subtitle": "#1 computer-use agent"
+      "subtitle": "#1 agent computer-use"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "Час на завдання",
+      "availability": "Доступність",
+      "setupTime": "Час налаштування",
+      "errorRate": "Рівень помилок",
+      "scaling": "Масштабування",
+      "auditTrail": "Аудиторський слід"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Години до днів",
+      "availability": "Лише робочі години",
+      "setupTime": "Вивчити інструменти, написати SOP",
+      "errorRate": "Людські помилки",
+      "scaling": "Більше завдань = більше часу",
+      "auditTrail": "Відсутній"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Хвилини",
+      "availability": "24/7, щодня",
+      "setupTime": "60 секунд",
+      "errorRate": "Самокорекція",
+      "scaling": "Запускайте необмежену кількість завдань паралельно",
+      "auditTrail": "Кожен клік зафіксований + скріншоти"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "Автоматизуйте завдання, які займають",
+      "hoursManually": "годин вручну",
+      "startingAt": "Починаючи від"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Дивіться агента в дії",
+    "subtitle": "Реальні завдання. Реальні браузери. Кожен клік записаний.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
-        "tag": "Marketing"
+        "title": "Coasty на Reddit",
+        "description": "Спостерігайте, як Coasty автономно проводить маркетингову кампанію — досліджує конкурентів, аналізує тренди та будує стратегію.",
+        "tag": "Маркетинг"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Пошук потенційних клієнтів",
+        "description": "Coasty знаходить та досліджує потенційних клієнтів, збираючи ключові деталі для створення персоналізованого аутрічу.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "QA-тестування самого себе",
+        "description": "Coasty проводить контроль якості власного продукту — навігує потоками, знаходить помилки та повідомляє про проблеми автономно.",
+        "tag": "QA-тестування"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "Відправка листа від вашого імені",
+        "description": "Від написання до відправки — AI-агент складає та доставляє лист повністю самостійно.",
+        "tag": "Комунікація"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Подання заявки на роботу",
+        "description": "Coasty знаходить відповідну вакансію, адаптує ваше резюме та подає заявку — все самостійно.",
+        "tag": "Заявка на роботу"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "Публікація на Hacker News",
+        "description": "Coasty створює та публікує пост на Hacker News — пише контент та надсилає його автономно.",
+        "tag": "Соціальні мережі"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Створений для реальних комп'ютерних завдань",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Самокорекція",
+      "description": "Виявляє помилки, пробує альтернативні шляхи"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Повний аудиторський слід",
+      "description": "Кожен клік зафіксований зі скріншотами"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "Розклад 24/7",
+      "description": "Працює за cron — щогодини, щодня, щотижня"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Ізольований та безпечний",
+      "description": "Ізольована VM на сесію, видаляється після"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 на OSWorld",
+      "description": "82% — найвищий бал в історії"
     },
     "swarms": {
       "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "description": "Розподіляйте завдання між машинами паралельно"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Починайте безкоштовно, масштабуйте коли готові",
+    "subtitle": "Без кредитної картки. Ваш AI-агент готовий за 60 секунд.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "Спробуйте #1 agent computer-use",
+        "cta": "Почати безкоштовно"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Легка щоденна автоматизація",
+        "cta": "Обрати Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Автоматизуйте завдання щодня",
+        "cta": "Обрати Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "Масштабуйте складні робочі процеси",
+        "cta": "Перейти на Plus",
+        "badge": "Найпопулярніший"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Необмежена інтенсивна автоматизація",
+        "cta": "Обрати Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 тимчасова VM (2 год.)",
+    "vmDeletedAfterInactivity": "1 VM (видаляється після неактивності)",
+    "vmAlwaysOn": "{count} постійно увімкнена VM",
+    "vmAlwaysOnPlural": "{count} постійно увімкнених VM",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Та сама робота коштує {oldPrice} при ручній праці",
+      "description": "Віртуальний асистент коштує $2 000–$4 000/міс. Працівник на часткову зайнятість коштує більше. Coasty виконує ту саму роботу 24/7 від $0 — з ідеальною послідовністю, повним аудиторським слідом та нульовим часом навчання."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Часті запитання",
+    "subtitle": "Все, що потрібно знати перед початком",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Що таке Coasty?",
+        "answer": "Coasty — це найкращий у світі AI-агент для використання комп'ютера. Ви описуєте завдання — знайти лідів, протестувати сайт, заповнити форми, опублікувати в соцмережах — і Coasty відкриває справжній браузер, навігує додатками, натискає кнопки, друкує текст і виконує завдання від початку до кінця. Без API, без інтеграцій, без коду."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Чим це відрізняється від ChatGPT або інших AI-інструментів?",
+        "answer": "ChatGPT генерує текст. Coasty використовує комп'ютер. Він не каже вам, що робити — він відкриває браузер, навігує на сайт, натискає кнопки, заповнює форми та доставляє виконану роботу. Це різниця між отриманням інструкцій та виконанням завдання за вас."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Які завдання може автоматизувати Coasty?",
+        "answer": "Будь-яке завдання, яке ви можете виконати на комп'ютері. Веб-дослідження, генерація лідів, введення даних, заповнення форм, QA-тестування, публікації в соцмережах, email-аутріч, обробка рахунків, аналіз конкурентів, рекрутинг — якщо це стосується браузера або десктопного додатку, Coasty зробить це."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Що таке кредити і як вони використовуються?",
+        "answer": "Кредити витрачаються під час роботи агента над завданнями. Довші та складніші завдання використовують більше кредитів. Платні плани включають місячні кредити, і ви також можете придбати додаткові пакети кредитів у будь-який час."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Чи може Coasty працювати на моєму комп'ютері?",
+        "answer": "Так. Наш десктопний додаток працює як легка накладка на вашій машині, безпосередньо керуючи вашим локальним браузером та додатками. Альтернативно завдання виконуються на ізольованих хмарних машинах — ваш вибір."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Чи мої дані в безпеці?",
+        "answer": "Кожне завдання виконується в ізольованому середовищі пісочниці. Нічого не витікає між сесіями. Ваші облікові дані залишаються приватними, а кожна дія фіксується зі скріншотами в повному аудиторському сліді, який ви можете переглянути в будь-який час."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "Використання комп'ютера на базі AI.",
+    "tagline2": "Автоматизуйте будь-який робочий процес з інтелектуальними агентами.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "Продукт",
+      "resources": "Ресурси",
+      "company": "Компанія",
+      "legal": "Юридичне"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
+      "computerUse": "Використання комп'ютера",
+      "guide": "Посібник",
+      "download": "Завантажити",
+      "pricing": "Ціни",
       "agentSwarms": "Agent Swarms",
-      "status": "Status",
-      "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "status": "Статус",
+      "blog": "Блог",
+      "useCases": "Застосування",
+      "demos": "Демо",
+      "compare": "Порівняти",
+      "talkToCofounders": "Поговорити зі співзасновниками та демо",
+      "contact": "Контакти",
+      "privacy": "Конфіденційність",
+      "terms": "Умови"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Мова"
   }
 }

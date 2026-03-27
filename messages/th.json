@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "เริ่มใช้ฟรี",
+    "bookDemo": "จองสาธิต",
+    "tryCoastyFree": "ลองใช้ Coasty ฟรี",
+    "learnMore": "เรียนรู้เพิ่มเติม",
+    "watchSession": "ดูเซสชัน",
+    "compareAllPlans": "เปรียบเทียบแผนและฟีเจอร์ทั้งหมด",
+    "allRightsReserved": "สงวนลิขสิทธิ์",
+    "privacy": "ความเป็นส่วนตัว",
+    "terms": "ข้อกำหนด",
+    "recommended": "แนะนำ",
+    "month": "เดือน",
+    "creditsPerMonth": "{count} เครดิต/เดือน",
+    "agentsInParallel": "{count} เอเจนต์พร้อมกัน"
   },
 
   "header": {
-    "useCases": "Use Cases",
-    "blog": "Blog",
+    "useCases": "กรณีใช้งาน",
+    "blog": "บล็อก",
     "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "compare": "เปรียบเทียบ",
+    "demos": "สาธิต",
+    "pricing": "ราคา",
+    "download": "ดาวน์โหลด",
+    "signIn": "เข้าสู่ระบบ",
+    "getStarted": "เริ่มต้นใช้งาน",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "ข่าวกรองคู่แข่ง",
+      "qaBugReports": "รายงานบั๊ก QA",
+      "seoGapAnalysis": "วิเคราะห์ช่องว่าง SEO",
+      "dataExtraction": "ดึงข้อมูล",
+      "leadGeneration": "สร้างลีด",
+      "siteAudit": "ตรวจสอบเว็บไซต์",
+      "adIntelligence": "วิเคราะห์โฆษณา",
+      "emailOutreach": "อีเมลเข้าถึง",
+      "designReview": "ตรวจสอบการออกแบบ",
+      "priceMonitoring": "ติดตามราคา",
+      "marketResearch": "วิจัยตลาด",
+      "emailCampaigns": "แคมเปญอีเมล"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} โปรไฟล์คู่แข่งที่จัดส่ง",
+      "qaBugReports": "{stat} โฟลว์ผู้ใช้ที่ทดสอบต่อรอบ",
+      "seoGapAnalysis": "{stat} ช่องว่างคำสำคัญที่ระบุ",
+      "dataExtraction": "{stat} แถวที่ดึงต่อรอบ",
+      "leadGeneration": "{stat} ลีดคุณภาพต่อรอบ",
+      "siteAudit": "{stat} หน้าที่ตรวจสอบต่อรอบ",
+      "adIntelligence": "{stat} ครีเอทีฟโฆษณาที่จับได้",
+      "emailOutreach": "{stat} อีเมลส่วนบุคคลที่ร่าง",
+      "designReview": "{stat} เบรกพอยต์ที่ทดสอบต่อหน้า",
+      "priceMonitoring": "{stat} SKU ที่เปรียบเทียบต่อรอบ",
+      "marketResearch": "{stat} จุดข้อมูลที่รวบรวม",
+      "emailCampaigns": "{stat} อีเมลส่วนบุคคลต่อแคมเปญ"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
-      "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "allPosts": "บทความทั้งหมด",
+      "computerUse": "การใช้คอมพิวเตอร์",
+      "compare": "เปรียบเทียบ",
+      "dataEntry": "ป้อนข้อมูล",
+      "webScraping": "Web scraping",
+      "jobApplications": "สมัครงาน",
+      "demosResults": "สาธิตและผลลัพธ์",
+      "guide": "คู่มือ"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} บทความที่เผยแพร่รายสัปดาห์",
+      "computerUse": "{stat} คะแนนเบนช์มาร์ก OSWorld",
+      "compare": "{stat} คู่แข่งที่วิเคราะห์",
+      "dataEntry": "{stat} เร็วกว่าทำด้วยตนเอง",
+      "webScraping": "{stat} หน้าต่อเซสชัน",
+      "jobApplications": "{stat} ใบสมัครต่อเซสชัน",
+      "demosResults": "{stat} กรณีศึกษาจริง",
+      "guide": "{stat} บทแนะนำกรณีใช้งาน"
     }
   },
 
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "headline": "ผู้ควบคุมคอมพิวเตอร์อัตโนมัติ",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "เอเจนต์คอมพิวเตอร์",
+        "headline": "ทำงานอัตโนมัติทุกงานในเบราว์เซอร์",
+        "outcome": "เอเจนต์ AI ที่ควบคุมคอมพิวเตอร์จริง — เปิดเว็บ คลิก พิมพ์ และส่งมอบงานสำเร็จ ไม่ต้องตั้งค่าใดๆ"
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "ข่าวกรองคู่แข่ง",
+        "headline": "ติดตามคู่แข่งทุกราย",
+        "outcome": "โปรไฟล์คู่แข่งฉบับสมบูรณ์พร้อมราคา ฟีเจอร์ และช่องว่างในการวางตำแหน่ง — ส่งออกเป็นรายงานพร้อมแชร์"
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "การทดสอบ QA",
+        "headline": "พบบั๊กก่อนผู้ใช้",
+        "outcome": "โฟลว์ผู้ใช้ที่สำคัญทดสอบแบบครบวงจร ทุกบั๊กถ่ายภาพหน้าจอพร้อมขั้นตอนจำลองและการจัดอันดับความรุนแรง"
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "วิเคราะห์ SEO",
+        "headline": "ค้นพบช่องว่างคำสำคัญ",
+        "outcome": "ช่องว่างคำสำคัญที่ระบุ บรีฟเนื้อหาที่ร่าง แหล่งแบ็คลิงก์ของคู่แข่งที่แมป — กลยุทธ์ SEO ที่นำไปปฏิบัติได้"
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "ดึงข้อมูล",
+        "headline": "สแกรปและจัดโครงสร้างเว็บไซต์ใดก็ได้",
+        "outcome": "ข้อมูลที่จัดโครงสร้างแล้ว ดึง ทำความสะอาด ลบซ้ำ และส่งออกเป็น CSV — จากเว็บไซต์ใดก็ได้ รูปแบบใดก็ได้"
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "สร้างลีด",
+        "headline": "เติมเต็มไปป์ไลน์การขาย",
+        "outcome": "ผู้ตัดสินใจคุณภาพที่ตรงกับ ICP ของคุณ พร้อมตำแหน่งที่ยืนยัน บริษัท และการเปิดอีเมลส่วนบุคคล"
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "ตรวจสอบเว็บไซต์",
+        "headline": "ตรวจสอบทุกหน้าในวงกว้าง",
+        "outcome": "หน้าถูกสแกน Core Web Vitals ให้คะแนน ลิงก์เสียพบแล้ว ปัญหาการเข้าถึงจัดอันดับตามลำดับความสำคัญ"
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "อีเมลเข้าถึง",
+        "headline": "ส่งอีเมลเข้าถึงส่วนบุคคล",
+        "outcome": "อีเมลส่วนบุคคลที่อ้างอิงบริษัท ตำแหน่ง และจุดเจ็บปวดของแต่ละลูกค้า — พร้อมส่ง"
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "วิจัยตลาด",
+        "headline": "ตรวจสอบตลาดของคุณอย่างรวดเร็ว",
+        "outcome": "TAM คำนวณแล้ว ผู้เล่นหลักถูกสร้างโปรไฟล์ แนวโน้มการเติบโตถูกแสดงกราฟ — จากจุดข้อมูลหลายสิบจุด"
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "การตลาด", "task": "ทำการตลาดสินค้าบน Reddit โดยอัตโนมัติ" },
+      "goToMarket": { "label": "Go-to-Market", "task": "หาลูกค้าเป้าหมายและส่งอีเมลส่วนบุคคล" },
+      "qaTesting": { "label": "การทดสอบ QA", "task": "ทดสอบทุกโฟลว์การชำระเงินและรายงานบั๊ก" },
+      "jobApplication": { "label": "สมัครงาน", "task": "หาตำแหน่ง ปรับแต่งเรซูเม่ และสมัคร" },
+      "formFilling": { "label": "กรอกแบบฟอร์ม", "task": "กรอกใบสมัคร YC S26 ให้คุณ" },
+      "socialMedia": { "label": "โซเชียลมีเดีย", "task": "โพสต์บน Hacker News และมีส่วนร่วมกับความคิดเห็น" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "เบนช์มาร์ก OSWorld", "sublabel": "#1 เอเจนต์ computer-use ของโลก" },
+    "tools": { "value": "50+", "label": "เครื่องมือที่เอเจนต์ใช้ได้", "sublabel": "เบราว์เซอร์ เทอร์มินัล เดสก์ท็อป ไฟล์" },
+    "schedule": { "value": "24/7", "label": "ทำงานตามกำหนดเวลา", "sublabel": "ทำงานอัตโนมัติทุกงานที่ทำซ้ำ" },
+    "setup": { "value": "0", "label": "การตั้งค่าที่ต้องทำ", "sublabel": "ไม่ต้อง API ไม่ต้องเชื่อมต่อ ไม่ต้องเขียนโค้ด" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "ทำไมต้อง Coasty",
+    "title": "ไม่ใช่แชทบอท ไม่ใช่สคริปต์ RPA",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "ทำงานเหมือนมนุษย์",
+      "description": "มองเห็น คลิก พิมพ์ นำทาง — เหมือนคุณทุกประการ"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "ไม่ต้องมีสคริปต์หรือตั้งค่า",
+      "description": "พิมพ์ภาษาไทย ได้ผลลัพธ์"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "จัดการกับสิ่งที่ไม่คาดคิด",
+      "description": "ปรับตัวกับ CAPTCHA ป๊อปอัป การเปลี่ยนแปลงเลย์เอาต์"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "ทำงานแบบแยกส่วน",
+      "description": "แซนด์บ็อกซ์ VM ต่อเซสชัน — ไม่มีอะไรรั่วไหล"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "วิธีการทำงาน",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "อธิบายงานของคุณ",
+      "description": "ภาษาไทยธรรมดา แค่นั้น",
+      "placeholder": "ค้นหา 100 ลีดบน LinkedIn..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "ดูเอเจนต์ทำงาน",
+      "description": "เปิดเบราว์เซอร์ คลิก พิมพ์ นำทาง"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "งานเสร็จสมบูรณ์",
+      "description": "ทุกการกระทำบันทึกพร้อมภาพหน้าจอ",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "งานเสร็จสมบูรณ์",
+        "leadsFound": "พบ 12 ลีด",
+        "addedToCrm": "เพิ่มลงใน CRM แล้ว"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "อันดับ #1 ของโลก",
+    "subtitle": "82% บน OSWorld — เบนช์มาร์กที่ยากที่สุดสำหรับเอเจนต์ AI ที่ใช้คอมพิวเตอร์จริง",
+    "agenticFramework": "เฟรมเวิร์กเอเจนต์",
+    "foundationModel": "โมเดลพื้นฐาน"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "ทำไมต้องทำงานอัตโนมัติกับ Coasty?",
+    "subtitle": "งานเดียวกันที่ทีมใช้เวลาหลายชั่วโมง — Coasty ทำเสร็จในไม่กี่นาที ตลอดทั้งวัน",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "ทำด้วยตนเอง",
+      "subtitle": "คุณหรือทีมของคุณ ด้วยมือ"
     },
     "coasty": {
       "title": "Coasty AI Agent",
-      "subtitle": "#1 computer-use agent"
+      "subtitle": "#1 เอเจนต์ computer-use"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "เวลาต่องาน",
+      "availability": "ความพร้อมใช้งาน",
+      "setupTime": "เวลาตั้งค่า",
+      "errorRate": "อัตราข้อผิดพลาด",
+      "scaling": "การขยายขนาด",
+      "auditTrail": "ร่องรอยการตรวจสอบ"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "หลายชั่วโมงถึงหลายวัน",
+      "availability": "เฉพาะเวลาทำการ",
+      "setupTime": "เรียนรู้เครื่องมือ เขียน SOP",
+      "errorRate": "ข้อผิดพลาดของมนุษย์",
+      "scaling": "ทำมากขึ้น = ใช้เวลามากขึ้น",
+      "auditTrail": "ไม่มี"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "ไม่กี่นาที",
+      "availability": "24/7 ทุกวัน",
+      "setupTime": "60 วินาที",
+      "errorRate": "แก้ไขตัวเอง",
+      "scaling": "รันงานไม่จำกัดพร้อมกัน",
+      "auditTrail": "ทุกคลิกถูกบันทึก + ภาพหน้าจอ"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "ทำงานอัตโนมัติที่ใช้เวลา",
+      "hoursManually": "ชั่วโมงด้วยตนเอง",
+      "startingAt": "เริ่มต้นที่"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "ดูเอเจนต์ทำงานจริง",
+    "subtitle": "งานจริง เบราว์เซอร์จริง ทุกคลิกถูกบันทึก",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
-        "tag": "Marketing"
+        "title": "Coasty บน Reddit",
+        "description": "ดู Coasty ดำเนินแคมเปญการตลาดอัตโนมัติ — วิจัยคู่แข่ง วิเคราะห์แนวโน้ม และสร้างกลยุทธ์",
+        "tag": "การตลาด"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "ค้นหาลูกค้าเป้าหมาย",
+        "description": "Coasty ค้นหาและวิจัยลูกค้าเป้าหมาย รวบรวมรายละเอียดสำคัญเพื่อสร้างอีเมลเข้าถึงส่วนบุคคล",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "QA ทดสอบตัวเอง",
+        "description": "Coasty ทดสอบคุณภาพผลิตภัณฑ์ของตัวเอง — นำทางโฟลว์ จับบั๊ก และรายงานปัญหาโดยอัตโนมัติ",
+        "tag": "การทดสอบ QA"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "ส่งอีเมลในนามของคุณ",
+        "description": "ตั้งแต่เขียนจนถึงส่ง — เอเจนต์ AI ร่างและส่งอีเมลด้วยตัวเองทั้งหมด",
+        "tag": "การสื่อสาร"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "สมัครงาน",
+        "description": "Coasty หาตำแหน่งที่ตรง ปรับแต่งเรซูเม่ และส่งใบสมัคร — ทั้งหมดด้วยตัวเอง",
+        "tag": "สมัครงาน"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "โพสต์บน Hacker News",
+        "description": "Coasty สร้างและเผยแพร่โพสต์บน Hacker News — เขียนเนื้อหาและส่งโดยอัตโนมัติ",
+        "tag": "โซเชียลมีเดีย"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "สร้างมาเพื่องานคอมพิวเตอร์จริง",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "แก้ไขตัวเอง",
+      "description": "ตรวจจับข้อผิดพลาด ลองเส้นทางอื่น"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "ร่องรอยการตรวจสอบเต็มรูปแบบ",
+      "description": "ทุกคลิกบันทึกพร้อมภาพหน้าจอ"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "กำหนดเวลา 24/7",
+      "description": "ทำงานตาม cron — รายชั่วโมง รายวัน รายสัปดาห์"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "แซนด์บ็อกซ์และปลอดภัย",
+      "description": "VM แยกต่อเซสชัน ลบหลังเสร็จ"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 บน OSWorld",
+      "description": "82% — คะแนนสูงสุดที่เคยบันทึก"
     },
     "swarms": {
       "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "description": "แบ่งงานข้ามเครื่องแบบขนาน"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "เริ่มฟรี ขยายเมื่อพร้อม",
+    "subtitle": "ไม่ต้องบัตรเครดิต เอเจนต์ AI ของคุณพร้อมใน 60 วินาที",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "ลอง #1 เอเจนต์ computer-use",
+        "cta": "เริ่มใช้ฟรี"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "ระบบอัตโนมัติรายวันแบบเบา",
+        "cta": "เลือก Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "ทำงานอัตโนมัติทุกวัน",
+        "cta": "เลือก Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "ขยายเวิร์กโฟลว์ที่ซับซ้อน",
+        "cta": "เลือก Plus",
+        "badge": "ยอดนิยม"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "ระบบอัตโนมัติหนักไม่จำกัด",
+        "cta": "เลือก Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 VM ชั่วคราว (2 ชม.)",
+    "vmDeletedAfterInactivity": "1 VM (ลบหลังไม่ใช้งาน)",
+    "vmAlwaysOn": "{count} VM เปิดตลอด",
+    "vmAlwaysOnPlural": "{count} VM เปิดตลอด",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "งานเดียวกันต้องจ่าย {oldPrice} ถ้าใช้แรงงานคน",
+      "description": "ผู้ช่วยเสมือนราคา $2,000–$4,000/เดือน พนักงานพาร์ทไทม์แพงกว่า Coasty ทำงานเดียวกัน 24/7 เริ่มต้นที่ $0 — ด้วยความสม่ำเสมอสมบูรณ์แบบ ร่องรอยการตรวจสอบเต็มรูปแบบ และไม่ต้องฝึกอบรม"
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "คำถามที่พบบ่อย",
+    "subtitle": "ทุกสิ่งที่คุณต้องรู้ก่อนเริ่มใช้งาน",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Coasty คืออะไร?",
+        "answer": "Coasty เป็นเอเจนต์ AI สำหรับใช้คอมพิวเตอร์ที่ดีที่สุดในโลก คุณอธิบายงาน — ค้นหาลีด ทดสอบเว็บไซต์ กรอกแบบฟอร์ม โพสต์บนโซเชียลมีเดีย — และ Coasty เปิดเบราว์เซอร์จริง นำทางแอป คลิกปุ่ม พิมพ์ข้อความ และทำงานให้เสร็จตั้งแต่ต้นจนจบ ไม่ต้อง API ไม่ต้องเชื่อมต่อ ไม่ต้องเขียนโค้ด"
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "แตกต่างจาก ChatGPT หรือเครื่องมือ AI อื่นอย่างไร?",
+        "answer": "ChatGPT สร้างข้อความ Coasty ใช้คอมพิวเตอร์ มันไม่ได้บอกคุณว่าต้องทำอะไร — มันเปิดเบราว์เซอร์ นำทางไปยังเว็บไซต์ คลิกปุ่ม กรอกแบบฟอร์ม และส่งมอบงานสำเร็จ มันคือความแตกต่างระหว่างการได้รับคำแนะนำกับการให้ทำงานให้คุณ"
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Coasty ทำงานอัตโนมัติอะไรได้บ้าง?",
+        "answer": "ทุกงานที่คุณทำได้บนคอมพิวเตอร์ วิจัยเว็บ สร้างลีด ป้อนข้อมูล กรอกแบบฟอร์ม ทดสอบ QA โพสต์โซเชียลมีเดีย อีเมลเข้าถึง ประมวลผลใบแจ้งหนี้ วิเคราะห์คู่แข่ง สรรหาบุคลากร — ถ้าเกี่ยวข้องกับเบราว์เซอร์หรือแอปเดสก์ท็อป Coasty ทำได้"
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "เครดิตคืออะไรและใช้อย่างไร?",
+        "answer": "เครดิตถูกใช้ขณะเอเจนต์ทำงาน งานที่ยาวและซับซ้อนกว่าใช้เครดิตมากกว่า แผนชำระเงินรวมเครดิตรายเดือน และคุณยังสามารถซื้อแพ็คเครดิตเพิ่มเติมได้ตลอดเวลา"
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Coasty ทำงานบนคอมพิวเตอร์ของฉันได้ไหม?",
+        "answer": "ได้ แอปเดสก์ท็อปของเราทำงานเป็นโอเวอร์เลย์น้ำหนักเบาบนเครื่องของคุณ ควบคุมเบราว์เซอร์และแอปพลิเคชันในเครื่องโดยตรง หรือจะให้งานทำงานบนเครื่องคลาวด์แบบแยกส่วนก็ได้ — เลือกได้เอง"
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "ข้อมูลของฉันปลอดภัยไหม?",
+        "answer": "ทุกงานทำงานในสภาพแวดล้อมแซนด์บ็อกซ์แบบแยกส่วน ไม่มีอะไรรั่วไหลระหว่างเซสชัน ข้อมูลรับรองของคุณยังคงเป็นส่วนตัว และทุกการกระทำถูกบันทึกพร้อมภาพหน้าจอในร่องรอยการตรวจสอบเต็มรูปแบบที่คุณตรวจสอบได้ตลอดเวลา"
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "การใช้คอมพิวเตอร์ด้วย AI",
+    "tagline2": "ทำงานอัตโนมัติทุกเวิร์กโฟลว์ด้วยเอเจนต์อัจฉริยะ",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "ผลิตภัณฑ์",
+      "resources": "แหล่งข้อมูล",
+      "company": "บริษัท",
+      "legal": "กฎหมาย"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
+      "computerUse": "การใช้คอมพิวเตอร์",
+      "guide": "คู่มือ",
+      "download": "ดาวน์โหลด",
+      "pricing": "ราคา",
       "agentSwarms": "Agent Swarms",
-      "status": "Status",
-      "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "status": "สถานะ",
+      "blog": "บล็อก",
+      "useCases": "กรณีใช้งาน",
+      "demos": "สาธิต",
+      "compare": "เปรียบเทียบ",
+      "talkToCofounders": "พูดคุยกับผู้ร่วมก่อตั้งและสาธิต",
+      "contact": "ติดต่อ",
+      "privacy": "ความเป็นส่วนตัว",
+      "terms": "ข้อกำหนด"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "ภาษา"
   }
 }

@@ -114,14 +114,17 @@ export function LandingFooter() {
           ))}
         </div>
 
+        {/* Language switcher strip */}
+        <div className="border-t border-border/20 pt-6 pb-2">
+          <LanguageSwitcher />
+        </div>
+
         {/* Bottom bar */}
-        <div className="border-t border-border/30 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="border-t border-border/20 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-[12px] text-muted-foreground/50 tracking-[-0.006em]">
             &copy; {new Date().getFullYear()} Coasty. {tc("allRightsReserved")}
           </p>
           <div className="flex items-center gap-4">
-            <LanguageSwitcher />
-            <span className="text-muted-foreground/20 text-[10px]">|</span>
             <Link
               href="/privacy"
               className="text-[12px] text-muted-foreground/50 hover:text-muted-foreground transition-colors duration-200"

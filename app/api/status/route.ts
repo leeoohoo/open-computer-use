@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic"
+
 const PYTHON_BACKEND_URL =
   process.env.PYTHON_BACKEND_URL || "http://127.0.0.1:8001"
 
@@ -100,19 +102,23 @@ export async function GET() {
   const allOperational = checks.every((c) => c.status === "operational")
   const hasOutage = checks.some((c) => c.status === "outage")
 
+  const overall = allOperational
+    ? "operational"
+    : hasOutage
+      ? "outage"
+      : "degraded"
+
   return NextResponse.json(
     {
-      overall: allOperational
-        ? "operational"
-        : hasOutage
-          ? "outage"
-          : "degraded",
+      overall,
       timestamp: new Date().toISOString(),
       services: checks,
     },
     {
       headers: {
-        "Cache-Control": "public, max-age=30, s-maxage=30",
+        "Cache-Control": allOperational
+          ? "public, max-age=15, s-maxage=15, stale-while-revalidate=10"
+          : "no-store, no-cache, must-revalidate",
       },
     }
   )

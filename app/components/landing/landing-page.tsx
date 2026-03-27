@@ -6,7 +6,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download, CalendarCheck, RefreshCw, GitFork } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
 import Link from "next/link"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { captureUtmParams } from "@/lib/posthog/analytics"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
@@ -16,7 +16,7 @@ import { LandingHeader } from "./landing-header"
 import { LandingFooter } from "./landing-footer"
 import { HeroUseCaseCarousel } from "./hero-use-case-carousel"
 import { GuideLines, SectionDivider as SharedSectionDivider } from "./guide-lines"
-import { DottedGlowBackground } from "@/components/ui/dotted-glow-background"
+import Orb from "@/components/Orb"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { Caveat } from "next/font/google"
@@ -43,6 +43,18 @@ const DEMO_SESSION_DATA = [
   { key: "job" as const, chatId: "4ac6f3d2-c273-4a07-bf98-b986d1cbfb88" },
   { key: "hackernews" as const, chatId: "d181de46-b41d-4b87-9648-0374b2b7ec1c" },
 ]
+
+const WHY_COASTY_KEYS = ["worksLikeHuman", "noScripts", "handlesUnexpected", "runsInIsolation"] as const
+
+const LANDING_NAV_SECTIONS = [
+  { id: "why-coasty", label: "Why Coasty" },
+  { id: "how-it-works", label: "How It Works" },
+  { id: "benchmark", label: "Benchmark" },
+  { id: "cost", label: "Cost" },
+  { id: "demo", label: "Demo" },
+  { id: "features", label: "Features" },
+  { id: "pricing", label: "Pricing" },
+] as const
 
 const FAQ_KEYS = ["whatIsCoasty", "howDifferent", "whatTasks", "whatAreCredits", "localComputer", "dataSafe"] as const
 
@@ -103,6 +115,75 @@ export function LandingPage() {
         }
       }
 
+  // ── Global section navigation: continuous scroll progress ──
+  // Reads offsetTop live on each scroll frame (works for sticky elements
+  // because offsetTop returns the normal-flow position relative to offsetParent).
+  // For click navigation, we temporarily force position:static to read the
+  // true flow position, then restore sticky.
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const activeLandingSection = Math.round(scrollProgress)
+
+  useEffect(() => {
+    const sectionEls = LANDING_NAV_SECTIONS
+      .map(s => document.getElementById(s.id))
+      .filter(Boolean) as HTMLElement[]
+    if (!sectionEls.length) return
+
+    const onScroll = () => {
+      const trigger = window.scrollY + window.innerHeight * 0.35
+      let progress = 0
+      for (let i = sectionEls.length - 1; i >= 0; i--) {
+        const top = sectionEls[i].offsetTop
+        if (top <= trigger) {
+          if (i < sectionEls.length - 1) {
+            const nextTop = sectionEls[i + 1].offsetTop
+            const span = nextTop - top
+            const frac = span > 0 ? Math.min(1, (trigger - top) / span) : 0
+            progress = i + frac
+          } else {
+            progress = i
+          }
+          break
+        }
+      }
+      setScrollProgress(progress)
+    }
+
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [mounted])
+
+  const scrollToLandingSection = useCallback((index: number) => {
+    const el = document.getElementById(LANDING_NAV_SECTIONS[index]?.id)
+    if (!el) return
+    // Temporarily remove sticky so offsetTop gives the true flow position
+    const original = el.style.position
+    el.style.position = 'relative'
+    let top = 0
+    let node: HTMLElement | null = el
+    while (node) {
+      top += node.offsetTop
+      node = node.offsetParent as HTMLElement | null
+    }
+    el.style.position = original
+    window.scrollTo({ top: Math.max(0, top - 90), behavior: 'smooth' })
+  }, [])
+
+  // ── Shared card interaction handlers (mouse-tracking gradient) ──
+  const handleCardMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    e.currentTarget.style.setProperty('--mouse-x', `${x}%`)
+    e.currentTarget.style.setProperty('--mouse-y', `${y}%`)
+  }, [])
+
+  const handleCardMouseLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.setProperty('--mouse-x', '50%')
+    e.currentTarget.style.setProperty('--mouse-y', '50%')
+  }, [])
+
   const SectionDivider = SharedSectionDivider
 
   return (
@@ -116,29 +197,23 @@ export function LandingPage() {
 
       {/* Main content */}
       <main className={cn("relative", isMobile ? "pt-16" : "pt-20")}>
+
         {/* Hero Section */}
         <section id="hero" className={cn(
           "relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-hidden",
           isMobile ? "px-7 pt-8 pb-16" : "px-10 pt-16 pb-24"
         )}>
 
-          {/* Dotted glow background — clipped to guide lines */}
+          {/* Orb background — clipped to guide lines */}
           <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
-              <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden">
-                <DottedGlowBackground
-                  className="[mask-image:radial-gradient(ellipse_80%_70%_at_50%_40%,black_0%,transparent_100%)]"
-                  opacity={0.6}
-                  gap={14}
-                  radius={1.4}
-                  colorLightVar="--color-neutral-400"
-                  glowColorLightVar="--color-neutral-500"
-                  colorDarkVar="--color-neutral-500"
-                  glowColorDarkVar="--color-sky-800"
-                  backgroundOpacity={0}
-                  speedMin={0.3}
-                  speedMax={1.4}
-                  speedScale={0.8}
+              <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_100%_90%_at_50%_45%,black_0%,black_40%,transparent_85%)]">
+                <Orb
+                  hue={220}
+                  hoverIntensity={0.3}
+                  rotateOnHover={true}
+                  forceHoverState={false}
+                  backgroundColor={resolvedTheme === "dark" ? "#000000" : "#ffffff"}
                 />
               </div>
             </div>
@@ -198,19 +273,161 @@ export function LandingPage() {
 
         <SectionDivider />
 
-        {/* Why Coasty Section */}
-        <section id="why-coasty" className={cn(
-          "py-20",
-          isMobile ? "px-7" : "px-10"
+        {/* ══════════════════════════════════════════════════════════════
+            Guided Sections: Sticky Left Nav + Right Card Stack
+            Wraps Why Coasty → Pricing inside a two-column layout
+            that sits within the guide lines (max-w-7xl).
+            On mobile: single column, no sidebar.
+           ══════════════════════════════════════════════════════════════ */}
+        <div className={cn(
+          "max-w-7xl mx-auto",
+          isMobile ? "" : "flex gap-0 px-6 sm:px-10 lg:px-12"
         )}>
+
+          {/* ── LEFT: Sticky section navigator ── */}
+          {!isMobile && (() => {
+            const count = LANDING_NAV_SECTIONS.length
+            const step = 38
+            const h = (count - 1) * step
+            const cx = 8
+            const wave = 5
+            // Smooth S-curve through dots
+            const pts = LANDING_NAV_SECTIONS.map((_, i) => ({
+              x: cx + (i % 2 === 0 ? -wave : wave) * (i > 0 && i < count - 1 ? 1 : 0),
+              y: i * step,
+            }))
+            let curve = `M ${pts[0].x} ${pts[0].y}`
+            for (let i = 1; i < pts.length; i++) {
+              const mid = (pts[i - 1].y + pts[i].y) / 2
+              curve += ` C ${pts[i - 1].x} ${mid}, ${pts[i].x} ${mid}, ${pts[i].x} ${pts[i].y}`
+            }
+            const len = h * 1.12
+            const progress = count > 1 ? Math.min(1, scrollProgress / (count - 1)) : 0
+
+            return (
+            <div className="w-48 flex-shrink-0">
+              <div className="sticky top-0 h-screen flex flex-col justify-center">
+                <div className="relative" style={{ paddingLeft: 28 }}>
+                  {/* SVG curve */}
+                  <svg
+                    className="absolute pointer-events-none"
+                    style={{ left: 6, top: 5, width: 20, height: h }}
+                    viewBox={`0 0 16 ${h}`}
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path d={curve} stroke="currentColor" className="text-foreground/10 dark:text-foreground/[0.06]" strokeWidth="1" strokeLinecap="round" fill="none" />
+                    <path
+                      d={curve}
+                      stroke="currentColor"
+                      className="text-foreground/40 dark:text-foreground/30"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      fill="none"
+                      strokeDasharray={len}
+                      strokeDashoffset={len * (1 - progress)}
+                    />
+                  </svg>
+
+                  {/* Orb — travels smoothly along the curve matching SVG coordinates */}
+                  {(() => {
+                    const clampedProgress = Math.max(0, Math.min(count - 1, scrollProgress))
+                    const segIdx = Math.floor(clampedProgress)
+                    const segFrac = clampedProgress - segIdx
+                    const p0 = pts[segIdx]
+                    const p1 = pts[Math.min(segIdx + 1, count - 1)]
+                    // Cubic bezier interpolation matching SVG C command control points
+                    const midY = (p0.y + p1.y) / 2
+                    const t = segFrac
+                    const mt = 1 - t
+                    const svgX = mt*mt*mt*p0.x + 3*mt*mt*t*p0.x + 3*mt*t*t*p1.x + t*t*t*p1.x
+                    const svgY = mt*mt*mt*p0.y + 3*mt*mt*t*midY + 3*mt*t*t*midY + t*t*t*p1.y
+                    // Convert SVG viewBox coords → pixel coords in the container
+                    // SVG element: left=6, top=5, width=20, viewBox="0 0 16 h"
+                    const pixelX = 6 + svgX * (20 / 16)
+                    const pixelY = 5 + svgY
+                    return (
+                      <div
+                        className="absolute pointer-events-none z-10"
+                        style={{
+                          left: pixelX,
+                          top: pixelY,
+                          width: 10,
+                          height: 10,
+                          transform: 'translate(-50%, -50%)',
+                        }}
+                      >
+                        {/* Dark mode: white glass orb */}
+                        <div
+                          className="w-full h-full rounded-full hidden dark:block shadow-[0_0_8px_rgba(255,255,255,0.25),0_0_3px_rgba(255,255,255,0.5)]"
+                          style={{
+                            background: 'radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.55) 45%, rgba(210,220,240,0.25) 75%, rgba(160,175,210,0.1))',
+                          }}
+                        />
+                        {/* Light mode: dark glass orb */}
+                        <div
+                          className="w-full h-full rounded-full dark:hidden shadow-[0_0_6px_rgba(0,0,0,0.15),0_0_2px_rgba(0,0,0,0.25)]"
+                          style={{
+                            background: 'radial-gradient(circle at 35% 30%, rgba(30,30,50,0.9), rgba(50,50,80,0.6) 45%, rgba(80,90,120,0.3) 75%, rgba(100,110,140,0.1))',
+                          }}
+                        />
+                      </div>
+                    )
+                  })()}
+
+                  {/* Nav labels */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: step - 16 }}>
+                    {LANDING_NAV_SECTIONS.map((section, i) => {
+                      const isActive = activeLandingSection === i
+                      const isPast = i <= activeLandingSection
+                      return (
+                      <button
+                        key={section.id}
+                        onClick={() => scrollToLandingSection(i)}
+                        className={cn(
+                          "text-left transition-all duration-300 cursor-pointer group",
+                          isActive ? "opacity-100" : isPast ? "opacity-45" : "opacity-25 hover:opacity-50"
+                        )}
+                        style={{ height: 16 }}
+                      >
+                        <span className={cn(
+                          "text-[13px] font-medium leading-tight transition-all duration-300 whitespace-nowrap",
+                          isActive ? "text-foreground" : "text-muted-foreground/60"
+                        )}>
+                          {section.label}
+                        </span>
+                      </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+            )
+          })()}
+
+          {/* ── RIGHT: Sections as sticky card stack ── */}
+          <div className={cn(
+            isMobile ? "" : "flex-1 min-w-0 pb-[40vh] pl-8 pr-8 lg:pl-10 lg:pr-10"
+          )}>
+
+        {/* Why Coasty Section */}
+        <section
+          id="why-coasty"
+          className={cn(
+            isMobile
+              ? "py-16 px-7"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+          )}
+          style={!isMobile ? { top: 'calc(5.5rem)', zIndex: 1 } : undefined}
+        >
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-5xl mx-auto"
           >
-            {/* CSS animations for visual cards */}
+            {/* CSS animations for visual cards (used across multiple sections) */}
             <style dangerouslySetInnerHTML={{ __html: `
               @keyframes lp-scan-line { 0% { top: 10% } 100% { top: 85% } }
               @keyframes lp-check-pop { 0% { transform: scale(0); opacity: 0 } 60% { transform: scale(1.2); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
@@ -230,9 +447,10 @@ export function LandingPage() {
               @keyframes lp-swarm-stagger-3 { 0% { width: 0 } 100% { width: 40% } }
             `}} />
 
-            <motion.div variants={itemVariants} className="text-center mb-12">
+            {/* Section header */}
+            <motion.div variants={itemVariants} className="text-center mb-8">
               <p className={cn(
-                "text-muted-foreground/60 font-medium uppercase tracking-[0.15em] mb-3",
+                "text-muted-foreground/60 font-medium uppercase tracking-[0.15em] mb-2",
                 isMobile ? "text-[10px]" : "text-xs"
               )}>
                 {t("whyCoasty.sectionLabel")}
@@ -245,139 +463,145 @@ export function LandingPage() {
               </h2>
             </motion.div>
 
+            {/* ── Cards: 2-col grid with staggered cascade + mouse-tracking gradient ── */}
             <div className={cn(
               "grid gap-4",
               isMobile ? "grid-cols-1" : "grid-cols-2"
             )}>
-              {/* Works like a human — scan + click visual */}
-              <motion.div
-                variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
-              >
-                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-16" : "h-20")}>
-                  <div className="flex items-center gap-3">
-                    <div className="relative w-[80px] h-[48px] rounded-lg border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
-                      <div className="space-y-1 p-2">
-                        <div className="h-[3px] w-[80%] rounded-full bg-foreground/10" />
-                        <div className="h-[3px] w-[60%] rounded-full bg-foreground/10" />
-                        <div className="h-[3px] w-[70%] rounded-full bg-foreground/10" />
-                        <div className="h-[3px] w-[50%] rounded-full bg-foreground/10" />
-                      </div>
-                      <div
-                        className="absolute left-0 right-0 h-px bg-foreground/25"
-                        style={{ animation: "lp-scan-line 3s ease-in-out infinite" }}
-                      />
-                    </div>
-                    <ArrowRight className="size-3 text-foreground/20" />
-                    <div className="relative w-6 h-6 rounded-lg border border-foreground/20 flex items-center justify-center">
-                      <Monitor className="size-3 text-foreground/30" />
-                      <div
-                        className="absolute inset-0 rounded-lg border border-foreground/20"
-                        style={{ animation: "lp-click-ring 2s ease-out infinite" }}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
-                  {t("whyCoasty.worksLikeHuman.title")}
-                </p>
-                <p className="text-sm text-muted-foreground/50 mt-0.5">{t("whyCoasty.worksLikeHuman.description")}</p>
-              </motion.div>
-
-              {/* No scripts or setup — plain english → done visual */}
-              <motion.div
-                variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
-              >
-                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-16" : "h-20")}>
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg border border-foreground/10 bg-foreground/[0.03] px-3 py-2 overflow-hidden">
-                      <div className="relative">
-                        <span className="text-[10px] text-foreground/40 font-mono whitespace-nowrap" style={{ animation: "lp-typing 4s ease-in-out infinite", display: "inline-block", overflow: "hidden" }}>
-                          do this task for me
-                        </span>
-                        <span className="text-[10px] text-foreground/50" style={{ animation: "lp-cursor-blink 1s step-end infinite" }}>|</span>
-                      </div>
-                    </div>
-                    <ArrowRight className="size-3 text-foreground/20" />
+              {WHY_COASTY_KEYS.map((key, i) => (
+                <motion.div
+                  key={key}
+                  initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
+                  whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={isMobile ? { duration: 0 } : { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: i * 0.08 }}
+                  onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                  onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                  className={cn(
+                    "relative rounded-2xl border overflow-hidden transition-all duration-500 group",
+                    "border-border/40 hover:border-border/60 hover:shadow-lg hover:shadow-primary/[0.04]",
+                    isMobile ? "p-5" : "p-6",
+                  )}
+                  style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
+                >
+                    {/* Mouse-tracking radial gradient overlay */}
                     <div
-                      className="flex items-center gap-1 text-foreground/40"
-                      style={{ animation: "lp-check-pop 0.5s ease forwards 1.5s", opacity: 0 }}
-                    >
-                      <Check className="size-4" />
-                      <span className="text-xs font-medium">done</span>
-                    </div>
-                  </div>
-                </div>
-                <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
-                  {t("whyCoasty.noScripts.title")}
-                </p>
-                <p className="text-sm text-muted-foreground/50 mt-0.5">{t("whyCoasty.noScripts.description")}</p>
-              </motion.div>
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                      style={{
+                        background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)'
+                      }}
+                    />
 
-              {/* Handles the unexpected — CAPTCHA → adapts → success */}
-              <motion.div
-                variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
-              >
-                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-16" : "h-20")}>
-                  <div className="flex items-center gap-2.5">
-                    <div className="rounded-lg border border-foreground/15 bg-foreground/[0.03] px-2.5 py-1.5">
-                      <span className="text-[10px] text-foreground/30 font-medium">CAPTCHA</span>
-                    </div>
-                    <span
-                      className="text-xs text-foreground/20"
-                      style={{ animation: "lp-float 2s ease-in-out infinite" }}
-                    >→</span>
-                    <div className="rounded-lg border border-foreground/15 bg-foreground/[0.03] px-2.5 py-1.5">
-                      <span className="text-[10px] text-foreground/30 font-medium">adapts</span>
-                    </div>
-                    <span className="text-xs text-foreground/20">→</span>
-                    <div
-                      className="h-5 w-5 rounded-full border border-foreground/20 flex items-center justify-center"
-                      style={{ animation: "lp-check-pop 0.5s ease forwards 2s", opacity: 0 }}
-                    >
-                      <Check className="size-3 text-foreground/40" />
-                    </div>
-                  </div>
-                </div>
-                <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
-                  {t("whyCoasty.handlesUnexpected.title")}
-                </p>
-                <p className="text-sm text-muted-foreground/50 mt-0.5">{t("whyCoasty.handlesUnexpected.description")}</p>
-              </motion.div>
+                    <div className="relative z-10">
+                      {/* Micro-illustration */}
+                      <div className={cn("flex items-center justify-center mb-3", isMobile ? "h-16" : "h-16")}>
+                        {/* Card 0: Works like a human — scan + click */}
+                        {i === 0 && (
+                          <div className="flex items-center gap-3">
+                            <div className="relative w-[80px] h-[48px] rounded-lg border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
+                              <div className="space-y-1 p-2">
+                                <div className="h-[3px] w-[80%] rounded-full bg-foreground/10" />
+                                <div className="h-[3px] w-[60%] rounded-full bg-foreground/10" />
+                                <div className="h-[3px] w-[70%] rounded-full bg-foreground/10" />
+                                <div className="h-[3px] w-[50%] rounded-full bg-foreground/10" />
+                              </div>
+                              <div
+                                className="absolute left-0 right-0 h-px bg-foreground/25"
+                                style={{ animation: "lp-scan-line 3s ease-in-out infinite" }}
+                              />
+                            </div>
+                            <ArrowRight className="size-3 text-foreground/20" />
+                            <div className="relative w-6 h-6 rounded-lg border border-foreground/20 flex items-center justify-center">
+                              <Monitor className="size-3 text-foreground/30" />
+                              <div
+                                className="absolute inset-0 rounded-lg border border-foreground/20"
+                                style={{ animation: "lp-click-ring 2s ease-out infinite" }}
+                              />
+                            </div>
+                          </div>
+                        )}
 
-              {/* Runs in isolation — sandboxed VM visual */}
-              <motion.div
-                variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
-              >
-                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-16" : "h-20")}>
-                  <div className="relative w-[60px] h-[44px] rounded-lg border border-dashed border-foreground/15 flex items-center justify-center">
-                    <div className="w-8 h-6 rounded border border-foreground/10 bg-foreground/[0.03] flex items-center justify-center">
-                      <Monitor className="size-3 text-foreground/20" />
+                        {/* Card 1: No scripts — typing → done */}
+                        {i === 1 && (
+                          <div className="flex items-center gap-3">
+                            <div className="rounded-lg border border-foreground/10 bg-foreground/[0.03] px-3 py-2 overflow-hidden">
+                              <div className="relative">
+                                <span className="text-[10px] text-foreground/40 font-mono whitespace-nowrap" style={{ animation: "lp-typing 4s ease-in-out infinite", display: "inline-block", overflow: "hidden" }}>
+                                  do this task for me
+                                </span>
+                                <span className="text-[10px] text-foreground/50" style={{ animation: "lp-cursor-blink 1s step-end infinite" }}>|</span>
+                              </div>
+                            </div>
+                            <ArrowRight className="size-3 text-foreground/20" />
+                            <div
+                              className="flex items-center gap-1 text-foreground/40"
+                              style={{ animation: "lp-check-pop 0.5s ease forwards 1.5s", opacity: 0 }}
+                            >
+                              <Check className="size-4" />
+                              <span className="text-xs font-medium">done</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Card 2: Handles unexpected — CAPTCHA → adapts → success */}
+                        {i === 2 && (
+                          <div className="flex items-center gap-2.5">
+                            <div className="rounded-lg border border-foreground/15 bg-foreground/[0.03] px-2.5 py-1.5">
+                              <span className="text-[10px] text-foreground/30 font-medium">CAPTCHA</span>
+                            </div>
+                            <span
+                              className="text-xs text-foreground/20"
+                              style={{ animation: "lp-float 2s ease-in-out infinite" }}
+                            >→</span>
+                            <div className="rounded-lg border border-foreground/15 bg-foreground/[0.03] px-2.5 py-1.5">
+                              <span className="text-[10px] text-foreground/30 font-medium">adapts</span>
+                            </div>
+                            <span className="text-xs text-foreground/20">→</span>
+                            <div
+                              className="h-5 w-5 rounded-full border border-foreground/20 flex items-center justify-center"
+                              style={{ animation: "lp-check-pop 0.5s ease forwards 2s", opacity: 0 }}
+                            >
+                              <Check className="size-3 text-foreground/40" />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Card 3: Runs in isolation — sandboxed VM */}
+                        {i === 3 && (
+                          <div className="relative w-[60px] h-[44px] rounded-lg border border-dashed border-foreground/15 flex items-center justify-center">
+                            <div className="w-8 h-6 rounded border border-foreground/10 bg-foreground/[0.03] flex items-center justify-center">
+                              <Monitor className="size-3 text-foreground/20" />
+                            </div>
+                            <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full border border-foreground/15 bg-background flex items-center justify-center">
+                              <Shield className="size-2.5 text-foreground/30" />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Title + description */}
+                      <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
+                        {t(`whyCoasty.${key}.title`)}
+                      </p>
+                      <p className="text-sm text-muted-foreground/50 mt-0.5">{t(`whyCoasty.${key}.description`)}</p>
                     </div>
-                    <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full border border-foreground/15 bg-background flex items-center justify-center">
-                      <Shield className="size-2.5 text-foreground/30" />
-                    </div>
-                  </div>
-                </div>
-                <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
-                  {t("whyCoasty.runsInIsolation.title")}
-                </p>
-                <p className="text-sm text-muted-foreground/50 mt-0.5">{t("whyCoasty.runsInIsolation.description")}</p>
-              </motion.div>
+                  </motion.div>
+                ))}
             </div>
           </motion.div>
         </section>
 
-        <SectionDivider />
 
         {/* How It Works Section */}
-        <section id="how-it-works" className={cn(
-          "py-20",
-          isMobile ? "px-7" : "px-10"
-        )}>
+        <section
+          id="how-it-works"
+          className={cn(
+            isMobile
+              ? "py-16 px-7"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+          )}
+          style={!isMobile ? { top: 'calc(5.5rem + 8px)', zIndex: 2 } : undefined}
+        >
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -385,10 +609,10 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-12">
+            <motion.div variants={itemVariants} className="text-center mb-8">
               <h2 className={cn(
                 "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
               )}>
                 {t("howItWorks.title")}
               </h2>
@@ -400,133 +624,164 @@ export function LandingPage() {
             )}>
               {/* Step 1: Describe — typing animation */}
               <motion.div
-                variants={itemVariants}
-                className="relative rounded-2xl border border-border/40 bg-card/30 p-5"
+                initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
+                whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={isMobile ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
               >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
                 {!isMobile && (
-                  <div className="absolute top-1/2 -right-2.5 text-foreground/15">
+                  <div className="absolute top-1/2 -right-2.5 text-foreground/15 z-10">
                     <ArrowRight className="size-4" />
                   </div>
                 )}
-                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-28")}>
-                  <div className="w-full max-w-[200px] rounded-lg border border-foreground/10 bg-foreground/[0.02] p-3">
-                    <div className="flex items-center gap-1.5 mb-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
-                      <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
-                      <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
-                    </div>
-                    <div className="relative overflow-hidden">
-                      <span
-                        className="text-[10px] text-foreground/40 font-mono whitespace-nowrap inline-block overflow-hidden"
-                        style={{ animation: "lp-typing 5s ease-in-out infinite" }}
-                      >
-                        Research 100 leads on LinkedIn...
-                      </span>
-                      <span className="text-[10px] text-foreground/50" style={{ animation: "lp-cursor-blink 1s step-end infinite" }}>|</span>
+                <div className="relative z-10">
+                  <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-22")}>
+                    <div className="w-full max-w-[200px] rounded-lg border border-foreground/10 bg-foreground/[0.02] p-3">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
+                      </div>
+                      <div className="relative overflow-hidden">
+                        <span
+                          className="text-[10px] text-foreground/40 font-mono whitespace-nowrap inline-block overflow-hidden"
+                          style={{ animation: "lp-typing 5s ease-in-out infinite" }}
+                        >
+                          Research 100 leads on LinkedIn...
+                        </span>
+                        <span className="text-[10px] text-foreground/50" style={{ animation: "lp-cursor-blink 1s step-end infinite" }}>|</span>
+                      </div>
                     </div>
                   </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">1</span>
+                    <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step1.title")}</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step1.description")}</p>
                 </div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">1</span>
-                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step1.title")}</p>
-                </div>
-                <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step1.description")}</p>
               </motion.div>
 
               {/* Step 2: Agent works — mini browser with actions */}
               <motion.div
-                variants={itemVariants}
-                className="relative rounded-2xl border border-border/40 bg-card/30 p-5"
+                initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+                whileInView={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={isMobile ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
               >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
                 {!isMobile && (
-                  <div className="absolute top-1/2 -right-2.5 text-foreground/15">
+                  <div className="absolute top-1/2 -right-2.5 text-foreground/15 z-10">
                     <ArrowRight className="size-4" />
                   </div>
                 )}
-                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-28")}>
-                  <div className="w-full max-w-[200px] rounded-lg border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
-                    {/* Browser bar */}
-                    <div className="flex items-center gap-1 px-2 py-1.5 border-b border-foreground/[0.06]">
-                      <div className="h-1 w-1 rounded-full bg-foreground/15" />
-                      <div className="h-1 w-1 rounded-full bg-foreground/15" />
-                      <div className="h-1 w-1 rounded-full bg-foreground/15" />
-                      <div className="ml-1 h-3 flex-1 rounded bg-foreground/[0.04]" />
-                    </div>
-                    {/* Page content with scan line */}
-                    <div className="relative p-2 space-y-1.5">
-                      <div className="h-[3px] w-[90%] rounded-full bg-foreground/10" />
-                      <div className="h-[3px] w-[70%] rounded-full bg-foreground/10" />
-                      <div className="h-[3px] w-[80%] rounded-full bg-foreground/10" />
-                      <div className="h-[3px] w-[55%] rounded-full bg-foreground/10" />
-                      <div className="h-[3px] w-[75%] rounded-full bg-foreground/10" />
-                      <div
-                        className="absolute left-0 right-0 h-px bg-foreground/20"
-                        style={{ animation: "lp-scan-line 2.5s ease-in-out infinite" }}
-                      />
-                      {/* Click ring */}
-                      <div className="absolute top-3 right-4">
+                <div className="relative z-10">
+                  <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-22")}>
+                    <div className="w-full max-w-[200px] rounded-lg border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
+                      {/* Browser bar */}
+                      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-foreground/[0.06]">
+                        <div className="h-1 w-1 rounded-full bg-foreground/15" />
+                        <div className="h-1 w-1 rounded-full bg-foreground/15" />
+                        <div className="h-1 w-1 rounded-full bg-foreground/15" />
+                        <div className="ml-1 h-3 flex-1 rounded bg-foreground/[0.04]" />
+                      </div>
+                      {/* Page content with scan line */}
+                      <div className="relative p-2 space-y-1.5">
+                        <div className="h-[3px] w-[90%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[70%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[80%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[55%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[75%] rounded-full bg-foreground/10" />
                         <div
-                          className="h-3 w-3 rounded-full border border-foreground/20"
-                          style={{ animation: "lp-click-ring 2s ease-out infinite 1s" }}
+                          className="absolute left-0 right-0 h-px bg-foreground/20"
+                          style={{ animation: "lp-scan-line 2.5s ease-in-out infinite" }}
+                        />
+                        {/* Click ring */}
+                        <div className="absolute top-3 right-4">
+                          <div
+                            className="h-3 w-3 rounded-full border border-foreground/20"
+                            style={{ animation: "lp-click-ring 2s ease-out infinite 1s" }}
+                          />
+                        </div>
+                        {/* Screenshot flash */}
+                        <div
+                          className="absolute inset-0 bg-foreground/10 rounded"
+                          style={{ animation: "lp-screenshot-flash 3s ease infinite" }}
                         />
                       </div>
-                      {/* Screenshot flash */}
-                      <div
-                        className="absolute inset-0 bg-foreground/10 rounded"
-                        style={{ animation: "lp-screenshot-flash 3s ease infinite" }}
-                      />
                     </div>
                   </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">2</span>
+                    <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step2.title")}</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step2.description")}</p>
                 </div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">2</span>
-                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step2.title")}</p>
-                </div>
-                <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step2.description")}</p>
               </motion.div>
 
               {/* Step 3: Done — results appearing */}
               <motion.div
-                variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5"
+                initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
+                whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={isMobile ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 overflow-hidden group relative"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
               >
-                <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-28")}>
-                  <div className="w-full max-w-[200px] space-y-2">
-                    {/* Result items appearing */}
-                    {[t("howItWorks.step3.results.taskCompleted"), t("howItWorks.step3.results.leadsFound"), t("howItWorks.step3.results.addedToCrm")].map((text, i) => (
-                      <div
-                        key={text}
-                        className="flex items-center gap-2 rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] px-2.5 py-1.5"
-                        style={{ animation: `lp-msg-appear 0.4s ease forwards ${0.5 + i * 0.4}s`, opacity: 0 }}
-                      >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
+                <div className="relative z-10">
+                  <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-22")}>
+                    <div className="w-full max-w-[200px] space-y-2">
+                      {/* Result items appearing */}
+                      {[t("howItWorks.step3.results.taskCompleted"), t("howItWorks.step3.results.leadsFound"), t("howItWorks.step3.results.addedToCrm")].map((text, i) => (
                         <div
-                          className="h-3 w-3 rounded-full border border-foreground/20 flex items-center justify-center flex-shrink-0"
-                          style={{ animation: `lp-check-pop 0.3s ease forwards ${0.8 + i * 0.4}s`, opacity: 0 }}
+                          key={text}
+                          className="flex items-center gap-2 rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] px-2.5 py-1.5"
+                          style={{ animation: `lp-msg-appear 0.4s ease forwards ${0.5 + i * 0.4}s`, opacity: 0 }}
                         >
-                          <Check className="size-2 text-foreground/40" />
+                          <div
+                            className="h-3 w-3 rounded-full border border-foreground/20 flex items-center justify-center flex-shrink-0"
+                            style={{ animation: `lp-check-pop 0.3s ease forwards ${0.8 + i * 0.4}s`, opacity: 0 }}
+                          >
+                            <Check className="size-2 text-foreground/40" />
+                          </div>
+                          <span className="text-[10px] text-foreground/40">{text}</span>
                         </div>
-                        <span className="text-[10px] text-foreground/40">{text}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">3</span>
+                    <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step3.title")}</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step3.description")}</p>
                 </div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">3</span>
-                  <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step3.title")}</p>
-                </div>
-                <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step3.description")}</p>
               </motion.div>
             </div>
           </motion.div>
         </section>
 
-        <SectionDivider />
 
         {/* OSWorld Benchmark Section */}
-        <section className={cn(
-          "py-20",
-          isMobile ? "px-7" : "px-10"
-        )}>
+        <section
+          id="benchmark"
+          className={cn(
+            isMobile
+              ? "py-16 px-7"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+          )}
+          style={!isMobile ? { top: 'calc(5.5rem + 16px)', zIndex: 3 } : undefined}
+        >
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -534,16 +789,16 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-12">
+            <motion.div variants={itemVariants} className="text-center mb-6">
               <h2 className={cn(
                 "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
               )}>
                 {t("benchmark.title")}
               </h2>
               <p className={cn(
-                "text-muted-foreground mt-4 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-base"
+                "text-muted-foreground mt-2 max-w-lg mx-auto",
+                isMobile ? "text-sm" : "text-sm"
               )}>
                 {t("benchmark.subtitle")}
               </p>
@@ -561,7 +816,7 @@ export function LandingPage() {
               </div>
             </motion.div>
 
-            <motion.div variants={itemVariants} className={cn(isMobile ? "space-y-3" : "space-y-2.5")}>
+            <motion.div variants={itemVariants} className={cn(isMobile ? "space-y-3" : "space-y-1.5")}>
               {[
                 { name: "Coasty", org: "Ours", score: 82.0, highlight: true, type: "framework" as const },
                 { name: "Agent S3", org: "Simular · Opus 4.5 + GPT-5", score: 72.6, type: "framework" as const },
@@ -627,8 +882,8 @@ export function LandingPage() {
                     "relative rounded-md bg-muted/50 overflow-hidden",
                     isMobile ? "w-full" : "flex-1",
                     entry.highlight
-                      ? cn(isMobile ? "h-8" : "h-10", "shadow-[0_0_20px_rgba(59,130,246,0.3)] ring-1 ring-blue-500/30")
-                      : cn(isMobile ? "h-6" : "h-7")
+                      ? cn(isMobile ? "h-8" : "h-8", "shadow-[0_0_20px_rgba(59,130,246,0.3)] ring-1 ring-blue-500/30")
+                      : cn(isMobile ? "h-6" : "h-6")
                   )}>
                     {/* Bar fill */}
                     {isMobile ? (
@@ -711,13 +966,17 @@ export function LandingPage() {
           </motion.div>
         </section>
 
-        <SectionDivider />
 
         {/* Cost Comparison */}
-        <section id="cost" className={cn(
-          "py-20",
-          isMobile ? "px-7" : "px-10"
-        )}>
+        <section
+          id="cost"
+          className={cn(
+            isMobile
+              ? "py-16 px-7"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+          )}
+          style={!isMobile ? { top: 'calc(5.5rem + 24px)', zIndex: 4 } : undefined}
+        >
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -725,28 +984,37 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-12">
+            <motion.div variants={itemVariants} className="text-center mb-8">
               <h2 className={cn(
                 "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
               )}>
                 {t("comparison.title")}
               </h2>
               <p className={cn(
-                "text-muted-foreground mt-4 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-base"
+                "text-muted-foreground mt-2 max-w-lg mx-auto",
+                isMobile ? "text-sm" : "text-sm"
               )}>
                 {t("comparison.subtitle")}
               </p>
             </motion.div>
 
-            <motion.div variants={itemVariants}>
-              <div className={cn(
-                "grid",
-                isMobile ? "grid-cols-1 gap-4" : "grid-cols-2 gap-5"
-              )}>
-                {/* Hiring column */}
-                <div className="relative rounded-2xl border border-border/30 bg-card/20 overflow-hidden">
+            <div className={cn(
+              "grid",
+              isMobile ? "grid-cols-1 gap-4" : "grid-cols-2 gap-5"
+            )}>
+              {/* Hiring column */}
+              <motion.div
+                initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
+                whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={isMobile ? { duration: 0 } : { duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/30 bg-card/20 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.05), transparent 40%)' }} />
                   <div className={cn("border-b border-border/20", isMobile ? "px-5 pt-5 pb-4" : "px-8 pt-8 pb-6")}>
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted/50">
@@ -775,10 +1043,20 @@ export function LandingPage() {
                       )
                     })}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Coasty column */}
-                <div className="relative rounded-2xl border border-primary/25 overflow-hidden shadow-lg shadow-primary/5">
+                <motion.div
+                  initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
+                  whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={isMobile ? { duration: 0 } : { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+                  onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                  onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                  className="relative rounded-2xl border border-primary/25 overflow-hidden shadow-lg shadow-primary/5 group"
+                  style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
+                >
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.06), transparent 40%)' }} />
                   {/* Subtle gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.06] via-primary/[0.02] to-transparent" />
                   {/* Top accent line */}
@@ -823,9 +1101,8 @@ export function LandingPage() {
                       )
                     })}
                   </div>
-                </div>
+                </motion.div>
               </div>
-            </motion.div>
 
             <motion.div variants={itemVariants} className="flex justify-center mt-12">
               <div className={cn(
@@ -844,13 +1121,17 @@ export function LandingPage() {
           </motion.div>
         </section>
 
-        <SectionDivider />
 
         {/* Demo Section */}
-        <section id="demo" className={cn(
-          "py-20",
-          isMobile ? "px-7" : "px-10"
-        )}>
+        <section
+          id="demo"
+          className={cn(
+            isMobile
+              ? "py-16 px-7"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+          )}
+          style={!isMobile ? { top: 'calc(5.5rem + 32px)', zIndex: 5 } : undefined}
+        >
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -858,90 +1139,102 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-12">
+            <motion.div variants={itemVariants} className="text-center mb-8">
               <h2 className={cn(
                 "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
               )}>
                 {t("demo.title")}
               </h2>
               <p className={cn(
-                "text-muted-foreground mt-4 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-base"
+                "text-muted-foreground mt-2 max-w-lg mx-auto",
+                isMobile ? "text-sm" : "text-sm"
               )}>
                 {t("demo.subtitle")}
               </p>
             </motion.div>
 
-            <motion.div
-              variants={itemVariants}
-              className={cn(
-                "grid gap-4",
-                isMobile ? "grid-cols-1" : "grid-cols-2"
-              )}
-            >
-              {DEMO_SESSION_DATA.map((demo) => (
-                <Link
+            <div className={cn(
+              "grid gap-3",
+              isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-3"
+            )}>
+              {DEMO_SESSION_DATA.map((demo, demoIdx) => (
+                <motion.div
                   key={demo.chatId}
+                  initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: demoIdx % 2 === 0 ? -30 : 30 }}
+                  whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={isMobile ? { duration: 0 } : { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: demoIdx * 0.05 }}
+                  onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                  onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                  style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
+                >
+                <Link
                   href={`/share/${demo.chatId}`}
                   target="_blank"
-                  className="group relative"
+                  className="group relative block h-full"
                 >
                   <div className={cn(
-                    "relative h-full rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden",
+                    "relative h-full rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden",
                     "transition-all duration-300",
                     "hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5",
-                    "hover:-translate-y-1",
-                    isMobile ? "p-5" : "p-6"
+                    "hover:-translate-y-0.5",
+                    isMobile ? "p-5" : "p-4"
                   )}>
-                    {/* Subtle gradient bg */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    {/* Mouse-tracking gradient */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
 
-                    <div className="relative h-full flex flex-col gap-4">
+                    <div className="relative h-full flex flex-col gap-2.5">
                       {/* Tag */}
                       <div className="flex items-center justify-between">
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-muted-foreground/70">
+                        <span className="inline-flex items-center gap-1.5 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/70">
                           <span className="h-1 w-1 rounded-full bg-emerald-500" />
                           {t(`demo.sessions.${demo.key}.tag`)}
                         </span>
-                        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
+                        <ArrowRight className="h-3 w-3 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
                       </div>
 
                       {/* Title */}
                       <h3 className={cn(
-                        "font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors duration-200",
-                        isMobile ? "text-lg" : "text-xl"
+                        "font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors duration-200 leading-snug",
+                        isMobile ? "text-base" : "text-sm"
                       )}>
                         {t(`demo.sessions.${demo.key}.title`)}
                       </h3>
 
                       {/* Description */}
-                      <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                      <p className={cn(
+                        "text-muted-foreground leading-relaxed flex-1",
+                        isMobile ? "text-sm" : "text-xs"
+                      )}>
                         {t(`demo.sessions.${demo.key}.description`)}
                       </p>
 
                       {/* Footer */}
-                      <div className="flex items-center gap-2 pt-2">
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60">
-                          <Play className="h-3 w-3" />
-                          <span>{tc("watchSession")}</span>
-                        </div>
+                      <div className="flex items-center gap-1.5 pt-1">
+                        <Play className="h-2.5 w-2.5 text-muted-foreground/50" />
+                        <span className="text-[11px] text-muted-foreground/50">{tc("watchSession")}</span>
                       </div>
                     </div>
                   </div>
                 </Link>
+                </motion.div>
               ))}
-            </motion.div>
+            </div>
           </motion.div>
         </section>
 
-        <SectionDivider />
 
         {/* Features Section */}
-        <section id="features" className={cn(
-          "py-20",
-          isMobile ? "px-7" : "px-10"
-        )}>
+        <section
+          id="features"
+          className={cn(
+            isMobile
+              ? "py-16 px-7"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+          )}
+          style={!isMobile ? { top: 'calc(5.5rem + 40px)', zIndex: 6 } : undefined}
+        >
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -949,10 +1242,10 @@ export function LandingPage() {
             viewport={sectionViewport}
             className="max-w-5xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="text-center mb-12">
+            <motion.div variants={itemVariants} className="text-center mb-8">
               <h2 className={cn(
                 "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
               )}>
                 {t("features.title")}
               </h2>
@@ -965,8 +1258,12 @@ export function LandingPage() {
               {/* Self-Correcting — retry loop visual */}
               <motion.div
                 variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:shadow-lg hover:shadow-primary/[0.04] transition-all duration-500 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
               >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
                 <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
                   <div className="flex items-center gap-2">
                     <div className="rounded border border-foreground/10 bg-foreground/[0.03] px-2 py-1">
@@ -992,8 +1289,12 @@ export function LandingPage() {
               {/* Audit Trail — screenshot stack visual */}
               <motion.div
                 variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:shadow-lg hover:shadow-primary/[0.04] transition-all duration-500 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
               >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
                 <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
                   <div className="relative w-[80px] h-[40px]">
                     {/* Stacked screenshots */}
@@ -1023,8 +1324,12 @@ export function LandingPage() {
               {/* Schedule — clock with ticks visual */}
               <motion.div
                 variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:shadow-lg hover:shadow-primary/[0.04] transition-all duration-500 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
               >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
                 <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
                   <div className="flex items-center gap-3">
                     <div className="relative w-10 h-10 rounded-full border border-foreground/15 flex items-center justify-center">
@@ -1054,8 +1359,12 @@ export function LandingPage() {
               {/* Sandboxed — VM isolation visual */}
               <motion.div
                 variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:shadow-lg hover:shadow-primary/[0.04] transition-all duration-500 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
               >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
                 <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
                   <div className="flex items-center gap-2">
                     <div className="relative w-10 h-8 rounded border border-dashed border-foreground/15 flex items-center justify-center">
@@ -1080,8 +1389,12 @@ export function LandingPage() {
               {/* #1 Benchmark — bar chart visual */}
               <motion.div
                 variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:shadow-lg hover:shadow-primary/[0.04] transition-all duration-500 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
               >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
                 <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
                   <div className="w-[100px] space-y-1.5">
                     <div className="flex items-center gap-1.5">
@@ -1105,8 +1418,12 @@ export function LandingPage() {
               {/* Swarms — parallel bars visual */}
               <motion.div
                 variants={itemVariants}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:bg-card/50 transition-all duration-300"
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 hover:border-border/60 hover:shadow-lg hover:shadow-primary/[0.04] transition-all duration-500 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
               >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
                 <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-14" : "h-16")}>
                   <div className="w-[100px] space-y-1.5">
                     {[
@@ -1133,13 +1450,17 @@ export function LandingPage() {
           </motion.div>
         </section>
 
-        <SectionDivider />
 
         {/* Pricing Section — simplified overview */}
-        <section id="pricing" className={cn(
-          "py-20",
-          isMobile ? "px-7" : "px-10"
-        )}>
+        <section
+          id="pricing"
+          className={cn(
+            isMobile
+              ? "py-16 px-7"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+          )}
+          style={!isMobile ? { top: 'calc(5.5rem + 48px)', zIndex: 7 } : undefined}
+        >
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -1148,16 +1469,16 @@ export function LandingPage() {
             className="max-w-5xl mx-auto"
           >
             {/* Header */}
-            <motion.div variants={itemVariants} className="text-center mb-12">
+            <motion.div variants={itemVariants} className="text-center mb-8">
               <h2 className={cn(
                 "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
               )}>
                 {t("pricing.title")}
               </h2>
               <p className={cn(
-                "text-muted-foreground mt-4 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-base"
+                "text-muted-foreground mt-2 max-w-lg mx-auto",
+                isMobile ? "text-sm" : "text-sm"
               )}>
                 {t("pricing.subtitle")}
               </p>
@@ -1168,17 +1489,24 @@ export function LandingPage() {
               "grid gap-3",
               isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-5"
             )}>
-              {PLAN_DATA.map((plan) => (
+              {PLAN_DATA.map((plan, planIdx) => (
                 <motion.div
                   key={plan.key}
-                  variants={itemVariants}
+                  initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  whileInView={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={isMobile ? { duration: 0 } : { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: planIdx * 0.07 }}
+                  onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                  onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
                   className={cn(
-                    "relative rounded-xl border p-5 flex flex-col",
+                    "relative rounded-xl border p-5 flex flex-col group",
                     plan.highlighted
                       ? "border-foreground/20 bg-foreground/[0.03]"
-                      : "border-border/50"
+                      : "border-border/50 hover:border-border/70"
                   )}
+                  style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
                 >
+                  <div className="absolute inset-0 rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
                   {plan.highlighted && (
                     <span className="absolute -top-2.5 left-4 rounded-full bg-foreground text-background px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
                       {t(`pricing.plans.${plan.key}.badge`)}
@@ -1235,8 +1563,8 @@ export function LandingPage() {
 
             {/* Bargain callout — why this is a steal */}
             <motion.div variants={itemVariants} className={cn(
-              "mt-10 rounded-xl border border-border/40 overflow-hidden",
-              isMobile ? "p-5" : "p-6 sm:p-8"
+              "mt-6 rounded-xl border border-border/40 overflow-hidden",
+              isMobile ? "p-5" : "p-5 sm:p-6"
             )}>
               <div className="text-center max-w-2xl mx-auto">
                 <p className={cn(
@@ -1276,6 +1604,9 @@ export function LandingPage() {
             </motion.div>
           </motion.div>
         </section>
+
+          </div>{/* end RIGHT card stack */}
+        </div>{/* end Guided Sections flex wrapper */}
 
         <SectionDivider />
 

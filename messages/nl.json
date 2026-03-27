@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
+    "startFree": "Start gratis",
+    "bookDemo": "Boek een demo",
+    "tryCoastyFree": "Probeer Coasty gratis",
+    "learnMore": "Meer informatie",
+    "watchSession": "Bekijk sessie",
+    "compareAllPlans": "Vergelijk alle plannen en functies",
+    "allRightsReserved": "Alle rechten voorbehouden.",
     "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "terms": "Voorwaarden",
+    "recommended": "Aanbevolen",
+    "month": "maand",
+    "creditsPerMonth": "{count} credits/maand",
+    "agentsInParallel": "{count} agents parallel"
   },
 
   "header": {
-    "useCases": "Use Cases",
+    "useCases": "Toepassingen",
     "blog": "Blog",
     "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "compare": "Vergelijken",
+    "demos": "Demo's",
+    "pricing": "Prijzen",
+    "download": "Downloaden",
+    "signIn": "Inloggen",
+    "getStarted": "Aan de slag",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "Concurrentie-informatie",
+      "qaBugReports": "QA-bugrapporten",
+      "seoGapAnalysis": "SEO-gapanalyse",
+      "dataExtraction": "Data-extractie",
+      "leadGeneration": "Leadgeneratie",
+      "siteAudit": "Site-audit",
+      "adIntelligence": "Advertentie-intelligentie",
+      "emailOutreach": "E-mailoutreach",
+      "designReview": "Designbeoordeling",
+      "priceMonitoring": "Prijsbewaking",
+      "marketResearch": "Marktonderzoek",
+      "emailCampaigns": "E-mailcampagnes"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} concurrentieprofielen geleverd",
+      "qaBugReports": "{stat} gebruikersflows getest per run",
+      "seoGapAnalysis": "{stat} zoekwoordgaps geïdentificeerd",
+      "dataExtraction": "{stat} rijen geëxtraheerd per run",
+      "leadGeneration": "{stat} gekwalificeerde leads per run",
+      "siteAudit": "{stat} pagina's geaudit per run",
+      "adIntelligence": "{stat} advertentiecreatives vastgelegd",
+      "emailOutreach": "{stat} gepersonaliseerde e-mails opgesteld",
+      "designReview": "{stat} breakpoints getest per pagina",
+      "priceMonitoring": "{stat} SKU's vergeleken per run",
+      "marketResearch": "{stat} datapunten verzameld",
+      "emailCampaigns": "{stat} gepersonaliseerde e-mails per campagne"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
-      "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "allPosts": "Alle berichten",
+      "computerUse": "Computergebruik",
+      "compare": "Vergelijken",
+      "dataEntry": "Gegevensinvoer",
+      "webScraping": "Web scraping",
+      "jobApplications": "Sollicitaties",
+      "demosResults": "Demo's en resultaten",
+      "guide": "Handleiding"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} artikelen wekelijks gepubliceerd",
+      "computerUse": "{stat} OSWorld benchmarkscore",
+      "compare": "{stat} concurrenten geanalyseerd",
+      "dataEntry": "{stat} sneller dan handmatig",
+      "webScraping": "{stat} pagina's per sessie",
+      "jobApplications": "{stat} sollicitaties per sessie",
+      "demosResults": "{stat} echte casestudies",
+      "guide": "{stat} handleidingen voor toepassingen"
     }
   },
 
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "headline": "Autonome computeroperators",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "Computeragent",
+        "headline": "automatiseer elke browsertaak",
+        "outcome": "Een AI-agent die een echte computer bestuurt — browst, klikt, typt en afgewerkt werk oplevert. Geen setup nodig."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Concurrentie-informatie",
+        "headline": "monitor elke concurrent",
+        "outcome": "Complete concurrentieprofielen met prijzen, functies en positioneringsgaps — geëxporteerd als kant-en-klaar rapport."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "QA-testen",
+        "headline": "vind bugs voordat gebruikers dat doen",
+        "outcome": "Kritieke gebruikersflows end-to-end getest, elke bug gefotografeerd met reproductiestappen en ernstclassificatie."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "SEO-analyse",
+        "headline": "ontdek zoekwoordgaps",
+        "outcome": "Zoekwoordgaps geïdentificeerd, contentbriefs opgesteld, backlinkbronnen van concurrenten in kaart gebracht — bruikbare SEO-strategie."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Data-extractie",
+        "headline": "schrapen en structureren van elke site",
+        "outcome": "Gestructureerde data geschraapt, opgeschoond, gededupliceerd en geëxporteerd als CSV — van elke website, elk formaat."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Leadgeneratie",
+        "headline": "vul je salespipeline",
+        "outcome": "Gekwalificeerde beslissers die aan je ICP voldoen met geverifieerde titels, bedrijven en gepersonaliseerde outreach-openers."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Site-audit",
+        "headline": "audit elke pagina op schaal",
+        "outcome": "Pagina's gescand, Core Web Vitals beoordeeld, gebroken links gevonden, toegankelijkheidsproblemen gerangschikt op fixprioriteit."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "E-mailoutreach",
+        "headline": "stuur gepersonaliseerde outreach",
+        "outcome": "Gepersonaliseerde e-mails die verwijzen naar het bedrijf, de rol en pijnpunten van elke prospect — klaar om te versturen."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Marktonderzoek",
+        "headline": "valideer je markt snel",
+        "outcome": "TAM berekend, belangrijkste spelers geprofileerd, groeitrends in kaart gebracht — uit tientallen datapunten."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Marketing", "task": "Promoot je product autonoom op Reddit" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Vind prospects en stuur gepersonaliseerde e-mails" },
+      "qaTesting": { "label": "QA-testen", "task": "Test elke afrekenflow en rapporteer bugs" },
+      "jobApplication": { "label": "Sollicitatie", "task": "Vind functies, pas je CV aan en solliciteer" },
+      "formFilling": { "label": "Formulieren invullen", "task": "Vul de YC S26-aanvraag voor je in" },
+      "socialMedia": { "label": "Social media", "task": "Plaats op Hacker News en reageer op comments" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent wereldwijd" },
+    "tools": { "value": "50+", "label": "Tools die de agent kan gebruiken", "sublabel": "Browser, terminal, desktop, bestanden" },
+    "schedule": { "value": "24/7", "label": "Draait op schema", "sublabel": "Automatiseer elke terugkerende taak" },
+    "setup": { "value": "0", "label": "Setup vereist", "sublabel": "Geen API's, geen integraties, geen code" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Waarom Coasty",
+    "title": "Geen chatbot. Geen RPA-script.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Werkt als een mens",
+      "description": "Ziet, klikt, typt, navigeert — precies zoals jij"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Geen scripts of setup",
+      "description": "Gewoon Nederlands erin, resultaten eruit"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Handelt het onverwachte af",
+      "description": "Past zich aan bij CAPTCHA's, popups, layoutwijzigingen"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Draait in isolatie",
+      "description": "Sandbox-VM per sessie — niets lekt"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Hoe het werkt",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Beschrijf je taak",
+      "description": "Gewoon Nederlands. Dat is alles.",
+      "placeholder": "Zoek 100 leads op LinkedIn..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Kijk hoe de agent werkt",
+      "description": "Opent browser, klikt, typt, navigeert"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Taak voltooid",
+      "description": "Elke actie gelogd met screenshots",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Taak voltooid",
+        "leadsFound": "12 leads gevonden",
+        "addedToCrm": "Toegevoegd aan CRM"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "Gebenchmarkt als #1 wereldwijd",
+    "subtitle": "82% op OSWorld — de moeilijkste benchmark voor AI-agents die echte computers gebruiken",
+    "agenticFramework": "Agentisch framework",
+    "foundationModel": "Basismodel"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Waarom automatiseren met Coasty?",
+    "subtitle": "Dezelfde taken die een team uren kosten — Coasty voltooit ze in minuten, dag en nacht.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Handmatig doen",
+      "subtitle": "Jij of je team, met de hand"
     },
     "coasty": {
       "title": "Coasty AI Agent",
       "subtitle": "#1 computer-use agent"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "Tijd per taak",
+      "availability": "Beschikbaarheid",
+      "setupTime": "Setuptijd",
+      "errorRate": "Foutpercentage",
+      "scaling": "Schaalbaarheid",
+      "auditTrail": "Audittrail"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Uren tot dagen",
+      "availability": "Alleen kantooruren",
+      "setupTime": "Tools leren, SOP's schrijven",
+      "errorRate": "Menselijke fouten",
+      "scaling": "Meer doen = meer tijd besteden",
+      "auditTrail": "Geen"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Minuten",
+      "availability": "24/7, elke dag",
+      "setupTime": "60 seconden",
+      "errorRate": "Zelfcorrigerend",
+      "scaling": "Voer onbeperkt taken parallel uit",
+      "auditTrail": "Elke klik gelogd + screenshots"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "Automatiseer taken die",
+      "hoursManually": "uren handmatig kosten",
+      "startingAt": "Vanaf"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Bekijk de agent in actie",
+    "subtitle": "Echte taken. Echte browsers. Elke klik vastgelegd.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
+        "title": "Coasty op Reddit",
+        "description": "Bekijk hoe Coasty autonoom een marketingcampagne uitvoert — concurrenten onderzoekt, trends analyseert en een strategiedeck bouwt.",
         "tag": "Marketing"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Potentiële klanten vinden",
+        "description": "Coasty vindt en onderzoekt potentiële klanten, verzamelt belangrijke details om gepersonaliseerde outreach te maken.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "QA-test op zichzelf",
+        "description": "Coasty voert kwaliteitscontrole uit op zijn eigen product — navigeert flows, vangt bugs en rapporteert problemen autonoom.",
+        "tag": "QA-testen"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "Een e-mail namens jou versturen",
+        "description": "Van opstellen tot verzenden — een AI-agent stelt een e-mail op en verstuurt deze volledig zelfstandig.",
+        "tag": "Communicatie"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Solliciteren op een baan",
+        "description": "Coasty vindt een passende functie, past je CV aan en dient de sollicitatie in — alles zelfstandig.",
+        "tag": "Sollicitatie"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "Plaatsen op Hacker News",
+        "description": "Coasty maakt en publiceert een bericht op Hacker News — schrijft de content en plaatst het autonoom.",
+        "tag": "Social media"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Gebouwd voor echte computertaken",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Zelfcorrigerend",
+      "description": "Detecteert fouten, probeert alternatieve paden"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Volledige audittrail",
+      "description": "Elke klik gelogd met screenshots"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "Planning 24/7",
+      "description": "Draait op cron — elk uur, dagelijks, wekelijks"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Sandbox en veilig",
+      "description": "Geïsoleerde VM per sessie, daarna verwijderd"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 op OSWorld",
+      "description": "82% — de hoogste score ooit geregistreerd"
     },
     "swarms": {
       "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "description": "Verdeel taken over machines parallel"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Start gratis, schaal wanneer je wilt",
+    "subtitle": "Geen creditcard nodig. Je AI-agent is klaar in 60 seconden.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "Probeer de #1 computer-use agent",
+        "cta": "Start gratis"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Lichte dagelijkse automatisering",
+        "cta": "Neem Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Automatiseer taken elke dag",
+        "cta": "Neem Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "Schaal complexe workflows",
+        "cta": "Ga naar Plus",
+        "badge": "Meest populair"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Onbeperkte zware automatisering",
+        "cta": "Neem Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 tijdelijke VM (2 uur)",
+    "vmDeletedAfterInactivity": "1 VM (verwijderd na inactiviteit)",
+    "vmAlwaysOn": "{count} altijd-aan VM",
+    "vmAlwaysOnPlural": "{count} altijd-aan VM's",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Hetzelfde werk kost {oldPrice} met handmatige arbeid",
+      "description": "Een virtuele assistent kost $2.000–$4.000/maand. Een parttime kracht kost meer. Coasty doet hetzelfde werk 24/7 vanaf $0 — met perfecte consistentie, volledige audittrails en nul trainingstijd."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Veelgestelde vragen",
+    "subtitle": "Alles wat je moet weten voordat je begint",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Wat is Coasty?",
+        "answer": "Coasty is 's werelds beste computer-use AI-agent. Beschrijf een taak — leads onderzoeken, een website testen, formulieren invullen, posten op social media — en Coasty opent een echte browser, navigeert door apps, klikt op knoppen, typt tekst en voltooit de taak van begin tot eind. Geen API's, geen integraties, geen code nodig."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Hoe verschilt dit van ChatGPT of andere AI-tools?",
+        "answer": "ChatGPT genereert tekst. Coasty gebruikt een computer. Het vertelt je niet wat je moet doen — het opent een browser, navigeert naar de website, klikt op de knoppen, vult de formulieren in en levert het voltooide werk op. Het verschil tussen instructies krijgen en de taak voor je laten doen."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Welke taken kan Coasty automatiseren?",
+        "answer": "Elke taak die je op een computer kunt doen. Webonderzoek, leadgeneratie, gegevensinvoer, formulieren invullen, QA-testen, social media posts, e-mailoutreach, factuurverwerking, concurrentieanalyse, recruitment — als het een browser of desktop-app betreft, kan Coasty het."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Wat zijn credits en hoe worden ze gebruikt?",
+        "answer": "Credits worden verbruikt terwijl de agent aan taken werkt. Langere, complexere taken gebruiken meer credits. Betaalde plannen bevatten maandelijkse credits en je kunt ook altijd extra creditpakketten kopen."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Kan Coasty op mijn eigen computer draaien?",
+        "answer": "Ja. Onze desktop-app draait als een lichtgewicht overlay op je machine en bestuurt je lokale browser en applicaties direct. Als alternatief draaien taken op geïsoleerde cloudmachines — jouw keuze."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Zijn mijn gegevens veilig?",
+        "answer": "Elke taak draait in een geïsoleerde sandbox-omgeving. Niets lekt tussen sessies. Je inloggegevens blijven privé en elke actie wordt gelogd met screenshots in een volledige audittrail die je altijd kunt inzien."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "AI-gestuurd computergebruik.",
+    "tagline2": "Automatiseer elke workflow met intelligente agents.",
     "columns": {
       "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "resources": "Bronnen",
+      "company": "Bedrijf",
+      "legal": "Juridisch"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
+      "computerUse": "Computergebruik",
+      "guide": "Handleiding",
+      "download": "Downloaden",
+      "pricing": "Prijzen",
       "agentSwarms": "Agent Swarms",
       "status": "Status",
       "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
+      "useCases": "Toepassingen",
+      "demos": "Demo's",
+      "compare": "Vergelijken",
+      "talkToCofounders": "Praat met de oprichters en demo",
       "contact": "Contact",
       "privacy": "Privacy",
-      "terms": "Terms"
+      "terms": "Voorwaarden"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Taal"
   }
 }

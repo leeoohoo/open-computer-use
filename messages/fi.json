@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "Aloita ilmaiseksi",
+    "bookDemo": "Varaa demo",
+    "tryCoastyFree": "Kokeile Coasty ilmaiseksi",
+    "learnMore": "Lue lisää",
+    "watchSession": "Katso istunto",
+    "compareAllPlans": "Vertaa kaikkia paketteja ja ominaisuuksia",
+    "allRightsReserved": "Kaikki oikeudet pidätetään.",
+    "privacy": "Tietosuoja",
+    "terms": "Ehdot",
+    "recommended": "Suositeltu",
+    "month": "kuukausi",
+    "creditsPerMonth": "{count} krediittiä/kk",
+    "agentsInParallel": "{count} agenttia rinnakkain"
   },
 
   "header": {
-    "useCases": "Use Cases",
-    "blog": "Blog",
-    "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "useCases": "Käyttötapaukset",
+    "blog": "Blogi",
+    "agentSwarms": "Agenttiparvet",
+    "compare": "Vertaile",
+    "demos": "Demot",
+    "pricing": "Hinnoittelu",
+    "download": "Lataa",
+    "signIn": "Kirjaudu sisään",
+    "getStarted": "Aloita",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "Kilpailija-analyysi",
+      "qaBugReports": "QA-virheraportointi",
+      "seoGapAnalysis": "SEO-puuteanalyysi",
+      "dataExtraction": "Tietojen poiminta",
+      "leadGeneration": "Liidien generointi",
+      "siteAudit": "Sivuston auditointi",
+      "adIntelligence": "Mainostiedustelu",
+      "emailOutreach": "Sähköposti-outreach",
+      "designReview": "Suunnittelun katselmus",
+      "priceMonitoring": "Hintaseuranta",
+      "marketResearch": "Markkinatutkimus",
+      "emailCampaigns": "Sähköpostikampanjat"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} kilpailijan profiilia toimitettu",
+      "qaBugReports": "{stat} käyttäjäpolkua testattu per ajo",
+      "seoGapAnalysis": "{stat} avainsanapuutetta tunnistettu",
+      "dataExtraction": "{stat} riviä poimittu per ajo",
+      "leadGeneration": "{stat} kvalifioitua liidiä per ajo",
+      "siteAudit": "{stat} sivua auditoitu per ajo",
+      "adIntelligence": "{stat} mainoskreatiivia tallennettu",
+      "emailOutreach": "{stat} personoitua sähköpostia laadittu",
+      "designReview": "{stat} breakpointia testattu per sivu",
+      "priceMonitoring": "{stat} tuotenumeroa vertailtu per ajo",
+      "marketResearch": "{stat} datapistettä kerätty",
+      "emailCampaigns": "{stat} personoitua sähköpostia per kampanja"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
-      "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "allPosts": "Kaikki artikkelit",
+      "computerUse": "Tietokoneen käyttö",
+      "compare": "Vertaile",
+      "dataEntry": "Tietojen syöttö",
+      "webScraping": "Web scraping",
+      "jobApplications": "Työhakemukset",
+      "demosResults": "Demot ja tulokset",
+      "guide": "Opas"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} artikkelia julkaistaan viikoittain",
+      "computerUse": "{stat} OSWorld benchmark -pistemäärä",
+      "compare": "{stat} kilpailijaa analysoitu",
+      "dataEntry": "{stat} nopeampi kuin manuaalisesti",
+      "webScraping": "{stat} sivua per istunto",
+      "jobApplications": "{stat} hakemusta per istunto",
+      "demosResults": "{stat} todellista tapaustutkimusta",
+      "guide": "{stat} käyttötapauskävelyä"
     }
   },
 
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "headline": "Autonomiset tietokoneoperaattorit",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "Tietokoneagentti",
+        "headline": "automatisoi mikä tahansa selaintehtävä",
+        "outcome": "AI-agentti joka ohjaa oikeaa tietokonetta — selaa, napsauttaa, kirjoittaa ja toimittaa valmiin työn. Ei vaadi asennusta."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Kilpailija-analyysi",
+        "headline": "seuraa jokaista kilpailijaa",
+        "outcome": "Täydelliset kilpailijaprofilit hinnoitteluineen, ominaisuuksineen ja positiointiaukkoineen — viety jaettavaksi raportiksi."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "QA-testaus",
+        "headline": "löydä bugit ennen käyttäjiä",
+        "outcome": "Kriittiset käyttäjäpolut testattu end-to-end, jokainen bugi kuvakaappauksella, toistamisohjeilla ja vakavuusluokituksella."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "SEO-analyysi",
+        "headline": "paljasta avainsanapuutteet",
+        "outcome": "Avainsanapuutteet tunnistettu, sisältöbriiffit laadittu, kilpailijoiden takalinkkilähteet kartoitettu — toteuttamiskelpoinen SEO-strategia."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Tietojen poiminta",
+        "headline": "scrape ja jäsennä mikä tahansa sivusto",
+        "outcome": "Jäsenneltyä dataa scrapat, puhdistettu, deduplikoitu ja viety CSV-muodossa — miltä tahansa sivustolta, missä tahansa muodossa."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Liidien generointi",
+        "headline": "täytä myyntiputkesi",
+        "outcome": "Kvalifioidut päättäjät jotka vastaavat ICP:täsi, vahvistetuin tittelein, yrityksin ja personoiduin kontaktiavaajin."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Sivuston auditointi",
+        "headline": "auditoi jokainen sivu laajamittaisesti",
+        "outcome": "Sivut skannattu, Core Web Vitals pisteitetty, rikkinäiset linkit löydetty, esteettömyysongelmat priorisoitu korjausjärjestykseen."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "Sähköposti-outreach",
+        "headline": "lähetä personoitua outreachia",
+        "outcome": "Personoidut sähköpostit jotka viittaavat jokaisen prospectin yritykseen, rooliin ja kipupisteisiin — valmiina lähetettäväksi."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Markkinatutkimus",
+        "headline": "validoi markkinasi nopeasti",
+        "outcome": "TAM laskettu, avaintoimijat profiloitu, kasvutrendit kartoitettu — kymmenistä datapisteistä."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Markkinointi", "task": "Markkinoi tuotettasi Reddit-alustalla autonomisesti" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Löydä prospektit ja lähetä personoituja sähköposteja" },
+      "qaTesting": { "label": "QA-testaus", "task": "Testaa jokainen kassapolku ja raportoi bugit" },
+      "jobApplication": { "label": "Työhakemus", "task": "Löydä positiot, räätälöi CV ja hae" },
+      "formFilling": { "label": "Lomakkeiden täyttö", "task": "Täytä YC S26 -hakemus puolestasi" },
+      "socialMedia": { "label": "Sosiaalinen media", "task": "Julkaise Hacker News -alustalla ja osallistu kommentteihin" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "OSWorld-benchmark", "sublabel": "#1 computer-use agentti maailmanlaajuisesti" },
+    "tools": { "value": "50+", "label": "Työkalua agentin käytettävissä", "sublabel": "Selain, terminaali, työpöytä, tiedostot" },
+    "schedule": { "value": "24/7", "label": "Toimii aikataulussa", "sublabel": "Automatisoi mikä tahansa toistuva tehtävä" },
+    "setup": { "value": "0", "label": "Asennusta vaaditaan", "sublabel": "Ei API:ta, ei integraatioita, ei koodia" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Miksi Coasty",
+    "title": "Ei chatbot. Ei RPA-skripti.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Toimii kuin ihminen",
+      "description": "Näkee, napsauttaa, kirjoittaa, navigoi — aivan kuten sinä"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Ei skriptejä tai asennusta",
+      "description": "Selkeää suomea sisään, tulokset ulos"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Käsittelee odottamattomat",
+      "description": "Sopeutuu CAPTCHA:oihin, ponnahdusikkunoihin, asettelumuutoksiin"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Toimii eristyksessä",
+      "description": "Sandbox-VM per istunto — mikään ei vuoda"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Näin se toimii",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Kuvaile tehtäväsi",
+      "description": "Selkeää suomea. Siinä kaikki.",
+      "placeholder": "Tutki 100 liidiä LinkedIn-alustalla..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Katso agentin työskentelyä",
+      "description": "Avaa selaimen, napsauttaa, kirjoittaa, navigoi"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Tehtävä valmis",
+      "description": "Jokainen toiminto kirjattu kuvakaappauksin",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Tehtävä valmis",
+        "leadsFound": "12 liidiä löydetty",
+        "addedToCrm": "Lisätty CRM:ään"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "Benchmarkattu #1 maailmanlaajuisesti",
+    "subtitle": "82% OSWorld-testissä — vaikein benchmark AI-agenteille jotka käyttävät oikeita tietokoneita",
+    "agenticFramework": "Agenttinen viitekehys",
+    "foundationModel": "Perusmalli"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Miksi automatisoida Coastylla?",
+    "subtitle": "Samat tehtävät jotka vievät tiimiltä tunteja — Coasty suorittaa minuuteissa, ympäri vuorokauden.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Manuaalinen suoritus",
+      "subtitle": "Sinä tai tiimisi, käsin"
     },
     "coasty": {
       "title": "Coasty AI Agent",
-      "subtitle": "#1 computer-use agent"
+      "subtitle": "#1 computer-use agentti"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "Aika per tehtävä",
+      "availability": "Saatavuus",
+      "setupTime": "Asennusaika",
+      "errorRate": "Virhetaso",
+      "scaling": "Skaalautuvuus",
+      "auditTrail": "Tarkastusjälki"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Tunteja tai päiviä",
+      "availability": "Vain työaikana",
+      "setupTime": "Opi työkalut, kirjoita SOP:t",
+      "errorRate": "Inhimilliset virheet",
+      "scaling": "Enemmän työtä = enemmän aikaa",
+      "auditTrail": "Ei mitään"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Minuutteja",
+      "availability": "24/7, joka päivä",
+      "setupTime": "60 sekuntia",
+      "errorRate": "Itsensä korjaava",
+      "scaling": "Suorita rajattomasti tehtäviä rinnakkain",
+      "auditTrail": "Jokainen napsautus kirjattu + kuvakaappaukset"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "Automatisoi tehtävät jotka vievät",
+      "hoursManually": "tunteja manuaalisesti",
+      "startingAt": "Alkaen"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Katso agentti toiminnassa",
+    "subtitle": "Oikeita tehtäviä. Oikeita selaimia. Jokainen napsautus tallennettu.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
-        "tag": "Marketing"
+        "title": "Coasty Reddit-alustalla",
+        "description": "Katso kuinka Coasty suorittaa autonomisesti markkinointikampanjan — tutkii kilpailijoita, analysoi trendejä ja rakentaa strategiaesityksen.",
+        "tag": "Markkinointi"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Potentiaalisten asiakkaiden löytäminen",
+        "description": "Coasty löytää ja tutkii potentiaalisia asiakkaita, keräten avaintiedot personoidun yhteydenoton laatimiseen.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "QA-testaa itsensä",
+        "description": "Coasty suorittaa laadunvarmistuksen omalle tuotteelleen — navigoi polkuja, löytää bugeja ja raportoi ongelmia autonomisesti.",
+        "tag": "QA-testaus"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "Sähköpostin lähettäminen puolestasi",
+        "description": "Kirjoittamisesta lähettämiseen — AI-agentti laatii ja toimittaa sähköpostin täysin itsenäisesti.",
+        "tag": "Viestintä"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Työpaikkahakemus",
+        "description": "Coasty löytää sopivan position, räätälöi CV:si ja lähettää hakemuksen — kaiken itsenäisesti.",
+        "tag": "Työhakemus"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "Julkaisu Hacker News -alustalla",
+        "description": "Coasty luo ja julkaisee blogikirjoituksen Hacker News -alustalla — kirjoittaa sisällön ja lähettää sen autonomisesti.",
+        "tag": "Sosiaalinen media"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Rakennettu oikeisiin tietokonetehtäviin",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Itsensä korjaava",
+      "description": "Tunnistaa virheet, kokeilee vaihtoehtoisia polkuja"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Täydellinen tarkastusjälki",
+      "description": "Jokainen napsautus kirjattu kuvakaappauksin"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "Aikataulutus 24/7",
+      "description": "Toimii cronilla — tunneittain, päivittäin, viikoittain"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Sandbox-suojattu ja turvallinen",
+      "description": "Eristetty VM per istunto, tuhotaan sen jälkeen"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 OSWorld-testissä",
+      "description": "82% — korkein koskaan kirjattu pistemäärä"
     },
     "swarms": {
-      "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "title": "Agenttiparvet",
+      "description": "Jaa tehtävät koneille rinnakkain"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Aloita ilmaiseksi, skaalaa kun olet valmis",
+    "subtitle": "Ei luottokorttia. AI-agenttisi on valmis 60 sekunnissa.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "Kokeile #1 computer-use agenttia",
+        "cta": "Aloita ilmaiseksi"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Kevyt päivittäinen automaatio",
+        "cta": "Hanki Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Automatisoi tehtäviä joka päivä",
+        "cta": "Hanki Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "Skaalaa monimutkaisia työnkulkuja",
+        "cta": "Valitse Plus",
+        "badge": "Suosituin"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Rajaton raskas automaatio",
+        "cta": "Hanki Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 väliaikainen VM (2 t)",
+    "vmDeletedAfterInactivity": "1 VM (poistetaan käyttämättömyyden jälkeen)",
+    "vmAlwaysOn": "{count} aina päällä oleva VM",
+    "vmAlwaysOnPlural": "{count} aina päällä olevaa VM:ää",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Sama työ maksaa {oldPrice} manuaalisesti tehtynä",
+      "description": "Virtuaaliassistentti maksaa $2 000–$4 000/kk. Osa-aikainen työntekijä maksaa enemmän. Coasty tekee saman työn 24/7 alkaen $0 — täydellisellä johdonmukaisuudella, kattavalla tarkastusjäljellä ja nollakoulutusajalla."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Usein kysytyt kysymykset",
+    "subtitle": "Kaikki mitä sinun tarvitsee tietää ennen aloittamista",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Mikä on Coasty?",
+        "answer": "Coasty on maailman paras computer-use AI-agentti. Kuvailet tehtävän — tutki liidejä, testaa verkkosivusto, täytä lomakkeita, julkaise sosiaalisessa mediassa — ja Coasty avaa oikean selaimen, navigoi sovelluksissa, napsauttaa painikkeita, kirjoittaa tekstiä ja suorittaa tehtävän alusta loppuun. Ei API:ta, ei integraatioita, ei koodia."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Miten tämä eroaa ChatGPT:stä tai muista AI-työkaluista?",
+        "answer": "ChatGPT tuottaa tekstiä. Coasty käyttää tietokonetta. Se ei kerro mitä tehdä — se avaa selaimen, navigoi verkkosivustolle, napsauttaa painikkeita, täyttää lomakkeet ja toimittaa valmiin työn. Se on ero ohjeiden saamisen ja tehtävän tekemisen välillä puolestasi."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Mitä tehtäviä Coasty voi automatisoida?",
+        "answer": "Minkä tahansa tehtävän jonka voit tehdä tietokoneella. Verkkotutka, liidien generointi, tietojen syöttö, lomakkeiden täyttö, QA-testaus, sosiaalisen median julkaisut, sähköposti-outreach, laskujen käsittely, kilpailija-analyysi, rekrytointi — jos se sisältää selaimen tai työpöytäsovelluksen, Coasty osaa tehdä sen."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Mitä ovat krediitit ja miten niitä käytetään?",
+        "answer": "Krediittejä kulutetaan kun agentti työskentelee tehtävien parissa. Pidemmät, monimutkaisemmat tehtävät käyttävät enemmän krediittejä. Maksulliset paketit sisältävät kuukausittaisia krediittejä, ja voit myös ostaa lisäkrediittipaketteja milloin tahansa."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Voiko Coasty toimia omalla tietokoneellani?",
+        "answer": "Kyllä. Työpöytäsovelluksemme toimii kevyenä overlay-kerroksena koneellasi, ohjaten paikallista selaintasi ja sovelluksiasi suoraan. Vaihtoehtoisesti tehtävät suoritetaan eristetyillä pilvikoneillla — sinun valintasi."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Onko tietoni turvassa?",
+        "answer": "Jokainen tehtävä suoritetaan eristetyssä sandbox-ympäristössä. Mikään ei vuoda istuntojen välillä. Tunnistetietosi pysyvät yksityisinä, ja jokainen toiminto kirjataan kuvakaappauksin kattavaan tarkastusjälkeen, jota voit tarkastella milloin tahansa."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "AI-avusteinen tietokoneen käyttö.",
+    "tagline2": "Automatisoi mikä tahansa työnkulku älykkäillä agenteilla.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "Tuote",
+      "resources": "Resurssit",
+      "company": "Yritys",
+      "legal": "Oikeudellinen"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
-      "agentSwarms": "Agent Swarms",
-      "status": "Status",
-      "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "computerUse": "Tietokoneen käyttö",
+      "guide": "Opas",
+      "download": "Lataa",
+      "pricing": "Hinnoittelu",
+      "agentSwarms": "Agenttiparvet",
+      "status": "Tila",
+      "blog": "Blogi",
+      "useCases": "Käyttötapaukset",
+      "demos": "Demot",
+      "compare": "Vertaile",
+      "talkToCofounders": "Keskustele perustajien kanssa ja demo",
+      "contact": "Yhteystiedot",
+      "privacy": "Tietosuoja",
+      "terms": "Ehdot"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Kieli"
   }
 }

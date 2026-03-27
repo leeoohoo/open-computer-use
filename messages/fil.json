@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
+    "startFree": "Magsimula nang Libre",
+    "bookDemo": "Mag-book ng demo",
+    "tryCoastyFree": "Subukan ang Coasty nang libre",
+    "learnMore": "Matuto pa",
+    "watchSession": "Panoorin ang session",
+    "compareAllPlans": "Ihambing ang lahat ng plano at features",
+    "allRightsReserved": "Lahat ng karapatan ay nakalaan.",
     "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "terms": "Mga Tuntunin",
+    "recommended": "Inirerekomenda",
+    "month": "buwan",
+    "creditsPerMonth": "{count} credits/buwan",
+    "agentsInParallel": "{count} agents nang sabay-sabay"
   },
 
   "header": {
-    "useCases": "Use Cases",
+    "useCases": "Mga Gamit",
     "blog": "Blog",
     "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "compare": "Ihambing",
+    "demos": "Mga Demo",
+    "pricing": "Presyo",
+    "download": "I-download",
+    "signIn": "Mag-sign in",
+    "getStarted": "Magsimula",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
+      "competitorIntel": "Pagsusuri ng Kakompetensya",
+      "qaBugReports": "QA Ulat ng Mga Bug",
       "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
+      "dataExtraction": "Pagkuha ng Data",
+      "leadGeneration": "Pagbuo ng Leads",
+      "siteAudit": "Pag-audit ng Site",
+      "adIntelligence": "Impormasyon sa Ads",
       "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "designReview": "Pagsusuri ng Disenyo",
+      "priceMonitoring": "Pagsubaybay ng Presyo",
+      "marketResearch": "Pananaliksik sa Merkado",
+      "emailCampaigns": "Mga Kampanya sa Email"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} profile ng kakompetensya na naihatid",
+      "qaBugReports": "{stat} user flows na nasubukan bawat run",
+      "seoGapAnalysis": "{stat} keyword gaps na natukoy",
+      "dataExtraction": "{stat} rows na nakuha bawat run",
+      "leadGeneration": "{stat} qualified leads bawat run",
+      "siteAudit": "{stat} pages na na-audit bawat run",
+      "adIntelligence": "{stat} ad creatives na nakuha",
+      "emailOutreach": "{stat} personalized emails na ginawa",
+      "designReview": "{stat} breakpoints na nasubukan bawat page",
+      "priceMonitoring": "{stat} SKUs na inihambing bawat run",
+      "marketResearch": "{stat} data points na nakuha",
+      "emailCampaigns": "{stat} personalized emails bawat kampanya"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
+      "allPosts": "Lahat ng Posts",
+      "computerUse": "Paggamit ng Computer",
+      "compare": "Ihambing",
+      "dataEntry": "Pagpasok ng Data",
       "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "jobApplications": "Mga Aplikasyon sa Trabaho",
+      "demosResults": "Mga Demo at Resulta",
+      "guide": "Gabay"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
+      "allPosts": "{stat} artikulo na ini-publish lingguhan",
       "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
+      "compare": "{stat} kakompetensya na sinuri",
+      "dataEntry": "{stat} mas mabilis kaysa mano-mano",
+      "webScraping": "{stat} pages bawat session",
+      "jobApplications": "{stat} aplikasyon bawat session",
+      "demosResults": "{stat} totoong case studies",
       "guide": "{stat} use case walkthroughs"
     }
   },
 
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "headline": "Mga autonomous na computer operator",
     "useCases": {
       "computerAgent": {
         "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "headline": "i-automate ang anumang gawain sa browser",
+        "outcome": "Isang AI agent na kumokontrol sa totoong computer — nagba-browse, nag-click, nagta-type, at naghahatid ng tapos na trabaho. Walang kailangan i-setup."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Pagsusuri ng kakompetensya",
+        "headline": "subaybayan ang bawat kakompetensya",
+        "outcome": "Kumpletong profile ng kakompetensya kasama ang presyo, features, at positioning gaps — na-export bilang ready-to-share na ulat."
       },
       "qaTesting": {
         "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "headline": "hanapin ang mga bug bago ang users",
+        "outcome": "Kritikal na user flows na nasubukan end-to-end, bawat bug may screenshot na may repro steps at severity ranking."
       },
       "seoAnalysis": {
         "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "headline": "tuklasin ang keyword gaps",
+        "outcome": "Keyword gaps na natukoy, content briefs na ginawa, backlink sources ng kakompetensya na na-map — actionable SEO strategy."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Pagkuha ng data",
+        "headline": "i-scrape at i-structure ang anumang site",
+        "outcome": "Structured data na na-scrape, nalinis, na-deduplicate, at na-export bilang CSV — mula sa anumang website, anumang format."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Pagbuo ng leads",
+        "headline": "punan ang iyong sales pipeline",
+        "outcome": "Qualified na decision-makers na tumutugma sa iyong ICP na may verified na titulo, kumpanya, at personalized na outreach openers."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Pag-audit ng site",
+        "headline": "i-audit ang bawat page sa malaking scale",
+        "outcome": "Mga page na na-scan, Core Web Vitals na na-score, sirang links na nahanap, accessibility issues na naka-rank ayon sa priority ng pag-aayos."
       },
       "emailOutreach": {
         "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "headline": "magpadala ng personalized na outreach",
+        "outcome": "Personalized na emails na tumutukoy sa kumpanya, tungkulin, at pain points ng bawat prospect — handa nang ipadala."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Pananaliksik sa merkado",
+        "headline": "i-validate ang iyong merkado nang mabilis",
+        "outcome": "TAM na nakalkula, pangunahing manlalaro na na-profile, growth trends na na-chart — mula sa dose-dosenang data points."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Marketing", "task": "I-market ang iyong produkto sa Reddit nang autonomous" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Humanap ng prospects at magpadala ng personalized na emails" },
+      "qaTesting": { "label": "QA Testing", "task": "Subukan ang bawat checkout flow at iulat ang mga bug" },
+      "jobApplication": { "label": "Aplikasyon sa Trabaho", "task": "Humanap ng mga posisyon, i-tailor ang resume, at mag-apply" },
+      "formFilling": { "label": "Pagpupuno ng Form", "task": "Punan ang YC S26 application para sa iyo" },
+      "socialMedia": { "label": "Social Media", "task": "Mag-post sa Hacker News at makipag-ugnayan sa mga komento" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent sa buong mundo" },
+    "tools": { "value": "50+", "label": "Mga tool na magagamit ng agent", "sublabel": "Browser, terminal, desktop, files" },
+    "schedule": { "value": "24/7", "label": "Tumatakbo ayon sa schedule", "sublabel": "I-automate ang anumang paulit-ulit na gawain" },
+    "setup": { "value": "0", "label": "Kailangan i-setup", "sublabel": "Walang APIs, walang integrations, walang code" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Bakit Coasty",
+    "title": "Hindi chatbot. Hindi RPA script.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Gumagana tulad ng tao",
+      "description": "Nakakakita, nag-click, nagta-type, nagna-navigate — eksaktong tulad mo"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Walang scripts o setup",
+      "description": "Simpleng Filipino ang ipasok, resulta ang lalabas"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Hinahandle ang di-inaasahan",
+      "description": "Umaangkop sa CAPTCHAs, popups, pagbabago ng layout"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Tumatakbo nang nakahiwalay",
+      "description": "Sandboxed VM bawat session — walang nakakalabas"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Paano ito gumagana",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Ilarawan ang iyong gawain",
+      "description": "Simpleng Filipino. Iyon lang.",
+      "placeholder": "Magsaliksik ng 100 leads sa LinkedIn..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Panoorin ang agent na gumagawa",
+      "description": "Nagbubukas ng browser, nag-click, nagta-type, nagna-navigate"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Tapos na ang gawain",
+      "description": "Bawat aksyon na naka-log kasama ang mga screenshot",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Tapos na ang gawain",
+        "leadsFound": "12 leads na nahanap",
+        "addedToCrm": "Idinagdag sa CRM"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
+    "title": "Na-benchmark bilang #1 sa buong mundo",
+    "subtitle": "82% sa OSWorld — ang pinakamahirap na benchmark para sa AI agents na gumagamit ng totoong mga computer",
     "agenticFramework": "Agentic Framework",
     "foundationModel": "Foundation Model"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Bakit mag-automate gamit ang Coasty?",
+    "subtitle": "Ang parehong gawain na tumatagal ng oras sa team — tinatapos ng Coasty sa ilang minuto, buong araw buong gabi.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Mano-manong Paggawa",
+      "subtitle": "Ikaw o ang iyong team, sa kamay"
     },
     "coasty": {
       "title": "Coasty AI Agent",
       "subtitle": "#1 computer-use agent"
     },
     "rows": {
-      "timePerTask": "Time per task",
+      "timePerTask": "Oras bawat gawain",
       "availability": "Availability",
-      "setupTime": "Setup time",
+      "setupTime": "Oras ng setup",
       "errorRate": "Error rate",
-      "scaling": "Scaling",
+      "scaling": "Pag-scale",
       "auditTrail": "Audit trail"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Oras hanggang araw",
+      "availability": "Business hours lang",
+      "setupTime": "Matuto ng tools, magsulat ng SOPs",
+      "errorRate": "Mga pagkakamali ng tao",
+      "scaling": "Mas maraming gawain = mas maraming oras",
+      "auditTrail": "Wala"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Minuto",
+      "availability": "24/7, araw-araw",
+      "setupTime": "60 segundo",
+      "errorRate": "Nag-aauto-correct",
+      "scaling": "Magpatakbo ng walang limitasyon na gawain nang sabay-sabay",
+      "auditTrail": "Bawat click na naka-log + mga screenshot"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "I-automate ang mga gawain na tumatagal ng",
+      "hoursManually": "oras nang mano-mano",
+      "startingAt": "Nagsisimula sa"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Panoorin ang agent sa aksyon",
+    "subtitle": "Totoong gawain. Totoong browsers. Bawat click na naka-record.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
+        "title": "Coasty sa Reddit",
+        "description": "Panoorin ang Coasty na autonomous na nagpapatakbo ng marketing campaign — nagsasaliksik ng kakompetensya, nag-aanalisa ng trends, at gumagawa ng strategy deck.",
         "tag": "Marketing"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Paghahanap ng Mga Prospective Customer",
+        "description": "Hinahanap at sinusuri ng Coasty ang mga prospective customer, kinukuha ang mahahalagang detalye para gumawa ng personalized na outreach.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
+        "title": "QA Testing sa Sarili",
+        "description": "Nagpapatakbo ang Coasty ng quality assurance sa sarili nitong produkto — nagna-navigate ng flows, nakakapansin ng bugs, at nag-uulat ng issues nang autonomous.",
         "tag": "QA Testing"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "Pagpapadala ng Email sa Ngalan Mo",
+        "description": "Mula sa pag-compose hanggang sa pagpadala — isang AI agent ang gumagawa at nagpapadala ng email nang ganap na mag-isa.",
+        "tag": "Komunikasyon"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Pag-apply sa Trabaho",
+        "description": "Hinahanap ng Coasty ang tamang posisyon, ini-tailor ang iyong resume, at sinusubmit ang application — lahat nang mag-isa.",
+        "tag": "Aplikasyon sa Trabaho"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
+        "title": "Pag-post sa Hacker News",
+        "description": "Gumagawa at nagpa-publish ang Coasty ng blog post sa Hacker News — sinusulat ang content at sinusubmit ito nang autonomous.",
         "tag": "Social Media"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Ginawa para sa totoong gawain sa computer",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Nag-aauto-correct",
+      "description": "Nakaka-detect ng errors, sumusubok ng ibang paraan"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Kumpletong Audit Trail",
+      "description": "Bawat click na naka-log kasama ang mga screenshot"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "Naka-schedule 24/7",
+      "description": "Tumatakbo sa cron — oras-oras, araw-araw, lingguhan"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Sandboxed at Secure",
+      "description": "Isolated na VM bawat session, sinisira pagkatapos"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 sa OSWorld",
+      "description": "82% — pinakamataas na score na naitala"
     },
     "swarms": {
       "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "description": "Hatiin ang mga gawain sa mga machine nang sabay-sabay"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Magsimula nang libre, mag-scale kapag handa na",
+    "subtitle": "Walang credit card. Ang iyong AI agent ay handa sa loob ng 60 segundo.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "Subukan ang #1 computer-use agent",
+        "cta": "Magsimula nang Libre"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Magaan na pang-araw-araw na automation",
+        "cta": "Kunin ang Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Mag-automate ng gawain araw-araw",
+        "cta": "Kunin ang Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "I-scale ang mga kumplikadong workflow",
+        "cta": "Pumili ng Plus",
+        "badge": "Pinakasikat"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Walang limitasyong mabigat na automation",
+        "cta": "Kunin ang Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 pansamantalang VM (2 oras)",
+    "vmDeletedAfterInactivity": "1 VM (dine-delete pagkatapos ng inactivity)",
+    "vmAlwaysOn": "{count} always-on na VM",
+    "vmAlwaysOnPlural": "{count} always-on na VMs",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Ang parehong trabaho ay nagkakahalaga ng {oldPrice} sa mano-manong paggawa",
+      "description": "Ang virtual assistant ay nagkakahalaga ng $2,000–$4,000/buwan. Ang part-time hire ay mas mahal pa. Ginagawa ng Coasty ang parehong trabaho 24/7 simula sa $0 — na may perpektong consistency, kumpletong audit trails, at zero training time."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Mga madalas itanong",
+    "subtitle": "Lahat ng kailangan mong malaman bago magsimula",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Ano ang Coasty?",
+        "answer": "Ang Coasty ang pinakamahusay na computer-use AI agent sa mundo. Mag-describe ka ng gawain — magsaliksik ng leads, mag-test ng website, punan ang mga form, mag-post sa social media — at magbubukas ang Coasty ng totoong browser, mag-navigate sa mga app, mag-click ng mga button, mag-type ng text, at tapusin ang gawain mula simula hanggang dulo. Walang APIs, walang integrations, walang code na kailangan."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Paano ito naiiba sa ChatGPT o ibang AI tools?",
+        "answer": "Ang ChatGPT ay gumagawa ng text. Ang Coasty ay gumagamit ng computer. Hindi ka nito sinasabihan kung ano ang gagawin — nagbubukas ito ng browser, nagna-navigate sa website, nag-click ng mga button, pinupunan ang mga form, at naghahatid ng tapos na trabaho. Ito ang pagkakaiba ng pagkuha ng mga instruksyon at pagkatapos na ng gawain para sa iyo."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Anong mga gawain ang maaaring i-automate ng Coasty?",
+        "answer": "Anumang gawain na magagawa mo sa computer. Web research, pagbuo ng leads, pagpasok ng data, pagpupuno ng form, QA testing, pag-post sa social media, email outreach, pagproseso ng invoice, pagsusuri ng kakompetensya, pag-recruit — kung kasama ang browser o desktop app, kaya itong gawin ng Coasty."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Ano ang credits at paano ginagamit?",
+        "answer": "Ang credits ay nagagamit habang gumagawa ang agent ng mga gawain. Ang mas matagal at mas kumplikadong gawain ay gumagamit ng mas maraming credits. Kasama sa mga bayad na plano ang buwanang credits, at maaari ka ring bumili ng karagdagang credit packs anumang oras."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Maaari bang tumakbo ang Coasty sa sarili kong computer?",
+        "answer": "Oo. Ang aming desktop app ay tumatakbo bilang lightweight overlay sa iyong machine, kinokontrol ang iyong lokal na browser at mga application nang direkta. Bilang alternatibo, tumatakbo ang mga gawain sa mga isolated na cloud machine — ikaw ang pipili."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Ligtas ba ang aking data?",
+        "answer": "Bawat gawain ay tumatakbo sa isang isolated na sandbox environment. Walang nakakalabas sa pagitan ng mga session. Ang iyong mga credentials ay nananatiling pribado, at bawat aksyon ay naka-log na may mga screenshot sa kumpletong audit trail na maaari mong suriin anumang oras."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "AI-powered na paggamit ng computer.",
+    "tagline2": "I-automate ang anumang workflow gamit ang mga intelligent agents.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
+      "product": "Produkto",
+      "resources": "Mga Mapagkukunan",
+      "company": "Kumpanya",
       "legal": "Legal"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
+      "computerUse": "Paggamit ng Computer",
+      "guide": "Gabay",
+      "download": "I-download",
+      "pricing": "Presyo",
       "agentSwarms": "Agent Swarms",
       "status": "Status",
       "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
+      "useCases": "Mga Gamit",
+      "demos": "Mga Demo",
+      "compare": "Ihambing",
+      "talkToCofounders": "Kausapin ang mga Cofounder at Demo",
+      "contact": "Makipag-ugnayan",
       "privacy": "Privacy",
-      "terms": "Terms"
+      "terms": "Mga Tuntunin"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Wika"
   }
 }

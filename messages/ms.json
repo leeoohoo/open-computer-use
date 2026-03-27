@@ -1,404 +1,404 @@
 {
   "common": {
-    "startFree": "Start Free",
-    "bookDemo": "Book a demo",
-    "tryCoastyFree": "Try Coasty free",
-    "learnMore": "Learn more",
-    "watchSession": "Watch session",
-    "compareAllPlans": "Compare all plans & features",
-    "allRightsReserved": "All rights reserved.",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "recommended": "Recommended",
-    "month": "month",
-    "creditsPerMonth": "{count} credits/mo",
-    "agentsInParallel": "{count} agents in parallel"
+    "startFree": "Mula Percuma",
+    "bookDemo": "Tempah demo",
+    "tryCoastyFree": "Cuba Coasty percuma",
+    "learnMore": "Ketahui lebih lanjut",
+    "watchSession": "Tonton sesi",
+    "compareAllPlans": "Bandingkan semua pelan & ciri",
+    "allRightsReserved": "Hak cipta terpelihara.",
+    "privacy": "Privasi",
+    "terms": "Terma",
+    "recommended": "Disyorkan",
+    "month": "bulan",
+    "creditsPerMonth": "{count} kredit/bln",
+    "agentsInParallel": "{count} agen secara selari"
   },
 
   "header": {
-    "useCases": "Use Cases",
+    "useCases": "Kes Penggunaan",
     "blog": "Blog",
-    "agentSwarms": "Agent Swarms",
-    "compare": "Compare",
-    "demos": "Demos",
-    "pricing": "Pricing",
-    "download": "Download",
-    "signIn": "Sign in",
-    "getStarted": "Get Started",
+    "agentSwarms": "Kawanan Agen",
+    "compare": "Bandingkan",
+    "demos": "Demo",
+    "pricing": "Harga",
+    "download": "Muat Turun",
+    "signIn": "Log masuk",
+    "getStarted": "Mulakan",
     "useCaseItems": {
-      "competitorIntel": "Competitor Intel",
-      "qaBugReports": "QA Bug Reports",
-      "seoGapAnalysis": "SEO Gap Analysis",
-      "dataExtraction": "Data Extraction",
-      "leadGeneration": "Lead Generation",
-      "siteAudit": "Site Audit",
-      "adIntelligence": "Ad Intelligence",
-      "emailOutreach": "Email Outreach",
-      "designReview": "Design Review",
-      "priceMonitoring": "Price Monitoring",
-      "marketResearch": "Market Research",
-      "emailCampaigns": "Email Campaigns"
+      "competitorIntel": "Perisikan Pesaing",
+      "qaBugReports": "Laporan Pepijat QA",
+      "seoGapAnalysis": "Analisis Jurang SEO",
+      "dataExtraction": "Pengekstrakan Data",
+      "leadGeneration": "Penjanaan Prospek",
+      "siteAudit": "Audit Laman",
+      "adIntelligence": "Perisikan Iklan",
+      "emailOutreach": "Jangkauan E-mel",
+      "designReview": "Semakan Reka Bentuk",
+      "priceMonitoring": "Pemantauan Harga",
+      "marketResearch": "Penyelidikan Pasaran",
+      "emailCampaigns": "Kempen E-mel"
     },
     "useCaseStats": {
-      "competitorIntel": "{stat} competitor profiles delivered",
-      "qaBugReports": "{stat} user flows tested per run",
-      "seoGapAnalysis": "{stat} keyword gaps identified",
-      "dataExtraction": "{stat} rows extracted per run",
-      "leadGeneration": "{stat} qualified leads per run",
-      "siteAudit": "{stat} pages audited per run",
-      "adIntelligence": "{stat} ad creatives captured",
-      "emailOutreach": "{stat} personalized emails drafted",
-      "designReview": "{stat} breakpoints tested per page",
-      "priceMonitoring": "{stat} SKUs compared per run",
-      "marketResearch": "{stat} data points sourced",
-      "emailCampaigns": "{stat} personalized emails per campaign"
+      "competitorIntel": "{stat} profil pesaing dihantar",
+      "qaBugReports": "{stat} aliran pengguna diuji setiap larian",
+      "seoGapAnalysis": "{stat} jurang kata kunci dikenal pasti",
+      "dataExtraction": "{stat} baris diekstrak setiap larian",
+      "leadGeneration": "{stat} prospek berkualiti setiap larian",
+      "siteAudit": "{stat} halaman diaudit setiap larian",
+      "adIntelligence": "{stat} kreatif iklan ditangkap",
+      "emailOutreach": "{stat} e-mel peribadi dirangka",
+      "designReview": "{stat} titik putus diuji setiap halaman",
+      "priceMonitoring": "{stat} SKU dibandingkan setiap larian",
+      "marketResearch": "{stat} titik data dikumpul",
+      "emailCampaigns": "{stat} e-mel peribadi setiap kempen"
     },
     "blogItems": {
-      "allPosts": "All Posts",
-      "computerUse": "Computer Use",
-      "compare": "Compare",
-      "dataEntry": "Data Entry",
+      "allPosts": "Semua Catatan",
+      "computerUse": "Penggunaan Komputer",
+      "compare": "Bandingkan",
+      "dataEntry": "Kemasukan Data",
       "webScraping": "Web Scraping",
-      "jobApplications": "Job Applications",
-      "demosResults": "Demos & Results",
-      "guide": "Guide"
+      "jobApplications": "Permohonan Kerja",
+      "demosResults": "Demo & Keputusan",
+      "guide": "Panduan"
     },
     "blogStats": {
-      "allPosts": "{stat} articles published weekly",
-      "computerUse": "{stat} OSWorld benchmark score",
-      "compare": "{stat} competitors analyzed",
-      "dataEntry": "{stat} faster than manual",
-      "webScraping": "{stat} pages per session",
-      "jobApplications": "{stat} applications per session",
-      "demosResults": "{stat} real case studies",
-      "guide": "{stat} use case walkthroughs"
+      "allPosts": "{stat} artikel diterbitkan setiap minggu",
+      "computerUse": "{stat} skor penanda aras OSWorld",
+      "compare": "{stat} pesaing dianalisis",
+      "dataEntry": "{stat} lebih pantas daripada manual",
+      "webScraping": "{stat} halaman setiap sesi",
+      "jobApplications": "{stat} permohonan setiap sesi",
+      "demosResults": "{stat} kajian kes sebenar",
+      "guide": "{stat} panduan kes penggunaan"
     }
   },
 
   "hero": {
-    "badge": "#1 Computer-Use Agent · {score} OSWorld",
-    "headline": "Autonomous computer operators",
+    "badge": "Agen Computer-Use #1 · {score} OSWorld",
+    "headline": "Operator komputer autonomi",
     "useCases": {
       "computerAgent": {
-        "label": "Computer agent",
-        "headline": "automate any browser task",
-        "outcome": "An AI agent that controls a real computer — browses, clicks, types, and delivers finished work. No setup required."
+        "label": "Agen komputer",
+        "headline": "automatikkan sebarang tugas pelayar",
+        "outcome": "Agen AI yang mengawal komputer sebenar — melayari, mengklik, menaip, dan menyiapkan kerja. Tiada persediaan diperlukan."
       },
       "competitorIntel": {
-        "label": "Competitor intel",
-        "headline": "monitor every competitor",
-        "outcome": "Full competitor profiles with pricing, features, and positioning gaps — exported as a ready-to-share report."
+        "label": "Perisikan pesaing",
+        "headline": "pantau setiap pesaing",
+        "outcome": "Profil pesaing lengkap dengan harga, ciri, dan jurang kedudukan — dieksport sebagai laporan sedia dikongsi."
       },
       "qaTesting": {
-        "label": "QA testing",
-        "headline": "find bugs before users do",
-        "outcome": "Critical user flows tested end-to-end, every bug screenshotted with repro steps and severity ranking."
+        "label": "Pengujian QA",
+        "headline": "cari pepijat sebelum pengguna",
+        "outcome": "Aliran pengguna kritikal diuji hujung ke hujung, setiap pepijat ditangkap skrin dengan langkah reproduksi dan penarafan keterukan."
       },
       "seoAnalysis": {
-        "label": "SEO analysis",
-        "headline": "uncover keyword gaps",
-        "outcome": "Keyword gaps identified, content briefs drafted, competitor backlink sources mapped — actionable SEO strategy."
+        "label": "Analisis SEO",
+        "headline": "temui jurang kata kunci",
+        "outcome": "Jurang kata kunci dikenal pasti, ringkasan kandungan dirangka, sumber pautan balik pesaing dipetakan — strategi SEO yang boleh dilaksanakan."
       },
       "dataExtraction": {
-        "label": "Data extraction",
-        "headline": "scrape and structure any site",
-        "outcome": "Structured data scraped, cleaned, de-duplicated, and exported as CSV — from any website, any format."
+        "label": "Pengekstrakan data",
+        "headline": "scrape dan strukturkan mana-mana laman",
+        "outcome": "Data berstruktur discrap, dibersihkan, dinyahduplikasi, dan dieksport sebagai CSV — dari mana-mana laman web, sebarang format."
       },
       "leadGeneration": {
-        "label": "Lead generation",
-        "headline": "fill your sales pipeline",
-        "outcome": "Qualified decision-makers matching your ICP with verified titles, companies, and personalized outreach openers."
+        "label": "Penjanaan prospek",
+        "headline": "isikan saluran jualan anda",
+        "outcome": "Pembuat keputusan berkualiti sepadan ICP anda dengan jawatan disahkan, syarikat, dan pembukaan jangkauan peribadi."
       },
       "siteAudit": {
-        "label": "Site audit",
-        "headline": "audit every page at scale",
-        "outcome": "Pages scanned, Core Web Vitals scored, broken links found, accessibility issues ranked by fix priority."
+        "label": "Audit laman",
+        "headline": "audit setiap halaman secara berskala",
+        "outcome": "Halaman diimbas, Core Web Vitals dinilai, pautan rosak ditemui, isu kebolehcapaian disusun mengikut keutamaan pembaikan."
       },
       "emailOutreach": {
-        "label": "Email outreach",
-        "headline": "send personalized outreach",
-        "outcome": "Personalized emails referencing each prospect's company, role, and pain points — ready to send."
+        "label": "Jangkauan e-mel",
+        "headline": "hantar jangkauan peribadi",
+        "outcome": "E-mel peribadi merujuk syarikat, peranan, dan masalah setiap prospek — sedia dihantar."
       },
       "marketResearch": {
-        "label": "Market research",
-        "headline": "validate your market fast",
-        "outcome": "TAM calculated, key players profiled, growth trends charted — sourced from dozens of data points."
+        "label": "Penyelidikan pasaran",
+        "headline": "sahkan pasaran anda dengan pantas",
+        "outcome": "TAM dikira, pemain utama diprofil, trend pertumbuhan dicarta — dikumpul dari berpuluh titik data."
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Market your product on Reddit autonomously" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Find prospects and send personalized emails" },
-      "qaTesting": { "label": "QA Testing", "task": "Test every checkout flow and report bugs" },
-      "jobApplication": { "label": "Job Application", "task": "Find roles, tailor resume, and apply" },
-      "formFilling": { "label": "Form Filling", "task": "Fill out the YC S26 application for you" },
-      "socialMedia": { "label": "Social Media", "task": "Post on Hacker News and engage with comments" }
+      "marketing": { "label": "Pemasaran", "task": "Pasarkan produk anda di Reddit secara autonomi" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Cari prospek dan hantar e-mel peribadi" },
+      "qaTesting": { "label": "Pengujian QA", "task": "Uji setiap aliran pembayaran dan laporkan pepijat" },
+      "jobApplication": { "label": "Permohonan Kerja", "task": "Cari jawatan, sesuaikan resume, dan mohon" },
+      "formFilling": { "label": "Pengisian Borang", "task": "Isi permohonan YC S26 untuk anda" },
+      "socialMedia": { "label": "Media Sosial", "task": "Siarkan di Hacker News dan berinteraksi dengan komen" }
     }
   },
 
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld benchmark", "sublabel": "#1 computer-use agent globally" },
-    "tools": { "value": "50+", "label": "Tools the agent can use", "sublabel": "Browser, terminal, desktop, files" },
-    "schedule": { "value": "24/7", "label": "Runs on schedule", "sublabel": "Automate any recurring task" },
-    "setup": { "value": "0", "label": "Setup required", "sublabel": "No APIs, no integrations, no code" }
+    "osworld": { "value": "82%", "label": "Penanda aras OSWorld", "sublabel": "Agen computer-use #1 di dunia" },
+    "tools": { "value": "50+", "label": "Alat yang boleh digunakan agen", "sublabel": "Pelayar, terminal, desktop, fail" },
+    "schedule": { "value": "24/7", "label": "Berjalan mengikut jadual", "sublabel": "Automatikkan sebarang tugas berulang" },
+    "setup": { "value": "0", "label": "Persediaan diperlukan", "sublabel": "Tiada API, tiada integrasi, tiada kod" }
   },
 
   "whyCoasty": {
-    "sectionLabel": "Why Coasty",
-    "title": "Not a chatbot. Not an RPA script.",
+    "sectionLabel": "Mengapa Coasty",
+    "title": "Bukan chatbot. Bukan skrip RPA.",
     "worksLikeHuman": {
-      "title": "Works like a human",
-      "description": "Sees, clicks, types, navigates — exactly like you"
+      "title": "Berfungsi seperti manusia",
+      "description": "Melihat, mengklik, menaip, menavigasi — sama seperti anda"
     },
     "noScripts": {
-      "title": "No scripts or setup",
-      "description": "Plain English in, results out"
+      "title": "Tiada skrip atau persediaan",
+      "description": "Bahasa biasa masuk, keputusan keluar"
     },
     "handlesUnexpected": {
-      "title": "Handles the unexpected",
-      "description": "Adapts to CAPTCHAs, popups, layout changes"
+      "title": "Mengendalikan yang tidak dijangka",
+      "description": "Menyesuaikan diri dengan CAPTCHA, popup, perubahan reka letak"
     },
     "runsInIsolation": {
-      "title": "Runs in isolation",
-      "description": "Sandboxed VM per session — nothing leaks"
+      "title": "Berjalan dalam pengasingan",
+      "description": "VM kotak pasir setiap sesi — tiada yang bocor"
     }
   },
 
   "howItWorks": {
-    "title": "How it works",
+    "title": "Cara ia berfungsi",
     "step1": {
-      "title": "Describe your task",
-      "description": "Plain English. That's it.",
-      "placeholder": "Research 100 leads on LinkedIn..."
+      "title": "Jelaskan tugas anda",
+      "description": "Bahasa biasa. Itu sahaja.",
+      "placeholder": "Kaji 100 prospek di LinkedIn..."
     },
     "step2": {
-      "title": "Watch the agent work",
-      "description": "Opens browser, clicks, types, navigates"
+      "title": "Saksikan agen bekerja",
+      "description": "Membuka pelayar, mengklik, menaip, menavigasi"
     },
     "step3": {
-      "title": "Task complete",
-      "description": "Every action logged with screenshots",
+      "title": "Tugas selesai",
+      "description": "Setiap tindakan dilog dengan tangkapan skrin",
       "results": {
-        "taskCompleted": "Task completed",
-        "leadsFound": "12 leads found",
-        "addedToCrm": "Added to CRM"
+        "taskCompleted": "Tugas selesai",
+        "leadsFound": "12 prospek ditemui",
+        "addedToCrm": "Ditambah ke CRM"
       }
     }
   },
 
   "benchmark": {
-    "title": "Benchmarked #1 worldwide",
-    "subtitle": "82% on OSWorld — the hardest benchmark for AI agents that use real computers",
-    "agenticFramework": "Agentic Framework",
-    "foundationModel": "Foundation Model"
+    "title": "Penanda aras #1 di dunia",
+    "subtitle": "82% di OSWorld — penanda aras paling sukar untuk agen AI yang menggunakan komputer sebenar",
+    "agenticFramework": "Rangka Kerja Agentik",
+    "foundationModel": "Model Asas"
   },
 
   "comparison": {
-    "title": "Why automate with Coasty?",
-    "subtitle": "The same tasks that take a team hours — Coasty completes in minutes, around the clock.",
+    "title": "Mengapa automatikkan dengan Coasty?",
+    "subtitle": "Tugas yang sama yang mengambil berjam-jam bagi pasukan — Coasty siapkan dalam beberapa minit, sepanjang masa.",
     "manual": {
-      "title": "Doing It Manually",
-      "subtitle": "You or your team, by hand"
+      "title": "Melakukannya Secara Manual",
+      "subtitle": "Anda atau pasukan anda, dengan tangan"
     },
     "coasty": {
-      "title": "Coasty AI Agent",
-      "subtitle": "#1 computer-use agent"
+      "title": "Agen AI Coasty",
+      "subtitle": "Agen computer-use #1"
     },
     "rows": {
-      "timePerTask": "Time per task",
-      "availability": "Availability",
-      "setupTime": "Setup time",
-      "errorRate": "Error rate",
-      "scaling": "Scaling",
-      "auditTrail": "Audit trail"
+      "timePerTask": "Masa setiap tugas",
+      "availability": "Ketersediaan",
+      "setupTime": "Masa persediaan",
+      "errorRate": "Kadar ralat",
+      "scaling": "Penskalaan",
+      "auditTrail": "Jejak audit"
     },
     "manualValues": {
-      "timePerTask": "Hours to days",
-      "availability": "Business hours only",
-      "setupTime": "Learn tools, write SOPs",
-      "errorRate": "Human mistakes",
-      "scaling": "Do more = spend more time",
-      "auditTrail": "None"
+      "timePerTask": "Berjam-jam hingga berhari-hari",
+      "availability": "Waktu perniagaan sahaja",
+      "setupTime": "Belajar alat, tulis SOP",
+      "errorRate": "Kesilapan manusia",
+      "scaling": "Buat lebih banyak = habiskan lebih masa",
+      "auditTrail": "Tiada"
     },
     "coastyValues": {
-      "timePerTask": "Minutes",
-      "availability": "24/7, every day",
-      "setupTime": "60 seconds",
-      "errorRate": "Self-correcting",
-      "scaling": "Run unlimited tasks in parallel",
-      "auditTrail": "Every click logged + screenshots"
+      "timePerTask": "Minit",
+      "availability": "24/7, setiap hari",
+      "setupTime": "60 saat",
+      "errorRate": "Pembetulan sendiri",
+      "scaling": "Jalankan tugas tanpa had secara selari",
+      "auditTrail": "Setiap klik dilog + tangkapan skrin"
     },
     "bottomBar": {
-      "automateTasksThat": "Automate tasks that take",
-      "hoursManually": "hours manually",
-      "startingAt": "Starting at"
+      "automateTasksThat": "Automatikkan tugas yang mengambil",
+      "hoursManually": "berjam-jam secara manual",
+      "startingAt": "Bermula pada"
     }
   },
 
   "demo": {
-    "title": "Watch the agent in action",
-    "subtitle": "Real tasks. Real browsers. Every click recorded.",
+    "title": "Saksikan agen dalam tindakan",
+    "subtitle": "Tugas sebenar. Pelayar sebenar. Setiap klik dirakam.",
     "sessions": {
       "reddit": {
-        "title": "Coasty on Reddit",
-        "description": "Watch Coasty autonomously run a marketing campaign — researching competitors, analyzing trends, and building a strategy deck.",
-        "tag": "Marketing"
+        "title": "Coasty di Reddit",
+        "description": "Saksikan Coasty secara autonomi menjalankan kempen pemasaran — menyelidik pesaing, menganalisis trend, dan membina dek strategi.",
+        "tag": "Pemasaran"
       },
       "prospects": {
-        "title": "Finding Prospective Customers",
-        "description": "Coasty finds and researches prospective customers, gathering key details to craft personalized outreach.",
+        "title": "Mencari Bakal Pelanggan",
+        "description": "Coasty mencari dan menyelidik bakal pelanggan, mengumpulkan butiran penting untuk merangka jangkauan peribadi.",
         "tag": "Go-to-Market"
       },
       "qa": {
-        "title": "QA Testing Itself",
-        "description": "Coasty runs quality assurance on its own product — navigating flows, catching bugs, and reporting issues autonomously.",
-        "tag": "QA Testing"
+        "title": "Menguji QA Sendiri",
+        "description": "Coasty menjalankan jaminan kualiti pada produknya sendiri — menavigasi aliran, menangkap pepijat, dan melaporkan isu secara autonomi.",
+        "tag": "Pengujian QA"
       },
       "email": {
-        "title": "Sending an Email on Your Behalf",
-        "description": "From composing to hitting send — an AI agent drafts and delivers an email entirely on its own.",
-        "tag": "Communication"
+        "title": "Menghantar E-mel Bagi Pihak Anda",
+        "description": "Dari merangka hingga menghantar — agen AI merangka dan menyampaikan e-mel sepenuhnya sendiri.",
+        "tag": "Komunikasi"
       },
       "job": {
-        "title": "Applying to a Job",
-        "description": "Coasty finds a matching role, tailors your resume, and submits the application — all on its own.",
-        "tag": "Job Application"
+        "title": "Memohon Pekerjaan",
+        "description": "Coasty mencari jawatan sepadan, menyesuaikan resume anda, dan menghantar permohonan — semuanya sendiri.",
+        "tag": "Permohonan Kerja"
       },
       "hackernews": {
-        "title": "Posting on Hacker News",
-        "description": "Coasty creates and publishes a blog post on Hacker News — writing the content and submitting it autonomously.",
-        "tag": "Social Media"
+        "title": "Menyiarkan di Hacker News",
+        "description": "Coasty mencipta dan menerbitkan catatan blog di Hacker News — menulis kandungan dan menghantarnya secara autonomi.",
+        "tag": "Media Sosial"
       }
     }
   },
 
   "features": {
-    "title": "Built for real computer tasks",
+    "title": "Dibina untuk tugas komputer sebenar",
     "selfCorrecting": {
-      "title": "Self-Correcting",
-      "description": "Detects errors, retries alternative paths"
+      "title": "Pembetulan Sendiri",
+      "description": "Mengesan ralat, mencuba laluan alternatif"
     },
     "auditTrail": {
-      "title": "Full Audit Trail",
-      "description": "Every click logged with screenshots"
+      "title": "Jejak Audit Penuh",
+      "description": "Setiap klik dilog dengan tangkapan skrin"
     },
     "schedule": {
-      "title": "Schedule 24/7",
-      "description": "Runs on cron — hourly, daily, weekly"
+      "title": "Jadualkan 24/7",
+      "description": "Berjalan dengan cron — setiap jam, harian, mingguan"
     },
     "sandboxed": {
-      "title": "Sandboxed & Secure",
-      "description": "Isolated VM per session, destroyed after"
+      "title": "Kotak Pasir & Selamat",
+      "description": "VM terpencil setiap sesi, dimusnahkan selepas itu"
     },
     "benchmark": {
-      "title": "#1 on OSWorld",
-      "description": "82% — highest score ever recorded"
+      "title": "#1 di OSWorld",
+      "description": "82% — skor tertinggi pernah direkodkan"
     },
     "swarms": {
-      "title": "Agent Swarms",
-      "description": "Split tasks across machines in parallel"
+      "title": "Kawanan Agen",
+      "description": "Bahagikan tugas merentasi mesin secara selari"
     }
   },
 
   "pricing": {
-    "title": "Start free, scale when ready",
-    "subtitle": "No credit card. Your AI agent is ready in 60 seconds.",
+    "title": "Mula percuma, skala bila sedia",
+    "subtitle": "Tiada kad kredit. Agen AI anda sedia dalam 60 saat.",
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Try the #1 computer-use agent",
-        "cta": "Start Free"
+        "description": "Cuba agen computer-use #1",
+        "cta": "Mula Percuma"
       },
       "lite": {
         "name": "Lite",
-        "description": "Light daily automation",
-        "cta": "Get Lite"
+        "description": "Automasi harian ringan",
+        "cta": "Dapatkan Lite"
       },
       "starter": {
         "name": "Starter",
-        "description": "Automate tasks every day",
-        "cta": "Get Starter"
+        "description": "Automatikkan tugas setiap hari",
+        "cta": "Dapatkan Starter"
       },
       "plus": {
         "name": "Plus",
-        "description": "Scale complex workflows",
-        "cta": "Go Plus",
-        "badge": "Most Popular"
+        "description": "Skalakan aliran kerja kompleks",
+        "cta": "Pilih Plus",
+        "badge": "Paling Popular"
       },
       "pro": {
         "name": "Pro",
-        "description": "Unlimited heavy automation",
-        "cta": "Get Pro"
+        "description": "Automasi berat tanpa had",
+        "cta": "Dapatkan Pro"
       }
     },
-    "vmTemporary": "1 temporary VM (2hr)",
-    "vmDeletedAfterInactivity": "1 VM (deleted after inactivity)",
-    "vmAlwaysOn": "{count} always-on VM",
-    "vmAlwaysOnPlural": "{count} always-on VMs",
+    "vmTemporary": "1 VM sementara (2 jam)",
+    "vmDeletedAfterInactivity": "1 VM (dipadam selepas tidak aktif)",
+    "vmAlwaysOn": "{count} VM sentiasa aktif",
+    "vmAlwaysOnPlural": "{count} VM sentiasa aktif",
     "bargain": {
-      "title": "The same work costs {oldPrice} with manual labor",
-      "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
+      "title": "Kerja yang sama berharga {oldPrice} dengan tenaga kerja manual",
+      "description": "Pembantu maya berharga $2,000–$4,000/bulan. Pekerja separuh masa lebih mahal. Coasty melakukan kerja yang sama 24/7 bermula pada $0 — dengan konsistensi sempurna, jejak audit penuh, dan sifar masa latihan."
     }
   },
 
   "faq": {
-    "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know before getting started",
+    "title": "Soalan lazim",
+    "subtitle": "Semua yang perlu anda tahu sebelum bermula",
     "items": {
       "whatIsCoasty": {
-        "question": "What is Coasty?",
-        "answer": "Coasty is the world's best computer-use AI agent. You describe a task — research leads, test a website, fill out forms, post on social media — and Coasty opens a real browser, navigates apps, clicks buttons, types text, and completes the task end-to-end. No APIs, no integrations, no code required."
+        "question": "Apa itu Coasty?",
+        "answer": "Coasty ialah agen AI computer-use terbaik di dunia. Anda jelaskan tugas — kaji prospek, uji laman web, isi borang, siarkan di media sosial — dan Coasty membuka pelayar sebenar, menavigasi aplikasi, mengklik butang, menaip teks, dan menyiapkan tugas dari hujung ke hujung. Tiada API, tiada integrasi, tiada kod diperlukan."
       },
       "howDifferent": {
-        "question": "How is this different from ChatGPT or other AI tools?",
-        "answer": "ChatGPT generates text. Coasty uses a computer. It doesn't tell you what to do — it opens a browser, navigates to the website, clicks the buttons, fills the forms, and delivers the completed work. It's the difference between getting instructions and having the task done for you."
+        "question": "Bagaimana ini berbeza daripada ChatGPT atau alat AI lain?",
+        "answer": "ChatGPT menjana teks. Coasty menggunakan komputer. Ia tidak memberitahu anda apa yang perlu dilakukan — ia membuka pelayar, menavigasi ke laman web, mengklik butang, mengisi borang, dan menyerahkan kerja yang telah siap. Ini perbezaan antara mendapat arahan dan tugas disiapkan untuk anda."
       },
       "whatTasks": {
-        "question": "What tasks can Coasty automate?",
-        "answer": "Any task you can do on a computer. Web research, lead generation, data entry, form filling, QA testing, social media posting, email outreach, invoice processing, competitive analysis, recruiting — if it involves a browser or desktop app, Coasty can do it."
+        "question": "Apakah tugas yang boleh diautomatikkan Coasty?",
+        "answer": "Sebarang tugas yang boleh anda lakukan pada komputer. Penyelidikan web, penjanaan prospek, kemasukan data, pengisian borang, pengujian QA, siaran media sosial, jangkauan e-mel, pemprosesan invois, analisis persaingan, pengambilan pekerja — jika ia melibatkan pelayar atau aplikasi desktop, Coasty boleh melakukannya."
       },
       "whatAreCredits": {
-        "question": "What are credits and how are they used?",
-        "answer": "Credits are consumed as the agent works on tasks. Longer, more complex tasks use more credits. Paid plans include monthly credits, and you can also purchase additional credit packs anytime."
+        "question": "Apa itu kredit dan bagaimana ia digunakan?",
+        "answer": "Kredit digunakan semasa agen bekerja pada tugas. Tugas yang lebih panjang dan kompleks menggunakan lebih banyak kredit. Pelan berbayar termasuk kredit bulanan, dan anda juga boleh membeli pek kredit tambahan pada bila-bila masa."
       },
       "localComputer": {
-        "question": "Can Coasty run on my own computer?",
-        "answer": "Yes. Our desktop app runs as a lightweight overlay on your machine, controlling your local browser and applications directly. Alternatively, tasks run on isolated cloud machines — your choice."
+        "question": "Bolehkah Coasty berjalan pada komputer saya sendiri?",
+        "answer": "Ya. Aplikasi desktop kami berjalan sebagai overlay ringan pada mesin anda, mengawal pelayar dan aplikasi tempatan anda secara langsung. Sebagai alternatif, tugas berjalan pada mesin awan terpencil — pilihan anda."
       },
       "dataSafe": {
-        "question": "Is my data safe?",
-        "answer": "Every task runs in an isolated sandbox environment. Nothing leaks between sessions. Your credentials stay private, and every action is logged with screenshots in a full audit trail you can review anytime."
+        "question": "Adakah data saya selamat?",
+        "answer": "Setiap tugas berjalan dalam persekitaran kotak pasir terpencil. Tiada yang bocor antara sesi. Kelayakan anda kekal peribadi, dan setiap tindakan dilog dengan tangkapan skrin dalam jejak audit penuh yang boleh anda semak pada bila-bila masa."
       }
     }
   },
 
   "footer": {
-    "tagline": "AI-powered computer use.",
-    "tagline2": "Automate any workflow with intelligent agents.",
+    "tagline": "Penggunaan komputer berkuasa AI.",
+    "tagline2": "Automatikkan sebarang aliran kerja dengan agen pintar.",
     "columns": {
-      "product": "Product",
-      "resources": "Resources",
-      "company": "Company",
-      "legal": "Legal"
+      "product": "Produk",
+      "resources": "Sumber",
+      "company": "Syarikat",
+      "legal": "Undang-undang"
     },
     "links": {
-      "computerUse": "Computer Use",
-      "guide": "Guide",
-      "download": "Download",
-      "pricing": "Pricing",
-      "agentSwarms": "Agent Swarms",
+      "computerUse": "Penggunaan Komputer",
+      "guide": "Panduan",
+      "download": "Muat Turun",
+      "pricing": "Harga",
+      "agentSwarms": "Kawanan Agen",
       "status": "Status",
       "blog": "Blog",
-      "useCases": "Use Cases",
-      "demos": "Demos",
-      "compare": "Compare",
-      "talkToCofounders": "Talk to Cofounders & Demo",
-      "contact": "Contact",
-      "privacy": "Privacy",
-      "terms": "Terms"
+      "useCases": "Kes Penggunaan",
+      "demos": "Demo",
+      "compare": "Bandingkan",
+      "talkToCofounders": "Bercakap dengan Pengasas Bersama & Demo",
+      "contact": "Hubungi",
+      "privacy": "Privasi",
+      "terms": "Terma"
     }
   },
 
   "languageSwitcher": {
-    "label": "Language"
+    "label": "Bahasa"
   }
 }
