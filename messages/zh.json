@@ -14,7 +14,6 @@
     "creditsPerMonth": "{count} 积分/月",
     "agentsInParallel": "{count} 个智能体并行"
   },
-
   "header": {
     "useCases": "使用场景",
     "blog": "博客",
@@ -74,7 +73,6 @@
       "guide": "{stat} 个使用场景教程"
     }
   },
-
   "hero": {
     "badge": "#1 计算机使用智能体 · {score} OSWorld",
     "headline": "自主计算机操作员",
@@ -126,22 +124,54 @@
       }
     },
     "demoVideos": {
-      "marketing": { "label": "营销", "task": "在 Reddit 上自主推广您的产品" },
-      "goToMarket": { "label": "市场推广", "task": "寻找潜在客户并发送个性化邮件" },
-      "qaTesting": { "label": "QA 测试", "task": "测试每个结账流程并报告缺陷" },
-      "jobApplication": { "label": "求职申请", "task": "查找职位、定制简历并投递" },
-      "formFilling": { "label": "表单填写", "task": "为您填写 YC S26 申请表" },
-      "socialMedia": { "label": "社交媒体", "task": "在 Hacker News 上发帖并参与评论互动" }
+      "marketing": {
+        "label": "营销",
+        "task": "在 Reddit 上自主推广您的产品"
+      },
+      "goToMarket": {
+        "label": "市场推广",
+        "task": "寻找潜在客户并发送个性化邮件"
+      },
+      "qaTesting": {
+        "label": "QA 测试",
+        "task": "测试每个结账流程并报告缺陷"
+      },
+      "jobApplication": {
+        "label": "求职申请",
+        "task": "查找职位、定制简历并投递"
+      },
+      "formFilling": {
+        "label": "表单填写",
+        "task": "为您填写 YC S26 申请表"
+      },
+      "socialMedia": {
+        "label": "社交媒体",
+        "task": "在 Hacker News 上发帖并参与评论互动"
+      }
     }
   },
-
   "stats": {
-    "osworld": { "value": "82%", "label": "OSWorld 基准测试", "sublabel": "全球排名第一的计算机使用智能体" },
-    "tools": { "value": "50+", "label": "智能体可使用的工具", "sublabel": "浏览器、终端、桌面、文件" },
-    "schedule": { "value": "24/7", "label": "定时自动运行", "sublabel": "自动化任何重复性任务" },
-    "setup": { "value": "0", "label": "无需设置", "sublabel": "无需 API、无需集成、无需代码" }
+    "osworld": {
+      "value": "82%",
+      "label": "OSWorld 基准测试",
+      "sublabel": "全球排名第一的计算机使用智能体"
+    },
+    "tools": {
+      "value": "50+",
+      "label": "智能体可使用的工具",
+      "sublabel": "浏览器、终端、桌面、文件"
+    },
+    "schedule": {
+      "value": "24/7",
+      "label": "定时自动运行",
+      "sublabel": "自动化任何重复性任务"
+    },
+    "setup": {
+      "value": "0",
+      "label": "无需设置",
+      "sublabel": "无需 API、无需集成、无需代码"
+    }
   },
-
   "whyCoasty": {
     "sectionLabel": "为什么选择 Coasty",
     "title": "不是聊天机器人，也不是 RPA 脚本。",
@@ -162,7 +192,6 @@
       "description": "每个会话使用独立沙盒 VM——数据不会泄露"
     }
   },
-
   "howItWorks": {
     "title": "工作原理",
     "step1": {
@@ -184,14 +213,12 @@
       }
     }
   },
-
   "benchmark": {
     "title": "全球基准测试排名第一",
     "subtitle": "OSWorld 得分 82%——这是针对使用真实计算机的 AI 智能体最难的基准测试",
     "agenticFramework": "智能体框架",
     "foundationModel": "基础模型"
   },
-
   "comparison": {
     "title": "为什么选择 Coasty 自动化？",
     "subtitle": "同样的任务，团队需要数小时——Coasty 几分钟就能完成，全天候运行。",
@@ -233,7 +260,6 @@
       "startingAt": "起步价"
     }
   },
-
   "demo": {
     "title": "观看智能体实际操作",
     "subtitle": "真实任务。真实浏览器。每次点击都有记录。",
@@ -270,7 +296,6 @@
       }
     }
   },
-
   "features": {
     "title": "为真实计算机任务而构建",
     "selfCorrecting": {
@@ -298,7 +323,6 @@
       "description": "跨多台机器并行拆分任务"
     }
   },
-
   "pricing": {
     "title": "免费开始，按需扩展",
     "subtitle": "无需信用卡。您的 AI 智能体 60 秒内即可就绪。",
@@ -339,7 +363,6 @@
       "description": "一名虚拟助理每月费用为 $2,000–$4,000。兼职员工更贵。Coasty 以 $0 起步完成同样的工作，全天候运行——完美一致、完整审计追踪、零培训时间。"
     }
   },
-
   "faq": {
     "title": "常见问题",
     "subtitle": "开始之前您需要了解的一切",
@@ -370,7 +393,6 @@
       }
     }
   },
-
   "footer": {
     "tagline": "AI 驱动的计算机使用。",
     "tagline2": "用智能代理自动化任何工作流。",
@@ -397,8 +419,223 @@
       "terms": "服务条款"
     }
   },
-
   "languageSwitcher": {
     "label": "语言"
+  },
+  "auth": {
+    "brandHeading": "目标由你设定。",
+    "brandSubheading": "其余的交给我们。",
+    "mobileHeading": "目标由你设定。其余的交给我们。",
+    "mobileSubheading": "像真正的队友一样浏览、点击和工作的AI智能体。",
+    "flowSteps": {
+      "step1": {
+        "label": "你描述任务",
+        "sub": "\"调研我们的前5名竞争对手\""
+      },
+      "step2": {
+        "label": "智能体接管控制",
+        "sub": "自主浏览、点击、输入"
+      },
+      "step3": {
+        "label": "工作完成",
+        "sub": "包含5个完整竞争对手档案的电子表格"
+      }
+    },
+    "complete": "完成",
+    "doneIn": "8分钟完成",
+    "viewTitles": {
+      "signIn": "您的操作员已就绪",
+      "signUp": "让您的工作流程自动化",
+      "magicLink": "跳过密码",
+      "forgotPassword": "让我们帮您恢复访问"
+    },
+    "viewDescriptions": {
+      "signIn": "从您上次离开的地方继续 — 您的智能体会记住一切",
+      "signUp": "一分钟内部署您的第一个AI智能体",
+      "magicLink": "从收件箱点击一下即可登录",
+      "forgotPassword": "我们将向您的邮箱发送重置链接"
+    },
+    "google": {
+      "connecting": "连接中...",
+      "continueWithGoogle": "使用 Google 继续"
+    },
+    "or": "或",
+    "email": "邮箱",
+    "emailPlaceholder": "you@example.com",
+    "password": "密码",
+    "passwordPlaceholder": "您的密码",
+    "confirmPassword": "确认密码",
+    "confirmPasswordPlaceholder": "再次输入密码",
+    "minChars": "最少6个字符",
+    "signingIn": "登录中...",
+    "signIn": "登录",
+    "creatingAccount": "创建账户中...",
+    "createAccount": "创建账户",
+    "sending": "发送中...",
+    "sendMagicLink": "发送魔法链接",
+    "sendResetLink": "发送重置链接",
+    "forgotPassword": "忘记密码？",
+    "useMagicLink": "使用魔法链接",
+    "dontHaveAccount": "没有账户？",
+    "signUp": "注册",
+    "alreadyHaveAccount": "已有账户？",
+    "backToSignIn": "返回登录",
+    "termsAgreement": "继续即表示您同意我们的",
+    "terms": "服务条款",
+    "and": "和",
+    "privacyPolicy": "隐私政策",
+    "errors": {
+      "fillAllFields": "请填写所有字段",
+      "passwordMinLength": "密码至少需要6个字符",
+      "passwordsDoNotMatch": "密码不匹配",
+      "supabaseNotConfigured": "Supabase未配置",
+      "unexpectedError": "发生意外错误。请重试。",
+      "confirmEmail": "登录前请先确认您的邮箱。请检查收件箱。",
+      "invalidCredentials": "邮箱或密码无效。",
+      "signInFailed": "登录失败。请重试。",
+      "invalidEmail": "邮箱地址无效。",
+      "emailAlreadyExists": "此邮箱已注册账户。请尝试登录。",
+      "signUpFailed": "注册失败。请重试。",
+      "enterEmail": "请输入您的邮箱",
+      "noAccountFound": "未找到此邮箱的账户。请先注册。",
+      "magicLinkFailed": "魔法链接发送失败。请重试。",
+      "resetFailed": "重置邮件发送失败。请重试。",
+      "updateFailed": "密码更新失败。请重试。"
+    },
+    "success": {
+      "checkEmailConfirm": "登录前请检查邮箱以确认您的账户。",
+      "checkEmailMagicLink": "请检查邮箱中的魔法链接以登录。",
+      "checkEmailReset": "请检查邮箱中的密码重置链接。",
+      "passwordUpdated": "密码更新成功。正在跳转到登录页面..."
+    },
+    "resetPassword": {
+      "title": "重置密码",
+      "subtitle": "请在下方输入您的新密码。",
+      "newPassword": "新密码",
+      "confirmNewPassword": "确认新密码",
+      "confirmPlaceholder": "再次输入新密码",
+      "updating": "更新中...",
+      "updatePassword": "更新密码"
+    },
+    "errorPage": {
+      "title": "认证错误",
+      "defaultMessage": "认证过程中发生错误。",
+      "tryAgain": "重试",
+      "backToChat": "返回聊天",
+      "needHelp": "需要帮助？",
+      "contactSupport": "联系客服"
+    }
+  },
+  "onboarding": {
+    "skipForNow": "暂时跳过",
+    "back": "返回",
+    "continue": "继续",
+    "getStarted": "开始使用",
+    "settingUp": "设置中...",
+    "welcome": {
+      "titleReturning": "欢迎回来{name}！",
+      "titleNew": "欢迎来到 Coasty",
+      "descriptionReturning": "我们想更多地了解您，以改善您的体验",
+      "descriptionNew": "让我们设置您的账户，以便个性化您的体验"
+    },
+    "nameLabel": "您希望我们怎么称呼您？",
+    "namePlaceholder": "您的姓名",
+    "companyLabel": "公司",
+    "optional": "（选填）",
+    "companyPlaceholder": "MacroHard",
+    "websiteLabel": "网站",
+    "websitePlaceholder": "xai.com",
+    "roleStep": {
+      "title": "哪个最能描述您？",
+      "subtitle": "选择所有适用的 — 这有助于我们定制您的体验"
+    },
+    "roles": {
+      "founder": "创始人 / CEO",
+      "developer": "开发者",
+      "marketer": "市场营销",
+      "designer": "设计师",
+      "product_manager": "产品经理",
+      "data_analyst": "数据 / 分析",
+      "operations": "运营",
+      "other": "其他"
+    },
+    "teamSizeLabel": "团队规模",
+    "teamSizes": {
+      "solo": "只有我自己",
+      "2-5": "2-5",
+      "6-20": "6-20",
+      "21-50": "21-50",
+      "51-200": "51-200",
+      "200+": "200+"
+    },
+    "referralStep": {
+      "title": "您是如何找到我们的？",
+      "subtitle": "我们想知道您在哪里了解到 Coasty"
+    },
+    "referralSources": {
+      "twitter": "Twitter / X",
+      "linkedin": "LinkedIn",
+      "google": "Google Search",
+      "youtube": "YouTube",
+      "friend": "朋友 / 同事",
+      "producthunt": "Product Hunt",
+      "reddit": "Reddit",
+      "other": "其他"
+    },
+    "useCaseStep": {
+      "title": "您首先想自动化什么？",
+      "subtitle": "选择所有适用的 — 之后可以探索所有功能"
+    },
+    "useCases": {
+      "web_scraping": "网页抓取与研究",
+      "browser_automation": "浏览器自动化",
+      "data_entry": "数据录入与表单",
+      "email_outreach": "邮件与外联",
+      "testing": "QA与测试",
+      "ecommerce": "电商任务",
+      "social_media": "社交媒体管理",
+      "general_automation": "通用自动化"
+    },
+    "showcase": {
+      "title": "您需要的一切，",
+      "titleHighlight": "内置其中。",
+      "subtitle": "以下是 Coasty 能为您做的",
+      "noCode": {
+        "title": "无需代码",
+        "description": "用简单的中文描述您想要的即可"
+      },
+      "agentSwarms": {
+        "title": "智能体集群",
+        "description": "并行智能体舰队"
+      },
+      "desktopControl": {
+        "title": "桌面控制",
+        "description": "点击、输入、导航"
+      },
+      "browserAutomation": {
+        "title": "浏览器自动化",
+        "description": "表单、标签页、抓取 — 完全自动化"
+      },
+      "computerVision": {
+        "title": "计算机视觉",
+        "description": "实时查看和理解您的屏幕"
+      },
+      "workflows": {
+        "title": "工作流",
+        "description": "多步骤流程"
+      },
+      "onDevice": {
+        "title": "本地运行",
+        "description": "在本地执行"
+      },
+      "autonomous": {
+        "title": "24/7 自主运行",
+        "description": "设置后即可忘记 — 在您睡觉时也在运行"
+      }
+    },
+    "guideCallout": {
+      "title": "初来乍到？我们为您准备了指南",
+      "subtitle": "一分钟内部署您的第一个AI智能体"
+    }
   }
 }

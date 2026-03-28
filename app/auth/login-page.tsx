@@ -22,9 +22,11 @@ import { motion, AnimatePresence } from "framer-motion"
 import { CoastyIcon } from "@/components/icons/coasty"
 import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
 /* ── Minimal Computer Animation ── */
 function MiniComputer({ activeStep }: { activeStep: number }) {
+  const t = useTranslations("auth")
   const allDone = activeStep === 3
 
   return (
@@ -165,7 +167,7 @@ function MiniComputer({ activeStep }: { activeStep: number }) {
                   transition={{ delay: 0.2 }}
                   className="text-xs text-muted-foreground/40 mt-2"
                 >
-                  Complete
+                  {t("complete")}
                 </motion.p>
               </motion.div>
             )}
@@ -184,11 +186,12 @@ function MiniComputer({ activeStep }: { activeStep: number }) {
 
 /* ── Left Brand Panel ── */
 function LeftBrandPanel() {
+  const t = useTranslations("auth")
   const [activeStep, setActiveStep] = useState(0)
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % (FLOW_STEPS.length + 1))
+      setActiveStep((prev) => (prev + 1) % (FLOW_STEP_KEYS.length + 1))
     }, 2800)
     return () => clearInterval(timer)
   }, [])
@@ -207,9 +210,9 @@ function LeftBrandPanel() {
       <MiniComputer activeStep={activeStep} />
 
       <h1 className="mt-6 text-foreground text-3xl xl:text-4xl font-medium tracking-tight leading-[1.25]">
-        You set the goal.
+        {t("brandHeading")}
         <br />
-        <span className="text-muted-foreground/50">We handle the rest.</span>
+        <span className="text-muted-foreground/50">{t("brandSubheading")}</span>
       </h1>
 
       <div className="mt-8">
@@ -220,13 +223,14 @@ function LeftBrandPanel() {
 }
 
 /* ── Minimal Agent Flow ── */
-const FLOW_STEPS = [
-  { label: "You describe the task", sub: "\"Research our top 5 competitors\"" },
-  { label: "Agent takes control", sub: "Browses, clicks, types autonomously" },
-  { label: "Work delivered", sub: "Spreadsheet with 5 full competitor profiles" },
-]
+const FLOW_STEP_KEYS = ["step1", "step2", "step3"] as const
 
 function AgentFlowVisual({ activeStep }: { activeStep: number }) {
+  const t = useTranslations("auth")
+  const FLOW_STEPS = FLOW_STEP_KEYS.map(key => ({
+    label: t(`flowSteps.${key}.label`),
+    sub: t(`flowSteps.${key}.sub`),
+  }))
   // When activeStep === FLOW_STEPS.length, all are complete before resetting
   const allDone = activeStep === FLOW_STEPS.length
 
@@ -349,7 +353,7 @@ function AgentFlowVisual({ activeStep }: { activeStep: number }) {
             className="mt-5 flex items-center gap-3 text-emerald-600 dark:text-emerald-400"
           >
             <div className="h-px flex-1 bg-emerald-500/20" />
-            <span className="text-[13px] font-medium">Done in 8 minutes</span>
+            <span className="text-[13px] font-medium">{t("doneIn")}</span>
             <div className="h-px flex-1 bg-emerald-500/20" />
           </motion.div>
         )}
@@ -360,21 +364,25 @@ function AgentFlowVisual({ activeStep }: { activeStep: number }) {
 
 type AuthView = "sign-in" | "sign-up" | "magic-link" | "forgot-password"
 
-const viewTitles: Record<AuthView, string> = {
-  "sign-in": "Your operator is standing by",
-  "sign-up": "Put your workflows on autopilot",
-  "magic-link": "Skip the password",
-  "forgot-password": "Let's get you back in",
-}
-
-const viewDescriptions: Record<AuthView, string> = {
-  "sign-in": "Pick up right where you left off — your agents remember",
-  "sign-up": "Deploy your first AI agent in under a minute",
-  "magic-link": "One click from your inbox and you're in",
-  "forgot-password": "We'll send a reset link to your email",
-}
-
 export default function LoginPage() {
+  const t = useTranslations("auth")
+  const te = useTranslations("auth.errors")
+  const ts = useTranslations("auth.success")
+
+  const viewTitleMap: Record<AuthView, string> = {
+    "sign-in": t("viewTitles.signIn"),
+    "sign-up": t("viewTitles.signUp"),
+    "magic-link": t("viewTitles.magicLink"),
+    "forgot-password": t("viewTitles.forgotPassword"),
+  }
+
+  const viewDescriptionMap: Record<AuthView, string> = {
+    "sign-in": t("viewDescriptions.signIn"),
+    "sign-up": t("viewDescriptions.signUp"),
+    "magic-link": t("viewDescriptions.magicLink"),
+    "forgot-password": t("viewDescriptions.forgotPassword"),
+  }
+
   const [isLoading, setIsLoading] = useState(false)
   const [isAnonymousLoading, setIsAnonymousLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -403,7 +411,7 @@ export default function LoginPage() {
   async function handleSignInWithGoogle() {
     const supabase = createClient()
     if (!supabase) {
-      throw new Error("Supabase is not configured")
+      throw new Error(te("supabaseNotConfigured"))
     }
 
     try {
@@ -421,7 +429,7 @@ export default function LoginPage() {
       console.error("Error signing in with Google:", err)
       setError(
         (err as Error).message ||
-          "An unexpected error occurred. Please try again."
+          te("unexpectedError")
       )
     } finally {
       setIsLoading(false)
@@ -431,7 +439,7 @@ export default function LoginPage() {
   async function handleSignInAnonymously() {
     const supabase = createClient()
     if (!supabase) {
-      throw new Error("Supabase is not configured")
+      throw new Error(te("supabaseNotConfigured"))
     }
 
     try {
@@ -449,7 +457,7 @@ export default function LoginPage() {
       console.error("Error signing in anonymously:", err)
       setError(
         (err as Error).message ||
-          "An unexpected error occurred. Please try again."
+          te("unexpectedError")
       )
     } finally {
       setIsAnonymousLoading(false)
@@ -460,12 +468,12 @@ export default function LoginPage() {
     e.preventDefault()
     const supabase = createClient()
     if (!supabase) {
-      setError("Supabase is not configured")
+      setError(te("supabaseNotConfigured"))
       return
     }
 
     if (!email || !password) {
-      setError("Please fill in all fields")
+      setError(te("fillAllFields"))
       return
     }
 
@@ -483,11 +491,11 @@ export default function LoginPage() {
     } catch (err: unknown) {
       const message = (err as Error).message
       if (message?.includes("Email not confirmed")) {
-        setError("Please confirm your email before signing in. Check your inbox.")
+        setError(te("confirmEmail"))
       } else if (message?.includes("Invalid login credentials")) {
-        setError("Invalid email or password.")
+        setError(te("invalidCredentials"))
       } else {
-        setError(message || "Sign in failed. Please try again.")
+        setError(message || te("signInFailed"))
       }
     } finally {
       setIsLoading(false)
@@ -498,22 +506,22 @@ export default function LoginPage() {
     e.preventDefault()
     const supabase = createClient()
     if (!supabase) {
-      setError("Supabase is not configured")
+      setError(te("supabaseNotConfigured"))
       return
     }
 
     if (!email || !password || !confirmPassword) {
-      setError("Please fill in all fields")
+      setError(te("fillAllFields"))
       return
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters")
+      setError(te("passwordMinLength"))
       return
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
+      setError(te("passwordsDoNotMatch"))
       return
     }
 
@@ -525,24 +533,24 @@ export default function LoginPage() {
       // Validate email against 121k+ disposable domains (server-side check)
       const validation = await validateEmailForSignup(email)
       if (!validation.valid) {
-        setError(validation.error || "Invalid email address.")
+        setError(validation.error || te("invalidEmail"))
         return
       }
 
       const data = await signUpWithEmail(supabase, validation.normalized || email, password)
 
       if (data?.user?.identities?.length === 0) {
-        setError("An account with this email already exists. Try signing in instead.")
+        setError(te("emailAlreadyExists"))
         return
       }
 
       trackSignUp("email")
-      setSuccess("Check your email to confirm your account before signing in.")
+      setSuccess(ts("checkEmailConfirm"))
       setEmail("")
       setPassword("")
       setConfirmPassword("")
     } catch (err: unknown) {
-      setError((err as Error).message || "Sign up failed. Please try again.")
+      setError((err as Error).message || te("signUpFailed"))
     } finally {
       setIsLoading(false)
     }
@@ -552,12 +560,12 @@ export default function LoginPage() {
     e.preventDefault()
     const supabase = createClient()
     if (!supabase) {
-      setError("Supabase is not configured")
+      setError(te("supabaseNotConfigured"))
       return
     }
 
     if (!email) {
-      setError("Please enter your email")
+      setError(te("enterEmail"))
       return
     }
 
@@ -568,14 +576,14 @@ export default function LoginPage() {
 
       await signInWithMagicLink(supabase, email)
       trackSignIn("magic_link")
-      setSuccess("Check your email for the magic link to sign in.")
+      setSuccess(ts("checkEmailMagicLink"))
     } catch (err: unknown) {
       const message = (err as Error).message
       if (message?.includes("Signups not allowed for otp")) {
         setAuthView("sign-up")
-        setError("No account found with this email. Please sign up first.")
+        setError(te("noAccountFound"))
       } else {
-        setError(message || "Failed to send magic link. Please try again.")
+        setError(message || te("magicLinkFailed"))
       }
     } finally {
       setIsLoading(false)
@@ -586,12 +594,12 @@ export default function LoginPage() {
     e.preventDefault()
     const supabase = createClient()
     if (!supabase) {
-      setError("Supabase is not configured")
+      setError(te("supabaseNotConfigured"))
       return
     }
 
     if (!email) {
-      setError("Please enter your email")
+      setError(te("enterEmail"))
       return
     }
 
@@ -601,9 +609,9 @@ export default function LoginPage() {
       setSuccess(null)
 
       await resetPassword(supabase, email)
-      setSuccess("Check your email for the password reset link.")
+      setSuccess(ts("checkEmailReset"))
     } catch (err: unknown) {
-      setError((err as Error).message || "Failed to send reset email. Please try again.")
+      setError((err as Error).message || te("resetFailed"))
     } finally {
       setIsLoading(false)
     }
@@ -651,10 +659,10 @@ export default function LoginPage() {
                 <CoastyIcon className="size-7 sm:size-8" />
               </div>
               <h1 className="text-foreground text-2xl sm:text-4xl font-medium tracking-tight">
-                You set the goal. We handle the rest.
+                {t("mobileHeading")}
               </h1>
               <p className="text-muted-foreground mt-2 text-sm sm:text-base">
-                AI agents that browse, click, and work like a real teammate.
+                {t("mobileSubheading")}
               </p>
             </div>
 
@@ -671,10 +679,10 @@ export default function LoginPage() {
                   className="mb-4 sm:mb-6"
                 >
                   <h2 className="text-foreground text-xl font-medium tracking-tight">
-                    {viewTitles[authView]}
+                    {viewTitleMap[authView]}
                   </h2>
                   <p className="text-muted-foreground text-sm mt-1">
-                    {viewDescriptions[authView]}
+                    {viewDescriptionMap[authView]}
                   </p>
                 </motion.div>
               </AnimatePresence>
@@ -738,8 +746,8 @@ export default function LoginPage() {
                   </svg>
                   <span>
                     {isLoading && authView === "sign-in" && !email
-                      ? "Connecting..."
-                      : "Continue with Google"}
+                      ? t("google.connecting")
+                      : t("google.continueWithGoogle")}
                   </span>
                 </Button>
 
@@ -747,7 +755,7 @@ export default function LoginPage() {
                 <div className="relative flex items-center gap-3 py-1">
                   <div className="h-px flex-1 bg-border/60" />
                   <span className="text-[11px] uppercase tracking-widest text-muted-foreground/50 font-medium select-none">
-                    or
+                    {t("or")}
                   </span>
                   <div className="h-px flex-1 bg-border/60" />
                 </div>
@@ -765,12 +773,12 @@ export default function LoginPage() {
                       <form onSubmit={handleEmailSignIn} className="space-y-3">
                         <div className="space-y-1.5">
                           <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
-                            Email
+                            {t("email")}
                           </Label>
                           <Input
                             id="email"
                             type="email"
-                            placeholder="you@example.com"
+                            placeholder={t("emailPlaceholder")}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLoading}
@@ -780,12 +788,12 @@ export default function LoginPage() {
                         </div>
                         <div className="space-y-1.5">
                           <Label htmlFor="password" className="text-xs font-medium text-muted-foreground">
-                            Password
+                            {t("password")}
                           </Label>
                           <Input
                             id="password"
                             type="password"
-                            placeholder="Your password"
+                            placeholder={t("passwordPlaceholder")}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={isLoading}
@@ -798,7 +806,7 @@ export default function LoginPage() {
                           className="w-full h-11 rounded-xl font-medium"
                           disabled={isLoading}
                         >
-                          {isLoading ? "Signing in..." : "Sign in"}
+                          {isLoading ? t("signingIn") : t("signIn")}
                         </Button>
                         <div className="flex items-center justify-between text-[13px] pt-1">
                           <button
@@ -806,24 +814,24 @@ export default function LoginPage() {
                             onClick={() => switchView("forgot-password")}
                             className="text-muted-foreground hover:text-foreground transition-colors"
                           >
-                            Forgot password?
+                            {t("forgotPassword")}
                           </button>
                           <button
                             type="button"
                             onClick={() => switchView("magic-link")}
                             className="text-muted-foreground hover:text-foreground transition-colors"
                           >
-                            Use magic link
+                            {t("useMagicLink")}
                           </button>
                         </div>
                         <p className="text-center text-[13px] text-muted-foreground pt-2">
-                          Don&apos;t have an account?{" "}
+                          {t("dontHaveAccount")}{" "}
                           <button
                             type="button"
                             onClick={() => switchView("sign-up")}
                             className="text-foreground hover:underline font-medium"
                           >
-                            Sign up
+                            {t("signUp")}
                           </button>
                         </p>
                       </form>
@@ -833,12 +841,12 @@ export default function LoginPage() {
                       <form onSubmit={handleEmailSignUp} className="space-y-3">
                         <div className="space-y-1.5">
                           <Label htmlFor="signup-email" className="text-xs font-medium text-muted-foreground">
-                            Email
+                            {t("email")}
                           </Label>
                           <Input
                             id="signup-email"
                             type="email"
-                            placeholder="you@example.com"
+                            placeholder={t("emailPlaceholder")}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLoading}
@@ -848,12 +856,12 @@ export default function LoginPage() {
                         </div>
                         <div className="space-y-1.5">
                           <Label htmlFor="signup-password" className="text-xs font-medium text-muted-foreground">
-                            Password
+                            {t("password")}
                           </Label>
                           <Input
                             id="signup-password"
                             type="password"
-                            placeholder="Min. 6 characters"
+                            placeholder={t("minChars")}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={isLoading}
@@ -863,12 +871,12 @@ export default function LoginPage() {
                         </div>
                         <div className="space-y-1.5">
                           <Label htmlFor="signup-confirm" className="text-xs font-medium text-muted-foreground">
-                            Confirm password
+                            {t("confirmPassword")}
                           </Label>
                           <Input
                             id="signup-confirm"
                             type="password"
-                            placeholder="Confirm your password"
+                            placeholder={t("confirmPasswordPlaceholder")}
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             disabled={isLoading}
@@ -881,16 +889,16 @@ export default function LoginPage() {
                           className="w-full h-11 rounded-xl font-medium"
                           disabled={isLoading}
                         >
-                          {isLoading ? "Creating account..." : "Create account"}
+                          {isLoading ? t("creatingAccount") : t("createAccount")}
                         </Button>
                         <p className="text-center text-[13px] text-muted-foreground pt-2">
-                          Already have an account?{" "}
+                          {t("alreadyHaveAccount")}{" "}
                           <button
                             type="button"
                             onClick={() => switchView("sign-in")}
                             className="text-foreground hover:underline font-medium"
                           >
-                            Sign in
+                            {t("signIn")}
                           </button>
                         </p>
                       </form>
@@ -900,12 +908,12 @@ export default function LoginPage() {
                       <form onSubmit={handleMagicLink} className="space-y-3">
                         <div className="space-y-1.5">
                           <Label htmlFor="magic-email" className="text-xs font-medium text-muted-foreground">
-                            Email
+                            {t("email")}
                           </Label>
                           <Input
                             id="magic-email"
                             type="email"
-                            placeholder="you@example.com"
+                            placeholder={t("emailPlaceholder")}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLoading}
@@ -918,7 +926,7 @@ export default function LoginPage() {
                           className="w-full h-11 rounded-xl font-medium"
                           disabled={isLoading}
                         >
-                          {isLoading ? "Sending..." : "Send magic link"}
+                          {isLoading ? t("sending") : t("sendMagicLink")}
                         </Button>
                         <p className="text-center text-[13px] text-muted-foreground pt-2">
                           <button
@@ -926,7 +934,7 @@ export default function LoginPage() {
                             onClick={() => switchView("sign-in")}
                             className="text-foreground hover:underline font-medium"
                           >
-                            Back to sign in
+                            {t("backToSignIn")}
                           </button>
                         </p>
                       </form>
@@ -936,12 +944,12 @@ export default function LoginPage() {
                       <form onSubmit={handleForgotPassword} className="space-y-3">
                         <div className="space-y-1.5">
                           <Label htmlFor="reset-email" className="text-xs font-medium text-muted-foreground">
-                            Email
+                            {t("email")}
                           </Label>
                           <Input
                             id="reset-email"
                             type="email"
-                            placeholder="you@example.com"
+                            placeholder={t("emailPlaceholder")}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLoading}
@@ -954,7 +962,7 @@ export default function LoginPage() {
                           className="w-full h-11 rounded-xl font-medium"
                           disabled={isLoading}
                         >
-                          {isLoading ? "Sending..." : "Send reset link"}
+                          {isLoading ? t("sending") : t("sendResetLink")}
                         </Button>
                         <p className="text-center text-[13px] text-muted-foreground pt-2">
                           <button
@@ -962,7 +970,7 @@ export default function LoginPage() {
                             onClick={() => switchView("sign-in")}
                             className="text-foreground hover:underline font-medium"
                           >
-                            Back to sign in
+                            {t("backToSignIn")}
                           </button>
                         </p>
                       </form>
@@ -975,13 +983,13 @@ export default function LoginPage() {
             {/* Footer */}
             <div className="mt-4 sm:mt-6 text-center">
               <p className="text-[12px] text-muted-foreground/60 leading-relaxed">
-                By continuing, you agree to our{" "}
+                {t("termsAgreement")}{" "}
                 <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">
-                  Terms
+                  {t("terms")}
                 </Link>{" "}
-                and{" "}
+                {t("and")}{" "}
                 <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">
-                  Privacy Policy
+                  {t("privacyPolicy")}
                 </Link>
               </p>
             </div>

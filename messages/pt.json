@@ -14,7 +14,6 @@
     "creditsPerMonth": "{count} créditos/mês",
     "agentsInParallel": "{count} agentes em paralelo"
   },
-
   "header": {
     "useCases": "Casos de Uso",
     "blog": "Blog",
@@ -74,7 +73,6 @@
       "guide": "{stat} tutoriais de casos de uso"
     }
   },
-
   "hero": {
     "badge": "#1 Agente de Uso de Computador · {score} OSWorld",
     "headline": "Operadores de computador autônomos",
@@ -126,22 +124,54 @@
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Divulgue seu produto no Reddit de forma autônoma" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Encontre prospects e envie e-mails personalizados" },
-      "qaTesting": { "label": "Testes QA", "task": "Teste todos os fluxos de checkout e reporte bugs" },
-      "jobApplication": { "label": "Candidatura", "task": "Encontre vagas, adapte o currículo e candidate-se" },
-      "formFilling": { "label": "Preenchimento de Formulários", "task": "Preencha a aplicação do YC S26 para você" },
-      "socialMedia": { "label": "Redes Sociais", "task": "Publique no Hacker News e interaja com comentários" }
+      "marketing": {
+        "label": "Marketing",
+        "task": "Divulgue seu produto no Reddit de forma autônoma"
+      },
+      "goToMarket": {
+        "label": "Go-to-Market",
+        "task": "Encontre prospects e envie e-mails personalizados"
+      },
+      "qaTesting": {
+        "label": "Testes QA",
+        "task": "Teste todos os fluxos de checkout e reporte bugs"
+      },
+      "jobApplication": {
+        "label": "Candidatura",
+        "task": "Encontre vagas, adapte o currículo e candidate-se"
+      },
+      "formFilling": {
+        "label": "Preenchimento de Formulários",
+        "task": "Preencha a aplicação do YC S26 para você"
+      },
+      "socialMedia": {
+        "label": "Redes Sociais",
+        "task": "Publique no Hacker News e interaja com comentários"
+      }
     }
   },
-
   "stats": {
-    "osworld": { "value": "82%", "label": "Benchmark OSWorld", "sublabel": "#1 agente de uso de computador no mundo" },
-    "tools": { "value": "50+", "label": "Ferramentas que o agente pode usar", "sublabel": "Navegador, terminal, desktop, arquivos" },
-    "schedule": { "value": "24/7", "label": "Executa por agendamento", "sublabel": "Automatize qualquer tarefa recorrente" },
-    "setup": { "value": "0", "label": "Configuração necessária", "sublabel": "Sem APIs, sem integrações, sem código" }
+    "osworld": {
+      "value": "82%",
+      "label": "Benchmark OSWorld",
+      "sublabel": "#1 agente de uso de computador no mundo"
+    },
+    "tools": {
+      "value": "50+",
+      "label": "Ferramentas que o agente pode usar",
+      "sublabel": "Navegador, terminal, desktop, arquivos"
+    },
+    "schedule": {
+      "value": "24/7",
+      "label": "Executa por agendamento",
+      "sublabel": "Automatize qualquer tarefa recorrente"
+    },
+    "setup": {
+      "value": "0",
+      "label": "Configuração necessária",
+      "sublabel": "Sem APIs, sem integrações, sem código"
+    }
   },
-
   "whyCoasty": {
     "sectionLabel": "Por que Coasty",
     "title": "Não é um chatbot. Não é um script RPA.",
@@ -162,7 +192,6 @@
       "description": "VM isolada por sessão — nada vaza"
     }
   },
-
   "howItWorks": {
     "title": "Como funciona",
     "step1": {
@@ -184,14 +213,12 @@
       }
     }
   },
-
   "benchmark": {
     "title": "Classificado #1 no mundo",
     "subtitle": "82% no OSWorld — o benchmark mais difícil para agentes de IA que usam computadores reais",
     "agenticFramework": "Framework Agêntico",
     "foundationModel": "Modelo Base"
   },
-
   "comparison": {
     "title": "Por que automatizar com Coasty?",
     "subtitle": "As mesmas tarefas que levam horas para uma equipe — Coasty completa em minutos, 24 horas por dia.",
@@ -233,7 +260,6 @@
       "startingAt": "A partir de"
     }
   },
-
   "demo": {
     "title": "Veja o agente em ação",
     "subtitle": "Tarefas reais. Navegadores reais. Cada clique gravado.",
@@ -270,7 +296,6 @@
       }
     }
   },
-
   "features": {
     "title": "Feito para tarefas reais no computador",
     "selfCorrecting": {
@@ -298,7 +323,6 @@
       "description": "Divida tarefas entre máquinas em paralelo"
     }
   },
-
   "pricing": {
     "title": "Comece grátis, escale quando quiser",
     "subtitle": "Sem cartão de crédito. Seu agente de IA estará pronto em 60 segundos.",
@@ -339,7 +363,6 @@
       "description": "Um assistente virtual custa $2.000–$4.000/mês. Uma contratação meio período custa mais. Coasty faz o mesmo trabalho 24/7 a partir de $0 — com consistência perfeita, trilhas de auditoria completas e zero tempo de treinamento."
     }
   },
-
   "faq": {
     "title": "Perguntas frequentes",
     "subtitle": "Tudo o que você precisa saber antes de começar",
@@ -370,7 +393,6 @@
       }
     }
   },
-
   "footer": {
     "tagline": "Uso de computador com IA.",
     "tagline2": "Automatize qualquer fluxo de trabalho com agentes inteligentes.",
@@ -397,8 +419,223 @@
       "terms": "Termos"
     }
   },
-
   "languageSwitcher": {
     "label": "Idioma"
+  },
+  "auth": {
+    "brandHeading": "Você define o objetivo.",
+    "brandSubheading": "Nós cuidamos do resto.",
+    "mobileHeading": "Você define o objetivo. Nós cuidamos do resto.",
+    "mobileSubheading": "Agentes de IA que navegam, clicam e trabalham como um colega real.",
+    "flowSteps": {
+      "step1": {
+        "label": "Você descreve a tarefa",
+        "sub": "\"Pesquise nossos 5 principais concorrentes\""
+      },
+      "step2": {
+        "label": "O agente assume o controle",
+        "sub": "Navega, clica e digita de forma autônoma"
+      },
+      "step3": {
+        "label": "Trabalho entregue",
+        "sub": "Planilha com 5 perfis completos de concorrentes"
+      }
+    },
+    "complete": "Concluído",
+    "doneIn": "Pronto em 8 minutos",
+    "viewTitles": {
+      "signIn": "Seu operador está pronto",
+      "signUp": "Coloque seus fluxos de trabalho no piloto automático",
+      "magicLink": "Pule a senha",
+      "forgotPassword": "Vamos recuperar seu acesso"
+    },
+    "viewDescriptions": {
+      "signIn": "Continue de onde parou — seus agentes lembram",
+      "signUp": "Implante seu primeiro agente de IA em menos de um minuto",
+      "magicLink": "Um clique na sua caixa de entrada e pronto",
+      "forgotPassword": "Enviaremos um link de redefinição para seu email"
+    },
+    "google": {
+      "connecting": "Conectando...",
+      "continueWithGoogle": "Continuar com Google"
+    },
+    "or": "ou",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Senha",
+    "passwordPlaceholder": "Sua senha",
+    "confirmPassword": "Confirmar senha",
+    "confirmPasswordPlaceholder": "Confirme sua senha",
+    "minChars": "Mín. 6 caracteres",
+    "signingIn": "Entrando...",
+    "signIn": "Entrar",
+    "creatingAccount": "Criando conta...",
+    "createAccount": "Criar conta",
+    "sending": "Enviando...",
+    "sendMagicLink": "Enviar link mágico",
+    "sendResetLink": "Enviar link de redefinição",
+    "forgotPassword": "Esqueceu a senha?",
+    "useMagicLink": "Usar link mágico",
+    "dontHaveAccount": "Não tem uma conta?",
+    "signUp": "Cadastrar-se",
+    "alreadyHaveAccount": "Já tem uma conta?",
+    "backToSignIn": "Voltar para login",
+    "termsAgreement": "Ao continuar, você concorda com nossos",
+    "terms": "Termos",
+    "and": "e",
+    "privacyPolicy": "Política de Privacidade",
+    "errors": {
+      "fillAllFields": "Por favor, preencha todos os campos",
+      "passwordMinLength": "A senha deve ter pelo menos 6 caracteres",
+      "passwordsDoNotMatch": "As senhas não coincidem",
+      "supabaseNotConfigured": "Supabase não está configurado",
+      "unexpectedError": "Ocorreu um erro inesperado. Por favor, tente novamente.",
+      "confirmEmail": "Por favor, confirme seu email antes de entrar. Verifique sua caixa de entrada.",
+      "invalidCredentials": "Email ou senha inválidos.",
+      "signInFailed": "Falha ao entrar. Por favor, tente novamente.",
+      "invalidEmail": "Endereço de email inválido.",
+      "emailAlreadyExists": "Já existe uma conta com este email. Tente fazer login.",
+      "signUpFailed": "Falha ao cadastrar. Por favor, tente novamente.",
+      "enterEmail": "Por favor, insira seu email",
+      "noAccountFound": "Nenhuma conta encontrada com este email. Por favor, cadastre-se primeiro.",
+      "magicLinkFailed": "Falha ao enviar o link mágico. Por favor, tente novamente.",
+      "resetFailed": "Falha ao enviar o email de redefinição. Por favor, tente novamente.",
+      "updateFailed": "Falha ao atualizar a senha. Por favor, tente novamente."
+    },
+    "success": {
+      "checkEmailConfirm": "Verifique seu email para confirmar sua conta antes de entrar.",
+      "checkEmailMagicLink": "Verifique seu email para encontrar o link mágico de login.",
+      "checkEmailReset": "Verifique seu email para encontrar o link de redefinição de senha.",
+      "passwordUpdated": "Senha atualizada com sucesso. Redirecionando para o login..."
+    },
+    "resetPassword": {
+      "title": "Redefinir sua senha",
+      "subtitle": "Digite sua nova senha abaixo.",
+      "newPassword": "Nova senha",
+      "confirmNewPassword": "Confirmar nova senha",
+      "confirmPlaceholder": "Confirme sua nova senha",
+      "updating": "Atualizando...",
+      "updatePassword": "Atualizar senha"
+    },
+    "errorPage": {
+      "title": "Erro de autenticação",
+      "defaultMessage": "Ocorreu um erro durante a autenticação.",
+      "tryAgain": "Tentar novamente",
+      "backToChat": "Voltar ao chat",
+      "needHelp": "Precisa de ajuda?",
+      "contactSupport": "Contatar suporte"
+    }
+  },
+  "onboarding": {
+    "skipForNow": "Pular por enquanto",
+    "back": "Voltar",
+    "continue": "Continuar",
+    "getStarted": "Começar",
+    "settingUp": "Configurando...",
+    "welcome": {
+      "titleReturning": "Bem-vindo de volta{name}!",
+      "titleNew": "Bem-vindo ao Coasty",
+      "descriptionReturning": "Gostaríamos de saber um pouco mais sobre você para melhorar sua experiência",
+      "descriptionNew": "Vamos configurar sua conta para personalizar sua experiência"
+    },
+    "nameLabel": "Como devemos chamá-lo?",
+    "namePlaceholder": "Seu nome",
+    "companyLabel": "Empresa",
+    "optional": "(opcional)",
+    "companyPlaceholder": "MacroHard",
+    "websiteLabel": "Site",
+    "websitePlaceholder": "xai.com",
+    "roleStep": {
+      "title": "O que melhor descreve você?",
+      "subtitle": "Selecione todos que se aplicam — isso nos ajuda a personalizar sua experiência"
+    },
+    "roles": {
+      "founder": "Fundador / CEO",
+      "developer": "Desenvolvedor",
+      "marketer": "Marketing",
+      "designer": "Designer",
+      "product_manager": "Gerente de Produto",
+      "data_analyst": "Dados / Análise",
+      "operations": "Operações",
+      "other": "Outro"
+    },
+    "teamSizeLabel": "Tamanho da equipe",
+    "teamSizes": {
+      "solo": "Só eu",
+      "2-5": "2-5",
+      "6-20": "6-20",
+      "21-50": "21-50",
+      "51-200": "51-200",
+      "200+": "200+"
+    },
+    "referralStep": {
+      "title": "Como nos encontrou?",
+      "subtitle": "Gostaríamos de saber onde você ouviu falar do Coasty"
+    },
+    "referralSources": {
+      "twitter": "Twitter / X",
+      "linkedin": "LinkedIn",
+      "google": "Google Search",
+      "youtube": "YouTube",
+      "friend": "Amigo / Colega",
+      "producthunt": "Product Hunt",
+      "reddit": "Reddit",
+      "other": "Outro"
+    },
+    "useCaseStep": {
+      "title": "O que você vai automatizar primeiro?",
+      "subtitle": "Selecione todos que se aplicam — você pode explorar tudo depois"
+    },
+    "useCases": {
+      "web_scraping": "Web Scraping e Pesquisa",
+      "browser_automation": "Automação do Navegador",
+      "data_entry": "Entrada de Dados e Formulários",
+      "email_outreach": "Email e Prospecção",
+      "testing": "QA e Testes",
+      "ecommerce": "Tarefas de E-commerce",
+      "social_media": "Gestão de Redes Sociais",
+      "general_automation": "Automação Geral"
+    },
+    "showcase": {
+      "title": "Tudo o que você precisa,",
+      "titleHighlight": "integrado.",
+      "subtitle": "Veja o que o Coasty pode fazer por você",
+      "noCode": {
+        "title": "Sem Código",
+        "description": "Apenas descreva o que você quer em português simples"
+      },
+      "agentSwarms": {
+        "title": "Enxame de Agentes",
+        "description": "Frotas de agentes em paralelo"
+      },
+      "desktopControl": {
+        "title": "Controle de Desktop",
+        "description": "Clica, digita, navega"
+      },
+      "browserAutomation": {
+        "title": "Automação do Navegador",
+        "description": "Formulários, abas, scraping — totalmente automatizado"
+      },
+      "computerVision": {
+        "title": "Visão Computacional",
+        "description": "Vê e entende sua tela em tempo real"
+      },
+      "workflows": {
+        "title": "Fluxos de Trabalho",
+        "description": "Fluxos de múltiplas etapas"
+      },
+      "onDevice": {
+        "title": "No Dispositivo",
+        "description": "Executa localmente"
+      },
+      "autonomous": {
+        "title": "Autônomo 24/7",
+        "description": "Configure e esqueça — funciona enquanto você dorme"
+      }
+    },
+    "guideCallout": {
+      "title": "Novo aqui? Temos um guia para você",
+      "subtitle": "Implante seu primeiro agente de IA em menos de um minuto"
+    }
   }
 }

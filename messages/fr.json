@@ -14,7 +14,6 @@
     "creditsPerMonth": "{count} crédits/mois",
     "agentsInParallel": "{count} agents en parallèle"
   },
-
   "header": {
     "useCases": "Cas d'usage",
     "blog": "Blog",
@@ -74,7 +73,6 @@
       "guide": "{stat} guides de cas d'usage"
     }
   },
-
   "hero": {
     "badge": "Agent n°1 d'utilisation d'ordinateur · {score} OSWorld",
     "headline": "Opérateurs informatiques autonomes",
@@ -126,22 +124,54 @@
       }
     },
     "demoVideos": {
-      "marketing": { "label": "Marketing", "task": "Faites la promotion de votre produit sur Reddit de manière autonome" },
-      "goToMarket": { "label": "Go-to-Market", "task": "Trouvez des prospects et envoyez des e-mails personnalisés" },
-      "qaTesting": { "label": "Tests QA", "task": "Testez chaque parcours d'achat et signalez les bugs" },
-      "jobApplication": { "label": "Candidature", "task": "Trouvez des postes, adaptez votre CV et postulez" },
-      "formFilling": { "label": "Remplissage de formulaires", "task": "Remplissez la candidature YC S26 pour vous" },
-      "socialMedia": { "label": "Réseaux sociaux", "task": "Publiez sur Hacker News et interagissez avec les commentaires" }
+      "marketing": {
+        "label": "Marketing",
+        "task": "Faites la promotion de votre produit sur Reddit de manière autonome"
+      },
+      "goToMarket": {
+        "label": "Go-to-Market",
+        "task": "Trouvez des prospects et envoyez des e-mails personnalisés"
+      },
+      "qaTesting": {
+        "label": "Tests QA",
+        "task": "Testez chaque parcours d'achat et signalez les bugs"
+      },
+      "jobApplication": {
+        "label": "Candidature",
+        "task": "Trouvez des postes, adaptez votre CV et postulez"
+      },
+      "formFilling": {
+        "label": "Remplissage de formulaires",
+        "task": "Remplissez la candidature YC S26 pour vous"
+      },
+      "socialMedia": {
+        "label": "Réseaux sociaux",
+        "task": "Publiez sur Hacker News et interagissez avec les commentaires"
+      }
     }
   },
-
   "stats": {
-    "osworld": { "value": "82%", "label": "Benchmark OSWorld", "sublabel": "Agent n°1 d'utilisation d'ordinateur au monde" },
-    "tools": { "value": "50+", "label": "Outils utilisables par l'agent", "sublabel": "Navigateur, terminal, bureau, fichiers" },
-    "schedule": { "value": "24/7", "label": "Exécution planifiée", "sublabel": "Automatisez toute tâche récurrente" },
-    "setup": { "value": "0", "label": "Configuration requise", "sublabel": "Pas d'API, pas d'intégrations, pas de code" }
+    "osworld": {
+      "value": "82%",
+      "label": "Benchmark OSWorld",
+      "sublabel": "Agent n°1 d'utilisation d'ordinateur au monde"
+    },
+    "tools": {
+      "value": "50+",
+      "label": "Outils utilisables par l'agent",
+      "sublabel": "Navigateur, terminal, bureau, fichiers"
+    },
+    "schedule": {
+      "value": "24/7",
+      "label": "Exécution planifiée",
+      "sublabel": "Automatisez toute tâche récurrente"
+    },
+    "setup": {
+      "value": "0",
+      "label": "Configuration requise",
+      "sublabel": "Pas d'API, pas d'intégrations, pas de code"
+    }
   },
-
   "whyCoasty": {
     "sectionLabel": "Pourquoi Coasty",
     "title": "Ni chatbot. Ni script RPA.",
@@ -162,7 +192,6 @@
       "description": "VM sandboxée par session — rien ne fuite"
     }
   },
-
   "howItWorks": {
     "title": "Comment ça marche",
     "step1": {
@@ -184,14 +213,12 @@
       }
     }
   },
-
   "benchmark": {
     "title": "Classé n°1 mondial",
     "subtitle": "82% sur OSWorld — le benchmark le plus exigeant pour les agents IA utilisant de vrais ordinateurs",
     "agenticFramework": "Framework agentique",
     "foundationModel": "Modèle fondation"
   },
-
   "comparison": {
     "title": "Pourquoi automatiser avec Coasty ?",
     "subtitle": "Les mêmes tâches qui prennent des heures à une équipe — Coasty les termine en minutes, 24h/24.",
@@ -233,7 +260,6 @@
       "startingAt": "À partir de"
     }
   },
-
   "demo": {
     "title": "Regardez l'agent en action",
     "subtitle": "Des tâches réelles. De vrais navigateurs. Chaque clic enregistré.",
@@ -270,7 +296,6 @@
       }
     }
   },
-
   "features": {
     "title": "Conçu pour les vraies tâches informatiques",
     "selfCorrecting": {
@@ -298,7 +323,6 @@
       "description": "Répartissez les tâches sur plusieurs machines en parallèle"
     }
   },
-
   "pricing": {
     "title": "Commencez gratuitement, évoluez quand vous êtes prêt",
     "subtitle": "Pas de carte bancaire. Votre agent IA est prêt en 60 secondes.",
@@ -339,7 +363,6 @@
       "description": "Un assistant virtuel coûte 2 000 à 4 000 $/mois. Un employé à temps partiel coûte encore plus. Coasty fait le même travail 24/7 à partir de $0 — avec une cohérence parfaite, une traçabilité complète et zéro temps de formation."
     }
   },
-
   "faq": {
     "title": "Questions fréquemment posées",
     "subtitle": "Tout ce que vous devez savoir avant de commencer",
@@ -370,7 +393,6 @@
       }
     }
   },
-
   "footer": {
     "tagline": "Utilisation d'ordinateur par IA.",
     "tagline2": "Automatisez n'importe quel flux de travail avec des agents intelligents.",
@@ -397,8 +419,223 @@
       "terms": "Conditions"
     }
   },
-
   "languageSwitcher": {
     "label": "Langue"
+  },
+  "auth": {
+    "brandHeading": "Vous fixez l'objectif.",
+    "brandSubheading": "Nous nous occupons du reste.",
+    "mobileHeading": "Vous fixez l'objectif. Nous nous occupons du reste.",
+    "mobileSubheading": "Des agents IA qui naviguent, cliquent et travaillent comme un vrai coéquipier.",
+    "flowSteps": {
+      "step1": {
+        "label": "Vous décrivez la tâche",
+        "sub": "\"Rechercher nos 5 principaux concurrents\""
+      },
+      "step2": {
+        "label": "L'agent prend le contrôle",
+        "sub": "Navigue, clique et tape de manière autonome"
+      },
+      "step3": {
+        "label": "Travail livré",
+        "sub": "Tableur avec 5 profils complets de concurrents"
+      }
+    },
+    "complete": "Terminé",
+    "doneIn": "Fait en 8 minutes",
+    "viewTitles": {
+      "signIn": "Votre opérateur est prêt",
+      "signUp": "Mettez vos flux de travail en pilote automatique",
+      "magicLink": "Pas besoin de mot de passe",
+      "forgotPassword": "Récupérons votre accès"
+    },
+    "viewDescriptions": {
+      "signIn": "Reprenez là où vous en étiez — vos agents se souviennent",
+      "signUp": "Déployez votre premier agent IA en moins d'une minute",
+      "magicLink": "Un clic depuis votre boîte de réception et c'est fait",
+      "forgotPassword": "Nous enverrons un lien de réinitialisation à votre email"
+    },
+    "google": {
+      "connecting": "Connexion...",
+      "continueWithGoogle": "Continuer avec Google"
+    },
+    "or": "ou",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Votre mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+    "minChars": "Min. 6 caractères",
+    "signingIn": "Connexion...",
+    "signIn": "Se connecter",
+    "creatingAccount": "Création du compte...",
+    "createAccount": "Créer un compte",
+    "sending": "Envoi...",
+    "sendMagicLink": "Envoyer le lien magique",
+    "sendResetLink": "Envoyer le lien de réinitialisation",
+    "forgotPassword": "Mot de passe oublié ?",
+    "useMagicLink": "Utiliser un lien magique",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "signUp": "S'inscrire",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "backToSignIn": "Retour à la connexion",
+    "termsAgreement": "En continuant, vous acceptez nos",
+    "terms": "Conditions",
+    "and": "et",
+    "privacyPolicy": "Politique de confidentialité",
+    "errors": {
+      "fillAllFields": "Veuillez remplir tous les champs",
+      "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
+      "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+      "supabaseNotConfigured": "Supabase n'est pas configuré",
+      "unexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      "confirmEmail": "Veuillez confirmer votre email avant de vous connecter. Vérifiez votre boîte de réception.",
+      "invalidCredentials": "Email ou mot de passe invalide.",
+      "signInFailed": "Échec de la connexion. Veuillez réessayer.",
+      "invalidEmail": "Adresse email invalide.",
+      "emailAlreadyExists": "Un compte avec cet email existe déjà. Essayez de vous connecter.",
+      "signUpFailed": "Échec de l'inscription. Veuillez réessayer.",
+      "enterEmail": "Veuillez entrer votre email",
+      "noAccountFound": "Aucun compte trouvé avec cet email. Veuillez d'abord vous inscrire.",
+      "magicLinkFailed": "Échec de l'envoi du lien magique. Veuillez réessayer.",
+      "resetFailed": "Échec de l'envoi de l'email de réinitialisation. Veuillez réessayer.",
+      "updateFailed": "Échec de la mise à jour du mot de passe. Veuillez réessayer."
+    },
+    "success": {
+      "checkEmailConfirm": "Vérifiez votre email pour confirmer votre compte avant de vous connecter.",
+      "checkEmailMagicLink": "Vérifiez votre email pour trouver le lien magique de connexion.",
+      "checkEmailReset": "Vérifiez votre email pour trouver le lien de réinitialisation du mot de passe.",
+      "passwordUpdated": "Mot de passe mis à jour avec succès. Redirection vers la connexion..."
+    },
+    "resetPassword": {
+      "title": "Réinitialiser votre mot de passe",
+      "subtitle": "Entrez votre nouveau mot de passe ci-dessous.",
+      "newPassword": "Nouveau mot de passe",
+      "confirmNewPassword": "Confirmer le nouveau mot de passe",
+      "confirmPlaceholder": "Confirmez votre nouveau mot de passe",
+      "updating": "Mise à jour...",
+      "updatePassword": "Mettre à jour le mot de passe"
+    },
+    "errorPage": {
+      "title": "Erreur d'authentification",
+      "defaultMessage": "Une erreur s'est produite lors de l'authentification.",
+      "tryAgain": "Réessayer",
+      "backToChat": "Retour au chat",
+      "needHelp": "Besoin d'aide ?",
+      "contactSupport": "Contacter le support"
+    }
+  },
+  "onboarding": {
+    "skipForNow": "Passer pour l'instant",
+    "back": "Retour",
+    "continue": "Continuer",
+    "getStarted": "Commencer",
+    "settingUp": "Configuration...",
+    "welcome": {
+      "titleReturning": "Bon retour{name} !",
+      "titleNew": "Bienvenue sur Coasty",
+      "descriptionReturning": "Nous aimerions en savoir un peu plus sur vous pour améliorer votre expérience",
+      "descriptionNew": "Configurons votre compte pour personnaliser votre expérience"
+    },
+    "nameLabel": "Comment devons-nous vous appeler ?",
+    "namePlaceholder": "Votre nom",
+    "companyLabel": "Entreprise",
+    "optional": "(facultatif)",
+    "companyPlaceholder": "MacroHard",
+    "websiteLabel": "Site web",
+    "websitePlaceholder": "xai.com",
+    "roleStep": {
+      "title": "Qu'est-ce qui vous décrit le mieux ?",
+      "subtitle": "Sélectionnez tout ce qui s'applique — cela nous aide à personnaliser votre expérience"
+    },
+    "roles": {
+      "founder": "Fondateur / CEO",
+      "developer": "Développeur",
+      "marketer": "Marketing",
+      "designer": "Designer",
+      "product_manager": "Chef de Produit",
+      "data_analyst": "Données / Analytique",
+      "operations": "Opérations",
+      "other": "Autre"
+    },
+    "teamSizeLabel": "Taille de l'équipe",
+    "teamSizes": {
+      "solo": "Juste moi",
+      "2-5": "2-5",
+      "6-20": "6-20",
+      "21-50": "21-50",
+      "51-200": "51-200",
+      "200+": "200+"
+    },
+    "referralStep": {
+      "title": "Comment nous avez-vous trouvés ?",
+      "subtitle": "Nous aimerions savoir où vous avez entendu parler de Coasty"
+    },
+    "referralSources": {
+      "twitter": "Twitter / X",
+      "linkedin": "LinkedIn",
+      "google": "Google Search",
+      "youtube": "YouTube",
+      "friend": "Ami / Collègue",
+      "producthunt": "Product Hunt",
+      "reddit": "Reddit",
+      "other": "Autre"
+    },
+    "useCaseStep": {
+      "title": "Qu'allez-vous automatiser en premier ?",
+      "subtitle": "Sélectionnez tout ce qui s'applique — vous pourrez tout explorer plus tard"
+    },
+    "useCases": {
+      "web_scraping": "Web Scraping et Recherche",
+      "browser_automation": "Automatisation du Navigateur",
+      "data_entry": "Saisie de Données et Formulaires",
+      "email_outreach": "Email et Prospection",
+      "testing": "QA et Tests",
+      "ecommerce": "Tâches E-commerce",
+      "social_media": "Gestion des Réseaux Sociaux",
+      "general_automation": "Automatisation Générale"
+    },
+    "showcase": {
+      "title": "Tout ce dont vous avez besoin,",
+      "titleHighlight": "intégré.",
+      "subtitle": "Voici ce que Coasty peut faire pour vous",
+      "noCode": {
+        "title": "Sans Code",
+        "description": "Décrivez simplement ce que vous voulez en français courant"
+      },
+      "agentSwarms": {
+        "title": "Essaims d'Agents",
+        "description": "Flottes d'agents en parallèle"
+      },
+      "desktopControl": {
+        "title": "Contrôle du Bureau",
+        "description": "Clique, tape, navigue"
+      },
+      "browserAutomation": {
+        "title": "Automatisation du Navigateur",
+        "description": "Formulaires, onglets, scraping — entièrement automatisé"
+      },
+      "computerVision": {
+        "title": "Vision par Ordinateur",
+        "description": "Voit et comprend votre écran en temps réel"
+      },
+      "workflows": {
+        "title": "Flux de Travail",
+        "description": "Flux multi-étapes"
+      },
+      "onDevice": {
+        "title": "Sur Appareil",
+        "description": "S'exécute localement"
+      },
+      "autonomous": {
+        "title": "Autonome 24/7",
+        "description": "Configurez-le et oubliez-le — fonctionne pendant que vous dormez"
+      }
+    },
+    "guideCallout": {
+      "title": "Nouveau ici ? Nous avons un guide pour vous",
+      "subtitle": "Déployez votre premier agent IA en moins d'une minute"
+    }
   }
 }
