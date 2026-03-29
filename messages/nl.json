@@ -423,145 +423,145 @@
     "label": "Taal"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Jij stelt het doel.",
+    "brandSubheading": "Wij doen de rest.",
+    "mobileHeading": "Jij stelt het doel. Wij doen de rest.",
+    "mobileSubheading": "AI-agents die browsen, klikken en werken als een echte teamgenoot.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Je beschrijft de taak",
+        "sub": "\"Onderzoek onze top 5 concurrenten\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "De agent neemt het over",
+        "sub": "Browst, klikt, typt autonoom"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Werk opgeleverd",
+        "sub": "Spreadsheet met 5 volledige concurrentieprofielen"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Voltooid",
+    "doneIn": "Klaar in 8 minuten",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Je operator staat klaar",
+      "signUp": "Zet je workflows op de automatische piloot",
+      "magicLink": "Sla het wachtwoord over",
+      "forgotPassword": "We helpen je weer binnen"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Ga verder waar je gebleven was — je agents onthouden alles",
+      "signUp": "Zet je eerste AI-agent in minder dan een minuut in",
+      "magicLink": "Eén klik vanuit je inbox en je bent binnen",
+      "forgotPassword": "We sturen een resetlink naar je e-mail"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Verbinden...",
+      "continueWithGoogle": "Doorgaan met Google"
     },
-    "or": "or",
-    "email": "Email",
+    "or": "of",
+    "email": "E-mail",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "Wachtwoord",
+    "passwordPlaceholder": "Je wachtwoord",
+    "confirmPassword": "Bevestig wachtwoord",
+    "confirmPasswordPlaceholder": "Bevestig je wachtwoord",
+    "minChars": "Min. 6 tekens",
+    "signingIn": "Inloggen...",
+    "signIn": "Inloggen",
+    "creatingAccount": "Account aanmaken...",
+    "createAccount": "Account aanmaken",
+    "sending": "Verzenden...",
+    "sendMagicLink": "Magic link versturen",
+    "sendResetLink": "Resetlink versturen",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "useMagicLink": "Magic link gebruiken",
+    "dontHaveAccount": "Nog geen account?",
+    "signUp": "Registreren",
+    "alreadyHaveAccount": "Heb je al een account?",
+    "backToSignIn": "Terug naar inloggen",
+    "termsAgreement": "Door verder te gaan, ga je akkoord met onze",
+    "terms": "Voorwaarden",
+    "and": "en",
+    "privacyPolicy": "Privacybeleid",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Vul alle velden in",
+      "passwordMinLength": "Wachtwoord moet minimaal 6 tekens bevatten",
+      "passwordsDoNotMatch": "Wachtwoorden komen niet overeen",
+      "supabaseNotConfigured": "Supabase is niet geconfigureerd",
+      "unexpectedError": "Er is een onverwachte fout opgetreden. Probeer het opnieuw.",
+      "confirmEmail": "Bevestig je e-mail voordat je inlogt. Controleer je inbox.",
+      "invalidCredentials": "Ongeldig e-mailadres of wachtwoord.",
+      "signInFailed": "Inloggen mislukt. Probeer het opnieuw.",
+      "invalidEmail": "Ongeldig e-mailadres.",
+      "emailAlreadyExists": "Er bestaat al een account met dit e-mailadres. Probeer in te loggen.",
+      "signUpFailed": "Registratie mislukt. Probeer het opnieuw.",
+      "enterEmail": "Voer je e-mailadres in",
+      "noAccountFound": "Geen account gevonden met dit e-mailadres. Registreer je eerst.",
+      "magicLinkFailed": "Magic link versturen mislukt. Probeer het opnieuw.",
+      "resetFailed": "Reset-e-mail versturen mislukt. Probeer het opnieuw.",
+      "updateFailed": "Wachtwoord bijwerken mislukt. Probeer het opnieuw."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Controleer je e-mail om je account te bevestigen voordat je inlogt.",
+      "checkEmailMagicLink": "Controleer je e-mail voor de magic link om in te loggen.",
+      "checkEmailReset": "Controleer je e-mail voor de wachtwoord-resetlink.",
+      "passwordUpdated": "Wachtwoord succesvol bijgewerkt. Je wordt doorgestuurd naar inloggen..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Wachtwoord resetten",
+      "subtitle": "Voer hieronder je nieuwe wachtwoord in.",
+      "newPassword": "Nieuw wachtwoord",
+      "confirmNewPassword": "Bevestig nieuw wachtwoord",
+      "confirmPlaceholder": "Bevestig je nieuwe wachtwoord",
+      "updating": "Bijwerken...",
+      "updatePassword": "Wachtwoord bijwerken"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Authenticatiefout",
+      "defaultMessage": "Er is een fout opgetreden tijdens de authenticatie.",
+      "tryAgain": "Opnieuw proberen",
+      "backToChat": "Terug naar chat",
+      "needHelp": "Hulp nodig?",
+      "contactSupport": "Contact opnemen"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Voorlopig overslaan",
+    "back": "Terug",
+    "continue": "Doorgaan",
+    "getStarted": "Aan de slag",
+    "settingUp": "Instellen...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Welkom terug{name}!",
+      "titleNew": "Welkom bij Coasty",
+      "descriptionReturning": "We willen graag iets meer over je weten om je ervaring te verbeteren",
+      "descriptionNew": "Laten we je account instellen zodat we je ervaring kunnen personaliseren"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Hoe moeten we je noemen?",
+    "namePlaceholder": "Je naam",
+    "companyLabel": "Bedrijf",
+    "optional": "(optioneel)",
     "companyPlaceholder": "MacroHard",
     "websiteLabel": "Website",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Wat beschrijft jou het best?",
+      "subtitle": "Selecteer alles wat van toepassing is — dit helpt ons je ervaring af te stemmen"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
-      "marketer": "Marketer",
+      "founder": "Oprichter / CEO",
+      "developer": "Ontwikkelaar",
+      "marketer": "Marketeer",
       "designer": "Designer",
-      "product_manager": "Product Manager",
+      "product_manager": "Productmanager",
       "data_analyst": "Data / Analytics",
       "operations": "Operations",
-      "other": "Other"
+      "other": "Anders"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Teamgrootte",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Alleen ik",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,608 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Hoe heb je ons gevonden?",
+      "subtitle": "We horen graag waar je over Coasty hebt gehoord"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Vriend / Collega",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Anders"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Wat ga je als eerste automatiseren?",
+      "subtitle": "Selecteer alles wat van toepassing is — je kunt later alles verkennen"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Web Scraping & Onderzoek",
+      "browser_automation": "Browserautomatisering",
+      "data_entry": "Gegevensinvoer & Formulieren",
+      "email_outreach": "E-mail & Outreach",
+      "testing": "QA & Testen",
+      "ecommerce": "E-commerce taken",
+      "social_media": "Social Media Beheer",
+      "general_automation": "Algemene Automatisering"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Alles wat je nodig hebt,",
+      "titleHighlight": "ingebouwd.",
+      "subtitle": "Dit kan Coasty voor je doen",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Geen Code",
+        "description": "Beschrijf gewoon wat je wilt in gewoon Nederlands"
       },
       "agentSwarms": {
         "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "description": "Parallelle agent-vloten"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Desktop Besturing",
+        "description": "Klikt, typt, navigeert"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Browserautomatisering",
+        "description": "Formulieren, tabs, scraping — volledig geautomatiseerd"
       },
       "computerVision": {
         "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "description": "Ziet en begrijpt je scherm in realtime"
       },
       "workflows": {
         "title": "Workflows",
-        "description": "Multi-step flows"
+        "description": "Meerstaps-flows"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Op Apparaat",
+        "description": "Draait lokaal"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "24/7 Autonoom",
+        "description": "Stel het in en vergeet het — draait terwijl je slaapt"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Nieuw hier? We hebben een gids voor je",
+      "subtitle": "Zet je eerste AI-agent in minder dan een minuut in"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Wat moet je AI-werker doen?",
+    "placeholderAlt": "Vertel je AI wat het op de computer moet doen...",
+    "vmError": {
+      "title": "Virtuele Machine Fout",
+      "description": "De virtuele machine is in een foutstatus of wordt verwijderd.",
+      "hint": "Controleer het tabblad Machines om het probleem op te lossen, of selecteer \"Geen Computer Geselecteerd\" om alleen webzoekopdrachten te gebruiken.",
+      "gotIt": "Begrepen"
+    },
+    "status": {
+      "creating": "{name} aanmaken...",
+      "initiating": "Agent starten op {name}...",
+      "stopping": "{name} stoppen...",
+      "preparing": "{name} voorbereiden..."
+    },
+    "swarm": {
+      "title": "Swarm Modus",
+      "pro": "PRO",
+      "upgradeLabel": "Swarm modus — upgrade om te ontgrendelen",
+      "feature1": "Parallelle uitvoering op tijdelijke machines",
+      "feature2": "Elke machine werkt autonoom",
+      "feature3": "3x de machinelimiet van je plan per swarm",
+      "description": "Voer één prompt uit op 3x je machinelimiet parallel — elk pakt de taak onafhankelijk aan.",
+      "enableLabel": "Swarm modus inschakelen",
+      "disableLabel": "Swarm modus uitschakelen",
+      "onTooltip": "Swarm modus AAN — je prompt wordt op meerdere machines parallel uitgevoerd",
+      "offTooltip": "Schakel swarm modus in om je prompt op meerdere machines tegelijk uit te voeren",
+      "decreaseMachines": "Aantal machines verlagen",
+      "increaseMachines": "Aantal machines verhogen",
+      "machineLimit": "Tot {max} swarm-machines op je plan. Meer nodig? Neem contact op met founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Verbinden met desktop",
+      "screenLabel": "Scherm van {name}",
+      "screenDefault": "Desktop",
+      "watchTooltip": "Kijk hoe je agent werkt op een apart scherm. Raak niets aan, anders krijgt hij plankenkoorts!"
+    },
+    "buttons": {
+      "stop": "Stop",
+      "sendToSwarm": "Naar swarm sturen",
+      "taskRunning": "Er loopt al een taak — klik om deze te stoppen en de jouwe te starten",
+      "selectComputer": "Selecteer een computer om berichten te versturen",
+      "waitCreating": "Wacht tot de VM is aangemaakt",
+      "waitStarting": "Wacht tot de VM is gestart",
+      "waitAgent": "Wacht tot de agent is geïnitialiseerd",
+      "vmStopping": "VM wordt gestopt",
+      "send": "Versturen",
+      "switching": "Wisselen...",
+      "overrideRun": "Overschrijven & Uitvoeren",
+      "stopLabel": "Stop lopende taak en start deze",
+      "sendLabel": "Bericht versturen"
+    },
+    "search": "Zoeken",
+    "upload": {
+      "label": "Bestanden uploaden naar VM",
+      "heading": "Bestanden uploaden naar VM",
+      "description": "Bestanden worden opgeslagen op het Bureaublad",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Sleep bestanden hierheen",
+      "dropDescription": "Bestanden worden geüpload naar de Desktop-map van de VM",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Log in om meer functies gratis te proberen",
+      "description": "Maak projecten, nodig teamleden uit en meer.",
+      "connecting": "Verbinden...",
+      "continueWithGoogle": "Doorgaan met Google"
+    },
+    "removeFile": "Bestand verwijderen"
+  },
+  "chat": {
+    "greeting": "Hallo",
+    "greetingAuth": "Ik neem het computerwerk op me. Wat is de taak?",
+    "greetingUnauth": "AI die de computer bedient zodat jij dat niet hoeft te doen. Vertel gewoon wat je gedaan wilt hebben.",
+    "guide": "Gids",
+    "saveLogins": "Logins opslaan voor automatisch invullen",
+    "encryptedNote": "versleuteld, nooit gezien door AI",
+    "roleLabels": [
+      "Collega",
+      "Medewerker",
+      "Vriend",
+      "Assistent",
+      "Partner",
+      "Teamgenoot",
+      "Medewerker",
+      "Helper"
+    ],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Maak een concurrentierapport",
+        "warmLeads": "Genereer 20 warme leads",
+        "pitchDeck": "Maak een concept pitch deck"
+      },
+      "developer": {
+        "findBugs": "Vind bugs op mijn site",
+        "performance": "Maak een prestatierapport",
+        "apiDocs": "Extraheer API-documentatie"
+      },
+      "marketer": {
+        "seoGap": "Maak een SEO-gap-analyse",
+        "competitorAds": "Bespioneer concurrentieadvertenties",
+        "trendingContent": "Vind trending content-ideeën"
+      },
+      "product_manager": {
+        "reviewSummary": "Maak een recensie-samenvatting",
+        "featureComparison": "Maak een functievergelijking",
+        "competitorLaunches": "Volg concurrentielanceringen"
+      },
+      "data_analyst": {
+        "exportCsv": "Exporteer sitegegevens naar CSV",
+        "marketSizing": "Maak een marktomvangrapport",
+        "benchmark": "Benchmark tegen de industrie"
+      },
+      "operations": {
+        "enterRecords": "Voer records in ons systeem in",
+        "cheapestVendor": "Vind de goedkoopste leverancier",
+        "invoiceSummary": "Maak een factuursamenvatting"
+      },
+      "designer": {
+        "designComparison": "Maak een designvergelijking",
+        "responsiveAudit": "Voer een responsive audit uit",
+        "inspiration": "Verzamel designinspiratie"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Exporteer sitegegevens naar CSV",
+      "browser_automation": "Exporteer dashboardrapporten",
+      "data_entry": "Voer records in onze app in",
+      "email_outreach": "Stuur gepersonaliseerde outreach",
+      "testing": "Maak een volledig QA-rapport",
+      "ecommerce": "Maak een prijsvergelijking",
+      "social_media": "Post en krijg engagement",
+      "general_automation": "Voer een taak uit op mijn site"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Tekst kopiëren",
+    "copied": "Gekopieerd!",
+    "regenerate": "Opnieuw genereren",
+    "feedback": {
+      "title": "Feedback",
+      "prompts": [
+        "Beoordeel dit",
+        "Feedback",
+        "Hoe ging het?",
+        "Gedachten?",
+        "Deel feedback"
+      ],
+      "tooltip": "Deel je feedback"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Slim Zoeken",
+      "description": "AI-gestuurde zoekopdrachten op het web"
+    },
+    "collaborate": {
+      "title": "Samenwerken",
+      "description": "Werk samen in realtime"
+    },
+    "globalAccess": {
+      "title": "Wereldwijde Toegang",
+      "description": "Zoek in meer dan 50 talen"
+    },
+    "aiModels": {
+      "title": "AI-modellen",
+      "description": "Meerdere AI-providers"
+    },
+    "freeForever": {
+      "title": "Voor Altijd Gratis",
+      "description": "Geen verborgen kosten"
+    },
+    "privateSecure": {
+      "title": "Privé & Veilig",
+      "description": "Je gegevens blijven van jou"
+    }
+  },
+  "sidebar": {
+    "newTask": "Nieuwe Taak",
+    "newTaskDescription": "Start een nieuwe AI-automatisering",
+    "activity": "Activiteit",
+    "taskHistory": "Taakgeschiedenis",
+    "taskHistoryDescription": "Bekijk eerdere taken en ga verder waar je gebleven was",
+    "taskHistoryPopup": {
+      "title": "Je recente taken",
+      "description": "Blader door eerdere gesprekken en ga verder. Elke taak wordt opgeslagen zodat je precies kunt hervatten waar je gebleven was."
+    },
+    "swarmRuns": "Swarm Runs",
+    "swarmRunsDescription": "Monitor multi-agent parallelle workflows",
+    "swarmRunsPopup": {
+      "title": "Multi-agent workflows",
+      "description": "Voer taken uit op meerdere machines parallel. Elke agent werkt onafhankelijk en resultaten convergeren automatisch."
+    },
+    "guide": "Gids",
+    "guideDescription": "Leer hoe je het meeste uit Coasty haalt",
+    "guidePopup": {
+      "title": "Aan de slag",
+      "description": "Stapsgewijze handleidingen en best practices om je te helpen effectief te automatiseren."
+    },
+    "infrastructure": "Infrastructuur",
+    "computer": "Computer",
+    "computers": "Computers",
+    "active": "actief",
+    "view": "Bekijken",
+    "workforce": "Personeelsbestand",
+    "workforceDescription": "Plan geautomatiseerde agents en triggers",
+    "workforcePopup": {
+      "title": "Geplande automatisering",
+      "description": "Stel terugkerende taken in met cron-schema's en agent-naar-agent triggers. Je personeelsbestand werkt terwijl je slaapt."
+    },
+    "credentials": "Inloggegevens",
+    "credentialsDescription": "Sla inloggegevens veilig op voor agenttoegang",
+    "credentialsPopup": {
+      "title": "Beveiligde inlogkluis",
+      "description": "Sla inloggegevens en API-sleutels op met versleuteling. Agents vullen inloggegevens automatisch in zonder ruwe waarden te tonen."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Download Desktop App",
+      "download": "Downloaden",
+      "downloadDesktopApp": "Download Desktop App",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Bedien je computer op afstand",
+      "controlDescription": "Installeer de desktop-app en voer taken uit op je pc vanuit dit dashboard — overal, altijd."
+    },
+    "credits": {
+      "runningLow": "Credits — Bijna op",
+      "remaining": "Credits resterend",
+      "buy": "Kopen",
+      "creditsLeft": "credits over",
+      "usedLabel": "Gebruikt: {count}",
+      "consumed": "{percent}% verbruikt",
+      "usageThisWeek": "Gebruik deze week"
+    },
+    "talkToUs": "Praat met ons",
+    "inviteEarn": "Uitnodigen & Verdienen",
+    "user": "Gebruiker",
+    "account": "Account",
+    "tasks": "{count} Taken",
+    "recentActivity": "Recente activiteit",
+    "viewAllHistory": "Bekijk alle geschiedenis →",
+    "swarmRunsCount": "{count} Swarm Runs",
+    "running": "actief",
+    "completed": "voltooid",
+    "viewAllSwarms": "Bekijk alle swarms →",
+    "schedulesCount": "{count} Schema's",
+    "totalRuns": "{count} totale runs",
+    "paused": "gepauzeerd",
+    "viewAllSchedules": "Bekijk alle schema's →",
+    "credentialsCount": "{count} Inloggegevens",
+    "encryptedVault": "Versleutelde kluis",
+    "manageCredentials": "Inloggegevens beheren →",
+    "days": [
+      "Ma",
+      "Di",
+      "Wo",
+      "Do",
+      "Vr",
+      "Za",
+      "Zo"
+    ],
+    "resume": "HERVATTEN",
+    "result": "RESULTAAT",
+    "notScheduled": "Niet gepland",
+    "overdue": "Achterstallig",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "over {count}m",
+    "inHours": "over {count}u",
+    "today": "vandaag",
+    "yesterday": "gisteren"
+  },
+  "appHeader": {
+    "login": "Inloggen",
+    "assign": "Toewijzen",
+    "assignDescription": "Wijs een medewerker toe om deze taak uit te voeren",
+    "computer": "Computer",
+    "showComputer": "Computer tonen",
+    "hideComputer": "Computer verbergen",
+    "employeeHired": "Medewerker aangenomen!",
+    "employeeRemoved": "Medewerker verwijderd"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Lichte dagelijkse automatisering"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Automatiseer dagelijks taken"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Schaal complexe workflows",
+        "badge": "Meest Populair"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Onbeperkte zware automatisering"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (verwijderd na inactiviteit)",
+      "vmAlwaysOn": "{count} altijd-aan VM",
+      "vmAlwaysOnPlural": "{count} altijd-aan VMs",
+      "agentsParallel": "{count} agents parallel",
+      "basicSearch": "Basiszoekopdrachten",
+      "advancedSearch": "Geavanceerd zoeken & extractie",
+      "standardSupport": "Standaard support (echte mensen)",
+      "prioritySupport": "Prioriteitssupport, 24u respons",
+      "premiumSupport": "Premium support, 12u respons"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Kleine Boost",
+        "description": "Snelle opwaardering"
+      },
+      "medium": {
+        "name": "Medium Boost",
+        "description": "Standaard bijvulling",
+        "savings": "8% besparing"
+      },
+      "large": {
+        "name": "Grote Boost",
+        "description": "Bulkaankoop",
+        "savings": "17% besparing"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Zojuist",
+      "minutesAgo": "{count}m geleden",
+      "hoursAgo": "{count}u geleden",
+      "daysAgo": "{count}d geleden"
+    },
+    "noActivity": "Geen activiteit in deze periode",
+    "stats": {
+      "balance": "Saldo",
+      "earned": "Verdiend",
+      "used": "Gebruikt",
+      "credits": "credits",
+      "allTime": "totaal",
+      "lastRange": "laatste {range}",
+      "sessions": "{count} sessies",
+      "avgDaily": "~{count}/dag gem.",
+      "plan": "Plan",
+      "free": "Gratis",
+      "noPlan": "Geen plan",
+      "canceling": "Opzeggen"
+    },
+    "monthlyUsage": "Maandelijks Creditgebruik",
+    "remaining": "{used} / {total} resterend",
+    "usedPercent": "{percent}% gebruikt deze periode",
+    "renews": "Verlengt op {date}",
+    "choosePlan": "Kies Je Plan",
+    "choosePlanDescription": "Abonneer je om AI-functies te ontgrendelen en maandelijkse credits te krijgen",
+    "savingsVsHuman": "Bespaar {amount}/mnd vs mens",
+    "timeSaved": "{time} maandelijks bespaard",
+    "cheaper": "{multiplier} goedkoper",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/maand",
+    "creditsPerMonth": "{count} credits /maand",
+    "processing": "Verwerken...",
+    "subscribeTo": "Abonneer op {name}",
+    "transactionTypes": {
+      "credit_purchase": "Credit Aankoop",
+      "agent_usage": "Agent Gebruik",
+      "refund": "Terugbetaling",
+      "bonus": "Bonusbeloning",
+      "subscription": "Abonnement",
+      "subscription_grant": "Abonnementscredits",
+      "renewal": "Verlengingscredits",
+      "reactivation": "Heractivering"
+    },
+    "toasts": {
+      "paymentSuccess": "Betaling geslaagd! Je credits zijn toegevoegd.",
+      "subscriptionActivated": "Abonnement succesvol geactiveerd!",
+      "paymentCanceled": "Betaling is geannuleerd. Er zijn geen kosten in rekening gebracht.",
+      "signInToSubscribe": "Log in om te abonneren",
+      "subscriptionCheckoutFailed": "Kon abonnementscheckout niet starten. Probeer het opnieuw.",
+      "signInToPurchase": "Log in om credits te kopen",
+      "needSubscription": "Je hebt een actief abonnement nodig om extra credits te kopen",
+      "checkoutFailed": "Kon checkout niet starten. Probeer het opnieuw.",
+      "manageFailed": "Kon abonnementsbeheer niet openen. Probeer het opnieuw.",
+      "transactionsExported": "Transacties geëxporteerd"
+    }
+  },
+  "apiKeys": {
+    "title": "Model Providers",
+    "new": "nieuw",
+    "description": "Voeg je eigen API-sleutels toe om toegang tot modellen te ontgrendelen.",
+    "securityNote": "Je sleutels worden veilig opgeslagen met end-to-end versleuteling.",
+    "apiKeyLabel": "{provider} API-sleutel",
+    "getApiKey": "API-sleutel ophalen",
+    "delete": "Verwijderen",
+    "save": "Opslaan",
+    "deleteDialog": {
+      "title": "API-sleutel Verwijderen",
+      "description": "Weet je zeker dat je je {provider} API-sleutel wilt verwijderen? Dit kan niet ongedaan worden gemaakt en je verliest toegang tot {provider} modellen.",
+      "cancel": "Annuleren",
+      "confirm": "Verwijderen"
+    },
+    "toasts": {
+      "saved": "API-sleutel opgeslagen",
+      "savedDescription": "Je {provider} API-sleutel is opgeslagen en modellen zijn toegevoegd aan je favorieten.",
+      "updatedDescription": "Je {provider} API-sleutel is bijgewerkt.",
+      "saveFailed": "API-sleutel opslaan mislukt",
+      "saveFailedDescription": "Kon {provider} API-sleutel niet opslaan. Probeer het opnieuw.",
+      "deleted": "API-sleutel verwijderd",
+      "deletedDescription": "Je {provider} API-sleutel is verwijderd.",
+      "deleteFailed": "API-sleutel verwijderen mislukt",
+      "deleteFailedDescription": "Kon {provider} API-sleutel niet verwijderen. Probeer het opnieuw."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Profielgegevens",
+    "displayName": "Weergavenaam",
+    "namePlaceholder": "Je naam",
+    "company": "Bedrijf",
+    "companyPlaceholder": "Je bedrijf",
+    "website": "Website",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Opslaan...",
+    "saveChanges": "Wijzigingen opslaan",
+    "account": "Account",
+    "email": "E-mail",
+    "verified": "Geverifieerd",
+    "signOut": "Uitloggen",
+    "signOutDescription": "Uitloggen op dit apparaat",
+    "toasts": {
+      "profileUpdated": "Profiel bijgewerkt",
+      "profileUpdateFailed": "Profiel bijwerken mislukt",
+      "signOutFailed": "Uitloggen mislukt"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Je gegevens zijn beschermd",
+    "dataProtectedDescription": "Enterprise-grade beveiliging met versleuteling in rust en tijdens verzending",
+    "features": {
+      "encryption": {
+        "title": "End-to-End Versleuteling",
+        "description": "API-sleutels versleuteld met AES-256-GCM. Je inloggegevens worden nooit in platte tekst opgeslagen."
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "Isolatie op databaseniveau zorgt ervoor dat je gegevens alleen door jou toegankelijk zijn. Geen cross-tenant toegang mogelijk."
+      },
+      "privacy": {
+        "title": "Privacy by Design",
+        "description": "We verzamelen minimale gegevens die nodig zijn om de service te leveren. Je gesprekken en bestanden blijven van jou."
+      },
+      "session": {
+        "title": "Sessiebeveiliging",
+        "description": "CSRF-bescherming, beveiligde HTTP-only cookies en Content Security Policy headers bij elk verzoek."
+      }
+    },
+    "legal": "Juridisch",
+    "privacyPolicy": {
+      "title": "Privacybeleid",
+      "description": "Hoe we je gegevens verzamelen, gebruiken en beschermen"
+    },
+    "termsOfService": {
+      "title": "Servicevoorwaarden",
+      "description": "Onze algemene voorwaarden"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Layout"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Samenvatting",
+      "highlight": "Samenvatten"
+    },
+    "code": {
+      "label": "Code",
+      "highlight": "Bouwen"
+    },
+    "research": {
+      "label": "Onderzoek",
+      "highlight": "Analyseren"
+    },
+    "create": {
+      "label": "Creëren",
+      "highlight": "Genereren"
+    },
+    "solve": {
+      "label": "Oplossen",
+      "highlight": "Debug"
+    },
+    "learn": {
+      "label": "Leren",
+      "highlight": "Uitleggen"
+    }
+  },
+  "loadingMessages": [
+    "Het siliconen brein opstarten",
+    "Het digitale bewustzijn wekken",
+    "Neurale paden initialiseren",
+    "Kwantumkernen opstarten",
+    "De fluxcondensator opladen",
+    "Het mainframe activeren",
+    "De rekenmatrix voeden",
+    "Warp-aandrijving inschakelen",
+    "De siliconen geesten oproepen",
+    "De elektronenmotor aansteken",
+    "De transistors opwarmen",
+    "Bits en bytes assembleren",
+    "Digitale synapsen kalibreren",
+    "CPU-kristallen opladen",
+    "Bewustzijnsprotocollen laden",
+    "Systeembronnen initialiseren",
+    "Computeromgeving voorbereiden",
+    "Beveiligde verbinding opzetten",
+    "Virtuele bronnen inrichten",
+    "Systeemparameters configureren",
+    "Virtuele instantie lanceren",
+    "Extern bureaublad activeren",
+    "Cloudbronnen uitrollen",
+    "Systeemopstartreeks starten",
+    "Uitvoeringsomgeving voorbereiden",
+    "De slaperige computer wakker maken",
+    "De digitale beer prikken",
+    "Computationele koffie zetten",
+    "De digitale spieren strekken",
+    "De digitale ogen openen",
+    "Opstarten",
+    "Aanzetten",
+    "Online komen",
+    "Systeem opstarten",
+    "Klaarmaken",
+    "Bijna klaar",
+    "Werkruimte voorbereiden",
+    "Bronnen laden",
+    "Systeem ontwaakt"
+  ]
 }

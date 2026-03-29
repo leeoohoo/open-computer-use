@@ -423,145 +423,145 @@
     "label": "ภาษา"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "คุณตั้งเป้าหมาย",
+    "brandSubheading": "เราจัดการที่เหลือ",
+    "mobileHeading": "คุณตั้งเป้าหมาย เราจัดการที่เหลือ",
+    "mobileSubheading": "เอเจนต์ AI ที่ท่องเว็บ คลิก และทำงานเหมือนเพื่อนร่วมทีมจริงๆ",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "คุณอธิบายงาน",
+        "sub": "\"วิจัยคู่แข่งยอดนิยม 5 รายของเรา\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "เอเจนต์เข้าควบคุม",
+        "sub": "ท่องเว็บ คลิก พิมพ์ อัตโนมัติ"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "ส่งมอบงาน",
+        "sub": "สเปรดชีตพร้อมโปรไฟล์คู่แข่งครบ 5 ราย"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "เสร็จสิ้น",
+    "doneIn": "เสร็จใน 8 นาที",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "ผู้ดำเนินงานของคุณพร้อมแล้ว",
+      "signUp": "ให้เวิร์กโฟลว์ทำงานอัตโนมัติ",
+      "magicLink": "ข้ามรหัสผ่าน",
+      "forgotPassword": "มาช่วยให้คุณกลับเข้าสู่ระบบ"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "กลับมาต่อจากจุดที่ค้างไว้ — เอเจนต์ของคุณจำได้",
+      "signUp": "ติดตั้งเอเจนต์ AI ตัวแรกในไม่ถึงนาที",
+      "magicLink": "คลิกเดียวจากกล่องจดหมายก็เข้าได้เลย",
+      "forgotPassword": "เราจะส่งลิงก์รีเซ็ตไปยังอีเมลของคุณ"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "กำลังเชื่อมต่อ...",
+      "continueWithGoogle": "ดำเนินต่อด้วย Google"
     },
-    "or": "or",
-    "email": "Email",
+    "or": "หรือ",
+    "email": "อีเมล",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "รหัสผ่าน",
+    "passwordPlaceholder": "รหัสผ่านของคุณ",
+    "confirmPassword": "ยืนยันรหัสผ่าน",
+    "confirmPasswordPlaceholder": "ยืนยันรหัสผ่านของคุณ",
+    "minChars": "อย่างน้อย 6 ตัวอักษร",
+    "signingIn": "กำลังเข้าสู่ระบบ...",
+    "signIn": "เข้าสู่ระบบ",
+    "creatingAccount": "กำลังสร้างบัญชี...",
+    "createAccount": "สร้างบัญชี",
+    "sending": "กำลังส่ง...",
+    "sendMagicLink": "ส่ง magic link",
+    "sendResetLink": "ส่งลิงก์รีเซ็ต",
+    "forgotPassword": "ลืมรหัสผ่าน?",
+    "useMagicLink": "ใช้ magic link",
+    "dontHaveAccount": "ยังไม่มีบัญชี?",
+    "signUp": "สมัครสมาชิก",
+    "alreadyHaveAccount": "มีบัญชีอยู่แล้ว?",
+    "backToSignIn": "กลับไปเข้าสู่ระบบ",
+    "termsAgreement": "เมื่อดำเนินต่อ คุณยอมรับ",
+    "terms": "ข้อกำหนด",
+    "and": "และ",
+    "privacyPolicy": "นโยบายความเป็นส่วนตัว",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "กรุณากรอกข้อมูลทุกช่อง",
+      "passwordMinLength": "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+      "passwordsDoNotMatch": "รหัสผ่านไม่ตรงกัน",
+      "supabaseNotConfigured": "ยังไม่ได้ตั้งค่า Supabase",
+      "unexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองใหม่อีกครั้ง",
+      "confirmEmail": "กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ ตรวจสอบกล่องจดหมายของคุณ",
+      "invalidCredentials": "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+      "signInFailed": "เข้าสู่ระบบล้มเหลว กรุณาลองใหม่อีกครั้ง",
+      "invalidEmail": "ที่อยู่อีเมลไม่ถูกต้อง",
+      "emailAlreadyExists": "บัญชีที่ใช้อีเมลนี้มีอยู่แล้ว ลองเข้าสู่ระบบแทน",
+      "signUpFailed": "สมัครสมาชิกล้มเหลว กรุณาลองใหม่อีกครั้ง",
+      "enterEmail": "กรุณาป้อนอีเมลของคุณ",
+      "noAccountFound": "ไม่พบบัญชีที่ใช้อีเมลนี้ กรุณาสมัครสมาชิกก่อน",
+      "magicLinkFailed": "ส่ง magic link ล้มเหลว กรุณาลองใหม่อีกครั้ง",
+      "resetFailed": "ส่งอีเมลรีเซ็ตล้มเหลว กรุณาลองใหม่อีกครั้ง",
+      "updateFailed": "อัปเดตรหัสผ่านล้มเหลว กรุณาลองใหม่อีกครั้ง"
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "ตรวจสอบอีเมลเพื่อยืนยันบัญชีก่อนเข้าสู่ระบบ",
+      "checkEmailMagicLink": "ตรวจสอบอีเมลสำหรับ magic link เพื่อเข้าสู่ระบบ",
+      "checkEmailReset": "ตรวจสอบอีเมลสำหรับลิงก์รีเซ็ตรหัสผ่าน",
+      "passwordUpdated": "อัปเดตรหัสผ่านสำเร็จ กำลังนำไปหน้าเข้าสู่ระบบ..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "รีเซ็ตรหัสผ่านของคุณ",
+      "subtitle": "ป้อนรหัสผ่านใหม่ด้านล่าง",
+      "newPassword": "รหัสผ่านใหม่",
+      "confirmNewPassword": "ยืนยันรหัสผ่านใหม่",
+      "confirmPlaceholder": "ยืนยันรหัสผ่านใหม่ของคุณ",
+      "updating": "กำลังอัปเดต...",
+      "updatePassword": "อัปเดตรหัสผ่าน"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "ข้อผิดพลาดการยืนยันตัวตน",
+      "defaultMessage": "เกิดข้อผิดพลาดระหว่างการยืนยันตัวตน",
+      "tryAgain": "ลองอีกครั้ง",
+      "backToChat": "กลับไปแชท",
+      "needHelp": "ต้องการความช่วยเหลือ?",
+      "contactSupport": "ติดต่อฝ่ายสนับสนุน"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "ข้ามไปก่อน",
+    "back": "ย้อนกลับ",
+    "continue": "ดำเนินต่อ",
+    "getStarted": "เริ่มต้นใช้งาน",
+    "settingUp": "กำลังตั้งค่า...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "ยินดีต้อนรับกลับ{name}!",
+      "titleNew": "ยินดีต้อนรับสู่ Coasty",
+      "descriptionReturning": "เราอยากเรียนรู้เพิ่มเติมเกี่ยวกับคุณเพื่อปรับปรุงประสบการณ์การใช้งาน",
+      "descriptionNew": "มาตั้งค่าบัญชีเพื่อปรับแต่งประสบการณ์ของคุณกัน"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "เราควรเรียกคุณว่าอะไร?",
+    "namePlaceholder": "ชื่อของคุณ",
+    "companyLabel": "บริษัท",
+    "optional": "(ไม่บังคับ)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "เว็บไซต์",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "คุณเป็นใครมากที่สุด?",
+      "subtitle": "เลือกทั้งหมดที่ตรง — ช่วยให้เราปรับแต่งประสบการณ์ให้คุณ"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
-      "marketer": "Marketer",
-      "designer": "Designer",
-      "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "founder": "ผู้ก่อตั้ง / CEO",
+      "developer": "นักพัฒนา",
+      "marketer": "นักการตลาด",
+      "designer": "นักออกแบบ",
+      "product_manager": "ผู้จัดการผลิตภัณฑ์",
+      "data_analyst": "ข้อมูล / การวิเคราะห์",
+      "operations": "ปฏิบัติการ",
+      "other": "อื่นๆ"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "ขนาดทีม",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "แค่ฉัน",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,608 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "คุณรู้จักเราได้อย่างไร?",
+      "subtitle": "เราอยากรู้ว่าคุณได้ยินเกี่ยวกับ Coasty จากที่ไหน"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "เพื่อน / เพื่อนร่วมงาน",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "อื่นๆ"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "คุณจะทำอะไรอัตโนมัติเป็นอย่างแรก?",
+      "subtitle": "เลือกทั้งหมดที่ตรง — คุณสามารถสำรวจทุกอย่างได้ภายหลัง"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "การดึงข้อมูลเว็บและวิจัย",
+      "browser_automation": "ระบบอัตโนมัติของเบราว์เซอร์",
+      "data_entry": "ป้อนข้อมูลและแบบฟอร์ม",
+      "email_outreach": "อีเมลและการเข้าถึง",
+      "testing": "QA และการทดสอบ",
+      "ecommerce": "งาน E-commerce",
+      "social_media": "การจัดการโซเชียลมีเดีย",
+      "general_automation": "ระบบอัตโนมัติทั่วไป"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "ทุกอย่างที่คุณต้องการ",
+      "titleHighlight": "มีในตัว",
+      "subtitle": "นี่คือสิ่งที่ Coasty ทำได้เพื่อคุณ",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "ไม่ต้องเขียนโค้ด",
+        "description": "แค่อธิบายสิ่งที่คุณต้องการเป็นภาษาธรรมดา"
       },
       "agentSwarms": {
         "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "description": "กองเอเจนต์แบบขนาน"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "ควบคุมเดสก์ท็อป",
+        "description": "คลิก พิมพ์ นำทาง"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "ระบบอัตโนมัติเบราว์เซอร์",
+        "description": "แบบฟอร์ม แท็บ การดึงข้อมูล — อัตโนมัติเต็มรูปแบบ"
       },
       "computerVision": {
         "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "description": "เห็นและเข้าใจหน้าจอของคุณแบบเรียลไทม์"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "เวิร์กโฟลว์",
+        "description": "โฟลว์หลายขั้นตอน"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "บนอุปกรณ์",
+        "description": "ทำงานในเครื่อง"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "อัตโนมัติ 24/7",
+        "description": "ตั้งค่าแล้วปล่อย — ทำงานขณะคุณหลับ"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "มาใหม่? เรามีคู่มือให้คุณ",
+      "subtitle": "ติดตั้งเอเจนต์ AI ตัวแรกในไม่ถึงนาที"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "AI ของคุณควรทำอะไร?",
+    "placeholderAlt": "บอก AI ของคุณว่าต้องทำอะไรบนคอมพิวเตอร์...",
+    "vmError": {
+      "title": "ข้อผิดพลาด Virtual Machine",
+      "description": "Virtual Machine อยู่ในสถานะผิดพลาดหรือกำลังถูกลบ",
+      "hint": "กรุณาตรวจสอบแท็บ Machines เพื่อแก้ไขปัญหา หรือเลือก \"ไม่ได้เลือกคอมพิวเตอร์\" เพื่อใช้เฉพาะการค้นหาเว็บ",
+      "gotIt": "เข้าใจแล้ว"
+    },
+    "status": {
+      "creating": "กำลังสร้าง {name}...",
+      "initiating": "กำลังเริ่มเอเจนต์บน {name}...",
+      "stopping": "กำลังหยุด {name}...",
+      "preparing": "กำลังเตรียม {name}..."
+    },
+    "swarm": {
+      "title": "โหมด Swarm",
+      "pro": "PRO",
+      "upgradeLabel": "โหมด Swarm — อัปเกรดเพื่อปลดล็อก",
+      "feature1": "ประมวลผลแบบขนานข้ามเครื่องชั่วคราว",
+      "feature2": "แต่ละเครื่องทำงานอัตโนมัติ",
+      "feature3": "3 เท่าของจำนวนเครื่องตามแผนต่อ swarm",
+      "description": "รันหนึ่งพรอมต์ข้าม 3 เท่าของจำนวนเครื่องแบบขนาน — แต่ละเครื่องทำงานอิสระ",
+      "enableLabel": "เปิดโหมด Swarm",
+      "disableLabel": "ปิดโหมด Swarm",
+      "onTooltip": "โหมด Swarm เปิด — พรอมต์ของคุณจะทำงานบนหลายเครื่องพร้อมกัน",
+      "offTooltip": "เปิดโหมด Swarm เพื่อรันพรอมต์ข้ามหลายเครื่องพร้อมกัน",
+      "decreaseMachines": "ลดจำนวนเครื่อง",
+      "increaseMachines": "เพิ่มจำนวนเครื่อง",
+      "machineLimit": "สูงสุด {max} เครื่อง swarm ในแผนของคุณ ต้องการมากกว่านี้? ติดต่อ founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "เชื่อมต่อเดสก์ท็อป",
+      "screenLabel": "หน้าจอของ {name}",
+      "screenDefault": "เดสก์ท็อป",
+      "watchTooltip": "ดูเอเจนต์ทำงานบนหน้าจอแยก แค่อย่าแตะอะไร ไม่งั้นมันจะตื่นเต้นจนทำงานไม่ได้!"
+    },
+    "buttons": {
+      "stop": "หยุด",
+      "sendToSwarm": "ส่งไปยัง swarm",
+      "taskRunning": "งานอื่นกำลังทำงาน — คลิกเพื่อหยุดแล้วรันของคุณ",
+      "selectComputer": "เลือกคอมพิวเตอร์เพื่อส่งข้อความ",
+      "waitCreating": "กรุณารอให้ VM ถูกสร้าง",
+      "waitStarting": "กรุณารอให้ VM เริ่มทำงาน",
+      "waitAgent": "กรุณารอให้เอเจนต์เริ่มต้น",
+      "vmStopping": "VM กำลังหยุด",
+      "send": "ส่ง",
+      "switching": "กำลังสลับ...",
+      "overrideRun": "แทนที่และรัน",
+      "stopLabel": "หยุดงานที่กำลังทำแล้วเริ่มงานนี้",
+      "sendLabel": "ส่งข้อความ"
+    },
+    "search": "ค้นหา",
+    "upload": {
+      "label": "อัปโหลดไฟล์ไปยัง VM",
+      "heading": "อัปโหลดไฟล์ไปยัง VM",
+      "description": "ไฟล์จะถูกบันทึกไว้ที่เดสก์ท็อป",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "วางไฟล์ที่นี่",
+      "dropDescription": "ไฟล์จะถูกอัปโหลดไปยังโฟลเดอร์เดสก์ท็อปของ VM",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "เข้าสู่ระบบเพื่อทดลองฟีเจอร์เพิ่มเติมฟรี",
+      "description": "สร้างโปรเจกต์ เชิญสมาชิกทีม และอีกมากมาย",
+      "connecting": "กำลังเชื่อมต่อ...",
+      "continueWithGoogle": "ดำเนินต่อด้วย Google"
+    },
+    "removeFile": "ลบไฟล์"
+  },
+  "chat": {
+    "greeting": "สวัสดี",
+    "greetingAuth": "ผมจะจัดการงานคอมพิวเตอร์ มีงานอะไร?",
+    "greetingUnauth": "AI ที่ทำงานคอมพิวเตอร์แทนคุณ แค่บอกว่าต้องการอะไร",
+    "guide": "คู่มือ",
+    "saveLogins": "บันทึกข้อมูลเข้าสู่ระบบสำหรับกรอกอัตโนมัติ",
+    "encryptedNote": "เข้ารหัส ไม่เคยเห็นโดย AI",
+    "roleLabels": [
+      "เพื่อนร่วมงาน",
+      "พนักงาน",
+      "เพื่อน",
+      "ผู้ช่วย",
+      "หุ้นส่วน",
+      "เพื่อนร่วมทีม",
+      "ผู้ร่วมงาน",
+      "ผู้ช่วยเหลือ"
+    ],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "รับรายงานคู่แข่ง",
+        "warmLeads": "สร้างลีดอบอุ่น 20 ราย",
+        "pitchDeck": "สร้างร่างพิทช์เด็ค"
+      },
+      "developer": {
+        "findBugs": "หาบั๊กบนเว็บไซต์ของฉัน",
+        "performance": "รับรายงานประสิทธิภาพ",
+        "apiDocs": "ดึงเอกสาร API"
+      },
+      "marketer": {
+        "seoGap": "รับการวิเคราะห์ช่องว่าง SEO",
+        "competitorAds": "สอดส่องโฆษณาคู่แข่ง",
+        "trendingContent": "รับไอเดียเนื้อหาที่กำลังเป็นกระแส"
+      },
+      "product_manager": {
+        "reviewSummary": "รับสรุปรีวิว",
+        "featureComparison": "สร้างการเปรียบเทียบฟีเจอร์",
+        "competitorLaunches": "ติดตามการเปิดตัวของคู่แข่ง"
+      },
+      "data_analyst": {
+        "exportCsv": "ส่งออกข้อมูลเว็บไซต์เป็น CSV",
+        "marketSizing": "รับรายงานขนาดตลาด",
+        "benchmark": "เปรียบเทียบกับอุตสาหกรรม"
+      },
+      "operations": {
+        "enterRecords": "ป้อนบันทึกเข้าสู่ระบบของเรา",
+        "cheapestVendor": "หาผู้ขายที่ถูกที่สุด",
+        "invoiceSummary": "รับสรุปใบแจ้งหนี้"
+      },
+      "designer": {
+        "designComparison": "รับการเปรียบเทียบการออกแบบ",
+        "responsiveAudit": "ตรวจสอบ responsive",
+        "inspiration": "รวบรวมแรงบันดาลใจการออกแบบ"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "ส่งออกข้อมูลเว็บไซต์เป็น CSV",
+      "browser_automation": "ส่งออกรายงานแดชบอร์ด",
+      "data_entry": "ป้อนบันทึกเข้าแอปของเรา",
+      "email_outreach": "ส่งอีเมลเข้าถึงแบบส่วนตัว",
+      "testing": "รับรายงาน QA ฉบับเต็ม",
+      "ecommerce": "รับการเปรียบเทียบราคา",
+      "social_media": "โพสต์และรับ engagement",
+      "general_automation": "รันงานบนเว็บไซต์ของฉัน"
+    }
+  },
+  "chatMessages": {
+    "copyText": "คัดลอกข้อความ",
+    "copied": "คัดลอกแล้ว!",
+    "regenerate": "สร้างใหม่",
+    "feedback": {
+      "title": "ความคิดเห็น",
+      "prompts": [
+        "ให้คะแนน",
+        "ความคิดเห็น",
+        "เราเป็นอย่างไร?",
+        "คิดยังไง?",
+        "แบ่งปันความคิดเห็น"
+      ],
+      "tooltip": "แบ่งปันความคิดเห็นของคุณ"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "ค้นหาอัจฉริยะ",
+      "description": "ค้นหาด้วย AI ทั่วทั้งเว็บ"
+    },
+    "collaborate": {
+      "title": "ทำงานร่วมกัน",
+      "description": "ทำงานร่วมกันแบบเรียลไทม์"
+    },
+    "globalAccess": {
+      "title": "เข้าถึงทั่วโลก",
+      "description": "ค้นหาใน 50+ ภาษา"
+    },
+    "aiModels": {
+      "title": "โมเดล AI",
+      "description": "ผู้ให้บริการ AI หลายราย"
+    },
+    "freeForever": {
+      "title": "ฟรีตลอดไป",
+      "description": "ไม่มีค่าใช้จ่ายแอบแฝง"
+    },
+    "privateSecure": {
+      "title": "ส่วนตัวและปลอดภัย",
+      "description": "ข้อมูลของคุณยังคงเป็นของคุณ"
+    }
+  },
+  "sidebar": {
+    "newTask": "งานใหม่",
+    "newTaskDescription": "เริ่มระบบอัตโนมัติ AI ใหม่",
+    "activity": "กิจกรรม",
+    "taskHistory": "ประวัติงาน",
+    "taskHistoryDescription": "ตรวจสอบงานที่ผ่านมาและกลับมาต่อจากจุดที่ค้างไว้",
+    "taskHistoryPopup": {
+      "title": "งานล่าสุดของคุณ",
+      "description": "เรียกดูและกลับมาต่อการสนทนาที่ผ่านมา ทุกงานถูกบันทึกเพื่อให้คุณกลับมาต่อได้ทันที"
+    },
+    "swarmRuns": "การรัน Swarm",
+    "swarmRunsDescription": "ตรวจสอบเวิร์กโฟลว์ขนานหลายเอเจนต์",
+    "swarmRunsPopup": {
+      "title": "เวิร์กโฟลว์หลายเอเจนต์",
+      "description": "รันงานข้ามหลายเครื่องแบบขนาน แต่ละเอเจนต์ทำงานอิสระและผลลัพธ์รวมกันอัตโนมัติ"
+    },
+    "guide": "คู่มือ",
+    "guideDescription": "เรียนรู้วิธีใช้ Coasty ให้เต็มประสิทธิภาพ",
+    "guidePopup": {
+      "title": "เริ่มต้นใช้งาน",
+      "description": "คำแนะนำทีละขั้นตอนและแนวปฏิบัติที่ดีที่สุดเพื่อช่วยให้คุณทำงานอัตโนมัติอย่างมีประสิทธิภาพ"
+    },
+    "infrastructure": "โครงสร้างพื้นฐาน",
+    "computer": "คอมพิวเตอร์",
+    "computers": "คอมพิวเตอร์",
+    "active": "ใช้งานอยู่",
+    "view": "ดู",
+    "workforce": "แรงงาน",
+    "workforceDescription": "ตั้งเวลาเอเจนต์อัตโนมัติและทริกเกอร์",
+    "workforcePopup": {
+      "title": "ระบบอัตโนมัติตามกำหนดเวลา",
+      "description": "ตั้งค่างานที่ทำซ้ำด้วยตาราง cron และทริกเกอร์เอเจนต์ต่อเอเจนต์ แรงงานของคุณทำงานขณะคุณหลับ"
+    },
+    "credentials": "ข้อมูลรับรอง",
+    "credentialsDescription": "เก็บข้อมูลเข้าสู่ระบบอย่างปลอดภัยสำหรับเอเจนต์",
+    "credentialsPopup": {
+      "title": "ตู้เซฟข้อมูลรับรองที่ปลอดภัย",
+      "description": "เก็บข้อมูลเข้าสู่ระบบและ API key ด้วยการเข้ารหัส เอเจนต์กรอกข้อมูลอัตโนมัติโดยไม่เปิดเผยค่าจริง"
+    },
+    "desktopApp": {
+      "getDesktopApp": "ดาวน์โหลดแอปเดสก์ท็อป",
+      "download": "ดาวน์โหลด",
+      "downloadDesktopApp": "ดาวน์โหลดแอปเดสก์ท็อป",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "ควบคุมคอมพิวเตอร์ของคุณจากระยะไกล",
+      "controlDescription": "ติดตั้งแอปเดสก์ท็อปและรันงานบน PC ของคุณจากแดชบอร์ดนี้ — ที่ไหนก็ได้ เมื่อไรก็ได้"
+    },
+    "credits": {
+      "runningLow": "เครดิต — ใกล้หมด",
+      "remaining": "เครดิตคงเหลือ",
+      "buy": "ซื้อ",
+      "creditsLeft": "เครดิตเหลือ",
+      "usedLabel": "ใช้แล้ว: {count}",
+      "consumed": "ใช้ไป {percent}%",
+      "usageThisWeek": "การใช้งานสัปดาห์นี้"
+    },
+    "talkToUs": "พูดคุยกับเรา",
+    "inviteEarn": "เชิญและรับรางวัล",
+    "user": "ผู้ใช้",
+    "account": "บัญชี",
+    "tasks": "{count} งาน",
+    "recentActivity": "กิจกรรมล่าสุด",
+    "viewAllHistory": "ดูประวัติทั้งหมด →",
+    "swarmRunsCount": "{count} การรัน Swarm",
+    "running": "กำลังทำงาน",
+    "completed": "เสร็จสิ้น",
+    "viewAllSwarms": "ดู swarm ทั้งหมด →",
+    "schedulesCount": "{count} ตารางเวลา",
+    "totalRuns": "{count} การรันทั้งหมด",
+    "paused": "หยุดชั่วคราว",
+    "viewAllSchedules": "ดูตารางเวลาทั้งหมด →",
+    "credentialsCount": "{count} ข้อมูลรับรอง",
+    "encryptedVault": "ตู้เซฟเข้ารหัส",
+    "manageCredentials": "จัดการข้อมูลรับรอง →",
+    "days": [
+      "จ.",
+      "อ.",
+      "พ.",
+      "พฤ.",
+      "ศ.",
+      "ส.",
+      "อา."
+    ],
+    "resume": "ดำเนินต่อ",
+    "result": "ผลลัพธ์",
+    "notScheduled": "ไม่ได้ตั้งเวลา",
+    "overdue": "เกินกำหนด",
+    "lessThanMin": "< 1 นาที",
+    "inMinutes": "ใน {count} นาที",
+    "inHours": "ใน {count} ชม.",
+    "today": "วันนี้",
+    "yesterday": "เมื่อวาน"
+  },
+  "appHeader": {
+    "login": "เข้าสู่ระบบ",
+    "assign": "มอบหมาย",
+    "assignDescription": "มอบหมายพนักงานให้รันงานนี้",
+    "computer": "คอมพิวเตอร์",
+    "showComputer": "แสดงคอมพิวเตอร์",
+    "hideComputer": "ซ่อนคอมพิวเตอร์",
+    "employeeHired": "จ้างพนักงานแล้ว!",
+    "employeeRemoved": "ลบพนักงานแล้ว"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "ระบบอัตโนมัติรายวันแบบเบา"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "ทำงานอัตโนมัติทุกวัน"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "ขยายเวิร์กโฟลว์ที่ซับซ้อน",
+        "badge": "ยอดนิยม"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "ระบบอัตโนมัติหนักไม่จำกัด"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (ลบหลังไม่ใช้งาน)",
+      "vmAlwaysOn": "{count} VM เปิดตลอด",
+      "vmAlwaysOnPlural": "{count} VM เปิดตลอด",
+      "agentsParallel": "{count} เอเจนต์พร้อมกัน",
+      "basicSearch": "ค้นหาพื้นฐาน",
+      "advancedSearch": "ค้นหาขั้นสูงและดึงข้อมูล",
+      "standardSupport": "การสนับสนุนมาตรฐาน (คนจริง)",
+      "prioritySupport": "การสนับสนุนลำดับแรก ตอบภายใน 24 ชม.",
+      "premiumSupport": "การสนับสนุนพรีเมียม ตอบภายใน 12 ชม."
+    },
+    "creditPackages": {
+      "small": {
+        "name": "เพิ่มเล็ก",
+        "description": "เติมเร็ว"
+      },
+      "medium": {
+        "name": "เพิ่มกลาง",
+        "description": "เติมมาตรฐาน",
+        "savings": "ประหยัด 8%"
+      },
+      "large": {
+        "name": "เพิ่มใหญ่",
+        "description": "ซื้อเป็นจำนวนมาก",
+        "savings": "ประหยัด 17%"
+      }
+    },
+    "timeAgo": {
+      "justNow": "เมื่อกี้",
+      "minutesAgo": "{count} นาทีที่แล้ว",
+      "hoursAgo": "{count} ชม. ที่แล้ว",
+      "daysAgo": "{count} วันที่แล้ว"
+    },
+    "noActivity": "ไม่มีกิจกรรมในช่วงนี้",
+    "stats": {
+      "balance": "ยอมคงเหลือ",
+      "earned": "ได้รับ",
+      "used": "ใช้แล้ว",
+      "credits": "เครดิต",
+      "allTime": "ตลอดทั้งหมด",
+      "lastRange": "{range} ล่าสุด",
+      "sessions": "{count} เซสชัน",
+      "avgDaily": "~{count}/วัน โดยเฉลี่ย",
+      "plan": "แผน",
+      "free": "ฟรี",
+      "noPlan": "ไม่มีแผน",
+      "canceling": "กำลังยกเลิก"
+    },
+    "monthlyUsage": "การใช้เครดิตรายเดือน",
+    "remaining": "{used} / {total} คงเหลือ",
+    "usedPercent": "ใช้ไป {percent}% ในช่วงนี้",
+    "renews": "ต่ออายุ {date}",
+    "choosePlan": "เลือกแผนของคุณ",
+    "choosePlanDescription": "สมัครสมาชิกเพื่อปลดล็อกฟีเจอร์ AI และรับเครดิตรายเดือน",
+    "savingsVsHuman": "ประหยัด {amount}/เดือน เทียบกับคน",
+    "timeSaved": "ประหยัดเวลา {time} ต่อเดือน",
+    "cheaper": "ถูกกว่า {multiplier}",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/เดือน",
+    "creditsPerMonth": "{count} เครดิต /เดือน",
+    "processing": "กำลังประมวลผล...",
+    "subscribeTo": "สมัคร {name}",
+    "transactionTypes": {
+      "credit_purchase": "ซื้อเครดิต",
+      "agent_usage": "การใช้งานเอเจนต์",
+      "refund": "คืนเงิน",
+      "bonus": "รางวัลโบนัส",
+      "subscription": "การสมัครสมาชิก",
+      "subscription_grant": "เครดิตจากการสมัคร",
+      "renewal": "เครดิตต่ออายุ",
+      "reactivation": "เปิดใช้งานใหม่"
+    },
+    "toasts": {
+      "paymentSuccess": "ชำระเงินสำเร็จ! เครดิตของคุณถูกเพิ่มแล้ว",
+      "subscriptionActivated": "เปิดใช้งานการสมัครสมาชิกสำเร็จ!",
+      "paymentCanceled": "การชำระเงินถูกยกเลิก ไม่มีการเรียกเก็บเงิน",
+      "signInToSubscribe": "กรุณาเข้าสู่ระบบเพื่อสมัครสมาชิก",
+      "subscriptionCheckoutFailed": "เริ่มการชำระเงินสมาชิกล้มเหลว กรุณาลองใหม่อีกครั้ง",
+      "signInToPurchase": "กรุณาเข้าสู่ระบบเพื่อซื้อเครดิต",
+      "needSubscription": "คุณต้องมีการสมัครสมาชิกที่ใช้งานอยู่เพื่อซื้อเครดิตเพิ่มเติม",
+      "checkoutFailed": "เริ่มการชำระเงินล้มเหลว กรุณาลองใหม่อีกครั้ง",
+      "manageFailed": "เปิดการจัดการสมาชิกล้มเหลว กรุณาลองใหม่อีกครั้ง",
+      "transactionsExported": "ส่งออกธุรกรรมแล้ว"
+    }
+  },
+  "apiKeys": {
+    "title": "ผู้ให้บริการโมเดล",
+    "new": "ใหม่",
+    "description": "เพิ่ม API key ของคุณเพื่อปลดล็อกการเข้าถึงโมเดล",
+    "securityNote": "คีย์ของคุณถูกเก็บอย่างปลอดภัยด้วยการเข้ารหัสแบบ end-to-end",
+    "apiKeyLabel": "{provider} API Key",
+    "getApiKey": "รับ API key",
+    "delete": "ลบ",
+    "save": "บันทึก",
+    "deleteDialog": {
+      "title": "ลบ API Key",
+      "description": "คุณแน่ใจว่าต้องการลบ API key ของ {provider} หรือไม่? การดำเนินการนี้ไม่สามารถย้อนกลับได้ และคุณจะสูญเสียการเข้าถึงโมเดลของ {provider}",
+      "cancel": "ยกเลิก",
+      "confirm": "ลบ"
+    },
+    "toasts": {
+      "saved": "บันทึก API key แล้ว",
+      "savedDescription": "API key ของ {provider} ถูกบันทึกแล้วและโมเดลถูกเพิ่มในรายการโปรดของคุณ",
+      "updatedDescription": "API key ของ {provider} ถูกอัปเดตแล้ว",
+      "saveFailed": "บันทึก API key ล้มเหลว",
+      "saveFailedDescription": "บันทึก API key ของ {provider} ล้มเหลว กรุณาลองใหม่อีกครั้ง",
+      "deleted": "ลบ API key แล้ว",
+      "deletedDescription": "API key ของ {provider} ถูกลบแล้ว",
+      "deleteFailed": "ลบ API key ล้มเหลว",
+      "deleteFailedDescription": "ลบ API key ของ {provider} ล้มเหลว กรุณาลองใหม่อีกครั้ง"
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "รายละเอียดโปรไฟล์",
+    "displayName": "ชื่อที่แสดง",
+    "namePlaceholder": "ชื่อของคุณ",
+    "company": "บริษัท",
+    "companyPlaceholder": "บริษัทของคุณ",
+    "website": "เว็บไซต์",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "กำลังบันทึก...",
+    "saveChanges": "บันทึกการเปลี่ยนแปลง",
+    "account": "บัญชี",
+    "email": "อีเมล",
+    "verified": "ยืนยันแล้ว",
+    "signOut": "ออกจากระบบ",
+    "signOutDescription": "ออกจากระบบอุปกรณ์นี้",
+    "toasts": {
+      "profileUpdated": "อัปเดตโปรไฟล์แล้ว",
+      "profileUpdateFailed": "อัปเดตโปรไฟล์ล้มเหลว",
+      "signOutFailed": "ออกจากระบบล้มเหลว"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "ข้อมูลของคุณได้รับการปกป้อง",
+    "dataProtectedDescription": "ความปลอดภัยระดับองค์กรด้วยการเข้ารหัสทั้งขณะเก็บและระหว่างส่ง",
+    "features": {
+      "encryption": {
+        "title": "การเข้ารหัสแบบ End-to-End",
+        "description": "API key เข้ารหัสด้วย AES-256-GCM ข้อมูลรับรองของคุณไม่เคยถูกเก็บเป็นข้อความธรรมดา"
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "การแยกระดับฐานข้อมูลรับประกันว่าข้อมูลของคุณเข้าถึงได้โดยคุณเท่านั้น ไม่สามารถเข้าถึงข้ามผู้เช่าได้"
+      },
+      "privacy": {
+        "title": "ความเป็นส่วนตัวโดยการออกแบบ",
+        "description": "เราเก็บข้อมูลน้อยที่สุดที่จำเป็นในการให้บริการ การสนทนาและไฟล์ของคุณยังคงเป็นของคุณ"
+      },
+      "session": {
+        "title": "ความปลอดภัยเซสชัน",
+        "description": "การป้องกัน CSRF คุกกี้ HTTP-only ที่ปลอดภัย และ Content Security Policy headers ในทุกคำขอ"
+      }
+    },
+    "legal": "กฎหมาย",
+    "privacyPolicy": {
+      "title": "นโยบายความเป็นส่วนตัว",
+      "description": "วิธีที่เราเก็บรวบรวม ใช้ และปกป้องข้อมูลของคุณ"
+    },
+    "termsOfService": {
+      "title": "ข้อกำหนดการให้บริการ",
+      "description": "ข้อกำหนดและเงื่อนไขการใช้งานของเรา"
+    }
+  },
+  "layoutSettings": {
+    "layout": "เลย์เอาต์"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "สรุป",
+      "highlight": "สรุป"
+    },
+    "code": {
+      "label": "โค้ด",
+      "highlight": "สร้าง"
+    },
+    "research": {
+      "label": "วิจัย",
+      "highlight": "วิเคราะห์"
+    },
+    "create": {
+      "label": "สร้างสรรค์",
+      "highlight": "สร้าง"
+    },
+    "solve": {
+      "label": "แก้ปัญหา",
+      "highlight": "ดีบั๊ก"
+    },
+    "learn": {
+      "label": "เรียนรู้",
+      "highlight": "อธิบาย"
+    }
+  },
+  "loadingMessages": [
+    "กำลังบูตสมองซิลิคอน",
+    "กำลังปลุกจิตสำนึกดิจิทัล",
+    "กำลังเริ่มต้นเส้นทางประสาท",
+    "กำลังหมุนแกนควอนตัม",
+    "กำลังชาร์จฟลักซ์คาปาซิเตอร์",
+    "กำลังเปิดใช้เมนเฟรม",
+    "กำลังจ่ายพลังงานเมทริกซ์คำนวณ",
+    "กำลังเข้าเกียร์วาร์ป",
+    "กำลังเรียกวิญญาณซิลิคอน",
+    "กำลังจุดเครื่องยนต์อิเล็กตรอน",
+    "กำลังอุ่นทรานซิสเตอร์",
+    "กำลังประกอบบิตและไบต์",
+    "กำลังปรับเทียบซิแนปส์ดิจิทัล",
+    "กำลังเติมพลังคริสตัล CPU",
+    "กำลังโหลดโปรโตคอลจิตสำนึก",
+    "กำลังเริ่มต้นทรัพยากรระบบ",
+    "กำลังเตรียมสภาพแวดล้อมคำนวณ",
+    "กำลังสร้างการเชื่อมต่อที่ปลอดภัย",
+    "กำลังจัดเตรียมทรัพยากรเสมือน",
+    "กำลังกำหนดค่าพารามิเตอร์ระบบ",
+    "กำลังเปิดตัวอินสแตนซ์เสมือน",
+    "กำลังเปิดใช้เดสก์ท็อประยะไกล",
+    "กำลังติดตั้งทรัพยากรคลาวด์",
+    "กำลังเริ่มลำดับการบูตระบบ",
+    "กำลังเตรียมสภาพแวดล้อมการทำงาน",
+    "กำลังปลุกคอมพิวเตอร์ที่ง่วงนอน",
+    "กำลังจิ้มหมีดิจิทัล",
+    "กำลังชงกาแฟคำนวณ",
+    "กำลังยืดกล้ามเนื้อดิจิทัล",
+    "กำลังเปิดตาดิจิทัล",
+    "กำลังเริ่มต้น",
+    "กำลังเปิดเครื่อง",
+    "กำลังออนไลน์",
+    "กำลังบูตระบบ",
+    "กำลังเตรียมพร้อม",
+    "เกือบเสร็จแล้ว",
+    "กำลังเตรียมพื้นที่ทำงาน",
+    "กำลังโหลดทรัพยากร",
+    "ระบบกำลังตื่น"
+  ]
 }

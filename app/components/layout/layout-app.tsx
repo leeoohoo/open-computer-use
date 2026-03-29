@@ -13,6 +13,7 @@ import { useChats } from "@/lib/chat-store/chats/provider"
 import { cn } from "@/lib/utils"
 import { ChatStreamingProvider } from "@/lib/chat-streaming-store/provider"
 import dynamic from "next/dynamic"
+import { AccountDialog } from "@/app/components/layout/account-dialog"
 
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
@@ -80,6 +81,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
           )}
         </main>
       </div>
+      <AccountDialog />
     </div>
   )
 }

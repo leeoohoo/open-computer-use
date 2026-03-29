@@ -25,6 +25,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
+import { useTranslations } from "next-intl"
 
 interface HeaderProps {
   hasSidebar: boolean
@@ -37,7 +38,7 @@ export function Header({ hasSidebar }: HeaderProps) {
   const { chatId } = useChatSession()
   const { isOpen: isNavigatorOpen, toggleNavigator, selectedVMId } = useProjectNavigator()
   const isLoggedIn = !!user
-
+  const t = useTranslations("appHeader")
 
   // Schedule dialog state
   const [scheduleOpen, setScheduleOpen] = useState(false)
@@ -104,7 +105,7 @@ export function Header({ hasSidebar }: HeaderProps) {
                 href="/auth"
                 className="font-base text-muted-foreground hover:text-foreground text-sm sm:text-base transition-colors flex-shrink-0"
               >
-                Login
+                {t("login")}
               </Link>
             </div>
           ) : (
@@ -120,10 +121,10 @@ export function Header({ hasSidebar }: HeaderProps) {
                       onClick={openScheduleDialog}
                     >
                       <AgentIcon className="size-4" />
-                      <span className="hidden sm:inline ml-1.5 text-sm">Assign</span>
+                      <span className="hidden sm:inline ml-1.5 text-sm">{t("assign")}</span>
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Assign an employee to run this task</TooltipContent>
+                  <TooltipContent>{t("assignDescription")}</TooltipContent>
                 </Tooltip>
               )}
 
@@ -141,10 +142,10 @@ export function Header({ hasSidebar }: HeaderProps) {
                       onClick={toggleNavigator}
                     >
                       <Desktop className="size-4" />
-                      <span className="hidden sm:inline ml-1.5 text-sm">Computer</span>
+                      <span className="hidden sm:inline ml-1.5 text-sm">{t("computer")}</span>
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>{isNavigatorOpen ? "Hide" : "Show"} Computer</TooltipContent>
+                  <TooltipContent>{isNavigatorOpen ? t("hideComputer") : t("showComputer")}</TooltipContent>
                 </Tooltip>
               )}
 
@@ -176,11 +177,11 @@ export function Header({ hasSidebar }: HeaderProps) {
           machines={scheduleMachines}
           defaultMachineId={selectedVMId}
           onScheduleCreated={() => {
-            toast.success("Employee hired!")
+            toast.success(t("employeeHired"))
             refresh()
           }}
           onScheduleDeleted={() => {
-            toast.success("Employee removed")
+            toast.success(t("employeeRemoved"))
             refresh()
           }}
         />

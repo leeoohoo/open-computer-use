@@ -423,145 +423,145 @@
     "label": "Lingua"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Tu definisci l'obiettivo.",
+    "brandSubheading": "Noi pensiamo al resto.",
+    "mobileHeading": "Tu definisci l'obiettivo. Noi pensiamo al resto.",
+    "mobileSubheading": "Agenti AI che navigano, cliccano e lavorano come un vero collega.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Descrivi il compito",
+        "sub": "\"Analizza i nostri 5 principali concorrenti\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "L'agente prende il controllo",
+        "sub": "Naviga, clicca, digita in autonomia"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Lavoro consegnato",
+        "sub": "Foglio di calcolo con 5 profili concorrenti completi"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Completato",
+    "doneIn": "Fatto in 8 minuti",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Il tuo operatore è pronto",
+      "signUp": "Metti i tuoi flussi di lavoro in automatico",
+      "magicLink": "Salta la password",
+      "forgotPassword": "Ti facciamo rientrare"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Riprendi da dove avevi lasciato — i tuoi agenti ricordano",
+      "signUp": "Distribuisci il tuo primo agente AI in meno di un minuto",
+      "magicLink": "Un clic dalla tua casella email e sei dentro",
+      "forgotPassword": "Ti invieremo un link di reset via email"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Connessione...",
+      "continueWithGoogle": "Continua con Google"
     },
-    "or": "or",
+    "or": "o",
     "email": "Email",
     "emailPlaceholder": "you@example.com",
     "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "passwordPlaceholder": "La tua password",
+    "confirmPassword": "Conferma password",
+    "confirmPasswordPlaceholder": "Conferma la tua password",
+    "minChars": "Min. 6 caratteri",
+    "signingIn": "Accesso in corso...",
+    "signIn": "Accedi",
+    "creatingAccount": "Creazione account...",
+    "createAccount": "Crea account",
+    "sending": "Invio...",
+    "sendMagicLink": "Invia magic link",
+    "sendResetLink": "Invia link di reset",
+    "forgotPassword": "Password dimenticata?",
+    "useMagicLink": "Usa magic link",
+    "dontHaveAccount": "Non hai un account?",
+    "signUp": "Registrati",
+    "alreadyHaveAccount": "Hai già un account?",
+    "backToSignIn": "Torna all'accesso",
+    "termsAgreement": "Continuando, accetti i nostri",
+    "terms": "Termini",
+    "and": "e",
+    "privacyPolicy": "Informativa sulla Privacy",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Compila tutti i campi",
+      "passwordMinLength": "La password deve avere almeno 6 caratteri",
+      "passwordsDoNotMatch": "Le password non corrispondono",
+      "supabaseNotConfigured": "Supabase non è configurato",
+      "unexpectedError": "Si è verificato un errore imprevisto. Riprova.",
+      "confirmEmail": "Conferma la tua email prima di accedere. Controlla la posta in arrivo.",
+      "invalidCredentials": "Email o password non validi.",
+      "signInFailed": "Accesso non riuscito. Riprova.",
+      "invalidEmail": "Indirizzo email non valido.",
+      "emailAlreadyExists": "Esiste già un account con questa email. Prova ad accedere.",
+      "signUpFailed": "Registrazione non riuscita. Riprova.",
+      "enterEmail": "Inserisci la tua email",
+      "noAccountFound": "Nessun account trovato con questa email. Registrati prima.",
+      "magicLinkFailed": "Invio del magic link non riuscito. Riprova.",
+      "resetFailed": "Invio dell'email di reset non riuscito. Riprova.",
+      "updateFailed": "Aggiornamento della password non riuscito. Riprova."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Controlla la tua email per confermare l'account prima di accedere.",
+      "checkEmailMagicLink": "Controlla la tua email per il magic link di accesso.",
+      "checkEmailReset": "Controlla la tua email per il link di reset della password.",
+      "passwordUpdated": "Password aggiornata con successo. Reindirizzamento all'accesso..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Reimposta la tua password",
+      "subtitle": "Inserisci la tua nuova password qui sotto.",
+      "newPassword": "Nuova password",
+      "confirmNewPassword": "Conferma nuova password",
+      "confirmPlaceholder": "Conferma la tua nuova password",
+      "updating": "Aggiornamento...",
+      "updatePassword": "Aggiorna password"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Errore di autenticazione",
+      "defaultMessage": "Si è verificato un errore durante l'autenticazione.",
+      "tryAgain": "Riprova",
+      "backToChat": "Torna alla chat",
+      "needHelp": "Hai bisogno di aiuto?",
+      "contactSupport": "Contatta il supporto"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Salta per ora",
+    "back": "Indietro",
+    "continue": "Continua",
+    "getStarted": "Inizia",
+    "settingUp": "Configurazione...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Bentornato{name}!",
+      "titleNew": "Benvenuto su Coasty",
+      "descriptionReturning": "Vorremmo saperne un po' di più su di te per migliorare la tua esperienza",
+      "descriptionNew": "Configuriamo il tuo account per personalizzare la tua esperienza"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Come dovremmo chiamarti?",
+    "namePlaceholder": "Il tuo nome",
+    "companyLabel": "Azienda",
+    "optional": "(opzionale)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "Sito web",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Cosa ti descrive meglio?",
+      "subtitle": "Seleziona tutto ciò che si applica — ci aiuta a personalizzare la tua esperienza"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
-      "marketer": "Marketer",
+      "founder": "Fondatore / CEO",
+      "developer": "Sviluppatore",
+      "marketer": "Marketing",
       "designer": "Designer",
       "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "data_analyst": "Dati / Analytics",
+      "operations": "Operazioni",
+      "other": "Altro"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Dimensione del team",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Solo io",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,608 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Come ci hai trovato?",
+      "subtitle": "Vorremmo sapere dove hai sentito parlare di Coasty"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Amico / Collega",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Altro"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Cosa automatizzerai per primo?",
+      "subtitle": "Seleziona tutto ciò che si applica — potrai esplorare tutto più tardi"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Web Scraping e Ricerca",
+      "browser_automation": "Automazione Browser",
+      "data_entry": "Inserimento Dati e Moduli",
+      "email_outreach": "Email e Outreach",
+      "testing": "QA e Testing",
+      "ecommerce": "Attività E-commerce",
+      "social_media": "Gestione Social Media",
+      "general_automation": "Automazione Generale"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Tutto ciò di cui hai bisogno,",
+      "titleHighlight": "integrato.",
+      "subtitle": "Ecco cosa Coasty può fare per te",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Senza Codice",
+        "description": "Descrivi semplicemente cosa vuoi in italiano"
       },
       "agentSwarms": {
         "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "description": "Flotte di agenti in parallelo"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Controllo Desktop",
+        "description": "Clicca, digita, naviga"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Automazione Browser",
+        "description": "Moduli, schede, scraping — completamente automatizzato"
       },
       "computerVision": {
-        "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "title": "Visione Artificiale",
+        "description": "Vede e comprende il tuo schermo in tempo reale"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Flussi di Lavoro",
+        "description": "Flussi multi-step"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Sul Dispositivo",
+        "description": "Funziona in locale"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "Autonomo 24/7",
+        "description": "Impostalo e dimenticalo — funziona mentre dormi"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Sei nuovo? Abbiamo una guida per te",
+      "subtitle": "Distribuisci il tuo primo agente AI in meno di un minuto"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Cosa deve fare il tuo lavoratore AI?",
+    "placeholderAlt": "Di' alla tua AI cosa fare sul computer...",
+    "vmError": {
+      "title": "Errore Macchina Virtuale",
+      "description": "La macchina virtuale è in stato di errore o è in fase di eliminazione.",
+      "hint": "Controlla la scheda Macchine per risolvere il problema, oppure seleziona \"Nessun Computer Selezionato\" per usare solo la ricerca web.",
+      "gotIt": "Capito"
+    },
+    "status": {
+      "creating": "Creazione di {name}...",
+      "initiating": "Avvio dell'agente su {name}...",
+      "stopping": "Arresto di {name}...",
+      "preparing": "Preparazione di {name}..."
+    },
+    "swarm": {
+      "title": "Modalità Swarm",
+      "pro": "PRO",
+      "upgradeLabel": "Modalità swarm — aggiorna per sbloccare",
+      "feature1": "Esecuzione parallela su macchine temporanee",
+      "feature2": "Ogni macchina funziona in autonomia",
+      "feature3": "3x il limite di macchine del tuo piano per swarm",
+      "description": "Esegui un prompt su 3x il limite di macchine del tuo piano in parallelo — ognuna affronta il compito indipendentemente.",
+      "enableLabel": "Attiva modalità swarm",
+      "disableLabel": "Disattiva modalità swarm",
+      "onTooltip": "Modalità swarm ATTIVA — il tuo prompt verrà eseguito su più macchine in parallelo",
+      "offTooltip": "Attiva la modalità swarm per eseguire il tuo prompt su più macchine simultaneamente",
+      "decreaseMachines": "Diminuisci il numero di macchine",
+      "increaseMachines": "Aumenta il numero di macchine",
+      "machineLimit": "Fino a {max} macchine swarm nel tuo piano. Ne servono di più? Contatta founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Connetti al desktop",
+      "screenLabel": "Schermo di {name}",
+      "screenDefault": "Desktop",
+      "watchTooltip": "Guarda il tuo agente lavorare su uno schermo separato. Non toccare nulla o gli verrà la paura del palcoscenico!"
+    },
+    "buttons": {
+      "stop": "Ferma",
+      "sendToSwarm": "Invia allo swarm",
+      "taskRunning": "Un altro compito è in esecuzione — clicca per fermarlo e avviare il tuo",
+      "selectComputer": "Seleziona un computer per inviare messaggi",
+      "waitCreating": "Attendi la creazione della VM",
+      "waitStarting": "Attendi l'avvio della VM",
+      "waitAgent": "Attendi l'inizializzazione dell'agente",
+      "vmStopping": "La VM si sta arrestando",
+      "send": "Invia",
+      "switching": "Cambio in corso...",
+      "overrideRun": "Sovrascrivi e avvia",
+      "stopLabel": "Ferma il compito in esecuzione e avvia questo",
+      "sendLabel": "Invia messaggio"
+    },
+    "search": "Cerca",
+    "upload": {
+      "label": "Carica file sulla VM",
+      "heading": "Carica file sulla VM",
+      "description": "I file verranno salvati sul Desktop",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Trascina i file qui",
+      "dropDescription": "I file verranno caricati nella cartella Desktop della VM",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Accedi per provare più funzionalità gratis",
+      "description": "Crea Progetti, invita membri del team e altro ancora.",
+      "connecting": "Connessione...",
+      "continueWithGoogle": "Continua con Google"
+    },
+    "removeFile": "Rimuovi file"
+  },
+  "chat": {
+    "greeting": "Ciao",
+    "greetingAuth": "Mi occupo io del lavoro al computer. Qual è il compito?",
+    "greetingUnauth": "AI che usa il computer al posto tuo. Basta dire cosa ti serve.",
+    "guide": "Guida",
+    "saveLogins": "Salva le credenziali per il riempimento automatico",
+    "encryptedNote": "crittografato, mai visto dall'AI",
+    "roleLabels": [
+      "Collega",
+      "Dipendente",
+      "Amico",
+      "Assistente",
+      "Partner",
+      "Compagno di squadra",
+      "Collaboratore",
+      "Aiutante"
+    ],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Ottieni un report sulla concorrenza",
+        "warmLeads": "Genera 20 lead qualificati",
+        "pitchDeck": "Crea una bozza di pitch deck"
+      },
+      "developer": {
+        "findBugs": "Trova bug sul mio sito",
+        "performance": "Ottieni un report sulle prestazioni",
+        "apiDocs": "Estrai la documentazione API"
+      },
+      "marketer": {
+        "seoGap": "Ottieni un'analisi gap SEO",
+        "competitorAds": "Spia le pubblicità dei concorrenti",
+        "trendingContent": "Ottieni idee di contenuti in tendenza"
+      },
+      "product_manager": {
+        "reviewSummary": "Ottieni un riepilogo delle recensioni",
+        "featureComparison": "Crea un confronto di funzionalità",
+        "competitorLaunches": "Monitora i lanci dei concorrenti"
+      },
+      "data_analyst": {
+        "exportCsv": "Esporta dati del sito in CSV",
+        "marketSizing": "Ottieni un report sulle dimensioni del mercato",
+        "benchmark": "Confronta con il settore"
+      },
+      "operations": {
+        "enterRecords": "Inserisci record nel nostro sistema",
+        "cheapestVendor": "Trova il fornitore più economico",
+        "invoiceSummary": "Ottieni un riepilogo delle fatture"
+      },
+      "designer": {
+        "designComparison": "Ottieni un confronto di design",
+        "responsiveAudit": "Esegui un audit responsive",
+        "inspiration": "Raccogli ispirazione per il design"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Esporta dati del sito in CSV",
+      "browser_automation": "Esporta report della dashboard",
+      "data_entry": "Inserisci record nella nostra app",
+      "email_outreach": "Invia outreach personalizzato",
+      "testing": "Ottieni un report QA completo",
+      "ecommerce": "Ottieni un confronto prezzi",
+      "social_media": "Pubblica e ottieni engagement",
+      "general_automation": "Esegui un compito sul mio sito"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Copia testo",
+    "copied": "Copiato!",
+    "regenerate": "Rigenera",
+    "feedback": {
+      "title": "Feedback",
+      "prompts": [
+        "Valuta",
+        "Feedback",
+        "Com'è andata?",
+        "Opinioni?",
+        "Condividi feedback"
+      ],
+      "tooltip": "Condividi il tuo feedback"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Ricerca Intelligente",
+      "description": "Ricerca web potenziata dall'AI"
+    },
+    "collaborate": {
+      "title": "Collabora",
+      "description": "Lavora insieme in tempo reale"
+    },
+    "globalAccess": {
+      "title": "Accesso Globale",
+      "description": "Cerca in più di 50 lingue"
+    },
+    "aiModels": {
+      "title": "Modelli AI",
+      "description": "Più provider AI"
+    },
+    "freeForever": {
+      "title": "Gratis per Sempre",
+      "description": "Nessun costo nascosto"
+    },
+    "privateSecure": {
+      "title": "Privato e Sicuro",
+      "description": "I tuoi dati restano tuoi"
+    }
+  },
+  "sidebar": {
+    "newTask": "Nuovo Compito",
+    "newTaskDescription": "Avvia una nuova automazione AI",
+    "activity": "Attività",
+    "taskHistory": "Cronologia Compiti",
+    "taskHistoryDescription": "Rivedi i compiti passati e riprendi da dove avevi lasciato",
+    "taskHistoryPopup": {
+      "title": "I tuoi compiti recenti",
+      "description": "Sfoglia e continua le conversazioni passate. Ogni compito è salvato per riprendere esattamente da dove avevi lasciato."
+    },
+    "swarmRuns": "Esecuzioni Swarm",
+    "swarmRunsDescription": "Monitora i flussi di lavoro paralleli multi-agente",
+    "swarmRunsPopup": {
+      "title": "Flussi di lavoro multi-agente",
+      "description": "Esegui compiti su più macchine in parallelo. Ogni agente lavora indipendentemente e i risultati convergono automaticamente."
+    },
+    "guide": "Guida",
+    "guideDescription": "Scopri come ottenere il massimo da Coasty",
+    "guidePopup": {
+      "title": "Per iniziare",
+      "description": "Guide passo-passo e best practice per aiutarti ad automatizzare efficacemente."
+    },
+    "infrastructure": "Infrastruttura",
+    "computer": "Computer",
+    "computers": "Computer",
+    "active": "attivo",
+    "view": "Visualizza",
+    "workforce": "Forza Lavoro",
+    "workforceDescription": "Programma agenti automatizzati e trigger",
+    "workforcePopup": {
+      "title": "Automazione programmata",
+      "description": "Configura compiti ricorrenti con pianificazioni cron e trigger agente-agente. La tua forza lavoro funziona mentre dormi."
+    },
+    "credentials": "Credenziali",
+    "credentialsDescription": "Archivia in sicurezza le credenziali per l'accesso degli agenti",
+    "credentialsPopup": {
+      "title": "Cassaforte credenziali sicura",
+      "description": "Archivia credenziali e chiavi API con crittografia. Gli agenti compilano automaticamente le credenziali senza esporre i valori grezzi."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Scarica l'App Desktop",
+      "download": "Scarica",
+      "downloadDesktopApp": "Scarica App Desktop",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Controlla il tuo computer da remoto",
+      "controlDescription": "Installa l'app desktop ed esegui compiti sul tuo PC da questa dashboard — ovunque, in qualsiasi momento."
+    },
+    "credits": {
+      "runningLow": "Crediti — In esaurimento",
+      "remaining": "Crediti rimanenti",
+      "buy": "Acquista",
+      "creditsLeft": "crediti rimanenti",
+      "usedLabel": "Usati: {count}",
+      "consumed": "{percent}% consumato",
+      "usageThisWeek": "Utilizzo questa settimana"
+    },
+    "talkToUs": "Parlaci",
+    "inviteEarn": "Invita e Guadagna",
+    "user": "Utente",
+    "account": "Account",
+    "tasks": "{count} Compiti",
+    "recentActivity": "Attività recente",
+    "viewAllHistory": "Vedi tutta la cronologia →",
+    "swarmRunsCount": "{count} Esecuzioni Swarm",
+    "running": "in esecuzione",
+    "completed": "completato",
+    "viewAllSwarms": "Vedi tutti gli swarm →",
+    "schedulesCount": "{count} Pianificazioni",
+    "totalRuns": "{count} esecuzioni totali",
+    "paused": "in pausa",
+    "viewAllSchedules": "Vedi tutte le pianificazioni →",
+    "credentialsCount": "{count} Credenziali",
+    "encryptedVault": "Cassaforte crittografata",
+    "manageCredentials": "Gestisci credenziali →",
+    "days": [
+      "Lun",
+      "Mar",
+      "Mer",
+      "Gio",
+      "Ven",
+      "Sab",
+      "Dom"
+    ],
+    "resume": "RIPRENDI",
+    "result": "RISULTATO",
+    "notScheduled": "Non pianificato",
+    "overdue": "In ritardo",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "tra {count}m",
+    "inHours": "tra {count}h",
+    "today": "oggi",
+    "yesterday": "ieri"
+  },
+  "appHeader": {
+    "login": "Accedi",
+    "assign": "Assegna",
+    "assignDescription": "Assegna un dipendente per eseguire questo compito",
+    "computer": "Computer",
+    "showComputer": "Mostra Computer",
+    "hideComputer": "Nascondi Computer",
+    "employeeHired": "Dipendente assunto!",
+    "employeeRemoved": "Dipendente rimosso"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Automazione quotidiana leggera"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Automatizza compiti ogni giorno"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Scala flussi di lavoro complessi",
+        "badge": "Più Popolare"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Automazione pesante illimitata"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (eliminata dopo inattività)",
+      "vmAlwaysOn": "{count} VM sempre attiva",
+      "vmAlwaysOnPlural": "{count} VM sempre attive",
+      "agentsParallel": "{count} agenti in parallelo",
+      "basicSearch": "Ricerca base",
+      "advancedSearch": "Ricerca avanzata ed estrazione",
+      "standardSupport": "Supporto standard (persone reali)",
+      "prioritySupport": "Supporto prioritario, risposta in 24h",
+      "premiumSupport": "Supporto premium, risposta in 12h"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Boost Piccolo",
+        "description": "Ricarica rapida"
+      },
+      "medium": {
+        "name": "Boost Medio",
+        "description": "Ricarica standard",
+        "savings": "8% di risparmio"
+      },
+      "large": {
+        "name": "Boost Grande",
+        "description": "Acquisto in blocco",
+        "savings": "17% di risparmio"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Proprio ora",
+      "minutesAgo": "{count}m fa",
+      "hoursAgo": "{count}h fa",
+      "daysAgo": "{count}g fa"
+    },
+    "noActivity": "Nessuna attività in questo periodo",
+    "stats": {
+      "balance": "Saldo",
+      "earned": "Guadagnati",
+      "used": "Usati",
+      "credits": "crediti",
+      "allTime": "da sempre",
+      "lastRange": "ultimi {range}",
+      "sessions": "{count} sessioni",
+      "avgDaily": "~{count}/giorno in media",
+      "plan": "Piano",
+      "free": "Gratuito",
+      "noPlan": "Nessun piano",
+      "canceling": "Annullamento"
+    },
+    "monthlyUsage": "Utilizzo Crediti Mensile",
+    "remaining": "{used} / {total} rimanenti",
+    "usedPercent": "{percent}% utilizzato in questo periodo",
+    "renews": "Rinnovo il {date}",
+    "choosePlan": "Scegli il Tuo Piano",
+    "choosePlanDescription": "Abbonati per sbloccare le funzionalità AI e ottenere crediti mensili",
+    "savingsVsHuman": "Risparmia {amount}/mese rispetto a un umano",
+    "timeSaved": "{time} risparmiato mensilmente",
+    "cheaper": "{multiplier} più economico",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/mese",
+    "creditsPerMonth": "{count} crediti /mese",
+    "processing": "Elaborazione...",
+    "subscribeTo": "Abbonati a {name}",
+    "transactionTypes": {
+      "credit_purchase": "Acquisto Crediti",
+      "agent_usage": "Utilizzo Agente",
+      "refund": "Rimborso",
+      "bonus": "Bonus Premio",
+      "subscription": "Abbonamento",
+      "subscription_grant": "Crediti Abbonamento",
+      "renewal": "Crediti Rinnovo",
+      "reactivation": "Riattivazione"
+    },
+    "toasts": {
+      "paymentSuccess": "Pagamento riuscito! I tuoi crediti sono stati aggiunti.",
+      "subscriptionActivated": "Abbonamento attivato con successo!",
+      "paymentCanceled": "Il pagamento è stato annullato. Nessun addebito effettuato.",
+      "signInToSubscribe": "Accedi per abbonarti",
+      "subscriptionCheckoutFailed": "Impossibile avviare il checkout dell'abbonamento. Riprova.",
+      "signInToPurchase": "Accedi per acquistare crediti",
+      "needSubscription": "Hai bisogno di un abbonamento attivo per acquistare crediti aggiuntivi",
+      "checkoutFailed": "Impossibile avviare il checkout. Riprova.",
+      "manageFailed": "Impossibile aprire la gestione dell'abbonamento. Riprova.",
+      "transactionsExported": "Transazioni esportate"
+    }
+  },
+  "apiKeys": {
+    "title": "Provider di Modelli",
+    "new": "nuovo",
+    "description": "Aggiungi le tue chiavi API per sbloccare l'accesso ai modelli.",
+    "securityNote": "Le tue chiavi sono archiviate in modo sicuro con crittografia end-to-end.",
+    "apiKeyLabel": "Chiave API {provider}",
+    "getApiKey": "Ottieni chiave API",
+    "delete": "Elimina",
+    "save": "Salva",
+    "deleteDialog": {
+      "title": "Elimina Chiave API",
+      "description": "Sei sicuro di voler eliminare la tua chiave API {provider}? Questa azione non può essere annullata e perderai l'accesso ai modelli {provider}.",
+      "cancel": "Annulla",
+      "confirm": "Elimina"
+    },
+    "toasts": {
+      "saved": "Chiave API salvata",
+      "savedDescription": "La tua chiave API {provider} è stata salvata e i modelli sono stati aggiunti ai preferiti.",
+      "updatedDescription": "La tua chiave API {provider} è stata aggiornata.",
+      "saveFailed": "Salvataggio chiave API non riuscito",
+      "saveFailedDescription": "Impossibile salvare la chiave API {provider}. Riprova.",
+      "deleted": "Chiave API eliminata",
+      "deletedDescription": "La tua chiave API {provider} è stata eliminata.",
+      "deleteFailed": "Eliminazione chiave API non riuscita",
+      "deleteFailedDescription": "Impossibile eliminare la chiave API {provider}. Riprova."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Dettagli Profilo",
+    "displayName": "Nome Visualizzato",
+    "namePlaceholder": "Il tuo nome",
+    "company": "Azienda",
+    "companyPlaceholder": "La tua azienda",
+    "website": "Sito web",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Salvataggio...",
+    "saveChanges": "Salva modifiche",
+    "account": "Account",
+    "email": "Email",
+    "verified": "Verificato",
+    "signOut": "Esci",
+    "signOutDescription": "Disconnettiti da questo dispositivo",
+    "toasts": {
+      "profileUpdated": "Profilo aggiornato",
+      "profileUpdateFailed": "Aggiornamento profilo non riuscito",
+      "signOutFailed": "Disconnessione non riuscita"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "I tuoi dati sono protetti",
+    "dataProtectedDescription": "Sicurezza di livello enterprise con crittografia a riposo e in transito",
+    "features": {
+      "encryption": {
+        "title": "Crittografia End-to-End",
+        "description": "Chiavi API crittografate con AES-256-GCM. Le tue credenziali non vengono mai archiviate in testo semplice."
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "L'isolamento a livello di database garantisce che i tuoi dati siano accessibili solo da te. Nessun accesso cross-tenant possibile."
+      },
+      "privacy": {
+        "title": "Privacy by Design",
+        "description": "Raccogliamo il minimo di dati necessari per fornire il servizio. Le tue conversazioni e i tuoi file restano tuoi."
+      },
+      "session": {
+        "title": "Sicurezza della Sessione",
+        "description": "Protezione CSRF, cookie HTTP-only sicuri e intestazioni Content Security Policy su ogni richiesta."
+      }
+    },
+    "legal": "Legale",
+    "privacyPolicy": {
+      "title": "Informativa sulla Privacy",
+      "description": "Come raccogliamo, utilizziamo e proteggiamo i tuoi dati"
+    },
+    "termsOfService": {
+      "title": "Termini di Servizio",
+      "description": "I nostri termini e condizioni d'uso"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Layout"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Riepilogo",
+      "highlight": "Riassumi"
+    },
+    "code": {
+      "label": "Codice",
+      "highlight": "Costruisci"
+    },
+    "research": {
+      "label": "Ricerca",
+      "highlight": "Analizza"
+    },
+    "create": {
+      "label": "Crea",
+      "highlight": "Genera"
+    },
+    "solve": {
+      "label": "Risolvi",
+      "highlight": "Debug"
+    },
+    "learn": {
+      "label": "Impara",
+      "highlight": "Spiega"
+    }
+  },
+  "loadingMessages": [
+    "Avvio del cervello al silicio",
+    "Risveglio della coscienza digitale",
+    "Inizializzazione dei percorsi neurali",
+    "Accensione dei nuclei quantistici",
+    "Carica del condensatore di flusso",
+    "Attivazione del mainframe",
+    "Alimentazione della matrice computazionale",
+    "Attivazione del motore a curvatura",
+    "Evocazione degli spiriti del silicio",
+    "Accensione del motore a elettroni",
+    "Riscaldamento dei transistor",
+    "Assemblaggio di bit e byte",
+    "Calibrazione delle sinapsi digitali",
+    "Energizzazione dei cristalli della CPU",
+    "Caricamento dei protocolli di coscienza",
+    "Inizializzazione delle risorse di sistema",
+    "Preparazione dell'ambiente computazionale",
+    "Connessione sicura in corso",
+    "Provisioning delle risorse virtuali",
+    "Configurazione dei parametri di sistema",
+    "Lancio dell'istanza virtuale",
+    "Attivazione del desktop remoto",
+    "Distribuzione delle risorse cloud",
+    "Avvio della sequenza di startup",
+    "Preparazione dell'ambiente di esecuzione",
+    "Svegliamo il computer addormentato",
+    "Diamo un colpetto all'orso digitale",
+    "Prepariamo un caffè computazionale",
+    "Stretching dei muscoli digitali",
+    "Apertura degli occhi digitali",
+    "Avvio in corso",
+    "Accensione",
+    "Connessione in corso",
+    "Avvio del sistema",
+    "Preparazione",
+    "Quasi pronto",
+    "Preparazione dello spazio di lavoro",
+    "Caricamento risorse",
+    "Il sistema si risveglia"
+  ]
 }

@@ -46,6 +46,7 @@ import {
 } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 
 // ─── Plan & Package Data ────────────────────────────────────────────────────
 
@@ -197,7 +198,7 @@ function formatShortDate(dateString: string) {
   })
 }
 
-function formatRelativeDate(dateString: string) {
+function formatRelativeDate(dateString: string, t?: (key: string, values?: any) => string) {
   const now = new Date()
   const date = new Date(dateString)
   const diffMs = now.getTime() - date.getTime()
@@ -205,10 +206,17 @@ function formatRelativeDate(dateString: string) {
   const diffHr = Math.floor(diffMin / 60)
   const diffDay = Math.floor(diffHr / 24)
 
-  if (diffMin < 1) return "Just now"
-  if (diffMin < 60) return `${diffMin}m ago`
-  if (diffHr < 24) return `${diffHr}h ago`
-  if (diffDay < 7) return `${diffDay}d ago`
+  if (t) {
+    if (diffMin < 1) return t("timeAgo.justNow")
+    if (diffMin < 60) return t("timeAgo.minutesAgo", { count: diffMin })
+    if (diffHr < 24) return t("timeAgo.hoursAgo", { count: diffHr })
+    if (diffDay < 7) return t("timeAgo.daysAgo", { count: diffDay })
+  } else {
+    if (diffMin < 1) return "Just now"
+    if (diffMin < 60) return `${diffMin}m ago`
+    if (diffHr < 24) return `${diffHr}h ago`
+    if (diffDay < 7) return `${diffDay}d ago`
+  }
   return formatShortDate(dateString)
 }
 
@@ -269,6 +277,7 @@ function UsageChart({
   height?: number
   chartView?: "area" | "bar"
 }) {
+  const t = useTranslations("billing")
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   if (data.length === 0) {
@@ -278,7 +287,7 @@ function UsageChart({
         style={{ height }}
       >
         <ChartLine className="h-8 w-8" weight="thin" />
-        <span className="text-xs">No activity in this period</span>
+        <span className="text-xs">{t("noActivity")}</span>
       </div>
     )
   }
@@ -360,7 +369,7 @@ function UsageChart({
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-indigo-500" />
-              <span className="text-muted-foreground/70">Balance</span>
+              <span className="text-muted-foreground/70">{t("stats.balance")}</span>
             </div>
             <span className="font-semibold text-foreground tabular-nums">{d.balance.toLocaleString()}</span>
           </div>
@@ -368,14 +377,14 @@ function UsageChart({
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            <span className="text-muted-foreground/70">Earned</span>
+            <span className="text-muted-foreground/70">{t("stats.earned")}</span>
           </div>
           <span className="font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">+{d.earned.toLocaleString()}</span>
         </div>
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-rose-500" />
-            <span className="text-muted-foreground/70">Used</span>
+            <span className="text-muted-foreground/70">{t("stats.used")}</span>
           </div>
           <span className="font-semibold text-rose-500 dark:text-rose-400 tabular-nums">-{d.spent.toLocaleString()}</span>
         </div>
@@ -660,17 +669,18 @@ function StatCard({
 // ─── Transaction Row ────────────────────────────────────────────────────────
 
 function TransactionRow({ transaction, isLast }: { transaction: Transaction; isLast: boolean }) {
+  const t = useTranslations("billing")
   const isPositive = transaction.amount > 0
 
   const typeConfig: Record<string, { icon: React.ElementType; color: string; label: string }> = {
-    purchase: { icon: ShoppingCart, color: "text-green-500 bg-green-500/10", label: "Credit Purchase" },
-    usage: { icon: Activity, color: "text-blue-500 bg-blue-500/10", label: "Agent Usage" },
-    refund: { icon: ArrowDownRight, color: "text-amber-500 bg-amber-500/10", label: "Refund" },
-    bonus: { icon: Lightning, color: "text-purple-500 bg-purple-500/10", label: "Bonus Reward" },
-    subscription: { icon: CreditCard, color: "text-indigo-500 bg-indigo-500/10", label: "Subscription" },
-    subscription_grant: { icon: Zap, color: "text-indigo-500 bg-indigo-500/10", label: "Subscription Grant" },
-    subscription_renewal: { icon: Clock, color: "text-indigo-500 bg-indigo-500/10", label: "Renewal Credits" },
-    subscription_reactivation: { icon: CheckCircle, color: "text-green-500 bg-green-500/10", label: "Reactivation" },
+    purchase: { icon: ShoppingCart, color: "text-green-500 bg-green-500/10", label: t("transactionTypes.credit_purchase") },
+    usage: { icon: Activity, color: "text-blue-500 bg-blue-500/10", label: t("transactionTypes.agent_usage") },
+    refund: { icon: ArrowDownRight, color: "text-amber-500 bg-amber-500/10", label: t("transactionTypes.refund") },
+    bonus: { icon: Lightning, color: "text-purple-500 bg-purple-500/10", label: t("transactionTypes.bonus") },
+    subscription: { icon: CreditCard, color: "text-indigo-500 bg-indigo-500/10", label: t("transactionTypes.subscription") },
+    subscription_grant: { icon: Zap, color: "text-indigo-500 bg-indigo-500/10", label: t("transactionTypes.subscription_grant") },
+    subscription_renewal: { icon: Clock, color: "text-indigo-500 bg-indigo-500/10", label: t("transactionTypes.renewal") },
+    subscription_reactivation: { icon: CheckCircle, color: "text-green-500 bg-green-500/10", label: t("transactionTypes.reactivation") },
   }
 
   const config = typeConfig[transaction.type] || {
@@ -698,7 +708,7 @@ function TransactionRow({ transaction, isLast }: { transaction: Transaction; isL
         </div>
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-[11px] text-muted-foreground/50">
-            {formatRelativeDate(transaction.created_at)}
+            {formatRelativeDate(transaction.created_at, t)}
           </span>
           {transaction.usage_description && (
             <>
@@ -739,6 +749,7 @@ function TransactionRow({ transaction, isLast }: { transaction: Transaction; isL
 // ─── Main Component ─────────────────────────────────────────────────────────
 
 export function BillingSection() {
+  const t = useTranslations("billing")
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useUser()
@@ -783,15 +794,15 @@ export function BillingSection() {
     const subscriptionSuccess = searchParams.get("subscription_success")
 
     if (success === "true") {
-      toast.success("Payment successful! Your credits have been added.")
+      toast.success(t("toasts.paymentSuccess"))
       refetchCredits()
       window.history.replaceState({}, "", window.location.pathname)
     } else if (subscriptionSuccess === "true") {
-      toast.success("Subscription activated successfully!")
+      toast.success(t("toasts.subscriptionActivated"))
       refetchCredits()
       window.location.reload()
     } else if (canceled === "true") {
-      toast.error("Payment was canceled. No charges were made.")
+      toast.error(t("toasts.paymentCanceled"))
       window.history.replaceState({}, "", window.location.pathname)
     }
   }, [searchParams, refetchCredits])
@@ -820,14 +831,14 @@ export function BillingSection() {
     let filtered = [...transactions]
     const rangeDate = getTimeRangeDate(timeRange)
     if (rangeDate) {
-      filtered = filtered.filter((t) => new Date(t.created_at) >= rangeDate)
+      filtered = filtered.filter((tx) => new Date(tx.created_at) >= rangeDate)
     }
     if (typeFilter !== "all") {
-      filtered = filtered.filter((t) => {
+      filtered = filtered.filter((tx) => {
         if (typeFilter === "subscription") {
-          return t.type.startsWith("subscription")
+          return tx.type.startsWith("subscription")
         }
-        return t.type === typeFilter
+        return tx.type === typeFilter
       })
     }
     return filtered
@@ -836,7 +847,7 @@ export function BillingSection() {
   const chartData = useMemo<ChartDataPoint[]>(() => {
     const rangeDate = getTimeRangeDate(timeRange)
     const relevant = rangeDate
-      ? transactions.filter((t) => new Date(t.created_at) >= rangeDate)
+      ? transactions.filter((tx) => new Date(tx.created_at) >= rangeDate)
       : transactions
 
     if (relevant.length === 0) return []
@@ -848,15 +859,15 @@ export function BillingSection() {
       (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     )
 
-    for (const t of sorted) {
-      const day = new Date(t.created_at).toISOString().split("T")[0]
+    for (const tx of sorted) {
+      const day = new Date(tx.created_at).toISOString().split("T")[0]
       const existing = dayMap.get(day) || { earned: 0, spent: 0, balance: 0 }
-      if (t.amount > 0) {
-        existing.earned += t.amount
+      if (tx.amount > 0) {
+        existing.earned += tx.amount
       } else {
-        existing.spent += Math.abs(t.amount)
+        existing.spent += Math.abs(tx.amount)
       }
-      existing.balance = t.balance_after
+      existing.balance = tx.balance_after
       dayMap.set(day, existing)
     }
 
@@ -886,11 +897,11 @@ export function BillingSection() {
   const stats = useMemo(() => {
     const rangeDate = getTimeRangeDate(timeRange)
     const relevant = rangeDate
-      ? transactions.filter((t) => new Date(t.created_at) >= rangeDate)
+      ? transactions.filter((tx) => new Date(tx.created_at) >= rangeDate)
       : transactions
 
-    const totalEarned = relevant.filter((t) => t.amount > 0).reduce((sum, t) => sum + t.amount, 0)
-    const totalSpent = relevant.filter((t) => t.amount < 0).reduce((sum, t) => sum + Math.abs(t.amount), 0)
+    const totalEarned = relevant.filter((tx) => tx.amount > 0).reduce((sum, tx) => sum + tx.amount, 0)
+    const totalSpent = relevant.filter((tx) => tx.amount < 0).reduce((sum, tx) => sum + Math.abs(tx.amount), 0)
     const netChange = totalEarned - totalSpent
     const avgDailyUsage =
       relevant.length > 0
@@ -902,7 +913,7 @@ export function BillingSection() {
     const daysRemaining = avgDailyUsage > 0 ? Math.floor(currentBalance / avgDailyUsage) : null
 
     // Usage sessions count
-    const usageSessions = relevant.filter((t) => t.type === "usage").length
+    const usageSessions = relevant.filter((tx) => tx.type === "usage").length
 
     return { totalEarned, totalSpent, netChange, avgDailyUsage, daysRemaining, usageSessions }
   }, [transactions, timeRange, chartData, credits])
@@ -923,7 +934,7 @@ export function BillingSection() {
 
   const handleSubscribe = async (planId: string, tier: string, price: number) => {
     if (!user) {
-      toast.error("Please sign in to subscribe")
+      toast.error(t("toasts.signInToSubscribe"))
       return
     }
     try {
@@ -938,7 +949,7 @@ export function BillingSection() {
       if (url) window.location.href = url
     } catch (error) {
       console.error("Error creating subscription checkout:", error)
-      toast.error("Failed to start subscription checkout. Please try again.")
+      toast.error(t("toasts.subscriptionCheckoutFailed"))
     } finally {
       setSubscribingPlan(null)
     }
@@ -946,11 +957,11 @@ export function BillingSection() {
 
   const handlePurchaseCredits = async (packageId: string, credits: number, price: number) => {
     if (!user) {
-      toast.error("Please sign in to purchase credits")
+      toast.error(t("toasts.signInToPurchase"))
       return
     }
     if (!subscription || subscription.status !== "active") {
-      toast.error("You need an active subscription to purchase additional credits")
+      toast.error(t("toasts.needSubscription"))
       return
     }
     try {
@@ -965,7 +976,7 @@ export function BillingSection() {
       if (url) window.location.href = url
     } catch (error) {
       console.error("Error creating checkout session:", error)
-      toast.error("Failed to start checkout. Please try again.")
+      toast.error(t("toasts.checkoutFailed"))
     } finally {
       setPurchasingPackage(null)
     }
@@ -979,21 +990,21 @@ export function BillingSection() {
       if (url) window.location.href = url
     } catch (error) {
       console.error("Error creating portal session:", error)
-      toast.error("Failed to open subscription management. Please try again.")
+      toast.error(t("toasts.manageFailed"))
     }
   }
 
   const handleExportCSV = useCallback(() => {
     if (filteredTransactions.length === 0) return
     const headers = "Date,Type,Amount,Balance After,Description,Price Paid"
-    const rows = filteredTransactions.map((t) =>
+    const rows = filteredTransactions.map((tx) =>
       [
-        new Date(t.created_at).toISOString(),
-        t.type,
-        t.amount,
-        t.balance_after,
-        `"${(t.usage_description || "").replace(/"/g, '""')}"`,
-        t.price_paid || "",
+        new Date(tx.created_at).toISOString(),
+        tx.type,
+        tx.amount,
+        tx.balance_after,
+        `"${(tx.usage_description || "").replace(/"/g, '""')}"`,
+        tx.price_paid || "",
       ].join(",")
     )
     const csv = [headers, ...rows].join("\n")
@@ -1004,8 +1015,8 @@ export function BillingSection() {
     a.download = `coasty-transactions-${timeRange}.csv`
     a.click()
     URL.revokeObjectURL(url)
-    toast.success("Transactions exported")
-  }, [filteredTransactions, timeRange])
+    toast.success(t("toasts.transactionsExported"))
+  }, [filteredTransactions, timeRange, t])
 
   const plan = subscriptionPlans[selectedPlan]
 
@@ -1027,9 +1038,9 @@ export function BillingSection() {
         {[
           <StatCard
             key="balance"
-            label="Balance"
+            label={t("stats.balance")}
             value={creditsLoading ? "..." : (credits?.balance || 0).toLocaleString()}
-            subtext="credits"
+            subtext={t("stats.credits")}
             icon={Wallet}
             accent="purple"
             trend={stats.netChange > 0 ? "up" : stats.netChange < 0 ? "down" : "neutral"}
@@ -1037,31 +1048,31 @@ export function BillingSection() {
           />,
           <StatCard
             key="earned"
-            label="Earned"
+            label={t("stats.earned")}
             value={`+${stats.totalEarned.toLocaleString()}`}
-            subtext={timeRange === "all" ? "all time" : `last ${timeRange.replace("d", " days")}`}
+            subtext={timeRange === "all" ? t("stats.allTime") : t("stats.lastRange", { range: timeRange.replace("d", " days") })}
             icon={TrendUp}
             accent="green"
           />,
           <StatCard
             key="used"
-            label="Used"
+            label={t("stats.used")}
             value={stats.totalSpent.toLocaleString()}
-            subtext={`${stats.usageSessions} sessions`}
+            subtext={t("stats.sessions", { count: stats.usageSessions })}
             icon={Activity}
             accent="red"
             trend={stats.avgDailyUsage > 0 ? "neutral" : undefined}
-            trendLabel={stats.avgDailyUsage > 0 ? `~${Math.round(stats.avgDailyUsage)}/day avg` : undefined}
+            trendLabel={stats.avgDailyUsage > 0 ? t("stats.avgDaily", { count: Math.round(stats.avgDailyUsage) }) : undefined}
           />,
           <StatCard
             key="plan"
-            label="Plan"
-            value={activePlan?.name || "Free"}
-            subtext={activePlan ? `$${activePlan.price}/mo` : "No plan"}
+            label={t("stats.plan")}
+            value={activePlan?.name || t("stats.free")}
+            subtext={activePlan ? `$${activePlan.price}/mo` : t("stats.noPlan")}
             icon={CoastyIcon}
             accent="blue"
             trend={subscription?.cancel_at_period_end ? "down" : undefined}
-            trendLabel={subscription?.cancel_at_period_end ? "Canceling" : undefined}
+            trendLabel={subscription?.cancel_at_period_end ? t("stats.canceling") : undefined}
           />,
         ].map((card, i) => (
           <motion.div key={i} {...fadeUp(i * 0.06)}>
@@ -1076,10 +1087,10 @@ export function BillingSection() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-3">
             <div className="flex items-center gap-2">
               <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
-              <span className="text-sm font-medium">Monthly Credit Usage</span>
+              <span className="text-sm font-medium">{t("monthlyUsage")}</span>
             </div>
             <span className="text-xs text-muted-foreground">
-              {(credits?.balance || 0).toLocaleString()} / {activePlan.monthlyCredits.toLocaleString()} remaining
+              {t("remaining", { used: (credits?.balance || 0).toLocaleString(), total: activePlan.monthlyCredits.toLocaleString() })}
             </span>
           </div>
           <div className="relative h-2 w-full rounded-full bg-muted/60 overflow-hidden">
@@ -1099,11 +1110,11 @@ export function BillingSection() {
           </div>
           <div className="flex items-center justify-between mt-2">
             <span className="text-[11px] text-muted-foreground/50">
-              {Math.round(creditUsagePercent)}% used this period
+              {t("usedPercent", { percent: Math.round(creditUsagePercent) })}
             </span>
             {subscription?.current_period_end && (
               <span className="text-[11px] text-muted-foreground/50">
-                Renews {formatDate(subscription.current_period_end)}
+                {t("renews", { date: formatDate(subscription.current_period_end) })}
               </span>
             )}
           </div>
@@ -1113,9 +1124,9 @@ export function BillingSection() {
       {/* ─── Subscription / Plans / Buy Credits ──────────────────────────── */}
       {!subscription || subscription.status !== "active" ? (
         <motion.div {...fadeUp(0.3)}>
-          <h4 className="text-base font-semibold mb-1">Choose Your Plan</h4>
+          <h4 className="text-base font-semibold mb-1">{t("choosePlan")}</h4>
           <p className="text-sm text-muted-foreground mb-6">
-            Subscribe to unlock AI features and get monthly credits
+            {t("choosePlanDescription")}
           </p>
 
           {/* Plan pills */}
@@ -1183,21 +1194,15 @@ export function BillingSection() {
               <div className="flex justify-center mb-6">
                 <div className="inline-flex items-center gap-3 rounded-full border border-border bg-muted/40 px-4 py-2 flex-wrap justify-center">
                   <span className="text-xs text-muted-foreground">
-                    Save{" "}
-                    <span className="font-semibold text-foreground">
-                      ${moneySaved}/mo
-                    </span>{" "}
-                    vs human
+                    {t("savingsVsHuman", { amount: `$${moneySaved}` })}
                   </span>
                   <span className="h-3 w-px bg-border hidden sm:block" />
                   <span className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground">{timeSaved}</span>{" "}
-                    saved monthly
+                    {t("timeSaved", { time: timeSaved })}
                   </span>
                   <span className="h-3 w-px bg-border hidden sm:block" />
                   <span className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground">{multiplier}</span>{" "}
-                    cheaper
+                    {t("cheaper", { multiplier })}
                   </span>
                 </div>
               </div>
@@ -1216,7 +1221,7 @@ export function BillingSection() {
             {plan.popular && (
               <div className="absolute -top-2.5 left-4">
                 <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-medium text-primary-foreground">
-                  Most Popular
+                  {t("plans.plus.badge")}
                 </span>
               </div>
             )}
@@ -1226,14 +1231,14 @@ export function BillingSection() {
                 <div className="flex items-center gap-2">
                   <CoastyIcon className="h-5 w-5 text-primary" />
                   <h3 className="text-sm font-semibold text-primary">
-                    Coasty {plan.name}
+                    {t("coastyPlan", { name: plan.name })}
                   </h3>
                 </div>
                 <div className="mt-2 flex items-baseline gap-1">
                   <span className="text-4xl font-semibold tracking-tight text-foreground">
                     ${plan.price}
                   </span>
-                  <span className="text-sm text-muted-foreground">/month</span>
+                  <span className="text-sm text-muted-foreground">{t("perMonth")}</span>
                 </div>
                 <p className="mt-1.5 text-sm text-muted-foreground">
                   {plan.description}
@@ -1244,8 +1249,7 @@ export function BillingSection() {
             <div className="mb-3 flex items-center gap-2 rounded-lg bg-primary/[0.08] border border-primary/10 px-3 py-2">
               <Zap className="h-3.5 w-3.5 text-primary flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">
-                {plan.monthlyCredits.toLocaleString()} credits
-                <span className="text-muted-foreground font-normal">/month</span>
+                {t("creditsPerMonth", { count: plan.monthlyCredits.toLocaleString() })}
               </span>
             </div>
 
@@ -1253,8 +1257,10 @@ export function BillingSection() {
               <HardDrive className="h-3.5 w-3.5 text-violet-500 flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">
                 {plan.id === "lite"
-                  ? "1 VM (deleted after inactivity)"
-                  : `${plan.machines} always-on VM${plan.machines > 1 ? "s" : ""}`}
+                  ? t("features.vmDeleted")
+                  : plan.machines > 1
+                    ? t("features.vmAlwaysOnPlural", { count: plan.machines })
+                    : t("features.vmAlwaysOn", { count: plan.machines })}
               </span>
             </div>
 
@@ -1271,11 +1277,11 @@ export function BillingSection() {
               {subscribingPlan === plan.id ? (
                 <>
                   <Spinner className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
+                  {t("processing")}
                 </>
               ) : (
                 <>
-                  Subscribe to {plan.name}
+                  {t("subscribeTo", { name: plan.name })}
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                 </>
               )}
@@ -1417,7 +1423,7 @@ export function BillingSection() {
                     {purchasingPackage === pkg.id ? (
                       <>
                         <Spinner className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                        Processing...
+                        {t("processing")}
                       </>
                     ) : (
                       <>
@@ -1484,15 +1490,15 @@ export function BillingSection() {
         <div className="flex items-center gap-3 sm:gap-5 px-5 pb-1 pt-1 flex-wrap">
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-indigo-500" />
-            <span className="text-[10px] text-muted-foreground/60 font-medium">Balance</span>
+            <span className="text-[10px] text-muted-foreground/60 font-medium">{t("stats.balance")}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            <span className="text-[10px] text-muted-foreground/60 font-medium">Earned</span>
+            <span className="text-[10px] text-muted-foreground/60 font-medium">{t("stats.earned")}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-rose-500" />
-            <span className="text-[10px] text-muted-foreground/60 font-medium">Used</span>
+            <span className="text-[10px] text-muted-foreground/60 font-medium">{t("stats.used")}</span>
           </div>
         </div>
 

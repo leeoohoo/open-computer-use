@@ -77,141 +77,44 @@
     "badge": "#1 コンピュータ操作エージェント · {score} OSWorld",
     "headline": "自律型コンピュータオペレーター",
     "useCases": {
-      "computerAgent": {
-        "label": "コンピュータエージェント",
-        "headline": "あらゆるブラウザタスクを自動化",
-        "outcome": "実際のコンピュータを操作するAIエージェント — ブラウジング、クリック、入力、そして完成した作業を提供。セットアップ不要。"
-      },
-      "competitorIntel": {
-        "label": "競合インテリジェンス",
-        "headline": "すべての競合を監視",
-        "outcome": "価格、機能、ポジショニングのギャップを含む完全な競合プロフィール — すぐに共有できるレポートとしてエクスポート。"
-      },
-      "qaTesting": {
-        "label": "QAテスト",
-        "headline": "ユーザーより先にバグを発見",
-        "outcome": "重要なユーザーフローをエンドツーエンドでテスト、すべてのバグを再現手順と重要度ランキング付きでスクリーンショット。"
-      },
-      "seoAnalysis": {
-        "label": "SEO分析",
-        "headline": "キーワードギャップを発見",
-        "outcome": "キーワードギャップの特定、コンテンツブリーフの作成、競合の被リンク元のマッピング — 実行可能なSEO戦略。"
-      },
-      "dataExtraction": {
-        "label": "データ抽出",
-        "headline": "あらゆるサイトをスクレイピングして構造化",
-        "outcome": "構造化データのスクレイピング、クリーニング、重複排除、CSVエクスポート — どんなウェブサイトでも、どんな形式でも。"
-      },
-      "leadGeneration": {
-        "label": "リード獲得",
-        "headline": "営業パイプラインを充実させる",
-        "outcome": "ICPに一致する適格な意思決定者の、検証済み役職、企業情報、パーソナライズされたアウトリーチオープナー付き。"
-      },
-      "siteAudit": {
-        "label": "サイト監査",
-        "headline": "大規模にすべてのページを監査",
-        "outcome": "ページスキャン、Core Web Vitalsスコアリング、リンク切れ検出、修正優先度順のアクセシビリティ問題ランキング。"
-      },
-      "emailOutreach": {
-        "label": "メールアウトリーチ",
-        "headline": "パーソナライズされたアウトリーチを送信",
-        "outcome": "各見込み客の企業、役職、課題を参照したパーソナライズメール — すぐに送信可能。"
-      },
-      "marketResearch": {
-        "label": "市場調査",
-        "headline": "市場を素早く検証",
-        "outcome": "TAMの算出、主要プレーヤーのプロフィール、成長トレンドのチャート化 — 多数のデータポイントから収集。"
-      }
+      "computerAgent": { "label": "コンピュータエージェント", "headline": "あらゆるブラウザタスクを自動化", "outcome": "実際のコンピュータを操作するAIエージェント — ブラウジング、クリック、入力、そして完成した作業を提供。セットアップ不要。" },
+      "competitorIntel": { "label": "競合インテリジェンス", "headline": "すべての競合を監視", "outcome": "価格、機能、ポジショニングのギャップを含む完全な競合プロフィール — すぐに共有できるレポートとしてエクスポート。" },
+      "qaTesting": { "label": "QAテスト", "headline": "ユーザーより先にバグを発見", "outcome": "重要なユーザーフローをエンドツーエンドでテスト、すべてのバグを再現手順と重要度ランキング付きでスクリーンショット。" },
+      "seoAnalysis": { "label": "SEO分析", "headline": "キーワードギャップを発見", "outcome": "キーワードギャップの特定、コンテンツブリーフの作成、競合の被リンク元のマッピング — 実行可能なSEO戦略。" },
+      "dataExtraction": { "label": "データ抽出", "headline": "あらゆるサイトをスクレイピングして構造化", "outcome": "構造化データのスクレイピング、クリーニング、重複排除、CSVエクスポート — どんなウェブサイトでも、どんな形式でも。" },
+      "leadGeneration": { "label": "リード獲得", "headline": "営業パイプラインを充実させる", "outcome": "ICPに一致する適格な意思決定者の、検証済み役職、企業情報、パーソナライズされたアウトリーチオープナー付き。" },
+      "siteAudit": { "label": "サイト監査", "headline": "大規模にすべてのページを監査", "outcome": "ページスキャン、Core Web Vitalsスコアリング、リンク切れ検出、修正優先度順のアクセシビリティ問題ランキング。" },
+      "emailOutreach": { "label": "メールアウトリーチ", "headline": "パーソナライズされたアウトリーチを送信", "outcome": "各見込み客の企業、役職、課題を参照したパーソナライズメール — すぐに送信可能。" },
+      "marketResearch": { "label": "市場調査", "headline": "市場を素早く検証", "outcome": "TAMの算出、主要プレーヤーのプロフィール、成長トレンドのチャート化 — 多数のデータポイントから収集。" }
     },
     "demoVideos": {
-      "marketing": {
-        "label": "マーケティング",
-        "task": "Redditで自律的に製品をマーケティング"
-      },
-      "goToMarket": {
-        "label": "Go-to-Market",
-        "task": "見込み客を見つけてパーソナライズメールを送信"
-      },
-      "qaTesting": {
-        "label": "QAテスト",
-        "task": "すべてのチェックアウトフローをテストしバグを報告"
-      },
-      "jobApplication": {
-        "label": "求人応募",
-        "task": "求人を探し、履歴書を調整して応募"
-      },
-      "formFilling": {
-        "label": "フォーム入力",
-        "task": "YC S26の応募フォームを代行入力"
-      },
-      "socialMedia": {
-        "label": "ソーシャルメディア",
-        "task": "Hacker Newsに投稿してコメントに対応"
-      }
+      "marketing": { "label": "マーケティング", "task": "Redditで自律的に製品をマーケティング" },
+      "goToMarket": { "label": "Go-to-Market", "task": "見込み客を見つけてパーソナライズメールを送信" },
+      "qaTesting": { "label": "QAテスト", "task": "すべてのチェックアウトフローをテストしバグを報告" },
+      "jobApplication": { "label": "求人応募", "task": "求人を探し、履歴書を調整して応募" },
+      "formFilling": { "label": "フォーム入力", "task": "YC S26の応募フォームを代行入力" },
+      "socialMedia": { "label": "ソーシャルメディア", "task": "Hacker Newsに投稿してコメントに対応" }
     }
   },
   "stats": {
-    "osworld": {
-      "value": "82%",
-      "label": "OSWorldベンチマーク",
-      "sublabel": "世界No.1のコンピュータ操作エージェント"
-    },
-    "tools": {
-      "value": "50+",
-      "label": "エージェントが使えるツール",
-      "sublabel": "ブラウザ、ターミナル、デスクトップ、ファイル"
-    },
-    "schedule": {
-      "value": "24/7",
-      "label": "スケジュール実行",
-      "sublabel": "繰り返しタスクを自動化"
-    },
-    "setup": {
-      "value": "0",
-      "label": "セットアップ不要",
-      "sublabel": "API不要、連携不要、コード不要"
-    }
+    "osworld": { "value": "82%", "label": "OSWorldベンチマーク", "sublabel": "世界No.1のコンピュータ操作エージェント" },
+    "tools": { "value": "50+", "label": "エージェントが使えるツール", "sublabel": "ブラウザ、ターミナル、デスクトップ、ファイル" },
+    "schedule": { "value": "24/7", "label": "スケジュール実行", "sublabel": "繰り返しタスクを自動化" },
+    "setup": { "value": "0", "label": "セットアップ不要", "sublabel": "API不要、連携不要、コード不要" }
   },
   "whyCoasty": {
     "sectionLabel": "Coastyを選ぶ理由",
     "title": "チャットボットではない。RPAスクリプトでもない。",
-    "worksLikeHuman": {
-      "title": "人間のように動作",
-      "description": "見る、クリック、入力、ナビゲート — あなたと全く同じように"
-    },
-    "noScripts": {
-      "title": "スクリプトもセットアップも不要",
-      "description": "日本語で指示するだけ、結果が出る"
-    },
-    "handlesUnexpected": {
-      "title": "予期しない事態にも対応",
-      "description": "CAPTCHA、ポップアップ、レイアウト変更に適応"
-    },
-    "runsInIsolation": {
-      "title": "隔離環境で実行",
-      "description": "セッションごとにサンドボックスVM — 情報漏洩なし"
-    }
+    "worksLikeHuman": { "title": "人間のように動作", "description": "見る、クリック、入力、ナビゲート — あなたと全く同じように" },
+    "noScripts": { "title": "スクリプトもセットアップも不要", "description": "日本語で指示するだけ、結果が出る" },
+    "handlesUnexpected": { "title": "予期しない事態にも対応", "description": "CAPTCHA、ポップアップ、レイアウト変更に適応" },
+    "runsInIsolation": { "title": "隔離環境で実行", "description": "セッションごとにサンドボックスVM — 情報漏洩なし" }
   },
   "howItWorks": {
     "title": "使い方",
-    "step1": {
-      "title": "タスクを説明する",
-      "description": "自然な言葉で。それだけ。",
-      "placeholder": "LinkedInで100件のリードを調査..."
-    },
-    "step2": {
-      "title": "エージェントの作業を見る",
-      "description": "ブラウザを開き、クリック、入力、ナビゲート"
-    },
-    "step3": {
-      "title": "タスク完了",
-      "description": "すべてのアクションをスクリーンショット付きで記録",
-      "results": {
-        "taskCompleted": "タスク完了",
-        "leadsFound": "12件のリードを発見",
-        "addedToCrm": "CRMに追加済み"
-      }
-    }
+    "step1": { "title": "タスクを説明する", "description": "自然な言葉で。それだけ。", "placeholder": "LinkedInで100件のリードを調査..." },
+    "step2": { "title": "エージェントの作業を見る", "description": "ブラウザを開き、クリック、入力、ナビゲート" },
+    "step3": { "title": "タスク完了", "description": "すべてのアクションをスクリーンショット付きで記録", "results": { "taskCompleted": "タスク完了", "leadsFound": "12件のリードを発見", "addedToCrm": "CRMに追加済み" } }
   },
   "benchmark": {
     "title": "世界No.1のベンチマーク",
@@ -222,137 +125,43 @@
   "comparison": {
     "title": "なぜCoastyで自動化するのか？",
     "subtitle": "チームが何時間もかかる同じタスクを、Coastyは数分で24時間365日完了します。",
-    "manual": {
-      "title": "手動で行う場合",
-      "subtitle": "あなたやチームが手作業で"
-    },
-    "coasty": {
-      "title": "Coasty AIエージェント",
-      "subtitle": "No.1コンピュータ操作エージェント"
-    },
-    "rows": {
-      "timePerTask": "タスクあたりの時間",
-      "availability": "稼働時間",
-      "setupTime": "セットアップ時間",
-      "errorRate": "エラー率",
-      "scaling": "スケーリング",
-      "auditTrail": "監査証跡"
-    },
-    "manualValues": {
-      "timePerTask": "数時間〜数日",
-      "availability": "営業時間のみ",
-      "setupTime": "ツールの学習、SOP作成",
-      "errorRate": "ヒューマンエラー",
-      "scaling": "増やす＝時間がかかる",
-      "auditTrail": "なし"
-    },
-    "coastyValues": {
-      "timePerTask": "数分",
-      "availability": "24時間365日",
-      "setupTime": "60秒",
-      "errorRate": "自己修正",
-      "scaling": "無制限のタスクを並列実行",
-      "auditTrail": "すべてのクリックを記録＋スクリーンショット"
-    },
-    "bottomBar": {
-      "automateTasksThat": "手動で",
-      "hoursManually": "何時間もかかるタスクを自動化",
-      "startingAt": "料金"
-    }
+    "manual": { "title": "手動で行う場合", "subtitle": "あなたやチームが手作業で" },
+    "coasty": { "title": "Coasty AIエージェント", "subtitle": "No.1コンピュータ操作エージェント" },
+    "rows": { "timePerTask": "タスクあたりの時間", "availability": "稼働時間", "setupTime": "セットアップ時間", "errorRate": "エラー率", "scaling": "スケーリング", "auditTrail": "監査証跡" },
+    "manualValues": { "timePerTask": "数時間〜数日", "availability": "営業時間のみ", "setupTime": "ツールの学習、SOP作成", "errorRate": "ヒューマンエラー", "scaling": "増やす＝時間がかかる", "auditTrail": "なし" },
+    "coastyValues": { "timePerTask": "数分", "availability": "24時間365日", "setupTime": "60秒", "errorRate": "自己修正", "scaling": "無制限のタスクを並列実行", "auditTrail": "すべてのクリックを記録＋スクリーンショット" },
+    "bottomBar": { "automateTasksThat": "手動で", "hoursManually": "何時間もかかるタスクを自動化", "startingAt": "料金" }
   },
   "demo": {
     "title": "エージェントの動作を見る",
     "subtitle": "実際のタスク。実際のブラウザ。すべてのクリックを記録。",
     "sessions": {
-      "reddit": {
-        "title": "CoastyでReddit",
-        "description": "Coastyが自律的にマーケティングキャンペーンを実行する様子をご覧ください — 競合調査、トレンド分析、戦略デッキの作成。",
-        "tag": "マーケティング"
-      },
-      "prospects": {
-        "title": "見込み客の発見",
-        "description": "Coastyが見込み客を見つけて調査し、パーソナライズされたアウトリーチに必要な主要情報を収集します。",
-        "tag": "Go-to-Market"
-      },
-      "qa": {
-        "title": "自社製品のQAテスト",
-        "description": "Coastyが自社製品の品質保証を実行 — フローのナビゲーション、バグの検出、問題の自律的レポート。",
-        "tag": "QAテスト"
-      },
-      "email": {
-        "title": "代行メール送信",
-        "description": "作成から送信まで — AIエージェントが完全に自動でメールを作成して配信します。",
-        "tag": "コミュニケーション"
-      },
-      "job": {
-        "title": "求人への応募",
-        "description": "Coastyがマッチする求人を見つけ、履歴書を調整し、応募を提出 — すべて自動で。",
-        "tag": "求人応募"
-      },
-      "hackernews": {
-        "title": "Hacker Newsへの投稿",
-        "description": "CoastyがHacker Newsにブログ記事を作成・公開 — コンテンツの執筆と自律的な投稿。",
-        "tag": "ソーシャルメディア"
-      }
+      "reddit": { "title": "CoastyでReddit", "description": "Coastyが自律的にマーケティングキャンペーンを実行する様子をご覧ください — 競合調査、トレンド分析、戦略デッキの作成。", "tag": "マーケティング" },
+      "prospects": { "title": "見込み客の発見", "description": "Coastyが見込み客を見つけて調査し、パーソナライズされたアウトリーチに必要な主要情報を収集します。", "tag": "Go-to-Market" },
+      "qa": { "title": "自社製品のQAテスト", "description": "Coastyが自社製品の品質保証を実行 — フローのナビゲーション、バグの検出、問題の自律的レポート。", "tag": "QAテスト" },
+      "email": { "title": "代行メール送信", "description": "作成から送信まで — AIエージェントが完全に自動でメールを作成して配信します。", "tag": "コミュニケーション" },
+      "job": { "title": "求人への応募", "description": "Coastyがマッチする求人を見つけ、履歴書を調整し、応募を提出 — すべて自動で。", "tag": "求人応募" },
+      "hackernews": { "title": "Hacker Newsへの投稿", "description": "CoastyがHacker Newsにブログ記事を作成・公開 — コンテンツの執筆と自律的な投稿。", "tag": "ソーシャルメディア" }
     }
   },
   "features": {
     "title": "実際のコンピュータタスクのために構築",
-    "selfCorrecting": {
-      "title": "自己修正",
-      "description": "エラーを検出し、代替パスで再試行"
-    },
-    "auditTrail": {
-      "title": "完全な監査証跡",
-      "description": "すべてのクリックをスクリーンショット付きで記録"
-    },
-    "schedule": {
-      "title": "24時間365日スケジュール",
-      "description": "cronで実行 — 毎時、毎日、毎週"
-    },
-    "sandboxed": {
-      "title": "サンドボックスで安全",
-      "description": "セッションごとに隔離されたVM、終了後に破棄"
-    },
-    "benchmark": {
-      "title": "OSWorld No.1",
-      "description": "82% — 過去最高スコア"
-    },
-    "swarms": {
-      "title": "エージェントスウォーム",
-      "description": "タスクを複数マシンで並列分割"
-    }
+    "selfCorrecting": { "title": "自己修正", "description": "エラーを検出し、代替パスで再試行" },
+    "auditTrail": { "title": "完全な監査証跡", "description": "すべてのクリックをスクリーンショット付きで記録" },
+    "schedule": { "title": "24時間365日スケジュール", "description": "cronで実行 — 毎時、毎日、毎週" },
+    "sandboxed": { "title": "サンドボックスで安全", "description": "セッションごとに隔離されたVM、終了後に破棄" },
+    "benchmark": { "title": "OSWorld No.1", "description": "82% — 過去最高スコア" },
+    "swarms": { "title": "エージェントスウォーム", "description": "タスクを複数マシンで並列分割" }
   },
   "pricing": {
     "title": "無料で始めて、準備ができたらスケール",
     "subtitle": "クレジットカード不要。AIエージェントが60秒で準備完了。",
     "plans": {
-      "free": {
-        "name": "Free",
-        "description": "No.1コンピュータ操作エージェントを試す",
-        "cta": "無料で始める"
-      },
-      "lite": {
-        "name": "Lite",
-        "description": "軽量な日常自動化",
-        "cta": "Liteを始める"
-      },
-      "starter": {
-        "name": "Starter",
-        "description": "毎日のタスクを自動化",
-        "cta": "Starterを始める"
-      },
-      "plus": {
-        "name": "Plus",
-        "description": "複雑なワークフローをスケール",
-        "cta": "Plusにする",
-        "badge": "人気No.1"
-      },
-      "pro": {
-        "name": "Pro",
-        "description": "無制限のヘビー自動化",
-        "cta": "Proを始める"
-      }
+      "free": { "name": "Free", "description": "No.1コンピュータ操作エージェントを試す", "cta": "無料で始める" },
+      "lite": { "name": "Lite", "description": "軽量な日常自動化", "cta": "Liteを始める" },
+      "starter": { "name": "Starter", "description": "毎日のタスクを自動化", "cta": "Starterを始める" },
+      "plus": { "name": "Plus", "description": "複雑なワークフローをスケール", "cta": "Plusにする", "badge": "人気No.1" },
+      "pro": { "name": "Pro", "description": "無制限のヘビー自動化", "cta": "Proを始める" }
     },
     "vmTemporary": "一時VM 1台（2時間）",
     "vmDeletedAfterInactivity": "VM 1台（非アクティブ時に削除）",
@@ -367,136 +176,50 @@
     "title": "よくある質問",
     "subtitle": "始める前に知っておきたいことすべて",
     "items": {
-      "whatIsCoasty": {
-        "question": "Coastyとは何ですか？",
-        "answer": "Coastyは世界最高のコンピュータ操作AIエージェントです。タスクを説明するだけで — リード調査、ウェブサイトテスト、フォーム入力、SNS投稿 — Coastyが実際のブラウザを開き、アプリを操作し、ボタンをクリックし、テキストを入力し、タスクをエンドツーエンドで完了します。API不要、連携不要、コード不要。"
-      },
-      "howDifferent": {
-        "question": "ChatGPTや他のAIツールとの違いは？",
-        "answer": "ChatGPTはテキストを生成します。Coastyはコンピュータを操作します。何をすべきか教えるのではなく — ブラウザを開き、ウェブサイトに移動し、ボタンをクリックし、フォームを入力し、完了した作業を届けます。指示をもらうのと、タスクを代行してもらうのとの違いです。"
-      },
-      "whatTasks": {
-        "question": "Coastyはどんなタスクを自動化できますか？",
-        "answer": "コンピュータでできるタスクなら何でも。Web調査、リード獲得、データ入力、フォーム入力、QAテスト、SNS投稿、メールアウトリーチ、請求書処理、競合分析、採用活動 — ブラウザやデスクトップアプリを使うタスクなら、Coastyが対応します。"
-      },
-      "whatAreCredits": {
-        "question": "クレジットとは何ですか？どう使われますか？",
-        "answer": "クレジットはエージェントがタスクに取り組む際に消費されます。長く複雑なタスクほど多くのクレジットを使用します。有料プランには月間クレジットが含まれ、追加のクレジットパックをいつでも購入できます。"
-      },
-      "localComputer": {
-        "question": "Coastyは自分のコンピュータで実行できますか？",
-        "answer": "はい。デスクトップアプリがマシン上の軽量オーバーレイとして動作し、ローカルのブラウザやアプリケーションを直接制御します。または、隔離されたクラウドマシンでタスクを実行することも可能です — お好みで選べます。"
-      },
-      "dataSafe": {
-        "question": "データは安全ですか？",
-        "answer": "すべてのタスクは隔離されたサンドボックス環境で実行されます。セッション間で情報が漏洩することはありません。認証情報はプライベートに保たれ、すべてのアクションはスクリーンショット付きの完全な監査証跡として記録され、いつでも確認できます。"
-      }
+      "whatIsCoasty": { "question": "Coastyとは何ですか？", "answer": "Coastyは世界最高のコンピュータ操作AIエージェントです。タスクを説明するだけで — リード調査、ウェブサイトテスト、フォーム入力、SNS投稿 — Coastyが実際のブラウザを開き、アプリを操作し、ボタンをクリックし、テキストを入力し、タスクをエンドツーエンドで完了します。API不要、連携不要、コード不要。" },
+      "howDifferent": { "question": "ChatGPTや他のAIツールとの違いは？", "answer": "ChatGPTはテキストを生成します。Coastyはコンピュータを操作します。何をすべきか教えるのではなく — ブラウザを開き、ウェブサイトに移動し、ボタンをクリックし、フォームを入力し、完了した作業を届けます。指示をもらうのと、タスクを代行してもらうのとの違いです。" },
+      "whatTasks": { "question": "Coastyはどんなタスクを自動化できますか？", "answer": "コンピュータでできるタスクなら何でも。Web調査、リード獲得、データ入力、フォーム入力、QAテスト、SNS投稿、メールアウトリーチ、請求書処理、競合分析、採用活動 — ブラウザやデスクトップアプリを使うタスクなら、Coastyが対応します。" },
+      "whatAreCredits": { "question": "クレジットとは何ですか？どう使われますか？", "answer": "クレジットはエージェントがタスクに取り組む際に消費されます。長く複雑なタスクほど多くのクレジットを使用します。有料プランには月間クレジットが含まれ、追加のクレジットパックをいつでも購入できます。" },
+      "localComputer": { "question": "Coastyは自分のコンピュータで実行できますか？", "answer": "はい。デスクトップアプリがマシン上の軽量オーバーレイとして動作し、ローカルのブラウザやアプリケーションを直接制御します。または、隔離されたクラウドマシンでタスクを実行することも可能です — お好みで選べます。" },
+      "dataSafe": { "question": "データは安全ですか？", "answer": "すべてのタスクは隔離されたサンドボックス環境で実行されます。セッション間で情報が漏洩することはありません。認証情報はプライベートに保たれ、すべてのアクションはスクリーンショット付きの完全な監査証跡として記録され、いつでも確認できます。" }
     }
   },
   "footer": {
     "tagline": "AI搭載のコンピュータ操作。",
     "tagline2": "インテリジェントエージェントであらゆるワークフローを自動化。",
-    "columns": {
-      "product": "製品",
-      "resources": "リソース",
-      "company": "会社",
-      "legal": "法的情報"
-    },
-    "links": {
-      "computerUse": "コンピュータ操作",
-      "guide": "ガイド",
-      "download": "ダウンロード",
-      "pricing": "料金",
-      "agentSwarms": "エージェントスウォーム",
-      "status": "ステータス",
-      "blog": "ブログ",
-      "useCases": "ユースケース",
-      "demos": "デモ",
-      "compare": "比較",
-      "talkToCofounders": "共同創業者と話す・デモ",
-      "contact": "お問い合わせ",
-      "privacy": "プライバシー",
-      "terms": "利用規約"
-    }
+    "columns": { "product": "製品", "resources": "リソース", "company": "会社", "legal": "法的情報" },
+    "links": { "computerUse": "コンピュータ操作", "guide": "ガイド", "download": "ダウンロード", "pricing": "料金", "agentSwarms": "エージェントスウォーム", "status": "ステータス", "blog": "ブログ", "useCases": "ユースケース", "demos": "デモ", "compare": "比較", "talkToCofounders": "共同創業者と話す・デモ", "contact": "お問い合わせ", "privacy": "プライバシー", "terms": "利用規約" }
   },
-  "languageSwitcher": {
-    "label": "言語"
-  },
+  "languageSwitcher": { "label": "言語" },
   "auth": {
     "brandHeading": "目標を設定するのはあなた。",
     "brandSubheading": "残りは私たちにお任せください。",
     "mobileHeading": "目標を設定するのはあなた。残りは私たちにお任せください。",
     "mobileSubheading": "ブラウジング、クリック、入力を本物のチームメイトのようにこなすAIエージェント。",
     "flowSteps": {
-      "step1": {
-        "label": "タスクを説明する",
-        "sub": "「上位5社の競合を調査して」"
-      },
-      "step2": {
-        "label": "エージェントが操作を開始",
-        "sub": "自律的にブラウジング、クリック、入力"
-      },
-      "step3": {
-        "label": "作業完了",
-        "sub": "5社の完全な競合プロファイル付きスプレッドシート"
-      }
+      "step1": { "label": "タスクを説明する", "sub": "「上位5社の競合を調査して」" },
+      "step2": { "label": "エージェントが操作を開始", "sub": "自律的にブラウジング、クリック、入力" },
+      "step3": { "label": "作業完了", "sub": "5社の完全な競合プロファイル付きスプレッドシート" }
     },
-    "complete": "完了",
-    "doneIn": "8分で完了",
-    "viewTitles": {
-      "signIn": "オペレーターが待機しています",
-      "signUp": "ワークフローを自動化しましょう",
-      "magicLink": "パスワード不要",
-      "forgotPassword": "アクセスを回復しましょう"
-    },
-    "viewDescriptions": {
-      "signIn": "前回の続きから再開 — エージェントは覚えています",
-      "signUp": "1分以内に最初のAIエージェントをデプロイ",
-      "magicLink": "受信トレイからワンクリックでログイン",
-      "forgotPassword": "リセットリンクをメールでお送りします"
-    },
-    "google": {
-      "connecting": "接続中...",
-      "continueWithGoogle": "Google で続ける"
-    },
-    "or": "または",
-    "email": "メールアドレス",
-    "emailPlaceholder": "you@example.com",
-    "password": "パスワード",
-    "passwordPlaceholder": "パスワードを入力",
-    "confirmPassword": "パスワードを確認",
-    "confirmPasswordPlaceholder": "パスワードを再入力",
-    "minChars": "最低6文字",
-    "signingIn": "ログイン中...",
-    "signIn": "ログイン",
-    "creatingAccount": "アカウント作成中...",
-    "createAccount": "アカウント作成",
-    "sending": "送信中...",
-    "sendMagicLink": "マジックリンクを送信",
-    "sendResetLink": "リセットリンクを送信",
-    "forgotPassword": "パスワードをお忘れですか？",
-    "useMagicLink": "マジックリンクを使用",
-    "dontHaveAccount": "アカウントをお持ちでないですか？",
-    "signUp": "新規登録",
-    "alreadyHaveAccount": "既にアカウントをお持ちですか？",
-    "backToSignIn": "ログインに戻る",
-    "termsAgreement": "続行することで、以下に同意したことになります：",
-    "terms": "利用規約",
-    "and": "および",
-    "privacyPolicy": "プライバシーポリシー",
+    "complete": "完了", "doneIn": "8分で完了",
+    "viewTitles": { "signIn": "オペレーターが待機しています", "signUp": "ワークフローを自動化しましょう", "magicLink": "パスワード不要", "forgotPassword": "アクセスを回復しましょう" },
+    "viewDescriptions": { "signIn": "前回の続きから再開 — エージェントは覚えています", "signUp": "1分以内に最初のAIエージェントをデプロイ", "magicLink": "受信トレイからワンクリックでログイン", "forgotPassword": "リセットリンクをメールでお送りします" },
+    "google": { "connecting": "接続中...", "continueWithGoogle": "Google で続ける" },
+    "or": "または", "email": "メールアドレス", "emailPlaceholder": "you@example.com", "password": "パスワード", "passwordPlaceholder": "パスワードを入力",
+    "confirmPassword": "パスワードを確認", "confirmPasswordPlaceholder": "パスワードを再入力", "minChars": "最低6文字",
+    "signingIn": "ログイン中...", "signIn": "ログイン", "creatingAccount": "アカウント作成中...", "createAccount": "アカウント作成",
+    "sending": "送信中...", "sendMagicLink": "マジックリンクを送信", "sendResetLink": "リセットリンクを送信",
+    "forgotPassword": "パスワードをお忘れですか？", "useMagicLink": "マジックリンクを使用", "dontHaveAccount": "アカウントをお持ちでないですか？",
+    "signUp": "新規登録", "alreadyHaveAccount": "既にアカウントをお持ちですか？", "backToSignIn": "ログインに戻る",
+    "termsAgreement": "続行することで、以下に同意したことになります：", "terms": "利用規約", "and": "および", "privacyPolicy": "プライバシーポリシー",
     "errors": {
-      "fillAllFields": "すべてのフィールドを入力してください",
-      "passwordMinLength": "パスワードは6文字以上である必要があります",
-      "passwordsDoNotMatch": "パスワードが一致しません",
-      "supabaseNotConfigured": "Supabaseが設定されていません",
+      "fillAllFields": "すべてのフィールドを入力してください", "passwordMinLength": "パスワードは6文字以上である必要があります",
+      "passwordsDoNotMatch": "パスワードが一致しません", "supabaseNotConfigured": "Supabaseが設定されていません",
       "unexpectedError": "予期しないエラーが発生しました。もう一度お試しください。",
       "confirmEmail": "ログイン前にメールアドレスを確認してください。受信トレイをご確認ください。",
-      "invalidCredentials": "メールアドレスまたはパスワードが無効です。",
-      "signInFailed": "ログインに失敗しました。もう一度お試しください。",
-      "invalidEmail": "無効なメールアドレスです。",
-      "emailAlreadyExists": "このメールアドレスのアカウントは既に存在します。ログインをお試しください。",
-      "signUpFailed": "登録に失敗しました。もう一度お試しください。",
-      "enterEmail": "メールアドレスを入力してください",
+      "invalidCredentials": "メールアドレスまたはパスワードが無効です。", "signInFailed": "ログインに失敗しました。もう一度お試しください。",
+      "invalidEmail": "無効なメールアドレスです。", "emailAlreadyExists": "このメールアドレスのアカウントは既に存在します。ログインをお試しください。",
+      "signUpFailed": "登録に失敗しました。もう一度お試しください。", "enterEmail": "メールアドレスを入力してください",
       "noAccountFound": "このメールアドレスのアカウントが見つかりません。先に登録してください。",
       "magicLinkFailed": "マジックリンクの送信に失敗しました。もう一度お試しください。",
       "resetFailed": "リセットメールの送信に失敗しました。もう一度お試しください。",
@@ -508,134 +231,404 @@
       "checkEmailReset": "パスワードリセットリンクをメールでご確認ください。",
       "passwordUpdated": "パスワードが正常に更新されました。ログインページにリダイレクトします..."
     },
-    "resetPassword": {
-      "title": "パスワードをリセット",
-      "subtitle": "新しいパスワードを以下に入力してください。",
-      "newPassword": "新しいパスワード",
-      "confirmNewPassword": "新しいパスワードを確認",
-      "confirmPlaceholder": "新しいパスワードを再入力",
-      "updating": "更新中...",
-      "updatePassword": "パスワードを更新"
-    },
-    "errorPage": {
-      "title": "認証エラー",
-      "defaultMessage": "認証中にエラーが発生しました。",
-      "tryAgain": "再試行",
-      "backToChat": "チャットに戻る",
-      "needHelp": "ヘルプが必要ですか？",
-      "contactSupport": "サポートに連絡"
-    }
+    "resetPassword": { "title": "パスワードをリセット", "subtitle": "新しいパスワードを以下に入力してください。", "newPassword": "新しいパスワード", "confirmNewPassword": "新しいパスワードを確認", "confirmPlaceholder": "新しいパスワードを再入力", "updating": "更新中...", "updatePassword": "パスワードを更新" },
+    "errorPage": { "title": "認証エラー", "defaultMessage": "認証中にエラーが発生しました。", "tryAgain": "再試行", "backToChat": "チャットに戻る", "needHelp": "ヘルプが必要ですか？", "contactSupport": "サポートに連絡" }
   },
   "onboarding": {
-    "skipForNow": "今はスキップ",
-    "back": "戻る",
-    "continue": "続行",
-    "getStarted": "はじめる",
-    "settingUp": "設定中...",
-    "welcome": {
-      "titleReturning": "おかえりなさい{name}！",
-      "titleNew": "Coasty へようこそ",
-      "descriptionReturning": "体験を向上させるために、もう少し詳しく教えてください",
-      "descriptionNew": "体験をパーソナライズするためにアカウントを設定しましょう"
-    },
-    "nameLabel": "お名前は何ですか？",
-    "namePlaceholder": "お名前",
-    "companyLabel": "会社",
-    "optional": "（任意）",
-    "companyPlaceholder": "MacroHard",
-    "websiteLabel": "ウェブサイト",
-    "websitePlaceholder": "xai.com",
-    "roleStep": {
-      "title": "あなたに最も当てはまるのは？",
-      "subtitle": "該当するものをすべて選択 — 体験のカスタマイズに役立ちます"
-    },
-    "roles": {
-      "founder": "創業者 / CEO",
-      "developer": "開発者",
-      "marketer": "マーケター",
-      "designer": "デザイナー",
-      "product_manager": "プロダクトマネージャー",
-      "data_analyst": "データ / アナリティクス",
-      "operations": "オペレーション",
-      "other": "その他"
-    },
+    "skipForNow": "今はスキップ", "back": "戻る", "continue": "続行", "getStarted": "はじめる", "settingUp": "設定中...",
+    "welcome": { "titleReturning": "おかえりなさい{name}！", "titleNew": "Coasty へようこそ", "descriptionReturning": "体験を向上させるために、もう少し詳しく教えてください", "descriptionNew": "体験をパーソナライズするためにアカウントを設定しましょう" },
+    "nameLabel": "お名前は何ですか？", "namePlaceholder": "お名前", "companyLabel": "会社", "optional": "（任意）", "companyPlaceholder": "MacroHard", "websiteLabel": "ウェブサイト", "websitePlaceholder": "xai.com",
+    "roleStep": { "title": "あなたに最も当てはまるのは？", "subtitle": "該当するものをすべて選択 — 体験のカスタマイズに役立ちます" },
+    "roles": { "founder": "創業者 / CEO", "developer": "開発者", "marketer": "マーケター", "designer": "デザイナー", "product_manager": "プロダクトマネージャー", "data_analyst": "データ / アナリティクス", "operations": "オペレーション", "other": "その他" },
     "teamSizeLabel": "チーム規模",
-    "teamSizes": {
-      "solo": "自分だけ",
-      "2-5": "2-5",
-      "6-20": "6-20",
-      "21-50": "21-50",
-      "51-200": "51-200",
-      "200+": "200+"
-    },
-    "referralStep": {
-      "title": "どこで知りましたか？",
-      "subtitle": "Coasty をどこでお知りになったか教えてください"
-    },
-    "referralSources": {
-      "twitter": "Twitter / X",
-      "linkedin": "LinkedIn",
-      "google": "Google Search",
-      "youtube": "YouTube",
-      "friend": "友人 / 同僚",
-      "producthunt": "Product Hunt",
-      "reddit": "Reddit",
-      "other": "その他"
-    },
-    "useCaseStep": {
-      "title": "最初に何を自動化しますか？",
-      "subtitle": "該当するものをすべて選択 — 後ですべて探索できます"
-    },
-    "useCases": {
-      "web_scraping": "Webスクレイピング＆リサーチ",
-      "browser_automation": "ブラウザ自動化",
-      "data_entry": "データ入力＆フォーム",
-      "email_outreach": "メール＆アウトリーチ",
-      "testing": "QA＆テスト",
-      "ecommerce": "EC関連タスク",
-      "social_media": "ソーシャルメディア管理",
-      "general_automation": "一般的な自動化"
-    },
+    "teamSizes": { "solo": "自分だけ", "2-5": "2-5", "6-20": "6-20", "21-50": "21-50", "51-200": "51-200", "200+": "200+" },
+    "referralStep": { "title": "どこで知りましたか？", "subtitle": "Coasty をどこでお知りになったか教えてください" },
+    "referralSources": { "twitter": "Twitter / X", "linkedin": "LinkedIn", "google": "Google Search", "youtube": "YouTube", "friend": "友人 / 同僚", "producthunt": "Product Hunt", "reddit": "Reddit", "other": "その他" },
+    "useCaseStep": { "title": "最初に何を自動化しますか？", "subtitle": "該当するものをすべて選択 — 後ですべて探索できます" },
+    "useCases": { "web_scraping": "Webスクレイピング＆リサーチ", "browser_automation": "ブラウザ自動化", "data_entry": "データ入力＆フォーム", "email_outreach": "メール＆アウトリーチ", "testing": "QA＆テスト", "ecommerce": "EC関連タスク", "social_media": "ソーシャルメディア管理", "general_automation": "一般的な自動化" },
     "showcase": {
-      "title": "必要なものはすべて、",
-      "titleHighlight": "組み込み済み。",
-      "subtitle": "Coasty があなたにできること",
-      "noCode": {
-        "title": "ノーコード",
-        "description": "やりたいことを日本語で説明するだけ"
-      },
-      "agentSwarms": {
-        "title": "エージェントスウォーム",
-        "description": "並列エージェント群"
-      },
-      "desktopControl": {
-        "title": "デスクトップ操作",
-        "description": "クリック、入力、ナビゲーション"
-      },
-      "browserAutomation": {
-        "title": "ブラウザ自動化",
-        "description": "フォーム、タブ、スクレイピング — 完全自動"
-      },
-      "computerVision": {
-        "title": "コンピュータビジョン",
-        "description": "画面をリアルタイムで認識・理解"
-      },
-      "workflows": {
-        "title": "ワークフロー",
-        "description": "マルチステップフロー"
-      },
-      "onDevice": {
-        "title": "オンデバイス",
-        "description": "ローカルで実行"
-      },
-      "autonomous": {
-        "title": "24時間365日自律稼働",
-        "description": "設定したら放置 — 睡眠中も稼働"
-      }
+      "title": "必要なものはすべて、", "titleHighlight": "組み込み済み。", "subtitle": "Coasty があなたにできること",
+      "noCode": { "title": "ノーコード", "description": "やりたいことを日本語で説明するだけ" },
+      "agentSwarms": { "title": "エージェントスウォーム", "description": "並列エージェント群" },
+      "desktopControl": { "title": "デスクトップ操作", "description": "クリック、入力、ナビゲーション" },
+      "browserAutomation": { "title": "ブラウザ自動化", "description": "フォーム、タブ、スクレイピング — 完全自動" },
+      "computerVision": { "title": "コンピュータビジョン", "description": "画面をリアルタイムで認識・理解" },
+      "workflows": { "title": "ワークフロー", "description": "マルチステップフロー" },
+      "onDevice": { "title": "オンデバイス", "description": "ローカルで実行" },
+      "autonomous": { "title": "24時間365日自律稼働", "description": "設定したら放置 — 睡眠中も稼働" }
     },
-    "guideCallout": {
-      "title": "初めてですか？ガイドをご用意しています",
-      "subtitle": "1分以内に最初のAIエージェントをデプロイ"
+    "guideCallout": { "title": "初めてですか？ガイドをご用意しています", "subtitle": "1分以内に最初のAIエージェントをデプロイ" }
+  },
+  "chatInput": {
+    "placeholder": "AIワーカーに何をさせますか？",
+    "placeholderAlt": "コンピュータ上でAIに何をさせるか指示してください...",
+    "vmError": {
+      "title": "仮想マシンエラー",
+      "description": "仮想マシンがエラー状態にあるか、削除中です。",
+      "hint": "マシンタブで問題を確認するか、「コンピュータ未選択」を選んでWeb検索のみを使用してください。",
+      "gotIt": "了解"
+    },
+    "status": {
+      "creating": "{name}を作成中...",
+      "initiating": "{name}でエージェントを起動中...",
+      "stopping": "{name}を停止中...",
+      "preparing": "{name}を準備中..."
+    },
+    "swarm": {
+      "title": "スウォームモード",
+      "pro": "PRO",
+      "upgradeLabel": "スウォームモード — アップグレードで解除",
+      "feature1": "一時マシンでの並列実行",
+      "feature2": "各マシンが自律的に動作",
+      "feature3": "プランのマシン制限の3倍/スウォーム",
+      "description": "1つのプロンプトをマシン制限の3倍で並列実行 — それぞれが独立してタスクに取り組みます。",
+      "enableLabel": "スウォームモードを有効化",
+      "disableLabel": "スウォームモードを無効化",
+      "onTooltip": "スウォームモードON — プロンプトが複数のマシンで並列実行されます",
+      "offTooltip": "スウォームモードを有効にして、プロンプトを複数のマシンで同時実行",
+      "decreaseMachines": "マシン数を減らす",
+      "increaseMachines": "マシン数を増やす",
+      "machineLimit": "プランで最大{max}台のスウォームマシン。もっと必要ですか？founders@coasty.aiまでご連絡ください"
+    },
+    "desktop": {
+      "connectLabel": "デスクトップに接続",
+      "screenLabel": "{name}の画面",
+      "screenDefault": "デスクトップ",
+      "watchTooltip": "エージェントの作業を別画面で見ましょう。何も触らないでください、緊張しちゃいます！"
+    },
+    "buttons": {
+      "stop": "停止",
+      "sendToSwarm": "スウォームに送信",
+      "taskRunning": "別のタスクが実行中です — クリックして停止し、あなたのタスクを実行",
+      "selectComputer": "メッセージを送信するコンピュータを選択",
+      "waitCreating": "VMの作成をお待ちください",
+      "waitStarting": "VMの起動をお待ちください",
+      "waitAgent": "エージェントの初期化をお待ちください",
+      "vmStopping": "VMを停止中",
+      "send": "送信",
+      "switching": "切り替え中...",
+      "overrideRun": "上書き実行",
+      "stopLabel": "実行中のタスクを停止してこれを開始",
+      "sendLabel": "メッセージを送信"
+    },
+    "search": "検索",
+    "upload": {
+      "label": "VMにファイルをアップロード",
+      "heading": "VMにファイルをアップロード",
+      "description": "ファイルはデスクトップに保存されます",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "ここにファイルをドロップ",
+      "dropDescription": "ファイルはVMのデスクトップフォルダにアップロードされます",
+      "dropPath": "パス: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "ログインしてさらに多くの機能を無料でお試しください",
+      "description": "プロジェクトの作成、チームメンバーの招待など。",
+      "connecting": "接続中...",
+      "continueWithGoogle": "Google で続ける"
+    },
+    "removeFile": "ファイルを削除"
+  },
+  "chat": {
+    "greeting": "こんにちは",
+    "greetingAuth": "コンピュータの作業をお任せください。タスクは何ですか？",
+    "greetingUnauth": "あなたの代わりにコンピュータを操作するAI。何をすべきか指示するだけです。",
+    "guide": "ガイド",
+    "saveLogins": "自動入力用にログインを保存",
+    "encryptedNote": "暗号化済み、AIからは見えません",
+    "roleLabels": ["同僚", "従業員", "友人", "アシスタント", "パートナー", "チームメイト", "協力者", "ヘルパー"],
+    "taskTemplates": {
+      "founder": { "competitorReport": "競合レポートを取得", "warmLeads": "20件の見込みリードを生成", "pitchDeck": "ピッチデックの下書きを作成" },
+      "developer": { "findBugs": "サイトのバグを検出", "performance": "パフォーマンスレポートを取得", "apiDocs": "APIドキュメントを抽出" },
+      "marketer": { "seoGap": "SEOギャップ分析を取得", "competitorAds": "競合の広告を調査", "trendingContent": "トレンドコンテンツのアイデアを取得" },
+      "product_manager": { "reviewSummary": "レビューサマリーを取得", "featureComparison": "機能比較を作成", "competitorLaunches": "競合のローンチを追跡" },
+      "data_analyst": { "exportCsv": "サイトデータをCSVにエクスポート", "marketSizing": "市場規模レポートを取得", "benchmark": "業界ベンチマークと比較" },
+      "operations": { "enterRecords": "システムにレコードを入力", "cheapestVendor": "最安の業者を見つける", "invoiceSummary": "請求書サマリーを取得" },
+      "designer": { "designComparison": "デザイン比較を取得", "responsiveAudit": "レスポンシブ監査を実行", "inspiration": "デザインインスピレーションを収集" }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "サイトデータをCSVにエクスポート",
+      "browser_automation": "ダッシュボードレポートをエクスポート",
+      "data_entry": "アプリにレコードを入力",
+      "email_outreach": "パーソナライズされたアウトリーチを送信",
+      "testing": "完全なQAレポートを取得",
+      "ecommerce": "価格比較を取得",
+      "social_media": "投稿してエンゲージメントを獲得",
+      "general_automation": "サイトでタスクを実行"
     }
-  }
+  },
+  "chatMessages": {
+    "copyText": "テキストをコピー",
+    "copied": "コピーしました！",
+    "regenerate": "再生成",
+    "feedback": {
+      "title": "フィードバック",
+      "prompts": ["評価する", "フィードバック", "いかがでしたか？", "ご感想は？", "フィードバックを共有"],
+      "tooltip": "フィードバックを共有"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": { "title": "スマート検索", "description": "AI搭載のWeb全体検索" },
+    "collaborate": { "title": "コラボレーション", "description": "リアルタイムで共同作業" },
+    "globalAccess": { "title": "グローバルアクセス", "description": "50以上の言語で検索" },
+    "aiModels": { "title": "AIモデル", "description": "複数のAIプロバイダー" },
+    "freeForever": { "title": "永久無料", "description": "隠れたコストなし" },
+    "privateSecure": { "title": "プライベート＆安全", "description": "データはあなたのもの" }
+  },
+  "sidebar": {
+    "newTask": "新規タスク",
+    "newTaskDescription": "新しいAI自動化を開始",
+    "activity": "アクティビティ",
+    "taskHistory": "タスク履歴",
+    "taskHistoryDescription": "過去のタスクを確認し、中断した場所から再開",
+    "taskHistoryPopup": { "title": "最近のタスク", "description": "過去の会話を閲覧して続行できます。すべてのタスクは保存されるので、中断した場所から再開できます。" },
+    "swarmRuns": "スウォーム実行",
+    "swarmRunsDescription": "マルチエージェント並列ワークフローを監視",
+    "swarmRunsPopup": { "title": "マルチエージェントワークフロー", "description": "複数のマシンで並列にタスクを実行。各エージェントが独立して作業し、結果は自動的に集約されます。" },
+    "guide": "ガイド",
+    "guideDescription": "Coastyを最大限に活用する方法を学ぶ",
+    "guidePopup": { "title": "はじめに", "description": "効果的に自動化するためのステップバイステップガイドとベストプラクティス。" },
+    "infrastructure": "インフラストラクチャ",
+    "computer": "コンピュータ",
+    "computers": "コンピュータ",
+    "active": "アクティブ",
+    "view": "表示",
+    "workforce": "ワークフォース",
+    "workforceDescription": "自動化エージェントとトリガーをスケジュール",
+    "workforcePopup": { "title": "スケジュール自動化", "description": "cronスケジュールとエージェント間トリガーで繰り返しタスクを設定。ワークフォースはあなたが眠っている間も稼働します。" },
+    "credentials": "認証情報",
+    "credentialsDescription": "エージェントアクセス用のログインを安全に保存",
+    "credentialsPopup": { "title": "安全な認証情報ボールト", "description": "ログインとAPIキーを暗号化して保存。エージェントは生の値を公開せずに認証情報を自動入力します。" },
+    "desktopApp": {
+      "getDesktopApp": "デスクトップアプリを入手",
+      "download": "ダウンロード",
+      "downloadDesktopApp": "デスクトップアプリをダウンロード",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "コンピュータをリモート操作",
+      "controlDescription": "デスクトップアプリをインストールして、このダッシュボードからPCでタスクを実行 — いつでもどこでも。"
+    },
+    "credits": {
+      "runningLow": "クレジット — 残り少ない",
+      "remaining": "残りクレジット",
+      "buy": "購入",
+      "creditsLeft": "クレジット残高",
+      "usedLabel": "使用済み: {count}",
+      "consumed": "{percent}% 消費済み",
+      "usageThisWeek": "今週の使用量"
+    },
+    "talkToUs": "お問い合わせ",
+    "inviteEarn": "招待して稼ぐ",
+    "user": "ユーザー",
+    "account": "アカウント",
+    "tasks": "{count} タスク",
+    "recentActivity": "最近のアクティビティ",
+    "viewAllHistory": "すべての履歴を表示 →",
+    "swarmRunsCount": "{count} スウォーム実行",
+    "running": "実行中",
+    "completed": "完了",
+    "viewAllSwarms": "すべてのスウォームを表示 →",
+    "schedulesCount": "{count} スケジュール",
+    "totalRuns": "{count} 回の合計実行",
+    "paused": "一時停止",
+    "viewAllSchedules": "すべてのスケジュールを表示 →",
+    "credentialsCount": "{count} 認証情報",
+    "encryptedVault": "暗号化ボールト",
+    "manageCredentials": "認証情報を管理 →",
+    "days": ["月", "火", "水", "木", "金", "土", "日"],
+    "resume": "再開",
+    "result": "結果",
+    "notScheduled": "未スケジュール",
+    "overdue": "期限超過",
+    "lessThanMin": "< 1分",
+    "inMinutes": "{count}分後",
+    "inHours": "{count}時間後",
+    "today": "今日",
+    "yesterday": "昨日"
+  },
+  "appHeader": {
+    "login": "ログイン",
+    "assign": "割り当て",
+    "assignDescription": "このタスクを実行する担当者を割り当て",
+    "computer": "コンピュータ",
+    "showComputer": "コンピュータを表示",
+    "hideComputer": "コンピュータを非表示",
+    "employeeHired": "担当者が配置されました！",
+    "employeeRemoved": "担当者が解除されました"
+  },
+  "billing": {
+    "plans": {
+      "lite": { "name": "Lite", "description": "軽量な日常自動化" },
+      "starter": { "name": "Starter", "description": "毎日のタスクを自動化" },
+      "plus": { "name": "Plus", "description": "複雑なワークフローをスケール", "badge": "人気No.1" },
+      "pro": { "name": "Pro", "description": "無制限のヘビー自動化" }
+    },
+    "features": {
+      "vmDeleted": "VM 1台（非アクティブ時に削除）",
+      "vmAlwaysOn": "常時稼働VM {count}台",
+      "vmAlwaysOnPlural": "常時稼働VM {count}台",
+      "agentsParallel": "{count} エージェント並列",
+      "basicSearch": "基本検索",
+      "advancedSearch": "高度な検索と抽出",
+      "standardSupport": "標準サポート（実際の人間）",
+      "prioritySupport": "優先サポート、24時間以内に回答",
+      "premiumSupport": "プレミアムサポート、12時間以内に回答"
+    },
+    "creditPackages": {
+      "small": { "name": "スモールブースト", "description": "クイックチャージ" },
+      "medium": { "name": "ミディアムブースト", "description": "標準リフィル", "savings": "8%お得" },
+      "large": { "name": "ラージブースト", "description": "まとめ買い", "savings": "17%お得" }
+    },
+    "timeAgo": { "justNow": "たった今", "minutesAgo": "{count}分前", "hoursAgo": "{count}時間前", "daysAgo": "{count}日前" },
+    "noActivity": "この期間にアクティビティはありません",
+    "stats": {
+      "balance": "残高", "earned": "獲得", "used": "使用済み", "credits": "クレジット",
+      "allTime": "全期間", "lastRange": "過去{range}", "sessions": "{count} セッション",
+      "avgDaily": "~{count}/日 平均", "plan": "プラン", "free": "無料", "noPlan": "プランなし", "canceling": "キャンセル中"
+    },
+    "monthlyUsage": "月間クレジット使用量",
+    "remaining": "{used} / {total} 残り",
+    "usedPercent": "この期間で{percent}%使用",
+    "renews": "{date}に更新",
+    "choosePlan": "プランを選択",
+    "choosePlanDescription": "AI機能を解除して毎月のクレジットを受け取るにはサブスクリプションに加入",
+    "savingsVsHuman": "手動作業と比べて月{amount}節約",
+    "timeSaved": "月{time}節約",
+    "cheaper": "{multiplier} 安い",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/月",
+    "creditsPerMonth": "{count} クレジット/月",
+    "processing": "処理中...",
+    "subscribeTo": "{name}に登録",
+    "transactionTypes": {
+      "credit_purchase": "クレジット購入", "agent_usage": "エージェント使用", "refund": "返金",
+      "bonus": "ボーナス報酬", "subscription": "サブスクリプション", "subscription_grant": "サブスクリプション付与",
+      "renewal": "更新クレジット", "reactivation": "再有効化"
+    },
+    "toasts": {
+      "paymentSuccess": "お支払い完了！クレジットが追加されました。",
+      "subscriptionActivated": "サブスクリプションが正常に有効化されました！",
+      "paymentCanceled": "お支払いがキャンセルされました。課金は発生していません。",
+      "signInToSubscribe": "サブスクリプションに加入するにはログインしてください",
+      "subscriptionCheckoutFailed": "サブスクリプションのチェックアウトを開始できませんでした。もう一度お試しください。",
+      "signInToPurchase": "クレジットを購入するにはログインしてください",
+      "needSubscription": "追加クレジットを購入するにはアクティブなサブスクリプションが必要です",
+      "checkoutFailed": "チェックアウトを開始できませんでした。もう一度お試しください。",
+      "manageFailed": "サブスクリプション管理を開けませんでした。もう一度お試しください。",
+      "transactionsExported": "取引履歴がエクスポートされました"
+    }
+  },
+  "apiKeys": {
+    "title": "モデルプロバイダー",
+    "new": "新規",
+    "description": "独自のAPIキーを追加して、モデルへのアクセスを解除できます。",
+    "securityNote": "キーはエンドツーエンド暗号化で安全に保存されます。",
+    "apiKeyLabel": "{provider} APIキー",
+    "getApiKey": "APIキーを取得",
+    "delete": "削除",
+    "save": "保存",
+    "deleteDialog": {
+      "title": "APIキーを削除",
+      "description": "{provider}のAPIキーを削除してもよろしいですか？この操作は取り消せず、{provider}モデルへのアクセスを失います。",
+      "cancel": "キャンセル",
+      "confirm": "削除"
+    },
+    "toasts": {
+      "saved": "APIキーを保存しました",
+      "savedDescription": "{provider}のAPIキーが保存され、モデルがお気に入りに追加されました。",
+      "updatedDescription": "{provider}のAPIキーが更新されました。",
+      "saveFailed": "APIキーの保存に失敗しました",
+      "saveFailedDescription": "{provider}のAPIキーを保存できませんでした。もう一度お試しください。",
+      "deleted": "APIキーを削除しました",
+      "deletedDescription": "{provider}のAPIキーが削除されました。",
+      "deleteFailed": "APIキーの削除に失敗しました",
+      "deleteFailedDescription": "{provider}のAPIキーを削除できませんでした。もう一度お試しください。"
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "プロフィール詳細",
+    "displayName": "表示名",
+    "namePlaceholder": "お名前",
+    "company": "会社",
+    "companyPlaceholder": "会社名",
+    "website": "ウェブサイト",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "保存中...",
+    "saveChanges": "変更を保存",
+    "account": "アカウント",
+    "email": "メールアドレス",
+    "verified": "認証済み",
+    "signOut": "ログアウト",
+    "signOutDescription": "このデバイスからログアウト",
+    "toasts": {
+      "profileUpdated": "プロフィールが更新されました",
+      "profileUpdateFailed": "プロフィールの更新に失敗しました",
+      "signOutFailed": "ログアウトに失敗しました"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "データは保護されています",
+    "dataProtectedDescription": "保存時と転送時の暗号化によるエンタープライズグレードのセキュリティ",
+    "features": {
+      "encryption": { "title": "エンドツーエンド暗号化", "description": "APIキーはAES-256-GCMで暗号化。認証情報が平文で保存されることはありません。" },
+      "rls": { "title": "行レベルセキュリティ", "description": "データベースレベルの分離により、データにアクセスできるのはあなただけです。テナント間アクセスは不可能です。" },
+      "privacy": { "title": "プライバシー・バイ・デザイン", "description": "サービス提供に必要な最小限のデータのみを収集します。会話とファイルはあなたのものです。" },
+      "session": { "title": "セッションセキュリティ", "description": "CSRF保護、セキュアなHTTP-onlyクッキー、すべてのリクエストにContent Security Policyヘッダー。" }
+    },
+    "legal": "法的情報",
+    "privacyPolicy": { "title": "プライバシーポリシー", "description": "データの収集、使用、保護方法について" },
+    "termsOfService": { "title": "利用規約", "description": "サービス利用の条件" }
+  },
+  "layoutSettings": {
+    "layout": "レイアウト"
+  },
+  "suggestions": {
+    "summary": { "label": "要約", "highlight": "要約する" },
+    "code": { "label": "コード", "highlight": "構築" },
+    "research": { "label": "調査", "highlight": "分析" },
+    "create": { "label": "作成", "highlight": "生成" },
+    "solve": { "label": "解決", "highlight": "デバッグ" },
+    "learn": { "label": "学習", "highlight": "説明" }
+  },
+  "loadingMessages": [
+    "シリコン脳を起動中",
+    "デジタル意識を覚醒中",
+    "ニューラルパスを初期化中",
+    "量子コアを回転中",
+    "フラックスキャパシタを充電中",
+    "メインフレームを起動中",
+    "計算マトリックスに電源投入中",
+    "ワープドライブを起動中",
+    "シリコンスピリットを召喚中",
+    "電子エンジンを点火中",
+    "トランジスタをウォームアップ中",
+    "ビットとバイトを組み立て中",
+    "デジタルシナプスを調整中",
+    "CPUクリスタルにエネルギーを充填中",
+    "意識プロトコルを読み込み中",
+    "システムリソースを初期化中",
+    "計算環境を準備中",
+    "安全な接続を確立中",
+    "仮想リソースをプロビジョニング中",
+    "システムパラメータを設定中",
+    "仮想インスタンスを起動中",
+    "リモートデスクトップを有効化中",
+    "クラウドリソースをデプロイ中",
+    "システム起動シーケンスを開始中",
+    "実行環境を準備中",
+    "眠たいコンピュータを起こし中",
+    "デジタルの熊をつつき中",
+    "計算用コーヒーを淹れ中",
+    "デジタルの筋肉をストレッチ中",
+    "デジタルの目を開け中",
+    "起動中",
+    "電源投入中",
+    "オンラインになります",
+    "システム起動中",
+    "準備中",
+    "もうすぐです",
+    "ワークスペースを準備中",
+    "リソースを読み込み中",
+    "システム立ち上げ中"
+  ]
 }

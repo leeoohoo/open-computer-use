@@ -109,3 +109,4 @@ temp/
 # FastAPI specific
 instance/
 .webassets-cache
+app/services/cua_v2/*

@@ -585,5 +585,437 @@
       "title": "New here? We've got a guide for you",
       "subtitle": "Deploy your first AI agent in under a minute"
     }
-  }
+  },
+
+  "chatInput": {
+    "placeholder": "What should your AI worker do?",
+    "placeholderAlt": "Tell your AI what to do on the computer...",
+    "vmError": {
+      "title": "Virtual Machine Error",
+      "description": "The virtual machine is in an error state or is being deleted.",
+      "hint": "Please check the Machines tab to resolve the issue, or select \"No Computer Selected\" to use web search only.",
+      "gotIt": "Got it"
+    },
+    "status": {
+      "creating": "Creating {name}...",
+      "initiating": "Initiating agent on {name}...",
+      "stopping": "Stopping {name}...",
+      "preparing": "Preparing {name}..."
+    },
+    "swarm": {
+      "title": "Swarm Mode",
+      "pro": "PRO",
+      "upgradeLabel": "Swarm mode — upgrade to unlock",
+      "feature1": "Parallel execution across temporary machines",
+      "feature2": "Each machine runs autonomously",
+      "feature3": "3x your plan's machine limit per swarm",
+      "description": "Run one prompt across 3x your machine limit in parallel — each tackling the task independently.",
+      "enableLabel": "Enable swarm mode",
+      "disableLabel": "Disable swarm mode",
+      "onTooltip": "Swarm mode ON — your prompt will run on multiple machines in parallel",
+      "offTooltip": "Enable swarm mode to run your prompt across multiple machines simultaneously",
+      "decreaseMachines": "Decrease machine count",
+      "increaseMachines": "Increase machine count",
+      "machineLimit": "Up to {max} swarm machines on your plan. Need more? Contact founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Connect to desktop",
+      "screenLabel": "{name}'s screen",
+      "screenDefault": "Desktop",
+      "watchTooltip": "Watch your agent work on a separate screen. Just don't touch anything or it gets stage fright!"
+    },
+    "buttons": {
+      "stop": "Stop",
+      "sendToSwarm": "Send to swarm",
+      "taskRunning": "Another task is running — click to stop it and run yours",
+      "selectComputer": "Select a computer to send messages",
+      "waitCreating": "Please wait for VM to be created",
+      "waitStarting": "Please wait for VM to start",
+      "waitAgent": "Please wait for agent to initialize",
+      "vmStopping": "VM is stopping",
+      "send": "Send",
+      "switching": "Switching...",
+      "overrideRun": "Override & Run",
+      "stopLabel": "Stop running task and start this one",
+      "sendLabel": "Send message"
+    },
+    "search": "Search",
+    "upload": {
+      "label": "Upload files to VM",
+      "heading": "Upload files to VM",
+      "description": "Files will be saved to Desktop",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Drop files here",
+      "dropDescription": "Files will be uploaded to the VM's Desktop folder",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Login to try more features for free",
+      "description": "Create Projects, invite team members, and more.",
+      "connecting": "Connecting...",
+      "continueWithGoogle": "Continue with Google"
+    },
+    "removeFile": "Remove file"
+  },
+
+  "chat": {
+    "greeting": "Hello",
+    "greetingAuth": "I'll handle the computer work. What's the task?",
+    "greetingUnauth": "AI that works the computer so you don't have to. Just tell it what you need done.",
+    "guide": "Guide",
+    "saveLogins": "Save logins for auto-fill",
+    "encryptedNote": "encrypted, never seen by AI",
+    "roleLabels": ["Co-worker", "Employee", "Friend", "Assistant", "Partner", "Teammate", "Collaborator", "Helper"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Get a competitor report",
+        "warmLeads": "Generate 20 warm leads",
+        "pitchDeck": "Build a pitch deck draft"
+      },
+      "developer": {
+        "findBugs": "Find bugs on my site",
+        "performance": "Get a performance report",
+        "apiDocs": "Extract API documentation"
+      },
+      "marketer": {
+        "seoGap": "Get an SEO gap analysis",
+        "competitorAds": "Spy on competitor ads",
+        "trendingContent": "Get trending content ideas"
+      },
+      "product_manager": {
+        "reviewSummary": "Get a review summary",
+        "featureComparison": "Build a feature comparison",
+        "competitorLaunches": "Track competitor launches"
+      },
+      "data_analyst": {
+        "exportCsv": "Export site data to CSV",
+        "marketSizing": "Get a market sizing report",
+        "benchmark": "Benchmark against industry"
+      },
+      "operations": {
+        "enterRecords": "Enter records into our system",
+        "cheapestVendor": "Find the cheapest vendor",
+        "invoiceSummary": "Get an invoice summary"
+      },
+      "designer": {
+        "designComparison": "Get a design comparison",
+        "responsiveAudit": "Run a responsive audit",
+        "inspiration": "Collect design inspiration"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Export site data to CSV",
+      "browser_automation": "Export dashboard reports",
+      "data_entry": "Enter records into our app",
+      "email_outreach": "Send personalized outreach",
+      "testing": "Get a full QA report",
+      "ecommerce": "Get a pricing comparison",
+      "social_media": "Post and get engagement",
+      "general_automation": "Run a task on my site"
+    }
+  },
+
+  "chatMessages": {
+    "copyText": "Copy text",
+    "copied": "Copied!",
+    "regenerate": "Regenerate",
+    "feedback": {
+      "title": "Feedback",
+      "prompts": ["Rate this", "Feedback", "How'd we do?", "Thoughts?", "Share feedback"],
+      "tooltip": "Share your feedback"
+    }
+  },
+
+  "collaborativeFeatures": {
+    "smartSearch": { "title": "Smart Search", "description": "AI-powered search across the web" },
+    "collaborate": { "title": "Collaborate", "description": "Work together in real-time" },
+    "globalAccess": { "title": "Global Access", "description": "Search in 50+ languages" },
+    "aiModels": { "title": "AI Models", "description": "Multiple AI providers" },
+    "freeForever": { "title": "Free Forever", "description": "No hidden costs" },
+    "privateSecure": { "title": "Private & Secure", "description": "Your data stays yours" }
+  },
+
+  "sidebar": {
+    "newTask": "New Task",
+    "newTaskDescription": "Start a new AI automation",
+    "activity": "Activity",
+    "taskHistory": "Task History",
+    "taskHistoryDescription": "Review past tasks and resume where you left off",
+    "taskHistoryPopup": { "title": "Your recent tasks", "description": "Browse and continue past conversations. Every task is saved so you can resume right where you left off." },
+    "swarmRuns": "Swarm Runs",
+    "swarmRunsDescription": "Monitor multi-agent parallel workflows",
+    "swarmRunsPopup": { "title": "Multi-agent workflows", "description": "Run tasks across multiple machines in parallel. Each agent works independently and results converge automatically." },
+    "guide": "Guide",
+    "guideDescription": "Learn how to get the most from Coasty",
+    "guidePopup": { "title": "Getting started", "description": "Step-by-step walkthroughs and best practices to help you automate effectively." },
+    "infrastructure": "Infrastructure",
+    "computer": "Computer",
+    "computers": "Computers",
+    "active": "active",
+    "view": "View",
+    "workforce": "Workforce",
+    "workforceDescription": "Schedule automated agents and triggers",
+    "workforcePopup": { "title": "Scheduled automation", "description": "Set up recurring tasks with cron schedules and agent-to-agent triggers. Your workforce runs while you sleep." },
+    "credentials": "Credentials",
+    "credentialsDescription": "Securely store logins for agent access",
+    "credentialsPopup": { "title": "Secure credential vault", "description": "Store logins and API keys with encryption. Agents auto-fill credentials without exposing raw values." },
+    "desktopApp": {
+      "getDesktopApp": "Get Desktop App",
+      "download": "Download",
+      "downloadDesktopApp": "Download Desktop App",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Control your computer remotely",
+      "controlDescription": "Install the desktop app and run tasks on your PC from this dashboard — anywhere, anytime."
+    },
+    "credits": {
+      "runningLow": "Credits — Running low",
+      "remaining": "Credits remaining",
+      "buy": "Buy",
+      "creditsLeft": "credits left",
+      "usedLabel": "Used: {count}",
+      "consumed": "{percent}% consumed",
+      "usageThisWeek": "Usage this week"
+    },
+    "talkToUs": "Talk to us",
+    "inviteEarn": "Invite & Earn",
+    "user": "User",
+    "account": "Account",
+    "tasks": "{count} Tasks",
+    "recentActivity": "Recent activity",
+    "viewAllHistory": "View all history →",
+    "swarmRunsCount": "{count} Swarm Runs",
+    "running": "running",
+    "completed": "completed",
+    "viewAllSwarms": "View all swarms →",
+    "schedulesCount": "{count} Schedules",
+    "totalRuns": "{count} total runs",
+    "paused": "paused",
+    "viewAllSchedules": "View all schedules →",
+    "credentialsCount": "{count} Credentials",
+    "encryptedVault": "Encrypted vault",
+    "manageCredentials": "Manage credentials →",
+    "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    "resume": "RESUME",
+    "result": "RESULT",
+    "notScheduled": "Not scheduled",
+    "overdue": "Overdue",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "in {count}m",
+    "inHours": "in {count}h",
+    "today": "today",
+    "yesterday": "yesterday"
+  },
+
+  "appHeader": {
+    "login": "Login",
+    "assign": "Assign",
+    "assignDescription": "Assign an employee to run this task",
+    "computer": "Computer",
+    "showComputer": "Show Computer",
+    "hideComputer": "Hide Computer",
+    "employeeHired": "Employee hired!",
+    "employeeRemoved": "Employee removed"
+  },
+
+  "billing": {
+    "plans": {
+      "lite": { "name": "Lite", "description": "Light daily automation" },
+      "starter": { "name": "Starter", "description": "Automate tasks every day" },
+      "plus": { "name": "Plus", "description": "Scale complex workflows", "badge": "Most Popular" },
+      "pro": { "name": "Pro", "description": "Unlimited heavy automation" }
+    },
+    "features": {
+      "vmDeleted": "1 VM (deleted after inactivity)",
+      "vmAlwaysOn": "{count} always-on VM",
+      "vmAlwaysOnPlural": "{count} always-on VMs",
+      "agentsParallel": "{count} agents in parallel",
+      "basicSearch": "Basic search",
+      "advancedSearch": "Advanced search & extraction",
+      "standardSupport": "Standard support (real humans)",
+      "prioritySupport": "Priority support, 24hr response",
+      "premiumSupport": "Premium support, 12hr response"
+    },
+    "creditPackages": {
+      "small": { "name": "Small Boost", "description": "Quick top-up" },
+      "medium": { "name": "Medium Boost", "description": "Standard refill", "savings": "8% savings" },
+      "large": { "name": "Large Boost", "description": "Bulk purchase", "savings": "17% savings" }
+    },
+    "timeAgo": {
+      "justNow": "Just now",
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago",
+      "daysAgo": "{count}d ago"
+    },
+    "noActivity": "No activity in this period",
+    "stats": {
+      "balance": "Balance",
+      "earned": "Earned",
+      "used": "Used",
+      "credits": "credits",
+      "allTime": "all time",
+      "lastRange": "last {range}",
+      "sessions": "{count} sessions",
+      "avgDaily": "~{count}/day avg",
+      "plan": "Plan",
+      "free": "Free",
+      "noPlan": "No plan",
+      "canceling": "Canceling"
+    },
+    "monthlyUsage": "Monthly Credit Usage",
+    "remaining": "{used} / {total} remaining",
+    "usedPercent": "{percent}% used this period",
+    "renews": "Renews {date}",
+    "choosePlan": "Choose Your Plan",
+    "choosePlanDescription": "Subscribe to unlock AI features and get monthly credits",
+    "savingsVsHuman": "Save {amount}/mo vs human",
+    "timeSaved": "{time} saved monthly",
+    "cheaper": "{multiplier} cheaper",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/month",
+    "creditsPerMonth": "{count} credits /month",
+    "processing": "Processing...",
+    "subscribeTo": "Subscribe to {name}",
+    "transactionTypes": {
+      "credit_purchase": "Credit Purchase",
+      "agent_usage": "Agent Usage",
+      "refund": "Refund",
+      "bonus": "Bonus Reward",
+      "subscription": "Subscription",
+      "subscription_grant": "Subscription Grant",
+      "renewal": "Renewal Credits",
+      "reactivation": "Reactivation"
+    },
+    "toasts": {
+      "paymentSuccess": "Payment successful! Your credits have been added.",
+      "subscriptionActivated": "Subscription activated successfully!",
+      "paymentCanceled": "Payment was canceled. No charges were made.",
+      "signInToSubscribe": "Please sign in to subscribe",
+      "subscriptionCheckoutFailed": "Failed to start subscription checkout. Please try again.",
+      "signInToPurchase": "Please sign in to purchase credits",
+      "needSubscription": "You need an active subscription to purchase additional credits",
+      "checkoutFailed": "Failed to start checkout. Please try again.",
+      "manageFailed": "Failed to open subscription management. Please try again.",
+      "transactionsExported": "Transactions exported"
+    }
+  },
+
+  "apiKeys": {
+    "title": "Model Providers",
+    "new": "new",
+    "description": "Add your own API keys to unlock access to models.",
+    "securityNote": "Your keys are stored securely with end-to-end encryption.",
+    "apiKeyLabel": "{provider} API Key",
+    "getApiKey": "Get API key",
+    "delete": "Delete",
+    "save": "Save",
+    "deleteDialog": {
+      "title": "Delete API Key",
+      "description": "Are you sure you want to delete your {provider} API key? This action cannot be undone and you will lose access to {provider} models.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "toasts": {
+      "saved": "API key saved",
+      "savedDescription": "Your {provider} API key has been saved and models have been added to your favorites.",
+      "updatedDescription": "Your {provider} API key has been updated.",
+      "saveFailed": "Failed to save API key",
+      "saveFailedDescription": "Failed to save {provider} API key. Please try again.",
+      "deleted": "API key deleted",
+      "deletedDescription": "Your {provider} API key has been deleted.",
+      "deleteFailed": "Failed to delete API key",
+      "deleteFailedDescription": "Failed to delete {provider} API key. Please try again."
+    }
+  },
+
+  "accountSettings": {
+    "profileDetails": "Profile Details",
+    "displayName": "Display Name",
+    "namePlaceholder": "Your name",
+    "company": "Company",
+    "companyPlaceholder": "Your company",
+    "website": "Website",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Saving...",
+    "saveChanges": "Save changes",
+    "account": "Account",
+    "email": "Email",
+    "verified": "Verified",
+    "signOut": "Sign out",
+    "signOutDescription": "Log out of this device",
+    "toasts": {
+      "profileUpdated": "Profile updated",
+      "profileUpdateFailed": "Failed to update profile",
+      "signOutFailed": "Failed to sign out"
+    }
+  },
+
+  "privacySettings": {
+    "dataProtected": "Your data is protected",
+    "dataProtectedDescription": "Enterprise-grade security with encryption at rest and in transit",
+    "features": {
+      "encryption": { "title": "End-to-End Encryption", "description": "API keys encrypted with AES-256-GCM. Your credentials are never stored in plain text." },
+      "rls": { "title": "Row Level Security", "description": "Database-level isolation ensures your data is only accessible by you. No cross-tenant access possible." },
+      "privacy": { "title": "Privacy by Design", "description": "We collect minimal data necessary to provide the service. Your conversations and files stay yours." },
+      "session": { "title": "Session Security", "description": "CSRF protection, secure HTTP-only cookies, and Content Security Policy headers on every request." }
+    },
+    "legal": "Legal",
+    "privacyPolicy": { "title": "Privacy Policy", "description": "How we collect, use, and protect your data" },
+    "termsOfService": { "title": "Terms of Service", "description": "Our terms and conditions of use" }
+  },
+
+  "layoutSettings": {
+    "layout": "Layout"
+  },
+
+  "suggestions": {
+    "summary": { "label": "Summary", "highlight": "Summarize" },
+    "code": { "label": "Code", "highlight": "Build" },
+    "research": { "label": "Research", "highlight": "Analyze" },
+    "create": { "label": "Create", "highlight": "Generate" },
+    "solve": { "label": "Solve", "highlight": "Debug" },
+    "learn": { "label": "Learn", "highlight": "Explain" }
+  },
+
+  "loadingMessages": [
+    "Booting up the silicon brain",
+    "Awakening the digital consciousness",
+    "Initializing neural pathways",
+    "Spinning up the quantum cores",
+    "Charging the flux capacitor",
+    "Activating the mainframe",
+    "Powering the computational matrix",
+    "Engaging warp drive",
+    "Summoning the silicon spirits",
+    "Firing up the electron engine",
+    "Warming up the transistors",
+    "Assembling the bits and bytes",
+    "Calibrating the digital synapses",
+    "Energizing the CPU crystals",
+    "Loading the consciousness protocols",
+    "Initializing system resources",
+    "Preparing computational environment",
+    "Establishing secure connection",
+    "Provisioning virtual resources",
+    "Configuring system parameters",
+    "Launching virtual instance",
+    "Activating remote desktop",
+    "Deploying cloud resources",
+    "Initiating system startup sequence",
+    "Preparing execution environment",
+    "Waking up the sleepy computer",
+    "Poking the digital bear",
+    "Brewing some computational coffee",
+    "Stretching the digital muscles",
+    "Opening the digital eyes",
+    "Starting up",
+    "Powering on",
+    "Coming online",
+    "Booting system",
+    "Getting ready",
+    "Almost there",
+    "Preparing workspace",
+    "Loading resources",
+    "System rising"
+  ]
 }

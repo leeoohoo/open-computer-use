@@ -16,6 +16,7 @@ import { Building2, Globe, User, Check, Camera, Shield } from "lucide-react"
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
 const fadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 10 },
@@ -24,6 +25,7 @@ const fadeUp = (delay: number) => ({
 })
 
 export function CombinedAccount() {
+  const t = useTranslations("accountSettings")
   const { user, signOut, updateUser, isLoading } = useUser()
   const { resetChats } = useChats()
   const { resetMessages } = useMessages()
@@ -61,9 +63,9 @@ export function CombinedAccount() {
         website: website.trim() || null,
       } as any)
       setHasChanges(false)
-      toast({ title: "Profile updated", status: "success" })
+      toast({ title: t("toasts.profileUpdated"), status: "success" })
     } catch {
-      toast({ title: "Failed to update profile", status: "error" })
+      toast({ title: t("toasts.profileUpdateFailed"), status: "error" })
     } finally {
       setIsSaving(false)
     }
@@ -78,7 +80,7 @@ export function CombinedAccount() {
       router.push("/")
     } catch (e) {
       console.error("Sign out failed:", e)
-      toast({ title: "Failed to sign out", status: "error" })
+      toast({ title: t("toasts.signOutFailed"), status: "error" })
     }
   }
 
@@ -148,20 +150,20 @@ export function CombinedAccount() {
           <div className="h-6 w-6 rounded-md bg-foreground/[0.04] flex items-center justify-center">
             <User className="h-3 w-3 text-muted-foreground/50" />
           </div>
-          <h3 className="text-sm font-semibold">Profile Details</h3>
+          <h3 className="text-sm font-semibold">{t("profileDetails")}</h3>
         </div>
 
         <div className="rounded-xl border border-border/30 bg-card/20 p-5 space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="account-name" className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">
-              Display Name
+              {t("displayName")}
             </Label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/30" />
               <Input
                 id="account-name"
                 type="text"
-                placeholder="Your name"
+                placeholder={t("namePlaceholder")}
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 className="h-10 rounded-lg bg-background/50 pl-9 text-sm border-border/40 focus:border-primary/30 transition-colors"
@@ -172,14 +174,14 @@ export function CombinedAccount() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="account-company" className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">
-                Company
+                {t("company")}
               </Label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/30" />
                 <Input
                   id="account-company"
                   type="text"
-                  placeholder="Your company"
+                  placeholder={t("companyPlaceholder")}
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   className="h-10 rounded-lg bg-background/50 pl-9 text-sm border-border/40 focus:border-primary/30 transition-colors"
@@ -189,14 +191,14 @@ export function CombinedAccount() {
 
             <div className="space-y-1.5">
               <Label htmlFor="account-website" className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">
-                Website
+                {t("website")}
               </Label>
               <div className="relative">
                 <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/30" />
                 <Input
                   id="account-website"
                   type="text"
-                  placeholder="yoursite.com"
+                  placeholder={t("websitePlaceholder")}
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
                   className="h-10 rounded-lg bg-background/50 pl-9 text-sm border-border/40 focus:border-primary/30 transition-colors"
@@ -220,12 +222,12 @@ export function CombinedAccount() {
                 {isSaving ? (
                   <>
                     <Spinner className="h-3.5 w-3.5 animate-spin" />
-                    Saving...
+                    {t("saving")}
                   </>
                 ) : (
                   <>
                     <Check className="h-3.5 w-3.5" />
-                    Save changes
+                    {t("saveChanges")}
                   </>
                 )}
               </Button>
@@ -240,7 +242,7 @@ export function CombinedAccount() {
           <div className="h-6 w-6 rounded-md bg-foreground/[0.04] flex items-center justify-center">
             <Shield className="h-3 w-3 text-muted-foreground/50" />
           </div>
-          <h3 className="text-sm font-semibold">Account</h3>
+          <h3 className="text-sm font-semibold">{t("account")}</h3>
         </div>
 
         <div className="rounded-xl border border-border/30 bg-card/20 divide-y divide-border/20">
@@ -251,11 +253,11 @@ export function CombinedAccount() {
                 <Envelope className="h-3.5 w-3.5 text-muted-foreground/50" />
               </div>
               <div>
-                <p className="text-sm font-medium">Email</p>
+                <p className="text-sm font-medium">{t("email")}</p>
                 <p className="text-xs text-muted-foreground/50">{user?.email}</p>
               </div>
             </div>
-            <span className="text-[10px] font-medium text-muted-foreground/30 uppercase tracking-wider">Verified</span>
+            <span className="text-[10px] font-medium text-muted-foreground/30 uppercase tracking-wider">{t("verified")}</span>
           </div>
 
           {/* Sign out row */}
@@ -265,8 +267,8 @@ export function CombinedAccount() {
                 <SignOut className="h-3.5 w-3.5 text-rose-500/70" />
               </div>
               <div>
-                <p className="text-sm font-medium">Sign out</p>
-                <p className="text-xs text-muted-foreground/50">Log out of this device</p>
+                <p className="text-sm font-medium">{t("signOut")}</p>
+                <p className="text-xs text-muted-foreground/50">{t("signOutDescription")}</p>
               </div>
             </div>
             <Button
@@ -275,7 +277,7 @@ export function CombinedAccount() {
               className="rounded-lg text-xs hover:bg-rose-500/5 hover:text-rose-600 hover:border-rose-500/20 transition-colors"
               onClick={handleSignOut}
             >
-              Sign out
+              {t("signOut")}
             </Button>
           </div>
         </div>

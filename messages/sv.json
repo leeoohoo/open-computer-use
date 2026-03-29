@@ -423,145 +423,145 @@
     "label": "Sprak"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Du satter malet.",
+    "brandSubheading": "Vi skoter resten.",
+    "mobileHeading": "Du satter malet. Vi skoter resten.",
+    "mobileSubheading": "AI-agenter som surfar, klickar och arbetar som en riktig teammedlem.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Du beskriver uppgiften",
+        "sub": "\"Undersok vara 5 storsta konkurrenter\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Agenten tar over",
+        "sub": "Surfar, klickar, skriver autonomt"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Arbetet levererat",
+        "sub": "Kalkylblad med 5 fullstandiga konkurrentprofiler"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Klart",
+    "doneIn": "Klart pa 8 minuter",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Din operator star redo",
+      "signUp": "Satt dina arbetsfloden pa autopilot",
+      "magicLink": "Skippa losenordet",
+      "forgotPassword": "Vi hjalper dig tillbaka"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Fortsatt dar du slutade — dina agenter minns",
+      "signUp": "Distribuera din forsta AI-agent pa under en minut",
+      "magicLink": "Ett klick fran din inkorg och du ar inne",
+      "forgotPassword": "Vi skickar en aterstallningslankar till din e-post"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Ansluter...",
+      "continueWithGoogle": "Fortsatt med Google"
     },
-    "or": "or",
-    "email": "Email",
+    "or": "eller",
+    "email": "E-post",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "Losenord",
+    "passwordPlaceholder": "Ditt losenord",
+    "confirmPassword": "Bekrafta losenord",
+    "confirmPasswordPlaceholder": "Bekrafta ditt losenord",
+    "minChars": "Minst 6 tecken",
+    "signingIn": "Loggar in...",
+    "signIn": "Logga in",
+    "creatingAccount": "Skapar konto...",
+    "createAccount": "Skapa konto",
+    "sending": "Skickar...",
+    "sendMagicLink": "Skicka magisk lank",
+    "sendResetLink": "Skicka aterstallningslank",
+    "forgotPassword": "Glomt losenord?",
+    "useMagicLink": "Anvand magisk lank",
+    "dontHaveAccount": "Har du inget konto?",
+    "signUp": "Registrera dig",
+    "alreadyHaveAccount": "Har du redan ett konto?",
+    "backToSignIn": "Tillbaka till inloggning",
+    "termsAgreement": "Genom att fortsatta godkanner du vara",
+    "terms": "Villkor",
+    "and": "och",
+    "privacyPolicy": "Integritetspolicy",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Vanligenyll i alla falt",
+      "passwordMinLength": "Losenordet maste vara minst 6 tecken",
+      "passwordsDoNotMatch": "Losenorden matchar inte",
+      "supabaseNotConfigured": "Supabase ar inte konfigurerat",
+      "unexpectedError": "Ett ovantade fel uppstod. Forsok igen.",
+      "confirmEmail": "Bekrafta din e-post innan du loggar in. Kolla din inkorg.",
+      "invalidCredentials": "Ogiltig e-post eller losenord.",
+      "signInFailed": "Inloggningen misslyckades. Forsok igen.",
+      "invalidEmail": "Ogiltig e-postadress.",
+      "emailAlreadyExists": "Ett konto med denna e-post finns redan. Forsok logga in istallet.",
+      "signUpFailed": "Registreringen misslyckades. Forsok igen.",
+      "enterEmail": "Ange din e-post",
+      "noAccountFound": "Inget konto hittat med denna e-post. Registrera dig forst.",
+      "magicLinkFailed": "Kunde inte skicka magisk lank. Forsok igen.",
+      "resetFailed": "Kunde inte skicka aterstallningsmail. Forsok igen.",
+      "updateFailed": "Kunde inte uppdatera losenordet. Forsok igen."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Kolla din e-post for att bekrafta ditt konto innan du loggar in.",
+      "checkEmailMagicLink": "Kolla din e-post efter den magiska lanken for att logga in.",
+      "checkEmailReset": "Kolla din e-post efter aterstallningslanken.",
+      "passwordUpdated": "Losenordet uppdaterat. Omdirigerar till inloggning..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Aterstall ditt losenord",
+      "subtitle": "Ange ditt nya losenord nedan.",
+      "newPassword": "Nytt losenord",
+      "confirmNewPassword": "Bekrafta nytt losenord",
+      "confirmPlaceholder": "Bekrafta ditt nya losenord",
+      "updating": "Uppdaterar...",
+      "updatePassword": "Uppdatera losenord"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Autentiseringsfel",
+      "defaultMessage": "Ett fel uppstod under autentiseringen.",
+      "tryAgain": "Forsok igen",
+      "backToChat": "Tillbaka till chatt",
+      "needHelp": "Behover du hjalp?",
+      "contactSupport": "Kontakta support"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Hoppa over for nu",
+    "back": "Tillbaka",
+    "continue": "Fortsatt",
+    "getStarted": "Kom igang",
+    "settingUp": "Konfigurera...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Valkommen tillbaka{name}!",
+      "titleNew": "Valkommen till Coasty",
+      "descriptionReturning": "Vi vill garna lara oss lite mer om dig for att forbattra din upplevelse",
+      "descriptionNew": "Lat oss konfigurera ditt konto sa vi kan anpassa din upplevelse"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Vad ska vi kalla dig?",
+    "namePlaceholder": "Ditt namn",
+    "companyLabel": "Foretag",
+    "optional": "(valfritt)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "Webbplats",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Vad beskriver dig bast?",
+      "subtitle": "Valj alla som stammer — detta hjalper oss anpassa din upplevelse"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
-      "marketer": "Marketer",
+      "founder": "Grundare / VD",
+      "developer": "Utvecklare",
+      "marketer": "Marknadsorare",
       "designer": "Designer",
-      "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "product_manager": "Produktchef",
+      "data_analyst": "Data / Analys",
+      "operations": "Drift",
+      "other": "Ovrigt"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Teamstorlek",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Bara jag",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,585 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Hur hittade du oss?",
+      "subtitle": "Vi vill garna veta var du horde talas om Coasty"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
-      "google": "Google Search",
+      "google": "Google-sok",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Van / Kollega",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Ovrigt"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Vad vill du automatisera forst?",
+      "subtitle": "Valj alla som stammer — du kan utforska allt senare"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Webbskrapning & Research",
+      "browser_automation": "Webbautomatisering",
+      "data_entry": "Datainmatning & Formular",
+      "email_outreach": "E-post & Utskick",
+      "testing": "QA & Testning",
+      "ecommerce": "E-handelsuppgifter",
+      "social_media": "Sociala medier-hantering",
+      "general_automation": "Allman automatisering"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Allt du behover,",
+      "titleHighlight": "inbyggt.",
+      "subtitle": "Har ar vad Coasty kan gora for dig",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Ingen kod",
+        "description": "Beskriv bara vad du vill pa vanlig svenska"
       },
       "agentSwarms": {
-        "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "title": "Agentsvarm",
+        "description": "Parallella agentflottor"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Skrivbordskontroll",
+        "description": "Klickar, skriver, navigerar"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Webbautomatisering",
+        "description": "Formular, flikar, skrapning — helt automatiserat"
       },
       "computerVision": {
-        "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "title": "Datorseende",
+        "description": "Ser och forstar din skarm i realtid"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Arbetsfloden",
+        "description": "Flerstegsfloden"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Pa enheten",
+        "description": "Kors lokalt"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "24/7 Autonom",
+        "description": "Stall in och glom — kors medan du sover"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Ny har? Vi har en guide at dig",
+      "subtitle": "Distribuera din forsta AI-agent pa under en minut"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Vad ska din AI-arbetare gora?",
+    "placeholderAlt": "Berattta for din AI vad den ska gora pa datorn...",
+    "vmError": {
+      "title": "Fel pa virtuell maskin",
+      "description": "Den virtuella maskinen ar i felstatus eller haller pa att raderas.",
+      "hint": "Kontrollera fliken Maskiner for att losa problemet, eller valj \"Ingen dator vald\" for att bara anvanda webbsokning.",
+      "gotIt": "Uppfattat"
+    },
+    "status": {
+      "creating": "Skapar {name}...",
+      "initiating": "Startar agent pa {name}...",
+      "stopping": "Stoppar {name}...",
+      "preparing": "Forbereder {name}..."
+    },
+    "swarm": {
+      "title": "Svarmlage",
+      "pro": "PRO",
+      "upgradeLabel": "Svarmlage — uppgradera for att lasa upp",
+      "feature1": "Parallell korning over tillfalliga maskiner",
+      "feature2": "Varje maskin kor autonomt",
+      "feature3": "3x din plans maskingrns per svarm",
+      "description": "Kor en prompt over 3x din maskingrans parallellt — var och en tacklar uppgiften sjalvstandigt.",
+      "enableLabel": "Aktivera svarmlage",
+      "disableLabel": "Inaktivera svarmlage",
+      "onTooltip": "Svarmlage PA — din prompt kors pa flera maskiner parallellt",
+      "offTooltip": "Aktivera svarmlage for att kora din prompt pa flera maskiner samtidigt",
+      "decreaseMachines": "Minska antal maskiner",
+      "increaseMachines": "Oka antal maskiner",
+      "machineLimit": "Upp till {max} svarmmaskiner pa din plan. Behover mer? Kontakta founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Anslut till skrivbord",
+      "screenLabel": "{name}s skarm",
+      "screenDefault": "Skrivbord",
+      "watchTooltip": "Se din agent arbeta pa en separat skarm. Ror bara inget — den far scenradsla!"
+    },
+    "buttons": {
+      "stop": "Stoppa",
+      "sendToSwarm": "Skicka till svarm",
+      "taskRunning": "En annan uppgift kors — klicka for att stoppa den och kora din",
+      "selectComputer": "Valj en dator for att skicka meddelanden",
+      "waitCreating": "Vanligen vanta medan VM skapas",
+      "waitStarting": "Vanligen vanta medan VM startar",
+      "waitAgent": "Vanligen vanta medan agenten initieras",
+      "vmStopping": "VM stoppas",
+      "send": "Skicka",
+      "switching": "Vaxlar...",
+      "overrideRun": "Overstyra & kora",
+      "stopLabel": "Stoppa korande uppgift och starta denna",
+      "sendLabel": "Skicka meddelande"
+    },
+    "search": "Sok",
+    "upload": {
+      "label": "Ladda upp filer till VM",
+      "heading": "Ladda upp filer till VM",
+      "description": "Filer sparas pa skrivbordet",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Slapp filer har",
+      "dropDescription": "Filer laddas upp till VM:ens skrivbordsmapp",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Logga in for att prova fler funktioner gratis",
+      "description": "Skapa projekt, bjud in teammedlemmar och mer.",
+      "connecting": "Ansluter...",
+      "continueWithGoogle": "Fortsatt med Google"
+    },
+    "removeFile": "Ta bort fil"
+  },
+  "chat": {
+    "greeting": "Hej",
+    "greetingAuth": "Jag tar hand om datorarbetet. Vad ar uppgiften?",
+    "greetingUnauth": "AI som skoter datorn sa du slipper. Beratta bara vad du behover.",
+    "guide": "Guide",
+    "saveLogins": "Spara inloggningar for automatisk ifyllnad",
+    "encryptedNote": "krypterat, aldrig sett av AI",
+    "roleLabels": ["Medarbetare", "Anstalld", "Van", "Assistent", "Partner", "Lagkamrat", "Samarbetspartner", "Hjalpare"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Hamta en konkurrentrapport",
+        "warmLeads": "Generera 20 varma leads",
+        "pitchDeck": "Bygg ett pitchdeck-utkast"
+      },
+      "developer": {
+        "findBugs": "Hitta buggar pa min sajt",
+        "performance": "Hamta en prestandarapport",
+        "apiDocs": "Extrahera API-dokumentation"
+      },
+      "marketer": {
+        "seoGap": "Hamta en SEO-gapanalys",
+        "competitorAds": "Spionera pa konkurrentannonser",
+        "trendingContent": "Hamta trendande innehallsideer"
+      },
+      "product_manager": {
+        "reviewSummary": "Hamta en recensionssammanfattning",
+        "featureComparison": "Bygg en funktionsjamforelse",
+        "competitorLaunches": "Spara konkurrentlanseringar"
+      },
+      "data_analyst": {
+        "exportCsv": "Exportera sajtdata till CSV",
+        "marketSizing": "Hamta en marknadstorleksrapport",
+        "benchmark": "Jamfor mot branschen"
+      },
+      "operations": {
+        "enterRecords": "Mata in poster i vart system",
+        "cheapestVendor": "Hitta billigaste leverantoren",
+        "invoiceSummary": "Hamta en fakturasammanfattning"
+      },
+      "designer": {
+        "designComparison": "Hamta en designjamforelse",
+        "responsiveAudit": "Kor en responsiv granskning",
+        "inspiration": "Samla designinspiration"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Exportera sajtdata till CSV",
+      "browser_automation": "Exportera instrumentpanelrapporter",
+      "data_entry": "Mata in poster i var app",
+      "email_outreach": "Skicka personliga utskick",
+      "testing": "Hamta en fullstandig QA-rapport",
+      "ecommerce": "Hamta en prisjamforelse",
+      "social_media": "Publicera och fa engagemang",
+      "general_automation": "Kor en uppgift pa min sajt"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Kopiera text",
+    "copied": "Kopierat!",
+    "regenerate": "Regenerera",
+    "feedback": {
+      "title": "Feedback",
+      "prompts": ["Betygsatt detta", "Feedback", "Hur gick det?", "Tankar?", "Dela feedback"],
+      "tooltip": "Dela din feedback"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Smart sokning",
+      "description": "AI-driven sokning over webben"
+    },
+    "collaborate": {
+      "title": "Samarbeta",
+      "description": "Arbeta tillsammans i realtid"
+    },
+    "globalAccess": {
+      "title": "Global atkomst",
+      "description": "Sok pa 50+ sprak"
+    },
+    "aiModels": {
+      "title": "AI-modeller",
+      "description": "Flera AI-leverantorer"
+    },
+    "freeForever": {
+      "title": "Gratis for alltid",
+      "description": "Inga dolda kostnader"
+    },
+    "privateSecure": {
+      "title": "Privat och sakert",
+      "description": "Din data forblir din"
+    }
+  },
+  "sidebar": {
+    "newTask": "Ny uppgift",
+    "newTaskDescription": "Starta en ny AI-automatisering",
+    "activity": "Aktivitet",
+    "taskHistory": "Uppgiftshistorik",
+    "taskHistoryDescription": "Granska tidigare uppgifter och fortsatt dar du slutade",
+    "taskHistoryPopup": {
+      "title": "Dina senaste uppgifter",
+      "description": "Bladdra och fortsatt tidigare konversationer. Varje uppgift sparas sa du kan aterupptas dar du slutade."
+    },
+    "swarmRuns": "Svarmkorningar",
+    "swarmRunsDescription": "Overvaka multi-agent parallella arbetsfloden",
+    "swarmRunsPopup": {
+      "title": "Multi-agent arbetsfloden",
+      "description": "Kor uppgifter over flera maskiner parallellt. Varje agent arbetar sjalvstandigt och resultaten konvergerar automatiskt."
+    },
+    "guide": "Guide",
+    "guideDescription": "Lar dig hur du far ut mest av Coasty",
+    "guidePopup": {
+      "title": "Komma igang",
+      "description": "Steg-for-steg-genomgangar och basta praxis for att hjalpa dig automatisera effektivt."
+    },
+    "infrastructure": "Infrastruktur",
+    "computer": "Dator",
+    "computers": "Datorer",
+    "active": "aktiv",
+    "view": "Visa",
+    "workforce": "Arbetsstyrka",
+    "workforceDescription": "Schemalag automatiserade agenter och triggers",
+    "workforcePopup": {
+      "title": "Schemalad automatisering",
+      "description": "Konfigurera aterkommande uppgifter med cron-scheman och agent-till-agent-triggers. Din arbetsstyrka kor medan du sover."
+    },
+    "credentials": "Inloggningsuppgifter",
+    "credentialsDescription": "Lagra inloggningar sakert for agentatkomst",
+    "credentialsPopup": {
+      "title": "Sakert valv for inloggningsuppgifter",
+      "description": "Lagra inloggningar och API-nycklar med kryptering. Agenter fyller i automatiskt utan att exponera radata."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Hamta skrivbordsappen",
+      "download": "Ladda ner",
+      "downloadDesktopApp": "Ladda ner skrivbordsappen",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Styr din dator pa distans",
+      "controlDescription": "Installera skrivbordsappen och kor uppgifter pa din PC fran denna instrumentpanel — var som helst, nar som helst."
+    },
+    "credits": {
+      "runningLow": "Krediter — Boja ta slut",
+      "remaining": "Krediter kvar",
+      "buy": "Kop",
+      "creditsLeft": "krediter kvar",
+      "usedLabel": "Anvant: {count}",
+      "consumed": "{percent}% forbrukat",
+      "usageThisWeek": "Anvandning denna vecka"
+    },
+    "talkToUs": "Prata med oss",
+    "inviteEarn": "Bjud in & tjana",
+    "user": "Anvandare",
+    "account": "Konto",
+    "tasks": "{count} uppgifter",
+    "recentActivity": "Senaste aktivitet",
+    "viewAllHistory": "Visa all historik →",
+    "swarmRunsCount": "{count} svarmkorningar",
+    "running": "kor",
+    "completed": "slutford",
+    "viewAllSwarms": "Visa alla svarmar →",
+    "schedulesCount": "{count} scheman",
+    "totalRuns": "{count} totala korningar",
+    "paused": "pausad",
+    "viewAllSchedules": "Visa alla scheman →",
+    "credentialsCount": "{count} inloggningsuppgifter",
+    "encryptedVault": "Krypterat valv",
+    "manageCredentials": "Hantera inloggningsuppgifter →",
+    "days": ["Man", "Tis", "Ons", "Tor", "Fre", "Lor", "Son"],
+    "resume": "ATERUPPTAS",
+    "result": "RESULTAT",
+    "notScheduled": "Ej schemalat",
+    "overdue": "Forsenat",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "om {count}m",
+    "inHours": "om {count}h",
+    "today": "idag",
+    "yesterday": "igar"
+  },
+  "appHeader": {
+    "login": "Logga in",
+    "assign": "Tilldela",
+    "assignDescription": "Tilldela en anstalld att kora denna uppgift",
+    "computer": "Dator",
+    "showComputer": "Visa dator",
+    "hideComputer": "Dolj dator",
+    "employeeHired": "Anstalld anstalldes!",
+    "employeeRemoved": "Anstalld borttagen"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Latt daglig automatisering"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Automatisera uppgifter varje dag"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Skala komplexa arbetsfloden",
+        "badge": "Mest popular"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Obegransad tung automatisering"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (raderas efter inaktivitet)",
+      "vmAlwaysOn": "{count} alltid-pa VM",
+      "vmAlwaysOnPlural": "{count} alltid-pa VM:ar",
+      "agentsParallel": "{count} agenter parallellt",
+      "basicSearch": "Grundlaggande sokning",
+      "advancedSearch": "Avancerad sokning & extraktion",
+      "standardSupport": "Standardsupport (riktiga manniskor)",
+      "prioritySupport": "Prioriterad support, 24h svar",
+      "premiumSupport": "Premiumsupport, 12h svar"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Liten boost",
+        "description": "Snabb pafyllning"
+      },
+      "medium": {
+        "name": "Medelstor boost",
+        "description": "Standardpafyllning",
+        "savings": "8% besparing"
+      },
+      "large": {
+        "name": "Stor boost",
+        "description": "Bulkkop",
+        "savings": "17% besparing"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Just nu",
+      "minutesAgo": "{count}m sedan",
+      "hoursAgo": "{count}h sedan",
+      "daysAgo": "{count}d sedan"
+    },
+    "noActivity": "Ingen aktivitet under denna period",
+    "stats": {
+      "balance": "Saldo",
+      "earned": "Intjanat",
+      "used": "Anvant",
+      "credits": "krediter",
+      "allTime": "totalt",
+      "lastRange": "senaste {range}",
+      "sessions": "{count} sessioner",
+      "avgDaily": "~{count}/dag snitt",
+      "plan": "Plan",
+      "free": "Gratis",
+      "noPlan": "Ingen plan",
+      "canceling": "Avslutar"
+    },
+    "monthlyUsage": "Manatlig kreditanvandning",
+    "remaining": "{used} / {total} kvar",
+    "usedPercent": "{percent}% anvant denna period",
+    "renews": "Fornya {date}",
+    "choosePlan": "Valj din plan",
+    "choosePlanDescription": "Prenumerera for att lasa upp AI-funktioner och fa manatliga krediter",
+    "savingsVsHuman": "Spara {amount}/man mot manniska",
+    "timeSaved": "{time} sparad manatligen",
+    "cheaper": "{multiplier} billigare",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/manad",
+    "creditsPerMonth": "{count} krediter /manad",
+    "processing": "Bearbetar...",
+    "subscribeTo": "Prenumerera pa {name}",
+    "transactionTypes": {
+      "credit_purchase": "Kreditkop",
+      "agent_usage": "Agentanvandning",
+      "refund": "Aterbetalning",
+      "bonus": "Bonusbeloning",
+      "subscription": "Prenumeration",
+      "subscription_grant": "Prenumerationstilldeln.",
+      "renewal": "Fornyelsekrediter",
+      "reactivation": "Ateraktivering"
+    },
+    "toasts": {
+      "paymentSuccess": "Betalning lyckades! Dina krediter har lagts till.",
+      "subscriptionActivated": "Prenumeration aktiverad!",
+      "paymentCanceled": "Betalningen avbrots. Inga debiteringar gjordes.",
+      "signInToSubscribe": "Logga in for att prenumerera",
+      "subscriptionCheckoutFailed": "Kunde inte starta prenumerationsutcheckningen. Forsok igen.",
+      "signInToPurchase": "Logga in for att kopa krediter",
+      "needSubscription": "Du behover en aktiv prenumeration for att kopa ytterligare krediter",
+      "checkoutFailed": "Kunde inte starta utcheckningen. Forsok igen.",
+      "manageFailed": "Kunde inte oppna prenumerationshantering. Forsok igen.",
+      "transactionsExported": "Transaktioner exporterade"
+    }
+  },
+  "apiKeys": {
+    "title": "Modellleverantorer",
+    "new": "ny",
+    "description": "Lagg till dina egna API-nycklar for att lasa upp atkomst till modeller.",
+    "securityNote": "Dina nycklar lagras sakert med end-to-end-kryptering.",
+    "apiKeyLabel": "{provider} API-nyckel",
+    "getApiKey": "Hamta API-nyckel",
+    "delete": "Radera",
+    "save": "Spara",
+    "deleteDialog": {
+      "title": "Radera API-nyckel",
+      "description": "Ar du saker pa att du vill radera din {provider} API-nyckel? Denna atgard kan inte angras och du forlorar atkomst till {provider}-modeller.",
+      "cancel": "Avbryt",
+      "confirm": "Radera"
+    },
+    "toasts": {
+      "saved": "API-nyckel sparad",
+      "savedDescription": "Din {provider} API-nyckel har sparats och modeller har lagts till i dina favoriter.",
+      "updatedDescription": "Din {provider} API-nyckel har uppdaterats.",
+      "saveFailed": "Kunde inte spara API-nyckel",
+      "saveFailedDescription": "Kunde inte spara {provider} API-nyckel. Forsok igen.",
+      "deleted": "API-nyckel raderad",
+      "deletedDescription": "Din {provider} API-nyckel har raderats.",
+      "deleteFailed": "Kunde inte radera API-nyckel",
+      "deleteFailedDescription": "Kunde inte radera {provider} API-nyckel. Forsok igen."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Profildetaljer",
+    "displayName": "Visningsnamn",
+    "namePlaceholder": "Ditt namn",
+    "company": "Foretag",
+    "companyPlaceholder": "Ditt foretag",
+    "website": "Webbplats",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Sparar...",
+    "saveChanges": "Spara andringar",
+    "account": "Konto",
+    "email": "E-post",
+    "verified": "Verifierad",
+    "signOut": "Logga ut",
+    "signOutDescription": "Logga ut fran denna enhet",
+    "toasts": {
+      "profileUpdated": "Profil uppdaterad",
+      "profileUpdateFailed": "Kunde inte uppdatera profil",
+      "signOutFailed": "Kunde inte logga ut"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Din data ar skyddad",
+    "dataProtectedDescription": "Foretagssakerhet med kryptering i vila och under overforning",
+    "features": {
+      "encryption": {
+        "title": "End-to-end-kryptering",
+        "description": "API-nycklar krypterade med AES-256-GCM. Dina inloggningsuppgifter lagras aldrig i klartext."
+      },
+      "rls": {
+        "title": "Radnivasakerhet",
+        "description": "Isolering pa databasniva sakertstaller att din data bara ar tillganglig for dig. Ingen korsklientsatkomst mojlig."
+      },
+      "privacy": {
+        "title": "Integritet genom design",
+        "description": "Vi samlar in minimal data som kravs for att tillhandahalla tjansten. Dina konversationer och filer forblir dina."
+      },
+      "session": {
+        "title": "Sessionssakerhet",
+        "description": "CSRF-skydd, sakra HTTP-only cookies och Content Security Policy-headers pa varje forfragan."
+      }
+    },
+    "legal": "Juridiskt",
+    "privacyPolicy": {
+      "title": "Integritetspolicy",
+      "description": "Hur vi samlar in, anvander och skyddar din data"
+    },
+    "termsOfService": {
+      "title": "Anvandarvillkor",
+      "description": "Vara villkor for anvandning"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Layout"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Sammanfattning",
+      "highlight": "Sammanfatta"
+    },
+    "code": {
+      "label": "Kod",
+      "highlight": "Bygg"
+    },
+    "research": {
+      "label": "Forskning",
+      "highlight": "Analysera"
+    },
+    "create": {
+      "label": "Skapa",
+      "highlight": "Generera"
+    },
+    "solve": {
+      "label": "Los",
+      "highlight": "Felsok"
+    },
+    "learn": {
+      "label": "Lar dig",
+      "highlight": "Forklara"
+    }
+  },
+  "loadingMessages": [
+    "Startar upp kiselhjarna",
+    "Vackerden digitala medvetandet",
+    "Initierar neurala banor",
+    "Snurrar upp kvantkarorna",
+    "Laddar fluxkondensatorn",
+    "Aktiverar stordatorn",
+    "Driver berakningsmatrisen",
+    "Kopplar in warp-driften",
+    "Frammanar kiselandan",
+    "Tandar elektronmotorn",
+    "Varmer upp transistorerna",
+    "Satter ihop bitar och bytes",
+    "Kalibrerar de digitala synapserna",
+    "Laddar CPU-kristallerna",
+    "Laddar medvetandeprotokollen",
+    "Initierar systemresurser",
+    "Forbereder berakningsmiljo",
+    "Uppratter saker anslutning",
+    "Tillhandahaller virtuella resurser",
+    "Konfigurerar systemparametrar",
+    "Startar virtuell instans",
+    "Aktiverar fjarrskrivbord",
+    "Driftsatter molnresurser",
+    "Paborjar systemstartsekvens",
+    "Forbereder koringsmiljon",
+    "Vackerden somniga datorn",
+    "Petar pa den digitala bjornen",
+    "Brygger lite berakningskaffe",
+    "Strackerpa de digitala musklerna",
+    "Oppnar de digitala ogonen",
+    "Startar upp",
+    "Slar pa",
+    "Kommer online",
+    "Startar systemet",
+    "Gor sig redo",
+    "Nastan dar",
+    "Forbereder arbetsyta",
+    "Laddar resurser",
+    "Systemet reser sig"
+  ]
 }

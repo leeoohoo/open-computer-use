@@ -8,6 +8,7 @@ import { useUserPreferences } from "@/lib/user-preference-store/provider"
 import { cn } from "@/lib/utils"
 import type { Message as MessageAISDK } from "@ai-sdk/react"
 import { useMemo } from "react"
+import { useTranslations } from "next-intl"
 import { ArrowClockwise, Check, Copy } from "@phosphor-icons/react"
 import { getSources } from "./get-sources"
 import { Reasoning } from "./reasoning"
@@ -57,6 +58,7 @@ export function MessageAssistant({
   contentSize,
 }: MessageAssistantProps) {
   const { preferences } = useUserPreferences()
+  const t = useTranslations("chatMessages")
   const sources = getSources(parts)
   const { isOpen: isNavigatorOpen, width: navigatorWidth } = useProjectNavigator()
   const { chatId } = useChatSession()
@@ -174,12 +176,12 @@ export function MessageAssistant({
             )}
           >
             <MessageAction
-              tooltip={copied ? "Copied!" : "Copy text"}
+              tooltip={copied ? t("copied") : t("copyText")}
               side="bottom"
             >
               <button
                 className="hover:bg-accent/60 text-muted-foreground hover:text-foreground flex size-7.5 items-center justify-center rounded-full bg-transparent transition"
-                aria-label="Copy text"
+                aria-label={t("copyText")}
                 onClick={copyToClipboard}
                 type="button"
               >
@@ -192,13 +194,13 @@ export function MessageAssistant({
             </MessageAction>
             {isLast ? (
               <MessageAction
-                tooltip="Regenerate"
+                tooltip={t("regenerate")}
                 side="bottom"
                 delayDuration={0}
               >
                 <button
                   className="hover:bg-accent/60 text-muted-foreground hover:text-foreground flex size-7.5 items-center justify-center rounded-full bg-transparent transition"
-                  aria-label="Regenerate"
+                  aria-label={t("regenerate")}
                   onClick={onReload}
                   type="button"
                 >

@@ -423,145 +423,145 @@
     "label": "Мова"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Ви ставите мету.",
+    "brandSubheading": "Ми робимо решту.",
+    "mobileHeading": "Ви ставите мету. Ми робимо решту.",
+    "mobileSubheading": "AI-агенти, що переглядають, натискають і працюють як справжній колега.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Ви описуєте завдання",
+        "sub": "\"Досліди наших топ-5 конкурентів\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Агент бере контроль",
+        "sub": "Переглядає, натискає, друкує автономно"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Робота доставлена",
+        "sub": "Таблиця з 5 повними профілями конкурентів"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Завершено",
+    "doneIn": "Готово за 8 хвилин",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Ваш оператор на зв'язку",
+      "signUp": "Поставте робочі процеси на автопілот",
+      "magicLink": "Без пароля",
+      "forgotPassword": "Повернемо вас назад"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Продовжуйте з того місця, де зупинилися — ваші агенти пам'ятають",
+      "signUp": "Розгорніть свого першого AI-агента менш ніж за хвилину",
+      "magicLink": "Один клік з вашої пошти — і ви всередині",
+      "forgotPassword": "Ми надішлемо посилання для скидання на вашу пошту"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Підключення...",
+      "continueWithGoogle": "Продовжити з Google"
     },
-    "or": "or",
+    "or": "або",
     "email": "Email",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "Пароль",
+    "passwordPlaceholder": "Ваш пароль",
+    "confirmPassword": "Підтвердити пароль",
+    "confirmPasswordPlaceholder": "Підтвердіть ваш пароль",
+    "minChars": "Мін. 6 символів",
+    "signingIn": "Вхід...",
+    "signIn": "Увійти",
+    "creatingAccount": "Створення акаунту...",
+    "createAccount": "Створити акаунт",
+    "sending": "Надсилання...",
+    "sendMagicLink": "Надіслати магічне посилання",
+    "sendResetLink": "Надіслати посилання для скидання",
+    "forgotPassword": "Забули пароль?",
+    "useMagicLink": "Використати магічне посилання",
+    "dontHaveAccount": "Немає акаунту?",
+    "signUp": "Зареєструватися",
+    "alreadyHaveAccount": "Вже є акаунт?",
+    "backToSignIn": "Повернутися до входу",
+    "termsAgreement": "Продовжуючи, ви погоджуєтеся з нашими",
+    "terms": "Умовами",
+    "and": "та",
+    "privacyPolicy": "Політикою конфіденційності",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Будь ласка, заповніть усі поля",
+      "passwordMinLength": "Пароль має містити щонайменше 6 символів",
+      "passwordsDoNotMatch": "Паролі не збігаються",
+      "supabaseNotConfigured": "Supabase не налаштовано",
+      "unexpectedError": "Виникла неочікувана помилка. Спробуйте ще раз.",
+      "confirmEmail": "Будь ласка, підтвердіть свою пошту перед входом. Перевірте вхідні.",
+      "invalidCredentials": "Невірна пошта або пароль.",
+      "signInFailed": "Вхід не вдався. Спробуйте ще раз.",
+      "invalidEmail": "Невірна адреса електронної пошти.",
+      "emailAlreadyExists": "Акаунт з такою поштою вже існує. Спробуйте увійти.",
+      "signUpFailed": "Реєстрація не вдалася. Спробуйте ще раз.",
+      "enterEmail": "Будь ласка, введіть вашу пошту",
+      "noAccountFound": "Акаунт з такою поштою не знайдено. Спочатку зареєструйтеся.",
+      "magicLinkFailed": "Не вдалося надіслати магічне посилання. Спробуйте ще раз.",
+      "resetFailed": "Не вдалося надіслати лист для скидання. Спробуйте ще раз.",
+      "updateFailed": "Не вдалося оновити пароль. Спробуйте ще раз."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Перевірте пошту, щоб підтвердити акаунт перед входом.",
+      "checkEmailMagicLink": "Перевірте пошту на наявність магічного посилання для входу.",
+      "checkEmailReset": "Перевірте пошту на наявність посилання для скидання пароля.",
+      "passwordUpdated": "Пароль успішно оновлено. Перенаправлення на вхід..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Скидання пароля",
+      "subtitle": "Введіть новий пароль нижче.",
+      "newPassword": "Новий пароль",
+      "confirmNewPassword": "Підтвердити новий пароль",
+      "confirmPlaceholder": "Підтвердіть ваш новий пароль",
+      "updating": "Оновлення...",
+      "updatePassword": "Оновити пароль"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Помилка автентифікації",
+      "defaultMessage": "Під час автентифікації виникла помилка.",
+      "tryAgain": "Спробувати ще",
+      "backToChat": "Повернутися до чату",
+      "needHelp": "Потрібна допомога?",
+      "contactSupport": "Зв'язатися з підтримкою"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Пропустити",
+    "back": "Назад",
+    "continue": "Продовжити",
+    "getStarted": "Розпочати",
+    "settingUp": "Налаштування...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "З поверненням{name}!",
+      "titleNew": "Ласкаво просимо до Coasty",
+      "descriptionReturning": "Ми хотіли б дізнатися трохи більше про вас, щоб покращити ваш досвід",
+      "descriptionNew": "Давайте налаштуємо ваш акаунт, щоб персоналізувати ваш досвід"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Як до вас звертатися?",
+    "namePlaceholder": "Ваше ім'я",
+    "companyLabel": "Компанія",
+    "optional": "(необов'язково)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "Веб-сайт",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Що вас найкраще описує?",
+      "subtitle": "Виберіть усе, що підходить — це допоможе нам налаштувати ваш досвід"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
-      "marketer": "Marketer",
-      "designer": "Designer",
-      "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "founder": "Засновник / CEO",
+      "developer": "Розробник",
+      "marketer": "Маркетолог",
+      "designer": "Дизайнер",
+      "product_manager": "Продакт-менеджер",
+      "data_analyst": "Дані / Аналітика",
+      "operations": "Операції",
+      "other": "Інше"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Розмір команди",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Тільки я",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,585 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Як ви нас знайшли?",
+      "subtitle": "Ми хотіли б знати, де ви дізналися про Coasty"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Друг / Колега",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Інше"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Що ви автоматизуєте першим?",
+      "subtitle": "Виберіть усе, що підходить — ви зможете дослідити все пізніше"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Web Scraping та дослідження",
+      "browser_automation": "Автоматизація браузера",
+      "data_entry": "Введення даних та форми",
+      "email_outreach": "Email та аутріч",
+      "testing": "QA та тестування",
+      "ecommerce": "Завдання E-commerce",
+      "social_media": "Управління соцмережами",
+      "general_automation": "Загальна автоматизація"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Все, що вам потрібно,",
+      "titleHighlight": "вже вбудовано.",
+      "subtitle": "Ось що Coasty може зробити для вас",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Без коду",
+        "description": "Просто опишіть, що вам потрібно, простою мовою"
       },
       "agentSwarms": {
         "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "description": "Паралельні флоти агентів"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Керування робочим столом",
+        "description": "Натискає, друкує, навігує"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Автоматизація браузера",
+        "description": "Форми, вкладки, скрейпінг — повністю автоматизовано"
       },
       "computerVision": {
-        "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "title": "Комп'ютерний зір",
+        "description": "Бачить і розуміє ваш екран у реальному часі"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Робочі процеси",
+        "description": "Багатокрокові процеси"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "На пристрої",
+        "description": "Працює локально"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "Автономний 24/7",
+        "description": "Налаштуйте і забудьте — працює, поки ви спите"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Новачок? У нас є посібник для вас",
+      "subtitle": "Розгорніть свого першого AI-агента менш ніж за хвилину"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Що повинен зробити ваш AI-працівник?",
+    "placeholderAlt": "Скажіть AI, що робити на комп'ютері...",
+    "vmError": {
+      "title": "Помилка віртуальної машини",
+      "description": "Віртуальна машина перебуває в стані помилки або видаляється.",
+      "hint": "Перевірте вкладку Машини, щоб вирішити проблему, або виберіть \"Комп'ютер не вибрано\", щоб використовувати лише веб-пошук.",
+      "gotIt": "Зрозуміло"
+    },
+    "status": {
+      "creating": "Створення {name}...",
+      "initiating": "Ініціалізація агента на {name}...",
+      "stopping": "Зупинка {name}...",
+      "preparing": "Підготовка {name}..."
+    },
+    "swarm": {
+      "title": "Режим рою",
+      "pro": "PRO",
+      "upgradeLabel": "Режим рою — оновіть, щоб розблокувати",
+      "feature1": "Паралельне виконання на тимчасових машинах",
+      "feature2": "Кожна машина працює автономно",
+      "feature3": "3x ліміт машин вашого плану на рій",
+      "description": "Запустіть один запит на 3x ліміту машин паралельно — кожна виконує завдання незалежно.",
+      "enableLabel": "Увімкнути режим рою",
+      "disableLabel": "Вимкнути режим рою",
+      "onTooltip": "Режим рою УВІМКНЕНО — ваш запит буде виконуватися на кількох машинах паралельно",
+      "offTooltip": "Увімкніть режим рою, щоб запустити запит на кількох машинах одночасно",
+      "decreaseMachines": "Зменшити кількість машин",
+      "increaseMachines": "Збільшити кількість машин",
+      "machineLimit": "До {max} машин рою у вашому плані. Потрібно більше? Зв'яжіться з founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Підключитися до робочого столу",
+      "screenLabel": "Екран {name}",
+      "screenDefault": "Робочий стіл",
+      "watchTooltip": "Спостерігайте за роботою агента на окремому екрані. Тільки нічого не чіпайте, а то він збентежиться!"
+    },
+    "buttons": {
+      "stop": "Стоп",
+      "sendToSwarm": "Надіслати в рій",
+      "taskRunning": "Інше завдання виконується — натисніть, щоб зупинити і запустити своє",
+      "selectComputer": "Виберіть комп'ютер для надсилання повідомлень",
+      "waitCreating": "Зачекайте, VM створюється",
+      "waitStarting": "Зачекайте, VM запускається",
+      "waitAgent": "Зачекайте, агент ініціалізується",
+      "vmStopping": "VM зупиняється",
+      "send": "Надіслати",
+      "switching": "Перемикання...",
+      "overrideRun": "Перевизначити і запустити",
+      "stopLabel": "Зупинити поточне завдання і запустити це",
+      "sendLabel": "Надіслати повідомлення"
+    },
+    "search": "Пошук",
+    "upload": {
+      "label": "Завантажити файли на VM",
+      "heading": "Завантажити файли на VM",
+      "description": "Файли будуть збережені на робочому столі",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Перетягніть файли сюди",
+      "dropDescription": "Файли будуть завантажені в папку робочого столу VM",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Увійдіть, щоб спробувати більше функцій безкоштовно",
+      "description": "Створюйте проекти, запрошуйте членів команди та інше.",
+      "connecting": "Підключення...",
+      "continueWithGoogle": "Продовжити з Google"
+    },
+    "removeFile": "Видалити файл"
+  },
+  "chat": {
+    "greeting": "Привіт",
+    "greetingAuth": "Я візьму на себе комп'ютерну роботу. Яке завдання?",
+    "greetingUnauth": "AI, який працює за комп'ютером замість вас. Просто скажіть, що потрібно зробити.",
+    "guide": "Посібник",
+    "saveLogins": "Зберегти логіни для автозаповнення",
+    "encryptedNote": "зашифровано, AI ніколи не бачить",
+    "roleLabels": ["Колега", "Працівник", "Друг", "Асистент", "Партнер", "Тіммейт", "Співробітник", "Помічник"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Отримати звіт про конкурентів",
+        "warmLeads": "Згенерувати 20 теплих лідів",
+        "pitchDeck": "Створити чернетку презентації"
+      },
+      "developer": {
+        "findBugs": "Знайти помилки на моєму сайті",
+        "performance": "Отримати звіт про продуктивність",
+        "apiDocs": "Витягнути документацію API"
+      },
+      "marketer": {
+        "seoGap": "Отримати аналіз прогалин SEO",
+        "competitorAds": "Відстежити рекламу конкурентів",
+        "trendingContent": "Отримати трендові ідеї контенту"
+      },
+      "product_manager": {
+        "reviewSummary": "Отримати зведення відгуків",
+        "featureComparison": "Створити порівняння функцій",
+        "competitorLaunches": "Відстежити запуски конкурентів"
+      },
+      "data_analyst": {
+        "exportCsv": "Експортувати дані сайту в CSV",
+        "marketSizing": "Отримати звіт про розмір ринку",
+        "benchmark": "Порівняти з галуззю"
+      },
+      "operations": {
+        "enterRecords": "Внести записи в нашу систему",
+        "cheapestVendor": "Знайти найдешевшого постачальника",
+        "invoiceSummary": "Отримати зведення рахунків"
+      },
+      "designer": {
+        "designComparison": "Отримати порівняння дизайнів",
+        "responsiveAudit": "Провести адаптивний аудит",
+        "inspiration": "Зібрати натхнення для дизайну"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Експортувати дані сайту в CSV",
+      "browser_automation": "Експортувати звіти з панелі",
+      "data_entry": "Внести записи в наш додаток",
+      "email_outreach": "Надіслати персоналізований аутріч",
+      "testing": "Отримати повний звіт QA",
+      "ecommerce": "Отримати порівняння цін",
+      "social_media": "Опублікувати та отримати залучення",
+      "general_automation": "Запустити завдання на моєму сайті"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Копіювати текст",
+    "copied": "Скопійовано!",
+    "regenerate": "Перегенерувати",
+    "feedback": {
+      "title": "Відгук",
+      "prompts": ["Оцініть це", "Відгук", "Як ми впоралися?", "Ваші думки?", "Залишити відгук"],
+      "tooltip": "Поділіться відгуком"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Розумний пошук",
+      "description": "Пошук по всьому вебу на базі AI"
+    },
+    "collaborate": {
+      "title": "Співпраця",
+      "description": "Працюйте разом у реальному часі"
+    },
+    "globalAccess": {
+      "title": "Глобальний доступ",
+      "description": "Пошук більш ніж 50 мовами"
+    },
+    "aiModels": {
+      "title": "AI-моделі",
+      "description": "Кілька AI-провайдерів"
+    },
+    "freeForever": {
+      "title": "Безкоштовно назавжди",
+      "description": "Жодних прихованих витрат"
+    },
+    "privateSecure": {
+      "title": "Приватно та безпечно",
+      "description": "Ваші дані залишаються вашими"
+    }
+  },
+  "sidebar": {
+    "newTask": "Нове завдання",
+    "newTaskDescription": "Розпочати нову AI-автоматизацію",
+    "activity": "Активність",
+    "taskHistory": "Історія завдань",
+    "taskHistoryDescription": "Перегляньте минулі завдання та продовжте з місця зупинки",
+    "taskHistoryPopup": {
+      "title": "Ваші останні завдання",
+      "description": "Переглядайте та продовжуйте минулі розмови. Кожне завдання збережено, щоб ви могли продовжити з місця зупинки."
+    },
+    "swarmRuns": "Запуски рою",
+    "swarmRunsDescription": "Моніторинг багатоагентних паралельних процесів",
+    "swarmRunsPopup": {
+      "title": "Багатоагентні процеси",
+      "description": "Запускайте завдання на кількох машинах паралельно. Кожен агент працює незалежно, а результати об'єднуються автоматично."
+    },
+    "guide": "Посібник",
+    "guideDescription": "Дізнайтеся, як отримати максимум від Coasty",
+    "guidePopup": {
+      "title": "Початок роботи",
+      "description": "Покрокові інструкції та найкращі практики для ефективної автоматизації."
+    },
+    "infrastructure": "Інфраструктура",
+    "computer": "Комп'ютер",
+    "computers": "Комп'ютери",
+    "active": "активний",
+    "view": "Переглянути",
+    "workforce": "Робоча сила",
+    "workforceDescription": "Заплануйте автоматичних агентів і тригери",
+    "workforcePopup": {
+      "title": "Запланована автоматизація",
+      "description": "Налаштуйте повторювані завдання з cron-розкладами та тригерами агент-агент. Ваша робоча сила працює, поки ви спите."
+    },
+    "credentials": "Облікові дані",
+    "credentialsDescription": "Безпечно зберігайте логіни для доступу агентів",
+    "credentialsPopup": {
+      "title": "Безпечне сховище облікових даних",
+      "description": "Зберігайте логіни та API-ключі з шифруванням. Агенти автоматично заповнюють облікові дані, не розкриваючи вихідні значення."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Отримати десктопний додаток",
+      "download": "Завантажити",
+      "downloadDesktopApp": "Завантажити десктопний додаток",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Керуйте комп'ютером віддалено",
+      "controlDescription": "Встановіть десктопний додаток і запускайте завдання на вашому ПК з цієї панелі — будь-де, будь-коли."
+    },
+    "credits": {
+      "runningLow": "Кредити — Мало залишилось",
+      "remaining": "Кредитів залишилось",
+      "buy": "Купити",
+      "creditsLeft": "кредитів залишилось",
+      "usedLabel": "Використано: {count}",
+      "consumed": "{percent}% використано",
+      "usageThisWeek": "Використання цього тижня"
+    },
+    "talkToUs": "Зв'яжіться з нами",
+    "inviteEarn": "Запроси та заробляй",
+    "user": "Користувач",
+    "account": "Акаунт",
+    "tasks": "{count} Завдань",
+    "recentActivity": "Остання активність",
+    "viewAllHistory": "Переглянути всю історію →",
+    "swarmRunsCount": "{count} Запусків рою",
+    "running": "виконується",
+    "completed": "завершено",
+    "viewAllSwarms": "Переглянути всі рої →",
+    "schedulesCount": "{count} Розкладів",
+    "totalRuns": "{count} загальних запусків",
+    "paused": "призупинено",
+    "viewAllSchedules": "Переглянути всі розклади →",
+    "credentialsCount": "{count} Облікових даних",
+    "encryptedVault": "Зашифроване сховище",
+    "manageCredentials": "Керувати обліковими даними →",
+    "days": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"],
+    "resume": "ПРОДОВЖИТИ",
+    "result": "РЕЗУЛЬТАТ",
+    "notScheduled": "Не заплановано",
+    "overdue": "Прострочено",
+    "lessThanMin": "< 1 хв",
+    "inMinutes": "через {count}хв",
+    "inHours": "через {count}год",
+    "today": "сьогодні",
+    "yesterday": "вчора"
+  },
+  "appHeader": {
+    "login": "Увійти",
+    "assign": "Призначити",
+    "assignDescription": "Призначити працівника для виконання цього завдання",
+    "computer": "Комп'ютер",
+    "showComputer": "Показати комп'ютер",
+    "hideComputer": "Приховати комп'ютер",
+    "employeeHired": "Працівника найнято!",
+    "employeeRemoved": "Працівника видалено"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Легка щоденна автоматизація"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Автоматизуйте завдання щодня"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Масштабуйте складні процеси",
+        "badge": "Найпопулярніший"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Необмежена інтенсивна автоматизація"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (видаляється після неактивності)",
+      "vmAlwaysOn": "{count} постійно увімкнена VM",
+      "vmAlwaysOnPlural": "{count} постійно увімкнених VM",
+      "agentsParallel": "{count} агентів паралельно",
+      "basicSearch": "Базовий пошук",
+      "advancedSearch": "Розширений пошук та витяг",
+      "standardSupport": "Стандартна підтримка (справжні люди)",
+      "prioritySupport": "Пріоритетна підтримка, відповідь за 24 год",
+      "premiumSupport": "Преміум підтримка, відповідь за 12 год"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Малий пакет",
+        "description": "Швидке поповнення"
+      },
+      "medium": {
+        "name": "Середній пакет",
+        "description": "Стандартне поповнення",
+        "savings": "8% економії"
+      },
+      "large": {
+        "name": "Великий пакет",
+        "description": "Оптова покупка",
+        "savings": "17% економії"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Щойно",
+      "minutesAgo": "{count}хв тому",
+      "hoursAgo": "{count}год тому",
+      "daysAgo": "{count}д тому"
+    },
+    "noActivity": "Немає активності за цей період",
+    "stats": {
+      "balance": "Баланс",
+      "earned": "Зароблено",
+      "used": "Використано",
+      "credits": "кредитів",
+      "allTime": "за весь час",
+      "lastRange": "за {range}",
+      "sessions": "{count} сесій",
+      "avgDaily": "~{count}/день серед.",
+      "plan": "План",
+      "free": "Безкоштовний",
+      "noPlan": "Без плану",
+      "canceling": "Скасовується"
+    },
+    "monthlyUsage": "Місячне використання кредитів",
+    "remaining": "{used} / {total} залишилось",
+    "usedPercent": "{percent}% використано за цей період",
+    "renews": "Поновлення {date}",
+    "choosePlan": "Оберіть свій план",
+    "choosePlanDescription": "Підпишіться, щоб розблокувати AI-функції та отримати місячні кредити",
+    "savingsVsHuman": "Економія {amount}/міс порівняно з людиною",
+    "timeSaved": "{time} заощаджено щомісяця",
+    "cheaper": "У {multiplier} дешевше",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/місяць",
+    "creditsPerMonth": "{count} кредитів /місяць",
+    "processing": "Обробка...",
+    "subscribeTo": "Підписатися на {name}",
+    "transactionTypes": {
+      "credit_purchase": "Покупка кредитів",
+      "agent_usage": "Використання агента",
+      "refund": "Повернення",
+      "bonus": "Бонусна нагорода",
+      "subscription": "Підписка",
+      "subscription_grant": "Грант підписки",
+      "renewal": "Кредити поновлення",
+      "reactivation": "Реактивація"
+    },
+    "toasts": {
+      "paymentSuccess": "Оплата успішна! Ваші кредити додано.",
+      "subscriptionActivated": "Підписку успішно активовано!",
+      "paymentCanceled": "Оплату скасовано. Жодних стягнень не було.",
+      "signInToSubscribe": "Увійдіть, щоб підписатися",
+      "subscriptionCheckoutFailed": "Не вдалося розпочати оформлення підписки. Спробуйте ще раз.",
+      "signInToPurchase": "Увійдіть, щоб придбати кредити",
+      "needSubscription": "Для покупки додаткових кредитів потрібна активна підписка",
+      "checkoutFailed": "Не вдалося розпочати оформлення. Спробуйте ще раз.",
+      "manageFailed": "Не вдалося відкрити управління підпискою. Спробуйте ще раз.",
+      "transactionsExported": "Транзакції експортовано"
+    }
+  },
+  "apiKeys": {
+    "title": "Постачальники моделей",
+    "new": "нове",
+    "description": "Додайте власні API-ключі для доступу до моделей.",
+    "securityNote": "Ваші ключі зберігаються безпечно з наскрізним шифруванням.",
+    "apiKeyLabel": "{provider} API Key",
+    "getApiKey": "Отримати API key",
+    "delete": "Видалити",
+    "save": "Зберегти",
+    "deleteDialog": {
+      "title": "Видалити API Key",
+      "description": "Ви впевнені, що хочете видалити ваш {provider} API-ключ? Цю дію неможливо скасувати, і ви втратите доступ до моделей {provider}.",
+      "cancel": "Скасувати",
+      "confirm": "Видалити"
+    },
+    "toasts": {
+      "saved": "API key збережено",
+      "savedDescription": "Ваш {provider} API-ключ збережено, а моделі додано до обраного.",
+      "updatedDescription": "Ваш {provider} API-ключ оновлено.",
+      "saveFailed": "Не вдалося зберегти API key",
+      "saveFailedDescription": "Не вдалося зберегти {provider} API-ключ. Спробуйте ще раз.",
+      "deleted": "API key видалено",
+      "deletedDescription": "Ваш {provider} API-ключ видалено.",
+      "deleteFailed": "Не вдалося видалити API key",
+      "deleteFailedDescription": "Не вдалося видалити {provider} API-ключ. Спробуйте ще раз."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Деталі профілю",
+    "displayName": "Ім'я для відображення",
+    "namePlaceholder": "Ваше ім'я",
+    "company": "Компанія",
+    "companyPlaceholder": "Ваша компанія",
+    "website": "Веб-сайт",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Збереження...",
+    "saveChanges": "Зберегти зміни",
+    "account": "Акаунт",
+    "email": "Email",
+    "verified": "Підтверджено",
+    "signOut": "Вийти",
+    "signOutDescription": "Вийти з цього пристрою",
+    "toasts": {
+      "profileUpdated": "Профіль оновлено",
+      "profileUpdateFailed": "Не вдалося оновити профіль",
+      "signOutFailed": "Не вдалося вийти"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Ваші дані захищені",
+    "dataProtectedDescription": "Безпека корпоративного рівня з шифруванням при зберіганні та передачі",
+    "features": {
+      "encryption": {
+        "title": "Наскрізне шифрування",
+        "description": "API-ключі зашифровані за допомогою AES-256-GCM. Ваші облікові дані ніколи не зберігаються у відкритому вигляді."
+      },
+      "rls": {
+        "title": "Безпека на рівні рядків",
+        "description": "Ізоляція на рівні бази даних гарантує, що ваші дані доступні лише вам. Міжорендний доступ неможливий."
+      },
+      "privacy": {
+        "title": "Конфіденційність за дизайном",
+        "description": "Ми збираємо мінімум даних, необхідних для надання послуги. Ваші розмови та файли залишаються вашими."
+      },
+      "session": {
+        "title": "Безпека сесії",
+        "description": "Захист CSRF, безпечні HTTP-only cookies та заголовки Content Security Policy на кожному запиті."
+      }
+    },
+    "legal": "Юридичне",
+    "privacyPolicy": {
+      "title": "Політика конфіденційності",
+      "description": "Як ми збираємо, використовуємо та захищаємо ваші дані"
+    },
+    "termsOfService": {
+      "title": "Умови використання",
+      "description": "Наші умови та положення використання"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Макет"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Зведення",
+      "highlight": "Підсумувати"
+    },
+    "code": {
+      "label": "Код",
+      "highlight": "Створити"
+    },
+    "research": {
+      "label": "Дослідження",
+      "highlight": "Аналізувати"
+    },
+    "create": {
+      "label": "Створити",
+      "highlight": "Згенерувати"
+    },
+    "solve": {
+      "label": "Розв'язати",
+      "highlight": "Відладити"
+    },
+    "learn": {
+      "label": "Вивчити",
+      "highlight": "Пояснити"
+    }
+  },
+  "loadingMessages": [
+    "Запускаємо кремнієвий мозок",
+    "Будимо цифрову свідомість",
+    "Ініціалізуємо нейронні шляхи",
+    "Розкручуємо квантові ядра",
+    "Заряджаємо конденсатор потоку",
+    "Активуємо мейнфрейм",
+    "Подаємо живлення на обчислювальну матрицю",
+    "Вмикаємо варп-двигун",
+    "Закликаємо кремнієвих духів",
+    "Розпалюємо електронний двигун",
+    "Прогріваємо транзистори",
+    "Збираємо біти та байти",
+    "Калібруємо цифрові синапси",
+    "Заряджаємо кристали CPU",
+    "Завантажуємо протоколи свідомості",
+    "Ініціалізуємо системні ресурси",
+    "Готуємо обчислювальне середовище",
+    "Встановлюємо безпечне з'єднання",
+    "Виділяємо віртуальні ресурси",
+    "Налаштовуємо параметри системи",
+    "Запускаємо віртуальний екземпляр",
+    "Активуємо віддалений робочий стіл",
+    "Розгортаємо хмарні ресурси",
+    "Починаємо послідовність запуску",
+    "Готуємо середовище виконання",
+    "Будимо сонний комп'ютер",
+    "Тицяємо цифрового ведмедя",
+    "Варимо обчислювальну каву",
+    "Розтягуємо цифрові м'язи",
+    "Відкриваємо цифрові очі",
+    "Запускаємось",
+    "Подаємо живлення",
+    "Виходимо в онлайн",
+    "Завантажуємо систему",
+    "Готуємось",
+    "Майже готово",
+    "Готуємо робочий простір",
+    "Завантажуємо ресурси",
+    "Система прокидається"
+  ]
 }

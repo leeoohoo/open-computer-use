@@ -637,5 +637,540 @@
       "title": "初来乍到？我们为您准备了指南",
       "subtitle": "一分钟内部署您的第一个AI智能体"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "AI 助手应该做什么？",
+    "placeholderAlt": "告诉 AI 在电脑上做什么...",
+    "vmError": {
+      "title": "虚拟机错误",
+      "description": "虚拟机处于错误状态或正在删除中。",
+      "hint": "请检查「机器」标签页以解决问题，或选择「未选择计算机」以仅使用网页搜索。",
+      "gotIt": "知道了"
+    },
+    "status": {
+      "creating": "正在创建 {name}...",
+      "initiating": "正在 {name} 上启动智能体...",
+      "stopping": "正在停止 {name}...",
+      "preparing": "正在准备 {name}..."
+    },
+    "swarm": {
+      "title": "集群模式",
+      "pro": "PRO",
+      "upgradeLabel": "集群模式 — 升级以解锁",
+      "feature1": "跨临时机器并行执行",
+      "feature2": "每台机器自主运行",
+      "feature3": "每个集群可使用套餐机器上限的 3 倍",
+      "description": "一条提示在机器上限的 3 倍上并行运行 — 每台独立处理任务。",
+      "enableLabel": "启用集群模式",
+      "disableLabel": "禁用集群模式",
+      "onTooltip": "集群模式已开启 — 您的提示将在多台机器上并行运行",
+      "offTooltip": "启用集群模式，在多台机器上同时运行您的提示",
+      "decreaseMachines": "减少机器数量",
+      "increaseMachines": "增加机器数量",
+      "machineLimit": "您的套餐最多可使用 {max} 台集群机器。需要更多？请联系 founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "连接到桌面",
+      "screenLabel": "{name} 的屏幕",
+      "screenDefault": "桌面",
+      "watchTooltip": "在单独的屏幕上观看智能体工作。请不要碰任何东西，它会怯场的！"
+    },
+    "buttons": {
+      "stop": "停止",
+      "sendToSwarm": "发送到集群",
+      "taskRunning": "另一个任务正在运行 — 点击停止它并运行您的任务",
+      "selectComputer": "选择一台计算机以发送消息",
+      "waitCreating": "请等待虚拟机创建完成",
+      "waitStarting": "请等待虚拟机启动",
+      "waitAgent": "请等待智能体初始化",
+      "vmStopping": "虚拟机正在停止",
+      "send": "发送",
+      "switching": "切换中...",
+      "overrideRun": "强制运行",
+      "stopLabel": "停止正在运行的任务并启动此任务",
+      "sendLabel": "发送消息"
+    },
+    "search": "搜索",
+    "upload": {
+      "label": "上传文件到虚拟机",
+      "heading": "上传文件到虚拟机",
+      "description": "文件将保存到桌面",
+      "vmInfo": "虚拟机: {name}",
+      "dropHeading": "将文件拖放到此处",
+      "dropDescription": "文件将上传到虚拟机的桌面文件夹",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "登录即可免费体验更多功能",
+      "description": "创建项目、邀请团队成员等。",
+      "connecting": "连接中...",
+      "continueWithGoogle": "使用 Google 继续"
+    },
+    "removeFile": "移除文件"
+  },
+  "chat": {
+    "greeting": "你好",
+    "greetingAuth": "我来处理电脑操作。有什么任务？",
+    "greetingUnauth": "AI 代替您操作电脑。只需告诉它您需要完成什么。",
+    "guide": "指南",
+    "saveLogins": "保存登录信息以自动填充",
+    "encryptedNote": "已加密，AI 无法查看",
+    "roleLabels": [
+      "同事",
+      "员工",
+      "朋友",
+      "助手",
+      "伙伴",
+      "队友",
+      "协作者",
+      "帮手"
+    ],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "获取竞争对手报告",
+        "warmLeads": "生成 20 个潜在客户",
+        "pitchDeck": "撰写路演文稿草案"
+      },
+      "developer": {
+        "findBugs": "查找我网站上的缺陷",
+        "performance": "获取性能报告",
+        "apiDocs": "提取 API 文档"
+      },
+      "marketer": {
+        "seoGap": "获取 SEO 差距分析",
+        "competitorAds": "分析竞争对手广告",
+        "trendingContent": "获取热门内容创意"
+      },
+      "product_manager": {
+        "reviewSummary": "获取评价摘要",
+        "featureComparison": "制作功能对比表",
+        "competitorLaunches": "追踪竞争对手发布"
+      },
+      "data_analyst": {
+        "exportCsv": "将网站数据导出为 CSV",
+        "marketSizing": "获取市场规模报告",
+        "benchmark": "与行业基准对比"
+      },
+      "operations": {
+        "enterRecords": "将记录录入系统",
+        "cheapestVendor": "寻找最低价供应商",
+        "invoiceSummary": "获取发票摘要"
+      },
+      "designer": {
+        "designComparison": "获取设计对比",
+        "responsiveAudit": "运行响应式审计",
+        "inspiration": "收集设计灵感"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "将网站数据导出为 CSV",
+      "browser_automation": "导出仪表盘报告",
+      "data_entry": "将记录录入应用",
+      "email_outreach": "发送个性化推广邮件",
+      "testing": "获取完整 QA 报告",
+      "ecommerce": "获取价格对比",
+      "social_media": "发布内容并提升互动",
+      "general_automation": "在我的网站上运行任务"
+    }
+  },
+  "chatMessages": {
+    "copyText": "复制文本",
+    "copied": "已复制！",
+    "regenerate": "重新生成",
+    "feedback": {
+      "title": "反馈",
+      "prompts": [
+        "评价一下",
+        "反馈",
+        "感觉如何？",
+        "有什么想法？",
+        "分享反馈"
+      ],
+      "tooltip": "分享您的反馈"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "智能搜索",
+      "description": "AI 驱动的全网搜索"
+    },
+    "collaborate": {
+      "title": "协作",
+      "description": "实时协同工作"
+    },
+    "globalAccess": {
+      "title": "全球访问",
+      "description": "支持 50+ 种语言搜索"
+    },
+    "aiModels": {
+      "title": "AI 模型",
+      "description": "多个 AI 提供商"
+    },
+    "freeForever": {
+      "title": "永久免费",
+      "description": "无隐藏费用"
+    },
+    "privateSecure": {
+      "title": "隐私与安全",
+      "description": "您的数据归您所有"
+    }
+  },
+  "sidebar": {
+    "newTask": "新任务",
+    "newTaskDescription": "开始新的 AI 自动化",
+    "activity": "活动",
+    "taskHistory": "任务历史",
+    "taskHistoryDescription": "查看过去的任务并继续未完成的工作",
+    "taskHistoryPopup": {
+      "title": "您的近期任务",
+      "description": "浏览并继续过去的对话。每个任务都会保存，您可以随时从中断处继续。"
+    },
+    "swarmRuns": "集群运行",
+    "swarmRunsDescription": "监控多智能体并行工作流",
+    "swarmRunsPopup": {
+      "title": "多智能体工作流",
+      "description": "在多台机器上并行运行任务。每个智能体独立工作，结果自动汇聚。"
+    },
+    "guide": "指南",
+    "guideDescription": "了解如何充分利用 Coasty",
+    "guidePopup": {
+      "title": "入门指南",
+      "description": "帮助您高效自动化的分步教程和最佳实践。"
+    },
+    "infrastructure": "基础设施",
+    "computer": "计算机",
+    "computers": "计算机",
+    "active": "活跃",
+    "view": "查看",
+    "workforce": "工作力",
+    "workforceDescription": "管理预定智能体和触发器",
+    "workforcePopup": {
+      "title": "定时自动化",
+      "description": "使用 cron 计划和智能体间触发器设置重复任务。您的工作力在您入睡时继续运行。"
+    },
+    "credentials": "凭据",
+    "credentialsDescription": "安全存储智能体访问所需的登录信息",
+    "credentialsPopup": {
+      "title": "安全凭据保管库",
+      "description": "加密存储登录信息和 API 密钥。智能体自动填充凭据，不会暴露原始值。"
+    },
+    "desktopApp": {
+      "getDesktopApp": "获取桌面应用",
+      "download": "下载",
+      "downloadDesktopApp": "下载桌面应用",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "远程控制您的电脑",
+      "controlDescription": "安装桌面应用，从此仪表盘运行 PC 上的任务 — 随时随地。"
+    },
+    "credits": {
+      "runningLow": "积分 — 即将用完",
+      "remaining": "剩余积分",
+      "buy": "购买",
+      "creditsLeft": "剩余积分",
+      "usedLabel": "已用: {count}",
+      "consumed": "已消耗 {percent}%",
+      "usageThisWeek": "本周使用量"
+    },
+    "talkToUs": "联系我们",
+    "inviteEarn": "邀请赚积分",
+    "user": "用户",
+    "account": "账户",
+    "tasks": "{count} 个任务",
+    "recentActivity": "近期活动",
+    "viewAllHistory": "查看全部历史 →",
+    "swarmRunsCount": "{count} 次集群运行",
+    "running": "运行中",
+    "completed": "已完成",
+    "viewAllSwarms": "查看全部集群 →",
+    "schedulesCount": "{count} 个计划",
+    "totalRuns": "共 {count} 次运行",
+    "paused": "已暂停",
+    "viewAllSchedules": "查看全部计划 →",
+    "credentialsCount": "{count} 个凭据",
+    "encryptedVault": "加密保管库",
+    "manageCredentials": "管理凭据 →",
+    "days": [
+      "周一",
+      "周二",
+      "周三",
+      "周四",
+      "周五",
+      "周六",
+      "周日"
+    ],
+    "resume": "继续",
+    "result": "结果",
+    "notScheduled": "未计划",
+    "overdue": "已逾期",
+    "lessThanMin": "< 1 分钟",
+    "inMinutes": "{count} 分钟后",
+    "inHours": "{count} 小时后",
+    "today": "今天",
+    "yesterday": "昨天"
+  },
+  "appHeader": {
+    "login": "登录",
+    "assign": "分配",
+    "assignDescription": "分配一名员工来执行此任务",
+    "computer": "计算机",
+    "showComputer": "显示计算机",
+    "hideComputer": "隐藏计算机",
+    "employeeHired": "员工已分配！",
+    "employeeRemoved": "员工已移除"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "轻度日常自动化"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "每日任务自动化"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "扩展复杂工作流",
+        "badge": "最受欢迎"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "无限大规模自动化"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 台虚拟机（不活跃后删除）",
+      "vmAlwaysOn": "{count} 台常驻虚拟机",
+      "vmAlwaysOnPlural": "{count} 台常驻虚拟机",
+      "agentsParallel": "{count} 个智能体并行",
+      "basicSearch": "基础搜索",
+      "advancedSearch": "高级搜索与提取",
+      "standardSupport": "标准支持（真人服务）",
+      "prioritySupport": "优先支持，24 小时内响应",
+      "premiumSupport": "高级支持，12 小时内响应"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "小额充值",
+        "description": "快速补充"
+      },
+      "medium": {
+        "name": "中额充值",
+        "description": "标准补充",
+        "savings": "省 8%"
+      },
+      "large": {
+        "name": "大额充值",
+        "description": "批量购买",
+        "savings": "省 17%"
+      }
+    },
+    "timeAgo": {
+      "justNow": "刚刚",
+      "minutesAgo": "{count} 分钟前",
+      "hoursAgo": "{count} 小时前",
+      "daysAgo": "{count} 天前"
+    },
+    "noActivity": "此期间无活动",
+    "stats": {
+      "balance": "余额",
+      "earned": "已获得",
+      "used": "已使用",
+      "credits": "积分",
+      "allTime": "全部时间",
+      "lastRange": "最近 {range}",
+      "sessions": "{count} 个会话",
+      "avgDaily": "日均约 {count}",
+      "plan": "套餐",
+      "free": "Free",
+      "noPlan": "无套餐",
+      "canceling": "取消中"
+    },
+    "monthlyUsage": "月度积分使用量",
+    "remaining": "{used} / {total} 剩余",
+    "usedPercent": "本期已用 {percent}%",
+    "renews": "{date} 续费",
+    "choosePlan": "选择您的套餐",
+    "choosePlanDescription": "订阅以解锁 AI 功能并获取每月积分",
+    "savingsVsHuman": "相比人工每月节省 {amount}",
+    "timeSaved": "每月节省 {time}",
+    "cheaper": "便宜 {multiplier}",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/月",
+    "creditsPerMonth": "{count} 积分/月",
+    "processing": "处理中...",
+    "subscribeTo": "订阅 {name}",
+    "transactionTypes": {
+      "credit_purchase": "积分购买",
+      "agent_usage": "智能体使用",
+      "refund": "退款",
+      "bonus": "奖励",
+      "subscription": "订阅",
+      "subscription_grant": "订阅发放",
+      "renewal": "续费积分",
+      "reactivation": "重新激活"
+    },
+    "toasts": {
+      "paymentSuccess": "支付成功！积分已添加。",
+      "subscriptionActivated": "订阅已成功激活！",
+      "paymentCanceled": "支付已取消。未产生任何费用。",
+      "signInToSubscribe": "请登录以订阅",
+      "subscriptionCheckoutFailed": "无法启动订阅结算。请重试。",
+      "signInToPurchase": "请登录以购买积分",
+      "needSubscription": "您需要有效订阅才能购买额外积分",
+      "checkoutFailed": "无法启动结算。请重试。",
+      "manageFailed": "无法打开订阅管理。请重试。",
+      "transactionsExported": "交易记录已导出"
+    }
+  },
+  "apiKeys": {
+    "title": "模型提供商",
+    "new": "new",
+    "description": "添加您自己的 API 密钥以解锁模型访问。",
+    "securityNote": "您的密钥通过端到端加密安全存储。",
+    "apiKeyLabel": "{provider} API 密钥",
+    "getApiKey": "获取 API 密钥",
+    "delete": "删除",
+    "save": "保存",
+    "deleteDialog": {
+      "title": "删除 API 密钥",
+      "description": "确定要删除您的 {provider} API 密钥吗？此操作无法撤销，您将失去对 {provider} 模型的访问权限。",
+      "cancel": "取消",
+      "confirm": "删除"
+    },
+    "toasts": {
+      "saved": "API 密钥已保存",
+      "savedDescription": "您的 {provider} API 密钥已保存，模型已添加到收藏夹。",
+      "updatedDescription": "您的 {provider} API 密钥已更新。",
+      "saveFailed": "API 密钥保存失败",
+      "saveFailedDescription": "保存 {provider} API 密钥失败。请重试。",
+      "deleted": "API 密钥已删除",
+      "deletedDescription": "您的 {provider} API 密钥已删除。",
+      "deleteFailed": "API 密钥删除失败",
+      "deleteFailedDescription": "删除 {provider} API 密钥失败。请重试。"
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "个人资料",
+    "displayName": "显示名称",
+    "namePlaceholder": "您的姓名",
+    "company": "公司",
+    "companyPlaceholder": "您的公司",
+    "website": "网站",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "保存中...",
+    "saveChanges": "保存更改",
+    "account": "账户",
+    "email": "邮箱",
+    "verified": "已验证",
+    "signOut": "退出登录",
+    "signOutDescription": "从此设备退出登录",
+    "toasts": {
+      "profileUpdated": "个人资料已更新",
+      "profileUpdateFailed": "更新个人资料失败",
+      "signOutFailed": "退出登录失败"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "您的数据受到保护",
+    "dataProtectedDescription": "企业级安全，数据在存储和传输时均加密",
+    "features": {
+      "encryption": {
+        "title": "端到端加密",
+        "description": "API 密钥使用 AES-256-GCM 加密。您的凭据永远不会以明文形式存储。"
+      },
+      "rls": {
+        "title": "行级安全",
+        "description": "数据库级别的隔离确保只有您可以访问自己的数据。不可能发生跨租户访问。"
+      },
+      "privacy": {
+        "title": "隐私优先设计",
+        "description": "我们仅收集提供服务所需的最少数据。您的对话和文件归您所有。"
+      },
+      "session": {
+        "title": "会话安全",
+        "description": "每个请求都有 CSRF 保护、安全的 HTTP-only Cookie 和内容安全策略头。"
+      }
+    },
+    "legal": "法律信息",
+    "privacyPolicy": {
+      "title": "隐私政策",
+      "description": "我们如何收集、使用和保护您的数据"
+    },
+    "termsOfService": {
+      "title": "服务条款",
+      "description": "我们的使用条款和条件"
+    }
+  },
+  "layoutSettings": {
+    "layout": "布局"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "摘要",
+      "highlight": "总结"
+    },
+    "code": {
+      "label": "代码",
+      "highlight": "构建"
+    },
+    "research": {
+      "label": "研究",
+      "highlight": "分析"
+    },
+    "create": {
+      "label": "创建",
+      "highlight": "生成"
+    },
+    "solve": {
+      "label": "解决",
+      "highlight": "调试"
+    },
+    "learn": {
+      "label": "学习",
+      "highlight": "解释"
+    }
+  },
+  "loadingMessages": [
+    "正在启动硅脑",
+    "正在唤醒数字意识",
+    "正在初始化神经通路",
+    "正在启动量子核心",
+    "正在充能通量电容器",
+    "正在激活主机",
+    "正在驱动计算矩阵",
+    "正在启动曲速引擎",
+    "正在召唤硅灵",
+    "正在点燃电子引擎",
+    "正在预热晶体管",
+    "正在组装比特和字节",
+    "正在校准数字突触",
+    "正在为 CPU 晶体充能",
+    "正在加载意识协议",
+    "正在初始化系统资源",
+    "正在准备计算环境",
+    "正在建立安全连接",
+    "正在配置虚拟资源",
+    "正在设置系统参数",
+    "正在启动虚拟实例",
+    "正在激活远程桌面",
+    "正在部署云资源",
+    "正在启动系统启动序列",
+    "正在准备执行环境",
+    "正在叫醒打瞌睡的电脑",
+    "正在戳数字熊",
+    "正在冲一杯计算咖啡",
+    "正在伸展数字肌肉",
+    "正在睁开数字之眼",
+    "正在启动",
+    "正在开机",
+    "正在上线",
+    "正在引导系统",
+    "正在准备",
+    "即将就绪",
+    "正在准备工作区",
+    "正在加载资源",
+    "系统启动中"
+  ]
 }

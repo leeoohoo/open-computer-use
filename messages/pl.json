@@ -423,131 +423,131 @@
     "label": "Język"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Ty wyznaczasz cel.",
+    "brandSubheading": "My zajmiemy sie reszta.",
+    "mobileHeading": "Ty wyznaczasz cel. My zajmiemy sie reszta.",
+    "mobileSubheading": "Agenci AI, ktorzy przegladaja, klikaja i pracuja jak prawdziwy czlonek zespolu.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Opisujesz zadanie",
+        "sub": "\"Zbadaj naszych 5 glownych konkurentow\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Agent przejmuje kontrole",
+        "sub": "Przegladal, klika, pisze autonomicznie"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Praca dostarczona",
+        "sub": "Arkusz z 5 pelnimi profilami konkurentow"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Ukonczone",
+    "doneIn": "Gotowe w 8 minut",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Twoj operator czeka",
+      "signUp": "Postaw swoje przeplywy pracy na autopilocie",
+      "magicLink": "Pomin haslo",
+      "forgotPassword": "Pomozemy Ci wrocic"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Kontynuuj tam, gdzie skonczyles — Twoi agenci pamietaja",
+      "signUp": "Wdroz swojego pierwszego agenta AI w mniej niz minute",
+      "magicLink": "Jedno klikniecie ze skrzynki odbiorczej i jestes w srodku",
+      "forgotPassword": "Wyslemy link do resetowania na Twoj e-mail"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Laczenie...",
+      "continueWithGoogle": "Kontynuuj z Google"
     },
-    "or": "or",
-    "email": "Email",
-    "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "or": "lub",
+    "email": "E-mail",
+    "emailPlaceholder": "ty@przyklad.pl",
+    "password": "Haslo",
+    "passwordPlaceholder": "Twoje haslo",
+    "confirmPassword": "Potwierdz haslo",
+    "confirmPasswordPlaceholder": "Potwierdz swoje haslo",
+    "minChars": "Min. 6 znakow",
+    "signingIn": "Logowanie...",
+    "signIn": "Zaloguj sie",
+    "creatingAccount": "Tworzenie konta...",
+    "createAccount": "Utworz konto",
+    "sending": "Wysylanie...",
+    "sendMagicLink": "Wyslij magic link",
+    "sendResetLink": "Wyslij link resetujacy",
+    "forgotPassword": "Zapomnialeś hasla?",
+    "useMagicLink": "Uzyj magic link",
+    "dontHaveAccount": "Nie masz konta?",
+    "signUp": "Zarejestruj sie",
+    "alreadyHaveAccount": "Masz juz konto?",
+    "backToSignIn": "Powrot do logowania",
+    "termsAgreement": "Kontynuujac, zgadzasz sie z naszym",
+    "terms": "Regulaminem",
+    "and": "i",
+    "privacyPolicy": "Polityka Prywatnosci",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Prosze wypelnic wszystkie pola",
+      "passwordMinLength": "Haslo musi miec co najmniej 6 znakow",
+      "passwordsDoNotMatch": "Hasla nie pasuja do siebie",
+      "supabaseNotConfigured": "Supabase nie jest skonfigurowany",
+      "unexpectedError": "Wystapil nieoczekiwany blad. Sprobuj ponownie.",
+      "confirmEmail": "Potwierdz swoj e-mail przed zalogowaniem. Sprawdz skrzynke odbiorcza.",
+      "invalidCredentials": "Nieprawidlowy e-mail lub haslo.",
+      "signInFailed": "Logowanie nie powiodlo sie. Sprobuj ponownie.",
+      "invalidEmail": "Nieprawidlowy adres e-mail.",
+      "emailAlreadyExists": "Konto z tym adresem e-mail juz istnieje. Sprobuj sie zalogowac.",
+      "signUpFailed": "Rejestracja nie powiodla sie. Sprobuj ponownie.",
+      "enterEmail": "Prosze podac swoj e-mail",
+      "noAccountFound": "Nie znaleziono konta z tym adresem e-mail. Prosze sie najpierw zarejestrowac.",
+      "magicLinkFailed": "Nie udalo sie wyslac magic link. Sprobuj ponownie.",
+      "resetFailed": "Nie udalo sie wyslac e-maila resetujacego. Sprobuj ponownie.",
+      "updateFailed": "Nie udalo sie zaktualizowac hasla. Sprobuj ponownie."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Sprawdz e-mail, aby potwierdzic konto przed zalogowaniem.",
+      "checkEmailMagicLink": "Sprawdz e-mail w poszukiwaniu magic link do zalogowania.",
+      "checkEmailReset": "Sprawdz e-mail w poszukiwaniu linku do resetowania hasla.",
+      "passwordUpdated": "Haslo zostalo zaktualizowane. Przekierowywanie do logowania..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Zresetuj swoje haslo",
+      "subtitle": "Wprowadz nowe haslo ponizej.",
+      "newPassword": "Nowe haslo",
+      "confirmNewPassword": "Potwierdz nowe haslo",
+      "confirmPlaceholder": "Potwierdz swoje nowe haslo",
+      "updating": "Aktualizowanie...",
+      "updatePassword": "Zaktualizuj haslo"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Blad uwierzytelniania",
+      "defaultMessage": "Wystapil blad podczas uwierzytelniania.",
+      "tryAgain": "Sprobuj ponownie",
+      "backToChat": "Powrot do czatu",
+      "needHelp": "Potrzebujesz pomocy?",
+      "contactSupport": "Skontaktuj sie z supportem"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Pomin na razie",
+    "back": "Wstecz",
+    "continue": "Kontynuuj",
+    "getStarted": "Rozpocznij",
+    "settingUp": "Konfigurowanie...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Witaj ponownie{name}!",
+      "titleNew": "Witaj w Coasty",
+      "descriptionReturning": "Chcielibysmy dowiedziec sie o Tobie wiecej, aby poprawic Twoje doswiadczenie",
+      "descriptionNew": "Skonfigurujmy Twoje konto, abysmy mogli spersonalizowac Twoje doswiadczenie"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Jak mamy sie do Ciebie zwracac?",
+    "namePlaceholder": "Twoje imie",
+    "companyLabel": "Firma",
+    "optional": "(opcjonalnie)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "Strona internetowa",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Co najlepiej Cie opisuje?",
+      "subtitle": "Wybierz wszystkie pasujace — to pomoze nam dostosowac Twoje doswiadczenie"
     },
     "roles": {
       "founder": "Founder / CEO",
@@ -557,11 +557,11 @@
       "product_manager": "Product Manager",
       "data_analyst": "Data / Analytics",
       "operations": "Operations",
-      "other": "Other"
+      "other": "Inne"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Wielkosc zespolu",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Tylko ja",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,585 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Jak nas znalazles?",
+      "subtitle": "Chcielibysmy wiedziec, skad uslyszales o Coasty"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Znajomy / Kolega",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Inne"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Co zautomatyzujesz jako pierwsze?",
+      "subtitle": "Wybierz wszystkie pasujace — mozesz odkryc wszystko pozniej"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Web Scraping i badania",
+      "browser_automation": "Automatyzacja przegladarki",
+      "data_entry": "Wprowadzanie danych i formularze",
+      "email_outreach": "E-mail i outreach",
+      "testing": "QA i testy",
+      "ecommerce": "Zadania e-commerce",
+      "social_media": "Zarzadzanie mediami spolecznosciowymi",
+      "general_automation": "Ogolna automatyzacja"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Wszystko, czego potrzebujesz,",
+      "titleHighlight": "wbudowane.",
+      "subtitle": "Oto co Coasty moze dla Ciebie zrobic",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Bez kodu",
+        "description": "Po prostu opisz czego chcesz po polsku"
       },
       "agentSwarms": {
         "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "description": "Rownolegle floty agentow"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Sterowanie pulpitem",
+        "description": "Klika, pisze, nawiguje"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Automatyzacja przegladarki",
+        "description": "Formularze, karty, scraping — w pelni automatycznie"
       },
       "computerVision": {
         "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "description": "Widzi i rozumie Twoj ekran w czasie rzeczywistym"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Przeplywy pracy",
+        "description": "Wieloetapowe przeplywy"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Na urzadzeniu",
+        "description": "Dziala lokalnie"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "24/7 Autonomiczny",
+        "description": "Ustaw i zapomnij — dziala gdy spisz"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Nowy tutaj? Mamy dla Ciebie przewodnik",
+      "subtitle": "Wdroz swojego pierwszego agenta AI w mniej niz minute"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Co ma zrobic Twoj pracownik AI?",
+    "placeholderAlt": "Powiedz swojemu AI, co ma zrobic na komputerze...",
+    "vmError": {
+      "title": "Blad maszyny wirtualnej",
+      "description": "Maszyna wirtualna jest w stanie bledu lub jest usuwana.",
+      "hint": "Sprawdz zakladke Maszyny, aby rozwiazac problem, lub wybierz \"Brak wybranego komputera\", aby uzywac tylko wyszukiwania.",
+      "gotIt": "Rozumiem"
+    },
+    "status": {
+      "creating": "Tworzenie {name}...",
+      "initiating": "Uruchamianie agenta na {name}...",
+      "stopping": "Zatrzymywanie {name}...",
+      "preparing": "Przygotowywanie {name}..."
+    },
+    "swarm": {
+      "title": "Tryb Swarm",
+      "pro": "PRO",
+      "upgradeLabel": "Tryb swarm — ulepsz, aby odblokowac",
+      "feature1": "Rownolegle wykonywanie na tymczasowych maszynach",
+      "feature2": "Kazda maszyna dziala autonomicznie",
+      "feature3": "3x limit maszyn Twojego planu na swarm",
+      "description": "Uruchom jeden prompt na 3x limicie maszyn rownolegle — kazda zajmuje sie zadaniem niezaleznie.",
+      "enableLabel": "Wlacz tryb swarm",
+      "disableLabel": "Wylacz tryb swarm",
+      "onTooltip": "Tryb swarm WLACZONY — Twoj prompt bedzie dzialac na wielu maszynach rownolegle",
+      "offTooltip": "Wlacz tryb swarm, aby uruchomic prompt na wielu maszynach jednoczesnie",
+      "decreaseMachines": "Zmniejsz liczbe maszyn",
+      "increaseMachines": "Zwieksz liczbe maszyn",
+      "machineLimit": "Do {max} maszyn swarm w Twoim planie. Potrzebujesz wiecej? Skontaktuj sie z founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Polacz z pulpitem",
+      "screenLabel": "Ekran {name}",
+      "screenDefault": "Pulpit",
+      "watchTooltip": "Obserwuj prace agenta na oddzielnym ekranie. Tylko niczego nie dotykaj, bo dostanie tremy!"
+    },
+    "buttons": {
+      "stop": "Zatrzymaj",
+      "sendToSwarm": "Wyslij do swarm",
+      "taskRunning": "Inne zadanie jest uruchomione — kliknij, aby je zatrzymac i uruchomic swoje",
+      "selectComputer": "Wybierz komputer, aby wysylac wiadomosci",
+      "waitCreating": "Prosze czekac na utworzenie VM",
+      "waitStarting": "Prosze czekac na uruchomienie VM",
+      "waitAgent": "Prosze czekac na inicjalizacje agenta",
+      "vmStopping": "VM sie zatrzymuje",
+      "send": "Wyslij",
+      "switching": "Przelaczanie...",
+      "overrideRun": "Nadpisz i uruchom",
+      "stopLabel": "Zatrzymaj biezace zadanie i rozpocznij to",
+      "sendLabel": "Wyslij wiadomosc"
+    },
+    "search": "Szukaj",
+    "upload": {
+      "label": "Przeslij pliki do VM",
+      "heading": "Przeslij pliki do VM",
+      "description": "Pliki zostana zapisane na Pulpicie",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Upusc pliki tutaj",
+      "dropDescription": "Pliki zostana przeslane do folderu Pulpit VM",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Zaloguj sie, aby wyprobowac wiecej funkcji za darmo",
+      "description": "Twórz projekty, zapraszaj czlonkow zespolu i wiecej.",
+      "connecting": "Laczenie...",
+      "continueWithGoogle": "Kontynuuj z Google"
+    },
+    "removeFile": "Usun plik"
+  },
+  "chat": {
+    "greeting": "Czesc",
+    "greetingAuth": "Zajme sie praca na komputerze. Jakie jest zadanie?",
+    "greetingUnauth": "AI, ktore obsluguje komputer, zebys nie musial. Po prostu powiedz, co trzeba zrobic.",
+    "guide": "Przewodnik",
+    "saveLogins": "Zapisz loginy do automatycznego wypelniania",
+    "encryptedNote": "zaszyfrowane, nigdy niewidoczne dla AI",
+    "roleLabels": ["Wspolpracownik", "Pracownik", "Przyjaciel", "Asystent", "Partner", "Czlonek zespolu", "Kolaborant", "Pomocnik"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Pobierz raport o konkurencji",
+        "warmLeads": "Wygeneruj 20 cieplychi leadow",
+        "pitchDeck": "Zbuduj szkic pitch decka"
+      },
+      "developer": {
+        "findBugs": "Znajdz bledy na mojej stronie",
+        "performance": "Pobierz raport wydajnosci",
+        "apiDocs": "Wyodrebnij dokumentacje API"
+      },
+      "marketer": {
+        "seoGap": "Pobierz analize luk SEO",
+        "competitorAds": "Podgladnij reklamy konkurencji",
+        "trendingContent": "Pobierz pomysly na trendujaca tresc"
+      },
+      "product_manager": {
+        "reviewSummary": "Pobierz podsumowanie recenzji",
+        "featureComparison": "Zbuduj porownanie funkcji",
+        "competitorLaunches": "Sledz premiery konkurencji"
+      },
+      "data_analyst": {
+        "exportCsv": "Eksportuj dane strony do CSV",
+        "marketSizing": "Pobierz raport o wielkosci rynku",
+        "benchmark": "Porownaj z branza"
+      },
+      "operations": {
+        "enterRecords": "Wprowadz rekordy do naszego systemu",
+        "cheapestVendor": "Znajdz najtanszego dostawce",
+        "invoiceSummary": "Pobierz podsumowanie faktur"
+      },
+      "designer": {
+        "designComparison": "Pobierz porownanie designu",
+        "responsiveAudit": "Przeprowadz audyt responsywnosci",
+        "inspiration": "Zbierz inspiracje designowe"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Eksportuj dane strony do CSV",
+      "browser_automation": "Eksportuj raporty z dashboardu",
+      "data_entry": "Wprowadz rekordy do naszej aplikacji",
+      "email_outreach": "Wyslij spersonalizowany outreach",
+      "testing": "Pobierz pelny raport QA",
+      "ecommerce": "Pobierz porownanie cen",
+      "social_media": "Opublikuj i uzyskaj zaangazowanie",
+      "general_automation": "Uruchom zadanie na mojej stronie"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Kopiuj tekst",
+    "copied": "Skopiowano!",
+    "regenerate": "Regeneruj",
+    "feedback": {
+      "title": "Opinia",
+      "prompts": ["Ocen to", "Opinia", "Jak nam poszlo?", "Uwagi?", "Podziel sie opinia"],
+      "tooltip": "Podziel sie swoja opinia"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Inteligentne wyszukiwanie",
+      "description": "Wyszukiwanie AI w calym Internecie"
+    },
+    "collaborate": {
+      "title": "Wspolpraca",
+      "description": "Pracuj razem w czasie rzeczywistym"
+    },
+    "globalAccess": {
+      "title": "Globalny dostep",
+      "description": "Szukaj w 50+ jezykach"
+    },
+    "aiModels": {
+      "title": "Modele AI",
+      "description": "Wielu dostawcow AI"
+    },
+    "freeForever": {
+      "title": "Na zawsze za darmo",
+      "description": "Zadnych ukrytych kosztow"
+    },
+    "privateSecure": {
+      "title": "Prywatne i bezpieczne",
+      "description": "Twoje dane pozostaja Twoje"
+    }
+  },
+  "sidebar": {
+    "newTask": "Nowe zadanie",
+    "newTaskDescription": "Rozpocznij nowa automatyzacje AI",
+    "activity": "Aktywnosc",
+    "taskHistory": "Historia zadan",
+    "taskHistoryDescription": "Przejrzyj poprzednie zadania i kontynuuj od miejsca, w ktorym skonczyles",
+    "taskHistoryPopup": {
+      "title": "Twoje ostatnie zadania",
+      "description": "Przegladaj i kontynuuj poprzednie rozmowy. Kazde zadanie jest zapisane, abys mogl kontynuowac od miejsca, w ktorym skonczyles."
+    },
+    "swarmRuns": "Uruchomienia Swarm",
+    "swarmRunsDescription": "Monitoruj rownolegle przeplywy pracy multi-agentow",
+    "swarmRunsPopup": {
+      "title": "Przeplywy pracy multi-agentow",
+      "description": "Uruchamiaj zadania na wielu maszynach rownolegle. Kazdy agent pracuje niezaleznie, a wyniki zbiegaja sie automatycznie."
+    },
+    "guide": "Przewodnik",
+    "guideDescription": "Dowiedz sie, jak w pelni wykorzystac Coasty",
+    "guidePopup": {
+      "title": "Poczatek",
+      "description": "Przewodniki krok po kroku i najlepsze praktyki, ktore pomoga Ci skutecznie automatyzowac."
+    },
+    "infrastructure": "Infrastruktura",
+    "computer": "Komputer",
+    "computers": "Komputery",
+    "active": "aktywny",
+    "view": "Wyswietl",
+    "workforce": "Sila robocza",
+    "workforceDescription": "Planuj automatycznych agentow i wyzwalacze",
+    "workforcePopup": {
+      "title": "Zaplanowana automatyzacja",
+      "description": "Skonfiguruj powtarzalne zadania z harmonogramami cron i wyzwalaczami agent-agent. Twoja sila robocza dziala gdy spisz."
+    },
+    "credentials": "Dane logowania",
+    "credentialsDescription": "Bezpiecznie przechowuj loginy do dostepu agenta",
+    "credentialsPopup": {
+      "title": "Bezpieczny sejf danych logowania",
+      "description": "Przechowuj loginy i klucze API z szyfrowaniem. Agenci automatycznie wypelniaja dane logowania bez ujawniania surowych wartosci."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Pobierz aplikacje desktopowa",
+      "download": "Pobierz",
+      "downloadDesktopApp": "Pobierz aplikacje desktopowa",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Kontroluj swoj komputer zdalnie",
+      "controlDescription": "Zainstaluj aplikacje desktopowa i uruchamiaj zadania na swoim PC z tego dashboardu — gdziekolwiek, kiedykolwiek."
+    },
+    "credits": {
+      "runningLow": "Kredyty — Na wyczerpaniu",
+      "remaining": "Pozostale kredyty",
+      "buy": "Kup",
+      "creditsLeft": "kredytow pozostalo",
+      "usedLabel": "Uzyto: {count}",
+      "consumed": "{percent}% wykorzystano",
+      "usageThisWeek": "Uzycie w tym tygodniu"
+    },
+    "talkToUs": "Porozmawiaj z nami",
+    "inviteEarn": "Zapros i zarabiaj",
+    "user": "Uzytkownik",
+    "account": "Konto",
+    "tasks": "{count} Zadan",
+    "recentActivity": "Ostatnia aktywnosc",
+    "viewAllHistory": "Zobacz cala historie →",
+    "swarmRunsCount": "{count} Uruchomien Swarm",
+    "running": "dziala",
+    "completed": "ukonczone",
+    "viewAllSwarms": "Zobacz wszystkie swarmy →",
+    "schedulesCount": "{count} Harmonogramow",
+    "totalRuns": "{count} lacznych uruchomien",
+    "paused": "wstrzymane",
+    "viewAllSchedules": "Zobacz wszystkie harmonogramy →",
+    "credentialsCount": "{count} Danych logowania",
+    "encryptedVault": "Zaszyfrowany sejf",
+    "manageCredentials": "Zarzadzaj danymi logowania →",
+    "days": ["Pon", "Wt", "Sr", "Czw", "Pt", "Sob", "Ndz"],
+    "resume": "WZNOW",
+    "result": "WYNIK",
+    "notScheduled": "Nie zaplanowano",
+    "overdue": "Zalegly",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "za {count}m",
+    "inHours": "za {count}g",
+    "today": "dzisiaj",
+    "yesterday": "wczoraj"
+  },
+  "appHeader": {
+    "login": "Zaloguj sie",
+    "assign": "Przypisz",
+    "assignDescription": "Przypisz pracownika do wykonania tego zadania",
+    "computer": "Komputer",
+    "showComputer": "Pokaz komputer",
+    "hideComputer": "Ukryj komputer",
+    "employeeHired": "Pracownik zatrudniony!",
+    "employeeRemoved": "Pracownik usuniety"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Lekka codzienna automatyzacja"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Automatyzuj zadania kazdego dnia"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Skaluj zlozone przeplywy pracy",
+        "badge": "Najpopularniejszy"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Nieograniczona intensywna automatyzacja"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (usuwana po nieaktywnosci)",
+      "vmAlwaysOn": "{count} zawsze wlaczona VM",
+      "vmAlwaysOnPlural": "{count} zawsze wlaczonych VM",
+      "agentsParallel": "{count} agentow rownolegle",
+      "basicSearch": "Podstawowe wyszukiwanie",
+      "advancedSearch": "Zaawansowane wyszukiwanie i ekstrakcja",
+      "standardSupport": "Standardowy support (prawdziwi ludzie)",
+      "prioritySupport": "Priorytetowy support, odpowiedz 24h",
+      "premiumSupport": "Premium support, odpowiedz 12h"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Maly Boost",
+        "description": "Szybkie doladowanie"
+      },
+      "medium": {
+        "name": "Sredni Boost",
+        "description": "Standardowe uzupelnienie",
+        "savings": "8% oszczednosci"
+      },
+      "large": {
+        "name": "Duzy Boost",
+        "description": "Zakup hurtowy",
+        "savings": "17% oszczednosci"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Wlasnie teraz",
+      "minutesAgo": "{count}m temu",
+      "hoursAgo": "{count}g temu",
+      "daysAgo": "{count}d temu"
+    },
+    "noActivity": "Brak aktywnosci w tym okresie",
+    "stats": {
+      "balance": "Saldo",
+      "earned": "Zarobione",
+      "used": "Uzyte",
+      "credits": "kredytow",
+      "allTime": "od poczatku",
+      "lastRange": "ostatnie {range}",
+      "sessions": "{count} sesji",
+      "avgDaily": "~{count}/dzien sr.",
+      "plan": "Plan",
+      "free": "Darmowy",
+      "noPlan": "Brak planu",
+      "canceling": "Anulowanie"
+    },
+    "monthlyUsage": "Miesieczne zuzycie kredytow",
+    "remaining": "{used} / {total} pozostalo",
+    "usedPercent": "{percent}% uzyte w tym okresie",
+    "renews": "Odnawia sie {date}",
+    "choosePlan": "Wybierz swoj plan",
+    "choosePlanDescription": "Subskrybuj, aby odblokowac funkcje AI i otrzymac miesieczne kredyty",
+    "savingsVsHuman": "Oszczedz {amount}/mies. vs czlowiek",
+    "timeSaved": "{time} zaoszczedzone miesiecznie",
+    "cheaper": "{multiplier} tansze",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/miesiac",
+    "creditsPerMonth": "{count} kredytow /miesiac",
+    "processing": "Przetwarzanie...",
+    "subscribeTo": "Subskrybuj {name}",
+    "transactionTypes": {
+      "credit_purchase": "Zakup kredytow",
+      "agent_usage": "Uzycie agenta",
+      "refund": "Zwrot",
+      "bonus": "Nagroda bonusowa",
+      "subscription": "Subskrypcja",
+      "subscription_grant": "Przyznanie subskrypcji",
+      "renewal": "Kredyty odnowienia",
+      "reactivation": "Reaktywacja"
+    },
+    "toasts": {
+      "paymentSuccess": "Platnosc pomyslna! Twoje kredyty zostaly dodane.",
+      "subscriptionActivated": "Subskrypcja aktywowana pomyslnie!",
+      "paymentCanceled": "Platnosc anulowana. Nie pobrano zadnych oplat.",
+      "signInToSubscribe": "Zaloguj sie, aby subskrybowac",
+      "subscriptionCheckoutFailed": "Nie udalo sie rozpoczac realizacji subskrypcji. Sprobuj ponownie.",
+      "signInToPurchase": "Zaloguj sie, aby kupic kredyty",
+      "needSubscription": "Potrzebujesz aktywnej subskrypcji, aby kupic dodatkowe kredyty",
+      "checkoutFailed": "Nie udalo sie rozpoczac realizacji. Sprobuj ponownie.",
+      "manageFailed": "Nie udalo sie otworzyc zarzadzania subskrypcja. Sprobuj ponownie.",
+      "transactionsExported": "Transakcje wyeksportowane"
+    }
+  },
+  "apiKeys": {
+    "title": "Dostawcy modeli",
+    "new": "nowy",
+    "description": "Dodaj wlasne klucze API, aby odblokowac dostep do modeli.",
+    "securityNote": "Twoje klucze sa przechowywane bezpiecznie z szyfrowaniem end-to-end.",
+    "apiKeyLabel": "Klucz API {provider}",
+    "getApiKey": "Pobierz klucz API",
+    "delete": "Usun",
+    "save": "Zapisz",
+    "deleteDialog": {
+      "title": "Usun klucz API",
+      "description": "Czy na pewno chcesz usunac klucz API {provider}? Tej akcji nie mozna cofnac i stracisz dostep do modeli {provider}.",
+      "cancel": "Anuluj",
+      "confirm": "Usun"
+    },
+    "toasts": {
+      "saved": "Klucz API zapisany",
+      "savedDescription": "Twoj klucz API {provider} zostal zapisany, a modele zostaly dodane do ulubionych.",
+      "updatedDescription": "Twoj klucz API {provider} zostal zaktualizowany.",
+      "saveFailed": "Nie udalo sie zapisac klucza API",
+      "saveFailedDescription": "Nie udalo sie zapisac klucza API {provider}. Sprobuj ponownie.",
+      "deleted": "Klucz API usuniety",
+      "deletedDescription": "Twoj klucz API {provider} zostal usuniety.",
+      "deleteFailed": "Nie udalo sie usunac klucza API",
+      "deleteFailedDescription": "Nie udalo sie usunac klucza API {provider}. Sprobuj ponownie."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Szczegoly profilu",
+    "displayName": "Nazwa wyswietlana",
+    "namePlaceholder": "Twoje imie",
+    "company": "Firma",
+    "companyPlaceholder": "Twoja firma",
+    "website": "Strona internetowa",
+    "websitePlaceholder": "twojastrona.pl",
+    "saving": "Zapisywanie...",
+    "saveChanges": "Zapisz zmiany",
+    "account": "Konto",
+    "email": "E-mail",
+    "verified": "Zweryfikowany",
+    "signOut": "Wyloguj sie",
+    "signOutDescription": "Wyloguj z tego urzadzenia",
+    "toasts": {
+      "profileUpdated": "Profil zaktualizowany",
+      "profileUpdateFailed": "Nie udalo sie zaktualizowac profilu",
+      "signOutFailed": "Nie udalo sie wylogowac"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Twoje dane sa chronione",
+    "dataProtectedDescription": "Bezpieczenstwo klasy enterprise z szyfrowaniem w spoczynku i w tranzycie",
+    "features": {
+      "encryption": {
+        "title": "Szyfrowanie end-to-end",
+        "description": "Klucze API zaszyfrowane AES-256-GCM. Twoje dane uwierzytelniajace nigdy nie sa przechowywane w postaci jawnej."
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "Izolacja na poziomie bazy danych zapewnia, ze Twoje dane sa dostepne tylko dla Ciebie. Brak dostepu miedzy lokatorami."
+      },
+      "privacy": {
+        "title": "Prywatnosc w projekcie",
+        "description": "Zbieramy minimalna ilosc danych niezbednych do swiadczenia uslugi. Twoje rozmowy i pliki pozostaja Twoje."
+      },
+      "session": {
+        "title": "Bezpieczenstwo sesji",
+        "description": "Ochrona CSRF, bezpieczne ciasteczka HTTP-only i naglowki Content Security Policy przy kazdym zadaniu."
+      }
+    },
+    "legal": "Prawne",
+    "privacyPolicy": {
+      "title": "Polityka prywatnosci",
+      "description": "Jak zbieramy, uzywamy i chronimy Twoje dane"
+    },
+    "termsOfService": {
+      "title": "Warunki korzystania z uslugi",
+      "description": "Nasze warunki uzytkowania"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Uklad"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Podsumowanie",
+      "highlight": "Podsumuj"
+    },
+    "code": {
+      "label": "Kod",
+      "highlight": "Zbuduj"
+    },
+    "research": {
+      "label": "Badanie",
+      "highlight": "Analizuj"
+    },
+    "create": {
+      "label": "Tworz",
+      "highlight": "Generuj"
+    },
+    "solve": {
+      "label": "Rozwiaz",
+      "highlight": "Debug"
+    },
+    "learn": {
+      "label": "Ucz sie",
+      "highlight": "Wyjasni"
+    }
+  },
+  "loadingMessages": [
+    "Uruchamiamy krzemowy mozg",
+    "Budzimy cyfrowa swiadomosc",
+    "Inicjalizujemy sciezki neuronowe",
+    "Rozkrecamy rdzenie kwantowe",
+    "Ladujemy kondensator strumieniowy",
+    "Aktywujemy komputer glowny",
+    "Zasilamy macierz obliczeniowa",
+    "Wlaczamy napead warp",
+    "Przywolujemy duchy krzemu",
+    "Rozpalamy silnik elektronowy",
+    "Rozgrzewamy tranzystory",
+    "Skladamy bity i bajty",
+    "Kalibrujemy cyfrowe synapsy",
+    "Ladujemy krystaly CPU energia",
+    "Ladujemy protokoly swiadomosci",
+    "Inicjalizujemy zasoby systemowe",
+    "Przygotowujemy srodowisko obliczeniowe",
+    "Nawiazujemy bezpieczne polaczenie",
+    "Przydzielamy zasoby wirtualne",
+    "Konfigurujemy parametry systemu",
+    "Uruchamiamy instancje wirtualna",
+    "Aktywujemy zdalny pulpit",
+    "Wdrazamy zasoby chmurowe",
+    "Rozpoczynamy sekwencje startu systemu",
+    "Przygotowujemy srodowisko wykonawcze",
+    "Budzimy spiacy komputer",
+    "Szturchamy cyfrowego niedzwiedzia",
+    "Parzymy obliczeniowa kawe",
+    "Rozciagamy cyfrowe miesnie",
+    "Otwieramy cyfrowe oczy",
+    "Uruchamiamy",
+    "Wlaczamy zasilanie",
+    "Laczymy sie",
+    "Bootujemy system",
+    "Przygotowujemy sie",
+    "Juz prawie",
+    "Przygotowujemy przestrzen robocza",
+    "Ladujemy zasoby",
+    "System sie budzi"
+  ]
 }

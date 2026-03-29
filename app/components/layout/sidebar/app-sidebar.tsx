@@ -1,6 +1,7 @@
 "use client"
 
 import { useBreakpoint } from "@/app/hooks/use-breakpoint"
+import { useAccountDialog } from "@/lib/account-dialog-store"
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +23,7 @@ import {
   IconKey,
 } from "@tabler/icons-react"
 import { useRouter, usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useState, useEffect, useCallback, useRef, useMemo, type ReactNode } from "react"
 import { DialogCollaborativeAuth } from "../../collaborative/dialog-collaborative-auth"
 import { CoastyIcon } from "@/components/icons/coasty"
@@ -89,6 +91,7 @@ type HoverInfo = {
 // Task History: A mini chat list where you see past conversations
 // and one gets selected + resumed
 function HistoryVisual() {
+  const t = useTranslations("sidebar")
   const rows = [
     { title: "Research competitors", time: "2h ago", width: "w-16" },
     { title: "Fill out invoice form", time: "5h ago", width: "w-20" },
@@ -123,7 +126,7 @@ function HistoryVisual() {
           {/* Resume button appears on selected row */}
           {i === 1 && (
             <div className="shv-resume shrink-0 px-1.5 py-[2px] rounded text-[6px] font-bold border border-foreground/25 text-foreground/50 tracking-wide">
-              RESUME
+              {t("resume")}
             </div>
           )}
         </div>
@@ -135,6 +138,7 @@ function HistoryVisual() {
 // Swarm Runs: Multiple parallel terminals/browsers each doing work
 // with progress bars, converging into a result
 function SwarmsVisual() {
+  const t = useTranslations("sidebar")
   const agents = [
     { label: "A1", progress: 85, delay: "0s" },
     { label: "A2", progress: 60, delay: "0.15s" },
@@ -176,7 +180,7 @@ function SwarmsVisual() {
       <div className="flex items-center gap-1.5 shv-fade-up" style={{ animationDelay: "0.6s" }}>
         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-foreground/15 to-foreground/15" />
         <div className="px-2 py-[2px] rounded-full border border-foreground/15 bg-foreground/[0.04] text-[5px] font-bold text-foreground/35 tracking-widest">
-          RESULT
+          {t("result")}
         </div>
         <div className="flex-1 h-px bg-gradient-to-l from-transparent via-foreground/15 to-foreground/15" />
       </div>
@@ -445,6 +449,7 @@ function NavButton({
   id,
   isActive,
   href,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   accentColor,
   hoverInfo,
   livePopup,
@@ -572,9 +577,9 @@ function NavButton({
 
 // ─── Section label ─────────────────────────────────────────────────
 function SectionLabel({ children, expanded }: { children: React.ReactNode; expanded: boolean }) {
-  if (!expanded) return <div className="mx-auto my-1.5 w-3 h-px bg-sidebar-border/15 rounded-full" />
+  if (!expanded) return <div className="mx-auto my-2 w-5 h-px bg-sidebar-border/20 rounded-full" />
   return (
-    <div className="text-[9.5px] font-semibold text-foreground/25 uppercase tracking-[0.1em] mb-1.5 px-2.5 select-none">
+    <div className="text-[10px] font-semibold text-foreground/35 uppercase tracking-[0.08em] mb-1 mt-0.5 px-2.5 select-none">
       {children}
     </div>
   )
@@ -582,12 +587,9 @@ function SectionLabel({ children, expanded }: { children: React.ReactNode; expan
 
 // ─── Credits sparkline background ───────────────────────────────────
 function CreditsSparkBg({ balance, totalUsed, className }: { balance: number; totalUsed: number; className?: string }) {
-  // Generate a gentle curve representing usage pattern
   const total = balance + totalUsed
   const pct = total > 0 ? balance / total : 1
 
-  // Build a smooth sparkline path — 8 points across the width
-  // Simulates a usage curve: starts high, dips with usage, current level at end
   const w = 200
   const h = 40
   const pad = 2
@@ -595,14 +597,11 @@ function CreditsSparkBg({ balance, totalUsed, className }: { balance: number; to
   const values: number[] = []
   for (let i = 0; i < points; i++) {
     const t = i / (points - 1)
-    // Curve: starts at ~total level, smoothly transitions to current balance level
     const base = pct + (1 - pct) * (1 - t) * (0.6 + 0.4 * Math.sin(t * Math.PI))
-    // Add subtle variation
     const jitter = Math.sin(t * Math.PI * 3) * 0.06 + Math.cos(t * Math.PI * 1.5) * 0.04
     values.push(Math.min(1, Math.max(0.05, base + jitter)))
   }
 
-  // Build SVG path with smooth cubic bezier curves
   const getX = (i: number) => pad + (i / (points - 1)) * (w - pad * 2)
   const getY = (v: number) => h - pad - v * (h - pad * 2)
 
@@ -613,7 +612,6 @@ function CreditsSparkBg({ balance, totalUsed, className }: { balance: number; to
     d += ` C ${cpx1} ${getY(values[i - 1])}, ${cpx2} ${getY(values[i])}, ${getX(i)} ${getY(values[i])}`
   }
 
-  // Area fill path (close to bottom)
   const areaD = d + ` L ${getX(points - 1)} ${h} L ${getX(0)} ${h} Z`
 
   return (
@@ -639,63 +637,6 @@ function CreditsSparkBg({ balance, totalUsed, className }: { balance: number; to
   )
 }
 
-// ─── Machines activity bars background ───────────────────────────────
-function MachinesActivityBg({
-  running, stopped, total, className,
-}: { running: number; stopped: number; total: number; className?: string }) {
-  const w = 200
-  const h = 44
-  const bars = 12
-  const barW = 8
-  const gap = (w - bars * barW) / (bars + 1)
-
-  // Generate bar heights: active machines = taller bars, creates a skyline feel
-  const activePct = total > 0 ? running / total : 0
-  const barHeights: number[] = []
-  for (let i = 0; i < bars; i++) {
-    const t = i / (bars - 1)
-    // Wave pattern with activity influence
-    const wave = Math.sin(t * Math.PI * 2.2 + 0.5) * 0.3
-    const peak = Math.exp(-Math.pow((t - 0.65) * 3, 2)) * 0.4
-    const base = 0.15 + activePct * 0.35 + wave * 0.15 + peak
-    barHeights.push(Math.min(0.95, Math.max(0.08, base)))
-  }
-
-  return (
-    <svg
-      className={cn("absolute inset-0 w-full h-full", className)}
-      viewBox={`0 0 ${w} ${h}`}
-      preserveAspectRatio="none"
-    >
-      <defs>
-        <linearGradient id="bar-fill" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="currentColor" stopOpacity="0.18" />
-          <stop offset="100%" stopColor="currentColor" stopOpacity="0.03" />
-        </linearGradient>
-      </defs>
-      {barHeights.map((h_pct, i) => {
-        const x = gap + i * (barW + gap)
-        const barH = h_pct * (h - 4)
-        const y = h - 2 - barH
-        // Bars toward the right (recent) are slightly brighter
-        const opacity = 0.4 + (i / (bars - 1)) * 0.6
-        return (
-          <rect
-            key={i}
-            x={x}
-            y={y}
-            width={barW}
-            height={barH}
-            rx={2.5}
-            fill="url(#bar-fill)"
-            opacity={opacity}
-          />
-        )
-      })}
-    </svg>
-  )
-}
-
 // ─── Shared popup shell (theme-aware) ────────────────────────────────
 function PopupShell({ children, width = "w-72" }: { children: ReactNode; width?: string }) {
   return (
@@ -715,6 +656,7 @@ function GlassSection({ children, className }: { children: ReactNode; className?
 
 // ─── Task History live popup ────────────────────────────────────────
 function HistoryLivePopup({ chats }: { chats: { id: string; title: string | null; updated_at: string | null; last_message_preview?: string }[] }) {
+  const t = useTranslations("sidebar")
   const recent = chats.slice(0, 5)
 
   const timeAgo = (d: string | null) => {
@@ -729,8 +671,8 @@ function HistoryLivePopup({ chats }: { chats: { id: string; title: string | null
     <PopupShell>
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-baseline justify-between">
-          <span className="text-sm font-semibold text-popover-foreground">{chats.length} Tasks</span>
-          <span className="text-[10px] text-muted-foreground">Recent activity</span>
+          <span className="text-sm font-semibold text-popover-foreground">{t("tasks", { count: chats.length })}</span>
+          <span className="text-[10px] text-muted-foreground">{t("recentActivity")}</span>
         </div>
       </div>
       <GlassSection>
@@ -758,7 +700,7 @@ function HistoryLivePopup({ chats }: { chats: { id: string; title: string | null
         </div>
       </GlassSection>
       <Link href="/history" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
-        <span className="text-[10px] font-medium text-blue-500 dark:text-blue-400">View all history →</span>
+        <span className="text-[10px] font-medium text-blue-500 dark:text-blue-400">{t("viewAllHistory")}</span>
       </Link>
     </PopupShell>
   )
@@ -766,6 +708,7 @@ function HistoryLivePopup({ chats }: { chats: { id: string; title: string | null
 
 // ─── Swarm Runs live popup ──────────────────────────────────────────
 function SwarmsLivePopup({ swarms }: { swarms: { swarm_id: string; status?: string; created_at: string; prompt?: string; machine_count?: number }[] }) {
+  const t = useTranslations("sidebar")
   const recent = swarms.slice(0, 4)
 
   const statusColor = (s?: string) => {
@@ -789,14 +732,14 @@ function SwarmsLivePopup({ swarms }: { swarms: { swarm_id: string; status?: stri
     <PopupShell>
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-baseline justify-between">
-          <span className="text-sm font-semibold text-popover-foreground">{swarms.length} Swarm Runs</span>
+          <span className="text-sm font-semibold text-popover-foreground">{t("swarmRunsCount", { count: swarms.length })}</span>
           {running > 0 && (
-            <span className="text-[10px] text-violet-500 dark:text-violet-400 font-medium">{running} active</span>
+            <span className="text-[10px] text-violet-500 dark:text-violet-400 font-medium">{running} {t("active")}</span>
           )}
         </div>
         <div className="flex gap-3 mt-1.5">
-          {running > 0 && <span className="text-[9px] text-muted-foreground">{running} running</span>}
-          {completed > 0 && <span className="text-[9px] text-muted-foreground">{completed} completed</span>}
+          {running > 0 && <span className="text-[9px] text-muted-foreground">{running} {t("running")}</span>}
+          {completed > 0 && <span className="text-[9px] text-muted-foreground">{completed} {t("completed")}</span>}
         </div>
       </div>
       <GlassSection>
@@ -818,7 +761,7 @@ function SwarmsLivePopup({ swarms }: { swarms: { swarm_id: string; status?: stri
         </div>
       </GlassSection>
       <Link href="/swarms" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
-        <span className="text-[10px] font-medium text-violet-500 dark:text-violet-400">View all swarms →</span>
+        <span className="text-[10px] font-medium text-violet-500 dark:text-violet-400">{t("viewAllSwarms")}</span>
       </Link>
     </PopupShell>
   )
@@ -826,17 +769,18 @@ function SwarmsLivePopup({ swarms }: { swarms: { swarm_id: string; status?: stri
 
 // ─── Workforce/Schedules live popup ─────────────────────────────────
 function WorkforceLivePopup({ schedules }: { schedules: { chat_id: string; title: string | null; enabled: boolean; frequency: string; next_run_at: string | null; run_count: number; consecutive_failures: number }[] }) {
+  const t = useTranslations("sidebar")
   const recent = schedules.slice(0, 4)
   const active = schedules.filter(s => s.enabled).length
   const totalRuns = schedules.reduce((acc, s) => acc + s.run_count, 0)
 
   const formatNext = (d: string | null) => {
-    if (!d) return "Not scheduled"
+    if (!d) return t("notScheduled")
     const ms = new Date(d).getTime() - Date.now()
-    if (ms < 0) return "Overdue"
-    if (ms < 60_000) return "< 1 min"
-    if (ms < 3_600_000) return `in ${Math.round(ms / 60_000)}m`
-    if (ms < 86_400_000) return `in ${Math.round(ms / 3_600_000)}h`
+    if (ms < 0) return t("overdue")
+    if (ms < 60_000) return t("lessThanMin")
+    if (ms < 3_600_000) return t("inMinutes", { count: Math.round(ms / 60_000) })
+    if (ms < 86_400_000) return t("inHours", { count: Math.round(ms / 3_600_000) })
     return new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric" })
   }
 
@@ -844,12 +788,12 @@ function WorkforceLivePopup({ schedules }: { schedules: { chat_id: string; title
     <PopupShell>
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-baseline justify-between">
-          <span className="text-sm font-semibold text-popover-foreground">{schedules.length} Schedules</span>
-          <span className="text-[10px] text-muted-foreground">{totalRuns} total runs</span>
+          <span className="text-sm font-semibold text-popover-foreground">{t("schedulesCount", { count: schedules.length })}</span>
+          <span className="text-[10px] text-muted-foreground">{t("totalRuns", { count: totalRuns })}</span>
         </div>
         <div className="flex gap-3 mt-1.5">
-          <span className="text-[9px] text-amber-500 dark:text-amber-400/70">{active} active</span>
-          <span className="text-[9px] text-muted-foreground">{schedules.length - active} paused</span>
+          <span className="text-[9px] text-amber-500 dark:text-amber-400/70">{active} {t("active")}</span>
+          <span className="text-[9px] text-muted-foreground">{schedules.length - active} {t("paused")}</span>
         </div>
       </div>
       <GlassSection>
@@ -871,14 +815,14 @@ function WorkforceLivePopup({ schedules }: { schedules: { chat_id: string; title
                 "text-[9px] shrink-0 tabular-nums",
                 s.enabled ? "text-amber-500/60 dark:text-amber-400/50" : "text-muted-foreground/50"
               )}>
-                {s.enabled ? formatNext(s.next_run_at) : "paused"}
+                {s.enabled ? formatNext(s.next_run_at) : t("paused")}
               </span>
             </div>
           ))}
         </div>
       </GlassSection>
       <Link href="/schedules" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
-        <span className="text-[10px] font-medium text-amber-500 dark:text-amber-400">View all schedules →</span>
+        <span className="text-[10px] font-medium text-amber-500 dark:text-amber-400">{t("viewAllSchedules")}</span>
       </Link>
     </PopupShell>
   )
@@ -886,12 +830,13 @@ function WorkforceLivePopup({ schedules }: { schedules: { chat_id: string; title
 
 // ─── Credentials live popup ─────────────────────────────────────────
 function CredentialsLivePopup({ secrets }: { secrets: { id: string; name: string; service: string; username: string; updatedAt: string }[] }) {
+  const t = useTranslations("sidebar")
   const recent = secrets.slice(0, 4)
 
   const timeAgo = (d: string) => {
     const ms = Date.now() - new Date(d).getTime()
-    if (ms < 86_400_000) return "today"
-    if (ms < 172_800_000) return "yesterday"
+    if (ms < 86_400_000) return t("today")
+    if (ms < 172_800_000) return t("yesterday")
     return `${Math.round(ms / 86_400_000)}d ago`
   }
 
@@ -899,8 +844,8 @@ function CredentialsLivePopup({ secrets }: { secrets: { id: string; name: string
     <PopupShell>
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-baseline justify-between">
-          <span className="text-sm font-semibold text-popover-foreground">{secrets.length} Credentials</span>
-          <span className="text-[10px] text-muted-foreground">Encrypted vault</span>
+          <span className="text-sm font-semibold text-popover-foreground">{t("credentialsCount", { count: secrets.length })}</span>
+          <span className="text-[10px] text-muted-foreground">{t("encryptedVault")}</span>
         </div>
       </div>
       <GlassSection>
@@ -920,7 +865,7 @@ function CredentialsLivePopup({ secrets }: { secrets: { id: string; name: string
         </div>
       </GlassSection>
       <Link href="/secrets" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
-        <span className="text-[10px] font-medium text-rose-500 dark:text-rose-400">Manage credentials →</span>
+        <span className="text-[10px] font-medium text-rose-500 dark:text-rose-400">{t("manageCredentials")}</span>
       </Link>
     </PopupShell>
   )
@@ -938,12 +883,13 @@ function CreditsUsageGraph({
   totalPurchased: number
   isLow: boolean
 }) {
+  const t = useTranslations("sidebar")
   const total = balance + totalUsed
   const usedPct = total > 0 ? totalUsed / total : 0
 
   // 7 days of usage distributed from totalUsed with a natural curve
   // Deterministic weights (no Math.random — avoids SSR hydration mismatch)
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  const days = t.raw("days") as string[]
   const weights = [0.18, 0.16, 0.2, 0.14, 0.12, 0.08, 0.12]
   const fallbackWeights = [0.35, 0.25, 0.45, 0.3, 0.2, 0.15, 0.28]
   const maxWeight = Math.max(...weights)
@@ -969,7 +915,7 @@ function CreditsUsageGraph({
             <span className={cn("text-xl font-bold tabular-nums", isLow ? "text-orange-500 dark:text-orange-400" : "text-popover-foreground")}>
               {balance.toLocaleString()}
             </span>
-            <span className="text-[10px] text-muted-foreground ml-1.5 font-medium">credits left</span>
+            <span className="text-[10px] text-muted-foreground ml-1.5 font-medium">{t("credits.creditsLeft")}</span>
           </div>
           {totalPurchased > 0 && (
             <span className="text-[10px] text-muted-foreground/60 tabular-nums">
@@ -986,16 +932,16 @@ function CreditsUsageGraph({
           />
         </div>
         <div className="flex justify-between mt-1.5">
-          <span className="text-[9px] text-muted-foreground">Used: {totalUsed.toLocaleString()}</span>
+          <span className="text-[9px] text-muted-foreground">{t("credits.usedLabel", { count: totalUsed.toLocaleString() })}</span>
           <span className={cn("text-[9px]", isLow ? "text-orange-500/60 dark:text-orange-400/60" : "text-muted-foreground")}>
-            {(usedPct * 100).toFixed(0)}% consumed
+            {t("credits.consumed", { percent: (usedPct * 100).toFixed(0) })}
           </span>
         </div>
       </div>
 
       {/* Graph area with glass effect */}
       <GlassSection>
-        <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider mb-2">Usage this week</p>
+        <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider mb-2">{t("credits.usageThisWeek")}</p>
 
         {/* Bar chart — fixed pixel heights for reliable rendering */}
         <div className="flex items-end gap-[6px]" style={{ height: `${barMaxH}px` }}>
@@ -1021,20 +967,21 @@ function CreditsUsageGraph({
       </GlassSection>
 
       {/* Footer hint */}
-      <Link href="/account?section=billing" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
+      <button onClick={() => useAccountDialog.getState().open("billing")} className="block w-full text-left px-4 pb-3 hover:opacity-80 transition-opacity">
         <div className="flex items-center justify-between">
           <span className="text-[10px] text-muted-foreground">10 credits / minute of usage</span>
           <span className={cn("text-[10px] font-medium", accentColor)}>
             View billing →
           </span>
         </div>
-      </Link>
+      </button>
     </PopupShell>
   )
 }
 
 // ─── Main sidebar ──────────────────────────────────────────────────
 export function AppSidebar() {
+  const t = useTranslations("sidebar")
   const isMobile = useBreakpoint(768)
   const { setOpenMobile, open, isMobile: isMobileSidebar } = useSidebar()
   const expanded = isMobileSidebar || open
@@ -1045,6 +992,7 @@ export function AppSidebar() {
   const [isReferralPopupOpen, setIsReferralPopupOpen] = useState(false)
 
   const router = useRouter()
+  const openAccountDialog = useAccountDialog((s) => s.open)
   const { credits } = useCredits()
 
   // ─── Machines state ────────────────────────────────────────────
@@ -1201,11 +1149,11 @@ export function AppSidebar() {
           )}
         >
           {/* New Task */}
-          <div className={cn("relative", expanded ? "pb-1.5 mb-1" : "pb-1 mb-0.5")}>
+          <div className={cn("relative", expanded ? "pb-1 mb-0.5" : "pb-1 mb-0.5")}>
             <NavButton
-              icon={<IconPlus size={15} stroke={2} className="shrink-0" />}
-              label="New Task"
-              tooltip="Start a new AI automation"
+              icon={<IconPlus size={16} stroke={2} className="shrink-0" />}
+              label={t("newTask")}
+              tooltip={t("newTaskDescription")}
               onClick={() => handleNavigation(() => router.push("/"))}
               variant="primary"
             />
@@ -1213,60 +1161,60 @@ export function AppSidebar() {
 
           {/* Divider */}
           <div className={cn(
-            "mx-auto mb-2.5 transition-all",
+            "mx-auto mb-2 transition-all",
             expanded
-              ? "w-[calc(100%-1rem)] h-px bg-gradient-to-r from-transparent via-sidebar-border/25 to-transparent"
-              : "w-4 h-px bg-sidebar-border/15"
+              ? "w-[calc(100%-1.25rem)] h-px bg-gradient-to-r from-transparent via-sidebar-border/20 to-transparent"
+              : "w-5 h-px bg-sidebar-border/15"
           )} />
 
           {/* Activity */}
           <div className="relative pb-1">
-            <SectionLabel expanded={expanded}>Activity</SectionLabel>
+            <SectionLabel expanded={expanded}>{t("activity")}</SectionLabel>
             <div className="space-y-0.5">
               <NavButton
                 id="sidebar-history-link"
                 icon={<IconClockPlay size={16} stroke={1.5} className="shrink-0" />}
-                label="Task History"
-                tooltip="Review past tasks and resume where you left off"
+                label={t("taskHistory")}
+                tooltip={t("taskHistoryDescription")}
                 href="/history"
                 isActive={isItemActive("/history")}
                 accentColor="text-blue-500"
                 onClick={closeMobileIfNeeded}
                 livePopup={allChats.length > 0 ? <HistoryLivePopup chats={allChats} /> : undefined}
                 hoverInfo={{
-                  description: "Your recent tasks",
-                  detail: "Browse and continue past conversations. Every task is saved so you can resume right where you left off.",
+                  description: t("taskHistoryPopup.title"),
+                  detail: t("taskHistoryPopup.description"),
                   visual: "history",
                 }}
               />
               <NavButton
                 id="sidebar-swarms-link"
                 icon={<IconBinaryTree size={16} stroke={1.5} className="shrink-0" />}
-                label="Swarm Runs"
-                tooltip="Monitor multi-agent parallel workflows"
+                label={t("swarmRuns")}
+                tooltip={t("swarmRunsDescription")}
                 href="/swarms"
                 isActive={isItemActive("/swarms")}
                 accentColor="text-violet-500"
                 onClick={closeMobileIfNeeded}
                 livePopup={sidebarSwarms.length > 0 ? <SwarmsLivePopup swarms={sidebarSwarms} /> : undefined}
                 hoverInfo={{
-                  description: "Multi-agent workflows",
-                  detail: "Run tasks across multiple machines in parallel. Each agent works independently and results converge automatically.",
+                  description: t("swarmRunsPopup.title"),
+                  detail: t("swarmRunsPopup.description"),
                   visual: "swarms",
                 }}
               />
               <NavButton
                 id="sidebar-guide-link"
                 icon={<IconBook2 size={16} stroke={1.5} className="shrink-0" />}
-                label="Guide"
-                tooltip="Learn how to get the most from Coasty"
+                label={t("guide")}
+                tooltip={t("guideDescription")}
                 href="/guide"
                 isActive={isItemActive("/guide")}
                 accentColor="text-emerald-500"
                 onClick={closeMobileIfNeeded}
                 hoverInfo={{
-                  description: "Getting started",
-                  detail: "Step-by-step walkthroughs and best practices to help you automate effectively.",
+                  description: t("guidePopup.title"),
+                  detail: t("guidePopup.description"),
                   visual: "guide",
                 }}
               />
@@ -1274,20 +1222,19 @@ export function AppSidebar() {
           </div>
 
           {/* Infrastructure */}
-          <div className="relative pb-1 mt-2">
-            <SectionLabel expanded={expanded}>Infrastructure</SectionLabel>
+          <div className="relative pb-1 mt-2.5">
+            <SectionLabel expanded={expanded}>{t("infrastructure")}</SectionLabel>
             <div className="space-y-0.5">
-              {/* My Computers — expanded card */}
+              {/* My Computers */}
               {expanded ? (
                 <button
                   id="sidebar-machines-link"
                   className={cn(
-                    "group relative flex w-full items-center gap-3 rounded-lg border transition-all duration-200 overflow-hidden",
-                    "hover:shadow-[0_1px_4px_rgba(0,0,0,0.06)] active:scale-[0.995]",
-                    "px-3 py-2",
+                    "group/btn relative flex w-full items-center rounded-lg transition-all duration-200 ease-out",
+                    "gap-2.5 px-2.5 py-[7px]",
                     isItemActive("/machines")
-                      ? "border-emerald-500/20 bg-emerald-500/[0.04]"
-                      : "border-sidebar-border/30 bg-sidebar-accent/15 hover:border-sidebar-border/50"
+                      ? "bg-sidebar-accent/80 text-sidebar-accent-foreground"
+                      : "text-foreground/45 hover:text-foreground/80 hover:bg-sidebar-accent/40"
                   )}
                   type="button"
                   onClick={() => {
@@ -1298,29 +1245,31 @@ export function AppSidebar() {
                   {isItemActive("/machines") && (
                     <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-3.5 rounded-r-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.3)]" />
                   )}
-                  <MachinesActivityBg
-                    running={machineStats.running}
-                    stopped={machineStats.stopped}
-                    total={machineStats.total}
-                    className={cn("pointer-events-none", isItemActive("/machines") ? "text-emerald-500/60" : "text-foreground/50")}
-                  />
-                  <div className="relative flex flex-col items-start flex-1 min-w-0">
-                    <span className="text-[15px] font-semibold tabular-nums leading-tight text-foreground">
-                      {machineStats.total}
-                    </span>
-                    <span className="text-[9.5px] text-foreground/35 font-medium">
-                      {machineStats.total === 1 ? "Computer" : "Computers"}
-                      {machineStats.running > 0 && (
-                        <span className="text-emerald-500/80 ml-1">
-                          <span className="inline-block h-1 w-1 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.4)] align-middle mr-0.5" />
-                          {machineStats.running} active
-                        </span>
-                      )}
-                    </span>
-                  </div>
-                  <span className="relative text-[9.5px] font-medium px-2 py-0.5 rounded transition-colors shrink-0 bg-foreground/[0.05] text-foreground/40 group-hover:bg-foreground/[0.08] group-hover:text-foreground/60">
-                    View
+                  <span className={cn(
+                    "shrink-0 flex items-center justify-center w-4 h-4 transition-colors duration-200",
+                    isItemActive("/machines") ? "text-emerald-500" : "group-hover/btn:text-foreground/70"
+                  )}>
+                    <IconDeviceDesktop size={16} stroke={1.5} />
                   </span>
+                  <span className={cn(
+                    "truncate text-[12.5px] tracking-[-0.01em]",
+                    isItemActive("/machines") ? "font-semibold text-foreground" : "font-medium"
+                  )}>
+                    {machineStats.total === 1 ? t("computer") : t("computers")}
+                  </span>
+                  {machineStats.total > 0 && (
+                    <span className="ml-auto flex items-center gap-1.5 shrink-0">
+                      {machineStats.running > 0 && (
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.4)]" />
+                      )}
+                      <span className={cn(
+                        "text-[11px] tabular-nums font-medium",
+                        isItemActive("/machines") ? "text-foreground/50" : "text-foreground/25"
+                      )}>
+                        {machineStats.total}
+                      </span>
+                    </span>
+                  )}
                 </button>
               ) : (
                 <Tooltip>
@@ -1328,29 +1277,25 @@ export function AppSidebar() {
                     <button
                       id="sidebar-machines-link"
                       className={cn(
-                        "relative flex w-full items-center justify-center p-2 rounded-lg border transition-all duration-200 overflow-hidden",
-                        "hover:shadow-[0_1px_4px_rgba(0,0,0,0.06)]",
+                        "relative flex w-full items-center justify-center p-2 rounded-lg transition-all duration-200",
                         isItemActive("/machines")
-                          ? "border-emerald-500/20 bg-emerald-500/[0.04]"
-                          : "border-sidebar-border/30 bg-sidebar-accent/15 hover:border-sidebar-border/50"
+                          ? "bg-sidebar-accent/80"
+                          : "text-foreground/45 hover:text-foreground/80 hover:bg-sidebar-accent/40"
                       )}
                       onClick={() => router.push("/machines")}
                     >
-                      <MachinesActivityBg
-                        running={machineStats.running}
-                        stopped={machineStats.stopped}
-                        total={machineStats.total}
-                        className={cn("pointer-events-none", isItemActive("/machines") ? "text-emerald-500/80" : "text-foreground/80")}
-                      />
-                      <IconDeviceDesktop size={16} stroke={1.5} className={isItemActive("/machines") ? "relative text-emerald-500" : "relative text-foreground/60"} />
+                      <IconDeviceDesktop size={16} stroke={1.5} className={isItemActive("/machines") ? "text-emerald-500" : ""} />
+                      {machineStats.running > 0 && (
+                        <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.4)]" />
+                      )}
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right" sideOffset={8}>
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold">{machineStats.total}</span>
-                      <span className="text-muted-foreground">{machineStats.total === 1 ? "computer" : "computers"}</span>
+                      <span className="text-muted-foreground">{machineStats.total === 1 ? t("computer") : t("computers")}</span>
                       {machineStats.running > 0 && (
-                        <span className="text-emerald-500">({machineStats.running} active)</span>
+                        <span className="text-emerald-500">({machineStats.running} {t("active")})</span>
                       )}
                     </div>
                   </TooltipContent>
@@ -1359,32 +1304,32 @@ export function AppSidebar() {
               <NavButton
                 id="sidebar-schedules-link"
                 icon={<IconCalendarClock size={16} stroke={1.5} className="shrink-0" />}
-                label="Workforce"
-                tooltip="Schedule automated agents and triggers"
+                label={t("workforce")}
+                tooltip={t("workforceDescription")}
                 href="/schedules"
                 isActive={isItemActive("/schedules")}
                 accentColor="text-amber-500"
                 onClick={closeMobileIfNeeded}
                 livePopup={sidebarSchedules.length > 0 ? <WorkforceLivePopup schedules={sidebarSchedules} /> : undefined}
                 hoverInfo={{
-                  description: "Scheduled automation",
-                  detail: "Set up recurring tasks with cron schedules and agent-to-agent triggers. Your workforce runs while you sleep.",
+                  description: t("workforcePopup.title"),
+                  detail: t("workforcePopup.description"),
                   visual: "workforce",
                 }}
               />
               <NavButton
                 id="sidebar-secrets-link"
                 icon={<IconShieldLock size={16} stroke={1.5} className="shrink-0" />}
-                label="Credentials"
-                tooltip="Securely store logins for agent access"
+                label={t("credentials")}
+                tooltip={t("credentialsDescription")}
                 href="/secrets"
                 isActive={isItemActive("/secrets")}
                 accentColor="text-rose-500"
                 onClick={closeMobileIfNeeded}
                 livePopup={sidebarSecrets.length > 0 ? <CredentialsLivePopup secrets={sidebarSecrets} /> : undefined}
                 hoverInfo={{
-                  description: "Secure credential vault",
-                  detail: "Store logins and API keys with encryption. Agents auto-fill credentials without exposing raw values.",
+                  description: t("credentialsPopup.title"),
+                  detail: t("credentialsPopup.description"),
                   visual: "credentials",
                 }}
               />
@@ -1392,83 +1337,33 @@ export function AppSidebar() {
           </div>
 
 {/* Desktop App Promo */}
-          {isMobile ? (
-            /* ── Mobile: compact inline card (no image, no hover) ── */
-            <Link
-              href="/download"
-              className="group flex items-center gap-3 mx-1 mt-auto mb-1 px-3 py-2.5 rounded-xl border border-sidebar-border/40 bg-sidebar-accent/20 hover:border-foreground/15 transition-all duration-200 active:scale-[0.99]"
-              onClick={closeMobileIfNeeded}
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/[0.06] shrink-0">
-                <Download size={15} className="text-foreground/60" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <span className="text-[12px] font-semibold text-foreground leading-tight block">
-                  Get Desktop App
-                </span>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className="inline-flex items-center gap-1 text-[10px] text-foreground/40">
-                    <WindowsIcon width={9} height={9} className="opacity-60" />
-                    Windows
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-[10px] text-foreground/40">
-                    <AppleIcon width={9} height={9} className="opacity-60" />
-                    macOS
-                  </span>
-                </div>
-              </div>
-              <span className="text-[10px] font-semibold px-2 py-1 rounded-md shrink-0 bg-sidebar-primary/10 text-sidebar-primary">
-                Download
-              </span>
-            </Link>
-          ) : (
-            /* ── Desktop: image card with hover popup ── */
+          {expanded ? (
             <HoverCard openDelay={300} closeDelay={200}>
               <HoverCardTrigger asChild>
-                {expanded ? (
-                  <Link
-                    href="/download"
-                    className="group relative block mx-1 mt-auto mb-1 rounded-xl overflow-hidden border border-white/[0.08] hover:border-white/[0.15] transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
-                  >
-                    <div className="relative">
-                      <Image
-                        src="/demo-screenshot.png"
-                        alt="Coasty Desktop App"
-                        width={728}
-                        height={408}
-                        className="w-full h-auto"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
-                      <div className="absolute bottom-0 inset-x-0 p-3">
-                        <div className="rounded-md backdrop-blur-[3px] bg-white/[0.04] border border-white/[0.06] px-2.5 py-2">
-                          <div className="flex items-center gap-1.5 mb-1.5">
-                            <Download size={12} className="text-white/90" />
-                            <span className="text-[11px] font-semibold text-white/90">
-                              Download Desktop App
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center gap-1 text-[10px] text-white/60">
-                              <WindowsIcon width={10} height={10} className="opacity-70" />
-                              Windows
-                            </span>
-                            <span className="inline-flex items-center gap-1 text-[10px] text-white/60">
-                              <AppleIcon width={10} height={10} className="opacity-70" />
-                              macOS
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+                <Link
+                  href="/download"
+                  className="group/promo flex items-center gap-2.5 mx-1 mt-3 mb-1 px-2.5 py-2 rounded-lg border border-sidebar-border/20 bg-sidebar-accent/10 hover:bg-sidebar-accent/25 hover:border-sidebar-border/35 transition-all duration-200"
+                  onClick={closeMobileIfNeeded}
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-md bg-sidebar-primary/[0.08] shrink-0">
+                    <Download size={14} className="text-sidebar-primary/70" />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[12px] font-semibold text-foreground/70 leading-tight block group-hover/promo:text-foreground/90 transition-colors">
+                      {t("desktopApp.getDesktopApp")}
+                    </span>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="inline-flex items-center gap-1 text-[9.5px] text-foreground/30">
+                        <WindowsIcon width={9} height={9} className="opacity-50" />
+                        {t("desktopApp.windows")}
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-[9.5px] text-foreground/30">
+                        <AppleIcon width={9} height={9} className="opacity-50" />
+                        {t("desktopApp.macos")}
+                      </span>
                     </div>
-                  </Link>
-                ) : (
-                  <Link
-                    href="/download"
-                    className="flex w-full items-center justify-center p-2 rounded-lg hover:bg-sidebar-accent/50 transition-colors"
-                  >
-                    <Download size={16} className="shrink-0 text-foreground/50" />
-                  </Link>
-                )}
+                  </div>
+                </Link>
               </HoverCardTrigger>
               <HoverCardContent
                 side="right"
@@ -1488,19 +1383,19 @@ export function AppSidebar() {
                   <div className="absolute inset-0 flex flex-col justify-end p-3.5">
                     <div className="rounded-lg backdrop-blur-[3px] bg-white/[0.04] border border-white/[0.06] px-3 py-2.5">
                       <p className="text-[11px] font-semibold text-white/90 leading-tight">
-                        Control your computer remotely
+                        {t("desktopApp.controlRemotely")}
                       </p>
                       <p className="text-[10px] text-white/50 leading-snug mt-1">
-                        Install the desktop app and run tasks on your PC from this dashboard — anywhere, anytime.
+                        {t("desktopApp.controlDescription")}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className="inline-flex items-center gap-1 text-[9px] text-white/50">
                           <WindowsIcon width={9} height={9} className="opacity-60" />
-                          Windows
+                          {t("desktopApp.windows")}
                         </span>
                         <span className="inline-flex items-center gap-1 text-[9px] text-white/50">
                           <AppleIcon width={9} height={9} className="opacity-60" />
-                          macOS
+                          {t("desktopApp.macos")}
                         </span>
                       </div>
                     </div>
@@ -1508,12 +1403,24 @@ export function AppSidebar() {
                 </div>
               </HoverCardContent>
             </HoverCard>
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/download"
+                  className="flex w-full items-center justify-center p-2 rounded-lg text-foreground/45 hover:text-foreground/80 hover:bg-sidebar-accent/40 transition-all duration-200"
+                >
+                  <Download size={16} className="shrink-0" />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={8}>{t("desktopApp.getDesktopApp")}</TooltipContent>
+            </Tooltip>
           )}
         </SidebarContent>
 
         {/* ─── Footer ─────────────────────────────────────── */}
-        <SidebarFooter className="relative pt-0 border-t border-sidebar-border/10">
-          <div className={cn("space-y-1", expanded ? "p-2 pt-2" : "p-1.5 pt-1.5")}>
+        <SidebarFooter className="relative pt-0 border-t border-sidebar-border/15">
+          <div className={cn("flex flex-col", expanded ? "p-2 pt-2.5 gap-0.5" : "p-1.5 pt-2 gap-1")}>
 
             {/* Credits */}
             {user && (() => {
@@ -1537,7 +1444,7 @@ export function AppSidebar() {
                         )}
                         type="button"
                         onClick={() => {
-                          router.push("/account?section=billing")
+                          openAccountDialog("billing")
                           if (isMobile) setOpenMobile(false)
                         }}
                       >
@@ -1557,14 +1464,14 @@ export function AppSidebar() {
                             {balance.toLocaleString()}
                           </span>
                           <span className="text-[9.5px] text-foreground/35 font-medium">
-                            {isLow ? "Credits — Running low" : "Credits remaining"}
+                            {isLow ? t("credits.runningLow") : t("credits.remaining")}
                           </span>
                         </div>
                         <span className={cn(
                           "relative text-[9.5px] font-medium px-2 py-0.5 rounded transition-colors shrink-0",
                           "bg-sidebar-primary/8 text-sidebar-primary/80 group-hover:bg-sidebar-primary/15"
                         )}>
-                          Buy
+                          {t("credits.buy")}
                         </span>
                       </button>
                     ) : (
@@ -1576,7 +1483,7 @@ export function AppSidebar() {
                             ? "border-orange-500/20 bg-orange-500/[0.03]"
                             : "border-sidebar-border/30 bg-sidebar-accent/15"
                         )}
-                        onClick={() => router.push("/account?section=billing")}
+                        onClick={() => openAccountDialog("billing")}
                       >
                         <CreditsSparkBg
                           balance={balance}
@@ -1606,69 +1513,77 @@ export function AppSidebar() {
               )
             })()}
 
-            {/* Quick links row */}
+            {/* Quick links */}
             {expanded ? (
-              <div className="flex items-center gap-0.5">
+              <div className="flex items-center gap-0.5 px-0.5">
                 <a
                   href="https://cal.com/coasty/15min"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    "flex-1 flex items-center justify-center gap-1.5 rounded py-1 text-[10.5px] font-medium transition-all duration-200",
-                    "text-foreground/35 hover:text-foreground/60 hover:bg-sidebar-accent/30"
+                    "flex-1 flex items-center justify-center gap-2 rounded-lg py-[6px] text-[11.5px] font-medium transition-all duration-200",
+                    "text-foreground/35 hover:text-foreground/60 hover:bg-sidebar-accent/40"
                   )}
                 >
-                  <IconVideo size={13} stroke={1.5} />
-                  <span>Talk to us</span>
+                  <IconVideo size={14} stroke={1.5} />
+                  <span>{t("talkToUs")}</span>
                 </a>
                 {user && (
                   <Link
                     href="/referral"
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-1.5 rounded py-1 text-[10.5px] font-medium transition-all duration-200",
-                      "text-foreground/35 hover:text-foreground/60 hover:bg-sidebar-accent/30"
+                      "flex-1 flex items-center justify-center gap-2 rounded-lg py-[6px] text-[11.5px] font-medium transition-all duration-200",
+                      "text-foreground/35 hover:text-foreground/60 hover:bg-sidebar-accent/40"
                     )}
                   >
-                    <IconGift size={13} stroke={1.5} />
-                    <span>Invite & Earn</span>
+                    <IconGift size={14} stroke={1.5} />
+                    <span>{t("inviteEarn")}</span>
                   </Link>
                 )}
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <a
                       href="https://cal.com/coasty/15min"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex w-full items-center justify-center p-2 rounded-lg hover:bg-sidebar-accent/50 transition-colors"
+                      className="flex w-full items-center justify-center p-2 rounded-lg text-foreground/45 hover:text-foreground/80 hover:bg-sidebar-accent/40 transition-all duration-200"
                     >
-                      <IconVideo size={16} stroke={1.5} className="shrink-0 text-foreground/50" />
+                      <IconVideo size={16} stroke={1.5} className="shrink-0" />
                     </a>
                   </TooltipTrigger>
-                  <TooltipContent side="right" sideOffset={8}>Talk to us</TooltipContent>
+                  <TooltipContent side="right" sideOffset={8}>{t("talkToUs")}</TooltipContent>
                 </Tooltip>
                 {user && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Link
                         href="/referral"
-                        className="flex w-full items-center justify-center p-2 rounded-lg hover:bg-sidebar-accent/50 transition-colors"
+                        className="flex w-full items-center justify-center p-2 rounded-lg text-foreground/45 hover:text-foreground/80 hover:bg-sidebar-accent/40 transition-all duration-200"
                       >
-                        <IconGift size={16} stroke={1.5} className="shrink-0 text-foreground/50" />
+                        <IconGift size={16} stroke={1.5} className="shrink-0" />
                       </Link>
                     </TooltipTrigger>
-                    <TooltipContent side="right" sideOffset={8}>Invite & Earn</TooltipContent>
+                    <TooltipContent side="right" sideOffset={8}>{t("inviteEarn")}</TooltipContent>
                   </Tooltip>
                 )}
               </div>
             )}
 
+            {/* Divider */}
+            <div className={cn(
+              "transition-all",
+              expanded
+                ? "w-[calc(100%-0.5rem)] mx-auto h-px bg-gradient-to-r from-transparent via-sidebar-border/20 to-transparent"
+                : "w-5 mx-auto h-px bg-sidebar-border/15 rounded-full"
+            )} />
+
             {/* User Account */}
             {expanded ? (
               <button
-                onClick={() => router.push("/account")}
+                onClick={() => openAccountDialog()}
                 onMouseEnter={() => {
                   avatarHoverTimer.current = setTimeout(() => setAvatarWobble(true), 3000)
                 }}
@@ -1677,8 +1592,8 @@ export function AppSidebar() {
                   setAvatarWobble(false)
                 }}
                 className={cn(
-                  "flex items-center gap-2.5 px-2 py-1.5 w-full rounded-lg transition-all duration-200 ease-out",
-                  "hover:bg-sidebar-accent/30"
+                  "flex items-center gap-2.5 px-2.5 py-2 w-full rounded-lg transition-all duration-200 ease-out",
+                  "hover:bg-sidebar-accent/40"
                 )}
               >
                 <Avatar className={cn(
@@ -1691,10 +1606,10 @@ export function AppSidebar() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col min-w-0 flex-1 text-left">
-                  <span className="text-[12px] font-medium truncate text-foreground/80">
-                    {user?.display_name || user?.email?.split("@")[0] || "User"}
+                  <span className="text-[12.5px] font-medium truncate text-foreground/80">
+                    {user?.display_name || user?.email?.split("@")[0] || t("user")}
                   </span>
-                  <span className="text-[9.5px] text-foreground/30 truncate">
+                  <span className="text-[10px] text-foreground/30 truncate">
                     {getGreeting()}
                   </span>
                 </div>
@@ -1703,8 +1618,8 @@ export function AppSidebar() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    onClick={() => router.push("/account")}
-                    className="flex w-full items-center justify-center p-1.5 rounded-lg hover:bg-sidebar-accent/30 transition-all duration-200"
+                    onClick={() => openAccountDialog()}
+                    className="flex w-full items-center justify-center p-1.5 rounded-lg hover:bg-sidebar-accent/40 transition-all duration-200"
                   >
                     <Avatar className="h-6 w-6 flex-shrink-0 ring-1 ring-sidebar-border/20">
                       <AvatarImage src={user?.profile_image || undefined} />
@@ -1715,7 +1630,7 @@ export function AppSidebar() {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={8}>
-                  {user?.display_name || user?.email?.split("@")[0] || "Account"}
+                  {user?.display_name || user?.email?.split("@")[0] || t("account")}
                 </TooltipContent>
               </Tooltip>
             )}

@@ -77,141 +77,44 @@
     "badge": "#1 Agente de Uso de Computador · {score} OSWorld",
     "headline": "Operadores de computador autônomos",
     "useCases": {
-      "computerAgent": {
-        "label": "Agente de computador",
-        "headline": "automatize qualquer tarefa no navegador",
-        "outcome": "Um agente de IA que controla um computador real — navega, clica, digita e entrega o trabalho pronto. Sem configuração necessária."
-      },
-      "competitorIntel": {
-        "label": "Inteligência competitiva",
-        "headline": "monitore todos os concorrentes",
-        "outcome": "Perfis completos de concorrentes com preços, recursos e lacunas de posicionamento — exportados como relatório pronto para compartilhar."
-      },
-      "qaTesting": {
-        "label": "Testes QA",
-        "headline": "encontre bugs antes dos usuários",
-        "outcome": "Fluxos críticos de usuário testados de ponta a ponta, cada bug capturado com passos de reprodução e classificação de severidade."
-      },
-      "seoAnalysis": {
-        "label": "Análise SEO",
-        "headline": "descubra gaps de palavras-chave",
-        "outcome": "Gaps de palavras-chave identificados, briefings de conteúdo redigidos, fontes de backlinks de concorrentes mapeadas — estratégia SEO acionável."
-      },
-      "dataExtraction": {
-        "label": "Extração de dados",
-        "headline": "extraia e estruture qualquer site",
-        "outcome": "Dados estruturados extraídos, limpos, deduplicados e exportados como CSV — de qualquer site, qualquer formato."
-      },
-      "leadGeneration": {
-        "label": "Geração de leads",
-        "headline": "preencha seu pipeline de vendas",
-        "outcome": "Decisores qualificados correspondendo ao seu ICP com cargos verificados, empresas e aberturas de prospecção personalizadas."
-      },
-      "siteAudit": {
-        "label": "Auditoria de site",
-        "headline": "audite cada página em escala",
-        "outcome": "Páginas escaneadas, Core Web Vitals pontuados, links quebrados encontrados, problemas de acessibilidade classificados por prioridade de correção."
-      },
-      "emailOutreach": {
-        "label": "Prospecção por e-mail",
-        "headline": "envie prospecção personalizada",
-        "outcome": "E-mails personalizados referenciando a empresa, cargo e dores de cada prospect — prontos para enviar."
-      },
-      "marketResearch": {
-        "label": "Pesquisa de mercado",
-        "headline": "valide seu mercado rapidamente",
-        "outcome": "TAM calculado, principais players perfilados, tendências de crescimento mapeadas — coletados de dezenas de fontes de dados."
-      }
+      "computerAgent": { "label": "Agente de computador", "headline": "automatize qualquer tarefa no navegador", "outcome": "Um agente de IA que controla um computador real — navega, clica, digita e entrega o trabalho pronto. Sem configuração necessária." },
+      "competitorIntel": { "label": "Inteligência competitiva", "headline": "monitore todos os concorrentes", "outcome": "Perfis completos de concorrentes com preços, recursos e lacunas de posicionamento — exportados como relatório pronto para compartilhar." },
+      "qaTesting": { "label": "Testes QA", "headline": "encontre bugs antes dos usuários", "outcome": "Fluxos críticos de usuário testados de ponta a ponta, cada bug capturado com passos de reprodução e classificação de severidade." },
+      "seoAnalysis": { "label": "Análise SEO", "headline": "descubra gaps de palavras-chave", "outcome": "Gaps de palavras-chave identificados, briefings de conteúdo redigidos, fontes de backlinks de concorrentes mapeadas — estratégia SEO acionável." },
+      "dataExtraction": { "label": "Extração de dados", "headline": "extraia e estruture qualquer site", "outcome": "Dados estruturados extraídos, limpos, deduplicados e exportados como CSV — de qualquer site, qualquer formato." },
+      "leadGeneration": { "label": "Geração de leads", "headline": "preencha seu pipeline de vendas", "outcome": "Decisores qualificados correspondendo ao seu ICP com cargos verificados, empresas e aberturas de prospecção personalizadas." },
+      "siteAudit": { "label": "Auditoria de site", "headline": "audite cada página em escala", "outcome": "Páginas escaneadas, Core Web Vitals pontuados, links quebrados encontrados, problemas de acessibilidade classificados por prioridade de correção." },
+      "emailOutreach": { "label": "Prospecção por e-mail", "headline": "envie prospecção personalizada", "outcome": "E-mails personalizados referenciando a empresa, cargo e dores de cada prospect — prontos para enviar." },
+      "marketResearch": { "label": "Pesquisa de mercado", "headline": "valide seu mercado rapidamente", "outcome": "TAM calculado, principais players perfilados, tendências de crescimento mapeadas — coletados de dezenas de fontes de dados." }
     },
     "demoVideos": {
-      "marketing": {
-        "label": "Marketing",
-        "task": "Divulgue seu produto no Reddit de forma autônoma"
-      },
-      "goToMarket": {
-        "label": "Go-to-Market",
-        "task": "Encontre prospects e envie e-mails personalizados"
-      },
-      "qaTesting": {
-        "label": "Testes QA",
-        "task": "Teste todos os fluxos de checkout e reporte bugs"
-      },
-      "jobApplication": {
-        "label": "Candidatura",
-        "task": "Encontre vagas, adapte o currículo e candidate-se"
-      },
-      "formFilling": {
-        "label": "Preenchimento de Formulários",
-        "task": "Preencha a aplicação do YC S26 para você"
-      },
-      "socialMedia": {
-        "label": "Redes Sociais",
-        "task": "Publique no Hacker News e interaja com comentários"
-      }
+      "marketing": { "label": "Marketing", "task": "Divulgue seu produto no Reddit de forma autônoma" },
+      "goToMarket": { "label": "Go-to-Market", "task": "Encontre prospects e envie e-mails personalizados" },
+      "qaTesting": { "label": "Testes QA", "task": "Teste todos os fluxos de checkout e reporte bugs" },
+      "jobApplication": { "label": "Candidatura", "task": "Encontre vagas, adapte o currículo e candidate-se" },
+      "formFilling": { "label": "Preenchimento de Formulários", "task": "Preencha a aplicação do YC S26 para você" },
+      "socialMedia": { "label": "Redes Sociais", "task": "Publique no Hacker News e interaja com comentários" }
     }
   },
   "stats": {
-    "osworld": {
-      "value": "82%",
-      "label": "Benchmark OSWorld",
-      "sublabel": "#1 agente de uso de computador no mundo"
-    },
-    "tools": {
-      "value": "50+",
-      "label": "Ferramentas que o agente pode usar",
-      "sublabel": "Navegador, terminal, desktop, arquivos"
-    },
-    "schedule": {
-      "value": "24/7",
-      "label": "Executa por agendamento",
-      "sublabel": "Automatize qualquer tarefa recorrente"
-    },
-    "setup": {
-      "value": "0",
-      "label": "Configuração necessária",
-      "sublabel": "Sem APIs, sem integrações, sem código"
-    }
+    "osworld": { "value": "82%", "label": "Benchmark OSWorld", "sublabel": "#1 agente de uso de computador no mundo" },
+    "tools": { "value": "50+", "label": "Ferramentas que o agente pode usar", "sublabel": "Navegador, terminal, desktop, arquivos" },
+    "schedule": { "value": "24/7", "label": "Executa por agendamento", "sublabel": "Automatize qualquer tarefa recorrente" },
+    "setup": { "value": "0", "label": "Configuração necessária", "sublabel": "Sem APIs, sem integrações, sem código" }
   },
   "whyCoasty": {
     "sectionLabel": "Por que Coasty",
     "title": "Não é um chatbot. Não é um script RPA.",
-    "worksLikeHuman": {
-      "title": "Funciona como um humano",
-      "description": "Vê, clica, digita, navega — exatamente como você"
-    },
-    "noScripts": {
-      "title": "Sem scripts ou configuração",
-      "description": "Português simples na entrada, resultados na saída"
-    },
-    "handlesUnexpected": {
-      "title": "Lida com o inesperado",
-      "description": "Adapta-se a CAPTCHAs, popups, mudanças de layout"
-    },
-    "runsInIsolation": {
-      "title": "Executa em isolamento",
-      "description": "VM isolada por sessão — nada vaza"
-    }
+    "worksLikeHuman": { "title": "Funciona como um humano", "description": "Vê, clica, digita, navega — exatamente como você" },
+    "noScripts": { "title": "Sem scripts ou configuração", "description": "Português simples na entrada, resultados na saída" },
+    "handlesUnexpected": { "title": "Lida com o inesperado", "description": "Adapta-se a CAPTCHAs, popups, mudanças de layout" },
+    "runsInIsolation": { "title": "Executa em isolamento", "description": "VM isolada por sessão — nada vaza" }
   },
   "howItWorks": {
     "title": "Como funciona",
-    "step1": {
-      "title": "Descreva sua tarefa",
-      "description": "Em português simples. Só isso.",
-      "placeholder": "Pesquise 100 leads no LinkedIn..."
-    },
-    "step2": {
-      "title": "Assista o agente trabalhar",
-      "description": "Abre o navegador, clica, digita, navega"
-    },
-    "step3": {
-      "title": "Tarefa concluída",
-      "description": "Cada ação registrada com capturas de tela",
-      "results": {
-        "taskCompleted": "Tarefa concluída",
-        "leadsFound": "12 leads encontrados",
-        "addedToCrm": "Adicionados ao CRM"
-      }
-    }
+    "step1": { "title": "Descreva sua tarefa", "description": "Em português simples. Só isso.", "placeholder": "Pesquise 100 leads no LinkedIn..." },
+    "step2": { "title": "Assista o agente trabalhar", "description": "Abre o navegador, clica, digita, navega" },
+    "step3": { "title": "Tarefa concluída", "description": "Cada ação registrada com capturas de tela", "results": { "taskCompleted": "Tarefa concluída", "leadsFound": "12 leads encontrados", "addedToCrm": "Adicionados ao CRM" } }
   },
   "benchmark": {
     "title": "Classificado #1 no mundo",
@@ -222,137 +125,43 @@
   "comparison": {
     "title": "Por que automatizar com Coasty?",
     "subtitle": "As mesmas tarefas que levam horas para uma equipe — Coasty completa em minutos, 24 horas por dia.",
-    "manual": {
-      "title": "Fazendo Manualmente",
-      "subtitle": "Você ou sua equipe, à mão"
-    },
-    "coasty": {
-      "title": "Coasty Agente IA",
-      "subtitle": "#1 agente de uso de computador"
-    },
-    "rows": {
-      "timePerTask": "Tempo por tarefa",
-      "availability": "Disponibilidade",
-      "setupTime": "Tempo de configuração",
-      "errorRate": "Taxa de erros",
-      "scaling": "Escalabilidade",
-      "auditTrail": "Trilha de auditoria"
-    },
-    "manualValues": {
-      "timePerTask": "Horas a dias",
-      "availability": "Apenas horário comercial",
-      "setupTime": "Aprender ferramentas, criar SOPs",
-      "errorRate": "Erros humanos",
-      "scaling": "Fazer mais = gastar mais tempo",
-      "auditTrail": "Nenhuma"
-    },
-    "coastyValues": {
-      "timePerTask": "Minutos",
-      "availability": "24/7, todos os dias",
-      "setupTime": "60 segundos",
-      "errorRate": "Autocorreção",
-      "scaling": "Execute tarefas ilimitadas em paralelo",
-      "auditTrail": "Cada clique registrado + capturas de tela"
-    },
-    "bottomBar": {
-      "automateTasksThat": "Automatize tarefas que levam",
-      "hoursManually": "horas manualmente",
-      "startingAt": "A partir de"
-    }
+    "manual": { "title": "Fazendo Manualmente", "subtitle": "Você ou sua equipe, à mão" },
+    "coasty": { "title": "Coasty Agente IA", "subtitle": "#1 agente de uso de computador" },
+    "rows": { "timePerTask": "Tempo por tarefa", "availability": "Disponibilidade", "setupTime": "Tempo de configuração", "errorRate": "Taxa de erros", "scaling": "Escalabilidade", "auditTrail": "Trilha de auditoria" },
+    "manualValues": { "timePerTask": "Horas a dias", "availability": "Apenas horário comercial", "setupTime": "Aprender ferramentas, criar SOPs", "errorRate": "Erros humanos", "scaling": "Fazer mais = gastar mais tempo", "auditTrail": "Nenhuma" },
+    "coastyValues": { "timePerTask": "Minutos", "availability": "24/7, todos os dias", "setupTime": "60 segundos", "errorRate": "Autocorreção", "scaling": "Execute tarefas ilimitadas em paralelo", "auditTrail": "Cada clique registrado + capturas de tela" },
+    "bottomBar": { "automateTasksThat": "Automatize tarefas que levam", "hoursManually": "horas manualmente", "startingAt": "A partir de" }
   },
   "demo": {
     "title": "Veja o agente em ação",
     "subtitle": "Tarefas reais. Navegadores reais. Cada clique gravado.",
     "sessions": {
-      "reddit": {
-        "title": "Coasty no Reddit",
-        "description": "Veja o Coasty executar autonomamente uma campanha de marketing — pesquisando concorrentes, analisando tendências e construindo uma apresentação estratégica.",
-        "tag": "Marketing"
-      },
-      "prospects": {
-        "title": "Encontrando Clientes em Potencial",
-        "description": "Coasty encontra e pesquisa clientes em potencial, reunindo detalhes-chave para criar prospecção personalizada.",
-        "tag": "Go-to-Market"
-      },
-      "qa": {
-        "title": "Testando a Si Mesmo com QA",
-        "description": "Coasty executa garantia de qualidade em seu próprio produto — navegando fluxos, encontrando bugs e reportando problemas autonomamente.",
-        "tag": "Testes QA"
-      },
-      "email": {
-        "title": "Enviando um E-mail em Seu Nome",
-        "description": "Da composição ao envio — um agente de IA redige e entrega um e-mail inteiramente por conta própria.",
-        "tag": "Comunicação"
-      },
-      "job": {
-        "title": "Candidatando-se a uma Vaga",
-        "description": "Coasty encontra uma vaga compatível, adapta seu currículo e envia a candidatura — tudo por conta própria.",
-        "tag": "Candidatura"
-      },
-      "hackernews": {
-        "title": "Publicando no Hacker News",
-        "description": "Coasty cria e publica um post no Hacker News — escrevendo o conteúdo e enviando autonomamente.",
-        "tag": "Redes Sociais"
-      }
+      "reddit": { "title": "Coasty no Reddit", "description": "Veja o Coasty executar autonomamente uma campanha de marketing — pesquisando concorrentes, analisando tendências e construindo uma apresentação estratégica.", "tag": "Marketing" },
+      "prospects": { "title": "Encontrando Clientes em Potencial", "description": "Coasty encontra e pesquisa clientes em potencial, reunindo detalhes-chave para criar prospecção personalizada.", "tag": "Go-to-Market" },
+      "qa": { "title": "Testando a Si Mesmo com QA", "description": "Coasty executa garantia de qualidade em seu próprio produto — navegando fluxos, encontrando bugs e reportando problemas autonomamente.", "tag": "Testes QA" },
+      "email": { "title": "Enviando um E-mail em Seu Nome", "description": "Da composição ao envio — um agente de IA redige e entrega um e-mail inteiramente por conta própria.", "tag": "Comunicação" },
+      "job": { "title": "Candidatando-se a uma Vaga", "description": "Coasty encontra uma vaga compatível, adapta seu currículo e envia a candidatura — tudo por conta própria.", "tag": "Candidatura" },
+      "hackernews": { "title": "Publicando no Hacker News", "description": "Coasty cria e publica um post no Hacker News — escrevendo o conteúdo e enviando autonomamente.", "tag": "Redes Sociais" }
     }
   },
   "features": {
     "title": "Feito para tarefas reais no computador",
-    "selfCorrecting": {
-      "title": "Autocorreção",
-      "description": "Detecta erros, tenta caminhos alternativos"
-    },
-    "auditTrail": {
-      "title": "Trilha de Auditoria Completa",
-      "description": "Cada clique registrado com capturas de tela"
-    },
-    "schedule": {
-      "title": "Agendamento 24/7",
-      "description": "Executa por cron — horária, diária, semanalmente"
-    },
-    "sandboxed": {
-      "title": "Isolado e Seguro",
-      "description": "VM isolada por sessão, destruída após o uso"
-    },
-    "benchmark": {
-      "title": "#1 no OSWorld",
-      "description": "82% — maior pontuação já registrada"
-    },
-    "swarms": {
-      "title": "Enxame de Agentes",
-      "description": "Divida tarefas entre máquinas em paralelo"
-    }
+    "selfCorrecting": { "title": "Autocorreção", "description": "Detecta erros, tenta caminhos alternativos" },
+    "auditTrail": { "title": "Trilha de Auditoria Completa", "description": "Cada clique registrado com capturas de tela" },
+    "schedule": { "title": "Agendamento 24/7", "description": "Executa por cron — horária, diária, semanalmente" },
+    "sandboxed": { "title": "Isolado e Seguro", "description": "VM isolada por sessão, destruída após o uso" },
+    "benchmark": { "title": "#1 no OSWorld", "description": "82% — maior pontuação já registrada" },
+    "swarms": { "title": "Enxame de Agentes", "description": "Divida tarefas entre máquinas em paralelo" }
   },
   "pricing": {
     "title": "Comece grátis, escale quando quiser",
     "subtitle": "Sem cartão de crédito. Seu agente de IA estará pronto em 60 segundos.",
     "plans": {
-      "free": {
-        "name": "Grátis",
-        "description": "Experimente o #1 agente de uso de computador",
-        "cta": "Comece Grátis"
-      },
-      "lite": {
-        "name": "Lite",
-        "description": "Automação leve diária",
-        "cta": "Obter Lite"
-      },
-      "starter": {
-        "name": "Starter",
-        "description": "Automatize tarefas todos os dias",
-        "cta": "Obter Starter"
-      },
-      "plus": {
-        "name": "Plus",
-        "description": "Escale fluxos de trabalho complexos",
-        "cta": "Obter Plus",
-        "badge": "Mais Popular"
-      },
-      "pro": {
-        "name": "Pro",
-        "description": "Automação pesada ilimitada",
-        "cta": "Obter Pro"
-      }
+      "free": { "name": "Grátis", "description": "Experimente o #1 agente de uso de computador", "cta": "Comece Grátis" },
+      "lite": { "name": "Lite", "description": "Automação leve diária", "cta": "Obter Lite" },
+      "starter": { "name": "Starter", "description": "Automatize tarefas todos os dias", "cta": "Obter Starter" },
+      "plus": { "name": "Plus", "description": "Escale fluxos de trabalho complexos", "cta": "Obter Plus", "badge": "Mais Popular" },
+      "pro": { "name": "Pro", "description": "Automação pesada ilimitada", "cta": "Obter Pro" }
     },
     "vmTemporary": "1 VM temporária (2h)",
     "vmDeletedAfterInactivity": "1 VM (excluída após inatividade)",
@@ -367,136 +176,50 @@
     "title": "Perguntas frequentes",
     "subtitle": "Tudo o que você precisa saber antes de começar",
     "items": {
-      "whatIsCoasty": {
-        "question": "O que é o Coasty?",
-        "answer": "Coasty é o melhor agente de IA de uso de computador do mundo. Você descreve uma tarefa — pesquisar leads, testar um site, preencher formulários, postar em redes sociais — e o Coasty abre um navegador real, navega por aplicativos, clica em botões, digita texto e completa a tarefa de ponta a ponta. Sem APIs, sem integrações, sem código necessário."
-      },
-      "howDifferent": {
-        "question": "Como isso é diferente do ChatGPT ou outras ferramentas de IA?",
-        "answer": "O ChatGPT gera texto. O Coasty usa um computador. Ele não diz o que fazer — ele abre um navegador, navega até o site, clica nos botões, preenche os formulários e entrega o trabalho concluído. É a diferença entre receber instruções e ter a tarefa feita por você."
-      },
-      "whatTasks": {
-        "question": "Quais tarefas o Coasty pode automatizar?",
-        "answer": "Qualquer tarefa que você pode fazer em um computador. Pesquisa web, geração de leads, entrada de dados, preenchimento de formulários, testes QA, postagem em redes sociais, prospecção por e-mail, processamento de faturas, análise competitiva, recrutamento — se envolve um navegador ou aplicativo desktop, o Coasty pode fazer."
-      },
-      "whatAreCredits": {
-        "question": "O que são créditos e como são utilizados?",
-        "answer": "Créditos são consumidos conforme o agente trabalha nas tarefas. Tarefas mais longas e complexas usam mais créditos. Planos pagos incluem créditos mensais, e você também pode comprar pacotes de créditos adicionais a qualquer momento."
-      },
-      "localComputer": {
-        "question": "O Coasty pode rodar no meu próprio computador?",
-        "answer": "Sim. Nosso aplicativo desktop funciona como uma sobreposição leve na sua máquina, controlando seu navegador e aplicativos locais diretamente. Alternativamente, as tarefas rodam em máquinas isoladas na nuvem — você escolhe."
-      },
-      "dataSafe": {
-        "question": "Meus dados estão seguros?",
-        "answer": "Cada tarefa roda em um ambiente sandbox isolado. Nada vaza entre sessões. Suas credenciais permanecem privadas, e cada ação é registrada com capturas de tela em uma trilha de auditoria completa que você pode revisar a qualquer momento."
-      }
+      "whatIsCoasty": { "question": "O que é o Coasty?", "answer": "Coasty é o melhor agente de IA de uso de computador do mundo. Você descreve uma tarefa — pesquisar leads, testar um site, preencher formulários, postar em redes sociais — e o Coasty abre um navegador real, navega por aplicativos, clica em botões, digita texto e completa a tarefa de ponta a ponta. Sem APIs, sem integrações, sem código necessário." },
+      "howDifferent": { "question": "Como isso é diferente do ChatGPT ou outras ferramentas de IA?", "answer": "O ChatGPT gera texto. O Coasty usa um computador. Ele não diz o que fazer — ele abre um navegador, navega até o site, clica nos botões, preenche os formulários e entrega o trabalho concluído. É a diferença entre receber instruções e ter a tarefa feita por você." },
+      "whatTasks": { "question": "Quais tarefas o Coasty pode automatizar?", "answer": "Qualquer tarefa que você pode fazer em um computador. Pesquisa web, geração de leads, entrada de dados, preenchimento de formulários, testes QA, postagem em redes sociais, prospecção por e-mail, processamento de faturas, análise competitiva, recrutamento — se envolve um navegador ou aplicativo desktop, o Coasty pode fazer." },
+      "whatAreCredits": { "question": "O que são créditos e como são utilizados?", "answer": "Créditos são consumidos conforme o agente trabalha nas tarefas. Tarefas mais longas e complexas usam mais créditos. Planos pagos incluem créditos mensais, e você também pode comprar pacotes de créditos adicionais a qualquer momento." },
+      "localComputer": { "question": "O Coasty pode rodar no meu próprio computador?", "answer": "Sim. Nosso aplicativo desktop funciona como uma sobreposição leve na sua máquina, controlando seu navegador e aplicativos locais diretamente. Alternativamente, as tarefas rodam em máquinas isoladas na nuvem — você escolhe." },
+      "dataSafe": { "question": "Meus dados estão seguros?", "answer": "Cada tarefa roda em um ambiente sandbox isolado. Nada vaza entre sessões. Suas credenciais permanecem privadas, e cada ação é registrada com capturas de tela em uma trilha de auditoria completa que você pode revisar a qualquer momento." }
     }
   },
   "footer": {
     "tagline": "Uso de computador com IA.",
     "tagline2": "Automatize qualquer fluxo de trabalho com agentes inteligentes.",
-    "columns": {
-      "product": "Produto",
-      "resources": "Recursos",
-      "company": "Empresa",
-      "legal": "Legal"
-    },
-    "links": {
-      "computerUse": "Uso de Computador",
-      "guide": "Guia",
-      "download": "Download",
-      "pricing": "Preços",
-      "agentSwarms": "Enxame de Agentes",
-      "status": "Status",
-      "blog": "Blog",
-      "useCases": "Casos de Uso",
-      "demos": "Demos",
-      "compare": "Comparar",
-      "talkToCofounders": "Fale com os Cofundadores e Demo",
-      "contact": "Contato",
-      "privacy": "Privacidade",
-      "terms": "Termos"
-    }
+    "columns": { "product": "Produto", "resources": "Recursos", "company": "Empresa", "legal": "Legal" },
+    "links": { "computerUse": "Uso de Computador", "guide": "Guia", "download": "Download", "pricing": "Preços", "agentSwarms": "Enxame de Agentes", "status": "Status", "blog": "Blog", "useCases": "Casos de Uso", "demos": "Demos", "compare": "Comparar", "talkToCofounders": "Fale com os Cofundadores e Demo", "contact": "Contato", "privacy": "Privacidade", "terms": "Termos" }
   },
-  "languageSwitcher": {
-    "label": "Idioma"
-  },
+  "languageSwitcher": { "label": "Idioma" },
   "auth": {
     "brandHeading": "Você define o objetivo.",
     "brandSubheading": "Nós cuidamos do resto.",
     "mobileHeading": "Você define o objetivo. Nós cuidamos do resto.",
     "mobileSubheading": "Agentes de IA que navegam, clicam e trabalham como um colega real.",
     "flowSteps": {
-      "step1": {
-        "label": "Você descreve a tarefa",
-        "sub": "\"Pesquise nossos 5 principais concorrentes\""
-      },
-      "step2": {
-        "label": "O agente assume o controle",
-        "sub": "Navega, clica e digita de forma autônoma"
-      },
-      "step3": {
-        "label": "Trabalho entregue",
-        "sub": "Planilha com 5 perfis completos de concorrentes"
-      }
+      "step1": { "label": "Você descreve a tarefa", "sub": "\"Pesquise nossos 5 principais concorrentes\"" },
+      "step2": { "label": "O agente assume o controle", "sub": "Navega, clica e digita de forma autônoma" },
+      "step3": { "label": "Trabalho entregue", "sub": "Planilha com 5 perfis completos de concorrentes" }
     },
-    "complete": "Concluído",
-    "doneIn": "Pronto em 8 minutos",
-    "viewTitles": {
-      "signIn": "Seu operador está pronto",
-      "signUp": "Coloque seus fluxos de trabalho no piloto automático",
-      "magicLink": "Pule a senha",
-      "forgotPassword": "Vamos recuperar seu acesso"
-    },
-    "viewDescriptions": {
-      "signIn": "Continue de onde parou — seus agentes lembram",
-      "signUp": "Implante seu primeiro agente de IA em menos de um minuto",
-      "magicLink": "Um clique na sua caixa de entrada e pronto",
-      "forgotPassword": "Enviaremos um link de redefinição para seu email"
-    },
-    "google": {
-      "connecting": "Conectando...",
-      "continueWithGoogle": "Continuar com Google"
-    },
-    "or": "ou",
-    "email": "Email",
-    "emailPlaceholder": "you@example.com",
-    "password": "Senha",
-    "passwordPlaceholder": "Sua senha",
-    "confirmPassword": "Confirmar senha",
-    "confirmPasswordPlaceholder": "Confirme sua senha",
-    "minChars": "Mín. 6 caracteres",
-    "signingIn": "Entrando...",
-    "signIn": "Entrar",
-    "creatingAccount": "Criando conta...",
-    "createAccount": "Criar conta",
-    "sending": "Enviando...",
-    "sendMagicLink": "Enviar link mágico",
-    "sendResetLink": "Enviar link de redefinição",
-    "forgotPassword": "Esqueceu a senha?",
-    "useMagicLink": "Usar link mágico",
-    "dontHaveAccount": "Não tem uma conta?",
-    "signUp": "Cadastrar-se",
-    "alreadyHaveAccount": "Já tem uma conta?",
-    "backToSignIn": "Voltar para login",
-    "termsAgreement": "Ao continuar, você concorda com nossos",
-    "terms": "Termos",
-    "and": "e",
-    "privacyPolicy": "Política de Privacidade",
+    "complete": "Concluído", "doneIn": "Pronto em 8 minutos",
+    "viewTitles": { "signIn": "Seu operador está pronto", "signUp": "Coloque seus fluxos de trabalho no piloto automático", "magicLink": "Pule a senha", "forgotPassword": "Vamos recuperar seu acesso" },
+    "viewDescriptions": { "signIn": "Continue de onde parou — seus agentes lembram", "signUp": "Implante seu primeiro agente de IA em menos de um minuto", "magicLink": "Um clique na sua caixa de entrada e pronto", "forgotPassword": "Enviaremos um link de redefinição para seu email" },
+    "google": { "connecting": "Conectando...", "continueWithGoogle": "Continuar com Google" },
+    "or": "ou", "email": "Email", "emailPlaceholder": "you@example.com", "password": "Senha", "passwordPlaceholder": "Sua senha",
+    "confirmPassword": "Confirmar senha", "confirmPasswordPlaceholder": "Confirme sua senha", "minChars": "Mín. 6 caracteres",
+    "signingIn": "Entrando...", "signIn": "Entrar", "creatingAccount": "Criando conta...", "createAccount": "Criar conta",
+    "sending": "Enviando...", "sendMagicLink": "Enviar link mágico", "sendResetLink": "Enviar link de redefinição",
+    "forgotPassword": "Esqueceu a senha?", "useMagicLink": "Usar link mágico", "dontHaveAccount": "Não tem uma conta?",
+    "signUp": "Cadastrar-se", "alreadyHaveAccount": "Já tem uma conta?", "backToSignIn": "Voltar para login",
+    "termsAgreement": "Ao continuar, você concorda com nossos", "terms": "Termos", "and": "e", "privacyPolicy": "Política de Privacidade",
     "errors": {
-      "fillAllFields": "Por favor, preencha todos os campos",
-      "passwordMinLength": "A senha deve ter pelo menos 6 caracteres",
-      "passwordsDoNotMatch": "As senhas não coincidem",
-      "supabaseNotConfigured": "Supabase não está configurado",
+      "fillAllFields": "Por favor, preencha todos os campos", "passwordMinLength": "A senha deve ter pelo menos 6 caracteres",
+      "passwordsDoNotMatch": "As senhas não coincidem", "supabaseNotConfigured": "Supabase não está configurado",
       "unexpectedError": "Ocorreu um erro inesperado. Por favor, tente novamente.",
       "confirmEmail": "Por favor, confirme seu email antes de entrar. Verifique sua caixa de entrada.",
-      "invalidCredentials": "Email ou senha inválidos.",
-      "signInFailed": "Falha ao entrar. Por favor, tente novamente.",
-      "invalidEmail": "Endereço de email inválido.",
-      "emailAlreadyExists": "Já existe uma conta com este email. Tente fazer login.",
-      "signUpFailed": "Falha ao cadastrar. Por favor, tente novamente.",
-      "enterEmail": "Por favor, insira seu email",
+      "invalidCredentials": "Email ou senha inválidos.", "signInFailed": "Falha ao entrar. Por favor, tente novamente.",
+      "invalidEmail": "Endereço de email inválido.", "emailAlreadyExists": "Já existe uma conta com este email. Tente fazer login.",
+      "signUpFailed": "Falha ao cadastrar. Por favor, tente novamente.", "enterEmail": "Por favor, insira seu email",
       "noAccountFound": "Nenhuma conta encontrada com este email. Por favor, cadastre-se primeiro.",
       "magicLinkFailed": "Falha ao enviar o link mágico. Por favor, tente novamente.",
       "resetFailed": "Falha ao enviar o email de redefinição. Por favor, tente novamente.",
@@ -508,134 +231,404 @@
       "checkEmailReset": "Verifique seu email para encontrar o link de redefinição de senha.",
       "passwordUpdated": "Senha atualizada com sucesso. Redirecionando para o login..."
     },
-    "resetPassword": {
-      "title": "Redefinir sua senha",
-      "subtitle": "Digite sua nova senha abaixo.",
-      "newPassword": "Nova senha",
-      "confirmNewPassword": "Confirmar nova senha",
-      "confirmPlaceholder": "Confirme sua nova senha",
-      "updating": "Atualizando...",
-      "updatePassword": "Atualizar senha"
-    },
-    "errorPage": {
-      "title": "Erro de autenticação",
-      "defaultMessage": "Ocorreu um erro durante a autenticação.",
-      "tryAgain": "Tentar novamente",
-      "backToChat": "Voltar ao chat",
-      "needHelp": "Precisa de ajuda?",
-      "contactSupport": "Contatar suporte"
-    }
+    "resetPassword": { "title": "Redefinir sua senha", "subtitle": "Digite sua nova senha abaixo.", "newPassword": "Nova senha", "confirmNewPassword": "Confirmar nova senha", "confirmPlaceholder": "Confirme sua nova senha", "updating": "Atualizando...", "updatePassword": "Atualizar senha" },
+    "errorPage": { "title": "Erro de autenticação", "defaultMessage": "Ocorreu um erro durante a autenticação.", "tryAgain": "Tentar novamente", "backToChat": "Voltar ao chat", "needHelp": "Precisa de ajuda?", "contactSupport": "Contatar suporte" }
   },
   "onboarding": {
-    "skipForNow": "Pular por enquanto",
-    "back": "Voltar",
-    "continue": "Continuar",
-    "getStarted": "Começar",
-    "settingUp": "Configurando...",
-    "welcome": {
-      "titleReturning": "Bem-vindo de volta{name}!",
-      "titleNew": "Bem-vindo ao Coasty",
-      "descriptionReturning": "Gostaríamos de saber um pouco mais sobre você para melhorar sua experiência",
-      "descriptionNew": "Vamos configurar sua conta para personalizar sua experiência"
-    },
-    "nameLabel": "Como devemos chamá-lo?",
-    "namePlaceholder": "Seu nome",
-    "companyLabel": "Empresa",
-    "optional": "(opcional)",
-    "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Site",
-    "websitePlaceholder": "xai.com",
-    "roleStep": {
-      "title": "O que melhor descreve você?",
-      "subtitle": "Selecione todos que se aplicam — isso nos ajuda a personalizar sua experiência"
-    },
-    "roles": {
-      "founder": "Fundador / CEO",
-      "developer": "Desenvolvedor",
-      "marketer": "Marketing",
-      "designer": "Designer",
-      "product_manager": "Gerente de Produto",
-      "data_analyst": "Dados / Análise",
-      "operations": "Operações",
-      "other": "Outro"
-    },
+    "skipForNow": "Pular por enquanto", "back": "Voltar", "continue": "Continuar", "getStarted": "Começar", "settingUp": "Configurando...",
+    "welcome": { "titleReturning": "Bem-vindo de volta{name}!", "titleNew": "Bem-vindo ao Coasty", "descriptionReturning": "Gostaríamos de saber um pouco mais sobre você para melhorar sua experiência", "descriptionNew": "Vamos configurar sua conta para personalizar sua experiência" },
+    "nameLabel": "Como devemos chamá-lo?", "namePlaceholder": "Seu nome", "companyLabel": "Empresa", "optional": "(opcional)", "companyPlaceholder": "MacroHard", "websiteLabel": "Site", "websitePlaceholder": "xai.com",
+    "roleStep": { "title": "O que melhor descreve você?", "subtitle": "Selecione todos que se aplicam — isso nos ajuda a personalizar sua experiência" },
+    "roles": { "founder": "Fundador / CEO", "developer": "Desenvolvedor", "marketer": "Marketing", "designer": "Designer", "product_manager": "Gerente de Produto", "data_analyst": "Dados / Análise", "operations": "Operações", "other": "Outro" },
     "teamSizeLabel": "Tamanho da equipe",
-    "teamSizes": {
-      "solo": "Só eu",
-      "2-5": "2-5",
-      "6-20": "6-20",
-      "21-50": "21-50",
-      "51-200": "51-200",
-      "200+": "200+"
-    },
-    "referralStep": {
-      "title": "Como nos encontrou?",
-      "subtitle": "Gostaríamos de saber onde você ouviu falar do Coasty"
-    },
-    "referralSources": {
-      "twitter": "Twitter / X",
-      "linkedin": "LinkedIn",
-      "google": "Google Search",
-      "youtube": "YouTube",
-      "friend": "Amigo / Colega",
-      "producthunt": "Product Hunt",
-      "reddit": "Reddit",
-      "other": "Outro"
-    },
-    "useCaseStep": {
-      "title": "O que você vai automatizar primeiro?",
-      "subtitle": "Selecione todos que se aplicam — você pode explorar tudo depois"
-    },
-    "useCases": {
-      "web_scraping": "Web Scraping e Pesquisa",
-      "browser_automation": "Automação do Navegador",
-      "data_entry": "Entrada de Dados e Formulários",
-      "email_outreach": "Email e Prospecção",
-      "testing": "QA e Testes",
-      "ecommerce": "Tarefas de E-commerce",
-      "social_media": "Gestão de Redes Sociais",
-      "general_automation": "Automação Geral"
-    },
+    "teamSizes": { "solo": "Só eu", "2-5": "2-5", "6-20": "6-20", "21-50": "21-50", "51-200": "51-200", "200+": "200+" },
+    "referralStep": { "title": "Como nos encontrou?", "subtitle": "Gostaríamos de saber onde você ouviu falar do Coasty" },
+    "referralSources": { "twitter": "Twitter / X", "linkedin": "LinkedIn", "google": "Google Search", "youtube": "YouTube", "friend": "Amigo / Colega", "producthunt": "Product Hunt", "reddit": "Reddit", "other": "Outro" },
+    "useCaseStep": { "title": "O que você vai automatizar primeiro?", "subtitle": "Selecione todos que se aplicam — você pode explorar tudo depois" },
+    "useCases": { "web_scraping": "Web Scraping e Pesquisa", "browser_automation": "Automação do Navegador", "data_entry": "Entrada de Dados e Formulários", "email_outreach": "Email e Prospecção", "testing": "QA e Testes", "ecommerce": "Tarefas de E-commerce", "social_media": "Gestão de Redes Sociais", "general_automation": "Automação Geral" },
     "showcase": {
-      "title": "Tudo o que você precisa,",
-      "titleHighlight": "integrado.",
-      "subtitle": "Veja o que o Coasty pode fazer por você",
-      "noCode": {
-        "title": "Sem Código",
-        "description": "Apenas descreva o que você quer em português simples"
-      },
-      "agentSwarms": {
-        "title": "Enxame de Agentes",
-        "description": "Frotas de agentes em paralelo"
-      },
-      "desktopControl": {
-        "title": "Controle de Desktop",
-        "description": "Clica, digita, navega"
-      },
-      "browserAutomation": {
-        "title": "Automação do Navegador",
-        "description": "Formulários, abas, scraping — totalmente automatizado"
-      },
-      "computerVision": {
-        "title": "Visão Computacional",
-        "description": "Vê e entende sua tela em tempo real"
-      },
-      "workflows": {
-        "title": "Fluxos de Trabalho",
-        "description": "Fluxos de múltiplas etapas"
-      },
-      "onDevice": {
-        "title": "No Dispositivo",
-        "description": "Executa localmente"
-      },
-      "autonomous": {
-        "title": "Autônomo 24/7",
-        "description": "Configure e esqueça — funciona enquanto você dorme"
-      }
+      "title": "Tudo o que você precisa,", "titleHighlight": "integrado.", "subtitle": "Veja o que o Coasty pode fazer por você",
+      "noCode": { "title": "Sem Código", "description": "Apenas descreva o que você quer em português simples" },
+      "agentSwarms": { "title": "Enxame de Agentes", "description": "Frotas de agentes em paralelo" },
+      "desktopControl": { "title": "Controle de Desktop", "description": "Clica, digita, navega" },
+      "browserAutomation": { "title": "Automação do Navegador", "description": "Formulários, abas, scraping — totalmente automatizado" },
+      "computerVision": { "title": "Visão Computacional", "description": "Vê e entende sua tela em tempo real" },
+      "workflows": { "title": "Fluxos de Trabalho", "description": "Fluxos de múltiplas etapas" },
+      "onDevice": { "title": "No Dispositivo", "description": "Executa localmente" },
+      "autonomous": { "title": "Autônomo 24/7", "description": "Configure e esqueça — funciona enquanto você dorme" }
     },
-    "guideCallout": {
-      "title": "Novo aqui? Temos um guia para você",
-      "subtitle": "Implante seu primeiro agente de IA em menos de um minuto"
+    "guideCallout": { "title": "Novo aqui? Temos um guia para você", "subtitle": "Implante seu primeiro agente de IA em menos de um minuto" }
+  },
+  "chatInput": {
+    "placeholder": "O que seu trabalhador de IA deve fazer?",
+    "placeholderAlt": "Diga à sua IA o que fazer no computador...",
+    "vmError": {
+      "title": "Erro na Máquina Virtual",
+      "description": "A máquina virtual está em estado de erro ou está sendo excluída.",
+      "hint": "Verifique a aba Máquinas para resolver o problema, ou selecione \"Nenhum Computador Selecionado\" para usar apenas a pesquisa web.",
+      "gotIt": "Entendi"
+    },
+    "status": {
+      "creating": "Criando {name}...",
+      "initiating": "Iniciando agente em {name}...",
+      "stopping": "Parando {name}...",
+      "preparing": "Preparando {name}..."
+    },
+    "swarm": {
+      "title": "Modo Enxame",
+      "pro": "PRO",
+      "upgradeLabel": "Modo enxame — faça upgrade para desbloquear",
+      "feature1": "Execução paralela em máquinas temporárias",
+      "feature2": "Cada máquina opera de forma autônoma",
+      "feature3": "3x o limite de máquinas do seu plano por enxame",
+      "description": "Execute um prompt em 3x o limite de máquinas em paralelo — cada uma trabalhando na tarefa de forma independente.",
+      "enableLabel": "Ativar modo enxame",
+      "disableLabel": "Desativar modo enxame",
+      "onTooltip": "Modo enxame ATIVO — seu prompt será executado em múltiplas máquinas em paralelo",
+      "offTooltip": "Ative o modo enxame para executar seu prompt em múltiplas máquinas simultaneamente",
+      "decreaseMachines": "Diminuir contagem de máquinas",
+      "increaseMachines": "Aumentar contagem de máquinas",
+      "machineLimit": "Até {max} máquinas de enxame no seu plano. Precisa de mais? Contate founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Conectar ao desktop",
+      "screenLabel": "Tela de {name}",
+      "screenDefault": "Desktop",
+      "watchTooltip": "Assista seu agente trabalhar em uma tela separada. Só não toque em nada ou ele fica com medo de palco!"
+    },
+    "buttons": {
+      "stop": "Parar",
+      "sendToSwarm": "Enviar para enxame",
+      "taskRunning": "Outra tarefa está em execução — clique para pará-la e executar a sua",
+      "selectComputer": "Selecione um computador para enviar mensagens",
+      "waitCreating": "Aguarde a criação da VM",
+      "waitStarting": "Aguarde a inicialização da VM",
+      "waitAgent": "Aguarde a inicialização do agente",
+      "vmStopping": "VM está parando",
+      "send": "Enviar",
+      "switching": "Alternando...",
+      "overrideRun": "Substituir e Executar",
+      "stopLabel": "Parar tarefa em execução e iniciar esta",
+      "sendLabel": "Enviar mensagem"
+    },
+    "search": "Pesquisar",
+    "upload": {
+      "label": "Enviar arquivos para VM",
+      "heading": "Enviar arquivos para VM",
+      "description": "Arquivos serão salvos na Área de Trabalho",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Solte os arquivos aqui",
+      "dropDescription": "Arquivos serão enviados para a pasta Área de Trabalho da VM",
+      "dropPath": "Caminho: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Faça login para experimentar mais recursos gratuitamente",
+      "description": "Crie projetos, convide membros da equipe e mais.",
+      "connecting": "Conectando...",
+      "continueWithGoogle": "Continuar com Google"
+    },
+    "removeFile": "Remover arquivo"
+  },
+  "chat": {
+    "greeting": "Olá",
+    "greetingAuth": "Eu cuido do trabalho no computador. Qual é a tarefa?",
+    "greetingUnauth": "IA que opera o computador para que você não precise. Basta dizer o que precisa ser feito.",
+    "guide": "Guia",
+    "saveLogins": "Salvar logins para preenchimento automático",
+    "encryptedNote": "criptografado, nunca visto pela IA",
+    "roleLabels": ["Colega", "Funcionário", "Amigo", "Assistente", "Parceiro", "Companheiro de equipe", "Colaborador", "Ajudante"],
+    "taskTemplates": {
+      "founder": { "competitorReport": "Obter um relatório de concorrentes", "warmLeads": "Gerar 20 leads quentes", "pitchDeck": "Criar um rascunho de pitch deck" },
+      "developer": { "findBugs": "Encontrar bugs no meu site", "performance": "Obter um relatório de desempenho", "apiDocs": "Extrair documentação de API" },
+      "marketer": { "seoGap": "Obter uma análise de gaps SEO", "competitorAds": "Espionar anúncios de concorrentes", "trendingContent": "Obter ideias de conteúdo em alta" },
+      "product_manager": { "reviewSummary": "Obter um resumo de avaliações", "featureComparison": "Criar uma comparação de recursos", "competitorLaunches": "Rastrear lançamentos de concorrentes" },
+      "data_analyst": { "exportCsv": "Exportar dados do site para CSV", "marketSizing": "Obter um relatório de dimensionamento de mercado", "benchmark": "Comparar com referências do setor" },
+      "operations": { "enterRecords": "Inserir registros no nosso sistema", "cheapestVendor": "Encontrar o fornecedor mais barato", "invoiceSummary": "Obter um resumo de faturas" },
+      "designer": { "designComparison": "Obter uma comparação de design", "responsiveAudit": "Executar uma auditoria responsiva", "inspiration": "Coletar inspiração de design" }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Exportar dados do site para CSV",
+      "browser_automation": "Exportar relatórios do painel",
+      "data_entry": "Inserir registros no nosso app",
+      "email_outreach": "Enviar prospecção personalizada",
+      "testing": "Obter um relatório completo de QA",
+      "ecommerce": "Obter uma comparação de preços",
+      "social_media": "Publicar e obter engajamento",
+      "general_automation": "Executar uma tarefa no meu site"
     }
-  }
+  },
+  "chatMessages": {
+    "copyText": "Copiar texto",
+    "copied": "Copiado!",
+    "regenerate": "Regenerar",
+    "feedback": {
+      "title": "Feedback",
+      "prompts": ["Avalie isto", "Feedback", "Como foi?", "Opiniões?", "Compartilhar feedback"],
+      "tooltip": "Compartilhe seu feedback"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": { "title": "Pesquisa Inteligente", "description": "Pesquisa com IA em toda a web" },
+    "collaborate": { "title": "Colaborar", "description": "Trabalhe junto em tempo real" },
+    "globalAccess": { "title": "Acesso Global", "description": "Pesquise em mais de 50 idiomas" },
+    "aiModels": { "title": "Modelos de IA", "description": "Múltiplos provedores de IA" },
+    "freeForever": { "title": "Grátis Para Sempre", "description": "Sem custos ocultos" },
+    "privateSecure": { "title": "Privado e Seguro", "description": "Seus dados permanecem seus" }
+  },
+  "sidebar": {
+    "newTask": "Nova Tarefa",
+    "newTaskDescription": "Iniciar uma nova automação de IA",
+    "activity": "Atividade",
+    "taskHistory": "Histórico de Tarefas",
+    "taskHistoryDescription": "Revise tarefas anteriores e continue de onde parou",
+    "taskHistoryPopup": { "title": "Suas tarefas recentes", "description": "Navegue e continue conversas anteriores. Cada tarefa é salva para que você possa retomar exatamente de onde parou." },
+    "swarmRuns": "Execuções de Enxame",
+    "swarmRunsDescription": "Monitore fluxos de trabalho paralelos multi-agente",
+    "swarmRunsPopup": { "title": "Fluxos de trabalho multi-agente", "description": "Execute tarefas em múltiplas máquinas em paralelo. Cada agente trabalha de forma independente e os resultados convergem automaticamente." },
+    "guide": "Guia",
+    "guideDescription": "Aprenda como aproveitar ao máximo o Coasty",
+    "guidePopup": { "title": "Primeiros passos", "description": "Tutoriais passo a passo e melhores práticas para ajudá-lo a automatizar de forma eficaz." },
+    "infrastructure": "Infraestrutura",
+    "computer": "Computador",
+    "computers": "Computadores",
+    "active": "ativo",
+    "view": "Ver",
+    "workforce": "Força de Trabalho",
+    "workforceDescription": "Agendar agentes automatizados e gatilhos",
+    "workforcePopup": { "title": "Automação agendada", "description": "Configure tarefas recorrentes com agendamentos cron e gatilhos agente-para-agente. Sua força de trabalho opera enquanto você dorme." },
+    "credentials": "Credenciais",
+    "credentialsDescription": "Armazenar logins com segurança para acesso do agente",
+    "credentialsPopup": { "title": "Cofre seguro de credenciais", "description": "Armazene logins e chaves de API com criptografia. Agentes preenchem credenciais automaticamente sem expor valores brutos." },
+    "desktopApp": {
+      "getDesktopApp": "Obter App Desktop",
+      "download": "Download",
+      "downloadDesktopApp": "Baixar App Desktop",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Controle seu computador remotamente",
+      "controlDescription": "Instale o app desktop e execute tarefas no seu PC a partir deste painel — em qualquer lugar, a qualquer momento."
+    },
+    "credits": {
+      "runningLow": "Créditos — Acabando",
+      "remaining": "Créditos restantes",
+      "buy": "Comprar",
+      "creditsLeft": "créditos restantes",
+      "usedLabel": "Usado: {count}",
+      "consumed": "{percent}% consumido",
+      "usageThisWeek": "Uso esta semana"
+    },
+    "talkToUs": "Fale conosco",
+    "inviteEarn": "Convide e Ganhe",
+    "user": "Usuário",
+    "account": "Conta",
+    "tasks": "{count} Tarefas",
+    "recentActivity": "Atividade recente",
+    "viewAllHistory": "Ver todo o histórico →",
+    "swarmRunsCount": "{count} Execuções de Enxame",
+    "running": "executando",
+    "completed": "concluído",
+    "viewAllSwarms": "Ver todos os enxames →",
+    "schedulesCount": "{count} Agendamentos",
+    "totalRuns": "{count} execuções totais",
+    "paused": "pausado",
+    "viewAllSchedules": "Ver todos os agendamentos →",
+    "credentialsCount": "{count} Credenciais",
+    "encryptedVault": "Cofre criptografado",
+    "manageCredentials": "Gerenciar credenciais →",
+    "days": ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
+    "resume": "RETOMAR",
+    "result": "RESULTADO",
+    "notScheduled": "Não agendado",
+    "overdue": "Atrasado",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "em {count}m",
+    "inHours": "em {count}h",
+    "today": "hoje",
+    "yesterday": "ontem"
+  },
+  "appHeader": {
+    "login": "Login",
+    "assign": "Atribuir",
+    "assignDescription": "Atribuir um funcionário para executar esta tarefa",
+    "computer": "Computador",
+    "showComputer": "Mostrar Computador",
+    "hideComputer": "Ocultar Computador",
+    "employeeHired": "Funcionário contratado!",
+    "employeeRemoved": "Funcionário removido"
+  },
+  "billing": {
+    "plans": {
+      "lite": { "name": "Lite", "description": "Automação leve diária" },
+      "starter": { "name": "Starter", "description": "Automatize tarefas todos os dias" },
+      "plus": { "name": "Plus", "description": "Escale fluxos de trabalho complexos", "badge": "Mais Popular" },
+      "pro": { "name": "Pro", "description": "Automação pesada ilimitada" }
+    },
+    "features": {
+      "vmDeleted": "1 VM (excluída após inatividade)",
+      "vmAlwaysOn": "{count} VM sempre ativa",
+      "vmAlwaysOnPlural": "{count} VMs sempre ativas",
+      "agentsParallel": "{count} agentes em paralelo",
+      "basicSearch": "Pesquisa básica",
+      "advancedSearch": "Pesquisa avançada e extração",
+      "standardSupport": "Suporte padrão (pessoas reais)",
+      "prioritySupport": "Suporte prioritário, resposta em 24h",
+      "premiumSupport": "Suporte premium, resposta em 12h"
+    },
+    "creditPackages": {
+      "small": { "name": "Pacote Pequeno", "description": "Recarga rápida" },
+      "medium": { "name": "Pacote Médio", "description": "Recarga padrão", "savings": "8% de economia" },
+      "large": { "name": "Pacote Grande", "description": "Compra em volume", "savings": "17% de economia" }
+    },
+    "timeAgo": { "justNow": "Agora mesmo", "minutesAgo": "há {count}m", "hoursAgo": "há {count}h", "daysAgo": "há {count}d" },
+    "noActivity": "Nenhuma atividade neste período",
+    "stats": {
+      "balance": "Saldo", "earned": "Ganho", "used": "Usado", "credits": "créditos",
+      "allTime": "todo o período", "lastRange": "últimos {range}", "sessions": "{count} sessões",
+      "avgDaily": "~{count}/dia média", "plan": "Plano", "free": "Grátis", "noPlan": "Sem plano", "canceling": "Cancelando"
+    },
+    "monthlyUsage": "Uso Mensal de Créditos",
+    "remaining": "{used} / {total} restantes",
+    "usedPercent": "{percent}% usado neste período",
+    "renews": "Renova em {date}",
+    "choosePlan": "Escolha Seu Plano",
+    "choosePlanDescription": "Assine para desbloquear recursos de IA e receber créditos mensais",
+    "savingsVsHuman": "Economize {amount}/mês vs manual",
+    "timeSaved": "{time} economizado mensalmente",
+    "cheaper": "{multiplier} mais barato",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/mês",
+    "creditsPerMonth": "{count} créditos/mês",
+    "processing": "Processando...",
+    "subscribeTo": "Assinar {name}",
+    "transactionTypes": {
+      "credit_purchase": "Compra de Créditos", "agent_usage": "Uso do Agente", "refund": "Reembolso",
+      "bonus": "Recompensa Bônus", "subscription": "Assinatura", "subscription_grant": "Concessão de Assinatura",
+      "renewal": "Créditos de Renovação", "reactivation": "Reativação"
+    },
+    "toasts": {
+      "paymentSuccess": "Pagamento realizado com sucesso! Seus créditos foram adicionados.",
+      "subscriptionActivated": "Assinatura ativada com sucesso!",
+      "paymentCanceled": "Pagamento foi cancelado. Nenhuma cobrança foi feita.",
+      "signInToSubscribe": "Faça login para assinar",
+      "subscriptionCheckoutFailed": "Falha ao iniciar o checkout da assinatura. Tente novamente.",
+      "signInToPurchase": "Faça login para comprar créditos",
+      "needSubscription": "Você precisa de uma assinatura ativa para comprar créditos adicionais",
+      "checkoutFailed": "Falha ao iniciar o checkout. Tente novamente.",
+      "manageFailed": "Falha ao abrir o gerenciamento de assinatura. Tente novamente.",
+      "transactionsExported": "Transações exportadas"
+    }
+  },
+  "apiKeys": {
+    "title": "Provedores de Modelos",
+    "new": "novo",
+    "description": "Adicione suas próprias chaves de API para desbloquear acesso a modelos.",
+    "securityNote": "Suas chaves são armazenadas com segurança com criptografia ponta a ponta.",
+    "apiKeyLabel": "Chave de API {provider}",
+    "getApiKey": "Obter chave de API",
+    "delete": "Excluir",
+    "save": "Salvar",
+    "deleteDialog": {
+      "title": "Excluir Chave de API",
+      "description": "Tem certeza de que deseja excluir sua chave de API {provider}? Esta ação não pode ser desfeita e você perderá o acesso aos modelos {provider}.",
+      "cancel": "Cancelar",
+      "confirm": "Excluir"
+    },
+    "toasts": {
+      "saved": "Chave de API salva",
+      "savedDescription": "Sua chave de API {provider} foi salva e os modelos foram adicionados aos seus favoritos.",
+      "updatedDescription": "Sua chave de API {provider} foi atualizada.",
+      "saveFailed": "Falha ao salvar chave de API",
+      "saveFailedDescription": "Falha ao salvar chave de API {provider}. Tente novamente.",
+      "deleted": "Chave de API excluída",
+      "deletedDescription": "Sua chave de API {provider} foi excluída.",
+      "deleteFailed": "Falha ao excluir chave de API",
+      "deleteFailedDescription": "Falha ao excluir chave de API {provider}. Tente novamente."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Detalhes do Perfil",
+    "displayName": "Nome de Exibição",
+    "namePlaceholder": "Seu nome",
+    "company": "Empresa",
+    "companyPlaceholder": "Sua empresa",
+    "website": "Site",
+    "websitePlaceholder": "seusite.com",
+    "saving": "Salvando...",
+    "saveChanges": "Salvar alterações",
+    "account": "Conta",
+    "email": "Email",
+    "verified": "Verificado",
+    "signOut": "Sair",
+    "signOutDescription": "Desconectar deste dispositivo",
+    "toasts": {
+      "profileUpdated": "Perfil atualizado",
+      "profileUpdateFailed": "Falha ao atualizar perfil",
+      "signOutFailed": "Falha ao sair"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Seus dados estão protegidos",
+    "dataProtectedDescription": "Segurança de nível empresarial com criptografia em repouso e em trânsito",
+    "features": {
+      "encryption": { "title": "Criptografia Ponta a Ponta", "description": "Chaves de API criptografadas com AES-256-GCM. Suas credenciais nunca são armazenadas em texto simples." },
+      "rls": { "title": "Segurança em Nível de Linha", "description": "Isolamento em nível de banco de dados garante que seus dados sejam acessíveis apenas por você. Nenhum acesso entre inquilinos possível." },
+      "privacy": { "title": "Privacidade por Design", "description": "Coletamos apenas os dados mínimos necessários para fornecer o serviço. Suas conversas e arquivos permanecem seus." },
+      "session": { "title": "Segurança de Sessão", "description": "Proteção CSRF, cookies HTTP-only seguros e headers de Content Security Policy em cada solicitação." }
+    },
+    "legal": "Legal",
+    "privacyPolicy": { "title": "Política de Privacidade", "description": "Como coletamos, usamos e protegemos seus dados" },
+    "termsOfService": { "title": "Termos de Serviço", "description": "Nossos termos e condições de uso" }
+  },
+  "layoutSettings": {
+    "layout": "Layout"
+  },
+  "suggestions": {
+    "summary": { "label": "Resumo", "highlight": "Resumir" },
+    "code": { "label": "Código", "highlight": "Construir" },
+    "research": { "label": "Pesquisa", "highlight": "Analisar" },
+    "create": { "label": "Criar", "highlight": "Gerar" },
+    "solve": { "label": "Resolver", "highlight": "Depurar" },
+    "learn": { "label": "Aprender", "highlight": "Explicar" }
+  },
+  "loadingMessages": [
+    "Inicializando o cérebro de silício",
+    "Despertando a consciência digital",
+    "Inicializando caminhos neurais",
+    "Ativando os núcleos quânticos",
+    "Carregando o capacitor de fluxo",
+    "Ativando o mainframe",
+    "Energizando a matriz computacional",
+    "Engajando propulsão warp",
+    "Invocando os espíritos de silício",
+    "Ligando o motor de elétrons",
+    "Aquecendo os transistores",
+    "Montando os bits e bytes",
+    "Calibrando as sinapses digitais",
+    "Energizando os cristais da CPU",
+    "Carregando os protocolos de consciência",
+    "Inicializando recursos do sistema",
+    "Preparando ambiente computacional",
+    "Estabelecendo conexão segura",
+    "Provisionando recursos virtuais",
+    "Configurando parâmetros do sistema",
+    "Lançando instância virtual",
+    "Ativando desktop remoto",
+    "Implantando recursos na nuvem",
+    "Iniciando sequência de inicialização do sistema",
+    "Preparando ambiente de execução",
+    "Acordando o computador sonolento",
+    "Cutucando o urso digital",
+    "Preparando um café computacional",
+    "Alongando os músculos digitais",
+    "Abrindo os olhos digitais",
+    "Iniciando",
+    "Ligando",
+    "Ficando online",
+    "Inicializando sistema",
+    "Preparando",
+    "Quase lá",
+    "Preparando espaço de trabalho",
+    "Carregando recursos",
+    "Sistema ativando"
+  ]
 }

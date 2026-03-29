@@ -4,7 +4,8 @@ import { PromptSuggestion } from "@/components/prompt-kit/prompt-suggestion"
 import { TRANSITION_SUGGESTIONS } from "@/lib/motion"
 import { AnimatePresence, motion } from "motion/react"
 import React, { memo, useCallback, useMemo, useState } from "react"
-import { SUGGESTIONS as SUGGESTIONS_CONFIG } from "../../../lib/config"
+import { SUGGESTIONS_DATA } from "../../../lib/config"
+import { useTranslations } from "next-intl"
 
 type SuggestionsProps = {
   onValueChange: (value: string) => void
@@ -20,10 +21,21 @@ export const Suggestions = memo(function Suggestions({
   value,
 }: SuggestionsProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const ts = useTranslations("suggestions")
 
   if (!value && activeCategory !== null) {
     setActiveCategory(null)
   }
+
+  // Build translated suggestions
+  const SUGGESTIONS_CONFIG = useMemo(() =>
+    SUGGESTIONS_DATA.map(s => ({
+      ...s,
+      label: ts(`${s.key}.label`),
+      highlight: ts(`${s.key}.highlight`),
+    })),
+    [ts]
+  )
 
   const activeCategoryData = SUGGESTIONS_CONFIG.find(
     (group) => group.label === activeCategory
@@ -88,7 +100,7 @@ export const Suggestions = memo(function Suggestions({
         ))}
       </motion.div>
     ),
-    [handleCategoryClick]
+    [handleCategoryClick, SUGGESTIONS_CONFIG]
   )
 
   const suggestionsList = useMemo(

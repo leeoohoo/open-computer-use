@@ -423,145 +423,145 @@
     "label": "Nyelv"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Te határozod meg a célt.",
+    "brandSubheading": "Mi intézzük a többit.",
+    "mobileHeading": "Te határozod meg a célt. Mi intézzük a többit.",
+    "mobileSubheading": "AI ügynökök, amelyek böngésznek, kattintanak és úgy dolgoznak, mint egy igazi csapattárs.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Leírod a feladatot",
+        "sub": "\"Kutatd fel a top 5 versenytársunkat\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Az ügynök átveszi az irányítást",
+        "sub": "Böngészik, kattint, gépel autonóm módon"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Munka elkészült",
+        "sub": "Táblázat 5 teljes versenytárs-profillal"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Kész",
+    "doneIn": "Kész 8 perc alatt",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Az operátorod készenlétben áll",
+      "signUp": "Tedd autopilótára a munkafolyamataidat",
+      "magicLink": "Hagyd ki a jelszót",
+      "forgotPassword": "Visszajuttatunk"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Folytasd ott, ahol abbahagytad — az ügynökeid emlékeznek",
+      "signUp": "Telepítsd az első AI ügynöködet kevesebb mint egy perc alatt",
+      "magicLink": "Egy kattintás a postaládádból és bent vagy",
+      "forgotPassword": "Küldünk egy visszaállító linket az e-mailedre"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Csatlakozás...",
+      "continueWithGoogle": "Folytatás Google-lal"
     },
-    "or": "or",
-    "email": "Email",
+    "or": "vagy",
+    "email": "E-mail",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "Jelszó",
+    "passwordPlaceholder": "A jelszavad",
+    "confirmPassword": "Jelszó megerősítése",
+    "confirmPasswordPlaceholder": "Erősítsd meg a jelszavad",
+    "minChars": "Min. 6 karakter",
+    "signingIn": "Bejelentkezés...",
+    "signIn": "Bejelentkezés",
+    "creatingAccount": "Fiók létrehozása...",
+    "createAccount": "Fiók létrehozása",
+    "sending": "Küldés...",
+    "sendMagicLink": "Magic link küldése",
+    "sendResetLink": "Visszaállító link küldése",
+    "forgotPassword": "Elfelejtetted a jelszavad?",
+    "useMagicLink": "Magic link használata",
+    "dontHaveAccount": "Nincs még fiókod?",
+    "signUp": "Regisztráció",
+    "alreadyHaveAccount": "Már van fiókod?",
+    "backToSignIn": "Vissza a bejelentkezéshez",
+    "termsAgreement": "A folytatással elfogadod a",
+    "terms": "Feltételeket",
+    "and": "és",
+    "privacyPolicy": "Adatvédelmi irányelveket",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Kérjük, töltsd ki az összes mezőt",
+      "passwordMinLength": "A jelszónak legalább 6 karakter hosszúnak kell lennie",
+      "passwordsDoNotMatch": "A jelszavak nem egyeznek",
+      "supabaseNotConfigured": "A Supabase nincs konfigurálva",
+      "unexpectedError": "Váratlan hiba történt. Kérjük, próbáld újra.",
+      "confirmEmail": "Kérjük, erősítsd meg az e-mailed bejelentkezés előtt. Nézd meg a postaládádat.",
+      "invalidCredentials": "Érvénytelen e-mail vagy jelszó.",
+      "signInFailed": "A bejelentkezés sikertelen. Kérjük, próbáld újra.",
+      "invalidEmail": "Érvénytelen e-mail cím.",
+      "emailAlreadyExists": "Ezzel az e-mail címmel már létezik fiók. Próbálj bejelentkezni.",
+      "signUpFailed": "A regisztráció sikertelen. Kérjük, próbáld újra.",
+      "enterEmail": "Kérjük, add meg az e-mail címed",
+      "noAccountFound": "Nem található fiók ezzel az e-mail címmel. Kérjük, regisztrálj először.",
+      "magicLinkFailed": "A magic link küldése sikertelen. Kérjük, próbáld újra.",
+      "resetFailed": "A visszaállító e-mail küldése sikertelen. Kérjük, próbáld újra.",
+      "updateFailed": "A jelszó frissítése sikertelen. Kérjük, próbáld újra."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Nézd meg az e-mailed a fiók megerősítéséhez bejelentkezés előtt.",
+      "checkEmailMagicLink": "Nézd meg az e-mailed a bejelentkezési magic linkért.",
+      "checkEmailReset": "Nézd meg az e-mailed a jelszó-visszaállító linkért.",
+      "passwordUpdated": "Jelszó sikeresen frissítve. Átirányítás a bejelentkezéshez..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Jelszó visszaállítása",
+      "subtitle": "Add meg az új jelszavad alább.",
+      "newPassword": "Új jelszó",
+      "confirmNewPassword": "Új jelszó megerősítése",
+      "confirmPlaceholder": "Erősítsd meg az új jelszavad",
+      "updating": "Frissítés...",
+      "updatePassword": "Jelszó frissítése"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Hitelesítési hiba",
+      "defaultMessage": "Hiba történt a hitelesítés során.",
+      "tryAgain": "Próbáld újra",
+      "backToChat": "Vissza a Chathez",
+      "needHelp": "Segítségre van szükséged?",
+      "contactSupport": "Kapcsolatfelvétel a támogatással"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Kihagyás most",
+    "back": "Vissza",
+    "continue": "Tovább",
+    "getStarted": "Kezdés",
+    "settingUp": "Beállítás...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Üdv újra{name}!",
+      "titleNew": "Üdvözlünk a Coasty-ban",
+      "descriptionReturning": "Szeretnénk egy kicsit jobban megismerni téged, hogy javíthassuk az élményed",
+      "descriptionNew": "Állítsuk be a fiókodat, hogy személyre szabhassuk az élményed"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Hogyan szólítsunk?",
+    "namePlaceholder": "A neved",
+    "companyLabel": "Vállalat",
+    "optional": "(opcionális)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "Weboldal",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Mi jellemez téged a legjobban?",
+      "subtitle": "Válaszd ki az összes releváns lehetőséget — ez segít nekünk személyre szabni az élményed"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
-      "marketer": "Marketer",
-      "designer": "Designer",
+      "founder": "Alapító / CEO",
+      "developer": "Fejlesztő",
+      "marketer": "Marketinges",
+      "designer": "Tervező",
       "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "data_analyst": "Adat / Analitika",
+      "operations": "Operáció",
+      "other": "Egyéb"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Csapatméret",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Csak én",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,585 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Hogyan találtál meg minket?",
+      "subtitle": "Szeretnénk tudni, hol hallottál a Coasty-ról"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Barát / Kolléga",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Egyéb"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Mit fogsz először automatizálni?",
+      "subtitle": "Válaszd ki az összes releváns lehetőséget — mindent felfedezhetsz később"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Web Scraping & Kutatás",
+      "browser_automation": "Böngésző automatizálás",
+      "data_entry": "Adatbevitel & Űrlapok",
+      "email_outreach": "E-mail & Outreach",
+      "testing": "QA & Tesztelés",
+      "ecommerce": "E-commerce feladatok",
+      "social_media": "Közösségi média kezelés",
+      "general_automation": "Általános automatizálás"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Minden amire szükséged van,",
+      "titleHighlight": "beépítve.",
+      "subtitle": "Íme, mit tud a Coasty érted tenni",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Kód nélkül",
+        "description": "Csak írd le, mit szeretnél egyszerű magyarul"
       },
       "agentSwarms": {
-        "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "title": "Ügynökrajok",
+        "description": "Párhuzamos ügynökflották"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Asztali vezérlés",
+        "description": "Kattint, gépel, navigál"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Böngésző automatizálás",
+        "description": "Űrlapok, lapok, scraping — teljesen automatizált"
       },
       "computerVision": {
         "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "description": "Látja és érti a képernyődet valós időben"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Munkafolyamatok",
+        "description": "Többlépéses folyamatok"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Eszközön",
+        "description": "Helyben fut"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "24/7 Autonóm",
+        "description": "Állítsd be és felejts el — fut, amíg alszol"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Új vagy itt? Van egy útmutatónk neked",
+      "subtitle": "Telepítsd az első AI ügynöködet kevesebb mint egy perc alatt"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Mit csináljon az AI munkásod?",
+    "placeholderAlt": "Mondd el az AI-nak, mit csináljon a számítógépen...",
+    "vmError": {
+      "title": "Virtuális gép hiba",
+      "description": "A virtuális gép hibás állapotban van vagy törlés alatt áll.",
+      "hint": "Kérjük, ellenőrizd a Gépek fület a probléma megoldásához, vagy válaszd a \"Nincs számítógép kiválasztva\" lehetőséget csak webes kereséshez.",
+      "gotIt": "Értem"
+    },
+    "status": {
+      "creating": "{name} létrehozása...",
+      "initiating": "Ügynök indítása a(z) {name} gépen...",
+      "stopping": "{name} leállítása...",
+      "preparing": "{name} előkészítése..."
+    },
+    "swarm": {
+      "title": "Raj mód",
+      "pro": "PRO",
+      "upgradeLabel": "Raj mód — frissíts a feloldáshoz",
+      "feature1": "Párhuzamos végrehajtás ideiglenes gépeken",
+      "feature2": "Minden gép autonóm módon fut",
+      "feature3": "3x a csomagod géplimitje rajonként",
+      "description": "Futtass egy promptot 3x a géplimited párhuzamosan — mindegyik önállóan dolgozik a feladaton.",
+      "enableLabel": "Raj mód bekapcsolása",
+      "disableLabel": "Raj mód kikapcsolása",
+      "onTooltip": "Raj mód BE — a prompted több gépen fut párhuzamosan",
+      "offTooltip": "Kapcsold be a raj módot, hogy a prompted több gépen fusson egyszerre",
+      "decreaseMachines": "Gépek számának csökkentése",
+      "increaseMachines": "Gépek számának növelése",
+      "machineLimit": "Legfeljebb {max} raj gép a csomagodban. Többre van szükséged? Írj a founders@coasty.ai címre"
+    },
+    "desktop": {
+      "connectLabel": "Csatlakozás az asztalhoz",
+      "screenLabel": "{name} képernyője",
+      "screenDefault": "Asztal",
+      "watchTooltip": "Nézd, ahogy az ügynököd dolgozik egy külön képernyőn. Csak ne nyúlj semmihez, mert lámpalázat kap!"
+    },
+    "buttons": {
+      "stop": "Leállítás",
+      "sendToSwarm": "Küldés a rajnak",
+      "taskRunning": "Egy másik feladat fut — kattints a leállításhoz és a sajátod futtatásához",
+      "selectComputer": "Válassz számítógépet üzenetek küldéséhez",
+      "waitCreating": "Kérjük, várd meg a VM létrehozását",
+      "waitStarting": "Kérjük, várd meg a VM indulását",
+      "waitAgent": "Kérjük, várd meg az ügynök inicializálását",
+      "vmStopping": "A VM leáll",
+      "send": "Küldés",
+      "switching": "Váltás...",
+      "overrideRun": "Felülírás & Futtatás",
+      "stopLabel": "Futó feladat leállítása és ennek indítása",
+      "sendLabel": "Üzenet küldése"
+    },
+    "search": "Keresés",
+    "upload": {
+      "label": "Fájlok feltöltése a VM-re",
+      "heading": "Fájlok feltöltése a VM-re",
+      "description": "A fájlok az Asztalra kerülnek mentésre",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Húzd ide a fájlokat",
+      "dropDescription": "A fájlok a VM Asztal mappájába kerülnek feltöltésre",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Jelentkezz be, hogy ingyen kipróbálj több funkciót",
+      "description": "Hozz létre projekteket, hívj meg csapattagokat és sok mást.",
+      "connecting": "Csatlakozás...",
+      "continueWithGoogle": "Folytatás Google-lal"
+    },
+    "removeFile": "Fájl eltávolítása"
+  },
+  "chat": {
+    "greeting": "Szia",
+    "greetingAuth": "Rám bízhatod a számítógépes munkát. Mi a feladat?",
+    "greetingUnauth": "AI, ami a számítógépet kezeli helyetted. Csak mondd el, mit kell elvégezni.",
+    "guide": "Útmutató",
+    "saveLogins": "Bejelentkezések mentése automatikus kitöltéshez",
+    "encryptedNote": "titkosított, az AI nem látja",
+    "roleLabels": ["Munkatárs", "Alkalmazott", "Barát", "Asszisztens", "Partner", "Csapattárs", "Együttműködő", "Segítő"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Versenytárs-jelentés készítése",
+        "warmLeads": "20 meleg lead generálása",
+        "pitchDeck": "Pitch deck vázlat készítése"
+      },
+      "developer": {
+        "findBugs": "Hibák keresése az oldalamon",
+        "performance": "Teljesítményjelentés készítése",
+        "apiDocs": "API dokumentáció kinyerése"
+      },
+      "marketer": {
+        "seoGap": "SEO réselemzés készítése",
+        "competitorAds": "Versenytárs hirdetések kémlelése",
+        "trendingContent": "Trendi tartalomötletek szerzése"
+      },
+      "product_manager": {
+        "reviewSummary": "Értékelés-összefoglaló készítése",
+        "featureComparison": "Funkció-összehasonlítás készítése",
+        "competitorLaunches": "Versenytárs indulások nyomon követése"
+      },
+      "data_analyst": {
+        "exportCsv": "Oldal adatainak exportálása CSV-be",
+        "marketSizing": "Piacméretezési jelentés készítése",
+        "benchmark": "Összehasonlítás az iparággal"
+      },
+      "operations": {
+        "enterRecords": "Rekordok bevitele a rendszerünkbe",
+        "cheapestVendor": "A legolcsóbb szállító megkeresése",
+        "invoiceSummary": "Számla-összefoglaló készítése"
+      },
+      "designer": {
+        "designComparison": "Design összehasonlítás készítése",
+        "responsiveAudit": "Reszponzív audit futtatása",
+        "inspiration": "Design inspiráció gyűjtése"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Oldal adatainak exportálása CSV-be",
+      "browser_automation": "Dashboard jelentések exportálása",
+      "data_entry": "Rekordok bevitele az alkalmazásunkba",
+      "email_outreach": "Személyre szabott outreach küldése",
+      "testing": "Teljes QA jelentés készítése",
+      "ecommerce": "Ár-összehasonlítás készítése",
+      "social_media": "Posztolás és elköteleződés szerzése",
+      "general_automation": "Feladat futtatása az oldalamon"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Szöveg másolása",
+    "copied": "Másolva!",
+    "regenerate": "Újragenerálás",
+    "feedback": {
+      "title": "Visszajelzés",
+      "prompts": ["Értékeld ezt", "Visszajelzés", "Hogy teljesítettünk?", "Gondolatok?", "Oszd meg véleményed"],
+      "tooltip": "Oszd meg a visszajelzésed"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Okos keresés",
+      "description": "AI-vezérelt keresés az egész weben"
+    },
+    "collaborate": {
+      "title": "Együttműködés",
+      "description": "Dolgozzatok együtt valós időben"
+    },
+    "globalAccess": {
+      "title": "Globális hozzáférés",
+      "description": "Keresés 50+ nyelven"
+    },
+    "aiModels": {
+      "title": "AI modellek",
+      "description": "Több AI szolgáltató"
+    },
+    "freeForever": {
+      "title": "Örökké ingyenes",
+      "description": "Nincs rejtett költség"
+    },
+    "privateSecure": {
+      "title": "Privát és biztonságos",
+      "description": "Az adataid a tieid maradnak"
+    }
+  },
+  "sidebar": {
+    "newTask": "Új feladat",
+    "newTaskDescription": "Indíts egy új AI automatizálást",
+    "activity": "Tevékenység",
+    "taskHistory": "Feladatelőzmények",
+    "taskHistoryDescription": "Tekintsd át a korábbi feladatokat és folytasd, ahol abbahagytad",
+    "taskHistoryPopup": {
+      "title": "A legutóbbi feladataid",
+      "description": "Böngéssz és folytasd a korábbi beszélgetéseket. Minden feladat mentésre kerül, hogy ott folytathass, ahol abbahagytad."
+    },
+    "swarmRuns": "Raj futtatások",
+    "swarmRunsDescription": "Figyeld a többügynökös párhuzamos munkafolyamatokat",
+    "swarmRunsPopup": {
+      "title": "Többügynökös munkafolyamatok",
+      "description": "Futtass feladatokat több gépen párhuzamosan. Minden ügynök önállóan dolgozik és az eredmények automatikusan összegződnek."
+    },
+    "guide": "Útmutató",
+    "guideDescription": "Tudd meg, hogyan hozd ki a legtöbbet a Coasty-ból",
+    "guidePopup": {
+      "title": "Kezdés",
+      "description": "Lépésről lépésre útmutatók és legjobb gyakorlatok a hatékony automatizáláshoz."
+    },
+    "infrastructure": "Infrastruktúra",
+    "computer": "Számítógép",
+    "computers": "Számítógépek",
+    "active": "aktív",
+    "view": "Megtekintés",
+    "workforce": "Munkaerő",
+    "workforceDescription": "Ütemezz automatizált ügynököket és triggereket",
+    "workforcePopup": {
+      "title": "Ütemezett automatizálás",
+      "description": "Állíts be ismétlődő feladatokat cron ütemezésekkel és ügynök-ügynök triggerekkel. A munkaerőd fut, amíg alszol."
+    },
+    "credentials": "Hitelesítő adatok",
+    "credentialsDescription": "Biztonságosan tárold a bejelentkezéseket ügynök hozzáféréshez",
+    "credentialsPopup": {
+      "title": "Biztonságos hitelesítő trezor",
+      "description": "Tárold a bejelentkezéseket és API kulcsokat titkosítással. Az ügynökök automatikusan kitöltik a hitelesítő adatokat anélkül, hogy felfedjék a nyers értékeket."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Asztali alkalmazás letöltése",
+      "download": "Letöltés",
+      "downloadDesktopApp": "Asztali alkalmazás letöltése",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Irányítsd a számítógéped távolról",
+      "controlDescription": "Telepítsd az asztali alkalmazást és futtass feladatokat a PC-den erről az irányítópultról — bárhonnan, bármikor."
+    },
+    "credits": {
+      "runningLow": "Kreditek — Fogytán",
+      "remaining": "Fennmaradó kreditek",
+      "buy": "Vásárlás",
+      "creditsLeft": "kredit maradt",
+      "usedLabel": "Felhasznált: {count}",
+      "consumed": "{percent}% felhasználva",
+      "usageThisWeek": "Felhasználás ezen a héten"
+    },
+    "talkToUs": "Beszélj velünk",
+    "inviteEarn": "Hívj meg & Keress",
+    "user": "Felhasználó",
+    "account": "Fiók",
+    "tasks": "{count} Feladat",
+    "recentActivity": "Legutóbbi tevékenység",
+    "viewAllHistory": "Összes előzmény megtekintése →",
+    "swarmRunsCount": "{count} Raj futtatás",
+    "running": "fut",
+    "completed": "befejezve",
+    "viewAllSwarms": "Összes raj megtekintése →",
+    "schedulesCount": "{count} Ütemezés",
+    "totalRuns": "{count} összes futtatás",
+    "paused": "szüneteltetve",
+    "viewAllSchedules": "Összes ütemezés megtekintése →",
+    "credentialsCount": "{count} Hitelesítő adat",
+    "encryptedVault": "Titkosított trezor",
+    "manageCredentials": "Hitelesítő adatok kezelése →",
+    "days": ["Hé", "Ke", "Sze", "Csü", "Pé", "Szo", "Va"],
+    "resume": "FOLYTATÁS",
+    "result": "EREDMÉNY",
+    "notScheduled": "Nincs ütemezve",
+    "overdue": "Lejárt",
+    "lessThanMin": "< 1 perc",
+    "inMinutes": "{count} perc múlva",
+    "inHours": "{count} óra múlva",
+    "today": "ma",
+    "yesterday": "tegnap"
+  },
+  "appHeader": {
+    "login": "Bejelentkezés",
+    "assign": "Kiosztás",
+    "assignDescription": "Ossz ki egy alkalmazottat ennek a feladatnak a futtatásához",
+    "computer": "Számítógép",
+    "showComputer": "Számítógép megjelenítése",
+    "hideComputer": "Számítógép elrejtése",
+    "employeeHired": "Alkalmazott felvéve!",
+    "employeeRemoved": "Alkalmazott eltávolítva"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Könnyű napi automatizálás"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Automatizálj feladatokat minden nap"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Skálázz összetett munkafolyamatokat",
+        "badge": "Legnépszerűbb"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Korlátlan nehéz automatizálás"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (inaktivitás után törölve)",
+      "vmAlwaysOn": "{count} mindig bekapcsolt VM",
+      "vmAlwaysOnPlural": "{count} mindig bekapcsolt VM",
+      "agentsParallel": "{count} ügynök párhuzamosan",
+      "basicSearch": "Alap keresés",
+      "advancedSearch": "Haladó keresés & kinyerés",
+      "standardSupport": "Standard támogatás (valódi emberek)",
+      "prioritySupport": "Prioritásos támogatás, 24 órás válasz",
+      "premiumSupport": "Prémium támogatás, 12 órás válasz"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Kis feltöltés",
+        "description": "Gyors feltöltés"
+      },
+      "medium": {
+        "name": "Közepes feltöltés",
+        "description": "Standard feltöltés",
+        "savings": "8% megtakarítás"
+      },
+      "large": {
+        "name": "Nagy feltöltés",
+        "description": "Tömeges vásárlás",
+        "savings": "17% megtakarítás"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Most",
+      "minutesAgo": "{count} perce",
+      "hoursAgo": "{count} órája",
+      "daysAgo": "{count} napja"
+    },
+    "noActivity": "Nincs tevékenység ebben az időszakban",
+    "stats": {
+      "balance": "Egyenleg",
+      "earned": "Szerzett",
+      "used": "Felhasznált",
+      "credits": "kredit",
+      "allTime": "összesen",
+      "lastRange": "utolsó {range}",
+      "sessions": "{count} munkamenet",
+      "avgDaily": "~{count}/nap átl.",
+      "plan": "Csomag",
+      "free": "Ingyenes",
+      "noPlan": "Nincs csomag",
+      "canceling": "Lemondás"
+    },
+    "monthlyUsage": "Havi kreditfelhasználás",
+    "remaining": "{used} / {total} fennmaradó",
+    "usedPercent": "{percent}% felhasználva ebben az időszakban",
+    "renews": "Megújul {date}",
+    "choosePlan": "Válaszd ki a csomagod",
+    "choosePlanDescription": "Fizess elő az AI funkciók feloldásához és havi kreditek szerzéséhez",
+    "savingsVsHuman": "{amount}/hó megtakarítás vs ember",
+    "timeSaved": "{time} megtakarítva havonta",
+    "cheaper": "{multiplier} olcsóbb",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/hónap",
+    "creditsPerMonth": "{count} kredit /hónap",
+    "processing": "Feldolgozás...",
+    "subscribeTo": "Feliratkozás: {name}",
+    "transactionTypes": {
+      "credit_purchase": "Kredit vásárlás",
+      "agent_usage": "Ügynök használat",
+      "refund": "Visszatérítés",
+      "bonus": "Bónusz jutalom",
+      "subscription": "Előfizetés",
+      "subscription_grant": "Előfizetési jóváírás",
+      "renewal": "Megújítási kreditek",
+      "reactivation": "Újraaktiválás"
+    },
+    "toasts": {
+      "paymentSuccess": "Sikeres fizetés! A kreditjeid hozzáadásra kerültek.",
+      "subscriptionActivated": "Előfizetés sikeresen aktiválva!",
+      "paymentCanceled": "A fizetés törölve lett. Nem történt terhelés.",
+      "signInToSubscribe": "Kérjük, jelentkezz be az előfizetéshez",
+      "subscriptionCheckoutFailed": "Az előfizetési fizetés indítása sikertelen. Kérjük, próbáld újra.",
+      "signInToPurchase": "Kérjük, jelentkezz be kreditek vásárlásához",
+      "needSubscription": "Aktív előfizetésre van szükséged további kreditek vásárlásához",
+      "checkoutFailed": "A fizetés indítása sikertelen. Kérjük, próbáld újra.",
+      "manageFailed": "Az előfizetés kezelésének megnyitása sikertelen. Kérjük, próbáld újra.",
+      "transactionsExported": "Tranzakciók exportálva"
+    }
+  },
+  "apiKeys": {
+    "title": "Modell szolgáltatók",
+    "new": "új",
+    "description": "Add hozzá a saját API kulcsaidat a modellekhez való hozzáférés feloldásához.",
+    "securityNote": "A kulcsaid biztonságosan vannak tárolva end-to-end titkosítással.",
+    "apiKeyLabel": "{provider} API Key",
+    "getApiKey": "API kulcs beszerzése",
+    "delete": "Törlés",
+    "save": "Mentés",
+    "deleteDialog": {
+      "title": "API kulcs törlése",
+      "description": "Biztosan törölni akarod a {provider} API kulcsod? Ez a művelet nem vonható vissza és elveszted a hozzáférést a {provider} modellekhez.",
+      "cancel": "Mégse",
+      "confirm": "Törlés"
+    },
+    "toasts": {
+      "saved": "API kulcs mentve",
+      "savedDescription": "A {provider} API kulcsod mentésre került és a modellek hozzáadva a kedvenceidhez.",
+      "updatedDescription": "A {provider} API kulcsod frissítve lett.",
+      "saveFailed": "API kulcs mentése sikertelen",
+      "saveFailedDescription": "A {provider} API kulcs mentése sikertelen. Kérjük, próbáld újra.",
+      "deleted": "API kulcs törölve",
+      "deletedDescription": "A {provider} API kulcsod törölve lett.",
+      "deleteFailed": "API kulcs törlése sikertelen",
+      "deleteFailedDescription": "A {provider} API kulcs törlése sikertelen. Kérjük, próbáld újra."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Profil adatok",
+    "displayName": "Megjelenítési név",
+    "namePlaceholder": "A neved",
+    "company": "Vállalat",
+    "companyPlaceholder": "A vállalatod",
+    "website": "Weboldal",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Mentés...",
+    "saveChanges": "Változások mentése",
+    "account": "Fiók",
+    "email": "E-mail",
+    "verified": "Ellenőrizve",
+    "signOut": "Kijelentkezés",
+    "signOutDescription": "Kijelentkezés erről az eszközről",
+    "toasts": {
+      "profileUpdated": "Profil frissítve",
+      "profileUpdateFailed": "Profil frissítése sikertelen",
+      "signOutFailed": "Kijelentkezés sikertelen"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Az adataid védettek",
+    "dataProtectedDescription": "Vállalati szintű biztonság titkosítással nyugalmi állapotban és átvitel közben",
+    "features": {
+      "encryption": {
+        "title": "End-to-End titkosítás",
+        "description": "API kulcsok AES-256-GCM-mel titkosítva. A hitelesítő adataid soha nem kerülnek egyszerű szövegként tárolásra."
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "Az adatbázis szintű izoláció biztosítja, hogy az adataid csak te férhess hozzá. Nincs lehetőség bérlők közötti hozzáférésre."
+      },
+      "privacy": {
+        "title": "Beépített adatvédelem",
+        "description": "Csak a szolgáltatás nyújtásához minimálisan szükséges adatokat gyűjtjük. A beszélgetéseid és fájljaid a tieid maradnak."
+      },
+      "session": {
+        "title": "Munkamenet biztonság",
+        "description": "CSRF védelem, biztonságos HTTP-only sütik és Content Security Policy fejlécek minden kérésnél."
+      }
+    },
+    "legal": "Jogi",
+    "privacyPolicy": {
+      "title": "Adatvédelmi irányelvek",
+      "description": "Hogyan gyűjtjük, használjuk és védjük az adataidat"
+    },
+    "termsOfService": {
+      "title": "Szolgáltatási feltételek",
+      "description": "A felhasználási feltételeink és kikötéseink"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Elrendezés"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Összefoglaló",
+      "highlight": "Összegezd"
+    },
+    "code": {
+      "label": "Kód",
+      "highlight": "Építsd"
+    },
+    "research": {
+      "label": "Kutatás",
+      "highlight": "Elemezd"
+    },
+    "create": {
+      "label": "Létrehozás",
+      "highlight": "Generáld"
+    },
+    "solve": {
+      "label": "Megoldás",
+      "highlight": "Debugold"
+    },
+    "learn": {
+      "label": "Tanulás",
+      "highlight": "Magyarázd"
+    }
+  },
+  "loadingMessages": [
+    "Beindítjuk a szilícium agyat",
+    "Ébresztjük a digitális tudatot",
+    "Inicializáljuk az idegsejt-útvonalakat",
+    "Pörgetjük a kvantummagokat",
+    "Töltjük a fluxuskondenzátort",
+    "Aktiváljuk a központi gépet",
+    "Bekapcsoljuk a számítási mátrixot",
+    "Bekapcsoljuk a warp hajtóművet",
+    "Megidézzük a szilícium szellemeket",
+    "Beindítjuk az elektronmotort",
+    "Bemelegítjük a tranzisztorokat",
+    "Összerakjuk a biteket és bájtokat",
+    "Kalibráljuk a digitális szinapszisokat",
+    "Feltöltjük a CPU kristályokat",
+    "Betöltjük a tudatprotokollt",
+    "Inicializáljuk a rendszer erőforrásokat",
+    "Előkészítjük a számítási környezetet",
+    "Biztonságos kapcsolat létrehozása",
+    "Virtuális erőforrások biztosítása",
+    "Rendszerparaméterek konfigurálása",
+    "Virtuális példány indítása",
+    "Távoli asztal aktiválása",
+    "Felhő erőforrások telepítése",
+    "Rendszerindítási szekvencia elkezdése",
+    "Végrehajtási környezet előkészítése",
+    "Ébresztjük az álmos számítógépet",
+    "Megbökjük a digitális medvét",
+    "Számítási kávét főzünk",
+    "Nyújtóztatjuk a digitális izmokat",
+    "Kinyitjuk a digitális szemeket",
+    "Indulás",
+    "Bekapcsolás",
+    "Online jövünk",
+    "Rendszer indítása",
+    "Felkészülés",
+    "Majdnem kész",
+    "Munkaterület előkészítése",
+    "Erőforrások betöltése",
+    "A rendszer ébred"
+  ]
 }

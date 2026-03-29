@@ -423,145 +423,145 @@
     "label": "Γλώσσα"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Εσείς θέτετε τον στόχο.",
+    "brandSubheading": "Εμείς αναλαμβάνουμε τα υπόλοιπα.",
+    "mobileHeading": "Εσείς θέτετε τον στόχο. Εμείς αναλαμβάνουμε τα υπόλοιπα.",
+    "mobileSubheading": "AI agents που περιηγούνται, κάνουν κλικ και δουλεύουν σαν πραγματικός συνεργάτης.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Περιγράφετε την εργασία",
+        "sub": "\"Ερευνήστε τους 5 κορυφαίους ανταγωνιστές μας\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Ο agent αναλαμβάνει",
+        "sub": "Περιηγείται, κάνει κλικ, πληκτρολογεί αυτόνομα"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Εργασία παραδοθείσα",
+        "sub": "Υπολογιστικό φύλλο με 5 πλήρη προφίλ ανταγωνιστών"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Ολοκληρώθηκε",
+    "doneIn": "Έτοιμο σε 8 λεπτά",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Ο χειριστής σας περιμένει",
+      "signUp": "Βάλτε τις ροές εργασίας σας στον αυτόματο",
+      "magicLink": "Παραλείψτε τον κωδικό",
+      "forgotPassword": "Ας σας επαναφέρουμε"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Συνεχίστε ακριβώς από εκεί που σταματήσατε — οι agents σας θυμούνται",
+      "signUp": "Αναπτύξτε τον πρώτο σας AI agent σε λιγότερο από ένα λεπτό",
+      "magicLink": "Ένα κλικ από τα εισερχόμενά σας και είστε μέσα",
+      "forgotPassword": "Θα σας στείλουμε σύνδεσμο επαναφοράς στο email σας"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Σύνδεση...",
+      "continueWithGoogle": "Συνέχεια με Google"
     },
-    "or": "or",
+    "or": "ή",
     "email": "Email",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "Κωδικός",
+    "passwordPlaceholder": "Ο κωδικός σας",
+    "confirmPassword": "Επιβεβαίωση κωδικού",
+    "confirmPasswordPlaceholder": "Επιβεβαιώστε τον κωδικό σας",
+    "minChars": "Ελάχ. 6 χαρακτήρες",
+    "signingIn": "Σύνδεση...",
+    "signIn": "Σύνδεση",
+    "creatingAccount": "Δημιουργία λογαριασμού...",
+    "createAccount": "Δημιουργία λογαριασμού",
+    "sending": "Αποστολή...",
+    "sendMagicLink": "Αποστολή magic link",
+    "sendResetLink": "Αποστολή συνδέσμου επαναφοράς",
+    "forgotPassword": "Ξεχάσατε τον κωδικό;",
+    "useMagicLink": "Χρήση magic link",
+    "dontHaveAccount": "Δεν έχετε λογαριασμό;",
+    "signUp": "Εγγραφή",
+    "alreadyHaveAccount": "Έχετε ήδη λογαριασμό;",
+    "backToSignIn": "Πίσω στη σύνδεση",
+    "termsAgreement": "Συνεχίζοντας, αποδέχεστε τους",
+    "terms": "Όρους",
+    "and": "και",
+    "privacyPolicy": "Πολιτική Απορρήτου",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Παρακαλώ συμπληρώστε όλα τα πεδία",
+      "passwordMinLength": "Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες",
+      "passwordsDoNotMatch": "Οι κωδικοί δεν ταιριάζουν",
+      "supabaseNotConfigured": "Το Supabase δεν έχει ρυθμιστεί",
+      "unexpectedError": "Παρουσιάστηκε απρόσμενο σφάλμα. Παρακαλώ δοκιμάστε ξανά.",
+      "confirmEmail": "Παρακαλώ επιβεβαιώστε το email σας πριν τη σύνδεση. Ελέγξτε τα εισερχόμενά σας.",
+      "invalidCredentials": "Μη έγκυρο email ή κωδικός.",
+      "signInFailed": "Η σύνδεση απέτυχε. Παρακαλώ δοκιμάστε ξανά.",
+      "invalidEmail": "Μη έγκυρη διεύθυνση email.",
+      "emailAlreadyExists": "Υπάρχει ήδη λογαριασμός με αυτό το email. Δοκιμάστε να συνδεθείτε.",
+      "signUpFailed": "Η εγγραφή απέτυχε. Παρακαλώ δοκιμάστε ξανά.",
+      "enterEmail": "Παρακαλώ εισάγετε το email σας",
+      "noAccountFound": "Δεν βρέθηκε λογαριασμός με αυτό το email. Παρακαλώ εγγραφείτε πρώτα.",
+      "magicLinkFailed": "Αποτυχία αποστολής magic link. Παρακαλώ δοκιμάστε ξανά.",
+      "resetFailed": "Αποτυχία αποστολής email επαναφοράς. Παρακαλώ δοκιμάστε ξανά.",
+      "updateFailed": "Αποτυχία ενημέρωσης κωδικού. Παρακαλώ δοκιμάστε ξανά."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Ελέγξτε το email σας για να επιβεβαιώσετε τον λογαριασμό σας πριν τη σύνδεση.",
+      "checkEmailMagicLink": "Ελέγξτε το email σας για το magic link σύνδεσης.",
+      "checkEmailReset": "Ελέγξτε το email σας για τον σύνδεσμο επαναφοράς κωδικού.",
+      "passwordUpdated": "Ο κωδικός ενημερώθηκε επιτυχώς. Ανακατεύθυνση στη σύνδεση..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Επαναφορά κωδικού",
+      "subtitle": "Εισάγετε τον νέο σας κωδικό παρακάτω.",
+      "newPassword": "Νέος κωδικός",
+      "confirmNewPassword": "Επιβεβαίωση νέου κωδικού",
+      "confirmPlaceholder": "Επιβεβαιώστε τον νέο σας κωδικό",
+      "updating": "Ενημέρωση...",
+      "updatePassword": "Ενημέρωση κωδικού"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Σφάλμα ταυτοποίησης",
+      "defaultMessage": "Παρουσιάστηκε σφάλμα κατά την ταυτοποίηση.",
+      "tryAgain": "Δοκιμάστε ξανά",
+      "backToChat": "Πίσω στο Chat",
+      "needHelp": "Χρειάζεστε βοήθεια;",
+      "contactSupport": "Επικοινωνία με υποστήριξη"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Παράλειψη προς το παρόν",
+    "back": "Πίσω",
+    "continue": "Συνέχεια",
+    "getStarted": "Ξεκινήστε",
+    "settingUp": "Ρύθμιση...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Καλώς ήρθατε πίσω{name}!",
+      "titleNew": "Καλώς ήρθατε στο Coasty",
+      "descriptionReturning": "Θα θέλαμε να μάθουμε λίγα περισσότερα για εσάς για να βελτιώσουμε την εμπειρία σας",
+      "descriptionNew": "Ας ρυθμίσουμε τον λογαριασμό σας για να εξατομικεύσουμε την εμπειρία σας"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Πώς να σας αποκαλούμε;",
+    "namePlaceholder": "Το όνομά σας",
+    "companyLabel": "Εταιρεία",
+    "optional": "(προαιρετικό)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "Ιστοσελίδα",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Τι σας περιγράφει καλύτερα;",
+      "subtitle": "Επιλέξτε όσα ισχύουν — αυτό μας βοηθά να προσαρμόσουμε την εμπειρία σας"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
+      "founder": "Ιδρυτής / CEO",
+      "developer": "Προγραμματιστής",
       "marketer": "Marketer",
-      "designer": "Designer",
+      "designer": "Σχεδιαστής",
       "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "data_analyst": "Δεδομένα / Αναλυτική",
+      "operations": "Λειτουργίες",
+      "other": "Άλλο"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Μέγεθος ομάδας",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Μόνο εγώ",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,585 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Πώς μας βρήκατε;",
+      "subtitle": "Θα θέλαμε να μάθουμε πού ακούσατε για το Coasty"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Φίλος / Συνάδελφος",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Άλλο"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Τι θα αυτοματοποιήσετε πρώτα;",
+      "subtitle": "Επιλέξτε όσα ισχύουν — μπορείτε να εξερευνήσετε τα πάντα αργότερα"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
+      "web_scraping": "Web Scraping & Έρευνα",
+      "browser_automation": "Αυτοματοποίηση Browser",
+      "data_entry": "Εισαγωγή Δεδομένων & Φόρμες",
       "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "testing": "QA & Δοκιμές",
+      "ecommerce": "E-commerce Εργασίες",
+      "social_media": "Διαχείριση Κοινωνικών Δικτύων",
+      "general_automation": "Γενική Αυτοματοποίηση"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Όλα όσα χρειάζεστε,",
+      "titleHighlight": "ενσωματωμένα.",
+      "subtitle": "Δείτε τι μπορεί να κάνει το Coasty για εσάς",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Χωρίς Κώδικα",
+        "description": "Απλά περιγράψτε τι θέλετε σε απλά ελληνικά"
       },
       "agentSwarms": {
-        "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "title": "Σμήνη Agents",
+        "description": "Παράλληλοι στόλοι agents"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Έλεγχος Επιφάνειας Εργασίας",
+        "description": "Κλικ, πληκτρολόγηση, πλοήγηση"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Αυτοματοποίηση Browser",
+        "description": "Φόρμες, καρτέλες, scraping — πλήρως αυτοματοποιημένο"
       },
       "computerVision": {
         "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "description": "Βλέπει και κατανοεί την οθόνη σας σε πραγματικό χρόνο"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Ροές Εργασίας",
+        "description": "Πολυβηματικές ροές"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Στη Συσκευή",
+        "description": "Τρέχει τοπικά"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "24/7 Αυτόνομο",
+        "description": "Ρυθμίστε το και ξεχάστε το — τρέχει ενώ κοιμάστε"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Νέος εδώ; Έχουμε οδηγό για εσάς",
+      "subtitle": "Αναπτύξτε τον πρώτο σας AI agent σε λιγότερο από ένα λεπτό"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Τι πρέπει να κάνει ο AI εργαζόμενός σας;",
+    "placeholderAlt": "Πείτε στο AI σας τι να κάνει στον υπολογιστή...",
+    "vmError": {
+      "title": "Σφάλμα Εικονικής Μηχανής",
+      "description": "Η εικονική μηχανή βρίσκεται σε κατάσταση σφάλματος ή διαγράφεται.",
+      "hint": "Ελέγξτε την καρτέλα Μηχανήματα για να επιλύσετε το πρόβλημα ή επιλέξτε \"Κανένας Υπολογιστής\" για χρήση μόνο αναζήτησης web.",
+      "gotIt": "Κατάλαβα"
+    },
+    "status": {
+      "creating": "Δημιουργία {name}...",
+      "initiating": "Εκκίνηση agent στο {name}...",
+      "stopping": "Διακοπή {name}...",
+      "preparing": "Προετοιμασία {name}..."
+    },
+    "swarm": {
+      "title": "Λειτουργία Σμήνους",
+      "pro": "PRO",
+      "upgradeLabel": "Λειτουργία σμήνους — αναβαθμίστε για ξεκλείδωμα",
+      "feature1": "Παράλληλη εκτέλεση σε προσωρινά μηχανήματα",
+      "feature2": "Κάθε μηχάνημα τρέχει αυτόνομα",
+      "feature3": "3x το όριο μηχανημάτων του πλάνου σας ανά σμήνος",
+      "description": "Εκτελέστε ένα prompt σε 3x το όριο μηχανημάτων σας παράλληλα — κάθε ένα αντιμετωπίζει την εργασία ανεξάρτητα.",
+      "enableLabel": "Ενεργοποίηση λειτουργίας σμήνους",
+      "disableLabel": "Απενεργοποίηση λειτουργίας σμήνους",
+      "onTooltip": "Λειτουργία σμήνους ΕΝΕΡΓΗ — το prompt σας θα τρέξει σε πολλαπλά μηχανήματα παράλληλα",
+      "offTooltip": "Ενεργοποιήστε τη λειτουργία σμήνους για να τρέξετε το prompt σας σε πολλαπλά μηχανήματα ταυτόχρονα",
+      "decreaseMachines": "Μείωση αριθμού μηχανημάτων",
+      "increaseMachines": "Αύξηση αριθμού μηχανημάτων",
+      "machineLimit": "Έως {max} μηχανήματα σμήνους στο πλάνο σας. Χρειάζεστε περισσότερα; Επικοινωνήστε founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Σύνδεση στην επιφάνεια εργασίας",
+      "screenLabel": "Οθόνη του {name}",
+      "screenDefault": "Επιφάνεια εργασίας",
+      "watchTooltip": "Παρακολουθήστε τον agent σας να εργάζεται σε ξεχωριστή οθόνη. Απλά μην αγγίζετε τίποτα, αλλιώς θα ντραπεί!"
+    },
+    "buttons": {
+      "stop": "Διακοπή",
+      "sendToSwarm": "Αποστολή στο σμήνος",
+      "taskRunning": "Μια άλλη εργασία τρέχει — κάντε κλικ για να τη σταματήσετε και να τρέξετε τη δική σας",
+      "selectComputer": "Επιλέξτε υπολογιστή για αποστολή μηνυμάτων",
+      "waitCreating": "Παρακαλώ περιμένετε τη δημιουργία του VM",
+      "waitStarting": "Παρακαλώ περιμένετε την εκκίνηση του VM",
+      "waitAgent": "Παρακαλώ περιμένετε την αρχικοποίηση του agent",
+      "vmStopping": "Το VM σταματάει",
+      "send": "Αποστολή",
+      "switching": "Εναλλαγή...",
+      "overrideRun": "Παράκαμψη & Εκτέλεση",
+      "stopLabel": "Σταματήστε την τρέχουσα εργασία και ξεκινήστε αυτή",
+      "sendLabel": "Αποστολή μηνύματος"
+    },
+    "search": "Αναζήτηση",
+    "upload": {
+      "label": "Μεταφόρτωση αρχείων στο VM",
+      "heading": "Μεταφόρτωση αρχείων στο VM",
+      "description": "Τα αρχεία θα αποθηκευτούν στην Επιφάνεια Εργασίας",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Σύρετε αρχεία εδώ",
+      "dropDescription": "Τα αρχεία θα μεταφορτωθούν στον φάκελο Επιφάνεια Εργασίας του VM",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Συνδεθείτε για να δοκιμάσετε περισσότερες δυνατότητες δωρεάν",
+      "description": "Δημιουργήστε έργα, προσκαλέστε μέλη ομάδας και πολλά άλλα.",
+      "connecting": "Σύνδεση...",
+      "continueWithGoogle": "Συνέχεια με Google"
+    },
+    "removeFile": "Αφαίρεση αρχείου"
+  },
+  "chat": {
+    "greeting": "Γεια σας",
+    "greetingAuth": "Αναλαμβάνω τη δουλειά στον υπολογιστή. Ποια είναι η εργασία;",
+    "greetingUnauth": "AI που χειρίζεται τον υπολογιστή ώστε να μη χρειάζεται εσείς. Απλά πείτε τι χρειάζεστε.",
+    "guide": "Οδηγός",
+    "saveLogins": "Αποθηκεύστε συνδέσεις για αυτόματη συμπλήρωση",
+    "encryptedNote": "κρυπτογραφημένο, αόρατο στο AI",
+    "roleLabels": ["Συνεργάτης", "Υπάλληλος", "Φίλος", "Βοηθός", "Εταίρος", "Ομαδικός", "Συνεργάτης", "Αρωγός"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Λάβετε αναφορά ανταγωνισμού",
+        "warmLeads": "Δημιουργήστε 20 θερμά leads",
+        "pitchDeck": "Φτιάξτε ένα draft pitch deck"
+      },
+      "developer": {
+        "findBugs": "Βρείτε σφάλματα στο site μου",
+        "performance": "Λάβετε αναφορά απόδοσης",
+        "apiDocs": "Εξάγετε API documentation"
+      },
+      "marketer": {
+        "seoGap": "Λάβετε SEO ανάλυση κενών",
+        "competitorAds": "Κατασκοπεύστε τις διαφημίσεις ανταγωνιστών",
+        "trendingContent": "Λάβετε ιδέες trending περιεχομένου"
+      },
+      "product_manager": {
+        "reviewSummary": "Λάβετε σύνοψη κριτικών",
+        "featureComparison": "Φτιάξτε σύγκριση χαρακτηριστικών",
+        "competitorLaunches": "Παρακολουθήστε λανσαρίσματα ανταγωνιστών"
+      },
+      "data_analyst": {
+        "exportCsv": "Εξάγετε δεδομένα site σε CSV",
+        "marketSizing": "Λάβετε αναφορά μεγέθους αγοράς",
+        "benchmark": "Benchmark έναντι κλάδου"
+      },
+      "operations": {
+        "enterRecords": "Εισάγετε εγγραφές στο σύστημά μας",
+        "cheapestVendor": "Βρείτε τον φθηνότερο προμηθευτή",
+        "invoiceSummary": "Λάβετε σύνοψη τιμολογίων"
+      },
+      "designer": {
+        "designComparison": "Λάβετε σύγκριση σχεδιασμού",
+        "responsiveAudit": "Εκτελέστε responsive audit",
+        "inspiration": "Συλλέξτε έμπνευση σχεδιασμού"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Εξάγετε δεδομένα site σε CSV",
+      "browser_automation": "Εξάγετε αναφορές dashboard",
+      "data_entry": "Εισάγετε εγγραφές στην εφαρμογή μας",
+      "email_outreach": "Στείλτε εξατομικευμένο outreach",
+      "testing": "Λάβετε πλήρη αναφορά QA",
+      "ecommerce": "Λάβετε σύγκριση τιμών",
+      "social_media": "Δημοσιεύστε και αποκτήστε engagement",
+      "general_automation": "Εκτελέστε εργασία στο site μου"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Αντιγραφή κειμένου",
+    "copied": "Αντιγράφηκε!",
+    "regenerate": "Αναδημιουργία",
+    "feedback": {
+      "title": "Σχόλια",
+      "prompts": ["Βαθμολογήστε αυτό", "Σχόλια", "Πώς τα πήγαμε;", "Σκέψεις;", "Μοιραστείτε σχόλια"],
+      "tooltip": "Μοιραστείτε τα σχόλιά σας"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Έξυπνη Αναζήτηση",
+      "description": "Αναζήτηση με AI σε όλο το web"
+    },
+    "collaborate": {
+      "title": "Συνεργασία",
+      "description": "Εργαστείτε μαζί σε πραγματικό χρόνο"
+    },
+    "globalAccess": {
+      "title": "Παγκόσμια Πρόσβαση",
+      "description": "Αναζήτηση σε 50+ γλώσσες"
+    },
+    "aiModels": {
+      "title": "AI Μοντέλα",
+      "description": "Πολλαπλοί πάροχοι AI"
+    },
+    "freeForever": {
+      "title": "Δωρεάν για πάντα",
+      "description": "Χωρίς κρυφά κόστη"
+    },
+    "privateSecure": {
+      "title": "Ιδιωτικό & Ασφαλές",
+      "description": "Τα δεδομένα σας παραμένουν δικά σας"
+    }
+  },
+  "sidebar": {
+    "newTask": "Νέα Εργασία",
+    "newTaskDescription": "Ξεκινήστε μια νέα AI αυτοματοποίηση",
+    "activity": "Δραστηριότητα",
+    "taskHistory": "Ιστορικό Εργασιών",
+    "taskHistoryDescription": "Ελέγξτε προηγούμενες εργασίες και συνεχίστε από εκεί που σταματήσατε",
+    "taskHistoryPopup": {
+      "title": "Οι πρόσφατες εργασίες σας",
+      "description": "Περιηγηθείτε και συνεχίστε προηγούμενες συνομιλίες. Κάθε εργασία αποθηκεύεται ώστε να μπορείτε να συνεχίσετε ακριβώς από εκεί που σταματήσατε."
+    },
+    "swarmRuns": "Εκτελέσεις Σμήνους",
+    "swarmRunsDescription": "Παρακολουθήστε πολυ-agent παράλληλες ροές",
+    "swarmRunsPopup": {
+      "title": "Πολυ-agent ροές εργασίας",
+      "description": "Εκτελέστε εργασίες σε πολλαπλά μηχανήματα παράλληλα. Κάθε agent εργάζεται ανεξάρτητα και τα αποτελέσματα συγκλίνουν αυτόματα."
+    },
+    "guide": "Οδηγός",
+    "guideDescription": "Μάθετε πώς να αξιοποιήσετε στο μέγιστο το Coasty",
+    "guidePopup": {
+      "title": "Ξεκινώντας",
+      "description": "Βήμα-βήμα οδηγίες και βέλτιστες πρακτικές για αποτελεσματική αυτοματοποίηση."
+    },
+    "infrastructure": "Υποδομή",
+    "computer": "Υπολογιστής",
+    "computers": "Υπολογιστές",
+    "active": "ενεργός",
+    "view": "Προβολή",
+    "workforce": "Εργατικό δυναμικό",
+    "workforceDescription": "Προγραμματίστε αυτοματοποιημένους agents και triggers",
+    "workforcePopup": {
+      "title": "Προγραμματισμένη αυτοματοποίηση",
+      "description": "Ρυθμίστε επαναλαμβανόμενες εργασίες με cron προγράμματα και triggers agent-σε-agent. Το εργατικό σας δυναμικό τρέχει ενώ κοιμάστε."
+    },
+    "credentials": "Διαπιστευτήρια",
+    "credentialsDescription": "Αποθηκεύστε με ασφάλεια συνδέσεις για πρόσβαση agent",
+    "credentialsPopup": {
+      "title": "Ασφαλές θησαυροφυλάκιο διαπιστευτηρίων",
+      "description": "Αποθηκεύστε συνδέσεις και API keys με κρυπτογράφηση. Οι agents συμπληρώνουν αυτόματα διαπιστευτήρια χωρίς να εκθέτουν τιμές."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Αποκτήστε την Desktop Εφαρμογή",
+      "download": "Λήψη",
+      "downloadDesktopApp": "Κατεβάστε την Desktop Εφαρμογή",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Ελέγξτε τον υπολογιστή σας εξ αποστάσεως",
+      "controlDescription": "Εγκαταστήστε την desktop εφαρμογή και εκτελέστε εργασίες στο PC σας από αυτόν τον πίνακα — οπουδήποτε, οποτεδήποτε."
+    },
+    "credits": {
+      "runningLow": "Πιστώσεις — Χαμηλές",
+      "remaining": "Υπόλοιπο πιστώσεων",
+      "buy": "Αγορά",
+      "creditsLeft": "πιστώσεις απομένουν",
+      "usedLabel": "Χρησιμοποιημένες: {count}",
+      "consumed": "{percent}% καταναλωμένο",
+      "usageThisWeek": "Χρήση αυτήν την εβδομάδα"
+    },
+    "talkToUs": "Μιλήστε μας",
+    "inviteEarn": "Προσκαλέστε & Κερδίστε",
+    "user": "Χρήστης",
+    "account": "Λογαριασμός",
+    "tasks": "{count} Εργασίες",
+    "recentActivity": "Πρόσφατη δραστηριότητα",
+    "viewAllHistory": "Δείτε όλο το ιστορικό →",
+    "swarmRunsCount": "{count} Εκτελέσεις Σμήνους",
+    "running": "σε εκτέλεση",
+    "completed": "ολοκληρωμένο",
+    "viewAllSwarms": "Δείτε όλα τα σμήνη →",
+    "schedulesCount": "{count} Προγράμματα",
+    "totalRuns": "{count} συνολικές εκτελέσεις",
+    "paused": "σε παύση",
+    "viewAllSchedules": "Δείτε όλα τα προγράμματα →",
+    "credentialsCount": "{count} Διαπιστευτήρια",
+    "encryptedVault": "Κρυπτογραφημένο θησαυροφυλάκιο",
+    "manageCredentials": "Διαχείριση διαπιστευτηρίων →",
+    "days": ["Δευ", "Τρί", "Τετ", "Πέμ", "Παρ", "Σάβ", "Κυρ"],
+    "resume": "ΣΥΝΕΧΕΙΑ",
+    "result": "ΑΠΟΤΕΛΕΣΜΑ",
+    "notScheduled": "Μη προγραμματισμένο",
+    "overdue": "Εκπρόθεσμο",
+    "lessThanMin": "< 1 λεπ",
+    "inMinutes": "σε {count}λ",
+    "inHours": "σε {count}ώ",
+    "today": "σήμερα",
+    "yesterday": "χθες"
+  },
+  "appHeader": {
+    "login": "Σύνδεση",
+    "assign": "Ανάθεση",
+    "assignDescription": "Αναθέστε έναν υπάλληλο για εκτέλεση αυτής της εργασίας",
+    "computer": "Υπολογιστής",
+    "showComputer": "Εμφάνιση Υπολογιστή",
+    "hideComputer": "Απόκρυψη Υπολογιστή",
+    "employeeHired": "Ο υπάλληλος προσλήφθηκε!",
+    "employeeRemoved": "Ο υπάλληλος αφαιρέθηκε"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Ελαφριά ημερήσια αυτοματοποίηση"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Αυτοματοποιήστε εργασίες κάθε μέρα"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Κλιμακώστε σύνθετες ροές εργασίας",
+        "badge": "Πιο δημοφιλές"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Απεριόριστη βαριά αυτοματοποίηση"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (διαγράφεται μετά από αδράνεια)",
+      "vmAlwaysOn": "{count} πάντα-ενεργό VM",
+      "vmAlwaysOnPlural": "{count} πάντα-ενεργά VMs",
+      "agentsParallel": "{count} agents παράλληλα",
+      "basicSearch": "Βασική αναζήτηση",
+      "advancedSearch": "Προηγμένη αναζήτηση & εξαγωγή",
+      "standardSupport": "Τυπική υποστήριξη (πραγματικοί άνθρωποι)",
+      "prioritySupport": "Υποστήριξη προτεραιότητας, απάντηση 24ωρ",
+      "premiumSupport": "Premium υποστήριξη, απάντηση 12ωρ"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Μικρή Ενίσχυση",
+        "description": "Γρήγορη αναπλήρωση"
+      },
+      "medium": {
+        "name": "Μεσαία Ενίσχυση",
+        "description": "Τυπική αναπλήρωση",
+        "savings": "8% εξοικονόμηση"
+      },
+      "large": {
+        "name": "Μεγάλη Ενίσχυση",
+        "description": "Μαζική αγορά",
+        "savings": "17% εξοικονόμηση"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Μόλις τώρα",
+      "minutesAgo": "{count}λ πριν",
+      "hoursAgo": "{count}ώ πριν",
+      "daysAgo": "{count}η πριν"
+    },
+    "noActivity": "Καμία δραστηριότητα αυτήν την περίοδο",
+    "stats": {
+      "balance": "Υπόλοιπο",
+      "earned": "Κερδήθηκαν",
+      "used": "Χρησιμοποιήθηκαν",
+      "credits": "πιστώσεις",
+      "allTime": "συνολικά",
+      "lastRange": "τελευταίες {range}",
+      "sessions": "{count} συνεδρίες",
+      "avgDaily": "~{count}/ημέρα μ.ό.",
+      "plan": "Πλάνο",
+      "free": "Δωρεάν",
+      "noPlan": "Χωρίς πλάνο",
+      "canceling": "Ακύρωση"
+    },
+    "monthlyUsage": "Μηνιαία Χρήση Πιστώσεων",
+    "remaining": "{used} / {total} απομένουν",
+    "usedPercent": "{percent}% χρησιμοποιημένο αυτήν την περίοδο",
+    "renews": "Ανανεώνεται {date}",
+    "choosePlan": "Επιλέξτε Πλάνο",
+    "choosePlanDescription": "Εγγραφείτε για να ξεκλειδώσετε AI δυνατότητες και να λαμβάνετε μηνιαίες πιστώσεις",
+    "savingsVsHuman": "Εξοικονόμηση {amount}/μήνα vs άνθρωπο",
+    "timeSaved": "{time} εξοικονόμηση μηνιαία",
+    "cheaper": "{multiplier} φθηνότερο",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/μήνα",
+    "creditsPerMonth": "{count} πιστώσεις /μήνα",
+    "processing": "Επεξεργασία...",
+    "subscribeTo": "Εγγραφή στο {name}",
+    "transactionTypes": {
+      "credit_purchase": "Αγορά Πιστώσεων",
+      "agent_usage": "Χρήση Agent",
+      "refund": "Επιστροφή χρημάτων",
+      "bonus": "Μπόνους Επιβράβευσης",
+      "subscription": "Συνδρομή",
+      "subscription_grant": "Χορήγηση Συνδρομής",
+      "renewal": "Πιστώσεις Ανανέωσης",
+      "reactivation": "Επανενεργοποίηση"
+    },
+    "toasts": {
+      "paymentSuccess": "Η πληρωμή ήταν επιτυχής! Οι πιστώσεις σας προστέθηκαν.",
+      "subscriptionActivated": "Η συνδρομή ενεργοποιήθηκε επιτυχώς!",
+      "paymentCanceled": "Η πληρωμή ακυρώθηκε. Δεν έγινε καμία χρέωση.",
+      "signInToSubscribe": "Παρακαλώ συνδεθείτε για εγγραφή",
+      "subscriptionCheckoutFailed": "Αποτυχία έναρξης checkout συνδρομής. Παρακαλώ δοκιμάστε ξανά.",
+      "signInToPurchase": "Παρακαλώ συνδεθείτε για αγορά πιστώσεων",
+      "needSubscription": "Χρειάζεστε ενεργή συνδρομή για αγορά επιπλέον πιστώσεων",
+      "checkoutFailed": "Αποτυχία έναρξης checkout. Παρακαλώ δοκιμάστε ξανά.",
+      "manageFailed": "Αποτυχία ανοίγματος διαχείρισης συνδρομής. Παρακαλώ δοκιμάστε ξανά.",
+      "transactionsExported": "Οι συναλλαγές εξήχθησαν"
+    }
+  },
+  "apiKeys": {
+    "title": "Πάροχοι Μοντέλων",
+    "new": "νέο",
+    "description": "Προσθέστε τα δικά σας API keys για πρόσβαση σε μοντέλα.",
+    "securityNote": "Τα κλειδιά σας αποθηκεύονται με ασφάλεια με end-to-end κρυπτογράφηση.",
+    "apiKeyLabel": "{provider} API Key",
+    "getApiKey": "Λήψη API key",
+    "delete": "Διαγραφή",
+    "save": "Αποθήκευση",
+    "deleteDialog": {
+      "title": "Διαγραφή API Key",
+      "description": "Είστε σίγουροι ότι θέλετε να διαγράψετε το {provider} API key σας; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί και θα χάσετε πρόσβαση στα μοντέλα {provider}.",
+      "cancel": "Ακύρωση",
+      "confirm": "Διαγραφή"
+    },
+    "toasts": {
+      "saved": "Το API key αποθηκεύτηκε",
+      "savedDescription": "Το {provider} API key σας αποθηκεύτηκε και τα μοντέλα προστέθηκαν στα αγαπημένα σας.",
+      "updatedDescription": "Το {provider} API key σας ενημερώθηκε.",
+      "saveFailed": "Αποτυχία αποθήκευσης API key",
+      "saveFailedDescription": "Αποτυχία αποθήκευσης {provider} API key. Παρακαλώ δοκιμάστε ξανά.",
+      "deleted": "Το API key διαγράφηκε",
+      "deletedDescription": "Το {provider} API key σας διαγράφηκε.",
+      "deleteFailed": "Αποτυχία διαγραφής API key",
+      "deleteFailedDescription": "Αποτυχία διαγραφής {provider} API key. Παρακαλώ δοκιμάστε ξανά."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Στοιχεία Προφίλ",
+    "displayName": "Εμφανιζόμενο Όνομα",
+    "namePlaceholder": "Το όνομά σας",
+    "company": "Εταιρεία",
+    "companyPlaceholder": "Η εταιρεία σας",
+    "website": "Ιστοσελίδα",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Αποθήκευση...",
+    "saveChanges": "Αποθήκευση αλλαγών",
+    "account": "Λογαριασμός",
+    "email": "Email",
+    "verified": "Επαληθευμένο",
+    "signOut": "Αποσύνδεση",
+    "signOutDescription": "Αποσυνδεθείτε από αυτή τη συσκευή",
+    "toasts": {
+      "profileUpdated": "Το προφίλ ενημερώθηκε",
+      "profileUpdateFailed": "Αποτυχία ενημέρωσης προφίλ",
+      "signOutFailed": "Αποτυχία αποσύνδεσης"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Τα δεδομένα σας προστατεύονται",
+    "dataProtectedDescription": "Ασφάλεια επιχειρησιακού επιπέδου με κρυπτογράφηση σε αδράνεια και κατά τη μεταφορά",
+    "features": {
+      "encryption": {
+        "title": "End-to-End Κρυπτογράφηση",
+        "description": "Τα API keys κρυπτογραφούνται με AES-256-GCM. Τα διαπιστευτήριά σας δεν αποθηκεύονται ποτέ σε απλό κείμενο."
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "Η απομόνωση σε επίπεδο βάσης δεδομένων διασφαλίζει ότι τα δεδομένα σας είναι προσβάσιμα μόνο από εσάς. Δεν είναι δυνατή η πρόσβαση μεταξύ tenants."
+      },
+      "privacy": {
+        "title": "Σχεδιασμένο για Απόρρητο",
+        "description": "Συλλέγουμε τα ελάχιστα απαραίτητα δεδομένα για την παροχή της υπηρεσίας. Οι συνομιλίες και τα αρχεία σας παραμένουν δικά σας."
+      },
+      "session": {
+        "title": "Ασφάλεια Συνεδρίας",
+        "description": "Προστασία CSRF, ασφαλή HTTP-only cookies και Content Security Policy headers σε κάθε αίτημα."
+      }
+    },
+    "legal": "Νομικά",
+    "privacyPolicy": {
+      "title": "Πολιτική Απορρήτου",
+      "description": "Πώς συλλέγουμε, χρησιμοποιούμε και προστατεύουμε τα δεδομένα σας"
+    },
+    "termsOfService": {
+      "title": "Όροι Χρήσης",
+      "description": "Οι όροι και οι προϋποθέσεις χρήσης μας"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Διάταξη"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Σύνοψη",
+      "highlight": "Συνοψίστε"
+    },
+    "code": {
+      "label": "Κώδικας",
+      "highlight": "Κατασκευάστε"
+    },
+    "research": {
+      "label": "Έρευνα",
+      "highlight": "Αναλύστε"
+    },
+    "create": {
+      "label": "Δημιουργία",
+      "highlight": "Παράγετε"
+    },
+    "solve": {
+      "label": "Επίλυση",
+      "highlight": "Αποσφαλμάτωση"
+    },
+    "learn": {
+      "label": "Μάθηση",
+      "highlight": "Εξηγήστε"
+    }
+  },
+  "loadingMessages": [
+    "Εκκινούμε τον πυριτικό εγκέφαλο",
+    "Ξυπνάμε την ψηφιακή συνείδηση",
+    "Αρχικοποιούμε τα νευρικά μονοπάτια",
+    "Περιστρέφουμε τους κβαντικούς πυρήνες",
+    "Φορτίζουμε τον πυκνωτή ροής",
+    "Ενεργοποιούμε το mainframe",
+    "Τροφοδοτούμε τον υπολογιστικό πίνακα",
+    "Ενεργοποιούμε warp drive",
+    "Καλούμε τα πυριτικά πνεύματα",
+    "Ανάβουμε τη μηχανή ηλεκτρονίων",
+    "Ζεσταίνουμε τα τρανζίστορ",
+    "Συναρμολογούμε τα bits και bytes",
+    "Βαθμονομούμε τις ψηφιακές συνάψεις",
+    "Ενεργοποιούμε τους κρυστάλλους CPU",
+    "Φορτώνουμε τα πρωτόκολλα συνείδησης",
+    "Αρχικοποιούμε πόρους συστήματος",
+    "Προετοιμάζουμε υπολογιστικό περιβάλλον",
+    "Εγκαθιδρύουμε ασφαλή σύνδεση",
+    "Παρέχουμε εικονικούς πόρους",
+    "Ρυθμίζουμε παραμέτρους συστήματος",
+    "Εκκινούμε εικονική παρουσία",
+    "Ενεργοποιούμε απομακρυσμένη επιφάνεια",
+    "Αναπτύσσουμε cloud πόρους",
+    "Ξεκινάμε ακολουθία εκκίνησης",
+    "Προετοιμάζουμε περιβάλλον εκτέλεσης",
+    "Ξυπνάμε τον νυσταγμένο υπολογιστή",
+    "Σκουντάμε την ψηφιακή αρκούδα",
+    "Φτιάχνουμε υπολογιστικό καφέ",
+    "Τεντώνουμε τους ψηφιακούς μύες",
+    "Ανοίγουμε τα ψηφιακά μάτια",
+    "Εκκίνηση",
+    "Ενεργοποίηση",
+    "Σύνδεση",
+    "Εκκίνηση συστήματος",
+    "Ετοιμαζόμαστε",
+    "Σχεδόν έτοιμο",
+    "Προετοιμασία χώρου εργασίας",
+    "Φόρτωση πόρων",
+    "Το σύστημα ξυπνάει"
+  ]
 }

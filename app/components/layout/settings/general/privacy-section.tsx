@@ -12,6 +12,7 @@ import {
 } from "@phosphor-icons/react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
 const fadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 10 },
@@ -19,34 +20,16 @@ const fadeUp = (delay: number) => ({
   transition: { duration: 0.35, delay, ease: [0.22, 1, 0.36, 1] as const },
 })
 
-const securityFeatures = [
-  {
-    icon: LockKey,
-    title: "End-to-End Encryption",
-    description: "API keys encrypted with AES-256-GCM. Your credentials are never stored in plain text.",
-    accent: "text-emerald-500 bg-emerald-500/[0.08]",
-  },
-  {
-    icon: Database,
-    title: "Row Level Security",
-    description: "Database-level isolation ensures your data is only accessible by you. No cross-tenant access possible.",
-    accent: "text-blue-500 bg-blue-500/[0.08]",
-  },
-  {
-    icon: Eye,
-    title: "Privacy by Design",
-    description: "We collect minimal data necessary to provide the service. Your conversations and files stay yours.",
-    accent: "text-indigo-500 bg-indigo-500/[0.08]",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Session Security",
-    description: "CSRF protection, secure HTTP-only cookies, and Content Security Policy headers on every request.",
-    accent: "text-amber-500 bg-amber-500/[0.08]",
-  },
+const securityFeaturesMeta = [
+  { icon: LockKey, key: "encryption" as const, accent: "text-emerald-500 bg-emerald-500/[0.08]" },
+  { icon: Database, key: "rls" as const, accent: "text-blue-500 bg-blue-500/[0.08]" },
+  { icon: Eye, key: "privacy" as const, accent: "text-indigo-500 bg-indigo-500/[0.08]" },
+  { icon: ShieldCheck, key: "session" as const, accent: "text-amber-500 bg-amber-500/[0.08]" },
 ]
 
 export function PrivacySection() {
+  const t = useTranslations("privacySettings")
+
   return (
     <div className="space-y-8">
 
@@ -58,9 +41,9 @@ export function PrivacySection() {
               <ShieldCheck className="h-5 w-5 text-emerald-500" weight="duotone" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold">Your data is protected</h3>
+              <h3 className="text-sm font-semibold">{t("dataProtected")}</h3>
               <p className="text-xs text-muted-foreground/50 mt-0.5">
-                Enterprise-grade security with encryption at rest and in transit
+                {t("dataProtectedDescription")}
               </p>
             </div>
           </div>
@@ -69,11 +52,11 @@ export function PrivacySection() {
 
       {/* ─── Security Features Grid ──────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {securityFeatures.map((feature, i) => {
+        {securityFeaturesMeta.map((feature, i) => {
           const Icon = feature.icon
           return (
             <motion.div
-              key={feature.title}
+              key={feature.key}
               {...fadeUp(0.08 + i * 0.06)}
               className="rounded-xl border border-border/30 bg-card/20 p-4 space-y-3"
             >
@@ -81,9 +64,9 @@ export function PrivacySection() {
                 <Icon className="h-4 w-4" weight="duotone" />
               </div>
               <div>
-                <h4 className="text-sm font-medium">{feature.title}</h4>
+                <h4 className="text-sm font-medium">{t(`features.${feature.key}.title`)}</h4>
                 <p className="text-xs text-muted-foreground/50 mt-1 leading-relaxed">
-                  {feature.description}
+                  {t(`features.${feature.key}.description`)}
                 </p>
               </div>
             </motion.div>
@@ -97,13 +80,13 @@ export function PrivacySection() {
           <div className="h-6 w-6 rounded-md bg-foreground/[0.04] flex items-center justify-center">
             <FileText className="h-3 w-3 text-muted-foreground/50" weight="duotone" />
           </div>
-          <h3 className="text-sm font-semibold">Legal</h3>
+          <h3 className="text-sm font-semibold">{t("legal")}</h3>
         </div>
 
         <div className="rounded-xl border border-border/30 bg-card/20 divide-y divide-border/20">
           {[
-            { href: "/privacy", label: "Privacy Policy", description: "How we collect, use, and protect your data" },
-            { href: "/terms", label: "Terms of Service", description: "Our terms and conditions of use" },
+            { href: "/privacy", labelKey: "privacyPolicy" as const },
+            { href: "/terms", labelKey: "termsOfService" as const },
           ].map((link) => (
             <Link
               key={link.href}
@@ -112,8 +95,8 @@ export function PrivacySection() {
               className="flex items-center justify-between px-5 py-4 hover:bg-muted/20 transition-colors group"
             >
               <div>
-                <p className="text-sm font-medium">{link.label}</p>
-                <p className="text-xs text-muted-foreground/50 mt-0.5">{link.description}</p>
+                <p className="text-sm font-medium">{t(`${link.labelKey}.title`)}</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">{t(`${link.labelKey}.description`)}</p>
               </div>
               <ArrowSquareOut className="h-4 w-4 text-muted-foreground/30 group-hover:text-muted-foreground/60 transition-colors shrink-0" />
             </Link>

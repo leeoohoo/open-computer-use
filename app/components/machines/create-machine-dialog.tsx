@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Loader2, Clock, Monitor, ArrowRight, History, Plus } from "lucide-react";
+import { useAccountDialog } from "@/lib/account-dialog-store";
 import { LinuxIcon, WindowsIcon } from "@/components/icons/platform-icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -252,13 +253,13 @@ export function CreateMachineDialog({
                   Free machines expire after <span className="font-medium text-foreground">2 hours</span>
                 </p>
               </div>
-              <a
-                href="/account?section=billing"
+              <button
+                onClick={() => useAccountDialog.getState().open("billing")}
                 className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-foreground hover:opacity-80 transition-opacity"
               >
                 Upgrade
                 <ArrowRight className="h-3 w-3" />
-              </a>
+              </button>
             </div>
           </NoiseBackground>
         )}
@@ -267,9 +268,9 @@ export function CreateMachineDialog({
         {!loadingLimits && wouldExceedLimit() && (
           <p className="text-sm text-muted-foreground rounded-lg border border-border bg-muted/40 px-4 py-3">
             You've reached your machine limit. Stop or delete an existing machine to create a new one.{" "}
-            <a href="/account?section=billing" className="font-medium text-foreground hover:opacity-80 transition-opacity">
+            <button onClick={() => useAccountDialog.getState().open("billing")} className="font-medium text-foreground hover:opacity-80 transition-opacity">
               Upgrade for more →
-            </a>
+            </button>
           </p>
         )}
 

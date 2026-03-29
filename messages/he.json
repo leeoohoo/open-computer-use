@@ -423,145 +423,145 @@
     "label": "שפה"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "אתה קובע את המטרה.",
+    "brandSubheading": "אנחנו מטפלים בשאר.",
+    "mobileHeading": "אתה קובע את המטרה. אנחנו מטפלים בשאר.",
+    "mobileSubheading": "סוכני AI שגולשים, לוחצים ועובדים כמו חבר צוות אמיתי.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "אתה מתאר את המשימה",
+        "sub": "\"חקור את 5 המתחרים המובילים שלנו\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "הסוכן משתלט",
+        "sub": "גולש, לוחץ, מקליד באופן אוטונומי"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "העבודה הושלמה",
+        "sub": "גיליון אלקטרוני עם 5 פרופילי מתחרים מלאים"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "הושלם",
+    "doneIn": "הסתיים ב-8 דקות",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "המפעיל שלך ממתין",
+      "signUp": "שים את תהליכי העבודה שלך על טייס אוטומטי",
+      "magicLink": "דלג על הסיסמה",
+      "forgotPassword": "בוא נחזיר אותך פנימה"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "המשך בדיוק מאיפה שהפסקת — הסוכנים שלך זוכרים",
+      "signUp": "הפעל את סוכן ה-AI הראשון שלך תוך פחות מדקה",
+      "magicLink": "לחיצה אחת מתיבת הדואר שלך ואתה בפנים",
+      "forgotPassword": "נשלח לך קישור איפוס לאימייל שלך"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "מתחבר...",
+      "continueWithGoogle": "המשך עם Google"
     },
-    "or": "or",
-    "email": "Email",
+    "or": "או",
+    "email": "אימייל",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "סיסמה",
+    "passwordPlaceholder": "הסיסמה שלך",
+    "confirmPassword": "אשר סיסמה",
+    "confirmPasswordPlaceholder": "אשר את הסיסמה שלך",
+    "minChars": "מינימום 6 תווים",
+    "signingIn": "מתחבר...",
+    "signIn": "התחבר",
+    "creatingAccount": "יוצר חשבון...",
+    "createAccount": "צור חשבון",
+    "sending": "שולח...",
+    "sendMagicLink": "שלח קישור קסם",
+    "sendResetLink": "שלח קישור איפוס",
+    "forgotPassword": "שכחת סיסמה?",
+    "useMagicLink": "השתמש בקישור קסם",
+    "dontHaveAccount": "אין לך חשבון?",
+    "signUp": "הרשם",
+    "alreadyHaveAccount": "כבר יש לך חשבון?",
+    "backToSignIn": "חזור להתחברות",
+    "termsAgreement": "בהמשך, אתה מסכים ל",
+    "terms": "תנאים",
+    "and": "ו",
+    "privacyPolicy": "מדיניות פרטיות",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "אנא מלא את כל השדות",
+      "passwordMinLength": "הסיסמה חייבת להכיל לפחות 6 תווים",
+      "passwordsDoNotMatch": "הסיסמאות אינן תואמות",
+      "supabaseNotConfigured": "Supabase לא מוגדר",
+      "unexpectedError": "אירעה שגיאה בלתי צפויה. אנא נסה שוב.",
+      "confirmEmail": "אנא אשר את האימייל שלך לפני ההתחברות. בדוק את תיבת הדואר.",
+      "invalidCredentials": "אימייל או סיסמה לא תקינים.",
+      "signInFailed": "ההתחברות נכשלה. אנא נסה שוב.",
+      "invalidEmail": "כתובת אימייל לא תקינה.",
+      "emailAlreadyExists": "חשבון עם אימייל זה כבר קיים. נסה להתחבר במקום.",
+      "signUpFailed": "ההרשמה נכשלה. אנא נסה שוב.",
+      "enterEmail": "אנא הזן את האימייל שלך",
+      "noAccountFound": "לא נמצא חשבון עם אימייל זה. אנא הירשם קודם.",
+      "magicLinkFailed": "שליחת קישור הקסם נכשלה. אנא נסה שוב.",
+      "resetFailed": "שליחת אימייל האיפוס נכשלה. אנא נסה שוב.",
+      "updateFailed": "עדכון הסיסמה נכשל. אנא נסה שוב."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "בדוק את האימייל שלך לאישור החשבון לפני ההתחברות.",
+      "checkEmailMagicLink": "בדוק את האימייל שלך לקישור הקסם להתחברות.",
+      "checkEmailReset": "בדוק את האימייל שלך לקישור איפוס הסיסמה.",
+      "passwordUpdated": "הסיסמה עודכנה בהצלחה. מפנה להתחברות..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "אפס את הסיסמה שלך",
+      "subtitle": "הזן את הסיסמה החדשה שלך למטה.",
+      "newPassword": "סיסמה חדשה",
+      "confirmNewPassword": "אשר סיסמה חדשה",
+      "confirmPlaceholder": "אשר את הסיסמה החדשה שלך",
+      "updating": "מעדכן...",
+      "updatePassword": "עדכן סיסמה"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "שגיאת אימות",
+      "defaultMessage": "אירעה שגיאה במהלך האימות.",
+      "tryAgain": "נסה שוב",
+      "backToChat": "חזור לצ'אט",
+      "needHelp": "צריך עזרה?",
+      "contactSupport": "צור קשר עם התמיכה"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "דלג לעת עתה",
+    "back": "חזור",
+    "continue": "המשך",
+    "getStarted": "התחל",
+    "settingUp": "מגדיר...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "ברוך שובך{name}!",
+      "titleNew": "ברוכים הבאים ל-Coasty",
+      "descriptionReturning": "נשמח ללמוד עוד קצת עליך כדי לשפר את החוויה שלך",
+      "descriptionNew": "בוא נגדיר את החשבון שלך כדי שנוכל להתאים אישית את החוויה"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "איך לקרוא לך?",
+    "namePlaceholder": "השם שלך",
+    "companyLabel": "חברה",
+    "optional": "(אופציונלי)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "אתר אינטרנט",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "מה מתאר אותך הכי טוב?",
+      "subtitle": "בחר את כל מה שמתאים — זה עוזר לנו להתאים את החוויה שלך"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
-      "marketer": "Marketer",
-      "designer": "Designer",
-      "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "founder": "מייסד / מנכ\"ל",
+      "developer": "מפתח",
+      "marketer": "משווק",
+      "designer": "מעצב",
+      "product_manager": "מנהל מוצר",
+      "data_analyst": "נתונים / אנליטיקה",
+      "operations": "תפעול",
+      "other": "אחר"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "גודל הצוות",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "רק אני",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,608 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "איך מצאת אותנו?",
+      "subtitle": "נשמח לדעת איפה שמעת על Coasty"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "חבר / עמית",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "אחר"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "מה תאטמט ראשון?",
+      "subtitle": "בחר את כל מה שמתאים — תוכל לחקור הכל מאוחר יותר"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "גריפת אתרים ומחקר",
+      "browser_automation": "אוטומציית דפדפן",
+      "data_entry": "הזנת נתונים וטפסים",
+      "email_outreach": "אימייל ופנייה",
+      "testing": "QA ובדיקות",
+      "ecommerce": "משימות מסחר אלקטרוני",
+      "social_media": "ניהול רשתות חברתיות",
+      "general_automation": "אוטומציה כללית"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "כל מה שאתה צריך,",
+      "titleHighlight": "מובנה.",
+      "subtitle": "הנה מה ש-Coasty יכול לעשות בשבילך",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "ללא קוד",
+        "description": "פשוט תאר מה אתה רוצה בשפה רגילה"
       },
       "agentSwarms": {
-        "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "title": "נחילי סוכנים",
+        "description": "צי סוכנים מקבילי"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "שליטה בשולחן העבודה",
+        "description": "לוחץ, מקליד, מנווט"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "אוטומציית דפדפן",
+        "description": "טפסים, לשוניות, גריפה — אוטומטית לחלוטין"
       },
       "computerVision": {
-        "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "title": "ראייה ממוחשבת",
+        "description": "רואה ומבין את המסך שלך בזמן אמת"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "תהליכי עבודה",
+        "description": "זרימות רב-שלביות"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "על המכשיר",
+        "description": "רץ מקומית"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "אוטונומי 24/7",
+        "description": "הגדר ושכח — רץ בזמן שאתה ישן"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "חדש כאן? יש לנו מדריך בשבילך",
+      "subtitle": "הפעל את סוכן ה-AI הראשון שלך תוך פחות מדקה"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "מה עובד ה-AI שלך צריך לעשות?",
+    "placeholderAlt": "ספר ל-AI שלך מה לעשות במחשב...",
+    "vmError": {
+      "title": "שגיאת מכונה וירטואלית",
+      "description": "המכונה הוירטואלית במצב שגיאה או נמחקת.",
+      "hint": "אנא בדוק את לשונית המכונות כדי לפתור את הבעיה, או בחר \"ללא מחשב נבחר\" לשימוש בחיפוש אינטרנט בלבד.",
+      "gotIt": "הבנתי"
+    },
+    "status": {
+      "creating": "יוצר {name}...",
+      "initiating": "מאתחל סוכן על {name}...",
+      "stopping": "עוצר {name}...",
+      "preparing": "מכין {name}..."
+    },
+    "swarm": {
+      "title": "מצב נחיל",
+      "pro": "PRO",
+      "upgradeLabel": "מצב נחיל — שדרג לפתיחה",
+      "feature1": "ביצוע מקבילי על מכונות זמניות",
+      "feature2": "כל מכונה רצה באופן אוטונומי",
+      "feature3": "3 פעמים ממגבלת המכונות של התוכנית שלך לנחיל",
+      "description": "הרץ פרומפט אחד על 3 פעמים ממגבלת המכונות שלך במקביל — כל אחת מתמודדת עם המשימה בנפרד.",
+      "enableLabel": "הפעל מצב נחיל",
+      "disableLabel": "השבת מצב נחיל",
+      "onTooltip": "מצב נחיל פעיל — הפרומפט שלך ירוץ על מספר מכונות במקביל",
+      "offTooltip": "הפעל מצב נחיל להרצת הפרומפט שלך על מספר מכונות בו-זמנית",
+      "decreaseMachines": "הפחת מספר מכונות",
+      "increaseMachines": "הגדל מספר מכונות",
+      "machineLimit": "עד {max} מכונות נחיל בתוכנית שלך. צריך יותר? צור קשר founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "התחבר לשולחן העבודה",
+      "screenLabel": "המסך של {name}",
+      "screenDefault": "שולחן עבודה",
+      "watchTooltip": "צפה בסוכן שלך עובד על מסך נפרד. רק אל תיגע בשום דבר או שהוא יתבייש!"
+    },
+    "buttons": {
+      "stop": "עצור",
+      "sendToSwarm": "שלח לנחיל",
+      "taskRunning": "משימה אחרת רצה — לחץ כדי לעצור אותה ולהריץ את שלך",
+      "selectComputer": "בחר מחשב לשליחת הודעות",
+      "waitCreating": "אנא המתן ליצירת ה-VM",
+      "waitStarting": "אנא המתן להפעלת ה-VM",
+      "waitAgent": "אנא המתן לאתחול הסוכן",
+      "vmStopping": "ה-VM נעצר",
+      "send": "שלח",
+      "switching": "מחליף...",
+      "overrideRun": "דרוס והרץ",
+      "stopLabel": "עצור משימה רצה והתחל את זו",
+      "sendLabel": "שלח הודעה"
+    },
+    "search": "חיפוש",
+    "upload": {
+      "label": "העלה קבצים ל-VM",
+      "heading": "העלה קבצים ל-VM",
+      "description": "הקבצים יישמרו בשולחן העבודה",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "שחרר קבצים כאן",
+      "dropDescription": "הקבצים יועלו לתיקיית שולחן העבודה של ה-VM",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "התחבר כדי לנסות עוד תכונות בחינם",
+      "description": "צור פרויקטים, הזמן חברי צוות ועוד.",
+      "connecting": "מתחבר...",
+      "continueWithGoogle": "המשך עם Google"
+    },
+    "removeFile": "הסר קובץ"
+  },
+  "chat": {
+    "greeting": "שלום",
+    "greetingAuth": "אני אטפל בעבודת המחשב. מה המשימה?",
+    "greetingUnauth": "AI שעובד על המחשב כדי שלא תצטרך. פשוט ספר מה צריך לעשות.",
+    "guide": "מדריך",
+    "saveLogins": "שמור כניסות למילוי אוטומטי",
+    "encryptedNote": "מוצפן, לעולם לא נראה על ידי AI",
+    "roleLabels": [
+      "עמית",
+      "עובד",
+      "חבר",
+      "עוזר",
+      "שותף",
+      "חבר צוות",
+      "משתף פעולה",
+      "מסייע"
+    ],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "קבל דוח מתחרים",
+        "warmLeads": "ייצר 20 לידים חמים",
+        "pitchDeck": "בנה טיוטת מצגת"
+      },
+      "developer": {
+        "findBugs": "מצא באגים באתר שלי",
+        "performance": "קבל דוח ביצועים",
+        "apiDocs": "חלץ תיעוד API"
+      },
+      "marketer": {
+        "seoGap": "קבל ניתוח פערי SEO",
+        "competitorAds": "רגל אחר פרסומות מתחרים",
+        "trendingContent": "קבל רעיונות תוכן טרנדי"
+      },
+      "product_manager": {
+        "reviewSummary": "קבל סיכום ביקורות",
+        "featureComparison": "בנה השוואת תכונות",
+        "competitorLaunches": "עקוב אחר השקות מתחרים"
+      },
+      "data_analyst": {
+        "exportCsv": "ייצא נתוני אתר ל-CSV",
+        "marketSizing": "קבל דוח גודל שוק",
+        "benchmark": "השווה מול התעשייה"
+      },
+      "operations": {
+        "enterRecords": "הזן רשומות למערכת שלנו",
+        "cheapestVendor": "מצא את הספק הזול ביותר",
+        "invoiceSummary": "קבל סיכום חשבוניות"
+      },
+      "designer": {
+        "designComparison": "קבל השוואת עיצוב",
+        "responsiveAudit": "הרץ ביקורת רספונסיבית",
+        "inspiration": "אסוף השראה לעיצוב"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "ייצא נתוני אתר ל-CSV",
+      "browser_automation": "ייצא דוחות לוח בקרה",
+      "data_entry": "הזן רשומות לאפליקציה שלנו",
+      "email_outreach": "שלח פנייה מותאמת אישית",
+      "testing": "קבל דוח QA מלא",
+      "ecommerce": "קבל השוואת מחירים",
+      "social_media": "פרסם וקבל מעורבות",
+      "general_automation": "הרץ משימה באתר שלי"
+    }
+  },
+  "chatMessages": {
+    "copyText": "העתק טקסט",
+    "copied": "הועתק!",
+    "regenerate": "ייצר מחדש",
+    "feedback": {
+      "title": "משוב",
+      "prompts": [
+        "דרג את זה",
+        "משוב",
+        "איך היה?",
+        "מחשבות?",
+        "שתף משוב"
+      ],
+      "tooltip": "שתף את המשוב שלך"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "חיפוש חכם",
+      "description": "חיפוש מונע AI ברחבי האינטרנט"
+    },
+    "collaborate": {
+      "title": "שיתוף פעולה",
+      "description": "עבודה משותפת בזמן אמת"
+    },
+    "globalAccess": {
+      "title": "גישה גלובלית",
+      "description": "חיפוש ביותר מ-50 שפות"
+    },
+    "aiModels": {
+      "title": "מודלי AI",
+      "description": "ספקי AI מרובים"
+    },
+    "freeForever": {
+      "title": "חינם לנצח",
+      "description": "ללא עלויות נסתרות"
+    },
+    "privateSecure": {
+      "title": "פרטי ומאובטח",
+      "description": "הנתונים שלך נשארים שלך"
+    }
+  },
+  "sidebar": {
+    "newTask": "משימה חדשה",
+    "newTaskDescription": "התחל אוטומציית AI חדשה",
+    "activity": "פעילות",
+    "taskHistory": "היסטוריית משימות",
+    "taskHistoryDescription": "סקור משימות קודמות והמשך מאיפה שהפסקת",
+    "taskHistoryPopup": {
+      "title": "המשימות האחרונות שלך",
+      "description": "עיין והמשך שיחות קודמות. כל משימה נשמרת כדי שתוכל להמשיך בדיוק מאיפה שהפסקת."
+    },
+    "swarmRuns": "הרצות נחיל",
+    "swarmRunsDescription": "מעקב אחר תהליכי עבודה מקבילים רב-סוכניים",
+    "swarmRunsPopup": {
+      "title": "תהליכי עבודה רב-סוכניים",
+      "description": "הרץ משימות על מספר מכונות במקביל. כל סוכן עובד באופן עצמאי והתוצאות מתכנסות אוטומטית."
+    },
+    "guide": "מדריך",
+    "guideDescription": "למד איך להפיק את המרב מ-Coasty",
+    "guidePopup": {
+      "title": "מתחילים",
+      "description": "מדריכים שלב אחר שלב ושיטות עבודה מומלצות שיעזרו לך לבצע אוטומציה ביעילות."
+    },
+    "infrastructure": "תשתית",
+    "computer": "מחשב",
+    "computers": "מחשבים",
+    "active": "פעיל",
+    "view": "הצג",
+    "workforce": "כוח עבודה",
+    "workforceDescription": "תזמן סוכנים אוטומטיים וטריגרים",
+    "workforcePopup": {
+      "title": "אוטומציה מתוזמנת",
+      "description": "הגדר משימות חוזרות עם תזמוני cron וטריגרים בין סוכנים. כוח העבודה שלך רץ בזמן שאתה ישן."
+    },
+    "credentials": "אישורים",
+    "credentialsDescription": "אחסן כניסות בצורה מאובטחת לגישת סוכנים",
+    "credentialsPopup": {
+      "title": "כספת אישורים מאובטחת",
+      "description": "אחסן כניסות ומפתחות API עם הצפנה. סוכנים ממלאים אישורים אוטומטית ללא חשיפת ערכים גולמיים."
+    },
+    "desktopApp": {
+      "getDesktopApp": "קבל אפליקציית שולחן עבודה",
+      "download": "הורד",
+      "downloadDesktopApp": "הורד אפליקציית שולחן עבודה",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "שלוט במחשב שלך מרחוק",
+      "controlDescription": "התקן את אפליקציית שולחן העבודה והרץ משימות על המחשב שלך מלוח הבקרה — מכל מקום, בכל זמן."
+    },
+    "credits": {
+      "runningLow": "קרדיטים — נגמרים",
+      "remaining": "קרדיטים שנותרו",
+      "buy": "קנה",
+      "creditsLeft": "קרדיטים נותרו",
+      "usedLabel": "בשימוש: {count}",
+      "consumed": "{percent}% נצרכו",
+      "usageThisWeek": "שימוש השבוע"
+    },
+    "talkToUs": "דבר איתנו",
+    "inviteEarn": "הזמן והרוויח",
+    "user": "משתמש",
+    "account": "חשבון",
+    "tasks": "{count} משימות",
+    "recentActivity": "פעילות אחרונה",
+    "viewAllHistory": "צפה בכל ההיסטוריה →",
+    "swarmRunsCount": "{count} הרצות נחיל",
+    "running": "רץ",
+    "completed": "הושלם",
+    "viewAllSwarms": "צפה בכל הנחילים →",
+    "schedulesCount": "{count} תזמונים",
+    "totalRuns": "{count} הרצות סה\"כ",
+    "paused": "מושהה",
+    "viewAllSchedules": "צפה בכל התזמונים →",
+    "credentialsCount": "{count} אישורים",
+    "encryptedVault": "כספת מוצפנת",
+    "manageCredentials": "נהל אישורים →",
+    "days": [
+      "שני",
+      "שלישי",
+      "רביעי",
+      "חמישי",
+      "שישי",
+      "שבת",
+      "ראשון"
+    ],
+    "resume": "המשך",
+    "result": "תוצאה",
+    "notScheduled": "לא מתוזמן",
+    "overdue": "באיחור",
+    "lessThanMin": "< דקה",
+    "inMinutes": "בעוד {count} דק'",
+    "inHours": "בעוד {count} שע'",
+    "today": "היום",
+    "yesterday": "אתמול"
+  },
+  "appHeader": {
+    "login": "התחבר",
+    "assign": "הקצה",
+    "assignDescription": "הקצה עובד להרצת משימה זו",
+    "computer": "מחשב",
+    "showComputer": "הצג מחשב",
+    "hideComputer": "הסתר מחשב",
+    "employeeHired": "עובד גויס!",
+    "employeeRemoved": "עובד הוסר"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "אוטומציה יומית קלה"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "אוטומציית משימות כל יום"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "הרחב תהליכי עבודה מורכבים",
+        "badge": "הפופולרי ביותר"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "אוטומציה כבדה ללא הגבלה"
+      }
+    },
+    "features": {
+      "vmDeleted": "VM אחד (נמחק לאחר חוסר פעילות)",
+      "vmAlwaysOn": "{count} VM פעיל תמיד",
+      "vmAlwaysOnPlural": "{count} מכונות VM פעילות תמיד",
+      "agentsParallel": "{count} סוכנים במקביל",
+      "basicSearch": "חיפוש בסיסי",
+      "advancedSearch": "חיפוש מתקדם וחילוץ",
+      "standardSupport": "תמיכה רגילה (אנשים אמיתיים)",
+      "prioritySupport": "תמיכה בעדיפות, מענה תוך 24 שעות",
+      "premiumSupport": "תמיכה פרימיום, מענה תוך 12 שעות"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "הגברה קטנה",
+        "description": "טעינה מהירה"
+      },
+      "medium": {
+        "name": "הגברה בינונית",
+        "description": "מילוי רגיל",
+        "savings": "חיסכון של 8%"
+      },
+      "large": {
+        "name": "הגברה גדולה",
+        "description": "רכישה בכמות",
+        "savings": "חיסכון של 17%"
+      }
+    },
+    "timeAgo": {
+      "justNow": "עכשיו",
+      "minutesAgo": "לפני {count} דק'",
+      "hoursAgo": "לפני {count} שע'",
+      "daysAgo": "לפני {count} ימים"
+    },
+    "noActivity": "אין פעילות בתקופה זו",
+    "stats": {
+      "balance": "יתרה",
+      "earned": "הורווח",
+      "used": "בשימוש",
+      "credits": "קרדיטים",
+      "allTime": "כל הזמנים",
+      "lastRange": "{range} אחרונים",
+      "sessions": "{count} הפעלות",
+      "avgDaily": "~{count}/יום ממוצע",
+      "plan": "תוכנית",
+      "free": "חינם",
+      "noPlan": "ללא תוכנית",
+      "canceling": "מבטל"
+    },
+    "monthlyUsage": "שימוש חודשי בקרדיטים",
+    "remaining": "{used} / {total} נותרו",
+    "usedPercent": "{percent}% בשימוש בתקופה זו",
+    "renews": "מתחדש {date}",
+    "choosePlan": "בחר את התוכנית שלך",
+    "choosePlanDescription": "הירשם כמנוי כדי לפתוח תכונות AI ולקבל קרדיטים חודשיים",
+    "savingsVsHuman": "חסוך {amount}/חודש מול עובד",
+    "timeSaved": "{time} נחסכו בחודש",
+    "cheaper": "זול פי {multiplier}",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/חודש",
+    "creditsPerMonth": "{count} קרדיטים /חודש",
+    "processing": "מעבד...",
+    "subscribeTo": "הירשם ל-{name}",
+    "transactionTypes": {
+      "credit_purchase": "רכישת קרדיטים",
+      "agent_usage": "שימוש בסוכן",
+      "refund": "החזר",
+      "bonus": "בונוס פרס",
+      "subscription": "מנוי",
+      "subscription_grant": "הקצאת מנוי",
+      "renewal": "קרדיטי חידוש",
+      "reactivation": "הפעלה מחדש"
+    },
+    "toasts": {
+      "paymentSuccess": "התשלום בוצע בהצלחה! הקרדיטים שלך נוספו.",
+      "subscriptionActivated": "המנוי הופעל בהצלחה!",
+      "paymentCanceled": "התשלום בוטל. לא בוצעו חיובים.",
+      "signInToSubscribe": "אנא התחבר כדי להירשם כמנוי",
+      "subscriptionCheckoutFailed": "תחילת תהליך הרכישה נכשלה. אנא נסה שוב.",
+      "signInToPurchase": "אנא התחבר כדי לרכוש קרדיטים",
+      "needSubscription": "אתה צריך מנוי פעיל כדי לרכוש קרדיטים נוספים",
+      "checkoutFailed": "תחילת תהליך הרכישה נכשלה. אנא נסה שוב.",
+      "manageFailed": "פתיחת ניהול המנוי נכשלה. אנא נסה שוב.",
+      "transactionsExported": "העסקאות יוצאו"
+    }
+  },
+  "apiKeys": {
+    "title": "ספקי מודלים",
+    "new": "חדש",
+    "description": "הוסף מפתחות API משלך כדי לפתוח גישה למודלים.",
+    "securityNote": "המפתחות שלך מאוחסנים באופן מאובטח עם הצפנה מקצה לקצה.",
+    "apiKeyLabel": "מפתח API של {provider}",
+    "getApiKey": "קבל מפתח API",
+    "delete": "מחק",
+    "save": "שמור",
+    "deleteDialog": {
+      "title": "מחק מפתח API",
+      "description": "האם אתה בטוח שברצונך למחוק את מפתח ה-API של {provider}? פעולה זו אינה ניתנת לביטול ותאבד גישה למודלי {provider}.",
+      "cancel": "ביטול",
+      "confirm": "מחק"
+    },
+    "toasts": {
+      "saved": "מפתח API נשמר",
+      "savedDescription": "מפתח ה-API של {provider} נשמר והמודלים נוספו למועדפים שלך.",
+      "updatedDescription": "מפתח ה-API של {provider} עודכן.",
+      "saveFailed": "שמירת מפתח API נכשלה",
+      "saveFailedDescription": "שמירת מפתח ה-API של {provider} נכשלה. אנא נסה שוב.",
+      "deleted": "מפתח API נמחק",
+      "deletedDescription": "מפתח ה-API של {provider} נמחק.",
+      "deleteFailed": "מחיקת מפתח API נכשלה",
+      "deleteFailedDescription": "מחיקת מפתח ה-API של {provider} נכשלה. אנא נסה שוב."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "פרטי פרופיל",
+    "displayName": "שם תצוגה",
+    "namePlaceholder": "השם שלך",
+    "company": "חברה",
+    "companyPlaceholder": "החברה שלך",
+    "website": "אתר אינטרנט",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "שומר...",
+    "saveChanges": "שמור שינויים",
+    "account": "חשבון",
+    "email": "אימייל",
+    "verified": "מאומת",
+    "signOut": "התנתק",
+    "signOutDescription": "התנתק מהמכשיר הזה",
+    "toasts": {
+      "profileUpdated": "הפרופיל עודכן",
+      "profileUpdateFailed": "עדכון הפרופיל נכשל",
+      "signOutFailed": "ההתנתקות נכשלה"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "הנתונים שלך מוגנים",
+    "dataProtectedDescription": "אבטחה ברמה ארגונית עם הצפנה במנוחה ובמעבר",
+    "features": {
+      "encryption": {
+        "title": "הצפנה מקצה לקצה",
+        "description": "מפתחות API מוצפנים עם AES-256-GCM. האישורים שלך לעולם לא נשמרים כטקסט גלוי."
+      },
+      "rls": {
+        "title": "אבטחה ברמת שורה",
+        "description": "בידוד ברמת מסד הנתונים מבטיח שהנתונים שלך נגישים רק לך. אין גישה חוצת-דיירים."
+      },
+      "privacy": {
+        "title": "פרטיות מעוצבת",
+        "description": "אנו אוספים את המינימום הנדרש לספק את השירות. השיחות והקבצים שלך נשארים שלך."
+      },
+      "session": {
+        "title": "אבטחת הפעלה",
+        "description": "הגנת CSRF, עוגיות HTTP-only מאובטחות, וכותרות Content Security Policy בכל בקשה."
+      }
+    },
+    "legal": "משפטי",
+    "privacyPolicy": {
+      "title": "מדיניות פרטיות",
+      "description": "איך אנו אוספים, משתמשים ומגנים על הנתונים שלך"
+    },
+    "termsOfService": {
+      "title": "תנאי שירות",
+      "description": "התנאים וההוראות לשימוש שלנו"
+    }
+  },
+  "layoutSettings": {
+    "layout": "פריסה"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "סיכום",
+      "highlight": "סכם"
+    },
+    "code": {
+      "label": "קוד",
+      "highlight": "בנה"
+    },
+    "research": {
+      "label": "מחקר",
+      "highlight": "נתח"
+    },
+    "create": {
+      "label": "צור",
+      "highlight": "ייצר"
+    },
+    "solve": {
+      "label": "פתור",
+      "highlight": "דבג"
+    },
+    "learn": {
+      "label": "למד",
+      "highlight": "הסבר"
+    }
+  },
+  "loadingMessages": [
+    "מאתחל את המוח הסיליקוני",
+    "מעורר את התודעה הדיגיטלית",
+    "מאתחל נתיבים עצביים",
+    "מסובב את הליבות הקוונטיות",
+    "טוען את קבל השטף",
+    "מפעיל את המיינפריים",
+    "מזין את המטריצה החישובית",
+    "מפעיל מנוע וורפ",
+    "מזמן את רוחות הסיליקון",
+    "מתניע את מנוע האלקטרונים",
+    "מחמם את הטרנזיסטורים",
+    "מרכיב את הביטים והבייטים",
+    "מכייל את הסינפסות הדיגיטליות",
+    "מטעין את גבישי ה-CPU",
+    "טוען את פרוטוקולי התודעה",
+    "מאתחל משאבי מערכת",
+    "מכין סביבה חישובית",
+    "יוצר חיבור מאובטח",
+    "מקצה משאבים וירטואליים",
+    "מגדיר פרמטרי מערכת",
+    "משיק מופע וירטואלי",
+    "מפעיל שולחן עבודה מרוחק",
+    "פורס משאבי ענן",
+    "מתחיל רצף אתחול מערכת",
+    "מכין סביבת הרצה",
+    "מעיר את המחשב הישנוני",
+    "מדגדג את הדוב הדיגיטלי",
+    "מכין קפה חישובי",
+    "מותח את השרירים הדיגיטליים",
+    "פותח את העיניים הדיגיטליות",
+    "מתחיל",
+    "נדלק",
+    "עולה לרשת",
+    "מאתחל מערכת",
+    "מתכונן",
+    "כמעט שם",
+    "מכין סביבת עבודה",
+    "טוען משאבים",
+    "המערכת קמה"
+  ]
 }

@@ -8,6 +8,7 @@ import {
   CreditCard,
   CalendarCheck,
 } from "@phosphor-icons/react"
+import { useAccountDialog } from "@/lib/account-dialog-store"
 
 type StopReason = "stopped_by_user" | "insufficient_credits" | "scheduled_insufficient_credits"
 
@@ -65,7 +66,7 @@ const STOP_REASONS: StopReasonConfig[] = [
       {
         label: "Add credits",
         icon: CreditCard,
-        href: "/account?section=billing",
+        onClick: "billing",
       },
       {
         label: "Retry",
@@ -91,7 +92,7 @@ const STOP_REASONS: StopReasonConfig[] = [
       {
         label: "Add credits",
         icon: CreditCard,
-        href: "/account?section=billing",
+        onClick: "billing",
       },
       {
         label: "View employees",
@@ -163,11 +164,12 @@ export function MessageStopBanner({
             {config.actions.map((action) => {
               const ActionIcon = action.icon
 
-              if (action.href) {
+              if (action.onClick === "billing") {
                 return (
-                  <a
+                  <button
                     key={action.label}
-                    href={action.href}
+                    onClick={() => useAccountDialog.getState().open("billing")}
+                    type="button"
                     className={cn(
                       "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors",
                       "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50",
@@ -176,7 +178,7 @@ export function MessageStopBanner({
                   >
                     <ActionIcon className="size-3.5" />
                     {action.label}
-                  </a>
+                  </button>
                 )
               }
 

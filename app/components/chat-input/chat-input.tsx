@@ -14,6 +14,8 @@ import { MacMiniIcon } from "@/components/icons/mac-mini"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card"
 import { useCallback, useMemo, useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
+import { useAccountDialog } from "@/lib/account-dialog-store"
 import { PromptSystem } from "../suggestions/prompt-system"
 import { AnimatePresence, motion } from "motion/react"
 import type { UserMachine } from "@/types/machines.types"
@@ -52,135 +54,11 @@ type ChatInputProps = {
   maxSwarmMachines?: number
 }
 
-// Fun startup messages
-const startupMessages = [
-  // Tech & Geeky
-  "Booting up the silicon brain",
-  "Awakening the digital consciousness",
-  "Initializing neural pathways",
-  "Spinning up the quantum cores",
-  "Charging the flux capacitor",
-  "Activating the mainframe",
-  "Powering the computational matrix",
-  "Engaging warp drive",
-  "Summoning the silicon spirits",
-  "Firing up the electron engine",
-  "Warming up the transistors",
-  "Assembling the bits and bytes",
-  "Calibrating the digital synapses",
-  "Energizing the CPU crystals",
-  "Loading the consciousness protocols",
-  
-  // Formal & Professional
-  "Initializing system resources",
-  "Preparing computational environment",
-  "Establishing secure connection",
-  "Provisioning virtual resources",
-  "Configuring system parameters",
-  "Launching virtual instance",
-  "Activating remote desktop",
-  "Deploying cloud resources",
-  "Initiating system startup sequence",
-  "Preparing execution environment",
-  
-  // Playful & Fun
-  "Waking up the sleepy computer",
-  "Poking the digital bear",
-  "Brewing some computational coffee",
-  "Stretching the digital muscles",
-  "Opening the digital eyes",
-  "Turning on the think machine",
-  "Revving up the brain engine",
-  "Unleashing the silicon beast",
-  "Summoning your digital assistant",
-  "Calling your virtual buddy",
-  "Rousing the electronic friend",
-  "Tickling the circuits awake",
-  "Giving life to the machine",
-  "Breathing life into silicon",
-  "Sparking the digital flame",
-  
-  // Space & Sci-Fi
-  "Launching the cyber rocket",
-  "Igniting the plasma cores",
-  "Activating the hyperdrive",
-  "Powering the photon processors",
-  "Engaging the stellar engine",
-  "Charging the antimatter cells",
-  "Initializing the holodeck",
-  "Booting the starship computer",
-  "Activating artificial gravity",
-  "Establishing subspace link",
-  
-  // Magic & Fantasy
-  "Casting the startup spell",
-  "Summoning the digital daemon",
-  "Awakening the silicon oracle",
-  "Channeling the electric mana",
-  "Invoking the binary spirits",
-  "Opening the portal to cyberspace",
-  "Enchanting the circuits",
-  "Conjuring computational power",
-  "Releasing the digital genie",
-  "Unlocking the techno-grimoire",
-  
-  // Nature & Organic
-  "Germinating the digital seed",
-  "Blooming the silicon flower",
-  "Hatching the cyber egg",
-  "Growing the computational tree",
-  "Nurturing the electric garden",
-  "Cultivating processing power",
-  "Sprouting digital neurons",
-  "Photosynthesizing the data streams",
-  
-  // Mechanical & Industrial
-  "Cranking the digital engine",
-  "Oiling the virtual gears",
-  "Stoking the computational furnace",
-  "Priming the data pumps",
-  "Spinning the turbines",
-  "Engaging the pistons",
-  "Lubricating the logic gates",
-  "Tightening the digital bolts",
-  "Revving the silicon motor",
-  "Igniting the cyber forge",
-  
-  // Cooking & Kitchen
-  "Preheating the digital oven",
-  "Marinating the data packets",
-  "Seasoning the algorithms",
-  "Simmering the code soup",
-  "Baking the binary bread",
-  "Grilling the graphics card",
-  "Stirring the pixel pot",
-  "Microwaving the memories",
-  
-  // Music & Audio
-  "Tuning the digital orchestra",
-  "Composing the startup symphony",
-  "Amplifying the silicon signals",
-  "Harmonizing the frequencies",
-  "Conducting the electron choir",
-  "Playing the boot sequence ballad",
-  "Drumming up processing power",
-  "Strumming the fiber optic strings",
-  
-  // Simple & Direct
-  "Starting up",
-  "Powering on",
-  "Coming online",
-  "Booting system",
-  "Getting ready",
-  "Almost there",
-  "Preparing workspace",
-  "Loading resources",
-  "System rising"
-]
+// startupMessages is loaded from translations inside the component
 
 
 // Beautiful VM status bar component
-function VMStatusBar({ isVisible, machineName, status }: { isVisible: boolean; machineName?: string; status?: string }) {
+function VMStatusBar({ isVisible, machineName, status, startupMessages, t }: { isVisible: boolean; machineName?: string; status?: string; startupMessages: string[]; t: (key: string, values?: Record<string, string>) => string }) {
   const [messageIndex, setMessageIndex] = useState(() => 
     Math.floor(Math.random() * startupMessages.length)
   )
@@ -199,18 +77,19 @@ function VMStatusBar({ isVisible, machineName, status }: { isVisible: boolean; m
   if (!isVisible) return null
   
   const getStatusMessage = () => {
+    const name = machineName || "computer"
     switch (status) {
       case "creating":
-        return `Creating ${machineName || "computer"}...`
+        return t("status.creating", { name })
       case "starting":
       case "stopped": // When stopped but starting
         return `${startupMessages[messageIndex]}...`
       case "initiating":
-        return `Initiating agent on ${machineName || "computer"}...`
+        return t("status.initiating", { name })
       case "stopping":
-        return `Stopping ${machineName || "computer"}...`
+        return t("status.stopping", { name })
       default:
-        return `Preparing ${machineName || "computer"}...`
+        return t("status.preparing", { name })
     }
   }
 
@@ -272,7 +151,7 @@ function VMStatusBar({ isVisible, machineName, status }: { isVisible: boolean; m
 }
 
 // Beautiful VM error dialog component (for other error states)
-function VMErrorDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+function VMErrorDialog({ isOpen, onClose, t }: { isOpen: boolean; onClose: () => void; t: (key: string) => string }) {
   if (!isOpen) return null
   
   return (
@@ -302,12 +181,12 @@ function VMErrorDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
               </div>
               
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold">Virtual Machine Error</h3>
+                <h3 className="text-lg font-semibold">{t("vmError.title")}</h3>
                 <p className="text-sm text-muted-foreground">
-                  The virtual machine is in an error state or is being deleted.
+                  {t("vmError.description")}
                 </p>
                 <p className="text-xs text-muted-foreground mt-3">
-                  Please check the <span className="font-medium">Machines</span> tab to resolve the issue, or select <span className="font-medium">"No Computer Selected"</span> to use web search only.
+                  {t("vmError.hint")}
                 </p>
               </div>
               
@@ -316,7 +195,7 @@ function VMErrorDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                 className="mt-2 w-full"
                 variant="outline"
               >
-                Got it
+                {t("vmError.gotIt")}
               </Button>
             </div>
           </motion.div>
@@ -351,6 +230,9 @@ export function ChatInput({
   userTier,
   maxSwarmMachines = 3,
 }: ChatInputProps) {
+  const t = useTranslations("chatInput")
+  const tl = useTranslations()
+  const startupMessages = tl.raw("loadingMessages") as string[]
   const isOnlyWhitespace = (text: string) => !/[^\s]/.test(text)
   const isSwarmLocked = !userTier || userTier === "free"
   const [machineStatus, setMachineStatus] = useState<UserMachine['status'] | null>(null)
@@ -756,9 +638,9 @@ export function ChatInput({
 
   return (
     <>
-      <VMErrorDialog isOpen={showVMError} onClose={() => setShowVMError(false)} />
+      <VMErrorDialog isOpen={showVMError} onClose={() => setShowVMError(false)} t={t} />
       <div className="relative flex w-full flex-col gap-4">
-        <VMStatusBar isVisible={showVMStatusBar} machineName={machineName || undefined} status={machineStatus === "running" && !agentReady ? "initiating" : (machineStatus || undefined)} />
+        <VMStatusBar isVisible={showVMStatusBar} machineName={machineName || undefined} status={machineStatus === "running" && !agentReady ? "initiating" : (machineStatus || undefined)} startupMessages={startupMessages} t={t} />
       {hasSuggestions && (
         <PromptSystem
           onValueChange={onValueChange}
@@ -783,8 +665,8 @@ export function ChatInput({
           <PromptInputTextarea
             placeholder={
               selectedVMId && selectedVMId !== "none"
-                ? "What should your AI worker do?"
-                : "Tell your AI what to do on the computer..."
+                ? t("placeholder")
+                : t("placeholderAlt")
             }
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
@@ -812,7 +694,7 @@ export function ChatInput({
                           variant="secondary"
                           type="button"
                           className="border-border h-9 rounded-full border px-2.5 sm:px-3 bg-transparent dark:bg-secondary opacity-70 hover:opacity-100 transition-all duration-200 cursor-default group"
-                          aria-label="Swarm mode — upgrade to unlock"
+                          aria-label={t("swarm.upgradeLabel")}
                         >
                           <div className="relative">
                             <GitFork className="size-4 flex-shrink-0 text-muted-foreground" weight="regular" />
@@ -935,21 +817,21 @@ export function ChatInput({
                             <div className="flex items-center justify-center size-6 rounded-md bg-amber-500/15">
                               <GitFork className="size-3.5 text-amber-500" weight="duotone" />
                             </div>
-                            <h4 className="text-sm font-semibold tracking-tight">Swarm Mode</h4>
-                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">PRO</span>
+                            <h4 className="text-sm font-semibold tracking-tight">{t("swarm.title")}</h4>
+                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">{t("swarm.pro")}</span>
                           </div>
                         </div>
 
                         {/* Feature list */}
                         <div className="px-5 pb-2">
                           <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-                            Run one prompt across <span className="text-foreground font-medium">3x your machine limit</span> in parallel — each tackling the task independently.
+                            {t("swarm.description")}
                           </p>
                           <div className="space-y-2">
                             {[
-                              { icon: Lightning, text: "Parallel execution across temporary machines" },
-                              { icon: GitFork, text: "3x your plan's machine limit per swarm" },
-                              { icon: Monitor, text: "Each machine runs autonomously" },
+                              { icon: Lightning, text: t("swarm.feature1") },
+                              { icon: GitFork, text: t("swarm.feature2") },
+                              { icon: Monitor, text: t("swarm.feature3") },
                             ].map((feature, i) => (
                               <div key={i} className="flex items-center gap-2.5">
                                 <div className="flex items-center justify-center size-5 rounded bg-amber-500/10 flex-shrink-0">
@@ -963,13 +845,13 @@ export function ChatInput({
 
                         {/* Upgrade CTA */}
                         <div className="px-4 pb-4 pt-3 space-y-2">
-                          <a
-                            href="/account?section=billing"
+                          <button
+                            onClick={() => useAccountDialog.getState().open("billing")}
                             className="flex items-center justify-center gap-2 w-full h-9 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-sm shadow-amber-500/20 hover:shadow-amber-500/30 transition-all duration-200 active:scale-[0.98]"
                           >
                             Upgrade to unlock Swarm
                             <ArrowRight className="size-3.5" weight="bold" />
-                          </a>
+                          </button>
                           <p className="text-[10px] text-muted-foreground text-center">
                             Need custom limits?{" "}
                             <a href="mailto:founders@coasty.ai" className="text-amber-600 dark:text-amber-400 hover:underline">founders@coasty.ai</a>
@@ -993,7 +875,7 @@ export function ChatInput({
                                 ? "bg-amber-500 hover:bg-amber-600 text-white border-amber-500"
                                 : "bg-transparent dark:bg-secondary"
                             )}
-                            aria-label={swarmMode ? "Disable swarm mode" : "Enable swarm mode"}
+                            aria-label={swarmMode ? t("swarm.disableLabel") : t("swarm.enableLabel")}
                           >
                             <GitFork className="size-4 flex-shrink-0" weight={swarmMode ? "duotone" : "regular"} />
                             <span className="hidden sm:inline text-xs ml-1.5">Swarm</span>
@@ -1001,8 +883,8 @@ export function ChatInput({
                         </TooltipTrigger>
                         <TooltipContent side="top" className="max-w-[220px] text-center">
                           {swarmMode
-                            ? "Swarm mode ON — your prompt will run on multiple machines in parallel"
-                            : "Enable swarm mode to run your prompt across multiple machines simultaneously"}
+                            ? t("swarm.onTooltip")
+                            : t("swarm.offTooltip")}
                         </TooltipContent>
                       </Tooltip>
                       {swarmMode && onSwarmCountChange && (
@@ -1013,7 +895,7 @@ export function ChatInput({
                                 type="button"
                                 onClick={() => onSwarmCountChange(Math.max(2, (swarmCount || 2) - 1))}
                                 className="size-6 rounded-full flex items-center justify-center text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-colors text-sm font-medium"
-                                aria-label="Decrease machine count"
+                                aria-label={t("swarm.decreaseMachines")}
                               >
                                 −
                               </button>
@@ -1024,14 +906,14 @@ export function ChatInput({
                                 type="button"
                                 onClick={() => onSwarmCountChange(Math.min(maxSwarmMachines, (swarmCount || 2) + 1))}
                                 className="size-6 rounded-full flex items-center justify-center text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-colors text-sm font-medium"
-                                aria-label="Increase machine count"
+                                aria-label={t("swarm.increaseMachines")}
                               >
                                 +
                               </button>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-[240px] text-center">
-                            Up to {maxSwarmMachines} swarm machines on your plan. Need more? Contact founders@coasty.ai
+                            {t("swarm.machineLimit", { max: String(maxSwarmMachines) })}
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -1055,14 +937,14 @@ export function ChatInput({
                         window.open(url, '_blank')
                       }}
                       className="border-border dark:bg-secondary h-9 rounded-full border bg-transparent px-2.5 sm:px-3"
-                      aria-label="Connect to desktop"
+                      aria-label={t("desktop.connectLabel")}
                     >
                       <Monitor className="size-4 flex-shrink-0" weight="duotone" />
-                      <span className="hidden sm:inline text-xs ml-1.5">{machineName ? `${machineName}'s screen` : "Desktop"}</span>
+                      <span className="hidden sm:inline text-xs ml-1.5">{machineName ? t("desktop.screenLabel", { name: machineName }) : t("desktop.screenDefault")}</span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[200px] text-center">
-                    Watch your agent work on a separate screen. Just don't touch anything or it gets stage fright!
+                    {t("desktop.watchTooltip")}
                   </TooltipContent>
                 </Tooltip>
               )}
@@ -1077,15 +959,15 @@ export function ChatInput({
             </div>
             <PromptInputAction
               tooltip={
-                status === "streaming" ? "Stop" :
-                swarmMode ? "Send to swarm" :
-                isMachineBusy ? "Another task is running — click to stop it and run yours" :
-                (!selectedVMId || selectedVMId === "none") ? "Select a computer to send messages" :
-                (machineStatus === "creating") ? "Please wait for VM to be created" :
-                (machineStatus === "starting" || machineStatus === "stopped") ? "Please wait for VM to start" :
-                (machineStatus === "running" && !agentReady) ? "Please wait for agent to initialize" :
-                (machineStatus === "stopping") ? "VM is stopping" :
-                "Send"
+                status === "streaming" ? t("buttons.stop") :
+                swarmMode ? t("buttons.sendToSwarm") :
+                isMachineBusy ? t("buttons.taskRunning") :
+                (!selectedVMId || selectedVMId === "none") ? t("buttons.selectComputer") :
+                (machineStatus === "creating") ? t("buttons.waitCreating") :
+                (machineStatus === "starting" || machineStatus === "stopped") ? t("buttons.waitStarting") :
+                (machineStatus === "running" && !agentReady) ? t("buttons.waitAgent") :
+                (machineStatus === "stopping") ? t("buttons.vmStopping") :
+                t("buttons.send")
               }
             >
               {isMachineBusy && value && !isOnlyWhitespace(value) && status !== "streaming" ? (
@@ -1095,7 +977,7 @@ export function ChatInput({
                   disabled={isStoppingMachine}
                   type="button"
                   onClick={forceStopAndSend}
-                  aria-label="Stop running task and start this one"
+                  aria-label={t("buttons.stopLabel")}
                 >
                   {isStoppingMachine ? (
                     <CircleNotch className="size-4 shrink-0 animate-spin" />
@@ -1103,7 +985,7 @@ export function ChatInput({
                     <ArrowsClockwise className="size-4 shrink-0" />
                   )}
                   <span className="text-xs font-medium hidden sm:inline whitespace-nowrap">
-                    {isStoppingMachine ? "Switching..." : "Override & Run"}
+                    {isStoppingMachine ? t("buttons.switching") : t("buttons.overrideRun")}
                   </span>
                 </Button>
               ) : (
@@ -1113,7 +995,7 @@ export function ChatInput({
                   disabled={status === "streaming" ? false : (!!(!value || isSubmitting || isOnlyWhitespace(value) || (!swarmMode && (!selectedVMId || selectedVMId === "none" || machineStatus !== "running" || !agentReady))))}
                   type="button"
                   onClick={handleSend}
-                  aria-label={status === "streaming" ? "Stop" : "Send message"}
+                  aria-label={status === "streaming" ? t("buttons.stop") : t("buttons.sendLabel")}
                 >
                   {status === "streaming" ? (
                     <StopIcon className="size-4" />

@@ -637,5 +637,457 @@
       "title": "यहां नए हैं? हमारे पास आपके लिए एक गाइड है",
       "subtitle": "एक मिनट से कम में अपना पहला AI एजेंट तैनात करें"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "आपका AI वर्कर क्या करे?",
+    "placeholderAlt": "अपने AI को बताएं कि कंप्यूटर पर क्या करना है...",
+    "vmError": {
+      "title": "वर्चुअल मशीन त्रुटि",
+      "description": "वर्चुअल मशीन त्रुटि स्थिति में है या हटाई जा रही है।",
+      "hint": "कृपया समस्या हल करने के लिए Machines टैब जांचें, या केवल वेब सर्च उपयोग करने के लिए \"No Computer Selected\" चुनें।",
+      "gotIt": "समझ गया"
+    },
+    "status": {
+      "creating": "{name} बनाया जा रहा है...",
+      "initiating": "{name} पर एजेंट शुरू हो रहा है...",
+      "stopping": "{name} रोका जा रहा है...",
+      "preparing": "{name} तैयार हो रहा है..."
+    },
+    "swarm": {
+      "title": "स्वार्म मोड",
+      "pro": "PRO",
+      "upgradeLabel": "स्वार्म मोड — अनलॉक करने के लिए अपग्रेड करें",
+      "feature1": "अस्थायी मशीनों पर समानांतर निष्पादन",
+      "feature2": "प्रत्येक मशीन स्वायत्त रूप से चलती है",
+      "feature3": "प्रति स्वार्म आपके प्लान की मशीन सीमा का 3 गुना",
+      "description": "एक प्रॉम्प्ट को अपनी मशीन सीमा के 3 गुना पर समानांतर चलाएं — प्रत्येक स्वतंत्र रूप से कार्य करता है।",
+      "enableLabel": "स्वार्म मोड सक्षम करें",
+      "disableLabel": "स्वार्म मोड अक्षम करें",
+      "onTooltip": "स्वार्म मोड चालू — आपका प्रॉम्प्ट कई मशीनों पर समानांतर चलेगा",
+      "offTooltip": "अपना प्रॉम्प्ट एक साथ कई मशीनों पर चलाने के लिए स्वार्म मोड सक्षम करें",
+      "decreaseMachines": "मशीन संख्या घटाएं",
+      "increaseMachines": "मशीन संख्या बढ़ाएं",
+      "machineLimit": "आपके प्लान पर अधिकतम {max} स्वार्म मशीनें। और चाहिए? founders@coasty.ai पर संपर्क करें"
+    },
+    "desktop": {
+      "connectLabel": "डेस्कटॉप से कनेक्ट करें",
+      "screenLabel": "{name} की स्क्रीन",
+      "screenDefault": "डेस्कटॉप",
+      "watchTooltip": "अपने एजेंट को अलग स्क्रीन पर काम करते देखें। बस कुछ छुएं नहीं वरना उसे स्टेज फ्राइट हो जाएगी!"
+    },
+    "buttons": {
+      "stop": "रोकें",
+      "sendToSwarm": "स्वार्म पर भेजें",
+      "taskRunning": "एक और कार्य चल रहा है — उसे रोकने और अपना चलाने के लिए क्लिक करें",
+      "selectComputer": "संदेश भेजने के लिए कंप्यूटर चुनें",
+      "waitCreating": "कृपया VM बनने तक प्रतीक्षा करें",
+      "waitStarting": "कृपया VM शुरू होने तक प्रतीक्षा करें",
+      "waitAgent": "कृपया एजेंट के इनिशियलाइज़ होने तक प्रतीक्षा करें",
+      "vmStopping": "VM रुक रहा है",
+      "send": "भेजें",
+      "switching": "स्विच हो रहा है...",
+      "overrideRun": "ओवरराइड और चलाएं",
+      "stopLabel": "चल रहा कार्य रोकें और यह शुरू करें",
+      "sendLabel": "संदेश भेजें"
+    },
+    "search": "खोजें",
+    "upload": {
+      "label": "VM पर फ़ाइलें अपलोड करें",
+      "heading": "VM पर फ़ाइलें अपलोड करें",
+      "description": "फ़ाइलें डेस्कटॉप पर सहेजी जाएंगी",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "फ़ाइलें यहां डालें",
+      "dropDescription": "फ़ाइलें VM के डेस्कटॉप फ़ोल्डर में अपलोड होंगी",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "मुफ़्त में और सुविधाएं आज़माने के लिए लॉग इन करें",
+      "description": "प्रोजेक्ट बनाएं, टीम सदस्यों को आमंत्रित करें, और भी बहुत कुछ।",
+      "connecting": "कनेक्ट हो रहा है...",
+      "continueWithGoogle": "Google से जारी रखें"
+    },
+    "removeFile": "फ़ाइल हटाएं"
+  },
+  "chat": {
+    "greeting": "नमस्ते",
+    "greetingAuth": "मैं कंप्यूटर का काम संभालूंगा। क्या करना है?",
+    "greetingUnauth": "AI जो कंप्यूटर चलाता है ताकि आपको न चलाना पड़े। बस बताएं क्या करना है।",
+    "guide": "गाइड",
+    "saveLogins": "ऑटो-फ़िल के लिए लॉगिन सहेजें",
+    "encryptedNote": "एन्क्रिप्टेड, AI कभी नहीं देखता",
+    "roleLabels": ["सहकर्मी", "कर्मचारी", "मित्र", "सहायक", "साथी", "टीम-साथी", "सहयोगी", "हेल्पर"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "प्रतिस्पर्धी रिपोर्ट लाएं",
+        "warmLeads": "20 वार्म लीड जनरेट करें",
+        "pitchDeck": "पिच डेक ड्राफ़्ट बनाएं"
+      },
+      "developer": {
+        "findBugs": "मेरी साइट पर बग खोजें",
+        "performance": "परफ़ॉर्मेंस रिपोर्ट लाएं",
+        "apiDocs": "API डॉक्यूमेंटेशन निकालें"
+      },
+      "marketer": {
+        "seoGap": "SEO गैप विश्लेषण लाएं",
+        "competitorAds": "प्रतिस्पर्धी विज्ञापनों पर नज़र रखें",
+        "trendingContent": "ट्रेंडिंग कंटेंट आइडिया लाएं"
+      },
+      "product_manager": {
+        "reviewSummary": "रिव्यू सारांश लाएं",
+        "featureComparison": "फ़ीचर तुलना बनाएं",
+        "competitorLaunches": "प्रतिस्पर्धी लॉन्च ट्रैक करें"
+      },
+      "data_analyst": {
+        "exportCsv": "साइट डेटा CSV में निर्यात करें",
+        "marketSizing": "मार्केट साइज़िंग रिपोर्ट लाएं",
+        "benchmark": "इंडस्ट्री से बेंचमार्क करें"
+      },
+      "operations": {
+        "enterRecords": "हमारे सिस्टम में रिकॉर्ड दर्ज करें",
+        "cheapestVendor": "सबसे सस्ता वेंडर खोजें",
+        "invoiceSummary": "इनवॉइस सारांश लाएं"
+      },
+      "designer": {
+        "designComparison": "डिज़ाइन तुलना लाएं",
+        "responsiveAudit": "रिस्पॉन्सिव ऑडिट चलाएं",
+        "inspiration": "डिज़ाइन इंस्पिरेशन एकत्र करें"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "साइट डेटा CSV में निर्यात करें",
+      "browser_automation": "डैशबोर्ड रिपोर्ट निर्यात करें",
+      "data_entry": "हमारे ऐप में रिकॉर्ड दर्ज करें",
+      "email_outreach": "व्यक्तिगत आउटरीच भेजें",
+      "testing": "पूर्ण QA रिपोर्ट लाएं",
+      "ecommerce": "मूल्य तुलना लाएं",
+      "social_media": "पोस्ट करें और एंगेजमेंट पाएं",
+      "general_automation": "मेरी साइट पर एक कार्य चलाएं"
+    }
+  },
+  "chatMessages": {
+    "copyText": "टेक्स्ट कॉपी करें",
+    "copied": "कॉपी हो गया!",
+    "regenerate": "पुनः बनाएं",
+    "feedback": {
+      "title": "फ़ीडबैक",
+      "prompts": ["इसे रेट करें", "फ़ीडबैक", "कैसा रहा?", "आपकी राय?", "फ़ीडबैक साझा करें"],
+      "tooltip": "अपना फ़ीडबैक साझा करें"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": { "title": "स्मार्ट सर्च", "description": "AI-संचालित वेब सर्च" },
+    "collaborate": { "title": "सहयोग करें", "description": "रीयल-टाइम में साथ काम करें" },
+    "globalAccess": { "title": "वैश्विक पहुंच", "description": "50+ भाषाओं में सर्च करें" },
+    "aiModels": { "title": "AI मॉडल", "description": "कई AI प्रदाता" },
+    "freeForever": { "title": "हमेशा मुफ़्त", "description": "कोई छिपी लागत नहीं" },
+    "privateSecure": { "title": "निजी और सुरक्षित", "description": "आपका डेटा आपका रहता है" }
+  },
+  "sidebar": {
+    "newTask": "नया कार्य",
+    "newTaskDescription": "नया AI ऑटोमेशन शुरू करें",
+    "activity": "गतिविधि",
+    "taskHistory": "कार्य इतिहास",
+    "taskHistoryDescription": "पिछले कार्यों की समीक्षा करें और जहां छोड़ा था वहां से जारी रखें",
+    "taskHistoryPopup": {
+      "title": "आपके हालिया कार्य",
+      "description": "पिछली बातचीत ब्राउज़ करें और जारी रखें। हर कार्य सहेजा जाता है ताकि आप ठीक वहीं से शुरू कर सकें जहां छोड़ा था।"
+    },
+    "swarmRuns": "स्वार्म रन",
+    "swarmRunsDescription": "मल्टी-एजेंट समानांतर वर्कफ़्लो मॉनिटर करें",
+    "swarmRunsPopup": {
+      "title": "मल्टी-एजेंट वर्कफ़्लो",
+      "description": "कई मशीनों पर समानांतर में कार्य चलाएं। प्रत्येक एजेंट स्वतंत्र रूप से काम करता है और परिणाम स्वचालित रूप से एकत्रित होते हैं।"
+    },
+    "guide": "गाइड",
+    "guideDescription": "Coasty से अधिकतम लाभ लेना सीखें",
+    "guidePopup": {
+      "title": "शुरुआत करें",
+      "description": "प्रभावी ऑटोमेशन के लिए चरण-दर-चरण मार्गदर्शिका और सर्वोत्तम प्रथाएं।"
+    },
+    "infrastructure": "इंफ्रास्ट्रक्चर",
+    "computer": "कंप्यूटर",
+    "computers": "कंप्यूटर",
+    "active": "सक्रिय",
+    "view": "देखें",
+    "workforce": "वर्कफ़ोर्स",
+    "workforceDescription": "ऑटोमेटेड एजेंट और ट्रिगर शेड्यूल करें",
+    "workforcePopup": {
+      "title": "शेड्यूल्ड ऑटोमेशन",
+      "description": "क्रॉन शेड्यूल और एजेंट-टू-एजेंट ट्रिगर के साथ आवर्ती कार्य सेट करें। आपकी वर्कफ़ोर्स तब भी काम करती है जब आप सोते हैं।"
+    },
+    "credentials": "क्रेडेंशियल",
+    "credentialsDescription": "एजेंट एक्सेस के लिए लॉगिन सुरक्षित रूप से स्टोर करें",
+    "credentialsPopup": {
+      "title": "सुरक्षित क्रेडेंशियल वॉल्ट",
+      "description": "एन्क्रिप्शन के साथ लॉगिन और API कुंजियां स्टोर करें। एजेंट कच्चे मान दिखाए बिना क्रेडेंशियल ऑटो-फ़िल करते हैं।"
+    },
+    "desktopApp": {
+      "getDesktopApp": "डेस्कटॉप ऐप लें",
+      "download": "डाउनलोड",
+      "downloadDesktopApp": "डेस्कटॉप ऐप डाउनलोड करें",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "अपना कंप्यूटर दूर से नियंत्रित करें",
+      "controlDescription": "डेस्कटॉप ऐप इंस्टॉल करें और इस डैशबोर्ड से अपने PC पर कार्य चलाएं — कहीं से भी, कभी भी।"
+    },
+    "credits": {
+      "runningLow": "क्रेडिट — कम हो रहे हैं",
+      "remaining": "शेष क्रेडिट",
+      "buy": "खरीदें",
+      "creditsLeft": "क्रेडिट शेष",
+      "usedLabel": "उपयोग किए: {count}",
+      "consumed": "{percent}% खर्च हुए",
+      "usageThisWeek": "इस सप्ताह का उपयोग"
+    },
+    "talkToUs": "हमसे बात करें",
+    "inviteEarn": "आमंत्रित करें और कमाएं",
+    "user": "उपयोगकर्ता",
+    "account": "खाता",
+    "tasks": "{count} कार्य",
+    "recentActivity": "हालिया गतिविधि",
+    "viewAllHistory": "पूरा इतिहास देखें →",
+    "swarmRunsCount": "{count} स्वार्म रन",
+    "running": "चल रहा है",
+    "completed": "पूर्ण",
+    "viewAllSwarms": "सभी स्वार्म देखें →",
+    "schedulesCount": "{count} शेड्यूल",
+    "totalRuns": "{count} कुल रन",
+    "paused": "रुका हुआ",
+    "viewAllSchedules": "सभी शेड्यूल देखें →",
+    "credentialsCount": "{count} क्रेडेंशियल",
+    "encryptedVault": "एन्क्रिप्टेड वॉल्ट",
+    "manageCredentials": "क्रेडेंशियल प्रबंधित करें →",
+    "days": ["सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि", "रवि"],
+    "resume": "जारी रखें",
+    "result": "परिणाम",
+    "notScheduled": "शेड्यूल नहीं है",
+    "overdue": "अतिदेय",
+    "lessThanMin": "< 1 मिनट",
+    "inMinutes": "{count} मिनट में",
+    "inHours": "{count} घंटे में",
+    "today": "आज",
+    "yesterday": "कल"
+  },
+  "appHeader": {
+    "login": "लॉग इन",
+    "assign": "असाइन करें",
+    "assignDescription": "इस कार्य को चलाने के लिए एक कर्मचारी असाइन करें",
+    "computer": "कंप्यूटर",
+    "showComputer": "कंप्यूटर दिखाएं",
+    "hideComputer": "कंप्यूटर छिपाएं",
+    "employeeHired": "कर्मचारी नियुक्त!",
+    "employeeRemoved": "कर्मचारी हटाया गया"
+  },
+  "billing": {
+    "plans": {
+      "lite": { "name": "Lite", "description": "हल्का दैनिक ऑटोमेशन" },
+      "starter": { "name": "Starter", "description": "रोज़ाना कार्य स्वचालित करें" },
+      "plus": { "name": "Plus", "description": "जटिल वर्कफ़्लो स्केल करें", "badge": "सबसे लोकप्रिय" },
+      "pro": { "name": "Pro", "description": "असीमित भारी ऑटोमेशन" }
+    },
+    "features": {
+      "vmDeleted": "1 VM (निष्क्रियता के बाद हटाया जाता है)",
+      "vmAlwaysOn": "{count} हमेशा चालू VM",
+      "vmAlwaysOnPlural": "{count} हमेशा चालू VM",
+      "agentsParallel": "{count} एजेंट समानांतर में",
+      "basicSearch": "बेसिक सर्च",
+      "advancedSearch": "एडवांस सर्च और एक्सट्रैक्शन",
+      "standardSupport": "स्टैंडर्ड सपोर्ट (असली इंसान)",
+      "prioritySupport": "प्राथमिकता सपोर्ट, 24 घंटे रिस्पॉन्स",
+      "premiumSupport": "प्रीमियम सपोर्ट, 12 घंटे रिस्पॉन्स"
+    },
+    "creditPackages": {
+      "small": { "name": "स्मॉल बूस्ट", "description": "त्वरित टॉप-अप" },
+      "medium": { "name": "मीडियम बूस्ट", "description": "स्टैंडर्ड रीफ़िल", "savings": "8% बचत" },
+      "large": { "name": "लार्ज बूस्ट", "description": "बल्क खरीद", "savings": "17% बचत" }
+    },
+    "timeAgo": {
+      "justNow": "अभी-अभी",
+      "minutesAgo": "{count} मिनट पहले",
+      "hoursAgo": "{count} घंटे पहले",
+      "daysAgo": "{count} दिन पहले"
+    },
+    "noActivity": "इस अवधि में कोई गतिविधि नहीं",
+    "stats": {
+      "balance": "शेष राशि",
+      "earned": "कमाया",
+      "used": "उपयोग किया",
+      "credits": "क्रेडिट",
+      "allTime": "कुल समय",
+      "lastRange": "पिछले {range}",
+      "sessions": "{count} सत्र",
+      "avgDaily": "~{count}/दिन औसत",
+      "plan": "प्लान",
+      "free": "मुफ़्त",
+      "noPlan": "कोई प्लान नहीं",
+      "canceling": "रद्द हो रहा है"
+    },
+    "monthlyUsage": "मासिक क्रेडिट उपयोग",
+    "remaining": "{used} / {total} शेष",
+    "usedPercent": "{percent}% इस अवधि में उपयोग",
+    "renews": "{date} को नवीनीकरण",
+    "choosePlan": "अपना प्लान चुनें",
+    "choosePlanDescription": "AI सुविधाएं अनलॉक करने और मासिक क्रेडिट पाने के लिए सब्सक्राइब करें",
+    "savingsVsHuman": "इंसान की तुलना में {amount}/माह बचाएं",
+    "timeSaved": "मासिक {time} बचत",
+    "cheaper": "{multiplier} सस्ता",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/माह",
+    "creditsPerMonth": "{count} क्रेडिट /माह",
+    "processing": "प्रोसेस हो रहा है...",
+    "subscribeTo": "{name} सब्सक्राइब करें",
+    "transactionTypes": {
+      "credit_purchase": "क्रेडिट खरीद",
+      "agent_usage": "एजेंट उपयोग",
+      "refund": "रिफ़ंड",
+      "bonus": "बोनस रिवॉर्ड",
+      "subscription": "सब्सक्रिप्शन",
+      "subscription_grant": "सब्सक्रिप्शन ग्रांट",
+      "renewal": "नवीनीकरण क्रेडिट",
+      "reactivation": "पुनः सक्रियण"
+    },
+    "toasts": {
+      "paymentSuccess": "भुगतान सफल! आपके क्रेडिट जोड़ दिए गए हैं।",
+      "subscriptionActivated": "सब्सक्रिप्शन सफलतापूर्वक सक्रिय!",
+      "paymentCanceled": "भुगतान रद्द हो गया। कोई शुल्क नहीं लिया गया।",
+      "signInToSubscribe": "सब्सक्राइब करने के लिए कृपया साइन इन करें",
+      "subscriptionCheckoutFailed": "सब्सक्रिप्शन चेकआउट शुरू करने में विफल। कृपया पुनः प्रयास करें।",
+      "signInToPurchase": "क्रेडिट खरीदने के लिए कृपया साइन इन करें",
+      "needSubscription": "अतिरिक्त क्रेडिट खरीदने के लिए एक सक्रिय सब्सक्रिप्शन चाहिए",
+      "checkoutFailed": "चेकआउट शुरू करने में विफल। कृपया पुनः प्रयास करें।",
+      "manageFailed": "सब्सक्रिप्शन प्रबंधन खोलने में विफल। कृपया पुनः प्रयास करें।",
+      "transactionsExported": "लेनदेन निर्यात हो गए"
+    }
+  },
+  "apiKeys": {
+    "title": "मॉडल प्रदाता",
+    "new": "नया",
+    "description": "मॉडल तक पहुंच अनलॉक करने के लिए अपनी API कुंजियां जोड़ें।",
+    "securityNote": "आपकी कुंजियां एंड-टू-एंड एन्क्रिप्शन के साथ सुरक्षित रूप से स्टोर की जाती हैं।",
+    "apiKeyLabel": "{provider} API कुंजी",
+    "getApiKey": "API कुंजी लें",
+    "delete": "हटाएं",
+    "save": "सहेजें",
+    "deleteDialog": {
+      "title": "API कुंजी हटाएं",
+      "description": "क्या आप वाकई अपनी {provider} API कुंजी हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती और आप {provider} मॉडल तक पहुंच खो देंगे।",
+      "cancel": "रद्द करें",
+      "confirm": "हटाएं"
+    },
+    "toasts": {
+      "saved": "API कुंजी सहेजी गई",
+      "savedDescription": "आपकी {provider} API कुंजी सहेजी गई है और मॉडल आपके पसंदीदा में जोड़े गए हैं।",
+      "updatedDescription": "आपकी {provider} API कुंजी अपडेट की गई है।",
+      "saveFailed": "API कुंजी सहेजने में विफल",
+      "saveFailedDescription": "{provider} API कुंजी सहेजने में विफल। कृपया पुनः प्रयास करें।",
+      "deleted": "API कुंजी हटाई गई",
+      "deletedDescription": "आपकी {provider} API कुंजी हटा दी गई है।",
+      "deleteFailed": "API कुंजी हटाने में विफल",
+      "deleteFailedDescription": "{provider} API कुंजी हटाने में विफल। कृपया पुनः प्रयास करें।"
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "प्रोफ़ाइल विवरण",
+    "displayName": "प्रदर्शन नाम",
+    "namePlaceholder": "आपका नाम",
+    "company": "कंपनी",
+    "companyPlaceholder": "आपकी कंपनी",
+    "website": "वेबसाइट",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "सहेजा जा रहा है...",
+    "saveChanges": "बदलाव सहेजें",
+    "account": "खाता",
+    "email": "ईमेल",
+    "verified": "सत्यापित",
+    "signOut": "साइन आउट",
+    "signOutDescription": "इस डिवाइस से लॉग आउट करें",
+    "toasts": {
+      "profileUpdated": "प्रोफ़ाइल अपडेट हुई",
+      "profileUpdateFailed": "प्रोफ़ाइल अपडेट करने में विफल",
+      "signOutFailed": "साइन आउट करने में विफल"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "आपका डेटा सुरक्षित है",
+    "dataProtectedDescription": "रेस्ट और ट्रांज़िट में एन्क्रिप्शन के साथ एंटरप्राइज़-ग्रेड सुरक्षा",
+    "features": {
+      "encryption": {
+        "title": "एंड-टू-एंड एन्क्रिप्शन",
+        "description": "API कुंजियां AES-256-GCM से एन्क्रिप्टेड। आपके क्रेडेंशियल कभी प्लेन टेक्स्ट में स्टोर नहीं होते।"
+      },
+      "rls": {
+        "title": "रो लेवल सिक्योरिटी",
+        "description": "डेटाबेस-स्तरीय आइसोलेशन सुनिश्चित करता है कि आपका डेटा केवल आपको ही सुलभ है। क्रॉस-टेनेंट एक्सेस संभव नहीं।"
+      },
+      "privacy": {
+        "title": "डिज़ाइन द्वारा गोपनीयता",
+        "description": "हम सेवा प्रदान करने के लिए न्यूनतम आवश्यक डेटा एकत्र करते हैं। आपकी बातचीत और फ़ाइलें आपकी रहती हैं।"
+      },
+      "session": {
+        "title": "सत्र सुरक्षा",
+        "description": "CSRF सुरक्षा, सुरक्षित HTTP-only कुकीज़, और हर अनुरोध पर Content Security Policy हेडर।"
+      }
+    },
+    "legal": "कानूनी",
+    "privacyPolicy": {
+      "title": "गोपनीयता नीति",
+      "description": "हम आपका डेटा कैसे एकत्र, उपयोग और सुरक्षित करते हैं"
+    },
+    "termsOfService": {
+      "title": "सेवा की शर्तें",
+      "description": "हमारे उपयोग के नियम और शर्तें"
+    }
+  },
+  "layoutSettings": {
+    "layout": "लेआउट"
+  },
+  "suggestions": {
+    "summary": { "label": "सारांश", "highlight": "संक्षेप करें" },
+    "code": { "label": "कोड", "highlight": "बनाएं" },
+    "research": { "label": "रिसर्च", "highlight": "विश्लेषण" },
+    "create": { "label": "बनाएं", "highlight": "जनरेट" },
+    "solve": { "label": "हल करें", "highlight": "डीबग" },
+    "learn": { "label": "सीखें", "highlight": "समझाएं" }
+  },
+  "loadingMessages": [
+    "सिलिकॉन दिमाग बूट हो रहा है",
+    "डिजिटल चेतना जगाई जा रही है",
+    "न्यूरल पाथवे इनिशियलाइज़ हो रहे हैं",
+    "क्वांटम कोर चालू हो रहे हैं",
+    "फ्लक्स कैपेसिटर चार्ज हो रहा है",
+    "मेनफ़्रेम सक्रिय हो रहा है",
+    "कम्प्यूटेशनल मैट्रिक्स पावर हो रहा है",
+    "वार्प ड्राइव चालू हो रहा है",
+    "सिलिकॉन आत्माएं बुलाई जा रही हैं",
+    "इलेक्ट्रॉन इंजन स्टार्ट हो रहा है",
+    "ट्रांज़िस्टर गरम हो रहे हैं",
+    "बिट्स और बाइट्स असेंबल हो रहे हैं",
+    "डिजिटल सिनैप्स कैलिब्रेट हो रहे हैं",
+    "CPU क्रिस्टल ऊर्जित हो रहे हैं",
+    "चेतना प्रोटोकॉल लोड हो रहे हैं",
+    "सिस्टम संसाधन इनिशियलाइज़ हो रहे हैं",
+    "कम्प्यूटेशनल वातावरण तैयार हो रहा है",
+    "सुरक्षित कनेक्शन स्थापित हो रहा है",
+    "वर्चुअल संसाधन प्रोविज़न हो रहे हैं",
+    "सिस्टम पैरामीटर कॉन्फ़िगर हो रहे हैं",
+    "वर्चुअल इंस्टेंस लॉन्च हो रहा है",
+    "रिमोट डेस्कटॉप सक्रिय हो रहा है",
+    "क्लाउड संसाधन डिप्लॉय हो रहे हैं",
+    "सिस्टम स्टार्टअप सीक्वेंस शुरू हो रहा है",
+    "एक्सीक्यूशन वातावरण तैयार हो रहा है",
+    "सोए हुए कंप्यूटर को जगाया जा रहा है",
+    "डिजिटल भालू को छेड़ा जा रहा है",
+    "कम्प्यूटेशनल कॉफ़ी बनाई जा रही है",
+    "डिजिटल मांसपेशियां खींची जा रही हैं",
+    "डिजिटल आंखें खोली जा रही हैं",
+    "शुरू हो रहा है",
+    "पावर ऑन हो रहा है",
+    "ऑनलाइन आ रहा है",
+    "सिस्टम बूट हो रहा है",
+    "तैयार हो रहा है",
+    "लगभग तैयार",
+    "कार्यक्षेत्र तैयार हो रहा है",
+    "संसाधन लोड हो रहे हैं",
+    "सिस्टम उठ रहा है"
+  ]
 }

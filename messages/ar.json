@@ -637,5 +637,540 @@
       "title": "جديد هنا؟ لدينا دليل لك",
       "subtitle": "انشر أول وكيل ذكاء اصطناعي في أقل من دقيقة"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "ماذا يجب أن يفعل مساعد AI الخاص بك؟",
+    "placeholderAlt": "أخبر AI بما يجب فعله على الكمبيوتر...",
+    "vmError": {
+      "title": "خطأ في الجهاز الافتراضي",
+      "description": "الجهاز الافتراضي في حالة خطأ أو يتم حذفه.",
+      "hint": "يرجى التحقق من علامة تبويب الأجهزة لحل المشكلة، أو اختر \"لم يتم اختيار كمبيوتر\" لاستخدام البحث على الويب فقط.",
+      "gotIt": "فهمت"
+    },
+    "status": {
+      "creating": "جارٍ إنشاء {name}...",
+      "initiating": "جارٍ بدء الوكيل على {name}...",
+      "stopping": "جارٍ إيقاف {name}...",
+      "preparing": "جارٍ تجهيز {name}..."
+    },
+    "swarm": {
+      "title": "وضع السرب",
+      "pro": "PRO",
+      "upgradeLabel": "وضع السرب — قم بالترقية لفتحه",
+      "feature1": "تنفيذ متوازٍ عبر أجهزة مؤقتة",
+      "feature2": "كل جهاز يعمل بشكل مستقل",
+      "feature3": "3 أضعاف حد أجهزة خطتك لكل سرب",
+      "description": "شغّل أمراً واحداً على 3 أضعاف حد أجهزتك بالتوازي — كل جهاز يعالج المهمة بشكل مستقل.",
+      "enableLabel": "تفعيل وضع السرب",
+      "disableLabel": "تعطيل وضع السرب",
+      "onTooltip": "وضع السرب مُفعّل — سيعمل أمرك على عدة أجهزة بالتوازي",
+      "offTooltip": "فعّل وضع السرب لتشغيل أمرك على عدة أجهزة في آن واحد",
+      "decreaseMachines": "تقليل عدد الأجهزة",
+      "increaseMachines": "زيادة عدد الأجهزة",
+      "machineLimit": "حتى {max} جهاز سرب في خطتك. تحتاج المزيد؟ تواصل مع founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "الاتصال بسطح المكتب",
+      "screenLabel": "شاشة {name}",
+      "screenDefault": "سطح المكتب",
+      "watchTooltip": "شاهد وكيلك يعمل على شاشة منفصلة. فقط لا تلمس أي شيء وإلا سيصاب برهبة المسرح!"
+    },
+    "buttons": {
+      "stop": "إيقاف",
+      "sendToSwarm": "إرسال إلى السرب",
+      "taskRunning": "مهمة أخرى قيد التشغيل — انقر لإيقافها وتشغيل مهمتك",
+      "selectComputer": "اختر كمبيوتراً لإرسال الرسائل",
+      "waitCreating": "يرجى الانتظار حتى يتم إنشاء الجهاز الافتراضي",
+      "waitStarting": "يرجى الانتظار حتى يبدأ الجهاز الافتراضي",
+      "waitAgent": "يرجى الانتظار حتى يتم تهيئة الوكيل",
+      "vmStopping": "الجهاز الافتراضي يتوقف",
+      "send": "إرسال",
+      "switching": "جارٍ التبديل...",
+      "overrideRun": "تجاوز وتشغيل",
+      "stopLabel": "إيقاف المهمة الجارية وبدء هذه المهمة",
+      "sendLabel": "إرسال رسالة"
+    },
+    "search": "بحث",
+    "upload": {
+      "label": "رفع ملفات إلى الجهاز الافتراضي",
+      "heading": "رفع ملفات إلى الجهاز الافتراضي",
+      "description": "سيتم حفظ الملفات على سطح المكتب",
+      "vmInfo": "الجهاز الافتراضي: {name}",
+      "dropHeading": "أفلت الملفات هنا",
+      "dropDescription": "سيتم رفع الملفات إلى مجلد سطح المكتب في الجهاز الافتراضي",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "سجّل الدخول لتجربة المزيد من الميزات مجاناً",
+      "description": "أنشئ مشاريع، ادعُ أعضاء الفريق، والمزيد.",
+      "connecting": "جارٍ الاتصال...",
+      "continueWithGoogle": "المتابعة مع Google"
+    },
+    "removeFile": "إزالة الملف"
+  },
+  "chat": {
+    "greeting": "مرحباً",
+    "greetingAuth": "سأتولى العمل على الكمبيوتر. ما هي المهمة؟",
+    "greetingUnauth": "ذكاء اصطناعي يعمل على الكمبيوتر بدلاً منك. فقط أخبره بما تحتاجه.",
+    "guide": "دليل",
+    "saveLogins": "حفظ بيانات الدخول للملء التلقائي",
+    "encryptedNote": "مُشفّر، لا يراه الذكاء الاصطناعي",
+    "roleLabels": [
+      "زميل عمل",
+      "موظف",
+      "صديق",
+      "مساعد",
+      "شريك",
+      "عضو فريق",
+      "متعاون",
+      "مُعين"
+    ],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "احصل على تقرير المنافسين",
+        "warmLeads": "ولّد 20 عميلاً محتملاً",
+        "pitchDeck": "أنشئ مسودة عرض تقديمي"
+      },
+      "developer": {
+        "findBugs": "ابحث عن أخطاء في موقعي",
+        "performance": "احصل على تقرير الأداء",
+        "apiDocs": "استخرج وثائق API"
+      },
+      "marketer": {
+        "seoGap": "احصل على تحليل فجوات SEO",
+        "competitorAds": "تجسس على إعلانات المنافسين",
+        "trendingContent": "احصل على أفكار محتوى رائجة"
+      },
+      "product_manager": {
+        "reviewSummary": "احصل على ملخص المراجعات",
+        "featureComparison": "أنشئ مقارنة الميزات",
+        "competitorLaunches": "تتبع إطلاقات المنافسين"
+      },
+      "data_analyst": {
+        "exportCsv": "صدّر بيانات الموقع إلى CSV",
+        "marketSizing": "احصل على تقرير حجم السوق",
+        "benchmark": "قارن مع معايير الصناعة"
+      },
+      "operations": {
+        "enterRecords": "أدخل السجلات في نظامنا",
+        "cheapestVendor": "ابحث عن أرخص مورّد",
+        "invoiceSummary": "احصل على ملخص الفواتير"
+      },
+      "designer": {
+        "designComparison": "احصل على مقارنة التصميم",
+        "responsiveAudit": "شغّل تدقيق الاستجابة",
+        "inspiration": "اجمع إلهام التصميم"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "صدّر بيانات الموقع إلى CSV",
+      "browser_automation": "صدّر تقارير لوحة المعلومات",
+      "data_entry": "أدخل السجلات في تطبيقنا",
+      "email_outreach": "أرسل تواصلاً مخصصاً",
+      "testing": "احصل على تقرير QA كامل",
+      "ecommerce": "احصل على مقارنة الأسعار",
+      "social_media": "انشر واحصل على تفاعل",
+      "general_automation": "شغّل مهمة على موقعي"
+    }
+  },
+  "chatMessages": {
+    "copyText": "نسخ النص",
+    "copied": "تم النسخ!",
+    "regenerate": "إعادة التوليد",
+    "feedback": {
+      "title": "ملاحظات",
+      "prompts": [
+        "قيّم هذا",
+        "ملاحظات",
+        "كيف كان أداؤنا؟",
+        "أفكارك؟",
+        "شارك ملاحظاتك"
+      ],
+      "tooltip": "شارك ملاحظاتك"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "بحث ذكي",
+      "description": "بحث مدعوم بالذكاء الاصطناعي عبر الويب"
+    },
+    "collaborate": {
+      "title": "تعاون",
+      "description": "اعمل مع فريقك في الوقت الفعلي"
+    },
+    "globalAccess": {
+      "title": "وصول عالمي",
+      "description": "بحث بأكثر من 50 لغة"
+    },
+    "aiModels": {
+      "title": "نماذج AI",
+      "description": "مزودو AI متعددون"
+    },
+    "freeForever": {
+      "title": "مجاني للأبد",
+      "description": "لا تكاليف خفية"
+    },
+    "privateSecure": {
+      "title": "خاص وآمن",
+      "description": "بياناتك تبقى ملكك"
+    }
+  },
+  "sidebar": {
+    "newTask": "مهمة جديدة",
+    "newTaskDescription": "ابدأ أتمتة AI جديدة",
+    "activity": "النشاط",
+    "taskHistory": "سجل المهام",
+    "taskHistoryDescription": "راجع المهام السابقة واستأنف من حيث توقفت",
+    "taskHistoryPopup": {
+      "title": "مهامك الأخيرة",
+      "description": "تصفح واستأنف المحادثات السابقة. كل مهمة محفوظة حتى تتمكن من الاستئناف من حيث توقفت."
+    },
+    "swarmRuns": "تشغيلات السرب",
+    "swarmRunsDescription": "مراقبة سير عمل الوكلاء المتوازية",
+    "swarmRunsPopup": {
+      "title": "سير عمل متعدد الوكلاء",
+      "description": "شغّل المهام عبر أجهزة متعددة بالتوازي. كل وكيل يعمل بشكل مستقل والنتائج تتجمع تلقائياً."
+    },
+    "guide": "دليل",
+    "guideDescription": "تعلم كيف تحقق أقصى استفادة من Coasty",
+    "guidePopup": {
+      "title": "البدء",
+      "description": "إرشادات خطوة بخطوة وأفضل الممارسات لمساعدتك على الأتمتة بفعالية."
+    },
+    "infrastructure": "البنية التحتية",
+    "computer": "كمبيوتر",
+    "computers": "أجهزة كمبيوتر",
+    "active": "نشط",
+    "view": "عرض",
+    "workforce": "القوى العاملة",
+    "workforceDescription": "جدولة الوكلاء الآليين والمُشغّلات",
+    "workforcePopup": {
+      "title": "الأتمتة المجدولة",
+      "description": "أعدّ المهام المتكررة بجداول cron ومُشغّلات بين الوكلاء. قواك العاملة تعمل أثناء نومك."
+    },
+    "credentials": "بيانات الاعتماد",
+    "credentialsDescription": "تخزين آمن لبيانات الدخول لوصول الوكلاء",
+    "credentialsPopup": {
+      "title": "خزنة بيانات اعتماد آمنة",
+      "description": "خزّن بيانات الدخول ومفاتيح API بالتشفير. الوكلاء يملأون بيانات الاعتماد تلقائياً دون كشف القيم الأصلية."
+    },
+    "desktopApp": {
+      "getDesktopApp": "احصل على تطبيق سطح المكتب",
+      "download": "تحميل",
+      "downloadDesktopApp": "تحميل تطبيق سطح المكتب",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "تحكم في كمبيوترك عن بُعد",
+      "controlDescription": "ثبّت تطبيق سطح المكتب وشغّل المهام على حاسوبك من لوحة التحكم هذه — في أي مكان وأي وقت."
+    },
+    "credits": {
+      "runningLow": "الأرصدة — تنفد",
+      "remaining": "الأرصدة المتبقية",
+      "buy": "شراء",
+      "creditsLeft": "أرصدة متبقية",
+      "usedLabel": "مستخدم: {count}",
+      "consumed": "{percent}% مستهلك",
+      "usageThisWeek": "الاستخدام هذا الأسبوع"
+    },
+    "talkToUs": "تحدث إلينا",
+    "inviteEarn": "ادعُ واكسب",
+    "user": "مستخدم",
+    "account": "الحساب",
+    "tasks": "{count} مهام",
+    "recentActivity": "النشاط الأخير",
+    "viewAllHistory": "عرض كل السجل →",
+    "swarmRunsCount": "{count} تشغيلات سرب",
+    "running": "قيد التشغيل",
+    "completed": "مكتمل",
+    "viewAllSwarms": "عرض كل الأسراب →",
+    "schedulesCount": "{count} جداول",
+    "totalRuns": "{count} تشغيل إجمالي",
+    "paused": "متوقف مؤقتاً",
+    "viewAllSchedules": "عرض كل الجداول →",
+    "credentialsCount": "{count} بيانات اعتماد",
+    "encryptedVault": "خزنة مشفرة",
+    "manageCredentials": "إدارة بيانات الاعتماد →",
+    "days": [
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس",
+      "الجمعة",
+      "السبت",
+      "الأحد"
+    ],
+    "resume": "استئناف",
+    "result": "نتيجة",
+    "notScheduled": "غير مجدول",
+    "overdue": "متأخر",
+    "lessThanMin": "< 1 دقيقة",
+    "inMinutes": "بعد {count} دقيقة",
+    "inHours": "بعد {count} ساعة",
+    "today": "اليوم",
+    "yesterday": "أمس"
+  },
+  "appHeader": {
+    "login": "تسجيل الدخول",
+    "assign": "تعيين",
+    "assignDescription": "عيّن موظفاً لتنفيذ هذه المهمة",
+    "computer": "كمبيوتر",
+    "showComputer": "إظهار الكمبيوتر",
+    "hideComputer": "إخفاء الكمبيوتر",
+    "employeeHired": "تم تعيين الموظف!",
+    "employeeRemoved": "تم إزالة الموظف"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "أتمتة يومية خفيفة"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "أتمتة المهام يومياً"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "توسيع سير العمل المعقدة",
+        "badge": "الأكثر شعبية"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "أتمتة ثقيلة غير محدودة"
+      }
+    },
+    "features": {
+      "vmDeleted": "جهاز افتراضي واحد (يُحذف بعد عدم النشاط)",
+      "vmAlwaysOn": "{count} جهاز افتراضي دائم التشغيل",
+      "vmAlwaysOnPlural": "{count} أجهزة افتراضية دائمة التشغيل",
+      "agentsParallel": "{count} وكلاء بالتوازي",
+      "basicSearch": "بحث أساسي",
+      "advancedSearch": "بحث متقدم واستخراج",
+      "standardSupport": "دعم عادي (بشر حقيقيون)",
+      "prioritySupport": "دعم ذو أولوية، استجابة خلال 24 ساعة",
+      "premiumSupport": "دعم متميز، استجابة خلال 12 ساعة"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "شحن صغير",
+        "description": "شحن سريع"
+      },
+      "medium": {
+        "name": "شحن متوسط",
+        "description": "إعادة شحن عادية",
+        "savings": "توفير 8%"
+      },
+      "large": {
+        "name": "شحن كبير",
+        "description": "شراء بالجملة",
+        "savings": "توفير 17%"
+      }
+    },
+    "timeAgo": {
+      "justNow": "الآن",
+      "minutesAgo": "منذ {count} دقيقة",
+      "hoursAgo": "منذ {count} ساعة",
+      "daysAgo": "منذ {count} يوم"
+    },
+    "noActivity": "لا يوجد نشاط في هذه الفترة",
+    "stats": {
+      "balance": "الرصيد",
+      "earned": "مكتسب",
+      "used": "مستخدم",
+      "credits": "أرصدة",
+      "allTime": "كل الوقت",
+      "lastRange": "آخر {range}",
+      "sessions": "{count} جلسات",
+      "avgDaily": "~{count}/يوم متوسط",
+      "plan": "الخطة",
+      "free": "Free",
+      "noPlan": "لا توجد خطة",
+      "canceling": "جارٍ الإلغاء"
+    },
+    "monthlyUsage": "استخدام الأرصدة الشهري",
+    "remaining": "{used} / {total} متبقٍ",
+    "usedPercent": "{percent}% مستخدم هذه الفترة",
+    "renews": "يُجدد في {date}",
+    "choosePlan": "اختر خطتك",
+    "choosePlanDescription": "اشترك لفتح ميزات AI والحصول على أرصدة شهرية",
+    "savingsVsHuman": "وفّر {amount}/شهر مقارنة بالبشر",
+    "timeSaved": "{time} يُوفر شهرياً",
+    "cheaper": "أرخص بـ {multiplier}",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/شهر",
+    "creditsPerMonth": "{count} رصيد/شهر",
+    "processing": "جارٍ المعالجة...",
+    "subscribeTo": "اشترك في {name}",
+    "transactionTypes": {
+      "credit_purchase": "شراء أرصدة",
+      "agent_usage": "استخدام الوكيل",
+      "refund": "استرداد",
+      "bonus": "مكافأة",
+      "subscription": "اشتراك",
+      "subscription_grant": "منح الاشتراك",
+      "renewal": "أرصدة التجديد",
+      "reactivation": "إعادة التفعيل"
+    },
+    "toasts": {
+      "paymentSuccess": "تم الدفع بنجاح! تمت إضافة أرصدتك.",
+      "subscriptionActivated": "تم تفعيل الاشتراك بنجاح!",
+      "paymentCanceled": "تم إلغاء الدفع. لم يتم خصم أي رسوم.",
+      "signInToSubscribe": "يرجى تسجيل الدخول للاشتراك",
+      "subscriptionCheckoutFailed": "فشل بدء عملية الدفع للاشتراك. يرجى المحاولة مرة أخرى.",
+      "signInToPurchase": "يرجى تسجيل الدخول لشراء الأرصدة",
+      "needSubscription": "تحتاج إلى اشتراك نشط لشراء أرصدة إضافية",
+      "checkoutFailed": "فشل بدء عملية الدفع. يرجى المحاولة مرة أخرى.",
+      "manageFailed": "فشل فتح إدارة الاشتراك. يرجى المحاولة مرة أخرى.",
+      "transactionsExported": "تم تصدير المعاملات"
+    }
+  },
+  "apiKeys": {
+    "title": "مزودو النماذج",
+    "new": "new",
+    "description": "أضف مفاتيح API الخاصة بك لفتح الوصول إلى النماذج.",
+    "securityNote": "مفاتيحك مخزنة بأمان مع تشفير من طرف إلى طرف.",
+    "apiKeyLabel": "مفتاح API لـ {provider}",
+    "getApiKey": "احصل على مفتاح API",
+    "delete": "حذف",
+    "save": "حفظ",
+    "deleteDialog": {
+      "title": "حذف مفتاح API",
+      "description": "هل أنت متأكد أنك تريد حذف مفتاح API الخاص بـ {provider}؟ لا يمكن التراجع عن هذا الإجراء وستفقد الوصول إلى نماذج {provider}.",
+      "cancel": "إلغاء",
+      "confirm": "حذف"
+    },
+    "toasts": {
+      "saved": "تم حفظ مفتاح API",
+      "savedDescription": "تم حفظ مفتاح API الخاص بـ {provider} وتمت إضافة النماذج إلى المفضلة.",
+      "updatedDescription": "تم تحديث مفتاح API الخاص بـ {provider}.",
+      "saveFailed": "فشل حفظ مفتاح API",
+      "saveFailedDescription": "فشل حفظ مفتاح API الخاص بـ {provider}. يرجى المحاولة مرة أخرى.",
+      "deleted": "تم حذف مفتاح API",
+      "deletedDescription": "تم حذف مفتاح API الخاص بـ {provider}.",
+      "deleteFailed": "فشل حذف مفتاح API",
+      "deleteFailedDescription": "فشل حذف مفتاح API الخاص بـ {provider}. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "تفاصيل الملف الشخصي",
+    "displayName": "الاسم المعروض",
+    "namePlaceholder": "اسمك",
+    "company": "الشركة",
+    "companyPlaceholder": "شركتك",
+    "website": "الموقع الإلكتروني",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "جارٍ الحفظ...",
+    "saveChanges": "حفظ التغييرات",
+    "account": "الحساب",
+    "email": "البريد الإلكتروني",
+    "verified": "تم التحقق",
+    "signOut": "تسجيل الخروج",
+    "signOutDescription": "تسجيل الخروج من هذا الجهاز",
+    "toasts": {
+      "profileUpdated": "تم تحديث الملف الشخصي",
+      "profileUpdateFailed": "فشل تحديث الملف الشخصي",
+      "signOutFailed": "فشل تسجيل الخروج"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "بياناتك محمية",
+    "dataProtectedDescription": "أمان على مستوى المؤسسات مع تشفير أثناء التخزين والنقل",
+    "features": {
+      "encryption": {
+        "title": "تشفير من طرف إلى طرف",
+        "description": "مفاتيح API مشفرة بـ AES-256-GCM. بيانات اعتمادك لا تُخزن أبداً كنص عادي."
+      },
+      "rls": {
+        "title": "أمان على مستوى الصف",
+        "description": "العزل على مستوى قاعدة البيانات يضمن أن بياناتك متاحة لك فقط. لا يمكن الوصول عبر المستأجرين."
+      },
+      "privacy": {
+        "title": "الخصوصية بالتصميم",
+        "description": "نجمع الحد الأدنى من البيانات اللازمة لتقديم الخدمة. محادثاتك وملفاتك تبقى ملكك."
+      },
+      "session": {
+        "title": "أمان الجلسة",
+        "description": "حماية CSRF، كوكيز HTTP آمنة للقراءة فقط، ورؤوس سياسة أمان المحتوى في كل طلب."
+      }
+    },
+    "legal": "قانوني",
+    "privacyPolicy": {
+      "title": "سياسة الخصوصية",
+      "description": "كيف نجمع بياناتك ونستخدمها ونحميها"
+    },
+    "termsOfService": {
+      "title": "شروط الخدمة",
+      "description": "شروط وأحكام الاستخدام"
+    }
+  },
+  "layoutSettings": {
+    "layout": "التخطيط"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "ملخص",
+      "highlight": "لخّص"
+    },
+    "code": {
+      "label": "كود",
+      "highlight": "ابنِ"
+    },
+    "research": {
+      "label": "بحث",
+      "highlight": "حلّل"
+    },
+    "create": {
+      "label": "إنشاء",
+      "highlight": "ولّد"
+    },
+    "solve": {
+      "label": "حل",
+      "highlight": "صحّح"
+    },
+    "learn": {
+      "label": "تعلّم",
+      "highlight": "اشرح"
+    }
+  },
+  "loadingMessages": [
+    "تشغيل الدماغ السيليكوني",
+    "إيقاظ الوعي الرقمي",
+    "تهيئة المسارات العصبية",
+    "تشغيل النوى الكمية",
+    "شحن مكثف التدفق",
+    "تفعيل الحاسوب المركزي",
+    "تشغيل مصفوفة الحوسبة",
+    "تفعيل محرك الانتقال الفائق",
+    "استدعاء أرواح السيليكون",
+    "إشعال محرك الإلكترون",
+    "تسخين الترانزستورات",
+    "تجميع البتات والبايتات",
+    "معايرة المشابك الرقمية",
+    "شحن بلورات المعالج",
+    "تحميل بروتوكولات الوعي",
+    "تهيئة موارد النظام",
+    "تجهيز بيئة الحوسبة",
+    "إنشاء اتصال آمن",
+    "تخصيص الموارد الافتراضية",
+    "ضبط معاملات النظام",
+    "إطلاق المثيل الافتراضي",
+    "تفعيل سطح المكتب البعيد",
+    "نشر الموارد السحابية",
+    "بدء تسلسل إقلاع النظام",
+    "تجهيز بيئة التنفيذ",
+    "إيقاظ الكمبيوتر النائم",
+    "نخز الدب الرقمي",
+    "تحضير قهوة حوسبية",
+    "تمديد العضلات الرقمية",
+    "فتح العيون الرقمية",
+    "جارٍ البدء",
+    "جارٍ التشغيل",
+    "الاتصال بالشبكة",
+    "إقلاع النظام",
+    "جارٍ التجهيز",
+    "اقتربنا",
+    "تجهيز مساحة العمل",
+    "تحميل الموارد",
+    "النظام يستيقظ"
+  ]
 }

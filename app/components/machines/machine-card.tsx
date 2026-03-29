@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useAccountDialog } from "@/lib/account-dialog-store";
 import {
   Monitor,
   Play,
@@ -414,13 +415,13 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
                   )}
                 </p>
               </div>
-              <a
-                href="/account?section=billing"
+              <button
+                onClick={() => useAccountDialog.getState().open("billing")}
                 className="inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-foreground/60 hover:text-foreground transition-colors"
               >
                 Upgrade
                 <ArrowRight className="h-3 w-3" />
-              </a>
+              </button>
             </div>
           )}
 

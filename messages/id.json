@@ -423,131 +423,131 @@
     "label": "Bahasa"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Anda tentukan tujuannya.",
+    "brandSubheading": "Kami urus sisanya.",
+    "mobileHeading": "Anda tentukan tujuannya. Kami urus sisanya.",
+    "mobileSubheading": "Agen AI yang menjelajah, mengklik, dan bekerja seperti rekan tim sungguhan.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Anda jelaskan tugasnya",
+        "sub": "\"Riset 5 kompetitor utama kami\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Agen mengambil kendali",
+        "sub": "Menjelajah, mengklik, mengetik secara otonom"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Pekerjaan selesai",
+        "sub": "Spreadsheet dengan 5 profil kompetitor lengkap"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Selesai",
+    "doneIn": "Selesai dalam 8 menit",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Operator Anda siap menunggu",
+      "signUp": "Buat alur kerja Anda berjalan otomatis",
+      "magicLink": "Lewati kata sandi",
+      "forgotPassword": "Mari kami bantu Anda masuk kembali"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Lanjutkan dari terakhir kali — agen Anda mengingat",
+      "signUp": "Deploy agen AI pertama Anda dalam waktu kurang dari semenit",
+      "magicLink": "Satu klik dari kotak masuk Anda dan Anda sudah masuk",
+      "forgotPassword": "Kami akan mengirim tautan reset ke email Anda"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Menghubungkan...",
+      "continueWithGoogle": "Lanjutkan dengan Google"
     },
-    "or": "or",
+    "or": "atau",
     "email": "Email",
-    "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "emailPlaceholder": "anda@contoh.com",
+    "password": "Kata Sandi",
+    "passwordPlaceholder": "Kata sandi Anda",
+    "confirmPassword": "Konfirmasi kata sandi",
+    "confirmPasswordPlaceholder": "Konfirmasi kata sandi Anda",
+    "minChars": "Min. 6 karakter",
+    "signingIn": "Sedang masuk...",
+    "signIn": "Masuk",
+    "creatingAccount": "Membuat akun...",
+    "createAccount": "Buat akun",
+    "sending": "Mengirim...",
+    "sendMagicLink": "Kirim magic link",
+    "sendResetLink": "Kirim tautan reset",
+    "forgotPassword": "Lupa kata sandi?",
+    "useMagicLink": "Gunakan magic link",
+    "dontHaveAccount": "Belum punya akun?",
+    "signUp": "Daftar",
+    "alreadyHaveAccount": "Sudah punya akun?",
+    "backToSignIn": "Kembali ke halaman masuk",
+    "termsAgreement": "Dengan melanjutkan, Anda menyetujui",
+    "terms": "Ketentuan",
+    "and": "dan",
+    "privacyPolicy": "Kebijakan Privasi",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Mohon isi semua kolom",
+      "passwordMinLength": "Kata sandi minimal 6 karakter",
+      "passwordsDoNotMatch": "Kata sandi tidak cocok",
+      "supabaseNotConfigured": "Supabase belum dikonfigurasi",
+      "unexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi.",
+      "confirmEmail": "Silakan konfirmasi email Anda sebelum masuk. Periksa kotak masuk Anda.",
+      "invalidCredentials": "Email atau kata sandi tidak valid.",
+      "signInFailed": "Gagal masuk. Silakan coba lagi.",
+      "invalidEmail": "Alamat email tidak valid.",
+      "emailAlreadyExists": "Akun dengan email ini sudah ada. Coba masuk saja.",
+      "signUpFailed": "Gagal mendaftar. Silakan coba lagi.",
+      "enterEmail": "Silakan masukkan email Anda",
+      "noAccountFound": "Tidak ada akun dengan email ini. Silakan daftar terlebih dahulu.",
+      "magicLinkFailed": "Gagal mengirim magic link. Silakan coba lagi.",
+      "resetFailed": "Gagal mengirim email reset. Silakan coba lagi.",
+      "updateFailed": "Gagal memperbarui kata sandi. Silakan coba lagi."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Periksa email Anda untuk mengonfirmasi akun sebelum masuk.",
+      "checkEmailMagicLink": "Periksa email Anda untuk magic link untuk masuk.",
+      "checkEmailReset": "Periksa email Anda untuk tautan reset kata sandi.",
+      "passwordUpdated": "Kata sandi berhasil diperbarui. Mengalihkan ke halaman masuk..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Reset kata sandi Anda",
+      "subtitle": "Masukkan kata sandi baru Anda di bawah.",
+      "newPassword": "Kata sandi baru",
+      "confirmNewPassword": "Konfirmasi kata sandi baru",
+      "confirmPlaceholder": "Konfirmasi kata sandi baru Anda",
+      "updating": "Memperbarui...",
+      "updatePassword": "Perbarui kata sandi"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Kesalahan Autentikasi",
+      "defaultMessage": "Terjadi kesalahan saat autentikasi.",
+      "tryAgain": "Coba Lagi",
+      "backToChat": "Kembali ke Chat",
+      "needHelp": "Butuh bantuan?",
+      "contactSupport": "Hubungi Dukungan"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Lewati untuk sekarang",
+    "back": "Kembali",
+    "continue": "Lanjutkan",
+    "getStarted": "Mulai",
+    "settingUp": "Menyiapkan...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Selamat datang kembali{name}!",
+      "titleNew": "Selamat datang di Coasty",
+      "descriptionReturning": "Kami ingin mengenal Anda lebih baik untuk meningkatkan pengalaman Anda",
+      "descriptionNew": "Mari siapkan akun Anda agar kami dapat mempersonalisasi pengalaman Anda"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Apa yang harus kami panggil Anda?",
+    "namePlaceholder": "Nama Anda",
+    "companyLabel": "Perusahaan",
+    "optional": "(opsional)",
     "companyPlaceholder": "MacroHard",
     "websiteLabel": "Website",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Apa yang paling menggambarkan Anda?",
+      "subtitle": "Pilih semua yang sesuai — ini membantu kami menyesuaikan pengalaman Anda"
     },
     "roles": {
       "founder": "Founder / CEO",
@@ -557,11 +557,11 @@
       "product_manager": "Product Manager",
       "data_analyst": "Data / Analytics",
       "operations": "Operations",
-      "other": "Other"
+      "other": "Lainnya"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Ukuran tim",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Hanya saya",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,585 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Bagaimana Anda menemukan kami?",
+      "subtitle": "Kami ingin tahu dari mana Anda mendengar tentang Coasty"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Teman / Kolega",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Lainnya"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Apa yang akan Anda otomatisasi pertama kali?",
+      "subtitle": "Pilih semua yang sesuai — Anda bisa menjelajahi semuanya nanti"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Web Scraping & Riset",
+      "browser_automation": "Otomatisasi Browser",
+      "data_entry": "Entri Data & Formulir",
+      "email_outreach": "Email & Penjangkauan",
+      "testing": "QA & Pengujian",
+      "ecommerce": "Tugas E-commerce",
+      "social_media": "Manajemen Media Sosial",
+      "general_automation": "Otomatisasi Umum"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Semua yang Anda butuhkan,",
+      "titleHighlight": "sudah tersedia.",
+      "subtitle": "Inilah yang bisa Coasty lakukan untuk Anda",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Tanpa Kode",
+        "description": "Cukup jelaskan apa yang Anda inginkan dalam bahasa sehari-hari"
       },
       "agentSwarms": {
-        "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "title": "Kawanan Agen",
+        "description": "Armada agen paralel"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Kontrol Desktop",
+        "description": "Mengklik, mengetik, bernavigasi"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Otomatisasi Browser",
+        "description": "Formulir, tab, scraping — sepenuhnya otomatis"
       },
       "computerVision": {
         "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "description": "Melihat & memahami layar Anda secara real time"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Alur Kerja",
+        "description": "Alur multi-langkah"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Di Perangkat",
+        "description": "Berjalan secara lokal"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "24/7 Otonom",
+        "description": "Atur dan lupakan — berjalan saat Anda tidur"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Baru di sini? Kami punya panduan untuk Anda",
+      "subtitle": "Deploy agen AI pertama Anda dalam waktu kurang dari semenit"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Apa yang harus dilakukan pekerja AI Anda?",
+    "placeholderAlt": "Beritahu AI Anda apa yang harus dilakukan di komputer...",
+    "vmError": {
+      "title": "Kesalahan Mesin Virtual",
+      "description": "Mesin virtual sedang dalam keadaan error atau sedang dihapus.",
+      "hint": "Silakan periksa tab Mesin untuk mengatasi masalah, atau pilih \"Tidak Ada Komputer Dipilih\" untuk hanya menggunakan pencarian web.",
+      "gotIt": "Mengerti"
+    },
+    "status": {
+      "creating": "Membuat {name}...",
+      "initiating": "Memulai agen di {name}...",
+      "stopping": "Menghentikan {name}...",
+      "preparing": "Menyiapkan {name}..."
+    },
+    "swarm": {
+      "title": "Mode Swarm",
+      "pro": "PRO",
+      "upgradeLabel": "Mode swarm — upgrade untuk membuka",
+      "feature1": "Eksekusi paralel di beberapa mesin sementara",
+      "feature2": "Setiap mesin berjalan secara otonom",
+      "feature3": "3x batas mesin paket Anda per swarm",
+      "description": "Jalankan satu prompt di 3x batas mesin Anda secara paralel — masing-masing mengerjakan tugas secara mandiri.",
+      "enableLabel": "Aktifkan mode swarm",
+      "disableLabel": "Nonaktifkan mode swarm",
+      "onTooltip": "Mode swarm AKTIF — prompt Anda akan berjalan di beberapa mesin secara paralel",
+      "offTooltip": "Aktifkan mode swarm untuk menjalankan prompt Anda di beberapa mesin secara bersamaan",
+      "decreaseMachines": "Kurangi jumlah mesin",
+      "increaseMachines": "Tambah jumlah mesin",
+      "machineLimit": "Hingga {max} mesin swarm di paket Anda. Butuh lebih? Hubungi founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Hubungkan ke desktop",
+      "screenLabel": "Layar {name}",
+      "screenDefault": "Desktop",
+      "watchTooltip": "Saksikan agen Anda bekerja di layar terpisah. Jangan sentuh apa pun atau dia jadi demam panggung!"
+    },
+    "buttons": {
+      "stop": "Berhenti",
+      "sendToSwarm": "Kirim ke swarm",
+      "taskRunning": "Tugas lain sedang berjalan — klik untuk menghentikan dan menjalankan milik Anda",
+      "selectComputer": "Pilih komputer untuk mengirim pesan",
+      "waitCreating": "Mohon tunggu VM sedang dibuat",
+      "waitStarting": "Mohon tunggu VM sedang dimulai",
+      "waitAgent": "Mohon tunggu agen sedang diinisialisasi",
+      "vmStopping": "VM sedang berhenti",
+      "send": "Kirim",
+      "switching": "Beralih...",
+      "overrideRun": "Ganti & Jalankan",
+      "stopLabel": "Hentikan tugas yang berjalan dan mulai yang ini",
+      "sendLabel": "Kirim pesan"
+    },
+    "search": "Cari",
+    "upload": {
+      "label": "Unggah file ke VM",
+      "heading": "Unggah file ke VM",
+      "description": "File akan disimpan ke Desktop",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Letakkan file di sini",
+      "dropDescription": "File akan diunggah ke folder Desktop VM",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Login untuk mencoba lebih banyak fitur gratis",
+      "description": "Buat Proyek, undang anggota tim, dan lainnya.",
+      "connecting": "Menghubungkan...",
+      "continueWithGoogle": "Lanjutkan dengan Google"
+    },
+    "removeFile": "Hapus file"
+  },
+  "chat": {
+    "greeting": "Halo",
+    "greetingAuth": "Saya akan menangani pekerjaan komputer. Apa tugasnya?",
+    "greetingUnauth": "AI yang mengoperasikan komputer agar Anda tidak perlu. Cukup beritahu apa yang perlu dikerjakan.",
+    "guide": "Panduan",
+    "saveLogins": "Simpan login untuk isi otomatis",
+    "encryptedNote": "terenkripsi, tidak pernah dilihat AI",
+    "roleLabels": ["Rekan Kerja", "Karyawan", "Teman", "Asisten", "Partner", "Rekan Tim", "Kolaborator", "Pembantu"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Dapatkan laporan kompetitor",
+        "warmLeads": "Hasilkan 20 prospek hangat",
+        "pitchDeck": "Buat draft pitch deck"
+      },
+      "developer": {
+        "findBugs": "Temukan bug di situs saya",
+        "performance": "Dapatkan laporan performa",
+        "apiDocs": "Ekstrak dokumentasi API"
+      },
+      "marketer": {
+        "seoGap": "Dapatkan analisis celah SEO",
+        "competitorAds": "Intai iklan kompetitor",
+        "trendingContent": "Dapatkan ide konten trending"
+      },
+      "product_manager": {
+        "reviewSummary": "Dapatkan ringkasan ulasan",
+        "featureComparison": "Buat perbandingan fitur",
+        "competitorLaunches": "Lacak peluncuran kompetitor"
+      },
+      "data_analyst": {
+        "exportCsv": "Ekspor data situs ke CSV",
+        "marketSizing": "Dapatkan laporan ukuran pasar",
+        "benchmark": "Bandingkan dengan industri"
+      },
+      "operations": {
+        "enterRecords": "Masukkan catatan ke sistem kami",
+        "cheapestVendor": "Temukan vendor termurah",
+        "invoiceSummary": "Dapatkan ringkasan faktur"
+      },
+      "designer": {
+        "designComparison": "Dapatkan perbandingan desain",
+        "responsiveAudit": "Jalankan audit responsif",
+        "inspiration": "Kumpulkan inspirasi desain"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Ekspor data situs ke CSV",
+      "browser_automation": "Ekspor laporan dashboard",
+      "data_entry": "Masukkan catatan ke aplikasi kami",
+      "email_outreach": "Kirim penjangkauan personal",
+      "testing": "Dapatkan laporan QA lengkap",
+      "ecommerce": "Dapatkan perbandingan harga",
+      "social_media": "Posting dan dapatkan engagement",
+      "general_automation": "Jalankan tugas di situs saya"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Salin teks",
+    "copied": "Disalin!",
+    "regenerate": "Regenerasi",
+    "feedback": {
+      "title": "Umpan Balik",
+      "prompts": ["Nilai ini", "Umpan balik", "Bagaimana menurut Anda?", "Pendapat?", "Bagikan umpan balik"],
+      "tooltip": "Bagikan umpan balik Anda"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Pencarian Cerdas",
+      "description": "Pencarian bertenaga AI di seluruh web"
+    },
+    "collaborate": {
+      "title": "Kolaborasi",
+      "description": "Bekerja bersama secara real-time"
+    },
+    "globalAccess": {
+      "title": "Akses Global",
+      "description": "Cari dalam 50+ bahasa"
+    },
+    "aiModels": {
+      "title": "Model AI",
+      "description": "Beberapa penyedia AI"
+    },
+    "freeForever": {
+      "title": "Gratis Selamanya",
+      "description": "Tanpa biaya tersembunyi"
+    },
+    "privateSecure": {
+      "title": "Privat & Aman",
+      "description": "Data Anda tetap milik Anda"
+    }
+  },
+  "sidebar": {
+    "newTask": "Tugas Baru",
+    "newTaskDescription": "Mulai otomatisasi AI baru",
+    "activity": "Aktivitas",
+    "taskHistory": "Riwayat Tugas",
+    "taskHistoryDescription": "Tinjau tugas sebelumnya dan lanjutkan dari terakhir",
+    "taskHistoryPopup": {
+      "title": "Tugas terbaru Anda",
+      "description": "Jelajahi dan lanjutkan percakapan sebelumnya. Setiap tugas disimpan agar Anda bisa melanjutkan dari terakhir."
+    },
+    "swarmRuns": "Eksekusi Swarm",
+    "swarmRunsDescription": "Pantau alur kerja paralel multi-agen",
+    "swarmRunsPopup": {
+      "title": "Alur kerja multi-agen",
+      "description": "Jalankan tugas di beberapa mesin secara paralel. Setiap agen bekerja mandiri dan hasil bertemu secara otomatis."
+    },
+    "guide": "Panduan",
+    "guideDescription": "Pelajari cara memaksimalkan Coasty",
+    "guidePopup": {
+      "title": "Memulai",
+      "description": "Panduan langkah demi langkah dan praktik terbaik untuk membantu Anda mengotomatisasi secara efektif."
+    },
+    "infrastructure": "Infrastruktur",
+    "computer": "Komputer",
+    "computers": "Komputer",
+    "active": "aktif",
+    "view": "Lihat",
+    "workforce": "Tenaga Kerja",
+    "workforceDescription": "Jadwalkan agen otomatis dan pemicu",
+    "workforcePopup": {
+      "title": "Otomatisasi terjadwal",
+      "description": "Siapkan tugas berulang dengan jadwal cron dan pemicu antar-agen. Tenaga kerja Anda berjalan saat Anda tidur."
+    },
+    "credentials": "Kredensial",
+    "credentialsDescription": "Simpan login secara aman untuk akses agen",
+    "credentialsPopup": {
+      "title": "Brankas kredensial aman",
+      "description": "Simpan login dan API key dengan enkripsi. Agen mengisi kredensial otomatis tanpa mengekspos nilai mentah."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Dapatkan Aplikasi Desktop",
+      "download": "Unduh",
+      "downloadDesktopApp": "Unduh Aplikasi Desktop",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Kendalikan komputer Anda dari jarak jauh",
+      "controlDescription": "Instal aplikasi desktop dan jalankan tugas di PC Anda dari dashboard ini — kapan saja, di mana saja."
+    },
+    "credits": {
+      "runningLow": "Kredit — Hampir habis",
+      "remaining": "Kredit tersisa",
+      "buy": "Beli",
+      "creditsLeft": "kredit tersisa",
+      "usedLabel": "Digunakan: {count}",
+      "consumed": "{percent}% dikonsumsi",
+      "usageThisWeek": "Penggunaan minggu ini"
+    },
+    "talkToUs": "Bicara dengan kami",
+    "inviteEarn": "Undang & Dapatkan",
+    "user": "Pengguna",
+    "account": "Akun",
+    "tasks": "{count} Tugas",
+    "recentActivity": "Aktivitas terbaru",
+    "viewAllHistory": "Lihat semua riwayat →",
+    "swarmRunsCount": "{count} Eksekusi Swarm",
+    "running": "berjalan",
+    "completed": "selesai",
+    "viewAllSwarms": "Lihat semua swarm →",
+    "schedulesCount": "{count} Jadwal",
+    "totalRuns": "{count} total eksekusi",
+    "paused": "dijeda",
+    "viewAllSchedules": "Lihat semua jadwal →",
+    "credentialsCount": "{count} Kredensial",
+    "encryptedVault": "Brankas terenkripsi",
+    "manageCredentials": "Kelola kredensial →",
+    "days": ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
+    "resume": "LANJUTKAN",
+    "result": "HASIL",
+    "notScheduled": "Tidak terjadwal",
+    "overdue": "Terlambat",
+    "lessThanMin": "< 1 menit",
+    "inMinutes": "dalam {count}m",
+    "inHours": "dalam {count}j",
+    "today": "hari ini",
+    "yesterday": "kemarin"
+  },
+  "appHeader": {
+    "login": "Masuk",
+    "assign": "Tugaskan",
+    "assignDescription": "Tugaskan karyawan untuk menjalankan tugas ini",
+    "computer": "Komputer",
+    "showComputer": "Tampilkan Komputer",
+    "hideComputer": "Sembunyikan Komputer",
+    "employeeHired": "Karyawan dipekerjakan!",
+    "employeeRemoved": "Karyawan dihapus"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Otomatisasi harian ringan"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Otomatisasi tugas setiap hari"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Skalakan alur kerja kompleks",
+        "badge": "Paling Populer"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Otomatisasi berat tanpa batas"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (dihapus setelah tidak aktif)",
+      "vmAlwaysOn": "{count} VM selalu aktif",
+      "vmAlwaysOnPlural": "{count} VM selalu aktif",
+      "agentsParallel": "{count} agen secara paralel",
+      "basicSearch": "Pencarian dasar",
+      "advancedSearch": "Pencarian lanjutan & ekstraksi",
+      "standardSupport": "Dukungan standar (manusia asli)",
+      "prioritySupport": "Dukungan prioritas, respons 24 jam",
+      "premiumSupport": "Dukungan premium, respons 12 jam"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Boost Kecil",
+        "description": "Isi ulang cepat"
+      },
+      "medium": {
+        "name": "Boost Sedang",
+        "description": "Isi ulang standar",
+        "savings": "Hemat 8%"
+      },
+      "large": {
+        "name": "Boost Besar",
+        "description": "Pembelian massal",
+        "savings": "Hemat 17%"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Baru saja",
+      "minutesAgo": "{count}m lalu",
+      "hoursAgo": "{count}j lalu",
+      "daysAgo": "{count}h lalu"
+    },
+    "noActivity": "Tidak ada aktivitas dalam periode ini",
+    "stats": {
+      "balance": "Saldo",
+      "earned": "Diperoleh",
+      "used": "Digunakan",
+      "credits": "kredit",
+      "allTime": "sepanjang waktu",
+      "lastRange": "{range} terakhir",
+      "sessions": "{count} sesi",
+      "avgDaily": "~{count}/hari rata-rata",
+      "plan": "Paket",
+      "free": "Gratis",
+      "noPlan": "Tanpa paket",
+      "canceling": "Membatalkan"
+    },
+    "monthlyUsage": "Penggunaan Kredit Bulanan",
+    "remaining": "{used} / {total} tersisa",
+    "usedPercent": "{percent}% digunakan periode ini",
+    "renews": "Diperbarui {date}",
+    "choosePlan": "Pilih Paket Anda",
+    "choosePlanDescription": "Berlangganan untuk membuka fitur AI dan mendapatkan kredit bulanan",
+    "savingsVsHuman": "Hemat {amount}/bln vs manusia",
+    "timeSaved": "{time} dihemat per bulan",
+    "cheaper": "{multiplier} lebih murah",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/bulan",
+    "creditsPerMonth": "{count} kredit /bulan",
+    "processing": "Memproses...",
+    "subscribeTo": "Berlangganan {name}",
+    "transactionTypes": {
+      "credit_purchase": "Pembelian Kredit",
+      "agent_usage": "Penggunaan Agen",
+      "refund": "Pengembalian Dana",
+      "bonus": "Bonus Hadiah",
+      "subscription": "Langganan",
+      "subscription_grant": "Pemberian Langganan",
+      "renewal": "Kredit Perpanjangan",
+      "reactivation": "Reaktivasi"
+    },
+    "toasts": {
+      "paymentSuccess": "Pembayaran berhasil! Kredit Anda telah ditambahkan.",
+      "subscriptionActivated": "Langganan berhasil diaktifkan!",
+      "paymentCanceled": "Pembayaran dibatalkan. Tidak ada tagihan.",
+      "signInToSubscribe": "Silakan masuk untuk berlangganan",
+      "subscriptionCheckoutFailed": "Gagal memulai checkout langganan. Silakan coba lagi.",
+      "signInToPurchase": "Silakan masuk untuk membeli kredit",
+      "needSubscription": "Anda memerlukan langganan aktif untuk membeli kredit tambahan",
+      "checkoutFailed": "Gagal memulai checkout. Silakan coba lagi.",
+      "manageFailed": "Gagal membuka manajemen langganan. Silakan coba lagi.",
+      "transactionsExported": "Transaksi diekspor"
+    }
+  },
+  "apiKeys": {
+    "title": "Penyedia Model",
+    "new": "baru",
+    "description": "Tambahkan API key Anda sendiri untuk membuka akses ke model.",
+    "securityNote": "Key Anda disimpan dengan aman menggunakan enkripsi end-to-end.",
+    "apiKeyLabel": "API Key {provider}",
+    "getApiKey": "Dapatkan API key",
+    "delete": "Hapus",
+    "save": "Simpan",
+    "deleteDialog": {
+      "title": "Hapus API Key",
+      "description": "Apakah Anda yakin ingin menghapus API key {provider} Anda? Tindakan ini tidak dapat dibatalkan dan Anda akan kehilangan akses ke model {provider}.",
+      "cancel": "Batal",
+      "confirm": "Hapus"
+    },
+    "toasts": {
+      "saved": "API key disimpan",
+      "savedDescription": "API key {provider} Anda telah disimpan dan model telah ditambahkan ke favorit.",
+      "updatedDescription": "API key {provider} Anda telah diperbarui.",
+      "saveFailed": "Gagal menyimpan API key",
+      "saveFailedDescription": "Gagal menyimpan API key {provider}. Silakan coba lagi.",
+      "deleted": "API key dihapus",
+      "deletedDescription": "API key {provider} Anda telah dihapus.",
+      "deleteFailed": "Gagal menghapus API key",
+      "deleteFailedDescription": "Gagal menghapus API key {provider}. Silakan coba lagi."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Detail Profil",
+    "displayName": "Nama Tampilan",
+    "namePlaceholder": "Nama Anda",
+    "company": "Perusahaan",
+    "companyPlaceholder": "Perusahaan Anda",
+    "website": "Website",
+    "websitePlaceholder": "situsweb.com",
+    "saving": "Menyimpan...",
+    "saveChanges": "Simpan perubahan",
+    "account": "Akun",
+    "email": "Email",
+    "verified": "Terverifikasi",
+    "signOut": "Keluar",
+    "signOutDescription": "Keluar dari perangkat ini",
+    "toasts": {
+      "profileUpdated": "Profil diperbarui",
+      "profileUpdateFailed": "Gagal memperbarui profil",
+      "signOutFailed": "Gagal keluar"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Data Anda dilindungi",
+    "dataProtectedDescription": "Keamanan tingkat enterprise dengan enkripsi saat diam dan saat transit",
+    "features": {
+      "encryption": {
+        "title": "Enkripsi End-to-End",
+        "description": "API key dienkripsi dengan AES-256-GCM. Kredensial Anda tidak pernah disimpan dalam teks biasa."
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "Isolasi tingkat database memastikan data Anda hanya dapat diakses oleh Anda. Tidak ada akses lintas-tenant."
+      },
+      "privacy": {
+        "title": "Privasi by Design",
+        "description": "Kami mengumpulkan data minimal yang diperlukan untuk menyediakan layanan. Percakapan dan file Anda tetap milik Anda."
+      },
+      "session": {
+        "title": "Keamanan Sesi",
+        "description": "Perlindungan CSRF, cookie HTTP-only yang aman, dan header Content Security Policy pada setiap permintaan."
+      }
+    },
+    "legal": "Hukum",
+    "privacyPolicy": {
+      "title": "Kebijakan Privasi",
+      "description": "Bagaimana kami mengumpulkan, menggunakan, dan melindungi data Anda"
+    },
+    "termsOfService": {
+      "title": "Ketentuan Layanan",
+      "description": "Syarat dan ketentuan penggunaan kami"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Tata Letak"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Ringkasan",
+      "highlight": "Rangkum"
+    },
+    "code": {
+      "label": "Kode",
+      "highlight": "Bangun"
+    },
+    "research": {
+      "label": "Riset",
+      "highlight": "Analisis"
+    },
+    "create": {
+      "label": "Buat",
+      "highlight": "Hasilkan"
+    },
+    "solve": {
+      "label": "Pecahkan",
+      "highlight": "Debug"
+    },
+    "learn": {
+      "label": "Pelajari",
+      "highlight": "Jelaskan"
+    }
+  },
+  "loadingMessages": [
+    "Menyalakan otak silikon",
+    "Membangunkan kesadaran digital",
+    "Menginisialisasi jalur neural",
+    "Memutar inti kuantum",
+    "Mengisi kapasitor fluks",
+    "Mengaktifkan mainframe",
+    "Menghidupkan matriks komputasi",
+    "Mengaktifkan warp drive",
+    "Memanggil roh-roh silikon",
+    "Menyalakan mesin elektron",
+    "Memanaskan transistor",
+    "Merakit bit dan byte",
+    "Mengkalibrasi sinaps digital",
+    "Mengisi energi kristal CPU",
+    "Memuat protokol kesadaran",
+    "Menginisialisasi sumber daya sistem",
+    "Menyiapkan lingkungan komputasi",
+    "Membangun koneksi aman",
+    "Menyediakan sumber daya virtual",
+    "Mengonfigurasi parameter sistem",
+    "Meluncurkan instance virtual",
+    "Mengaktifkan desktop jarak jauh",
+    "Men-deploy sumber daya cloud",
+    "Memulai urutan startup sistem",
+    "Menyiapkan lingkungan eksekusi",
+    "Membangunkan komputer yang mengantuk",
+    "Mencolek beruang digital",
+    "Menyeduh kopi komputasi",
+    "Meregangkan otot-otot digital",
+    "Membuka mata digital",
+    "Memulai",
+    "Menyalakan",
+    "Terhubung",
+    "Booting sistem",
+    "Bersiap-siap",
+    "Hampir selesai",
+    "Menyiapkan ruang kerja",
+    "Memuat sumber daya",
+    "Sistem bangkit"
+  ]
 }

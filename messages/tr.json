@@ -423,145 +423,145 @@
     "label": "Dil"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Hedefi sen belirle.",
+    "brandSubheading": "Gerisini biz halledelim.",
+    "mobileHeading": "Hedefi sen belirle. Gerisini biz halledelim.",
+    "mobileSubheading": "Gercek bir takim arkadasi gibi gozatan, tiklayan ve calisan AI ajanlari.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Gorevi tanimla",
+        "sub": "\"Ilk 5 rakibimizi arastir\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Ajan kontrolu alir",
+        "sub": "Otonom olarak gozatar, tiklar, yazar"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Is teslim edildi",
+        "sub": "5 tam rakip profili iceren tablo"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Tamamlandi",
+    "doneIn": "8 dakikada tamamlandi",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Operatorunuz hazir bekliyor",
+      "signUp": "Is akislarinizi otopilota alin",
+      "magicLink": "Sifreyi atla",
+      "forgotPassword": "Sizi geri alalim"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Kaldiginiz yerden devam edin — ajanlariniz hatirlyor",
+      "signUp": "Ilk AI ajaninizi bir dakikadan kisa surede devreye alin",
+      "magicLink": "Gelen kutunuzdan tek tikla iceridesiniz",
+      "forgotPassword": "E-postaniza bir sifirlama baglantisi gonderecegiz"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Baglaniyor...",
+      "continueWithGoogle": "Google ile devam et"
     },
-    "or": "or",
-    "email": "Email",
+    "or": "veya",
+    "email": "E-posta",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "Sifre",
+    "passwordPlaceholder": "Sifreniz",
+    "confirmPassword": "Sifre onayi",
+    "confirmPasswordPlaceholder": "Sifrenizi onaylayin",
+    "minChars": "Min. 6 karakter",
+    "signingIn": "Giris yapiliyor...",
+    "signIn": "Giris yap",
+    "creatingAccount": "Hesap olusturuluyor...",
+    "createAccount": "Hesap olustur",
+    "sending": "Gonderiliyor...",
+    "sendMagicLink": "Sihirli baglanti gonder",
+    "sendResetLink": "Sifirlama baglantisi gonder",
+    "forgotPassword": "Sifreni mi unuttun?",
+    "useMagicLink": "Sihirli baglanti kullan",
+    "dontHaveAccount": "Hesabiniz yok mu?",
+    "signUp": "Kaydol",
+    "alreadyHaveAccount": "Zaten hesabiniz var mi?",
+    "backToSignIn": "Girise don",
+    "termsAgreement": "Devam ederek, kabul etmis olursunuz:",
+    "terms": "Sartlar",
+    "and": "ve",
+    "privacyPolicy": "Gizlilik Politikasi",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Lutfen tum alanlari doldurun",
+      "passwordMinLength": "Sifre en az 6 karakter olmalidir",
+      "passwordsDoNotMatch": "Sifreler eslesmiyor",
+      "supabaseNotConfigured": "Supabase yapilandirilmamis",
+      "unexpectedError": "Beklenmeyen bir hata olustu. Lutfen tekrar deneyin.",
+      "confirmEmail": "Giris yapmadan once lutfen e-postanizi onaylayin. Gelen kutunuzu kontrol edin.",
+      "invalidCredentials": "Gecersiz e-posta veya sifre.",
+      "signInFailed": "Giris basarisiz. Lutfen tekrar deneyin.",
+      "invalidEmail": "Gecersiz e-posta adresi.",
+      "emailAlreadyExists": "Bu e-posta ile bir hesap zaten mevcut. Bunun yerine giris yapmayi deneyin.",
+      "signUpFailed": "Kayit basarisiz. Lutfen tekrar deneyin.",
+      "enterEmail": "Lutfen e-postanizi girin",
+      "noAccountFound": "Bu e-posta ile hesap bulunamadi. Lutfen once kaydolun.",
+      "magicLinkFailed": "Sihirli baglanti gonderilemedi. Lutfen tekrar deneyin.",
+      "resetFailed": "Sifirlama e-postasi gonderilemedi. Lutfen tekrar deneyin.",
+      "updateFailed": "Sifre guncellenemedi. Lutfen tekrar deneyin."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Giris yapmadan once hesabinizi onaylamak icin e-postanizi kontrol edin.",
+      "checkEmailMagicLink": "Giris yapmak icin sihirli baglanti e-postanizi kontrol edin.",
+      "checkEmailReset": "Sifre sifirlama baglantisi icin e-postanizi kontrol edin.",
+      "passwordUpdated": "Sifre basariyla guncellendi. Girise yonlendiriliyor..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Sifrenizi sifirlayin",
+      "subtitle": "Yeni sifrenizi asagiya girin.",
+      "newPassword": "Yeni sifre",
+      "confirmNewPassword": "Yeni sifre onayi",
+      "confirmPlaceholder": "Yeni sifrenizi onaylayin",
+      "updating": "Guncelleniyor...",
+      "updatePassword": "Sifreyi guncelle"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Kimlik Dogrulama Hatasi",
+      "defaultMessage": "Kimlik dogrulama sirasinda bir hata olustu.",
+      "tryAgain": "Tekrar Dene",
+      "backToChat": "Sohbete Don",
+      "needHelp": "Yardima mi ihtiyaciniz var?",
+      "contactSupport": "Destekle Iletisime Gec"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Simdilik atla",
+    "back": "Geri",
+    "continue": "Devam",
+    "getStarted": "Basla",
+    "settingUp": "Hazirlaniyor...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Tekrar hos geldiniz{name}!",
+      "titleNew": "Coasty'ye hos geldiniz",
+      "descriptionReturning": "Deneyiminizi iyilestirmek icin sizin hakkinda biraz daha bilgi edinmek isteriz",
+      "descriptionNew": "Deneyiminizi kisisellestirebilmemiz icin hesabinizi ayarlayalim"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Size ne diyelim?",
+    "namePlaceholder": "Adiniz",
+    "companyLabel": "Sirket",
+    "optional": "(istege bagli)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "Web sitesi",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Sizi en iyi ne tanimlar?",
+      "subtitle": "Gecerli olan tumu secin — bu deneyiminizi ozellestirmemize yardimci olur"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
-      "marketer": "Marketer",
-      "designer": "Designer",
-      "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "founder": "Kurucu / CEO",
+      "developer": "Gelistirici",
+      "marketer": "Pazarlamaci",
+      "designer": "Tasarimci",
+      "product_manager": "Urun Yoneticisi",
+      "data_analyst": "Veri / Analitik",
+      "operations": "Operasyon",
+      "other": "Diger"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Takim buyuklugu",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Sadece ben",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,585 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Bizi nasil buldunuz?",
+      "subtitle": "Coasty'yi nereden duydugunu bilmek isteriz"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Arkadas / Is Arkadasi",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Diger"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Ilk olarak neyi otomatiklestireceksiniz?",
+      "subtitle": "Gecerli olan tumu secin — daha sonra her seyi kesfedebilirsiniz"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Web Scraping ve Arastirma",
+      "browser_automation": "Tarayici Otomasyonu",
+      "data_entry": "Veri Girisi ve Formlar",
+      "email_outreach": "E-posta ve Erisim",
+      "testing": "QA ve Test",
+      "ecommerce": "E-ticaret Gorevleri",
+      "social_media": "Sosyal Medya Yonetimi",
+      "general_automation": "Genel Otomasyon"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Ihtiyaciniz olan her sey,",
+      "titleHighlight": "yerlesik.",
+      "subtitle": "Coasty sizin icin neler yapabilir",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Kod Yok",
+        "description": "Istediginizi duz Turkce olarak tanimlayin"
       },
       "agentSwarms": {
-        "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "title": "Ajan Suruleri",
+        "description": "Paralel ajan filolari"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Masaustu Kontrolu",
+        "description": "Tiklar, yazar, gezinir"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Tarayici Otomasyonu",
+        "description": "Formlar, sekmeler, scraping — tamamen otomatik"
       },
       "computerVision": {
-        "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "title": "Bilgisayar Gorusu",
+        "description": "Ekraninizi gercek zamanli gorur ve anlar"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Is Akislari",
+        "description": "Cok adimli akislar"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Cihaz Uzerinde",
+        "description": "Yerel olarak calisir"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "7/24 Otonom",
+        "description": "Ayarla ve unut — siz uyurken calisir"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Yeni misiniz? Sizin icin bir rehberimiz var",
+      "subtitle": "Ilk AI ajaninizi bir dakikadan kisa surede devreye alin"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "AI calisaniniz ne yapmali?",
+    "placeholderAlt": "AI'niza bilgisayarda ne yapacagini soyleyin...",
+    "vmError": {
+      "title": "Sanal Makine Hatasi",
+      "description": "Sanal makine hata durumunda veya siliniyor.",
+      "hint": "Lutfen sorunu cozmek icin Makineler sekmesini kontrol edin veya yalnizca web aramasi kullanmak icin \"Bilgisayar Secilmedi\" secenegini secin.",
+      "gotIt": "Anladim"
+    },
+    "status": {
+      "creating": "{name} olusturuluyor...",
+      "initiating": "{name} uzerinde ajan baslatiliyor...",
+      "stopping": "{name} durduruluyor...",
+      "preparing": "{name} hazirlaniyor..."
+    },
+    "swarm": {
+      "title": "Suru Modu",
+      "pro": "PRO",
+      "upgradeLabel": "Suru modu — acmak icin yukseltin",
+      "feature1": "Gecici makineler arasinda paralel yurutme",
+      "feature2": "Her makine otonom calisir",
+      "feature3": "Suru basina planinizin makine limitinin 3 kati",
+      "description": "Tek bir istemi makine limitinizin 3 kati uzerinde paralel calistirin — her biri gorevi bagimsiz olarak ustlenir.",
+      "enableLabel": "Suru modunu etkinlestir",
+      "disableLabel": "Suru modunu devre disi birak",
+      "onTooltip": "Suru modu ACIK — isteminiz birden fazla makinede paralel calisacak",
+      "offTooltip": "Isteminizi birden fazla makinede ayni anda calistirmak icin suru modunu etkinlestirin",
+      "decreaseMachines": "Makine sayisini azalt",
+      "increaseMachines": "Makine sayisini artir",
+      "machineLimit": "Planinizda en fazla {max} suru makinesi. Daha fazla mi lazim? founders@coasty.ai ile iletisime gecin"
+    },
+    "desktop": {
+      "connectLabel": "Masaustune baglan",
+      "screenLabel": "{name} ekrani",
+      "screenDefault": "Masaustu",
+      "watchTooltip": "Ajaninizin ayri bir ekranda calismasini izleyin. Sadece hicbir seye dokunmayin, yoksa sahne korkusu yasar!"
+    },
+    "buttons": {
+      "stop": "Dur",
+      "sendToSwarm": "Suruye gonder",
+      "taskRunning": "Baska bir gorev calisiyor — durdurmak ve kendinizinkini calistirmak icin tiklayin",
+      "selectComputer": "Mesaj gondermek icin bir bilgisayar secin",
+      "waitCreating": "Lutfen VM'nin olusturulmasini bekleyin",
+      "waitStarting": "Lutfen VM'nin baslamasini bekleyin",
+      "waitAgent": "Lutfen ajanin baslatilmasini bekleyin",
+      "vmStopping": "VM durduruluyor",
+      "send": "Gonder",
+      "switching": "Degistiriliyor...",
+      "overrideRun": "Gecer Yaz ve Calistir",
+      "stopLabel": "Calisan gorevi durdur ve bunu baslat",
+      "sendLabel": "Mesaj gonder"
+    },
+    "search": "Ara",
+    "upload": {
+      "label": "VM'ye dosya yukle",
+      "heading": "VM'ye dosya yukle",
+      "description": "Dosyalar Masaustune kaydedilecek",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Dosyalari buraya birakin",
+      "dropDescription": "Dosyalar VM'nin Masaustu klasorune yuklenecek",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Daha fazla ozellik icin ucretsiz giris yapin",
+      "description": "Projeler olusturun, takim uyelerini davet edin ve daha fazlasi.",
+      "connecting": "Baglaniyor...",
+      "continueWithGoogle": "Google ile devam et"
+    },
+    "removeFile": "Dosyayi kaldir"
+  },
+  "chat": {
+    "greeting": "Merhaba",
+    "greetingAuth": "Bilgisayar islerini ben hallederim. Gorev nedir?",
+    "greetingUnauth": "Bilgisayari sizin yerinize kullanan AI. Sadece ne yapilmasini istediginizi soyleyin.",
+    "guide": "Rehber",
+    "saveLogins": "Otomatik doldurma icin girisleri kaydet",
+    "encryptedNote": "sifrelenmis, AI tarafindan asla gorulmez",
+    "roleLabels": ["Is Arkadasi", "Calisan", "Arkadas", "Asistan", "Ortak", "Takim Arkadasi", "Isbirligi Yapan", "Yardimci"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Rakip raporu al",
+        "warmLeads": "20 sicak potansiyel musteri olustur",
+        "pitchDeck": "Sunum taslagi olustur"
+      },
+      "developer": {
+        "findBugs": "Sitemdeki hatalari bul",
+        "performance": "Performans raporu al",
+        "apiDocs": "API dokumantasyonunu cikar"
+      },
+      "marketer": {
+        "seoGap": "SEO bosluk analizi al",
+        "competitorAds": "Rakip reklamlarini izle",
+        "trendingContent": "Trend icerik fikirleri al"
+      },
+      "product_manager": {
+        "reviewSummary": "Degerlendirme ozeti al",
+        "featureComparison": "Ozellik karsilastirmasi olustur",
+        "competitorLaunches": "Rakip lansmanlrini takip et"
+      },
+      "data_analyst": {
+        "exportCsv": "Site verilerini CSV'ye aktar",
+        "marketSizing": "Pazar boyutlandirma raporu al",
+        "benchmark": "Sektore karsi kiyasla"
+      },
+      "operations": {
+        "enterRecords": "Sistemimize kayit gir",
+        "cheapestVendor": "En ucuz tedarikciyi bul",
+        "invoiceSummary": "Fatura ozeti al"
+      },
+      "designer": {
+        "designComparison": "Tasarim karsilastirmasi al",
+        "responsiveAudit": "Responsive denetim yap",
+        "inspiration": "Tasarim ilhami topla"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Site verilerini CSV'ye aktar",
+      "browser_automation": "Kontrol paneli raporlarini disari aktar",
+      "data_entry": "Uygulamamiza kayit gir",
+      "email_outreach": "Kisisellestirilmis erisim gonder",
+      "testing": "Tam QA raporu al",
+      "ecommerce": "Fiyat karsilastirmasi al",
+      "social_media": "Paylas ve etkilesim al",
+      "general_automation": "Sitemde bir gorev calistir"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Metni kopyala",
+    "copied": "Kopyalandi!",
+    "regenerate": "Yeniden olustur",
+    "feedback": {
+      "title": "Geri Bildirim",
+      "prompts": ["Bunu degerlendir", "Geri bildirim", "Nasil yaptik?", "Dusunceleriniz?", "Geri bildirim paylas"],
+      "tooltip": "Geri bildiriminizi paylasin"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Akilli Arama",
+      "description": "Web genelinde AI destekli arama"
+    },
+    "collaborate": {
+      "title": "Is Birligi",
+      "description": "Gercek zamanli birlikte calisin"
+    },
+    "globalAccess": {
+      "title": "Kuresel Erisim",
+      "description": "50'den fazla dilde arama yapin"
+    },
+    "aiModels": {
+      "title": "AI Modelleri",
+      "description": "Birden fazla AI saglayici"
+    },
+    "freeForever": {
+      "title": "Sonsuza Kadar Ucretsiz",
+      "description": "Gizli maliyet yok"
+    },
+    "privateSecure": {
+      "title": "Ozel ve Guvenli",
+      "description": "Verileriniz sizin kalir"
+    }
+  },
+  "sidebar": {
+    "newTask": "Yeni Gorev",
+    "newTaskDescription": "Yeni bir AI otomasyonu baslat",
+    "activity": "Aktivite",
+    "taskHistory": "Gorev Gecmisi",
+    "taskHistoryDescription": "Gecmis gorevleri inceleyin ve kaldiginiz yerden devam edin",
+    "taskHistoryPopup": {
+      "title": "Son gorevleriniz",
+      "description": "Gecmis konusmalari gozatin ve devam edin. Her gorev kaydedilir, boylece kaldiginiz yerden devam edebilirsiniz."
+    },
+    "swarmRuns": "Suru Calismalari",
+    "swarmRunsDescription": "Coklu ajan paralel is akislarini izle",
+    "swarmRunsPopup": {
+      "title": "Coklu ajan is akislari",
+      "description": "Gorevleri birden fazla makinede paralel calistirin. Her ajan bagimsiz calisir ve sonuclar otomatik olarak birlesir."
+    },
+    "guide": "Rehber",
+    "guideDescription": "Coasty'den en iyi sekilde nasil yararlanacaginizi ogrenin",
+    "guidePopup": {
+      "title": "Baslarken",
+      "description": "Etkili otomasyon icin adim adim kilavuzlar ve en iyi uygulamalar."
+    },
+    "infrastructure": "Altyapi",
+    "computer": "Bilgisayar",
+    "computers": "Bilgisayarlar",
+    "active": "aktif",
+    "view": "Goruntule",
+    "workforce": "Is Gucu",
+    "workforceDescription": "Otomatik ajanlari ve tetikleyicileri zamanla",
+    "workforcePopup": {
+      "title": "Zamanlanmis otomasyon",
+      "description": "Cron zamanlama ve ajandan ajana tetikleyicilerle tekrarlayan gorevler kurun. Is gucunuz siz uyurken calisir."
+    },
+    "credentials": "Kimlik Bilgileri",
+    "credentialsDescription": "Ajan erisimi icin girisleri guvenle saklayin",
+    "credentialsPopup": {
+      "title": "Guvenli kimlik bilgisi kasasi",
+      "description": "Sifreleme ile girisleri ve API anahtarlarini saklayin. Ajanlar ham degerleri ifsa etmeden kimlik bilgilerini otomatik doldurur."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Masaustu Uygulamasini Edin",
+      "download": "Indir",
+      "downloadDesktopApp": "Masaustu Uygulamasini Indir",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Bilgisayarinizi uzaktan kontrol edin",
+      "controlDescription": "Masaustu uygulamasini kurun ve bu kontrol panelinden bilgisayarinizda gorevleri calistirin — her yerden, her zaman."
+    },
+    "credits": {
+      "runningLow": "Krediler — Azaliyor",
+      "remaining": "Kalan krediler",
+      "buy": "Satin Al",
+      "creditsLeft": "kredi kaldi",
+      "usedLabel": "Kullanilan: {count}",
+      "consumed": "{percent}% tuketildi",
+      "usageThisWeek": "Bu haftaki kullanim"
+    },
+    "talkToUs": "Bizimle konusun",
+    "inviteEarn": "Davet Et ve Kazan",
+    "user": "Kullanici",
+    "account": "Hesap",
+    "tasks": "{count} Gorev",
+    "recentActivity": "Son aktivite",
+    "viewAllHistory": "Tum gecmisi goruntule →",
+    "swarmRunsCount": "{count} Suru Calismasi",
+    "running": "calisiyor",
+    "completed": "tamamlandi",
+    "viewAllSwarms": "Tum suruleri goruntule →",
+    "schedulesCount": "{count} Zamanlama",
+    "totalRuns": "{count} toplam calistirma",
+    "paused": "duraklatildi",
+    "viewAllSchedules": "Tum zamanlamalari goruntule →",
+    "credentialsCount": "{count} Kimlik Bilgisi",
+    "encryptedVault": "Sifrelenmis kasa",
+    "manageCredentials": "Kimlik bilgilerini yonet →",
+    "days": ["Pzt", "Sal", "Car", "Per", "Cum", "Cmt", "Paz"],
+    "resume": "DEVAM",
+    "result": "SONUC",
+    "notScheduled": "Zamanlanmamis",
+    "overdue": "Gecikti",
+    "lessThanMin": "< 1 dk",
+    "inMinutes": "{count}dk icinde",
+    "inHours": "{count}sa icinde",
+    "today": "bugun",
+    "yesterday": "dun"
+  },
+  "appHeader": {
+    "login": "Giris",
+    "assign": "Ata",
+    "assignDescription": "Bu gorevi calistirmak icin bir calisan ata",
+    "computer": "Bilgisayar",
+    "showComputer": "Bilgisayari Goster",
+    "hideComputer": "Bilgisayari Gizle",
+    "employeeHired": "Calisan ise alindi!",
+    "employeeRemoved": "Calisan cikarildi"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Hafif gunluk otomasyon"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Her gun gorevleri otomatiklestir"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Karmasik is akislarini olcekle",
+        "badge": "En Populer"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Sinirsiz agir otomasyon"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (etkinsizlik sonrasi silindi)",
+      "vmAlwaysOn": "{count} her zaman acik VM",
+      "vmAlwaysOnPlural": "{count} her zaman acik VM",
+      "agentsParallel": "{count} paralel ajan",
+      "basicSearch": "Temel arama",
+      "advancedSearch": "Gelismis arama ve cikarim",
+      "standardSupport": "Standart destek (gercek insanlar)",
+      "prioritySupport": "Oncelikli destek, 24 saat yanitlama",
+      "premiumSupport": "Premium destek, 12 saat yanitlama"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Kucuk Paket",
+        "description": "Hizli yukleme"
+      },
+      "medium": {
+        "name": "Orta Paket",
+        "description": "Standart yenileme",
+        "savings": "%8 tasarruf"
+      },
+      "large": {
+        "name": "Buyuk Paket",
+        "description": "Toplu satin alma",
+        "savings": "%17 tasarruf"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Az once",
+      "minutesAgo": "{count}dk once",
+      "hoursAgo": "{count}sa once",
+      "daysAgo": "{count}g once"
+    },
+    "noActivity": "Bu donemde aktivite yok",
+    "stats": {
+      "balance": "Bakiye",
+      "earned": "Kazanilan",
+      "used": "Kullanilan",
+      "credits": "kredi",
+      "allTime": "tum zamanlar",
+      "lastRange": "son {range}",
+      "sessions": "{count} oturum",
+      "avgDaily": "~{count}/gun ort.",
+      "plan": "Plan",
+      "free": "Ucretsiz",
+      "noPlan": "Plan yok",
+      "canceling": "Iptal ediliyor"
+    },
+    "monthlyUsage": "Aylik Kredi Kullanimi",
+    "remaining": "{used} / {total} kalan",
+    "usedPercent": "Bu donemde {percent}% kullanildi",
+    "renews": "{date} tarihinde yenilenir",
+    "choosePlan": "Planinizi Secin",
+    "choosePlanDescription": "AI ozelliklerini acmak ve aylik kredi almak icin abone olun",
+    "savingsVsHuman": "Insana karsi {amount}/ay tasarruf edin",
+    "timeSaved": "Aylik {time} tasarruf",
+    "cheaper": "{multiplier} daha ucuz",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/ay",
+    "creditsPerMonth": "{count} kredi /ay",
+    "processing": "Isleniyor...",
+    "subscribeTo": "{name} planina abone ol",
+    "transactionTypes": {
+      "credit_purchase": "Kredi Satin Alma",
+      "agent_usage": "Ajan Kullanimi",
+      "refund": "Iade",
+      "bonus": "Bonus Odul",
+      "subscription": "Abonelik",
+      "subscription_grant": "Abonelik Hibesi",
+      "renewal": "Yenileme Kredileri",
+      "reactivation": "Yeniden Aktivasyon"
+    },
+    "toasts": {
+      "paymentSuccess": "Odeme basarili! Kredileriniz eklendi.",
+      "subscriptionActivated": "Abonelik basariyla etkinlestirildi!",
+      "paymentCanceled": "Odeme iptal edildi. Hicbir ucret alinmadi.",
+      "signInToSubscribe": "Abone olmak icin lutfen giris yapin",
+      "subscriptionCheckoutFailed": "Abonelik odemesi baslatiliamadi. Lutfen tekrar deneyin.",
+      "signInToPurchase": "Kredi satin almak icin lutfen giris yapin",
+      "needSubscription": "Ek kredi satin almak icin aktif bir aboneliginiz olmasi gerekir",
+      "checkoutFailed": "Odeme baslatiliamadi. Lutfen tekrar deneyin.",
+      "manageFailed": "Abonelik yonetimi acilamadi. Lutfen tekrar deneyin.",
+      "transactionsExported": "Islemler disari aktarildi"
+    }
+  },
+  "apiKeys": {
+    "title": "Model Saglayicilari",
+    "new": "yeni",
+    "description": "Modellere erismek icin kendi API anahtarlarinizi ekleyin.",
+    "securityNote": "Anahtarlariniz uctan uca sifreleme ile guvenli sekilde saklanir.",
+    "apiKeyLabel": "{provider} API Key",
+    "getApiKey": "API key al",
+    "delete": "Sil",
+    "save": "Kaydet",
+    "deleteDialog": {
+      "title": "API Key Sil",
+      "description": "{provider} API anahtarinizi silmek istediginizden emin misiniz? Bu islem geri alinamaz ve {provider} modellerine erisinizi kaybedersiniz.",
+      "cancel": "Iptal",
+      "confirm": "Sil"
+    },
+    "toasts": {
+      "saved": "API key kaydedildi",
+      "savedDescription": "{provider} API anahtariniz kaydedildi ve modeller favorilerinize eklendi.",
+      "updatedDescription": "{provider} API anahtariniz guncellendi.",
+      "saveFailed": "API key kaydedilemedi",
+      "saveFailedDescription": "{provider} API anahtari kaydedilemedi. Lutfen tekrar deneyin.",
+      "deleted": "API key silindi",
+      "deletedDescription": "{provider} API anahtariniz silindi.",
+      "deleteFailed": "API key silinemedi",
+      "deleteFailedDescription": "{provider} API anahtari silinemedi. Lutfen tekrar deneyin."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Profil Detaylari",
+    "displayName": "Gorunen Ad",
+    "namePlaceholder": "Adiniz",
+    "company": "Sirket",
+    "companyPlaceholder": "Sirketiniz",
+    "website": "Web Sitesi",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Kaydediliyor...",
+    "saveChanges": "Degisiklikleri kaydet",
+    "account": "Hesap",
+    "email": "E-posta",
+    "verified": "Dogrulandi",
+    "signOut": "Cikis yap",
+    "signOutDescription": "Bu cihazdan cikis yap",
+    "toasts": {
+      "profileUpdated": "Profil guncellendi",
+      "profileUpdateFailed": "Profil guncellenemedi",
+      "signOutFailed": "Cikis yapilamadi"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Verileriniz koruma altinda",
+    "dataProtectedDescription": "Aktarim ve depolama sirasinda sifreleme ile kurumsal duzeyde guvenlik",
+    "features": {
+      "encryption": {
+        "title": "Uctan Uca Sifreleme",
+        "description": "API anahtarlari AES-256-GCM ile sifrelenmistir. Kimlik bilgileriniz asla duz metin olarak saklanmaz."
+      },
+      "rls": {
+        "title": "Satir Duzeyi Guvenlik",
+        "description": "Veritabani duzeyi izolasyon, verilerinizin yalnizca sizin tarafinizdan erisilebilmesini saglar. Calisanlar arasi erisim mumkun degildir."
+      },
+      "privacy": {
+        "title": "Tasarimla Gizlilik",
+        "description": "Hizmeti sunmak icin gerekli minimum veriyi topluriz. Konusmalariniz ve dosyalariniz sizin kalir."
+      },
+      "session": {
+        "title": "Oturum Guvenligi",
+        "description": "CSRF korumasi, guvenli HTTP-only cerezler ve her istekte Content Security Policy basiklari."
+      }
+    },
+    "legal": "Yasal",
+    "privacyPolicy": {
+      "title": "Gizlilik Politikasi",
+      "description": "Verilerinizi nasil topladigimiz, kullandigimiz ve korudigumuz"
+    },
+    "termsOfService": {
+      "title": "Hizmet Sartlari",
+      "description": "Kullanim sartlarimiz ve kosullarimiz"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Duzlem"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Ozet",
+      "highlight": "Ozetle"
+    },
+    "code": {
+      "label": "Kod",
+      "highlight": "Olustur"
+    },
+    "research": {
+      "label": "Arastirma",
+      "highlight": "Analiz Et"
+    },
+    "create": {
+      "label": "Olustur",
+      "highlight": "Uret"
+    },
+    "solve": {
+      "label": "Coz",
+      "highlight": "Hata Ayikla"
+    },
+    "learn": {
+      "label": "Ogren",
+      "highlight": "Acikla"
+    }
+  },
+  "loadingMessages": [
+    "Silikon beyin baslatiliyor",
+    "Dijital bilinc uyandiiriliyor",
+    "Noron yollari hazirlaniyor",
+    "Kuantum cekirdekleri dondruluyor",
+    "Flux kapasitor sarj ediliyor",
+    "Ana bilgisayar aktive ediliyor",
+    "Hesaplama matrisi guc veriliyor",
+    "Warp motoru devreye aliniyor",
+    "Silikon ruhlar cagriliyor",
+    "Elektron motoru atescleniyor",
+    "Transistorler isitiliyor",
+    "Bit ve baytlar birlestiriliyor",
+    "Dijital sinapslar kalibre ediliyor",
+    "CPU kristalleri enerji yukleniyor",
+    "Bilinc protokolleri yukleniyor",
+    "Sistem kaynaklari baslatiliyor",
+    "Hesaplama ortami hazirlaniyor",
+    "Guvenli baglanti kuruluyor",
+    "Sanal kaynaklar saglaaniyor",
+    "Sistem parametreleri yapilandiriliyor",
+    "Sanal ornek baslatiliyor",
+    "Uzak masaustu aktive ediliyor",
+    "Bulut kaynaklari dagitiliyor",
+    "Sistem baslama dizisi baslatiliyor",
+    "Yurutme ortami hazirlaniyor",
+    "Uykucu bilgisayar uyandiiriliyor",
+    "Dijital ayiya durtuklenliyor",
+    "Biraz hesaplama kahvesi demleniyor",
+    "Dijital kaslar gerriliyor",
+    "Dijital gozler aciliyor",
+    "Baslatiliyor",
+    "Guc veriliyor",
+    "Cevrimici olunuyor",
+    "Sistem yukleniyor",
+    "Hazirlaniyor",
+    "Neredeyse tamam",
+    "Calisma alani hazirlaniyor",
+    "Kaynaklar yukleniyor",
+    "Sistem yukseliyor"
+  ]
 }

@@ -423,145 +423,145 @@
     "label": "Limba"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Tu stabilesti obiectivul.",
+    "brandSubheading": "Noi ne ocupam de restul.",
+    "mobileHeading": "Tu stabilesti obiectivul. Noi ne ocupam de restul.",
+    "mobileSubheading": "Agenti AI care navigheaza, dau click si lucreaza ca un coleg real.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Descrii sarcina",
+        "sub": "\"Cerceteaza primii 5 competitori ai nostri\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Agentul preia controlul",
+        "sub": "Navigheaza, da click, tasteaza autonom"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Munca livrata",
+        "sub": "Tabel cu 5 profiluri complete ale competitorilor"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Finalizat",
+    "doneIn": "Gata in 8 minute",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Operatorul tau este pregatit",
+      "signUp": "Pune-ti fluxurile de lucru pe autopilot",
+      "magicLink": "Sari peste parola",
+      "forgotPassword": "Sa te readucem inapoi"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Continua exact de unde ai ramas — agentii tai isi amintesc",
+      "signUp": "Lanseaza primul tau agent AI in mai putin de un minut",
+      "magicLink": "Un click din inbox si esti conectat",
+      "forgotPassword": "Iti vom trimite un link de resetare pe e-mail"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Se conecteaza...",
+      "continueWithGoogle": "Continua cu Google"
     },
-    "or": "or",
-    "email": "Email",
+    "or": "sau",
+    "email": "E-mail",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "Parola",
+    "passwordPlaceholder": "Parola ta",
+    "confirmPassword": "Confirma parola",
+    "confirmPasswordPlaceholder": "Confirma parola ta",
+    "minChars": "Min. 6 caractere",
+    "signingIn": "Se conecteaza...",
+    "signIn": "Autentificare",
+    "creatingAccount": "Se creeaza contul...",
+    "createAccount": "Creeaza cont",
+    "sending": "Se trimite...",
+    "sendMagicLink": "Trimite link magic",
+    "sendResetLink": "Trimite link de resetare",
+    "forgotPassword": "Ai uitat parola?",
+    "useMagicLink": "Foloseste link magic",
+    "dontHaveAccount": "Nu ai cont?",
+    "signUp": "Inregistreaza-te",
+    "alreadyHaveAccount": "Ai deja un cont?",
+    "backToSignIn": "Inapoi la autentificare",
+    "termsAgreement": "Continuand, esti de acord cu",
+    "terms": "Termenii",
+    "and": "si",
+    "privacyPolicy": "Politica de confidentialitate",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Te rugam sa completezi toate campurile",
+      "passwordMinLength": "Parola trebuie sa aiba cel putin 6 caractere",
+      "passwordsDoNotMatch": "Parolele nu se potrivesc",
+      "supabaseNotConfigured": "Supabase nu este configurat",
+      "unexpectedError": "A aparut o eroare neasteptata. Te rugam sa incerci din nou.",
+      "confirmEmail": "Te rugam sa confirmi e-mailul inainte de autentificare. Verifica inbox-ul.",
+      "invalidCredentials": "E-mail sau parola invalida.",
+      "signInFailed": "Autentificarea a esuat. Te rugam sa incerci din nou.",
+      "invalidEmail": "Adresa de e-mail invalida.",
+      "emailAlreadyExists": "Un cont cu acest e-mail exista deja. Incearca sa te autentifici.",
+      "signUpFailed": "Inregistrarea a esuat. Te rugam sa incerci din nou.",
+      "enterEmail": "Te rugam sa introduci e-mailul",
+      "noAccountFound": "Nu s-a gasit niciun cont cu acest e-mail. Te rugam sa te inregistrezi mai intai.",
+      "magicLinkFailed": "Nu s-a putut trimite link-ul magic. Te rugam sa incerci din nou.",
+      "resetFailed": "Nu s-a putut trimite e-mailul de resetare. Te rugam sa incerci din nou.",
+      "updateFailed": "Nu s-a putut actualiza parola. Te rugam sa incerci din nou."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Verifica e-mailul pentru a confirma contul inainte de autentificare.",
+      "checkEmailMagicLink": "Verifica e-mailul pentru link-ul magic de autentificare.",
+      "checkEmailReset": "Verifica e-mailul pentru link-ul de resetare a parolei.",
+      "passwordUpdated": "Parola actualizata cu succes. Redirectionare catre autentificare..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Reseteaza-ti parola",
+      "subtitle": "Introdu noua parola mai jos.",
+      "newPassword": "Parola noua",
+      "confirmNewPassword": "Confirma parola noua",
+      "confirmPlaceholder": "Confirma noua ta parola",
+      "updating": "Se actualizeaza...",
+      "updatePassword": "Actualizeaza parola"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Eroare de autentificare",
+      "defaultMessage": "A aparut o eroare in timpul autentificarii.",
+      "tryAgain": "Incearca din nou",
+      "backToChat": "Inapoi la chat",
+      "needHelp": "Ai nevoie de ajutor?",
+      "contactSupport": "Contacteaza suportul"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Sari peste deocamdata",
+    "back": "Inapoi",
+    "continue": "Continua",
+    "getStarted": "Incepe",
+    "settingUp": "Se configureaza...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Bine ai revenit{name}!",
+      "titleNew": "Bine ai venit la Coasty",
+      "descriptionReturning": "Am dori sa aflam putin mai multe despre tine pentru a imbunatati experienta ta",
+      "descriptionNew": "Sa iti configuram contul pentru a personaliza experienta ta"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
+    "nameLabel": "Cum sa iti spunem?",
+    "namePlaceholder": "Numele tau",
+    "companyLabel": "Companie",
     "optional": "(optional)",
     "companyPlaceholder": "MacroHard",
     "websiteLabel": "Website",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Ce te descrie cel mai bine?",
+      "subtitle": "Selecteaza tot ce se aplica — ne ajuta sa iti personalizam experienta"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
+      "founder": "Fondator / CEO",
+      "developer": "Dezvoltator",
       "marketer": "Marketer",
       "designer": "Designer",
-      "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "product_manager": "Manager de produs",
+      "data_analyst": "Date / Analitica",
+      "operations": "Operatiuni",
+      "other": "Altele"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Dimensiunea echipei",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Doar eu",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,608 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Cum ne-ai gasit?",
+      "subtitle": "Am vrea sa stim de unde ai auzit despre Coasty"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Prieten / Coleg",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Altele"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Ce vei automatiza mai intai?",
+      "subtitle": "Selecteaza tot ce se aplica — poti explora totul mai tarziu"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Web Scraping si cercetare",
+      "browser_automation": "Automatizare browser",
+      "data_entry": "Introducere date si formulare",
+      "email_outreach": "E-mail si outreach",
+      "testing": "QA si testare",
+      "ecommerce": "Sarcini E-commerce",
+      "social_media": "Gestionare retele sociale",
+      "general_automation": "Automatizare generala"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Tot ce ai nevoie,",
+      "titleHighlight": "integrat.",
+      "subtitle": "Iata ce poate face Coasty pentru tine",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Fara cod",
+        "description": "Descrie pur si simplu ce vrei in limba romana"
       },
       "agentSwarms": {
-        "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "title": "Roiuri de agenti",
+        "description": "Flote de agenti in paralel"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Control desktop",
+        "description": "Da click, tasteaza, navigheaza"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Automatizare browser",
+        "description": "Formulare, tab-uri, scraping — complet automatizat"
       },
       "computerVision": {
-        "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "title": "Viziune computerizata",
+        "description": "Vede si intelege ecranul tau in timp real"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Fluxuri de lucru",
+        "description": "Fluxuri in mai multi pasi"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Pe dispozitiv",
+        "description": "Ruleaza local"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "24/7 Autonom",
+        "description": "Seteaza si uita — ruleaza in timp ce dormi"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Esti nou aici? Avem un ghid pentru tine",
+      "subtitle": "Lanseaza primul tau agent AI in mai putin de un minut"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Ce ar trebui sa faca lucratorul tau AI?",
+    "placeholderAlt": "Spune-i AI-ului tau ce sa faca pe computer...",
+    "vmError": {
+      "title": "Eroare masina virtuala",
+      "description": "Masina virtuala este intr-o stare de eroare sau este stearsa.",
+      "hint": "Te rugam sa verifici tab-ul Masini pentru a rezolva problema, sau selecteaza \"Niciun computer selectat\" pentru a folosi doar cautarea web.",
+      "gotIt": "Am inteles"
+    },
+    "status": {
+      "creating": "Se creeaza {name}...",
+      "initiating": "Se initiaza agentul pe {name}...",
+      "stopping": "Se opreste {name}...",
+      "preparing": "Se pregateste {name}..."
+    },
+    "swarm": {
+      "title": "Mod roi",
+      "pro": "PRO",
+      "upgradeLabel": "Mod roi — upgradeaza pentru deblocare",
+      "feature1": "Executie paralela pe masini temporare",
+      "feature2": "Fiecare masina ruleaza autonom",
+      "feature3": "3x limita de masini a planului tau per roi",
+      "description": "Ruleaza un prompt pe 3x limita de masini in paralel — fiecare abordeaza sarcina independent.",
+      "enableLabel": "Activeaza modul roi",
+      "disableLabel": "Dezactiveaza modul roi",
+      "onTooltip": "Modul roi ACTIVAT — prompt-ul tau va rula pe mai multe masini in paralel",
+      "offTooltip": "Activeaza modul roi pentru a rula prompt-ul pe mai multe masini simultan",
+      "decreaseMachines": "Scade numarul de masini",
+      "increaseMachines": "Creste numarul de masini",
+      "machineLimit": "Pana la {max} masini roi pe planul tau. Ai nevoie de mai multe? Contacteaza founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Conecteaza-te la desktop",
+      "screenLabel": "Ecranul lui {name}",
+      "screenDefault": "Desktop",
+      "watchTooltip": "Urmareste-ti agentul lucrand pe un ecran separat. Doar nu atinge nimic, ca ii face trac!"
+    },
+    "buttons": {
+      "stop": "Stop",
+      "sendToSwarm": "Trimite la roi",
+      "taskRunning": "Alta sarcina ruleaza — da click pentru a o opri si a rula a ta",
+      "selectComputer": "Selecteaza un computer pentru a trimite mesaje",
+      "waitCreating": "Te rugam sa astepti crearea VM-ului",
+      "waitStarting": "Te rugam sa astepti pornirea VM-ului",
+      "waitAgent": "Te rugam sa astepti initializarea agentului",
+      "vmStopping": "VM-ul se opreste",
+      "send": "Trimite",
+      "switching": "Se comuta...",
+      "overrideRun": "Suprascrie si ruleaza",
+      "stopLabel": "Opreste sarcina curenta si porneste aceasta",
+      "sendLabel": "Trimite mesaj"
+    },
+    "search": "Cauta",
+    "upload": {
+      "label": "Incarca fisiere pe VM",
+      "heading": "Incarca fisiere pe VM",
+      "description": "Fisierele vor fi salvate pe Desktop",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Trage fisierele aici",
+      "dropDescription": "Fisierele vor fi incarcate in folderul Desktop al VM-ului",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Autentifica-te pentru a incerca mai multe functii gratuit",
+      "description": "Creeaza proiecte, invita membrii echipei si multe altele.",
+      "connecting": "Se conecteaza...",
+      "continueWithGoogle": "Continua cu Google"
+    },
+    "removeFile": "Sterge fisier"
+  },
+  "chat": {
+    "greeting": "Salut",
+    "greetingAuth": "Ma ocup de munca pe computer. Care e sarcina?",
+    "greetingUnauth": "AI care lucreaza pe computer in locul tau. Spune-i doar ce ai nevoie.",
+    "guide": "Ghid",
+    "saveLogins": "Salveaza login-urile pentru completare automata",
+    "encryptedNote": "criptat, nevazut de AI",
+    "roleLabels": [
+      "Coleg",
+      "Angajat",
+      "Prieten",
+      "Asistent",
+      "Partener",
+      "Coechipier",
+      "Colaborator",
+      "Ajutor"
+    ],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Obtine un raport al competitorilor",
+        "warmLeads": "Genereaza 20 de lead-uri calde",
+        "pitchDeck": "Construieste un draft de pitch deck"
+      },
+      "developer": {
+        "findBugs": "Gaseste bug-uri pe site-ul meu",
+        "performance": "Obtine un raport de performanta",
+        "apiDocs": "Extrage documentatia API"
+      },
+      "marketer": {
+        "seoGap": "Obtine o analiza SEO a lacunelor",
+        "competitorAds": "Spionare reclame competitori",
+        "trendingContent": "Obtine idei de continut trending"
+      },
+      "product_manager": {
+        "reviewSummary": "Obtine un rezumat al recenziilor",
+        "featureComparison": "Construieste o comparatie de functionalitati",
+        "competitorLaunches": "Urmareste lansarile competitorilor"
+      },
+      "data_analyst": {
+        "exportCsv": "Exporta datele site-ului in CSV",
+        "marketSizing": "Obtine un raport de dimensionare a pietei",
+        "benchmark": "Compara cu industria"
+      },
+      "operations": {
+        "enterRecords": "Introduce inregistrari in sistemul nostru",
+        "cheapestVendor": "Gaseste cel mai ieftin furnizor",
+        "invoiceSummary": "Obtine un rezumat al facturilor"
+      },
+      "designer": {
+        "designComparison": "Obtine o comparatie de design",
+        "responsiveAudit": "Ruleaza un audit responsive",
+        "inspiration": "Colecteaza inspiratie de design"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Exporta datele site-ului in CSV",
+      "browser_automation": "Exporta rapoartele din dashboard",
+      "data_entry": "Introduce inregistrari in aplicatia noastra",
+      "email_outreach": "Trimite outreach personalizat",
+      "testing": "Obtine un raport QA complet",
+      "ecommerce": "Obtine o comparatie de preturi",
+      "social_media": "Posteaza si obtine engagement",
+      "general_automation": "Ruleaza o sarcina pe site-ul meu"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Copiaza text",
+    "copied": "Copiat!",
+    "regenerate": "Regenereaza",
+    "feedback": {
+      "title": "Feedback",
+      "prompts": [
+        "Evalueaza",
+        "Feedback",
+        "Cum ne-am descurcat?",
+        "Pareri?",
+        "Trimite feedback"
+      ],
+      "tooltip": "Trimite feedback-ul tau"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Cautare inteligenta",
+      "description": "Cautare alimentata de AI pe tot web-ul"
+    },
+    "collaborate": {
+      "title": "Colaboreaza",
+      "description": "Lucreaza impreuna in timp real"
+    },
+    "globalAccess": {
+      "title": "Acces global",
+      "description": "Cauta in 50+ limbi"
+    },
+    "aiModels": {
+      "title": "Modele AI",
+      "description": "Mai multi furnizori AI"
+    },
+    "freeForever": {
+      "title": "Gratuit pentru totdeauna",
+      "description": "Fara costuri ascunse"
+    },
+    "privateSecure": {
+      "title": "Privat si sigur",
+      "description": "Datele tale raman ale tale"
+    }
+  },
+  "sidebar": {
+    "newTask": "Sarcina noua",
+    "newTaskDescription": "Porneste o noua automatizare AI",
+    "activity": "Activitate",
+    "taskHistory": "Istoricul sarcinilor",
+    "taskHistoryDescription": "Revizuieste sarcinile trecute si continua de unde ai ramas",
+    "taskHistoryPopup": {
+      "title": "Sarcinile tale recente",
+      "description": "Navigheaza si continua conversatiile anterioare. Fiecare sarcina este salvata pentru a relua exact de unde ai ramas."
+    },
+    "swarmRuns": "Rulari roi",
+    "swarmRunsDescription": "Monitorizeaza fluxurile de lucru paralele multi-agent",
+    "swarmRunsPopup": {
+      "title": "Fluxuri de lucru multi-agent",
+      "description": "Ruleaza sarcini pe mai multe masini in paralel. Fiecare agent lucreaza independent si rezultatele converg automat."
+    },
+    "guide": "Ghid",
+    "guideDescription": "Invata cum sa profiti la maxim de Coasty",
+    "guidePopup": {
+      "title": "Primii pasi",
+      "description": "Tutoriale pas cu pas si bune practici pentru a te ajuta sa automatizezi eficient."
+    },
+    "infrastructure": "Infrastructura",
+    "computer": "Computer",
+    "computers": "Computere",
+    "active": "activ",
+    "view": "Vezi",
+    "workforce": "Forta de munca",
+    "workforceDescription": "Programeaza agenti automatizati si triggere",
+    "workforcePopup": {
+      "title": "Automatizare programata",
+      "description": "Configureaza sarcini recurente cu programari cron si triggere intre agenti. Forta ta de munca ruleaza in timp ce dormi."
+    },
+    "credentials": "Credentiale",
+    "credentialsDescription": "Stocheaza in siguranta login-urile pentru acces agenti",
+    "credentialsPopup": {
+      "title": "Seif de credentiale securizat",
+      "description": "Stocheaza login-uri si chei API cu criptare. Agentii completeaza automat credentialele fara a expune valorile brute."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Obtine aplicatia desktop",
+      "download": "Descarca",
+      "downloadDesktopApp": "Descarca aplicatia desktop",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Controleaza-ti computerul de la distanta",
+      "controlDescription": "Instaleaza aplicatia desktop si ruleaza sarcini pe PC-ul tau din acest dashboard — de oriunde, oricand."
+    },
+    "credits": {
+      "runningLow": "Credite — Se epuizeaza",
+      "remaining": "Credite ramase",
+      "buy": "Cumpara",
+      "creditsLeft": "credite ramase",
+      "usedLabel": "Folosite: {count}",
+      "consumed": "{percent}% consumat",
+      "usageThisWeek": "Utilizare saptamana aceasta"
+    },
+    "talkToUs": "Vorbeste cu noi",
+    "inviteEarn": "Invita si castiga",
+    "user": "Utilizator",
+    "account": "Cont",
+    "tasks": "{count} sarcini",
+    "recentActivity": "Activitate recenta",
+    "viewAllHistory": "Vezi tot istoricul →",
+    "swarmRunsCount": "{count} rulari roi",
+    "running": "in desfasurare",
+    "completed": "finalizat",
+    "viewAllSwarms": "Vezi toate roiurile →",
+    "schedulesCount": "{count} programari",
+    "totalRuns": "{count} rulari totale",
+    "paused": "in pauza",
+    "viewAllSchedules": "Vezi toate programarile →",
+    "credentialsCount": "{count} credentiale",
+    "encryptedVault": "Seif criptat",
+    "manageCredentials": "Gestioneaza credentialele →",
+    "days": [
+      "Lun",
+      "Mar",
+      "Mie",
+      "Joi",
+      "Vin",
+      "Sam",
+      "Dum"
+    ],
+    "resume": "REIA",
+    "result": "REZULTAT",
+    "notScheduled": "Neprogramat",
+    "overdue": "Intarziat",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "in {count}m",
+    "inHours": "in {count}h",
+    "today": "astazi",
+    "yesterday": "ieri"
+  },
+  "appHeader": {
+    "login": "Autentificare",
+    "assign": "Atribuie",
+    "assignDescription": "Atribuie un angajat pentru a rula aceasta sarcina",
+    "computer": "Computer",
+    "showComputer": "Arata computerul",
+    "hideComputer": "Ascunde computerul",
+    "employeeHired": "Angajat recrutat!",
+    "employeeRemoved": "Angajat eliminat"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Automatizare zilnica usoara"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Automatizeaza sarcini in fiecare zi"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Scaleaza fluxuri de lucru complexe",
+        "badge": "Cel mai popular"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Automatizare intensiva nelimitata"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (sters dupa inactivitate)",
+      "vmAlwaysOn": "{count} VM permanent activ",
+      "vmAlwaysOnPlural": "{count} VM-uri permanent active",
+      "agentsParallel": "{count} agenti in paralel",
+      "basicSearch": "Cautare de baza",
+      "advancedSearch": "Cautare avansata si extractie",
+      "standardSupport": "Suport standard (oameni reali)",
+      "prioritySupport": "Suport prioritar, raspuns in 24h",
+      "premiumSupport": "Suport premium, raspuns in 12h"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Boost mic",
+        "description": "Reincarcare rapida"
+      },
+      "medium": {
+        "name": "Boost mediu",
+        "description": "Reincarcare standard",
+        "savings": "economie 8%"
+      },
+      "large": {
+        "name": "Boost mare",
+        "description": "Achizitie in vrac",
+        "savings": "economie 17%"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Chiar acum",
+      "minutesAgo": "acum {count}m",
+      "hoursAgo": "acum {count}h",
+      "daysAgo": "acum {count}z"
+    },
+    "noActivity": "Nicio activitate in aceasta perioada",
+    "stats": {
+      "balance": "Sold",
+      "earned": "Castigat",
+      "used": "Folosit",
+      "credits": "credite",
+      "allTime": "din totdeauna",
+      "lastRange": "ultimele {range}",
+      "sessions": "{count} sesiuni",
+      "avgDaily": "~{count}/zi medie",
+      "plan": "Plan",
+      "free": "Gratuit",
+      "noPlan": "Fara plan",
+      "canceling": "Se anuleaza"
+    },
+    "monthlyUsage": "Utilizare lunara credite",
+    "remaining": "{used} / {total} ramase",
+    "usedPercent": "{percent}% folosit in aceasta perioada",
+    "renews": "Se reinnoieste {date}",
+    "choosePlan": "Alege-ti planul",
+    "choosePlanDescription": "Aboneaza-te pentru a debloca functii AI si a obtine credite lunare",
+    "savingsVsHuman": "Economisesti {amount}/luna vs om",
+    "timeSaved": "{time} economisit lunar",
+    "cheaper": "{multiplier} mai ieftin",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/luna",
+    "creditsPerMonth": "{count} credite /luna",
+    "processing": "Se proceseaza...",
+    "subscribeTo": "Aboneaza-te la {name}",
+    "transactionTypes": {
+      "credit_purchase": "Achizitie credite",
+      "agent_usage": "Utilizare agent",
+      "refund": "Rambursare",
+      "bonus": "Recompensa bonus",
+      "subscription": "Abonament",
+      "subscription_grant": "Acordare abonament",
+      "renewal": "Credite de reinnoire",
+      "reactivation": "Reactivare"
+    },
+    "toasts": {
+      "paymentSuccess": "Plata reusita! Creditele tale au fost adaugate.",
+      "subscriptionActivated": "Abonament activat cu succes!",
+      "paymentCanceled": "Plata a fost anulata. Nu au fost efectuate taxe.",
+      "signInToSubscribe": "Te rugam sa te autentifici pentru abonare",
+      "subscriptionCheckoutFailed": "Nu s-a putut initia plata abonamentului. Te rugam sa incerci din nou.",
+      "signInToPurchase": "Te rugam sa te autentifici pentru a cumpara credite",
+      "needSubscription": "Ai nevoie de un abonament activ pentru a cumpara credite suplimentare",
+      "checkoutFailed": "Nu s-a putut initia plata. Te rugam sa incerci din nou.",
+      "manageFailed": "Nu s-a putut deschide gestionarea abonamentului. Te rugam sa incerci din nou.",
+      "transactionsExported": "Tranzactii exportate"
+    }
+  },
+  "apiKeys": {
+    "title": "Furnizori de modele",
+    "new": "nou",
+    "description": "Adauga propriile chei API pentru a debloca accesul la modele.",
+    "securityNote": "Cheile tale sunt stocate in siguranta cu criptare end-to-end.",
+    "apiKeyLabel": "Cheie API {provider}",
+    "getApiKey": "Obtine cheie API",
+    "delete": "Sterge",
+    "save": "Salveaza",
+    "deleteDialog": {
+      "title": "Sterge cheia API",
+      "description": "Esti sigur ca vrei sa stergi cheia API {provider}? Aceasta actiune nu poate fi anulata si vei pierde accesul la modelele {provider}.",
+      "cancel": "Anuleaza",
+      "confirm": "Sterge"
+    },
+    "toasts": {
+      "saved": "Cheie API salvata",
+      "savedDescription": "Cheia ta API {provider} a fost salvata si modelele au fost adaugate la favorite.",
+      "updatedDescription": "Cheia ta API {provider} a fost actualizata.",
+      "saveFailed": "Nu s-a putut salva cheia API",
+      "saveFailedDescription": "Nu s-a putut salva cheia API {provider}. Te rugam sa incerci din nou.",
+      "deleted": "Cheie API stearsa",
+      "deletedDescription": "Cheia ta API {provider} a fost stearsa.",
+      "deleteFailed": "Nu s-a putut sterge cheia API",
+      "deleteFailedDescription": "Nu s-a putut sterge cheia API {provider}. Te rugam sa incerci din nou."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Detalii profil",
+    "displayName": "Nume afisat",
+    "namePlaceholder": "Numele tau",
+    "company": "Companie",
+    "companyPlaceholder": "Compania ta",
+    "website": "Website",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Se salveaza...",
+    "saveChanges": "Salveaza modificarile",
+    "account": "Cont",
+    "email": "E-mail",
+    "verified": "Verificat",
+    "signOut": "Deconecteaza-te",
+    "signOutDescription": "Deconecteaza-te de pe acest dispozitiv",
+    "toasts": {
+      "profileUpdated": "Profil actualizat",
+      "profileUpdateFailed": "Nu s-a putut actualiza profilul",
+      "signOutFailed": "Nu s-a putut deconecta"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Datele tale sunt protejate",
+    "dataProtectedDescription": "Securitate de nivel enterprise cu criptare in repaus si in tranzit",
+    "features": {
+      "encryption": {
+        "title": "Criptare end-to-end",
+        "description": "Cheile API criptate cu AES-256-GCM. Credentialele tale nu sunt niciodata stocate in text simplu."
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "Izolarea la nivel de baza de date asigura ca datele tale sunt accesibile doar de tine. Niciun acces intre tenanturi nu este posibil."
+      },
+      "privacy": {
+        "title": "Confidentialitate prin design",
+        "description": "Colectam datele minime necesare pentru furnizarea serviciului. Conversatiile si fisierele tale raman ale tale."
+      },
+      "session": {
+        "title": "Securitatea sesiunii",
+        "description": "Protectie CSRF, cookie-uri HTTP-only securizate si headere Content Security Policy la fiecare cerere."
+      }
+    },
+    "legal": "Legal",
+    "privacyPolicy": {
+      "title": "Politica de confidentialitate",
+      "description": "Cum colectam, folosim si protejam datele tale"
+    },
+    "termsOfService": {
+      "title": "Termeni si conditii",
+      "description": "Termenii si conditiile noastre de utilizare"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Aspect"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Rezumat",
+      "highlight": "Rezuma"
+    },
+    "code": {
+      "label": "Cod",
+      "highlight": "Construieste"
+    },
+    "research": {
+      "label": "Cercetare",
+      "highlight": "Analizeaza"
+    },
+    "create": {
+      "label": "Creeaza",
+      "highlight": "Genereaza"
+    },
+    "solve": {
+      "label": "Rezolva",
+      "highlight": "Depaneraza"
+    },
+    "learn": {
+      "label": "Invata",
+      "highlight": "Explica"
+    }
+  },
+  "loadingMessages": [
+    "Pornim creierul de siliciu",
+    "Trezim constiinta digitala",
+    "Initializam caile neurale",
+    "Rotim nucleele cuantice",
+    "Incarcam condensatorul de flux",
+    "Activam mainframe-ul",
+    "Alimentam matricea computationala",
+    "Activam propulsia warp",
+    "Invocam spiritele de siliciu",
+    "Pornim motorul de electroni",
+    "Incalzim tranzistoarele",
+    "Asamblam bitii si octetii",
+    "Calibram sinapsele digitale",
+    "Energizam cristalele CPU",
+    "Incarcam protocoalele de constiinta",
+    "Initializam resursele sistemului",
+    "Pregatim mediul computational",
+    "Stabilim conexiunea securizata",
+    "Aprovizionam resursele virtuale",
+    "Configuram parametrii sistemului",
+    "Lansam instanta virtuala",
+    "Activam desktopul la distanta",
+    "Implementam resursele cloud",
+    "Initiem secventa de pornire",
+    "Pregatim mediul de executie",
+    "Trezim computerul somnoros",
+    "Impungem ursul digital",
+    "Preparam o cafea computationala",
+    "Intindem muschii digitali",
+    "Deschidem ochii digitali",
+    "Pornire",
+    "Se alimenteaza",
+    "Se conecteaza",
+    "Bootare sistem",
+    "Ne pregatim",
+    "Aproape gata",
+    "Pregatim spatiul de lucru",
+    "Incarcam resursele",
+    "Sistemul se trezeste"
+  ]
 }

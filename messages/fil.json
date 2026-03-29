@@ -423,131 +423,131 @@
     "label": "Wika"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Ikaw ang nagtatakda ng layunin.",
+    "brandSubheading": "Kami ang bahala sa natitira.",
+    "mobileHeading": "Ikaw ang nagtatakda ng layunin. Kami ang bahala sa natitira.",
+    "mobileSubheading": "Mga AI agent na nagba-browse, nag-click, at gumagana tulad ng totoong kasama sa team.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Inilarawan mo ang gawain",
+        "sub": "\"Mag-research ng top 5 kakompetensya namin\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Kinuha na ng agent ang kontrol",
+        "sub": "Nagba-browse, nag-click, nagta-type nang autonomous"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Naihatid na ang trabaho",
+        "sub": "Spreadsheet na may 5 kumpletong profile ng kakompetensya"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Tapos na",
+    "doneIn": "Natapos sa 8 minuto",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Naghihintay ang iyong operator",
+      "signUp": "Ilagay ang iyong mga workflow sa autopilot",
+      "magicLink": "Laktawan ang password",
+      "forgotPassword": "Ibalik ka namin"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Magpatuloy kung saan ka tumigil — naaalala ng iyong mga agent",
+      "signUp": "I-deploy ang iyong unang AI agent sa loob ng isang minuto",
+      "magicLink": "Isang click mula sa iyong inbox at pasok ka na",
+      "forgotPassword": "Magpapadala kami ng reset link sa iyong email"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Kumokonekta...",
+      "continueWithGoogle": "Magpatuloy gamit ang Google"
     },
-    "or": "or",
+    "or": "o",
     "email": "Email",
     "emailPlaceholder": "you@example.com",
     "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "passwordPlaceholder": "Ang iyong password",
+    "confirmPassword": "Kumpirmahin ang password",
+    "confirmPasswordPlaceholder": "Kumpirmahin ang iyong password",
+    "minChars": "Min. 6 na karakter",
+    "signingIn": "Nagsa-sign in...",
+    "signIn": "Mag-sign in",
+    "creatingAccount": "Gumagawa ng account...",
+    "createAccount": "Gumawa ng account",
+    "sending": "Nagpapadala...",
+    "sendMagicLink": "Ipadala ang magic link",
+    "sendResetLink": "Ipadala ang reset link",
+    "forgotPassword": "Nakalimutan ang password?",
+    "useMagicLink": "Gamitin ang magic link",
+    "dontHaveAccount": "Wala pang account?",
+    "signUp": "Mag-sign up",
+    "alreadyHaveAccount": "May account ka na?",
+    "backToSignIn": "Bumalik sa sign in",
+    "termsAgreement": "Sa pagpapatuloy, sumasang-ayon ka sa aming",
+    "terms": "Mga Tuntunin",
+    "and": "at",
+    "privacyPolicy": "Patakaran sa Privacy",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Pakipunan ang lahat ng field",
+      "passwordMinLength": "Ang password ay dapat may hindi bababa sa 6 na karakter",
+      "passwordsDoNotMatch": "Hindi magkatugma ang mga password",
+      "supabaseNotConfigured": "Hindi naka-configure ang Supabase",
+      "unexpectedError": "May nangyaring hindi inaasahang error. Pakisubukang muli.",
+      "confirmEmail": "Pakikumpirma ang iyong email bago mag-sign in. Tingnan ang iyong inbox.",
+      "invalidCredentials": "Hindi valid na email o password.",
+      "signInFailed": "Nabigo ang pag-sign in. Pakisubukang muli.",
+      "invalidEmail": "Hindi valid na email address.",
+      "emailAlreadyExists": "May account na sa email na ito. Subukang mag-sign in na lang.",
+      "signUpFailed": "Nabigo ang pag-sign up. Pakisubukang muli.",
+      "enterEmail": "Pakilagay ang iyong email",
+      "noAccountFound": "Walang nahanap na account sa email na ito. Mag-sign up muna.",
+      "magicLinkFailed": "Nabigo ang pagpapadala ng magic link. Pakisubukang muli.",
+      "resetFailed": "Nabigo ang pagpapadala ng reset email. Pakisubukang muli.",
+      "updateFailed": "Nabigo ang pag-update ng password. Pakisubukang muli."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Tingnan ang iyong email para kumpirmahin ang iyong account bago mag-sign in.",
+      "checkEmailMagicLink": "Tingnan ang iyong email para sa magic link sa pag-sign in.",
+      "checkEmailReset": "Tingnan ang iyong email para sa password reset link.",
+      "passwordUpdated": "Matagumpay na na-update ang password. Nire-redirect sa sign in..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "I-reset ang iyong password",
+      "subtitle": "Ilagay ang iyong bagong password sa ibaba.",
+      "newPassword": "Bagong password",
+      "confirmNewPassword": "Kumpirmahin ang bagong password",
+      "confirmPlaceholder": "Kumpirmahin ang iyong bagong password",
+      "updating": "Ina-update...",
+      "updatePassword": "I-update ang password"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Error sa Authentication",
+      "defaultMessage": "May nangyaring error sa authentication.",
+      "tryAgain": "Subukang Muli",
+      "backToChat": "Bumalik sa Chat",
+      "needHelp": "Kailangan ng tulong?",
+      "contactSupport": "Makipag-ugnayan sa Support"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Laktawan muna",
+    "back": "Bumalik",
+    "continue": "Magpatuloy",
+    "getStarted": "Magsimula",
+    "settingUp": "Sine-setup...",
     "welcome": {
       "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleNew": "Welcome sa Coasty",
+      "descriptionReturning": "Gusto naming malaman pa ang kaunti tungkol sa iyo para mapabuti ang iyong karanasan",
+      "descriptionNew": "I-setup natin ang iyong account para ma-personalize ang iyong karanasan"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Ano ang itatawag namin sa iyo?",
+    "namePlaceholder": "Ang pangalan mo",
+    "companyLabel": "Kumpanya",
+    "optional": "(opsyonal)",
     "companyPlaceholder": "MacroHard",
     "websiteLabel": "Website",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Ano ang pinaka-naglalarawan sa iyo?",
+      "subtitle": "Piliin ang lahat ng naaangkop — tumutulong ito sa amin na i-tailor ang iyong karanasan"
     },
     "roles": {
       "founder": "Founder / CEO",
@@ -557,11 +557,11 @@
       "product_manager": "Product Manager",
       "data_analyst": "Data / Analytics",
       "operations": "Operations",
-      "other": "Other"
+      "other": "Iba pa"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Laki ng team",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Ako lang",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,585 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Paano mo kami nahanap?",
+      "subtitle": "Gusto naming malaman kung saan mo narinig ang tungkol sa Coasty"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Kaibigan / Kasamahan",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Iba pa"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Ano ang ia-automate mo muna?",
+      "subtitle": "Piliin ang lahat ng naaangkop — maaari mong i-explore ang lahat mamaya"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
+      "web_scraping": "Web Scraping at Pananaliksik",
       "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "data_entry": "Pagpasok ng Data at Mga Form",
+      "email_outreach": "Email at Outreach",
+      "testing": "QA at Testing",
+      "ecommerce": "Mga Gawain sa E-commerce",
+      "social_media": "Pamamahala ng Social Media",
+      "general_automation": "Pangkalahatang Automation"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Lahat ng kailangan mo,",
+      "titleHighlight": "built-in na.",
+      "subtitle": "Ito ang magagawa ng Coasty para sa iyo",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Walang Code",
+        "description": "Ilarawan lang kung ano ang gusto mo sa simpleng Filipino"
       },
       "agentSwarms": {
         "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "description": "Mga parallel na agent fleet"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Kontrol sa Desktop",
+        "description": "Nag-click, nagta-type, nagna-navigate"
       },
       "browserAutomation": {
         "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "description": "Mga form, tabs, scraping — fully automated"
       },
       "computerVision": {
         "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "description": "Nakikita at naiintindihan ang iyong screen sa real time"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Mga Workflow",
+        "description": "Multi-step na mga daloy"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Sa Device",
+        "description": "Tumatakbo nang lokal"
       },
       "autonomous": {
         "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "description": "I-set at kalimutan — tumatakbo habang natutulog ka"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Bago ka dito? May gabay kami para sa iyo",
+      "subtitle": "I-deploy ang iyong unang AI agent sa loob ng isang minuto"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Ano ang dapat gawin ng iyong AI worker?",
+    "placeholderAlt": "Sabihin sa iyong AI kung ano ang gagawin sa computer...",
+    "vmError": {
+      "title": "Error sa Virtual Machine",
+      "description": "Ang virtual machine ay nasa error state o dine-delete.",
+      "hint": "Pakitingnan ang Machines tab para maayos ang isyu, o piliin ang \"Walang Computer na Napili\" para gumamit ng web search lang.",
+      "gotIt": "Sige"
+    },
+    "status": {
+      "creating": "Gumagawa ng {name}...",
+      "initiating": "Sinimulan ang agent sa {name}...",
+      "stopping": "Pinapatigil ang {name}...",
+      "preparing": "Inihahanda ang {name}..."
+    },
+    "swarm": {
+      "title": "Swarm Mode",
+      "pro": "PRO",
+      "upgradeLabel": "Swarm mode — mag-upgrade para i-unlock",
+      "feature1": "Parallel na execution sa mga pansamantalang machine",
+      "feature2": "Bawat machine ay tumatakbo nang autonomous",
+      "feature3": "3x ang machine limit ng iyong plano bawat swarm",
+      "description": "Patakbuhin ang isang prompt sa 3x ng iyong machine limit nang sabay-sabay — bawat isa ay humaharap sa gawain nang mag-isa.",
+      "enableLabel": "I-enable ang swarm mode",
+      "disableLabel": "I-disable ang swarm mode",
+      "onTooltip": "Swarm mode ON — ang iyong prompt ay tatakbo sa maraming machine nang sabay-sabay",
+      "offTooltip": "I-enable ang swarm mode para patakbuhin ang iyong prompt sa maraming machine nang sabay-sabay",
+      "decreaseMachines": "Bawasan ang bilang ng machine",
+      "increaseMachines": "Dagdagan ang bilang ng machine",
+      "machineLimit": "Hanggang {max} swarm machines sa iyong plano. Kailangan pa? Makipag-ugnayan sa founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Kumonekta sa desktop",
+      "screenLabel": "Screen ni {name}",
+      "screenDefault": "Desktop",
+      "watchTooltip": "Panoorin ang iyong agent na gumagawa sa hiwalay na screen. Huwag lang hawakan ang kahit ano o magka-stage fright siya!"
+    },
+    "buttons": {
+      "stop": "Itigil",
+      "sendToSwarm": "Ipadala sa swarm",
+      "taskRunning": "May ibang gawain na tumatakbo — i-click para itigil at patakbuhin ang iyo",
+      "selectComputer": "Pumili ng computer para magpadala ng mensahe",
+      "waitCreating": "Pakihintay ang paglikha ng VM",
+      "waitStarting": "Pakihintay ang pagsisimula ng VM",
+      "waitAgent": "Pakihintay ang pag-initialize ng agent",
+      "vmStopping": "Tumitigil ang VM",
+      "send": "Ipadala",
+      "switching": "Nagpapalit...",
+      "overrideRun": "I-override at Patakbuhin",
+      "stopLabel": "Itigil ang tumatakbong gawain at simulan ito",
+      "sendLabel": "Ipadala ang mensahe"
+    },
+    "search": "Maghanap",
+    "upload": {
+      "label": "Mag-upload ng files sa VM",
+      "heading": "Mag-upload ng files sa VM",
+      "description": "Ise-save ang mga file sa Desktop",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "I-drop ang mga file dito",
+      "dropDescription": "Ia-upload ang mga file sa Desktop folder ng VM",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Mag-login para subukan ang mas maraming feature nang libre",
+      "description": "Gumawa ng mga Project, mag-invite ng team members, at marami pa.",
+      "connecting": "Kumokonekta...",
+      "continueWithGoogle": "Magpatuloy gamit ang Google"
+    },
+    "removeFile": "Alisin ang file"
+  },
+  "chat": {
+    "greeting": "Kumusta",
+    "greetingAuth": "Ako ang bahala sa trabaho sa computer. Ano ang gawain?",
+    "greetingUnauth": "AI na gumagamit ng computer para hindi mo na kailangan. Sabihin mo lang kung ano ang kailangan mong magawa.",
+    "guide": "Gabay",
+    "saveLogins": "I-save ang mga login para sa auto-fill",
+    "encryptedNote": "naka-encrypt, hindi nakikita ng AI",
+    "roleLabels": ["Katrabaho", "Empleyado", "Kaibigan", "Katulong", "Kasosyo", "Kasama sa Team", "Collaborator", "Tagapag-tulong"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Kumuha ng ulat ng kakompetensya",
+        "warmLeads": "Bumuo ng 20 warm leads",
+        "pitchDeck": "Gumawa ng draft ng pitch deck"
+      },
+      "developer": {
+        "findBugs": "Humanap ng mga bug sa aking site",
+        "performance": "Kumuha ng performance report",
+        "apiDocs": "I-extract ang API documentation"
+      },
+      "marketer": {
+        "seoGap": "Kumuha ng SEO gap analysis",
+        "competitorAds": "Mag-spy sa ads ng kakompetensya",
+        "trendingContent": "Kumuha ng trending content ideas"
+      },
+      "product_manager": {
+        "reviewSummary": "Kumuha ng review summary",
+        "featureComparison": "Gumawa ng feature comparison",
+        "competitorLaunches": "I-track ang mga launches ng kakompetensya"
+      },
+      "data_analyst": {
+        "exportCsv": "I-export ang data ng site sa CSV",
+        "marketSizing": "Kumuha ng market sizing report",
+        "benchmark": "Mag-benchmark laban sa industry"
+      },
+      "operations": {
+        "enterRecords": "Magpasok ng mga record sa aming system",
+        "cheapestVendor": "Humanap ng pinakamurang vendor",
+        "invoiceSummary": "Kumuha ng invoice summary"
+      },
+      "designer": {
+        "designComparison": "Kumuha ng design comparison",
+        "responsiveAudit": "Mag-run ng responsive audit",
+        "inspiration": "Mangolekta ng design inspiration"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "I-export ang data ng site sa CSV",
+      "browser_automation": "I-export ang mga dashboard report",
+      "data_entry": "Magpasok ng mga record sa aming app",
+      "email_outreach": "Magpadala ng personalized na outreach",
+      "testing": "Kumuha ng buong QA report",
+      "ecommerce": "Kumuha ng pricing comparison",
+      "social_media": "Mag-post at kumuha ng engagement",
+      "general_automation": "Mag-run ng gawain sa aking site"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Kopyahin ang text",
+    "copied": "Nakopya na!",
+    "regenerate": "I-regenerate",
+    "feedback": {
+      "title": "Feedback",
+      "prompts": ["I-rate ito", "Feedback", "Kamusta namin?", "Mga saloobin?", "Ibahagi ang feedback"],
+      "tooltip": "Ibahagi ang iyong feedback"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Smart Search",
+      "description": "AI-powered na paghahanap sa buong web"
+    },
+    "collaborate": {
+      "title": "Mag-collaborate",
+      "description": "Magtulungan sa real-time"
+    },
+    "globalAccess": {
+      "title": "Global Access",
+      "description": "Maghanap sa 50+ na wika"
+    },
+    "aiModels": {
+      "title": "Mga AI Model",
+      "description": "Maraming AI provider"
+    },
+    "freeForever": {
+      "title": "Libre Magpakailanman",
+      "description": "Walang nakatagong gastos"
+    },
+    "privateSecure": {
+      "title": "Pribado at Secure",
+      "description": "Nananatiling sa iyo ang iyong data"
+    }
+  },
+  "sidebar": {
+    "newTask": "Bagong Gawain",
+    "newTaskDescription": "Magsimula ng bagong AI automation",
+    "activity": "Aktibidad",
+    "taskHistory": "Kasaysayan ng Gawain",
+    "taskHistoryDescription": "Suriin ang mga nakaraang gawain at magpatuloy kung saan ka tumigil",
+    "taskHistoryPopup": {
+      "title": "Ang iyong mga kamakailang gawain",
+      "description": "Mag-browse at magpatuloy ng mga nakaraang usapan. Bawat gawain ay naka-save para makabalik ka sa eksaktong pagtigil mo."
+    },
+    "swarmRuns": "Mga Swarm Run",
+    "swarmRunsDescription": "I-monitor ang multi-agent na parallel workflows",
+    "swarmRunsPopup": {
+      "title": "Multi-agent na mga workflow",
+      "description": "Magpatakbo ng mga gawain sa maraming machine nang sabay-sabay. Bawat agent ay gumagana nang mag-isa at ang mga resulta ay awtomatikong nagsasama."
+    },
+    "guide": "Gabay",
+    "guideDescription": "Alamin kung paano mapakinabangan ang Coasty",
+    "guidePopup": {
+      "title": "Pagsisimula",
+      "description": "Step-by-step na mga walkthrough at best practices para sa epektibong automation."
+    },
+    "infrastructure": "Imprastruktura",
+    "computer": "Computer",
+    "computers": "Mga Computer",
+    "active": "aktibo",
+    "view": "Tingnan",
+    "workforce": "Workforce",
+    "workforceDescription": "Mag-schedule ng mga automated agent at trigger",
+    "workforcePopup": {
+      "title": "Naka-schedule na automation",
+      "description": "Mag-set up ng mga paulit-ulit na gawain gamit ang cron schedules at agent-to-agent triggers. Tumatakbo ang iyong workforce habang natutulog ka."
+    },
+    "credentials": "Mga Credential",
+    "credentialsDescription": "Ligtas na mag-store ng mga login para sa access ng agent",
+    "credentialsPopup": {
+      "title": "Secure na credential vault",
+      "description": "Mag-store ng mga login at API key na may encryption. Awtomatikong pine-fill ng mga agent ang credentials nang hindi ine-expose ang mga raw value."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Kunin ang Desktop App",
+      "download": "I-download",
+      "downloadDesktopApp": "I-download ang Desktop App",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Kontrolin ang iyong computer nang malayo",
+      "controlDescription": "I-install ang desktop app at magpatakbo ng mga gawain sa iyong PC mula sa dashboard na ito — kahit saan, kahit kailan."
+    },
+    "credits": {
+      "runningLow": "Mga Credit — Nauubusan na",
+      "remaining": "Natitirang mga credit",
+      "buy": "Bumili",
+      "creditsLeft": "credits na natitira",
+      "usedLabel": "Nagamit: {count}",
+      "consumed": "{percent}% nagamit",
+      "usageThisWeek": "Paggamit ngayong linggo"
+    },
+    "talkToUs": "Kausapin kami",
+    "inviteEarn": "Mag-invite at Kumita",
+    "user": "User",
+    "account": "Account",
+    "tasks": "{count} Mga Gawain",
+    "recentActivity": "Kamakailang aktibidad",
+    "viewAllHistory": "Tingnan ang buong kasaysayan →",
+    "swarmRunsCount": "{count} Mga Swarm Run",
+    "running": "tumatakbo",
+    "completed": "tapos na",
+    "viewAllSwarms": "Tingnan ang lahat ng swarm →",
+    "schedulesCount": "{count} Mga Schedule",
+    "totalRuns": "{count} kabuuang run",
+    "paused": "naka-pause",
+    "viewAllSchedules": "Tingnan ang lahat ng schedule →",
+    "credentialsCount": "{count} Mga Credential",
+    "encryptedVault": "Naka-encrypt na vault",
+    "manageCredentials": "Pamahalaan ang mga credential →",
+    "days": ["Lun", "Mar", "Miy", "Huw", "Biy", "Sab", "Lin"],
+    "resume": "ITULOY",
+    "result": "RESULTA",
+    "notScheduled": "Hindi naka-schedule",
+    "overdue": "Lampas na",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "sa {count}m",
+    "inHours": "sa {count}h",
+    "today": "ngayon",
+    "yesterday": "kahapon"
+  },
+  "appHeader": {
+    "login": "Mag-login",
+    "assign": "I-assign",
+    "assignDescription": "Mag-assign ng empleyado para patakbuhin ang gawaing ito",
+    "computer": "Computer",
+    "showComputer": "Ipakita ang Computer",
+    "hideComputer": "Itago ang Computer",
+    "employeeHired": "Na-hire ang empleyado!",
+    "employeeRemoved": "Naalis ang empleyado"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Magaan na pang-araw-araw na automation"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Mag-automate ng gawain araw-araw"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "I-scale ang mga kumplikadong workflow",
+        "badge": "Pinakasikat"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Walang limitasyong mabigat na automation"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (dine-delete pagkatapos ng inactivity)",
+      "vmAlwaysOn": "{count} always-on na VM",
+      "vmAlwaysOnPlural": "{count} always-on na VMs",
+      "agentsParallel": "{count} agents nang sabay-sabay",
+      "basicSearch": "Basic na paghahanap",
+      "advancedSearch": "Advanced na paghahanap at extraction",
+      "standardSupport": "Standard na suporta (totoong tao)",
+      "prioritySupport": "Priority na suporta, 24hr na tugon",
+      "premiumSupport": "Premium na suporta, 12hr na tugon"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Maliit na Boost",
+        "description": "Mabilis na top-up"
+      },
+      "medium": {
+        "name": "Katamtamang Boost",
+        "description": "Standard na refill",
+        "savings": "8% tipid"
+      },
+      "large": {
+        "name": "Malaking Boost",
+        "description": "Bulk na pagbili",
+        "savings": "17% tipid"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Ngayon lang",
+      "minutesAgo": "{count}m ang nakalipas",
+      "hoursAgo": "{count}h ang nakalipas",
+      "daysAgo": "{count}d ang nakalipas"
+    },
+    "noActivity": "Walang aktibidad sa panahong ito",
+    "stats": {
+      "balance": "Balanse",
+      "earned": "Kinita",
+      "used": "Nagamit",
+      "credits": "credits",
+      "allTime": "lahat ng panahon",
+      "lastRange": "huling {range}",
+      "sessions": "{count} sessions",
+      "avgDaily": "~{count}/araw avg",
+      "plan": "Plano",
+      "free": "Libre",
+      "noPlan": "Walang plano",
+      "canceling": "Kina-cancel"
+    },
+    "monthlyUsage": "Buwanang Paggamit ng Credit",
+    "remaining": "{used} / {total} natitira",
+    "usedPercent": "{percent}% nagamit ngayong panahon",
+    "renews": "Magre-renew sa {date}",
+    "choosePlan": "Piliin ang Iyong Plano",
+    "choosePlanDescription": "Mag-subscribe para i-unlock ang mga AI feature at makakuha ng buwanang credits",
+    "savingsVsHuman": "Makatipid ng {amount}/buwan vs tao",
+    "timeSaved": "{time} na natipid buwan-buwan",
+    "cheaper": "{multiplier} mas mura",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/buwan",
+    "creditsPerMonth": "{count} credits /buwan",
+    "processing": "Pinoproseso...",
+    "subscribeTo": "Mag-subscribe sa {name}",
+    "transactionTypes": {
+      "credit_purchase": "Pagbili ng Credit",
+      "agent_usage": "Paggamit ng Agent",
+      "refund": "Refund",
+      "bonus": "Bonus na Reward",
+      "subscription": "Subscription",
+      "subscription_grant": "Subscription Grant",
+      "renewal": "Renewal Credits",
+      "reactivation": "Reactivation"
+    },
+    "toasts": {
+      "paymentSuccess": "Matagumpay ang bayad! Naidagdag na ang iyong mga credit.",
+      "subscriptionActivated": "Matagumpay na na-activate ang subscription!",
+      "paymentCanceled": "Na-cancel ang bayad. Walang sinisingil.",
+      "signInToSubscribe": "Pakisubukang mag-sign in para mag-subscribe",
+      "subscriptionCheckoutFailed": "Nabigo ang pagsisimula ng subscription checkout. Pakisubukang muli.",
+      "signInToPurchase": "Pakisubukang mag-sign in para bumili ng credits",
+      "needSubscription": "Kailangan mo ng aktibong subscription para bumili ng karagdagang credits",
+      "checkoutFailed": "Nabigo ang pagsisimula ng checkout. Pakisubukang muli.",
+      "manageFailed": "Nabigo ang pagbukas ng subscription management. Pakisubukang muli.",
+      "transactionsExported": "Na-export na ang mga transaksyon"
+    }
+  },
+  "apiKeys": {
+    "title": "Mga Model Provider",
+    "new": "bago",
+    "description": "Idagdag ang iyong sariling API keys para ma-unlock ang access sa mga model.",
+    "securityNote": "Ligtas na nakaimbak ang iyong mga key na may end-to-end encryption.",
+    "apiKeyLabel": "{provider} API Key",
+    "getApiKey": "Kumuha ng API key",
+    "delete": "I-delete",
+    "save": "I-save",
+    "deleteDialog": {
+      "title": "I-delete ang API Key",
+      "description": "Sigurado ka bang gusto mong i-delete ang iyong {provider} API key? Hindi na ito maibabalik at mawawala ang access mo sa mga {provider} model.",
+      "cancel": "I-cancel",
+      "confirm": "I-delete"
+    },
+    "toasts": {
+      "saved": "Na-save ang API key",
+      "savedDescription": "Na-save ang iyong {provider} API key at naidagdag ang mga model sa iyong mga paborito.",
+      "updatedDescription": "Na-update ang iyong {provider} API key.",
+      "saveFailed": "Nabigo ang pag-save ng API key",
+      "saveFailedDescription": "Nabigo ang pag-save ng {provider} API key. Pakisubukang muli.",
+      "deleted": "Na-delete ang API key",
+      "deletedDescription": "Na-delete ang iyong {provider} API key.",
+      "deleteFailed": "Nabigo ang pag-delete ng API key",
+      "deleteFailedDescription": "Nabigo ang pag-delete ng {provider} API key. Pakisubukang muli."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Mga Detalye ng Profile",
+    "displayName": "Display Name",
+    "namePlaceholder": "Ang pangalan mo",
+    "company": "Kumpanya",
+    "companyPlaceholder": "Ang iyong kumpanya",
+    "website": "Website",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Nag-save...",
+    "saveChanges": "I-save ang mga pagbabago",
+    "account": "Account",
+    "email": "Email",
+    "verified": "Na-verify",
+    "signOut": "Mag-sign out",
+    "signOutDescription": "Mag-log out sa device na ito",
+    "toasts": {
+      "profileUpdated": "Na-update ang profile",
+      "profileUpdateFailed": "Nabigo ang pag-update ng profile",
+      "signOutFailed": "Nabigo ang pag-sign out"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Protektado ang iyong data",
+    "dataProtectedDescription": "Enterprise-grade na seguridad na may encryption sa rest at transit",
+    "features": {
+      "encryption": {
+        "title": "End-to-End Encryption",
+        "description": "Naka-encrypt ang mga API key gamit ang AES-256-GCM. Hindi kailanman naka-store sa plain text ang iyong mga credential."
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "Ang database-level na isolation ay tinitiyak na ikaw lang ang may access sa iyong data. Walang cross-tenant access na posible."
+      },
+      "privacy": {
+        "title": "Privacy by Design",
+        "description": "Kinokolekta lang namin ang minimum na data na kailangan para ibigay ang serbisyo. Ang iyong mga usapan at file ay nananatiling sa iyo."
+      },
+      "session": {
+        "title": "Session Security",
+        "description": "CSRF protection, secure na HTTP-only cookies, at Content Security Policy headers sa bawat request."
+      }
+    },
+    "legal": "Legal",
+    "privacyPolicy": {
+      "title": "Patakaran sa Privacy",
+      "description": "Paano namin kinokolekta, ginagamit, at pinoprotektahan ang iyong data"
+    },
+    "termsOfService": {
+      "title": "Mga Tuntunin ng Serbisyo",
+      "description": "Ang aming mga tuntunin at kundisyon ng paggamit"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Layout"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Buod",
+      "highlight": "I-summarize"
+    },
+    "code": {
+      "label": "Code",
+      "highlight": "Bumuo"
+    },
+    "research": {
+      "label": "Research",
+      "highlight": "Suriin"
+    },
+    "create": {
+      "label": "Gumawa",
+      "highlight": "I-generate"
+    },
+    "solve": {
+      "label": "Lutasin",
+      "highlight": "I-debug"
+    },
+    "learn": {
+      "label": "Matuto",
+      "highlight": "Ipaliwanag"
+    }
+  },
+  "loadingMessages": [
+    "Binubukas ang silicon brain",
+    "Ginigising ang digital na kamalayan",
+    "Ininitialize ang mga neural pathway",
+    "Pinapaandar ang mga quantum core",
+    "Tina-charge ang flux capacitor",
+    "Ina-activate ang mainframe",
+    "Pinapagana ang computational matrix",
+    "Ini-engage ang warp drive",
+    "Tinatawag ang mga silicon spirit",
+    "Sinisindihan ang electron engine",
+    "Pinapainit ang mga transistor",
+    "Binubuo ang mga bits at bytes",
+    "Kina-calibrate ang mga digital synapse",
+    "Ine-energize ang mga CPU crystal",
+    "Nilo-load ang mga consciousness protocol",
+    "Ininitialize ang mga system resource",
+    "Inihahanda ang computational environment",
+    "Ginagawa ang secure na koneksyon",
+    "Nagpo-provision ng virtual resources",
+    "Kino-configure ang mga system parameter",
+    "Nila-launch ang virtual instance",
+    "Ina-activate ang remote desktop",
+    "Dine-deploy ang cloud resources",
+    "Sinisimulan ang startup sequence",
+    "Inihahanda ang execution environment",
+    "Ginigising ang antok na computer",
+    "Tinutulak ang digital na oso",
+    "Naggagawa ng computational na kape",
+    "Nag-iistretching ng mga digital na kalamnan",
+    "Binubuksan ang mga digital na mata",
+    "Nagsisimula na",
+    "Bumubukas na",
+    "Nag-o-online na",
+    "Binu-boot ang system",
+    "Naghahanda",
+    "Malapit na",
+    "Inihahanda ang workspace",
+    "Nilo-load ang mga resource",
+    "Bumabangon ang system"
+  ]
 }

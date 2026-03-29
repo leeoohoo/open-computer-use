@@ -637,5 +637,540 @@
       "title": "¿Eres nuevo? Tenemos una guía para ti",
       "subtitle": "Despliega tu primer agente de IA en menos de un minuto"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "¿Qué debe hacer tu trabajador de IA?",
+    "placeholderAlt": "Dile a tu IA qué hacer en la computadora...",
+    "vmError": {
+      "title": "Error de máquina virtual",
+      "description": "La máquina virtual está en estado de error o se está eliminando.",
+      "hint": "Por favor revisa la pestaña Máquinas para resolver el problema, o selecciona \"Sin computadora seleccionada\" para usar solo la búsqueda web.",
+      "gotIt": "Entendido"
+    },
+    "status": {
+      "creating": "Creando {name}...",
+      "initiating": "Iniciando agente en {name}...",
+      "stopping": "Deteniendo {name}...",
+      "preparing": "Preparando {name}..."
+    },
+    "swarm": {
+      "title": "Modo enjambre",
+      "pro": "PRO",
+      "upgradeLabel": "Modo enjambre — mejora tu plan para desbloquear",
+      "feature1": "Ejecución paralela en máquinas temporales",
+      "feature2": "Cada máquina opera de forma autónoma",
+      "feature3": "3x el límite de máquinas de tu plan por enjambre",
+      "description": "Ejecuta un prompt en 3x tu límite de máquinas en paralelo — cada una abordando la tarea de forma independiente.",
+      "enableLabel": "Activar modo enjambre",
+      "disableLabel": "Desactivar modo enjambre",
+      "onTooltip": "Modo enjambre ACTIVADO — tu prompt se ejecutará en múltiples máquinas en paralelo",
+      "offTooltip": "Activa el modo enjambre para ejecutar tu prompt en múltiples máquinas simultáneamente",
+      "decreaseMachines": "Reducir cantidad de máquinas",
+      "increaseMachines": "Aumentar cantidad de máquinas",
+      "machineLimit": "Hasta {max} máquinas de enjambre en tu plan. ¿Necesitas más? Contacta a founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Conectar al escritorio",
+      "screenLabel": "Pantalla de {name}",
+      "screenDefault": "Escritorio",
+      "watchTooltip": "Observa a tu agente trabajar en una pantalla separada. ¡Solo no toques nada o le dará pánico escénico!"
+    },
+    "buttons": {
+      "stop": "Detener",
+      "sendToSwarm": "Enviar al enjambre",
+      "taskRunning": "Otra tarea está en ejecución — haz clic para detenerla y ejecutar la tuya",
+      "selectComputer": "Selecciona una computadora para enviar mensajes",
+      "waitCreating": "Por favor espera a que se cree la VM",
+      "waitStarting": "Por favor espera a que inicie la VM",
+      "waitAgent": "Por favor espera a que el agente se inicialice",
+      "vmStopping": "La VM se está deteniendo",
+      "send": "Enviar",
+      "switching": "Cambiando...",
+      "overrideRun": "Anular y ejecutar",
+      "stopLabel": "Detener la tarea actual e iniciar esta",
+      "sendLabel": "Enviar mensaje"
+    },
+    "search": "Buscar",
+    "upload": {
+      "label": "Subir archivos a la VM",
+      "heading": "Subir archivos a la VM",
+      "description": "Los archivos se guardarán en el Escritorio",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Suelta los archivos aquí",
+      "dropDescription": "Los archivos se subirán a la carpeta Escritorio de la VM",
+      "dropPath": "Ruta: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Inicia sesión para probar más funciones gratis",
+      "description": "Crea proyectos, invita miembros del equipo y más.",
+      "connecting": "Conectando...",
+      "continueWithGoogle": "Continuar con Google"
+    },
+    "removeFile": "Eliminar archivo"
+  },
+  "chat": {
+    "greeting": "Hola",
+    "greetingAuth": "Yo me encargo del trabajo en la computadora. ¿Cuál es la tarea?",
+    "greetingUnauth": "IA que opera la computadora para que tú no tengas que hacerlo. Solo dile lo que necesitas.",
+    "guide": "Guía",
+    "saveLogins": "Guardar credenciales para autocompletado",
+    "encryptedNote": "cifrado, nunca visto por la IA",
+    "roleLabels": [
+      "Compañero",
+      "Empleado",
+      "Amigo",
+      "Asistente",
+      "Socio",
+      "Colega",
+      "Colaborador",
+      "Ayudante"
+    ],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Obtener un informe de competidores",
+        "warmLeads": "Generar 20 leads calificados",
+        "pitchDeck": "Crear un borrador de pitch deck"
+      },
+      "developer": {
+        "findBugs": "Encontrar errores en mi sitio",
+        "performance": "Obtener un informe de rendimiento",
+        "apiDocs": "Extraer documentación de API"
+      },
+      "marketer": {
+        "seoGap": "Obtener un análisis de brechas SEO",
+        "competitorAds": "Espiar los anuncios de competidores",
+        "trendingContent": "Obtener ideas de contenido en tendencia"
+      },
+      "product_manager": {
+        "reviewSummary": "Obtener un resumen de reseñas",
+        "featureComparison": "Crear una comparación de funciones",
+        "competitorLaunches": "Rastrear lanzamientos de competidores"
+      },
+      "data_analyst": {
+        "exportCsv": "Exportar datos del sitio a CSV",
+        "marketSizing": "Obtener un informe de tamaño de mercado",
+        "benchmark": "Comparar con la industria"
+      },
+      "operations": {
+        "enterRecords": "Ingresar registros en nuestro sistema",
+        "cheapestVendor": "Encontrar el proveedor más barato",
+        "invoiceSummary": "Obtener un resumen de facturas"
+      },
+      "designer": {
+        "designComparison": "Obtener una comparación de diseño",
+        "responsiveAudit": "Ejecutar una auditoría responsive",
+        "inspiration": "Recopilar inspiración de diseño"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Exportar datos del sitio a CSV",
+      "browser_automation": "Exportar informes del dashboard",
+      "data_entry": "Ingresar registros en nuestra app",
+      "email_outreach": "Enviar contactos personalizados",
+      "testing": "Obtener un informe completo de QA",
+      "ecommerce": "Obtener una comparación de precios",
+      "social_media": "Publicar y obtener interacción",
+      "general_automation": "Ejecutar una tarea en mi sitio"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Copiar texto",
+    "copied": "¡Copiado!",
+    "regenerate": "Regenerar",
+    "feedback": {
+      "title": "Comentarios",
+      "prompts": [
+        "Califica esto",
+        "Comentarios",
+        "¿Qué tal lo hicimos?",
+        "¿Opiniones?",
+        "Comparte tu opinión"
+      ],
+      "tooltip": "Comparte tu opinión"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Búsqueda inteligente",
+      "description": "Búsqueda potenciada por IA en toda la web"
+    },
+    "collaborate": {
+      "title": "Colaborar",
+      "description": "Trabaja en equipo en tiempo real"
+    },
+    "globalAccess": {
+      "title": "Acceso global",
+      "description": "Busca en más de 50 idiomas"
+    },
+    "aiModels": {
+      "title": "Modelos de IA",
+      "description": "Múltiples proveedores de IA"
+    },
+    "freeForever": {
+      "title": "Gratis para siempre",
+      "description": "Sin costos ocultos"
+    },
+    "privateSecure": {
+      "title": "Privado y seguro",
+      "description": "Tus datos son tuyos"
+    }
+  },
+  "sidebar": {
+    "newTask": "Nueva tarea",
+    "newTaskDescription": "Iniciar una nueva automatización con IA",
+    "activity": "Actividad",
+    "taskHistory": "Historial de tareas",
+    "taskHistoryDescription": "Revisa tareas anteriores y retoma donde lo dejaste",
+    "taskHistoryPopup": {
+      "title": "Tus tareas recientes",
+      "description": "Explora y continúa conversaciones anteriores. Cada tarea se guarda para que puedas retomar justo donde lo dejaste."
+    },
+    "swarmRuns": "Ejecuciones de enjambre",
+    "swarmRunsDescription": "Monitorea flujos de trabajo paralelos multiagente",
+    "swarmRunsPopup": {
+      "title": "Flujos de trabajo multiagente",
+      "description": "Ejecuta tareas en múltiples máquinas en paralelo. Cada agente trabaja de forma independiente y los resultados convergen automáticamente."
+    },
+    "guide": "Guía",
+    "guideDescription": "Aprende a sacar el máximo provecho de Coasty",
+    "guidePopup": {
+      "title": "Primeros pasos",
+      "description": "Tutoriales paso a paso y mejores prácticas para ayudarte a automatizar de manera efectiva."
+    },
+    "infrastructure": "Infraestructura",
+    "computer": "Computadora",
+    "computers": "Computadoras",
+    "active": "activa",
+    "view": "Ver",
+    "workforce": "Fuerza laboral",
+    "workforceDescription": "Programa agentes automatizados y disparadores",
+    "workforcePopup": {
+      "title": "Automatización programada",
+      "description": "Configura tareas recurrentes con programaciones cron y disparadores entre agentes. Tu fuerza laboral trabaja mientras duermes."
+    },
+    "credentials": "Credenciales",
+    "credentialsDescription": "Almacena credenciales de forma segura para el acceso de agentes",
+    "credentialsPopup": {
+      "title": "Bóveda segura de credenciales",
+      "description": "Almacena credenciales y claves API con cifrado. Los agentes autocompletan credenciales sin exponer los valores reales."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Obtener app de escritorio",
+      "download": "Descargar",
+      "downloadDesktopApp": "Descargar app de escritorio",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Controla tu computadora de forma remota",
+      "controlDescription": "Instala la app de escritorio y ejecuta tareas en tu PC desde este panel — en cualquier lugar, en cualquier momento."
+    },
+    "credits": {
+      "runningLow": "Créditos — Quedan pocos",
+      "remaining": "Créditos restantes",
+      "buy": "Comprar",
+      "creditsLeft": "créditos restantes",
+      "usedLabel": "Usados: {count}",
+      "consumed": "{percent}% consumido",
+      "usageThisWeek": "Uso esta semana"
+    },
+    "talkToUs": "Habla con nosotros",
+    "inviteEarn": "Invita y gana",
+    "user": "Usuario",
+    "account": "Cuenta",
+    "tasks": "{count} Tareas",
+    "recentActivity": "Actividad reciente",
+    "viewAllHistory": "Ver todo el historial →",
+    "swarmRunsCount": "{count} Ejecuciones de enjambre",
+    "running": "en ejecución",
+    "completed": "completado",
+    "viewAllSwarms": "Ver todos los enjambres →",
+    "schedulesCount": "{count} Programaciones",
+    "totalRuns": "{count} ejecuciones totales",
+    "paused": "pausado",
+    "viewAllSchedules": "Ver todas las programaciones →",
+    "credentialsCount": "{count} Credenciales",
+    "encryptedVault": "Bóveda cifrada",
+    "manageCredentials": "Administrar credenciales →",
+    "days": [
+      "Lun",
+      "Mar",
+      "Mié",
+      "Jue",
+      "Vie",
+      "Sáb",
+      "Dom"
+    ],
+    "resume": "REANUDAR",
+    "result": "RESULTADO",
+    "notScheduled": "No programado",
+    "overdue": "Vencido",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "en {count}m",
+    "inHours": "en {count}h",
+    "today": "hoy",
+    "yesterday": "ayer"
+  },
+  "appHeader": {
+    "login": "Iniciar sesión",
+    "assign": "Asignar",
+    "assignDescription": "Asignar un empleado para ejecutar esta tarea",
+    "computer": "Computadora",
+    "showComputer": "Mostrar computadora",
+    "hideComputer": "Ocultar computadora",
+    "employeeHired": "¡Empleado contratado!",
+    "employeeRemoved": "Empleado removido"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Automatización diaria ligera"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Automatiza tareas todos los días"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Escala flujos de trabajo complejos",
+        "badge": "Más popular"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Automatización pesada ilimitada"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (eliminada tras inactividad)",
+      "vmAlwaysOn": "{count} VM siempre activa",
+      "vmAlwaysOnPlural": "{count} VMs siempre activas",
+      "agentsParallel": "{count} agentes en paralelo",
+      "basicSearch": "Búsqueda básica",
+      "advancedSearch": "Búsqueda avanzada y extracción",
+      "standardSupport": "Soporte estándar (personas reales)",
+      "prioritySupport": "Soporte prioritario, respuesta en 24h",
+      "premiumSupport": "Soporte premium, respuesta en 12h"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Impulso pequeño",
+        "description": "Recarga rápida"
+      },
+      "medium": {
+        "name": "Impulso mediano",
+        "description": "Recarga estándar",
+        "savings": "8% de ahorro"
+      },
+      "large": {
+        "name": "Impulso grande",
+        "description": "Compra al por mayor",
+        "savings": "17% de ahorro"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Ahora mismo",
+      "minutesAgo": "hace {count}m",
+      "hoursAgo": "hace {count}h",
+      "daysAgo": "hace {count}d"
+    },
+    "noActivity": "Sin actividad en este período",
+    "stats": {
+      "balance": "Saldo",
+      "earned": "Ganados",
+      "used": "Usados",
+      "credits": "créditos",
+      "allTime": "total histórico",
+      "lastRange": "últimos {range}",
+      "sessions": "{count} sesiones",
+      "avgDaily": "~{count}/día promedio",
+      "plan": "Plan",
+      "free": "Gratis",
+      "noPlan": "Sin plan",
+      "canceling": "Cancelando"
+    },
+    "monthlyUsage": "Uso mensual de créditos",
+    "remaining": "{used} / {total} restantes",
+    "usedPercent": "{percent}% usado este período",
+    "renews": "Se renueva el {date}",
+    "choosePlan": "Elige tu plan",
+    "choosePlanDescription": "Suscríbete para desbloquear funciones de IA y obtener créditos mensuales",
+    "savingsVsHuman": "Ahorra {amount}/mes vs humano",
+    "timeSaved": "{time} ahorrado mensualmente",
+    "cheaper": "{multiplier} más barato",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/mes",
+    "creditsPerMonth": "{count} créditos /mes",
+    "processing": "Procesando...",
+    "subscribeTo": "Suscribirse a {name}",
+    "transactionTypes": {
+      "credit_purchase": "Compra de créditos",
+      "agent_usage": "Uso del agente",
+      "refund": "Reembolso",
+      "bonus": "Bonificación",
+      "subscription": "Suscripción",
+      "subscription_grant": "Créditos de suscripción",
+      "renewal": "Créditos de renovación",
+      "reactivation": "Reactivación"
+    },
+    "toasts": {
+      "paymentSuccess": "¡Pago exitoso! Tus créditos han sido agregados.",
+      "subscriptionActivated": "¡Suscripción activada exitosamente!",
+      "paymentCanceled": "El pago fue cancelado. No se realizaron cargos.",
+      "signInToSubscribe": "Por favor inicia sesión para suscribirte",
+      "subscriptionCheckoutFailed": "Error al iniciar el pago de suscripción. Por favor inténtalo de nuevo.",
+      "signInToPurchase": "Por favor inicia sesión para comprar créditos",
+      "needSubscription": "Necesitas una suscripción activa para comprar créditos adicionales",
+      "checkoutFailed": "Error al iniciar el pago. Por favor inténtalo de nuevo.",
+      "manageFailed": "Error al abrir la gestión de suscripción. Por favor inténtalo de nuevo.",
+      "transactionsExported": "Transacciones exportadas"
+    }
+  },
+  "apiKeys": {
+    "title": "Proveedores de modelos",
+    "new": "nuevo",
+    "description": "Agrega tus propias claves API para desbloquear acceso a modelos.",
+    "securityNote": "Tus claves se almacenan de forma segura con cifrado de extremo a extremo.",
+    "apiKeyLabel": "Clave API de {provider}",
+    "getApiKey": "Obtener clave API",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "deleteDialog": {
+      "title": "Eliminar clave API",
+      "description": "¿Estás seguro de que deseas eliminar tu clave API de {provider}? Esta acción no se puede deshacer y perderás acceso a los modelos de {provider}.",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar"
+    },
+    "toasts": {
+      "saved": "Clave API guardada",
+      "savedDescription": "Tu clave API de {provider} ha sido guardada y los modelos se han agregado a tus favoritos.",
+      "updatedDescription": "Tu clave API de {provider} ha sido actualizada.",
+      "saveFailed": "Error al guardar la clave API",
+      "saveFailedDescription": "Error al guardar la clave API de {provider}. Por favor inténtalo de nuevo.",
+      "deleted": "Clave API eliminada",
+      "deletedDescription": "Tu clave API de {provider} ha sido eliminada.",
+      "deleteFailed": "Error al eliminar la clave API",
+      "deleteFailedDescription": "Error al eliminar la clave API de {provider}. Por favor inténtalo de nuevo."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Detalles del perfil",
+    "displayName": "Nombre para mostrar",
+    "namePlaceholder": "Tu nombre",
+    "company": "Empresa",
+    "companyPlaceholder": "Tu empresa",
+    "website": "Sitio web",
+    "websitePlaceholder": "tusitio.com",
+    "saving": "Guardando...",
+    "saveChanges": "Guardar cambios",
+    "account": "Cuenta",
+    "email": "Correo electrónico",
+    "verified": "Verificado",
+    "signOut": "Cerrar sesión",
+    "signOutDescription": "Cerrar sesión en este dispositivo",
+    "toasts": {
+      "profileUpdated": "Perfil actualizado",
+      "profileUpdateFailed": "Error al actualizar el perfil",
+      "signOutFailed": "Error al cerrar sesión"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Tus datos están protegidos",
+    "dataProtectedDescription": "Seguridad de nivel empresarial con cifrado en reposo y en tránsito",
+    "features": {
+      "encryption": {
+        "title": "Cifrado de extremo a extremo",
+        "description": "Claves API cifradas con AES-256-GCM. Tus credenciales nunca se almacenan en texto plano."
+      },
+      "rls": {
+        "title": "Seguridad a nivel de fila",
+        "description": "El aislamiento a nivel de base de datos garantiza que tus datos solo sean accesibles por ti. No es posible el acceso entre inquilinos."
+      },
+      "privacy": {
+        "title": "Privacidad por diseño",
+        "description": "Recopilamos los datos mínimos necesarios para brindar el servicio. Tus conversaciones y archivos son tuyos."
+      },
+      "session": {
+        "title": "Seguridad de sesión",
+        "description": "Protección CSRF, cookies HTTP-only seguras y encabezados de Política de Seguridad de Contenido en cada solicitud."
+      }
+    },
+    "legal": "Legal",
+    "privacyPolicy": {
+      "title": "Política de privacidad",
+      "description": "Cómo recopilamos, usamos y protegemos tus datos"
+    },
+    "termsOfService": {
+      "title": "Términos de servicio",
+      "description": "Nuestros términos y condiciones de uso"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Diseño"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Resumen",
+      "highlight": "Resumir"
+    },
+    "code": {
+      "label": "Código",
+      "highlight": "Construir"
+    },
+    "research": {
+      "label": "Investigación",
+      "highlight": "Analizar"
+    },
+    "create": {
+      "label": "Crear",
+      "highlight": "Generar"
+    },
+    "solve": {
+      "label": "Resolver",
+      "highlight": "Depurar"
+    },
+    "learn": {
+      "label": "Aprender",
+      "highlight": "Explicar"
+    }
+  },
+  "loadingMessages": [
+    "Encendiendo el cerebro de silicio",
+    "Despertando la conciencia digital",
+    "Inicializando las vías neuronales",
+    "Activando los núcleos cuánticos",
+    "Cargando el condensador de flujo",
+    "Activando el mainframe",
+    "Energizando la matriz computacional",
+    "Activando el motor warp",
+    "Invocando a los espíritus de silicio",
+    "Encendiendo el motor de electrones",
+    "Calentando los transistores",
+    "Ensamblando los bits y bytes",
+    "Calibrando las sinapsis digitales",
+    "Energizando los cristales del CPU",
+    "Cargando los protocolos de conciencia",
+    "Inicializando recursos del sistema",
+    "Preparando el entorno computacional",
+    "Estableciendo conexión segura",
+    "Aprovisionando recursos virtuales",
+    "Configurando parámetros del sistema",
+    "Lanzando instancia virtual",
+    "Activando escritorio remoto",
+    "Desplegando recursos en la nube",
+    "Iniciando secuencia de arranque",
+    "Preparando entorno de ejecución",
+    "Despertando a la computadora dormilona",
+    "Picando al oso digital",
+    "Preparando un café computacional",
+    "Estirando los músculos digitales",
+    "Abriendo los ojos digitales",
+    "Arrancando",
+    "Encendiendo",
+    "Conectándose",
+    "Iniciando sistema",
+    "Preparándose",
+    "Ya casi",
+    "Preparando el espacio de trabajo",
+    "Cargando recursos",
+    "El sistema despierta"
+  ]
 }

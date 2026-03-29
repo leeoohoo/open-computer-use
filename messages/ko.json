@@ -637,5 +637,540 @@
       "title": "처음이신가요? 가이드가 준비되어 있습니다",
       "subtitle": "1분 이내에 첫 번째 AI 에이전트를 배포하세요"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "AI 작업자에게 무엇을 시킬까요?",
+    "placeholderAlt": "컴퓨터에서 AI가 할 일을 알려주세요...",
+    "vmError": {
+      "title": "가상 머신 오류",
+      "description": "가상 머신이 오류 상태이거나 삭제 중입니다.",
+      "hint": "머신 탭에서 문제를 해결하거나, 웹 검색만 사용하려면 \"컴퓨터 미선택\"을 선택하세요.",
+      "gotIt": "확인"
+    },
+    "status": {
+      "creating": "{name} 생성 중...",
+      "initiating": "{name}에서 에이전트 시작 중...",
+      "stopping": "{name} 중지 중...",
+      "preparing": "{name} 준비 중..."
+    },
+    "swarm": {
+      "title": "스웜 모드",
+      "pro": "PRO",
+      "upgradeLabel": "스웜 모드 — 업그레이드하여 잠금 해제",
+      "feature1": "임시 머신 간 병렬 실행",
+      "feature2": "각 머신이 자율적으로 실행",
+      "feature3": "스웜당 요금제 머신 한도의 3배",
+      "description": "하나의 프롬프트를 머신 한도의 3배로 병렬 실행 — 각각 독립적으로 작업을 수행합니다.",
+      "enableLabel": "스웜 모드 활성화",
+      "disableLabel": "스웜 모드 비활성화",
+      "onTooltip": "스웜 모드 켜짐 — 프롬프트가 여러 머신에서 병렬로 실행됩니다",
+      "offTooltip": "스웜 모드를 활성화하여 여러 머신에서 동시에 프롬프트를 실행하세요",
+      "decreaseMachines": "머신 수 줄이기",
+      "increaseMachines": "머신 수 늘리기",
+      "machineLimit": "요금제에서 최대 {max}개 스웜 머신 사용 가능. 더 필요하신가요? founders@coasty.ai로 문의하세요"
+    },
+    "desktop": {
+      "connectLabel": "데스크톱에 연결",
+      "screenLabel": "{name}의 화면",
+      "screenDefault": "데스크톱",
+      "watchTooltip": "별도의 화면에서 에이전트가 작업하는 모습을 지켜보세요. 아무것도 건드리지 마세요, 무대 공포증이 있거든요!"
+    },
+    "buttons": {
+      "stop": "중지",
+      "sendToSwarm": "스웜에 전송",
+      "taskRunning": "다른 작업이 실행 중입니다 — 클릭하여 중지하고 새 작업을 실행하세요",
+      "selectComputer": "메시지를 보낼 컴퓨터를 선택하세요",
+      "waitCreating": "VM 생성을 기다려 주세요",
+      "waitStarting": "VM 시작을 기다려 주세요",
+      "waitAgent": "에이전트 초기화를 기다려 주세요",
+      "vmStopping": "VM 중지 중",
+      "send": "전송",
+      "switching": "전환 중...",
+      "overrideRun": "강제 실행",
+      "stopLabel": "실행 중인 작업을 중지하고 이 작업 시작",
+      "sendLabel": "메시지 전송"
+    },
+    "search": "검색",
+    "upload": {
+      "label": "VM에 파일 업로드",
+      "heading": "VM에 파일 업로드",
+      "description": "파일이 데스크톱에 저장됩니다",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "여기에 파일을 놓으세요",
+      "dropDescription": "파일이 VM의 데스크톱 폴더에 업로드됩니다",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "로그인하여 더 많은 기능을 무료로 사용해 보세요",
+      "description": "프로젝트 생성, 팀원 초대 등.",
+      "connecting": "연결 중...",
+      "continueWithGoogle": "Google로 계속하기"
+    },
+    "removeFile": "파일 제거"
+  },
+  "chat": {
+    "greeting": "안녕하세요",
+    "greetingAuth": "컴퓨터 작업을 처리해 드리겠습니다. 무엇을 할까요?",
+    "greetingUnauth": "사람 대신 컴퓨터를 조작하는 AI. 필요한 작업을 알려주세요.",
+    "guide": "가이드",
+    "saveLogins": "자동 입력을 위한 로그인 저장",
+    "encryptedNote": "암호화됨, AI가 볼 수 없음",
+    "roleLabels": [
+      "동료",
+      "직원",
+      "친구",
+      "어시스턴트",
+      "파트너",
+      "팀원",
+      "협업자",
+      "도우미"
+    ],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "경쟁사 보고서 받기",
+        "warmLeads": "잠재 고객 20명 생성",
+        "pitchDeck": "피치 덱 초안 작성"
+      },
+      "developer": {
+        "findBugs": "내 사이트에서 버그 찾기",
+        "performance": "성능 보고서 받기",
+        "apiDocs": "API 문서 추출"
+      },
+      "marketer": {
+        "seoGap": "SEO 갭 분석 받기",
+        "competitorAds": "경쟁사 광고 분석",
+        "trendingContent": "트렌드 콘텐츠 아이디어 받기"
+      },
+      "product_manager": {
+        "reviewSummary": "리뷰 요약 받기",
+        "featureComparison": "기능 비교표 작성",
+        "competitorLaunches": "경쟁사 출시 추적"
+      },
+      "data_analyst": {
+        "exportCsv": "사이트 데이터를 CSV로 내보내기",
+        "marketSizing": "시장 규모 보고서 받기",
+        "benchmark": "업계 벤치마크 비교"
+      },
+      "operations": {
+        "enterRecords": "시스템에 기록 입력",
+        "cheapestVendor": "최저가 업체 찾기",
+        "invoiceSummary": "인보이스 요약 받기"
+      },
+      "designer": {
+        "designComparison": "디자인 비교 받기",
+        "responsiveAudit": "반응형 감사 실행",
+        "inspiration": "디자인 영감 수집"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "사이트 데이터를 CSV로 내보내기",
+      "browser_automation": "대시보드 보고서 내보내기",
+      "data_entry": "앱에 기록 입력",
+      "email_outreach": "맞춤형 아웃리치 발송",
+      "testing": "전체 QA 보고서 받기",
+      "ecommerce": "가격 비교 받기",
+      "social_media": "게시하고 참여도 높이기",
+      "general_automation": "내 사이트에서 작업 실행"
+    }
+  },
+  "chatMessages": {
+    "copyText": "텍스트 복사",
+    "copied": "복사됨!",
+    "regenerate": "다시 생성",
+    "feedback": {
+      "title": "피드백",
+      "prompts": [
+        "평가하기",
+        "피드백",
+        "어떠셨나요?",
+        "의견을 들려주세요",
+        "피드백 공유"
+      ],
+      "tooltip": "피드백을 공유해 주세요"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "스마트 검색",
+      "description": "AI 기반 웹 검색"
+    },
+    "collaborate": {
+      "title": "협업",
+      "description": "실시간으로 함께 작업"
+    },
+    "globalAccess": {
+      "title": "글로벌 접근",
+      "description": "50개 이상 언어로 검색"
+    },
+    "aiModels": {
+      "title": "AI 모델",
+      "description": "다양한 AI 제공업체"
+    },
+    "freeForever": {
+      "title": "영원히 무료",
+      "description": "숨겨진 비용 없음"
+    },
+    "privateSecure": {
+      "title": "비공개 & 보안",
+      "description": "당신의 데이터는 당신의 것"
+    }
+  },
+  "sidebar": {
+    "newTask": "새 작업",
+    "newTaskDescription": "새로운 AI 자동화 시작",
+    "activity": "활동",
+    "taskHistory": "작업 기록",
+    "taskHistoryDescription": "지난 작업을 검토하고 이어서 진행하세요",
+    "taskHistoryPopup": {
+      "title": "최근 작업",
+      "description": "과거 대화를 탐색하고 계속하세요. 모든 작업이 저장되어 중단한 곳에서 바로 재개할 수 있습니다."
+    },
+    "swarmRuns": "스웜 실행",
+    "swarmRunsDescription": "다중 에이전트 병렬 워크플로 모니터링",
+    "swarmRunsPopup": {
+      "title": "다중 에이전트 워크플로",
+      "description": "여러 머신에서 병렬로 작업을 실행하세요. 각 에이전트가 독립적으로 작업하고 결과가 자동으로 통합됩니다."
+    },
+    "guide": "가이드",
+    "guideDescription": "Coasty를 최대한 활용하는 방법 알아보기",
+    "guidePopup": {
+      "title": "시작하기",
+      "description": "효과적으로 자동화하는 데 도움이 되는 단계별 안내와 모범 사례."
+    },
+    "infrastructure": "인프라",
+    "computer": "컴퓨터",
+    "computers": "컴퓨터",
+    "active": "활성",
+    "view": "보기",
+    "workforce": "워크포스",
+    "workforceDescription": "예약된 에이전트 및 트리거 관리",
+    "workforcePopup": {
+      "title": "예약 자동화",
+      "description": "크론 스케줄과 에이전트 간 트리거로 반복 작업을 설정하세요. 워크포스가 잠자는 동안에도 실행됩니다."
+    },
+    "credentials": "자격 증명",
+    "credentialsDescription": "에이전트 접근을 위한 로그인 정보 안전 저장",
+    "credentialsPopup": {
+      "title": "보안 자격 증명 보관소",
+      "description": "암호화된 로그인 정보와 API 키를 저장하세요. 에이전트가 원본 값을 노출하지 않고 자격 증명을 자동 입력합니다."
+    },
+    "desktopApp": {
+      "getDesktopApp": "데스크톱 앱 받기",
+      "download": "다운로드",
+      "downloadDesktopApp": "데스크톱 앱 다운로드",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "원격으로 컴퓨터 제어",
+      "controlDescription": "데스크톱 앱을 설치하고 이 대시보드에서 PC 작업을 실행하세요 — 언제 어디서나."
+    },
+    "credits": {
+      "runningLow": "크레딧 — 부족",
+      "remaining": "남은 크레딧",
+      "buy": "구매",
+      "creditsLeft": "남은 크레딧",
+      "usedLabel": "사용: {count}",
+      "consumed": "{percent}% 소비됨",
+      "usageThisWeek": "이번 주 사용량"
+    },
+    "talkToUs": "문의하기",
+    "inviteEarn": "초대 & 적립",
+    "user": "사용자",
+    "account": "계정",
+    "tasks": "{count}개 작업",
+    "recentActivity": "최근 활동",
+    "viewAllHistory": "전체 기록 보기 →",
+    "swarmRunsCount": "{count}개 스웜 실행",
+    "running": "실행 중",
+    "completed": "완료",
+    "viewAllSwarms": "모든 스웜 보기 →",
+    "schedulesCount": "{count}개 스케줄",
+    "totalRuns": "총 {count}회 실행",
+    "paused": "일시 중지",
+    "viewAllSchedules": "모든 스케줄 보기 →",
+    "credentialsCount": "{count}개 자격 증명",
+    "encryptedVault": "암호화된 보관소",
+    "manageCredentials": "자격 증명 관리 →",
+    "days": [
+      "월",
+      "화",
+      "수",
+      "목",
+      "금",
+      "토",
+      "일"
+    ],
+    "resume": "재개",
+    "result": "결과",
+    "notScheduled": "예약되지 않음",
+    "overdue": "기한 초과",
+    "lessThanMin": "< 1분",
+    "inMinutes": "{count}분 후",
+    "inHours": "{count}시간 후",
+    "today": "오늘",
+    "yesterday": "어제"
+  },
+  "appHeader": {
+    "login": "로그인",
+    "assign": "배정",
+    "assignDescription": "이 작업을 실행할 직원 배정",
+    "computer": "컴퓨터",
+    "showComputer": "컴퓨터 표시",
+    "hideComputer": "컴퓨터 숨기기",
+    "employeeHired": "직원이 배정되었습니다!",
+    "employeeRemoved": "직원이 해제되었습니다"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "가벼운 일일 자동화"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "매일 작업 자동화"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "복잡한 워크플로 확장",
+        "badge": "가장 인기"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "무제한 대규모 자동화"
+      }
+    },
+    "features": {
+      "vmDeleted": "VM 1개 (비활성 시 삭제)",
+      "vmAlwaysOn": "상시 가동 VM {count}개",
+      "vmAlwaysOnPlural": "상시 가동 VM {count}개",
+      "agentsParallel": "{count}개 에이전트 병렬 실행",
+      "basicSearch": "기본 검색",
+      "advancedSearch": "고급 검색 및 추출",
+      "standardSupport": "일반 지원 (실제 담당자)",
+      "prioritySupport": "우선 지원, 24시간 내 응답",
+      "premiumSupport": "프리미엄 지원, 12시간 내 응답"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "소량 충전",
+        "description": "빠른 충전"
+      },
+      "medium": {
+        "name": "중량 충전",
+        "description": "일반 충전",
+        "savings": "8% 할인"
+      },
+      "large": {
+        "name": "대량 충전",
+        "description": "대량 구매",
+        "savings": "17% 할인"
+      }
+    },
+    "timeAgo": {
+      "justNow": "방금 전",
+      "minutesAgo": "{count}분 전",
+      "hoursAgo": "{count}시간 전",
+      "daysAgo": "{count}일 전"
+    },
+    "noActivity": "이 기간에 활동이 없습니다",
+    "stats": {
+      "balance": "잔액",
+      "earned": "획득",
+      "used": "사용",
+      "credits": "크레딧",
+      "allTime": "전체 기간",
+      "lastRange": "최근 {range}",
+      "sessions": "{count}개 세션",
+      "avgDaily": "일 평균 ~{count}",
+      "plan": "요금제",
+      "free": "Free",
+      "noPlan": "요금제 없음",
+      "canceling": "해지 중"
+    },
+    "monthlyUsage": "월간 크레딧 사용량",
+    "remaining": "{used} / {total} 남음",
+    "usedPercent": "이 기간 {percent}% 사용",
+    "renews": "{date}에 갱신",
+    "choosePlan": "요금제 선택",
+    "choosePlanDescription": "구독하여 AI 기능을 잠금 해제하고 월간 크레딧을 받으세요",
+    "savingsVsHuman": "사람 대비 월 {amount} 절약",
+    "timeSaved": "월 {time} 절약",
+    "cheaper": "{multiplier} 저렴",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/월",
+    "creditsPerMonth": "월 {count} 크레딧",
+    "processing": "처리 중...",
+    "subscribeTo": "{name} 구독",
+    "transactionTypes": {
+      "credit_purchase": "크레딧 구매",
+      "agent_usage": "에이전트 사용",
+      "refund": "환불",
+      "bonus": "보너스 보상",
+      "subscription": "구독",
+      "subscription_grant": "구독 지급",
+      "renewal": "갱신 크레딧",
+      "reactivation": "재활성화"
+    },
+    "toasts": {
+      "paymentSuccess": "결제가 완료되었습니다! 크레딧이 추가되었습니다.",
+      "subscriptionActivated": "구독이 성공적으로 활성화되었습니다!",
+      "paymentCanceled": "결제가 취소되었습니다. 요금이 청구되지 않았습니다.",
+      "signInToSubscribe": "구독하려면 로그인하세요",
+      "subscriptionCheckoutFailed": "구독 결제를 시작하지 못했습니다. 다시 시도해 주세요.",
+      "signInToPurchase": "크레딧을 구매하려면 로그인하세요",
+      "needSubscription": "추가 크레딧을 구매하려면 활성 구독이 필요합니다",
+      "checkoutFailed": "결제를 시작하지 못했습니다. 다시 시도해 주세요.",
+      "manageFailed": "구독 관리를 열지 못했습니다. 다시 시도해 주세요.",
+      "transactionsExported": "거래 내역이 내보내기되었습니다"
+    }
+  },
+  "apiKeys": {
+    "title": "모델 제공업체",
+    "new": "new",
+    "description": "자신의 API 키를 추가하여 모델에 접근하세요.",
+    "securityNote": "키는 종단간 암호화로 안전하게 저장됩니다.",
+    "apiKeyLabel": "{provider} API 키",
+    "getApiKey": "API 키 받기",
+    "delete": "삭제",
+    "save": "저장",
+    "deleteDialog": {
+      "title": "API 키 삭제",
+      "description": "{provider} API 키를 삭제하시겠습니까? 이 작업은 취소할 수 없으며 {provider} 모델에 대한 접근 권한을 잃게 됩니다.",
+      "cancel": "취소",
+      "confirm": "삭제"
+    },
+    "toasts": {
+      "saved": "API 키 저장됨",
+      "savedDescription": "{provider} API 키가 저장되었으며 모델이 즐겨찾기에 추가되었습니다.",
+      "updatedDescription": "{provider} API 키가 업데이트되었습니다.",
+      "saveFailed": "API 키 저장 실패",
+      "saveFailedDescription": "{provider} API 키 저장에 실패했습니다. 다시 시도해 주세요.",
+      "deleted": "API 키 삭제됨",
+      "deletedDescription": "{provider} API 키가 삭제되었습니다.",
+      "deleteFailed": "API 키 삭제 실패",
+      "deleteFailedDescription": "{provider} API 키 삭제에 실패했습니다. 다시 시도해 주세요."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "프로필 정보",
+    "displayName": "표시 이름",
+    "namePlaceholder": "이름",
+    "company": "회사",
+    "companyPlaceholder": "회사명",
+    "website": "웹사이트",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "저장 중...",
+    "saveChanges": "변경사항 저장",
+    "account": "계정",
+    "email": "이메일",
+    "verified": "인증됨",
+    "signOut": "로그아웃",
+    "signOutDescription": "이 기기에서 로그아웃",
+    "toasts": {
+      "profileUpdated": "프로필이 업데이트되었습니다",
+      "profileUpdateFailed": "프로필 업데이트에 실패했습니다",
+      "signOutFailed": "로그아웃에 실패했습니다"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "데이터가 보호됩니다",
+    "dataProtectedDescription": "저장 및 전송 시 엔터프라이즈급 암호화 보안",
+    "features": {
+      "encryption": {
+        "title": "종단간 암호화",
+        "description": "API 키가 AES-256-GCM으로 암호화됩니다. 자격 증명이 평문으로 저장되지 않습니다."
+      },
+      "rls": {
+        "title": "행 수준 보안",
+        "description": "데이터베이스 수준의 격리로 데이터에 본인만 접근할 수 있습니다. 교차 테넌트 접근이 불가능합니다."
+      },
+      "privacy": {
+        "title": "프라이버시 바이 디자인",
+        "description": "서비스 제공에 필요한 최소한의 데이터만 수집합니다. 대화와 파일은 본인의 것입니다."
+      },
+      "session": {
+        "title": "세션 보안",
+        "description": "CSRF 보호, 보안 HTTP 전용 쿠키, 모든 요청에 Content Security Policy 헤더가 적용됩니다."
+      }
+    },
+    "legal": "법적 정보",
+    "privacyPolicy": {
+      "title": "개인정보처리방침",
+      "description": "데이터 수집, 사용 및 보호 방법"
+    },
+    "termsOfService": {
+      "title": "이용약관",
+      "description": "서비스 이용 조건"
+    }
+  },
+  "layoutSettings": {
+    "layout": "레이아웃"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "요약",
+      "highlight": "요약하기"
+    },
+    "code": {
+      "label": "코드",
+      "highlight": "빌드"
+    },
+    "research": {
+      "label": "리서치",
+      "highlight": "분석"
+    },
+    "create": {
+      "label": "만들기",
+      "highlight": "생성"
+    },
+    "solve": {
+      "label": "해결",
+      "highlight": "디버그"
+    },
+    "learn": {
+      "label": "학습",
+      "highlight": "설명"
+    }
+  },
+  "loadingMessages": [
+    "실리콘 두뇌 부팅 중",
+    "디지털 의식 깨우는 중",
+    "신경 경로 초기화 중",
+    "양자 코어 가동 중",
+    "플럭스 커패시터 충전 중",
+    "메인프레임 활성화 중",
+    "연산 매트릭스 구동 중",
+    "워프 드라이브 작동 중",
+    "실리콘 정령 소환 중",
+    "전자 엔진 점화 중",
+    "트랜지스터 예열 중",
+    "비트와 바이트 조립 중",
+    "디지털 시냅스 보정 중",
+    "CPU 크리스탈 충전 중",
+    "의식 프로토콜 로딩 중",
+    "시스템 리소스 초기화 중",
+    "컴퓨팅 환경 준비 중",
+    "보안 연결 설정 중",
+    "가상 리소스 프로비저닝 중",
+    "시스템 파라미터 구성 중",
+    "가상 인스턴스 시작 중",
+    "원격 데스크톱 활성화 중",
+    "클라우드 리소스 배포 중",
+    "시스템 시작 시퀀스 개시 중",
+    "실행 환경 준비 중",
+    "졸린 컴퓨터 깨우는 중",
+    "디지털 곰 찌르는 중",
+    "연산용 커피 끓이는 중",
+    "디지털 근육 스트레칭 중",
+    "디지털 눈 뜨는 중",
+    "시작 중",
+    "전원 켜는 중",
+    "온라인 접속 중",
+    "시스템 부팅 중",
+    "준비 중",
+    "거의 완료",
+    "작업 공간 준비 중",
+    "리소스 로딩 중",
+    "시스템 기동 중"
+  ]
 }

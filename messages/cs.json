@@ -423,145 +423,145 @@
     "label": "Jazyk"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Vy stanovíte cíl.",
+    "brandSubheading": "My se postaráme o zbytek.",
+    "mobileHeading": "Vy stanovíte cíl. My se postaráme o zbytek.",
+    "mobileSubheading": "AI agenti, kteří prohlížejí, klikají a pracují jako skutečný spolupracovník.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Popíšete úkol",
+        "sub": "\"Prozkoumejte našich 5 hlavních konkurentů\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Agent přebírá kontrolu",
+        "sub": "Prohlíží, kliká, píše autonomně"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Práce doručena",
+        "sub": "Tabulka s 5 kompletními profily konkurentů"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Hotovo",
+    "doneIn": "Hotovo za 8 minut",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Váš operátor je připraven",
+      "signUp": "Přepněte své pracovní postupy na autopilot",
+      "magicLink": "Přeskočte heslo",
+      "forgotPassword": "Pojďme vás dostat zpět"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Pokračujte přesně tam, kde jste skončili — vaši agenti si pamatují",
+      "signUp": "Nasaďte svého prvního AI agenta za méně než minutu",
+      "magicLink": "Jedno kliknutí z vaší schránky a jste uvnitř",
+      "forgotPassword": "Pošleme vám odkaz pro obnovení na váš e-mail"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Připojování...",
+      "continueWithGoogle": "Pokračovat přes Google"
     },
-    "or": "or",
-    "email": "Email",
+    "or": "nebo",
+    "email": "E-mail",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "Heslo",
+    "passwordPlaceholder": "Vaše heslo",
+    "confirmPassword": "Potvrdit heslo",
+    "confirmPasswordPlaceholder": "Potvrďte své heslo",
+    "minChars": "Min. 6 znaků",
+    "signingIn": "Přihlašování...",
+    "signIn": "Přihlásit se",
+    "creatingAccount": "Vytváření účtu...",
+    "createAccount": "Vytvořit účet",
+    "sending": "Odesílání...",
+    "sendMagicLink": "Odeslat magický odkaz",
+    "sendResetLink": "Odeslat odkaz pro obnovení",
+    "forgotPassword": "Zapomněli jste heslo?",
+    "useMagicLink": "Použít magický odkaz",
+    "dontHaveAccount": "Nemáte účet?",
+    "signUp": "Zaregistrovat se",
+    "alreadyHaveAccount": "Již máte účet?",
+    "backToSignIn": "Zpět na přihlášení",
+    "termsAgreement": "Pokračováním souhlasíte s našimi",
+    "terms": "Podmínky",
+    "and": "a",
+    "privacyPolicy": "Zásady ochrany osobních údajů",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Vyplňte prosím všechna pole",
+      "passwordMinLength": "Heslo musí mít alespoň 6 znaků",
+      "passwordsDoNotMatch": "Hesla se neshodují",
+      "supabaseNotConfigured": "Supabase není nakonfigurován",
+      "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
+      "confirmEmail": "Před přihlášením prosím potvrďte svůj e-mail. Zkontrolujte svou schránku.",
+      "invalidCredentials": "Neplatný e-mail nebo heslo.",
+      "signInFailed": "Přihlášení se nezdařilo. Zkuste to prosím znovu.",
+      "invalidEmail": "Neplatná e-mailová adresa.",
+      "emailAlreadyExists": "Účet s tímto e-mailem již existuje. Zkuste se místo toho přihlásit.",
+      "signUpFailed": "Registrace se nezdařila. Zkuste to prosím znovu.",
+      "enterEmail": "Zadejte prosím svůj e-mail",
+      "noAccountFound": "S tímto e-mailem nebyl nalezen žádný účet. Nejprve se prosím zaregistrujte.",
+      "magicLinkFailed": "Nepodařilo se odeslat magický odkaz. Zkuste to prosím znovu.",
+      "resetFailed": "Nepodařilo se odeslat e-mail pro obnovení. Zkuste to prosím znovu.",
+      "updateFailed": "Nepodařilo se aktualizovat heslo. Zkuste to prosím znovu."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Zkontrolujte svůj e-mail a potvrďte svůj účet před přihlášením.",
+      "checkEmailMagicLink": "Zkontrolujte svůj e-mail pro magický odkaz k přihlášení.",
+      "checkEmailReset": "Zkontrolujte svůj e-mail pro odkaz na obnovení hesla.",
+      "passwordUpdated": "Heslo bylo úspěšně aktualizováno. Přesměrování na přihlášení..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Obnovte své heslo",
+      "subtitle": "Zadejte níže své nové heslo.",
+      "newPassword": "Nové heslo",
+      "confirmNewPassword": "Potvrdit nové heslo",
+      "confirmPlaceholder": "Potvrďte své nové heslo",
+      "updating": "Aktualizace...",
+      "updatePassword": "Aktualizovat heslo"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Chyba ověření",
+      "defaultMessage": "Během ověřování došlo k chybě.",
+      "tryAgain": "Zkusit znovu",
+      "backToChat": "Zpět do chatu",
+      "needHelp": "Potřebujete pomoc?",
+      "contactSupport": "Kontaktovat podporu"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Přeskočit",
+    "back": "Zpět",
+    "continue": "Pokračovat",
+    "getStarted": "Začít",
+    "settingUp": "Nastavování...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Vítejte zpět{name}!",
+      "titleNew": "Vítejte v Coasty",
+      "descriptionReturning": "Rádi bychom se o vás dozvěděli trochu více, abychom zlepšili váš zážitek",
+      "descriptionNew": "Pojďme nastavit váš účet, abychom mohli přizpůsobit váš zážitek"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Jak vám máme říkat?",
+    "namePlaceholder": "Vaše jméno",
+    "companyLabel": "Společnost",
+    "optional": "(volitelné)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "Web",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Co vás nejlépe vystihuje?",
+      "subtitle": "Vyberte vše, co platí — pomůže nám to přizpůsobit váš zážitek"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
-      "marketer": "Marketer",
-      "designer": "Designer",
-      "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "founder": "Zakladatel / CEO",
+      "developer": "Vývojář",
+      "marketer": "Marketér",
+      "designer": "Designér",
+      "product_manager": "Produktový manažer",
+      "data_analyst": "Data / Analytika",
+      "operations": "Provoz",
+      "other": "Ostatní"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Velikost týmu",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Jen já",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,608 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Jak jste nás našli?",
+      "subtitle": "Rádi bychom věděli, kde jste se o Coasty dozvěděli"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Přítel / Kolega",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Ostatní"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Co budete automatizovat jako první?",
+      "subtitle": "Vyberte vše, co platí — vše ostatní můžete prozkoumat později"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Web scraping a výzkum",
+      "browser_automation": "Automatizace prohlížeče",
+      "data_entry": "Zadávání dat a formuláře",
+      "email_outreach": "E-mail a outreach",
+      "testing": "QA a testování",
+      "ecommerce": "E-commerce úkoly",
+      "social_media": "Správa sociálních sítí",
+      "general_automation": "Obecná automatizace"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Vše, co potřebujete,",
+      "titleHighlight": "zabudováno.",
+      "subtitle": "Zde je, co pro vás Coasty může udělat",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Bez kódu",
+        "description": "Stačí popsat, co chcete, běžnou češtinou"
       },
       "agentSwarms": {
-        "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "title": "Roje agentů",
+        "description": "Paralelní flotily agentů"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Ovládání plochy",
+        "description": "Kliká, píše, naviguje"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Automatizace prohlížeče",
+        "description": "Formuláře, záložky, scraping — plně automatizováno"
       },
       "computerVision": {
-        "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "title": "Počítačové vidění",
+        "description": "Vidí a rozumí vaší obrazovce v reálném čase"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Pracovní postupy",
+        "description": "Vícekrokové toky"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Na zařízení",
+        "description": "Běží lokálně"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "24/7 autonomní",
+        "description": "Nastavte a zapomeňte — běží, zatímco spíte"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Jste tu noví? Máme pro vás průvodce",
+      "subtitle": "Nasaďte svého prvního AI agenta za méně než minutu"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Co má váš AI pracovník udělat?",
+    "placeholderAlt": "Řekněte svému AI, co má udělat na počítači...",
+    "vmError": {
+      "title": "Chyba virtuálního stroje",
+      "description": "Virtuální stroj je v chybovém stavu nebo je odstraňován.",
+      "hint": "Zkontrolujte prosím záložku Stroje pro vyřešení problému, nebo vyberte \"Žádný počítač nevybrán\" pro použití pouze webového vyhledávání.",
+      "gotIt": "Rozumím"
+    },
+    "status": {
+      "creating": "Vytváření {name}...",
+      "initiating": "Spouštění agenta na {name}...",
+      "stopping": "Zastavování {name}...",
+      "preparing": "Příprava {name}..."
+    },
+    "swarm": {
+      "title": "Režim roje",
+      "pro": "PRO",
+      "upgradeLabel": "Režim roje — upgradujte pro odemknutí",
+      "feature1": "Paralelní provádění na dočasných strojích",
+      "feature2": "Každý stroj běží autonomně",
+      "feature3": "3x limit strojů vašeho plánu na roj",
+      "description": "Spusťte jeden prompt na 3x limitu vašich strojů paralelně — každý řeší úkol nezávisle.",
+      "enableLabel": "Povolit režim roje",
+      "disableLabel": "Zakázat režim roje",
+      "onTooltip": "Režim roje ZAPNUT — váš prompt poběží na více strojích paralelně",
+      "offTooltip": "Povolte režim roje pro spuštění vašeho promptu na více strojích současně",
+      "decreaseMachines": "Snížit počet strojů",
+      "increaseMachines": "Zvýšit počet strojů",
+      "machineLimit": "Až {max} rojových strojů na vašem plánu. Potřebujete více? Kontaktujte founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Připojit k ploše",
+      "screenLabel": "Obrazovka {name}",
+      "screenDefault": "Plocha",
+      "watchTooltip": "Sledujte svého agenta pracovat na samostatné obrazovce. Jen se ničeho nedotýkejte, jinak dostane trému!"
+    },
+    "buttons": {
+      "stop": "Stop",
+      "sendToSwarm": "Odeslat do roje",
+      "taskRunning": "Další úkol běží — klikněte pro zastavení a spuštění vašeho",
+      "selectComputer": "Vyberte počítač pro odesílání zpráv",
+      "waitCreating": "Počkejte prosím na vytvoření VM",
+      "waitStarting": "Počkejte prosím na spuštění VM",
+      "waitAgent": "Počkejte prosím na inicializaci agenta",
+      "vmStopping": "VM se zastavuje",
+      "send": "Odeslat",
+      "switching": "Přepínání...",
+      "overrideRun": "Přepsat a spustit",
+      "stopLabel": "Zastavit běžící úkol a spustit tento",
+      "sendLabel": "Odeslat zprávu"
+    },
+    "search": "Hledat",
+    "upload": {
+      "label": "Nahrát soubory na VM",
+      "heading": "Nahrát soubory na VM",
+      "description": "Soubory budou uloženy na plochu",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Přetáhněte soubory sem",
+      "dropDescription": "Soubory budou nahrány do složky Plocha na VM",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Přihlaste se a vyzkoušejte více funkcí zdarma",
+      "description": "Vytvářejte projekty, zvěte členy týmu a další.",
+      "connecting": "Připojování...",
+      "continueWithGoogle": "Pokračovat přes Google"
+    },
+    "removeFile": "Odebrat soubor"
+  },
+  "chat": {
+    "greeting": "Ahoj",
+    "greetingAuth": "Postarám se o práci na počítači. Jaký je úkol?",
+    "greetingUnauth": "AI, které ovládá počítač, abyste nemuseli vy. Stačí říct, co potřebujete.",
+    "guide": "Průvodce",
+    "saveLogins": "Uložit přihlášení pro automatické vyplňování",
+    "encryptedNote": "šifrováno, AI nikdy nevidí",
+    "roleLabels": [
+      "Spolupracovník",
+      "Zaměstnanec",
+      "Přítel",
+      "Asistent",
+      "Partner",
+      "Týmový kolega",
+      "Kolaborátor",
+      "Pomocník"
+    ],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Získat zprávu o konkurenci",
+        "warmLeads": "Vygenerovat 20 teplých leadů",
+        "pitchDeck": "Vytvořit návrh pitch decku"
+      },
+      "developer": {
+        "findBugs": "Najít chyby na mém webu",
+        "performance": "Získat zprávu o výkonu",
+        "apiDocs": "Extrahovat API dokumentaci"
+      },
+      "marketer": {
+        "seoGap": "Získat SEO analýzu mezer",
+        "competitorAds": "Sledovat reklamy konkurence",
+        "trendingContent": "Získat trendy obsahové nápady"
+      },
+      "product_manager": {
+        "reviewSummary": "Získat shrnutí recenzí",
+        "featureComparison": "Vytvořit srovnání funkcí",
+        "competitorLaunches": "Sledovat uvedení konkurentů na trh"
+      },
+      "data_analyst": {
+        "exportCsv": "Exportovat data webu do CSV",
+        "marketSizing": "Získat zprávu o velikosti trhu",
+        "benchmark": "Porovnat s odvětvím"
+      },
+      "operations": {
+        "enterRecords": "Zadat záznamy do našeho systému",
+        "cheapestVendor": "Najít nejlevnějšího dodavatele",
+        "invoiceSummary": "Získat shrnutí faktur"
+      },
+      "designer": {
+        "designComparison": "Získat srovnání designu",
+        "responsiveAudit": "Spustit audit responzivity",
+        "inspiration": "Sbírat designovou inspiraci"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Exportovat data webu do CSV",
+      "browser_automation": "Exportovat reporty z dashboardu",
+      "data_entry": "Zadat záznamy do naší aplikace",
+      "email_outreach": "Odeslat personalizovaný outreach",
+      "testing": "Získat kompletní QA report",
+      "ecommerce": "Získat cenové srovnání",
+      "social_media": "Publikovat a získat engagement",
+      "general_automation": "Spustit úkol na mém webu"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Kopírovat text",
+    "copied": "Zkopírováno!",
+    "regenerate": "Regenerovat",
+    "feedback": {
+      "title": "Zpětná vazba",
+      "prompts": [
+        "Ohodnoťte",
+        "Zpětná vazba",
+        "Jak se nám dařilo?",
+        "Vaše myšlenky?",
+        "Sdílejte zpětnou vazbu"
+      ],
+      "tooltip": "Sdílejte svou zpětnou vazbu"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Chytré vyhledávání",
+      "description": "Vyhledávání poháněné AI po celém webu"
+    },
+    "collaborate": {
+      "title": "Spolupráce",
+      "description": "Pracujte společně v reálném čase"
+    },
+    "globalAccess": {
+      "title": "Globální přístup",
+      "description": "Vyhledávání v 50+ jazycích"
+    },
+    "aiModels": {
+      "title": "AI modely",
+      "description": "Více poskytovatelů AI"
+    },
+    "freeForever": {
+      "title": "Navždy zdarma",
+      "description": "Žádné skryté náklady"
+    },
+    "privateSecure": {
+      "title": "Soukromé a bezpečné",
+      "description": "Vaše data zůstávají vaše"
+    }
+  },
+  "sidebar": {
+    "newTask": "Nový úkol",
+    "newTaskDescription": "Spustit novou AI automatizaci",
+    "activity": "Aktivita",
+    "taskHistory": "Historie úkolů",
+    "taskHistoryDescription": "Prohlédněte si minulé úkoly a pokračujte tam, kde jste skončili",
+    "taskHistoryPopup": {
+      "title": "Vaše nedávné úkoly",
+      "description": "Procházejte a pokračujte v minulých konverzacích. Každý úkol je uložen, takže můžete pokračovat přesně tam, kde jste skončili."
+    },
+    "swarmRuns": "Běhy roje",
+    "swarmRunsDescription": "Monitorujte paralelní multi-agentní pracovní postupy",
+    "swarmRunsPopup": {
+      "title": "Multi-agentní pracovní postupy",
+      "description": "Spouštějte úkoly na více strojích paralelně. Každý agent pracuje nezávisle a výsledky se automaticky sbíhají."
+    },
+    "guide": "Průvodce",
+    "guideDescription": "Zjistěte, jak z Coasty vytěžit maximum",
+    "guidePopup": {
+      "title": "Začínáme",
+      "description": "Podrobné návody a osvědčené postupy, které vám pomohou efektivně automatizovat."
+    },
+    "infrastructure": "Infrastruktura",
+    "computer": "Počítač",
+    "computers": "Počítače",
+    "active": "aktivní",
+    "view": "Zobrazit",
+    "workforce": "Pracovní síla",
+    "workforceDescription": "Naplánujte automatizované agenty a triggery",
+    "workforcePopup": {
+      "title": "Plánovaná automatizace",
+      "description": "Nastavte opakující se úkoly s cron plány a triggery mezi agenty. Vaše pracovní síla běží, zatímco spíte."
+    },
+    "credentials": "Přihlašovací údaje",
+    "credentialsDescription": "Bezpečně uložte přihlášení pro přístup agentů",
+    "credentialsPopup": {
+      "title": "Bezpečný trezor přihlašovacích údajů",
+      "description": "Ukládejte přihlášení a API klíče se šifrováním. Agenti automaticky vyplňují údaje bez odhalení surových hodnot."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Získat desktopovou aplikaci",
+      "download": "Stáhnout",
+      "downloadDesktopApp": "Stáhnout desktopovou aplikaci",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Ovládejte svůj počítač na dálku",
+      "controlDescription": "Nainstalujte desktopovou aplikaci a spouštějte úkoly na svém PC z tohoto dashboardu — kdekoli, kdykoli."
+    },
+    "credits": {
+      "runningLow": "Kredity — Dochází",
+      "remaining": "Zbývající kredity",
+      "buy": "Koupit",
+      "creditsLeft": "kreditů zbývá",
+      "usedLabel": "Použito: {count}",
+      "consumed": "{percent} % spotřebováno",
+      "usageThisWeek": "Spotřeba tento týden"
+    },
+    "talkToUs": "Mluvte s námi",
+    "inviteEarn": "Pozvěte a vydělávejte",
+    "user": "Uživatel",
+    "account": "Účet",
+    "tasks": "{count} úkolů",
+    "recentActivity": "Nedávná aktivita",
+    "viewAllHistory": "Zobrazit celou historii →",
+    "swarmRunsCount": "{count} běhů roje",
+    "running": "běží",
+    "completed": "dokončeno",
+    "viewAllSwarms": "Zobrazit všechny roje →",
+    "schedulesCount": "{count} plánů",
+    "totalRuns": "{count} celkových běhů",
+    "paused": "pozastaveno",
+    "viewAllSchedules": "Zobrazit všechny plány →",
+    "credentialsCount": "{count} přihlašovacích údajů",
+    "encryptedVault": "Šifrovaný trezor",
+    "manageCredentials": "Spravovat přihlašovací údaje →",
+    "days": [
+      "Po",
+      "Út",
+      "St",
+      "Čt",
+      "Pá",
+      "So",
+      "Ne"
+    ],
+    "resume": "POKRAČOVAT",
+    "result": "VÝSLEDEK",
+    "notScheduled": "Neplánováno",
+    "overdue": "Po termínu",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "za {count}m",
+    "inHours": "za {count}h",
+    "today": "dnes",
+    "yesterday": "včera"
+  },
+  "appHeader": {
+    "login": "Přihlásit se",
+    "assign": "Přiřadit",
+    "assignDescription": "Přiřadit zaměstnance ke spuštění tohoto úkolu",
+    "computer": "Počítač",
+    "showComputer": "Zobrazit počítač",
+    "hideComputer": "Skrýt počítač",
+    "employeeHired": "Zaměstnanec najat!",
+    "employeeRemoved": "Zaměstnanec odebrán"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Lehká denní automatizace"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Automatizujte úkoly každý den"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Škálujte složité pracovní postupy",
+        "badge": "Nejoblíbenější"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Neomezená těžká automatizace"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (smazán po nečinnosti)",
+      "vmAlwaysOn": "{count} stále zapnutý VM",
+      "vmAlwaysOnPlural": "{count} stále zapnuté VM",
+      "agentsParallel": "{count} agentů paralelně",
+      "basicSearch": "Základní vyhledávání",
+      "advancedSearch": "Pokročilé vyhledávání a extrakce",
+      "standardSupport": "Standardní podpora (skuteční lidé)",
+      "prioritySupport": "Prioritní podpora, odpověď do 24h",
+      "premiumSupport": "Prémiová podpora, odpověď do 12h"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Malý boost",
+        "description": "Rychlé doplnění"
+      },
+      "medium": {
+        "name": "Střední boost",
+        "description": "Standardní doplnění",
+        "savings": "úspora 8 %"
+      },
+      "large": {
+        "name": "Velký boost",
+        "description": "Hromadný nákup",
+        "savings": "úspora 17 %"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Právě teď",
+      "minutesAgo": "před {count}m",
+      "hoursAgo": "před {count}h",
+      "daysAgo": "před {count}d"
+    },
+    "noActivity": "V tomto období žádná aktivita",
+    "stats": {
+      "balance": "Zůstatek",
+      "earned": "Získáno",
+      "used": "Použito",
+      "credits": "kreditů",
+      "allTime": "celkově",
+      "lastRange": "posledních {range}",
+      "sessions": "{count} relací",
+      "avgDaily": "~{count}/den průměr",
+      "plan": "Plán",
+      "free": "Zdarma",
+      "noPlan": "Žádný plán",
+      "canceling": "Rušení"
+    },
+    "monthlyUsage": "Měsíční spotřeba kreditů",
+    "remaining": "{used} / {total} zbývá",
+    "usedPercent": "{percent} % použito v tomto období",
+    "renews": "Obnovení {date}",
+    "choosePlan": "Vyberte si svůj plán",
+    "choosePlanDescription": "Přihlaste se k odběru pro odemknutí AI funkcí a získání měsíčních kreditů",
+    "savingsVsHuman": "Ušetříte {amount}/měs. oproti člověku",
+    "timeSaved": "{time} ušetřeno měsíčně",
+    "cheaper": "{multiplier} levnější",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/měsíc",
+    "creditsPerMonth": "{count} kreditů /měsíc",
+    "processing": "Zpracování...",
+    "subscribeTo": "Předplatit {name}",
+    "transactionTypes": {
+      "credit_purchase": "Nákup kreditů",
+      "agent_usage": "Využití agenta",
+      "refund": "Vrácení peněz",
+      "bonus": "Bonusová odměna",
+      "subscription": "Předplatné",
+      "subscription_grant": "Příděl předplatného",
+      "renewal": "Obnovovací kredity",
+      "reactivation": "Reaktivace"
+    },
+    "toasts": {
+      "paymentSuccess": "Platba úspěšná! Vaše kredity byly přidány.",
+      "subscriptionActivated": "Předplatné úspěšně aktivováno!",
+      "paymentCanceled": "Platba byla zrušena. Nebyly provedeny žádné poplatky.",
+      "signInToSubscribe": "Pro předplatné se prosím přihlaste",
+      "subscriptionCheckoutFailed": "Nepodařilo se spustit pokladnu předplatného. Zkuste to prosím znovu.",
+      "signInToPurchase": "Pro nákup kreditů se prosím přihlaste",
+      "needSubscription": "Pro nákup dalších kreditů potřebujete aktivní předplatné",
+      "checkoutFailed": "Nepodařilo se spustit pokladnu. Zkuste to prosím znovu.",
+      "manageFailed": "Nepodařilo se otevřít správu předplatného. Zkuste to prosím znovu.",
+      "transactionsExported": "Transakce exportovány"
+    }
+  },
+  "apiKeys": {
+    "title": "Poskytovatelé modelů",
+    "new": "nový",
+    "description": "Přidejte vlastní API klíče pro odemknutí přístupu k modelům.",
+    "securityNote": "Vaše klíče jsou bezpečně uloženy s end-to-end šifrováním.",
+    "apiKeyLabel": "API klíč {provider}",
+    "getApiKey": "Získat API klíč",
+    "delete": "Smazat",
+    "save": "Uložit",
+    "deleteDialog": {
+      "title": "Smazat API klíč",
+      "description": "Opravdu chcete smazat svůj API klíč {provider}? Tuto akci nelze vrátit zpět a ztratíte přístup k modelům {provider}.",
+      "cancel": "Zrušit",
+      "confirm": "Smazat"
+    },
+    "toasts": {
+      "saved": "API klíč uložen",
+      "savedDescription": "Váš API klíč {provider} byl uložen a modely byly přidány do vašich oblíbených.",
+      "updatedDescription": "Váš API klíč {provider} byl aktualizován.",
+      "saveFailed": "Nepodařilo se uložit API klíč",
+      "saveFailedDescription": "Nepodařilo se uložit API klíč {provider}. Zkuste to prosím znovu.",
+      "deleted": "API klíč smazán",
+      "deletedDescription": "Váš API klíč {provider} byl smazán.",
+      "deleteFailed": "Nepodařilo se smazat API klíč",
+      "deleteFailedDescription": "Nepodařilo se smazat API klíč {provider}. Zkuste to prosím znovu."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Detaily profilu",
+    "displayName": "Zobrazované jméno",
+    "namePlaceholder": "Vaše jméno",
+    "company": "Společnost",
+    "companyPlaceholder": "Vaše společnost",
+    "website": "Web",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Ukládání...",
+    "saveChanges": "Uložit změny",
+    "account": "Účet",
+    "email": "E-mail",
+    "verified": "Ověřeno",
+    "signOut": "Odhlásit se",
+    "signOutDescription": "Odhlásit se z tohoto zařízení",
+    "toasts": {
+      "profileUpdated": "Profil aktualizován",
+      "profileUpdateFailed": "Nepodařilo se aktualizovat profil",
+      "signOutFailed": "Nepodařilo se odhlásit"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Vaše data jsou chráněna",
+    "dataProtectedDescription": "Podniková úroveň zabezpečení se šifrováním v klidu i při přenosu",
+    "features": {
+      "encryption": {
+        "title": "End-to-end šifrování",
+        "description": "API klíče šifrovány pomocí AES-256-GCM. Vaše přihlašovací údaje nejsou nikdy uloženy v prostém textu."
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "Izolace na úrovni databáze zajišťuje, že vaše data jsou přístupná pouze vám. Žádný přístup mezi tenanty není možný."
+      },
+      "privacy": {
+        "title": "Ochrana soukromí od návrhu",
+        "description": "Sbíráme minimální data nezbytná pro poskytování služby. Vaše konverzace a soubory zůstávají vaše."
+      },
+      "session": {
+        "title": "Zabezpečení relace",
+        "description": "CSRF ochrana, zabezpečené HTTP-only cookies a Content Security Policy hlavičky u každého požadavku."
+      }
+    },
+    "legal": "Právní informace",
+    "privacyPolicy": {
+      "title": "Zásady ochrany osobních údajů",
+      "description": "Jak shromažďujeme, používáme a chráníme vaše data"
+    },
+    "termsOfService": {
+      "title": "Podmínky služby",
+      "description": "Naše smluvní podmínky používání"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Rozvržení"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Shrnutí",
+      "highlight": "Shrnout"
+    },
+    "code": {
+      "label": "Kód",
+      "highlight": "Sestavit"
+    },
+    "research": {
+      "label": "Výzkum",
+      "highlight": "Analyzovat"
+    },
+    "create": {
+      "label": "Vytvořit",
+      "highlight": "Generovat"
+    },
+    "solve": {
+      "label": "Vyřešit",
+      "highlight": "Ladit"
+    },
+    "learn": {
+      "label": "Učit se",
+      "highlight": "Vysvětlit"
+    }
+  },
+  "loadingMessages": [
+    "Startujeme silikonový mozek",
+    "Probouzíme digitální vědomí",
+    "Inicializujeme neurální dráhy",
+    "Roztáčíme kvantová jádra",
+    "Nabíjíme fluxový kondenzátor",
+    "Aktivujeme hlavní počítač",
+    "Napájíme výpočetní matici",
+    "Zapínáme warp pohon",
+    "Přivoláváme silikonové duchy",
+    "Zapalujeme elektronový motor",
+    "Zahříváme tranzistory",
+    "Skládáme bity a bajty",
+    "Kalibrujeme digitální synapse",
+    "Nabíjíme CPU krystaly",
+    "Načítáme protokoly vědomí",
+    "Inicializujeme systémové prostředky",
+    "Připravujeme výpočetní prostředí",
+    "Navazujeme zabezpečené spojení",
+    "Zřizujeme virtuální prostředky",
+    "Konfigurujeme systémové parametry",
+    "Spouštíme virtuální instanci",
+    "Aktivujeme vzdálenou plochu",
+    "Nasazujeme cloudové prostředky",
+    "Zahajujeme startovací sekvenci",
+    "Připravujeme prostředí pro spuštění",
+    "Budíme ospalý počítač",
+    "Šťoucháme digitálního medvěda",
+    "Vaříme výpočetní kafe",
+    "Protahujeme digitální svaly",
+    "Otevíráme digitální oči",
+    "Spouštíme",
+    "Zapínáme",
+    "Připojujeme se",
+    "Bootujeme systém",
+    "Připravujeme se",
+    "Už je to skoro",
+    "Připravujeme pracovní prostor",
+    "Načítáme prostředky",
+    "Systém se probouzí"
+  ]
 }

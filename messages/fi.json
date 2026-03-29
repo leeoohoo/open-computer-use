@@ -423,145 +423,145 @@
     "label": "Kieli"
   },
   "auth": {
-    "brandHeading": "You set the goal.",
-    "brandSubheading": "We handle the rest.",
-    "mobileHeading": "You set the goal. We handle the rest.",
-    "mobileSubheading": "AI agents that browse, click, and work like a real teammate.",
+    "brandHeading": "Sinä asetat tavoitteen.",
+    "brandSubheading": "Me hoidamme loput.",
+    "mobileHeading": "Sinä asetat tavoitteen. Me hoidamme loput.",
+    "mobileSubheading": "AI-agentit jotka selaavat, napsauttavat ja työskentelevät kuin oikea tiimikaveri.",
     "flowSteps": {
       "step1": {
-        "label": "You describe the task",
-        "sub": "\"Research our top 5 competitors\""
+        "label": "Kuvailet tehtävän",
+        "sub": "\"Tutki 5 tärkeintä kilpailijaamme\""
       },
       "step2": {
-        "label": "Agent takes control",
-        "sub": "Browses, clicks, types autonomously"
+        "label": "Agentti ottaa ohjat",
+        "sub": "Selaa, napsauttaa, kirjoittaa autonomisesti"
       },
       "step3": {
-        "label": "Work delivered",
-        "sub": "Spreadsheet with 5 full competitor profiles"
+        "label": "Työ toimitettu",
+        "sub": "Taulukko 5 täydellisellä kilpailijaprofiililla"
       }
     },
-    "complete": "Complete",
-    "doneIn": "Done in 8 minutes",
+    "complete": "Valmis",
+    "doneIn": "Valmis 8 minuutissa",
     "viewTitles": {
-      "signIn": "Your operator is standing by",
-      "signUp": "Put your workflows on autopilot",
-      "magicLink": "Skip the password",
-      "forgotPassword": "Let's get you back in"
+      "signIn": "Operaattorisi odottaa",
+      "signUp": "Laita työnkulkusi autopilotille",
+      "magicLink": "Ohita salasana",
+      "forgotPassword": "Pääsemme sinut takaisin sisään"
     },
     "viewDescriptions": {
-      "signIn": "Pick up right where you left off — your agents remember",
-      "signUp": "Deploy your first AI agent in under a minute",
-      "magicLink": "One click from your inbox and you're in",
-      "forgotPassword": "We'll send a reset link to your email"
+      "signIn": "Jatka siitä mihin jäit — agenttisi muistavat",
+      "signUp": "Ota käyttöön ensimmäinen AI-agenttisi alle minuutissa",
+      "magicLink": "Yksi napsautus sähköpostistasi ja olet sisällä",
+      "forgotPassword": "Lähetämme palautuslinkin sähköpostiisi"
     },
     "google": {
-      "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "connecting": "Yhdistetään...",
+      "continueWithGoogle": "Jatka Google-tilillä"
     },
-    "or": "or",
-    "email": "Email",
+    "or": "tai",
+    "email": "Sähköposti",
     "emailPlaceholder": "you@example.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "minChars": "Min. 6 characters",
-    "signingIn": "Signing in...",
-    "signIn": "Sign in",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "sending": "Sending...",
-    "sendMagicLink": "Send magic link",
-    "sendResetLink": "Send reset link",
-    "forgotPassword": "Forgot password?",
-    "useMagicLink": "Use magic link",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
-    "backToSignIn": "Back to sign in",
-    "termsAgreement": "By continuing, you agree to our",
-    "terms": "Terms",
-    "and": "and",
-    "privacyPolicy": "Privacy Policy",
+    "password": "Salasana",
+    "passwordPlaceholder": "Salasanasi",
+    "confirmPassword": "Vahvista salasana",
+    "confirmPasswordPlaceholder": "Vahvista salasanasi",
+    "minChars": "Väh. 6 merkkiä",
+    "signingIn": "Kirjaudutaan...",
+    "signIn": "Kirjaudu sisään",
+    "creatingAccount": "Luodaan tiliä...",
+    "createAccount": "Luo tili",
+    "sending": "Lähetetään...",
+    "sendMagicLink": "Lähetä magic link",
+    "sendResetLink": "Lähetä palautuslinkki",
+    "forgotPassword": "Unohditko salasanan?",
+    "useMagicLink": "Käytä magic linkiä",
+    "dontHaveAccount": "Eikö sinulla ole tiliä?",
+    "signUp": "Rekisteröidy",
+    "alreadyHaveAccount": "Onko sinulla jo tili?",
+    "backToSignIn": "Takaisin kirjautumiseen",
+    "termsAgreement": "Jatkamalla hyväksyt",
+    "terms": "Ehdot",
+    "and": "ja",
+    "privacyPolicy": "Tietosuojakäytäntö",
     "errors": {
-      "fillAllFields": "Please fill in all fields",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "supabaseNotConfigured": "Supabase is not configured",
-      "unexpectedError": "An unexpected error occurred. Please try again.",
-      "confirmEmail": "Please confirm your email before signing in. Check your inbox.",
-      "invalidCredentials": "Invalid email or password.",
-      "signInFailed": "Sign in failed. Please try again.",
-      "invalidEmail": "Invalid email address.",
-      "emailAlreadyExists": "An account with this email already exists. Try signing in instead.",
-      "signUpFailed": "Sign up failed. Please try again.",
-      "enterEmail": "Please enter your email",
-      "noAccountFound": "No account found with this email. Please sign up first.",
-      "magicLinkFailed": "Failed to send magic link. Please try again.",
-      "resetFailed": "Failed to send reset email. Please try again.",
-      "updateFailed": "Failed to update password. Please try again."
+      "fillAllFields": "Täytä kaikki kentät",
+      "passwordMinLength": "Salasanan on oltava vähintään 6 merkkiä",
+      "passwordsDoNotMatch": "Salasanat eivät täsmää",
+      "supabaseNotConfigured": "Supabase ei ole määritetty",
+      "unexpectedError": "Odottamaton virhe tapahtui. Yritä uudelleen.",
+      "confirmEmail": "Vahvista sähköpostisi ennen kirjautumista. Tarkista postilaatikkosi.",
+      "invalidCredentials": "Virheellinen sähköposti tai salasana.",
+      "signInFailed": "Kirjautuminen epäonnistui. Yritä uudelleen.",
+      "invalidEmail": "Virheellinen sähköpostiosoite.",
+      "emailAlreadyExists": "Tili tällä sähköpostilla on jo olemassa. Kokeile kirjautua sisään.",
+      "signUpFailed": "Rekisteröinti epäonnistui. Yritä uudelleen.",
+      "enterEmail": "Syötä sähköpostisi",
+      "noAccountFound": "Tiliä ei löytynyt tällä sähköpostilla. Rekisteröidy ensin.",
+      "magicLinkFailed": "Magic linkin lähetys epäonnistui. Yritä uudelleen.",
+      "resetFailed": "Palautussähköpostin lähetys epäonnistui. Yritä uudelleen.",
+      "updateFailed": "Salasanan päivitys epäonnistui. Yritä uudelleen."
     },
     "success": {
-      "checkEmailConfirm": "Check your email to confirm your account before signing in.",
-      "checkEmailMagicLink": "Check your email for the magic link to sign in.",
-      "checkEmailReset": "Check your email for the password reset link.",
-      "passwordUpdated": "Password updated successfully. Redirecting to sign in..."
+      "checkEmailConfirm": "Tarkista sähköpostisi vahvistaaksesi tilisi ennen kirjautumista.",
+      "checkEmailMagicLink": "Tarkista sähköpostisi magic linkin saamiseksi.",
+      "checkEmailReset": "Tarkista sähköpostisi salasanan palautuslinkin saamiseksi.",
+      "passwordUpdated": "Salasana päivitetty onnistuneesti. Uudelleenohjataan kirjautumiseen..."
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password below.",
-      "newPassword": "New password",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPlaceholder": "Confirm your new password",
-      "updating": "Updating...",
-      "updatePassword": "Update password"
+      "title": "Palauta salasanasi",
+      "subtitle": "Syötä uusi salasanasi alla.",
+      "newPassword": "Uusi salasana",
+      "confirmNewPassword": "Vahvista uusi salasana",
+      "confirmPlaceholder": "Vahvista uusi salasanasi",
+      "updating": "Päivitetään...",
+      "updatePassword": "Päivitä salasana"
     },
     "errorPage": {
-      "title": "Authentication Error",
-      "defaultMessage": "An error occurred during authentication.",
-      "tryAgain": "Try Again",
-      "backToChat": "Back to Chat",
-      "needHelp": "Need help?",
-      "contactSupport": "Contact Support"
+      "title": "Todennusvirhe",
+      "defaultMessage": "Todennuksen aikana tapahtui virhe.",
+      "tryAgain": "Yritä uudelleen",
+      "backToChat": "Takaisin chattiin",
+      "needHelp": "Tarvitsetko apua?",
+      "contactSupport": "Ota yhteyttä tukeen"
     }
   },
   "onboarding": {
-    "skipForNow": "Skip for now",
-    "back": "Back",
-    "continue": "Continue",
-    "getStarted": "Get started",
-    "settingUp": "Setting up...",
+    "skipForNow": "Ohita toistaiseksi",
+    "back": "Takaisin",
+    "continue": "Jatka",
+    "getStarted": "Aloita",
+    "settingUp": "Valmistellaan...",
     "welcome": {
-      "titleReturning": "Welcome back{name}!",
-      "titleNew": "Welcome to Coasty",
-      "descriptionReturning": "We'd love to learn a bit more about you to improve your experience",
-      "descriptionNew": "Let's set up your account so we can personalize your experience"
+      "titleReturning": "Tervetuloa takaisin{name}!",
+      "titleNew": "Tervetuloa Coastyyn",
+      "descriptionReturning": "Haluaisimme oppia sinusta hieman lisää parantaaksemme kokemustasi",
+      "descriptionNew": "Perustetaan tilisi, jotta voimme personoida kokemustasi"
     },
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "companyLabel": "Company",
-    "optional": "(optional)",
+    "nameLabel": "Miten meidän pitäisi kutsua sinua?",
+    "namePlaceholder": "Nimesi",
+    "companyLabel": "Yritys",
+    "optional": "(valinnainen)",
     "companyPlaceholder": "MacroHard",
-    "websiteLabel": "Website",
+    "websiteLabel": "Verkkosivusto",
     "websitePlaceholder": "xai.com",
     "roleStep": {
-      "title": "What best describes you?",
-      "subtitle": "Select all that apply — this helps us tailor your experience"
+      "title": "Mikä kuvaa sinua parhaiten?",
+      "subtitle": "Valitse kaikki sopivat — tämä auttaa meitä räätälöimään kokemustasi"
     },
     "roles": {
-      "founder": "Founder / CEO",
-      "developer": "Developer",
-      "marketer": "Marketer",
-      "designer": "Designer",
+      "founder": "Perustaja / CEO",
+      "developer": "Kehittäjä",
+      "marketer": "Markkinoija",
+      "designer": "Suunnittelija",
       "product_manager": "Product Manager",
-      "data_analyst": "Data / Analytics",
-      "operations": "Operations",
-      "other": "Other"
+      "data_analyst": "Data / Analytiikka",
+      "operations": "Operaatiot",
+      "other": "Muu"
     },
-    "teamSizeLabel": "Team size",
+    "teamSizeLabel": "Tiimin koko",
     "teamSizes": {
-      "solo": "Just me",
+      "solo": "Vain minä",
       "2-5": "2-5",
       "6-20": "6-20",
       "21-50": "21-50",
@@ -569,73 +569,585 @@
       "200+": "200+"
     },
     "referralStep": {
-      "title": "How did you find us?",
-      "subtitle": "We'd love to know where you heard about Coasty"
+      "title": "Miten löysit meidät?",
+      "subtitle": "Haluaisimme tietää missä kuulit Coastysta"
     },
     "referralSources": {
       "twitter": "Twitter / X",
       "linkedin": "LinkedIn",
       "google": "Google Search",
       "youtube": "YouTube",
-      "friend": "Friend / Colleague",
+      "friend": "Ystävä / Kollega",
       "producthunt": "Product Hunt",
       "reddit": "Reddit",
-      "other": "Other"
+      "other": "Muu"
     },
     "useCaseStep": {
-      "title": "What will you automate first?",
-      "subtitle": "Select all that apply — you can explore everything later"
+      "title": "Mitä automatisoit ensin?",
+      "subtitle": "Valitse kaikki sopivat — voit tutkia kaikkea myöhemmin"
     },
     "useCases": {
-      "web_scraping": "Web Scraping & Research",
-      "browser_automation": "Browser Automation",
-      "data_entry": "Data Entry & Forms",
-      "email_outreach": "Email & Outreach",
-      "testing": "QA & Testing",
-      "ecommerce": "E-commerce Tasks",
-      "social_media": "Social Media Management",
-      "general_automation": "General Automation"
+      "web_scraping": "Web Scraping & Tutkimus",
+      "browser_automation": "Selainautomaatio",
+      "data_entry": "Tietojen syöttö & Lomakkeet",
+      "email_outreach": "Sähköposti & Outreach",
+      "testing": "QA & Testaus",
+      "ecommerce": "Verkkokauppatehtävät",
+      "social_media": "Sosiaalisen median hallinta",
+      "general_automation": "Yleinen automaatio"
     },
     "showcase": {
-      "title": "Everything you need,",
-      "titleHighlight": "built in.",
-      "subtitle": "Here's what Coasty can do for you",
+      "title": "Kaikki mitä tarvitset,",
+      "titleHighlight": "sisäänrakennettu.",
+      "subtitle": "Tässä mitä Coasty voi tehdä puolestasi",
       "noCode": {
-        "title": "No Code",
-        "description": "Just describe what you want in plain English"
+        "title": "Ei koodia",
+        "description": "Kuvaile vain mitä haluat selkeällä suomella"
       },
       "agentSwarms": {
-        "title": "Agent Swarms",
-        "description": "Parallel agent fleets"
+        "title": "Agenttiparvet",
+        "description": "Rinnakkaiset agenttilaivueet"
       },
       "desktopControl": {
-        "title": "Desktop Control",
-        "description": "Clicks, types, navigates"
+        "title": "Työpöydän hallinta",
+        "description": "Napsauttaa, kirjoittaa, navigoi"
       },
       "browserAutomation": {
-        "title": "Browser Automation",
-        "description": "Forms, tabs, scraping — fully automated"
+        "title": "Selainautomaatio",
+        "description": "Lomakkeet, välilehdet, scraping — täysin automatisoitu"
       },
       "computerVision": {
         "title": "Computer Vision",
-        "description": "Sees & understands your screen in real time"
+        "description": "Näkee ja ymmärtää näyttösi reaaliajassa"
       },
       "workflows": {
-        "title": "Workflows",
-        "description": "Multi-step flows"
+        "title": "Työnkulut",
+        "description": "Monivaiheisia prosesseja"
       },
       "onDevice": {
-        "title": "On-Device",
-        "description": "Runs locally"
+        "title": "Laitteella",
+        "description": "Toimii paikallisesti"
       },
       "autonomous": {
-        "title": "24/7 Autonomous",
-        "description": "Set it and forget it — runs while you sleep"
+        "title": "24/7 Autonominen",
+        "description": "Aseta ja unohda — toimii kun nukut"
       }
     },
     "guideCallout": {
-      "title": "New here? We've got a guide for you",
-      "subtitle": "Deploy your first AI agent in under a minute"
+      "title": "Uusi täällä? Meillä on opas sinulle",
+      "subtitle": "Ota käyttöön ensimmäinen AI-agenttisi alle minuutissa"
     }
-  }
+  },
+  "chatInput": {
+    "placeholder": "Mitä AI-työntekijäsi pitäisi tehdä?",
+    "placeholderAlt": "Kerro AI:llesi mitä tehdä tietokoneella...",
+    "vmError": {
+      "title": "Virtuaalikonevirhe",
+      "description": "Virtuaalikone on virhetilassa tai sitä poistetaan.",
+      "hint": "Tarkista Koneet-välilehti ongelman ratkaisemiseksi tai valitse \"Ei tietokonetta valittu\" käyttääksesi vain verkkohakua.",
+      "gotIt": "Selvä"
+    },
+    "status": {
+      "creating": "Luodaan {name}...",
+      "initiating": "Käynnistetään agentti kohteessa {name}...",
+      "stopping": "Pysäytetään {name}...",
+      "preparing": "Valmistellaan {name}..."
+    },
+    "swarm": {
+      "title": "Parvitila",
+      "pro": "PRO",
+      "upgradeLabel": "Parvitila — päivitä avataksesi",
+      "feature1": "Rinnakkainen suoritus väliaikaisilla koneilla",
+      "feature2": "Jokainen kone toimii autonomisesti",
+      "feature3": "3x pakettisi koneraja per parvi",
+      "description": "Suorita yksi prompt 3x konerajasi rinnakkain — jokainen käsittelee tehtävän itsenäisesti.",
+      "enableLabel": "Ota parvitila käyttöön",
+      "disableLabel": "Poista parvitila käytöstä",
+      "onTooltip": "Parvitila PÄÄLLÄ — promptisi suoritetaan useilla koneilla rinnakkain",
+      "offTooltip": "Ota parvitila käyttöön suorittaaksesi promptisi useilla koneilla samanaikaisesti",
+      "decreaseMachines": "Vähennä koneiden määrää",
+      "increaseMachines": "Lisää koneiden määrää",
+      "machineLimit": "Enintään {max} parvikonetta paketissasi. Tarvitsetko lisää? Ota yhteyttä founders@coasty.ai"
+    },
+    "desktop": {
+      "connectLabel": "Yhdistä työpöytään",
+      "screenLabel": "{name}:n näyttö",
+      "screenDefault": "Työpöytä",
+      "watchTooltip": "Katso agenttisi työskentelyä erillisellä näytöllä. Älä vain koske mihinkään tai se saa ramppikuumeen!"
+    },
+    "buttons": {
+      "stop": "Pysäytä",
+      "sendToSwarm": "Lähetä parveen",
+      "taskRunning": "Toinen tehtävä on käynnissä — napsauta pysäyttääksesi ja suorittaaksesi omasi",
+      "selectComputer": "Valitse tietokone viestien lähettämiseen",
+      "waitCreating": "Odota VM:n luomista",
+      "waitStarting": "Odota VM:n käynnistymistä",
+      "waitAgent": "Odota agentin alustusta",
+      "vmStopping": "VM pysähtyy",
+      "send": "Lähetä",
+      "switching": "Vaihdetaan...",
+      "overrideRun": "Ohita & Suorita",
+      "stopLabel": "Pysäytä käynnissä oleva tehtävä ja aloita tämä",
+      "sendLabel": "Lähetä viesti"
+    },
+    "search": "Haku",
+    "upload": {
+      "label": "Lataa tiedostoja VM:lle",
+      "heading": "Lataa tiedostoja VM:lle",
+      "description": "Tiedostot tallennetaan työpöydälle",
+      "vmInfo": "VM: {name}",
+      "dropHeading": "Pudota tiedostot tähän",
+      "dropDescription": "Tiedostot ladataan VM:n Työpöytä-kansioon",
+      "dropPath": "Path: /home/desktop/Desktop/"
+    },
+    "authPrompt": {
+      "heading": "Kirjaudu kokeillaksesi lisää ominaisuuksia ilmaiseksi",
+      "description": "Luo projekteja, kutsu tiimin jäseniä ja paljon muuta.",
+      "connecting": "Yhdistetään...",
+      "continueWithGoogle": "Jatka Google-tilillä"
+    },
+    "removeFile": "Poista tiedosto"
+  },
+  "chat": {
+    "greeting": "Hei",
+    "greetingAuth": "Hoidan tietokonetyöt. Mikä on tehtävä?",
+    "greetingUnauth": "AI joka käyttää tietokonetta puolestasi. Kerro vain mitä tarvitset tehtäväksi.",
+    "guide": "Opas",
+    "saveLogins": "Tallenna kirjautumistiedot automaattista täyttöä varten",
+    "encryptedNote": "salattu, AI ei näe",
+    "roleLabels": ["Työkaveri", "Työntekijä", "Ystävä", "Avustaja", "Kumppani", "Tiimikaveri", "Yhteistyökumppani", "Auttaja"],
+    "taskTemplates": {
+      "founder": {
+        "competitorReport": "Hanki kilpailijaraportti",
+        "warmLeads": "Luo 20 lämmintä liidiä",
+        "pitchDeck": "Rakenna pitch deck -luonnos"
+      },
+      "developer": {
+        "findBugs": "Etsi bugeja sivustoltani",
+        "performance": "Hanki suorituskykyraportti",
+        "apiDocs": "Poimi API-dokumentaatio"
+      },
+      "marketer": {
+        "seoGap": "Hanki SEO-puuteanalyysi",
+        "competitorAds": "Vakoile kilpailijoiden mainoksia",
+        "trendingContent": "Hanki trendaavia sisältöideoita"
+      },
+      "product_manager": {
+        "reviewSummary": "Hanki arvosteluyhteenveto",
+        "featureComparison": "Rakenna ominaisuusvertailu",
+        "competitorLaunches": "Seuraa kilpailijoiden julkaisuja"
+      },
+      "data_analyst": {
+        "exportCsv": "Vie sivuston data CSV:ksi",
+        "marketSizing": "Hanki markkinakokraportti",
+        "benchmark": "Vertailu toimialaan"
+      },
+      "operations": {
+        "enterRecords": "Syötä tietueita järjestelmäämme",
+        "cheapestVendor": "Etsi halvin toimittaja",
+        "invoiceSummary": "Hanki laskuyhteenveto"
+      },
+      "designer": {
+        "designComparison": "Hanki suunnitteluvertailu",
+        "responsiveAudit": "Suorita responsiivinen auditointi",
+        "inspiration": "Kerää suunnitteluinspiraatiota"
+      }
+    },
+    "useCaseTemplates": {
+      "web_scraping": "Vie sivuston data CSV:ksi",
+      "browser_automation": "Vie dashboard-raportit",
+      "data_entry": "Syötä tietueita sovellukseemme",
+      "email_outreach": "Lähetä personoitua outreachia",
+      "testing": "Hanki täydellinen QA-raportti",
+      "ecommerce": "Hanki hintavertailu",
+      "social_media": "Julkaise ja hanki sitoutumista",
+      "general_automation": "Suorita tehtävä sivustollani"
+    }
+  },
+  "chatMessages": {
+    "copyText": "Kopioi teksti",
+    "copied": "Kopioitu!",
+    "regenerate": "Luo uudelleen",
+    "feedback": {
+      "title": "Palaute",
+      "prompts": ["Arvioi tämä", "Palaute", "Miten meillä meni?", "Ajatuksia?", "Jaa palaute"],
+      "tooltip": "Jaa palautteesi"
+    }
+  },
+  "collaborativeFeatures": {
+    "smartSearch": {
+      "title": "Älyhaku",
+      "description": "AI-avusteinen haku verkosta"
+    },
+    "collaborate": {
+      "title": "Yhteistyö",
+      "description": "Työskentele yhdessä reaaliajassa"
+    },
+    "globalAccess": {
+      "title": "Globaali pääsy",
+      "description": "Haku yli 50 kielellä"
+    },
+    "aiModels": {
+      "title": "AI-mallit",
+      "description": "Useita AI-tarjoajia"
+    },
+    "freeForever": {
+      "title": "Ikuisesti ilmainen",
+      "description": "Ei piilokustannuksia"
+    },
+    "privateSecure": {
+      "title": "Yksityinen & Turvallinen",
+      "description": "Datasi pysyy sinun"
+    }
+  },
+  "sidebar": {
+    "newTask": "Uusi tehtävä",
+    "newTaskDescription": "Aloita uusi AI-automaatio",
+    "activity": "Toiminta",
+    "taskHistory": "Tehtävähistoria",
+    "taskHistoryDescription": "Tarkastele aiempia tehtäviä ja jatka siitä mihin jäit",
+    "taskHistoryPopup": {
+      "title": "Viimeisimmät tehtäväsi",
+      "description": "Selaa ja jatka aiempia keskusteluja. Jokainen tehtävä tallennetaan, jotta voit jatkaa siitä mihin jäit."
+    },
+    "swarmRuns": "Parviajot",
+    "swarmRunsDescription": "Seuraa moniagenttisia rinnakkaisia työnkulkuja",
+    "swarmRunsPopup": {
+      "title": "Moniagenttisia työnkulkuja",
+      "description": "Suorita tehtäviä useilla koneilla rinnakkain. Jokainen agentti työskentelee itsenäisesti ja tulokset yhdistyvät automaattisesti."
+    },
+    "guide": "Opas",
+    "guideDescription": "Opi saamaan Coastysta kaiken irti",
+    "guidePopup": {
+      "title": "Aloittaminen",
+      "description": "Vaiheittaiset ohjeet ja parhaat käytännöt tehokkaaseen automatisointiin."
+    },
+    "infrastructure": "Infrastruktuuri",
+    "computer": "Tietokone",
+    "computers": "Tietokoneet",
+    "active": "aktiivinen",
+    "view": "Näytä",
+    "workforce": "Työvoima",
+    "workforceDescription": "Aikatauluta automatisoituja agentteja ja triggaajia",
+    "workforcePopup": {
+      "title": "Aikataulutettu automaatio",
+      "description": "Määritä toistuvia tehtäviä cron-aikatauluilla ja agentti-agenttitriggaajilla. Työvoimasi toimii kun nukut."
+    },
+    "credentials": "Tunnisteet",
+    "credentialsDescription": "Tallenna kirjautumistiedot turvallisesti agenttien käyttöön",
+    "credentialsPopup": {
+      "title": "Turvallinen tunnisteholvi",
+      "description": "Tallenna kirjautumistiedot ja API-avaimet salauksella. Agentit täyttävät tunnisteet automaattisesti paljastamatta raaka-arvoja."
+    },
+    "desktopApp": {
+      "getDesktopApp": "Hanki työpöytäsovellus",
+      "download": "Lataa",
+      "downloadDesktopApp": "Lataa työpöytäsovellus",
+      "windows": "Windows",
+      "macos": "macOS",
+      "controlRemotely": "Hallitse tietokonettasi etänä",
+      "controlDescription": "Asenna työpöytäsovellus ja suorita tehtäviä PC:lläsi tästä hallintapaneelista — missä tahansa, milloin tahansa."
+    },
+    "credits": {
+      "runningLow": "Krediitit — Vähissä",
+      "remaining": "Krediittejä jäljellä",
+      "buy": "Osta",
+      "creditsLeft": "krediittiä jäljellä",
+      "usedLabel": "Käytetty: {count}",
+      "consumed": "{percent}% kulutettu",
+      "usageThisWeek": "Käyttö tällä viikolla"
+    },
+    "talkToUs": "Ota yhteyttä",
+    "inviteEarn": "Kutsu & Ansaitse",
+    "user": "Käyttäjä",
+    "account": "Tili",
+    "tasks": "{count} Tehtävää",
+    "recentActivity": "Viimeaikainen toiminta",
+    "viewAllHistory": "Näytä koko historia →",
+    "swarmRunsCount": "{count} Parviajoa",
+    "running": "käynnissä",
+    "completed": "valmis",
+    "viewAllSwarms": "Näytä kaikki parvet →",
+    "schedulesCount": "{count} Aikataulua",
+    "totalRuns": "{count} ajoa yhteensä",
+    "paused": "tauolla",
+    "viewAllSchedules": "Näytä kaikki aikataulut →",
+    "credentialsCount": "{count} Tunnistetta",
+    "encryptedVault": "Salattu holvi",
+    "manageCredentials": "Hallitse tunnisteita →",
+    "days": ["Ma", "Ti", "Ke", "To", "Pe", "La", "Su"],
+    "resume": "JATKA",
+    "result": "TULOS",
+    "notScheduled": "Ei aikataulutettu",
+    "overdue": "Myöhässä",
+    "lessThanMin": "< 1 min",
+    "inMinutes": "{count} min päästä",
+    "inHours": "{count} t päästä",
+    "today": "tänään",
+    "yesterday": "eilen"
+  },
+  "appHeader": {
+    "login": "Kirjaudu",
+    "assign": "Määritä",
+    "assignDescription": "Määritä työntekijä suorittamaan tämä tehtävä",
+    "computer": "Tietokone",
+    "showComputer": "Näytä tietokone",
+    "hideComputer": "Piilota tietokone",
+    "employeeHired": "Työntekijä palkattu!",
+    "employeeRemoved": "Työntekijä poistettu"
+  },
+  "billing": {
+    "plans": {
+      "lite": {
+        "name": "Lite",
+        "description": "Kevyt päivittäinen automaatio"
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "Automatisoi tehtäviä joka päivä"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Skaalaa monimutkaisia työnkulkuja",
+        "badge": "Suosituin"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Rajaton raskas automaatio"
+      }
+    },
+    "features": {
+      "vmDeleted": "1 VM (poistetaan käyttämättömyyden jälkeen)",
+      "vmAlwaysOn": "{count} aina päällä oleva VM",
+      "vmAlwaysOnPlural": "{count} aina päällä olevaa VM:ää",
+      "agentsParallel": "{count} agenttia rinnakkain",
+      "basicSearch": "Perushaku",
+      "advancedSearch": "Edistynyt haku & poiminta",
+      "standardSupport": "Perustuki (oikeita ihmisiä)",
+      "prioritySupport": "Prioriteettituki, 24h vastaus",
+      "premiumSupport": "Premium-tuki, 12h vastaus"
+    },
+    "creditPackages": {
+      "small": {
+        "name": "Pieni lisäys",
+        "description": "Nopea täydennys"
+      },
+      "medium": {
+        "name": "Keskikokoinen lisäys",
+        "description": "Tavallinen täydennys",
+        "savings": "8% säästö"
+      },
+      "large": {
+        "name": "Suuri lisäys",
+        "description": "Massaosto",
+        "savings": "17% säästö"
+      }
+    },
+    "timeAgo": {
+      "justNow": "Juuri nyt",
+      "minutesAgo": "{count} min sitten",
+      "hoursAgo": "{count} t sitten",
+      "daysAgo": "{count} pv sitten"
+    },
+    "noActivity": "Ei toimintaa tällä kaudella",
+    "stats": {
+      "balance": "Saldo",
+      "earned": "Ansaittu",
+      "used": "Käytetty",
+      "credits": "krediittiä",
+      "allTime": "kaikilta ajoilta",
+      "lastRange": "viimeiset {range}",
+      "sessions": "{count} istuntoa",
+      "avgDaily": "~{count}/päivä ka.",
+      "plan": "Paketti",
+      "free": "Ilmainen",
+      "noPlan": "Ei pakettia",
+      "canceling": "Peruutetaan"
+    },
+    "monthlyUsage": "Kuukausittainen krediittien käyttö",
+    "remaining": "{used} / {total} jäljellä",
+    "usedPercent": "{percent}% käytetty tällä kaudella",
+    "renews": "Uusitaan {date}",
+    "choosePlan": "Valitse pakettisi",
+    "choosePlanDescription": "Tilaa avataksesi AI-ominaisuudet ja saadaksesi kuukausittaiset krediitit",
+    "savingsVsHuman": "Säästä {amount}/kk vs ihminen",
+    "timeSaved": "{time} säästetty kuukausittain",
+    "cheaper": "{multiplier} halvempi",
+    "coastyPlan": "Coasty {name}",
+    "perMonth": "/kuukausi",
+    "creditsPerMonth": "{count} krediittiä /kuukausi",
+    "processing": "Käsitellään...",
+    "subscribeTo": "Tilaa {name}",
+    "transactionTypes": {
+      "credit_purchase": "Krediittien osto",
+      "agent_usage": "Agentin käyttö",
+      "refund": "Hyvitys",
+      "bonus": "Bonuspalkinto",
+      "subscription": "Tilaus",
+      "subscription_grant": "Tilausmyöntö",
+      "renewal": "Uusintakrediitit",
+      "reactivation": "Uudelleenaktivointi"
+    },
+    "toasts": {
+      "paymentSuccess": "Maksu onnistui! Krediittisi on lisätty.",
+      "subscriptionActivated": "Tilaus aktivoitu onnistuneesti!",
+      "paymentCanceled": "Maksu peruutettu. Veloituksia ei tehty.",
+      "signInToSubscribe": "Kirjaudu sisään tilataksesi",
+      "subscriptionCheckoutFailed": "Tilauksen checkout epäonnistui. Yritä uudelleen.",
+      "signInToPurchase": "Kirjaudu sisään ostaaksesi krediittejä",
+      "needSubscription": "Tarvitset aktiivisen tilauksen ostaaksesi lisäkrediittejä",
+      "checkoutFailed": "Checkout epäonnistui. Yritä uudelleen.",
+      "manageFailed": "Tilauksen hallinnan avaaminen epäonnistui. Yritä uudelleen.",
+      "transactionsExported": "Tapahtumat viety"
+    }
+  },
+  "apiKeys": {
+    "title": "Mallitarjoajat",
+    "new": "uusi",
+    "description": "Lisää omat API-avaimesi avataksesi pääsyn malleihin.",
+    "securityNote": "Avaimesi tallennetaan turvallisesti end-to-end-salauksella.",
+    "apiKeyLabel": "{provider} API Key",
+    "getApiKey": "Hanki API-avain",
+    "delete": "Poista",
+    "save": "Tallenna",
+    "deleteDialog": {
+      "title": "Poista API-avain",
+      "description": "Haluatko varmasti poistaa {provider} API-avaimesi? Tätä toimintoa ei voi kumota ja menetät pääsyn {provider}-malleihin.",
+      "cancel": "Peruuta",
+      "confirm": "Poista"
+    },
+    "toasts": {
+      "saved": "API-avain tallennettu",
+      "savedDescription": "{provider} API-avaimesi on tallennettu ja mallit on lisätty suosikkeihisi.",
+      "updatedDescription": "{provider} API-avaimesi on päivitetty.",
+      "saveFailed": "API-avaimen tallennus epäonnistui",
+      "saveFailedDescription": "{provider} API-avaimen tallennus epäonnistui. Yritä uudelleen.",
+      "deleted": "API-avain poistettu",
+      "deletedDescription": "{provider} API-avaimesi on poistettu.",
+      "deleteFailed": "API-avaimen poisto epäonnistui",
+      "deleteFailedDescription": "{provider} API-avaimen poisto epäonnistui. Yritä uudelleen."
+    }
+  },
+  "accountSettings": {
+    "profileDetails": "Profiilin tiedot",
+    "displayName": "Näyttönimi",
+    "namePlaceholder": "Nimesi",
+    "company": "Yritys",
+    "companyPlaceholder": "Yrityksesi",
+    "website": "Verkkosivusto",
+    "websitePlaceholder": "yoursite.com",
+    "saving": "Tallennetaan...",
+    "saveChanges": "Tallenna muutokset",
+    "account": "Tili",
+    "email": "Sähköposti",
+    "verified": "Vahvistettu",
+    "signOut": "Kirjaudu ulos",
+    "signOutDescription": "Kirjaudu ulos tältä laitteelta",
+    "toasts": {
+      "profileUpdated": "Profiili päivitetty",
+      "profileUpdateFailed": "Profiilin päivitys epäonnistui",
+      "signOutFailed": "Uloskirjautuminen epäonnistui"
+    }
+  },
+  "privacySettings": {
+    "dataProtected": "Datasi on suojattu",
+    "dataProtectedDescription": "Yritystason tietoturva salauksella levossa ja siirrossa",
+    "features": {
+      "encryption": {
+        "title": "End-to-End-salaus",
+        "description": "API-avaimet salattu AES-256-GCM:llä. Tunnistetietojasi ei koskaan tallenneta selkotekstinä."
+      },
+      "rls": {
+        "title": "Row Level Security",
+        "description": "Tietokantatason eristys varmistaa, että datasi on vain sinun käytettävissäsi. Ristikkäinen pääsy ei ole mahdollista."
+      },
+      "privacy": {
+        "title": "Yksityisyys suunnittelusta lähtien",
+        "description": "Keräämme vain palvelun tarjoamiseen tarvittavan minimidatan. Keskustelusi ja tiedostosi pysyvät sinun."
+      },
+      "session": {
+        "title": "Istuntoturvallisuus",
+        "description": "CSRF-suojaus, turvalliset HTTP-only-evästeet ja Content Security Policy -otsikot jokaisessa pyynnössä."
+      }
+    },
+    "legal": "Oikeudellinen",
+    "privacyPolicy": {
+      "title": "Tietosuojakäytäntö",
+      "description": "Miten keräämme, käytämme ja suojaamme dataasi"
+    },
+    "termsOfService": {
+      "title": "Käyttöehdot",
+      "description": "Käyttöehtomme ja -ehdot"
+    }
+  },
+  "layoutSettings": {
+    "layout": "Asettelu"
+  },
+  "suggestions": {
+    "summary": {
+      "label": "Yhteenveto",
+      "highlight": "Tiivistä"
+    },
+    "code": {
+      "label": "Koodi",
+      "highlight": "Rakenna"
+    },
+    "research": {
+      "label": "Tutkimus",
+      "highlight": "Analysoi"
+    },
+    "create": {
+      "label": "Luo",
+      "highlight": "Generoi"
+    },
+    "solve": {
+      "label": "Ratkaise",
+      "highlight": "Debuggaa"
+    },
+    "learn": {
+      "label": "Opi",
+      "highlight": "Selitä"
+    }
+  },
+  "loadingMessages": [
+    "Käynnistetään piiiaivoja",
+    "Herätetään digitaalista tietoisuutta",
+    "Alustetaan hermopolkuja",
+    "Pyöritetään kvanttiytimiä",
+    "Ladataan fluksikondensaattoria",
+    "Aktivoidaan keskustietokone",
+    "Syötetään laskentamatriisiin virtaa",
+    "Kytketään warp-moottori",
+    "Kutsutaan piihenkiä",
+    "Sytytetään elektronimoottori",
+    "Lämmitetään transistoreja",
+    "Kootaan bittejä ja tavuja",
+    "Kalibroidaan digitaalisia synapseja",
+    "Energisoidaan CPU-kiteitä",
+    "Ladataan tietoisuusprotokollia",
+    "Alustetaan järjestelmäresursseja",
+    "Valmistellaan laskentaympäristöä",
+    "Muodostetaan turvallista yhteyttä",
+    "Varataan virtuaaliresursseja",
+    "Määritetään järjestelmäparametrejä",
+    "Käynnistetään virtuaali-instanssia",
+    "Aktivoidaan etätyöpöytä",
+    "Otetaan käyttöön pilviresursseja",
+    "Aloitetaan käynnistyssarjaa",
+    "Valmistellaan suoritusympäristöä",
+    "Herätellään unista tietokonetta",
+    "Tökkäistään digitaalista karhua",
+    "Keitetään laskennallista kahvia",
+    "Venytellään digitaalisia lihaksia",
+    "Avataan digitaalisia silmiä",
+    "Käynnistyy",
+    "Virta päälle",
+    "Tulee verkkoon",
+    "Käynnistetään järjestelmää",
+    "Valmistaudutaan",
+    "Melkein valmista",
+    "Valmistellaan työtilaa",
+    "Ladataan resursseja",
+    "Järjestelmä herää"
+  ]
 }
