@@ -30,8 +30,7 @@ import { useChatStreaming } from "@/lib/chat-streaming-store/provider"
 import { themeConfig } from "@/lib/theme-config"
 import { Switch } from "@/components/ui/switch"
 import { QuickStartGuide } from "./quick-start-guide"
-import Link from "next/link"
-import { ShieldCheck, Search, Bug, Globe, FileText, BarChart3, Mail, Zap, Sparkles, PenTool, MonitorSmartphone, Clipboard, Users, TrendingUp, Eye, FileCode, LayoutGrid, Send, ShoppingCart, MessageCircle, Bot } from "lucide-react"
+import { Search, Bug, Globe, FileText, BarChart3, Mail, Zap, Sparkles, PenTool, MonitorSmartphone, Clipboard, Users, TrendingUp, Eye, FileCode, LayoutGrid, Send, ShoppingCart, MessageCircle, Bot } from "lucide-react"
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card"
 import { SwarmPanel } from "./swarm-panel"
 import { ActiveSwarmBanner, type ActiveSwarm } from "./active-swarm-banner"
@@ -1027,9 +1026,8 @@ export function Chat() {
                   <QuickStartGuide
                     userName={user?.display_name || undefined}
                     selectedVMId={selectedVMId}
-                    setSelectedVMId={setSelectedVMId}
-                    onFillInput={handleInputChange}
                     isUserAuthenticated={isAuthenticated}
+                    hasCredentials={hasCredentials}
                   />
                 </motion.div>
               ) : (
@@ -1148,7 +1146,7 @@ export function Chat() {
               )}
             </AnimatePresence>
 
-            {/* Guide toggle + credential nudge */}
+            {/* Guide toggle */}
             {user && (
               <motion.div
                 className="flex items-center justify-center gap-3 mt-4 sm:mt-6 mb-2"
@@ -1171,20 +1169,6 @@ export function Chat() {
                     }}
                   />
                 </label>
-                {hasCredentials === false && (
-                  <>
-                    <span className="text-muted-foreground/20 text-xs select-none">&middot;</span>
-                    <Link
-                      href="/secrets"
-                      className="group inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 dark:bg-blue-500/15 px-3 py-1 text-[11px] text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 transition-colors"
-                    >
-                      <ShieldCheck className="h-3 w-3 shrink-0" />
-                      <span className="underline underline-offset-2 decoration-blue-400/30 group-hover:decoration-blue-400/60">{t("saveLogins")}</span>
-                      <span className="hidden sm:inline text-blue-500/50">&middot; {t("encryptedNote")}</span>
-                      <span className="text-[10px] group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                    </Link>
-                  </>
-                )}
               </motion.div>
             )}
           </motion.div>
@@ -1306,7 +1290,7 @@ export function Chat() {
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: 0.35 + i * 0.04, duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
                           className={cn(
-                            "group inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-all duration-200 cursor-pointer",
+                            "group inline-flex items-center gap-1.5 rounded-2xl border px-2.5 py-1 text-xs transition-all duration-200 cursor-pointer",
                             colors.border,
                             colors.hover,
                             "bg-card/40",
