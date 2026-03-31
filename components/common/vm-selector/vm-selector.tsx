@@ -1,21 +1,15 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { CircleNotch, Plus, Desktop, Laptop, WifiHigh, WifiSlash } from "@phosphor-icons/react"
+import { CircleNotch, Plus, Desktop, Laptop, WifiHigh, WifiSlash, Monitor, ArrowSquareOut, Check } from "@phosphor-icons/react"
 import { MacMiniIcon } from "@/components/icons/mac-mini"
 import { WindowsIcon, AppleIcon, LinuxIcon } from "@/components/icons/platform-icons"
 import { cn } from "@/lib/utils"
 import type { UserMachine } from "@/types/machines.types"
 import { CreateMachineDialog } from "@/app/components/machines/create-machine-dialog"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Button } from "@/components/ui/button"
+import { CaretUpDown } from "@phosphor-icons/react"
 
 interface VMSelectorProps {
   selectedVMId: string | null
@@ -33,46 +27,53 @@ function getStatusStyles(status: DisplayStatus) {
       return {
         bg: 'bg-green-500/10',
         text: 'text-green-700 dark:text-green-400',
-        border: 'border-green-500/20'
+        border: 'border-green-500/20',
+        dot: 'bg-green-500',
       }
     case 'creating':
       return {
         bg: 'bg-yellow-500/10',
         text: 'text-yellow-700 dark:text-yellow-400',
-        border: 'border-yellow-500/20'
+        border: 'border-yellow-500/20',
+        dot: 'bg-yellow-500',
       }
     case 'starting':
     case 'initiating':
       return {
         bg: 'bg-blue-500/10',
         text: 'text-blue-700 dark:text-blue-400',
-        border: 'border-blue-500/20'
+        border: 'border-blue-500/20',
+        dot: 'bg-blue-500',
       }
     case 'stopping':
       return {
         bg: 'bg-orange-500/10',
         text: 'text-orange-700 dark:text-orange-400',
-        border: 'border-orange-500/20'
+        border: 'border-orange-500/20',
+        dot: 'bg-orange-500',
       }
     case 'stopped':
     case 'offline':
       return {
         bg: 'bg-gray-500/10',
         text: 'text-gray-700 dark:text-gray-400',
-        border: 'border-gray-500/20'
+        border: 'border-gray-500/20',
+        dot: 'bg-gray-400',
       }
     case 'error':
     case 'deleting':
       return {
         bg: 'bg-red-500/10',
         text: 'text-red-700 dark:text-red-400',
-        border: 'border-red-500/20'
+        border: 'border-red-500/20',
+        dot: 'bg-red-500',
       }
     default:
       return {
         bg: 'bg-gray-500/10',
         text: 'text-gray-700 dark:text-gray-400',
-        border: 'border-gray-500/20'
+        border: 'border-gray-500/20',
+        dot: 'bg-gray-400',
       }
   }
 }
@@ -83,7 +84,7 @@ function getStatusText(status: DisplayStatus) {
     case 'online': return 'Online'
     case 'creating': return 'Creating'
     case 'starting': return 'Starting'
-    case 'initiating': return 'Initiating Agent'
+    case 'initiating': return 'Initiating'
     case 'stopping': return 'Stopping'
     case 'stopped': return 'Stopped'
     case 'offline': return 'Offline'
@@ -93,14 +94,15 @@ function getStatusText(status: DisplayStatus) {
   }
 }
 
-function StatusBadge({ status }: { status: DisplayStatus }) {
+function StatusDot({ status }: { status: DisplayStatus }) {
   const styles = getStatusStyles(status)
+  const isAnimated = status === 'running' || status === 'online' || status === 'starting' || status === 'creating' || status === 'initiating'
   return (
-    <span className={cn(
-      "px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 border",
-      styles.bg, styles.text, styles.border
-    )}>
-      {getStatusText(status)}
+    <span className="relative flex h-2 w-2 shrink-0">
+      {isAnimated && (
+        <span className={cn("absolute inline-flex h-full w-full rounded-full opacity-40 animate-ping", styles.dot)} />
+      )}
+      <span className={cn("relative inline-flex h-2 w-2 rounded-full", styles.dot)} />
     </span>
   )
 }
@@ -127,11 +129,27 @@ function OsTag({ machine }: { machine: UserMachine }) {
   if (!Icon) return null
 
   return (
-    <span className="inline-flex items-center gap-1 rounded-md border border-border/40 bg-foreground/[0.03] px-1.5 py-0.5 ml-1.5 shrink-0">
+    <span className="inline-flex items-center gap-1 rounded-md border border-border/40 bg-foreground/[0.03] px-1.5 py-0.5 shrink-0">
       <Icon className="h-2.5 w-2.5 text-muted-foreground/70" />
       <span className="text-[10px] font-medium text-muted-foreground/80">{label}</span>
     </span>
   )
+}
+
+function canViewScreen(machine: UserMachine): boolean {
+  return (
+    machine.status === "running" &&
+    !!machine.publicIpAddress &&
+    machine.settings?.provider !== "electron"
+  )
+}
+
+function openMachineScreen(machine: UserMachine) {
+  const websocketPort = machine.websocketPort || 6080
+  const vncPw = machine.vncPassword?.substring(0, 8) || ''
+  const encodedPassword = encodeURIComponent(vncPw)
+  const url = `http://${machine.publicIpAddress}:${websocketPort}/vnc.html?autoconnect=1&resize=scale&password=${encodedPassword}`
+  window.open(url, '_blank')
 }
 
 export function VMSelector({
@@ -144,6 +162,7 @@ export function VMSelector({
   const [isLoading, setIsLoading] = useState(false)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [agentReady, setAgentReady] = useState<Record<string, boolean>>({})
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (isUserAuthenticated) {
@@ -196,7 +215,6 @@ export function VMSelector({
     }
   }
 
-  // Split machines into Electron (Your Computers) and Cloud
   const { electronMachines, cloudMachines } = useMemo(() => {
     const electron: UserMachine[] = []
     const cloud: UserMachine[] = []
@@ -205,7 +223,6 @@ export function VMSelector({
       if (m.settings?.provider === 'electron') {
         electron.push(m)
       } else if (!m.settings?.isLocal || m.settings?.provider === 'docker') {
-        // Show cloud + docker machines if they are in a selectable state
         if (['running', 'creating', 'starting', 'stopped'].includes(m.status)) {
           cloud.push(m)
         }
@@ -216,7 +233,6 @@ export function VMSelector({
   }, [allMachines])
 
   const getDisplayStatus = (machine: UserMachine): DisplayStatus => {
-    // Electron machines: show online/offline based on electronConnected flag
     if (machine.settings?.provider === 'electron') {
       return (machine as any).electronConnected ? 'online' : 'offline'
     }
@@ -230,157 +246,215 @@ export function VMSelector({
     return null
   }
 
-  const handleValueChange = (value: string) => {
-    if (value === "create") {
-      setShowCreateDialog(true)
-    } else {
-      setSelectedVMId(value === "none" ? null : value)
-    }
-  }
-
-  // Find selected machine across both lists
   const selectedMachine = allMachines.find(m => m.id === selectedVMId)
   const isElectronSelected = selectedMachine?.settings?.provider === 'electron'
   const hasAnyMachines = electronMachines.length > 0 || cloudMachines.length > 0
 
+  const handleSelect = (machineId: string) => {
+    setSelectedVMId(machineId === "none" ? null : machineId)
+    setOpen(false)
+  }
+
   return (
     <>
-    <Select
-      value={selectedVMId || "none"}
-      onValueChange={handleValueChange}
-    >
-      <SelectTrigger
-        id="vm-selector-button"
-        className={cn(
-          "h-9 w-full max-w-[140px] sm:min-w-[240px] sm:max-w-[320px] text-xs bg-gray-200 hover:bg-gray-300 dark:bg-accent/90 dark:hover:bg-accent/70 transition-colors border border-gray-300 dark:border-0",
-          className
-        )}
-      >
-        {isLoading ? (
-          <CircleNotch className="h-3.5 w-3.5 animate-spin" />
-        ) : selectedVMId && selectedVMId !== "none" && selectedMachine ? (
-          <div className="flex items-center gap-1 sm:gap-2 truncate">
-            {isElectronSelected ? (
-              <Laptop className="h-4 w-4 shrink-0" weight="duotone" />
-            ) : (
-              <MacMiniIcon className="h-5 w-5 shrink-0" />
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            id="vm-selector-button"
+            className={cn(
+              "inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium transition-colors",
+              "bg-gray-200 hover:bg-gray-300 dark:bg-accent/90 dark:hover:bg-accent/70",
+              "border border-gray-300 dark:border-0",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "max-w-[140px] sm:max-w-[280px]",
+              className
             )}
-            <span className="truncate max-w-[60px] sm:max-w-[160px]">
-              {selectedMachine.displayName}
-            </span>
-            <span className="hidden sm:flex">
-              <StatusBadge status={getDisplayStatus(selectedMachine)} />
-            </span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1 sm:gap-2">
-            <MacMiniIcon className="h-5 w-5 opacity-50 shrink-0" />
-            <span className="hidden sm:inline">Select a Computer</span>
-            <span className="sm:hidden text-[11px]">Select</span>
-            <span className="hidden sm:inline-flex px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 border bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20">
-              Required
-            </span>
-          </div>
-        )}
-      </SelectTrigger>
-      <SelectContent className="w-[calc(100vw-2rem)] max-w-[320px] sm:min-w-[280px] sm:max-w-[360px] overflow-hidden">
+          >
+            {isLoading ? (
+              <CircleNotch className="h-3.5 w-3.5 animate-spin shrink-0" />
+            ) : selectedMachine ? (
+              <>
+                {isElectronSelected ? (
+                  <Laptop className="h-4 w-4 shrink-0" weight="duotone" />
+                ) : (
+                  <MacMiniIcon className="h-4 w-4 shrink-0" />
+                )}
+                <StatusDot status={getDisplayStatus(selectedMachine)} />
+                <span className="truncate">{selectedMachine.displayName}</span>
+              </>
+            ) : (
+              <>
+                <MacMiniIcon className="h-4 w-4 opacity-50 shrink-0" />
+                <span className="hidden sm:inline truncate">Select a Computer</span>
+                <span className="sm:hidden">Select</span>
+              </>
+            )}
+            <CaretUpDown className="h-3 w-3 shrink-0 opacity-50" />
+          </button>
+        </PopoverTrigger>
 
-        {/* ── Cloud Machines ── */}
-        <SelectGroup>
-          {electronMachines.length > 0 && (
-            <SelectLabel className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold px-2 py-1.5">
-              <Desktop className="h-3.5 w-3.5" weight="duotone" />
-              Cloud Machines
-            </SelectLabel>
-          )}
-          <SelectItem value="create" id="create-machine-button" className="py-2 mb-1 bg-primary/5 hover:bg-primary/10">
-            <div className="flex items-center gap-2 w-full">
-              <Plus className="h-4 w-4 shrink-0 text-primary" />
-              <span className="text-sm font-medium text-primary">Create Machine</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-primary text-primary-foreground">
-                New
-              </span>
-            </div>
-          </SelectItem>
-          {cloudMachines.map((machine) => (
-            <SelectItem key={machine.id} value={machine.id} className="py-2 [&>span]:min-w-0 [&>span]:overflow-hidden">
-              <div className="flex items-center gap-2 min-w-0 overflow-hidden">
-                <MacMiniIcon className="h-5 w-5 shrink-0" />
-                <span className="text-sm font-medium truncate flex-1 min-w-0">
-                  {machine.displayName}
-                </span>
-                <OsTag machine={machine} />
-                <StatusBadge status={getDisplayStatus(machine)} />
-              </div>
-            </SelectItem>
-          ))}
-        </SelectGroup>
-
-        {/* ── Separator between sections ── */}
-        {electronMachines.length > 0 && (
-          <div className="my-1 border-t border-border/50" />
-        )}
-
-        {/* ── Your Computers (Electron) ── */}
-        {electronMachines.length > 0 && (
-          <SelectGroup>
-            <SelectLabel className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold px-2 py-1.5">
-              <Laptop className="h-3.5 w-3.5" weight="duotone" />
-              Your Computers
-            </SelectLabel>
-            {electronMachines.map((machine) => {
-              const displayStatus = getDisplayStatus(machine)
-              const isOnline = displayStatus === 'online'
-              return (
-                <SelectItem
-                  key={machine.id}
-                  value={machine.id}
-                  className="py-2 [&>span]:min-w-0 [&>span]:overflow-hidden"
-                  disabled={!isOnline}
-                >
-                  <div className="flex items-center gap-2 min-w-0 overflow-hidden">
-                    <div className="relative shrink-0">
-                      <Laptop className="h-5 w-5" weight="duotone" />
-                      {isOnline ? (
-                        <WifiHigh className="h-2.5 w-2.5 text-green-500 absolute -bottom-0.5 -right-0.5" weight="bold" />
-                      ) : (
-                        <WifiSlash className="h-2.5 w-2.5 text-gray-400 absolute -bottom-0.5 -right-0.5" weight="bold" />
-                      )}
-                    </div>
-                    <span className={cn(
-                      "text-sm font-medium truncate flex-1 min-w-0",
-                      !isOnline && "text-muted-foreground"
-                    )}>
-                      {machine.displayName}
-                    </span>
-                    <OsTag machine={machine} />
-                    <StatusBadge status={displayStatus} />
+        <PopoverContent
+          align="start"
+          sideOffset={6}
+          className="w-[calc(100vw-2rem)] max-w-[340px] sm:min-w-[300px] p-0 overflow-hidden"
+        >
+          {/* ── Selected machine quick actions ── */}
+          {selectedMachine && canViewScreen(selectedMachine) && (
+            <div className="px-2 pt-2 pb-1">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  openMachineScreen(selectedMachine)
+                }}
+                className={cn(
+                  "flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-left transition-all duration-150",
+                  "bg-gradient-to-r from-blue-500/10 to-indigo-500/10 hover:from-blue-500/15 hover:to-indigo-500/15",
+                  "dark:from-blue-500/15 dark:to-indigo-500/15 dark:hover:from-blue-500/20 dark:hover:to-indigo-500/20",
+                  "border border-blue-500/15 dark:border-blue-400/15",
+                  "group"
+                )}
+              >
+                <div className="flex items-center justify-center size-8 rounded-lg bg-blue-500/15 dark:bg-blue-400/15 shrink-0 group-hover:bg-blue-500/25 transition-colors">
+                  <Monitor className="size-4 text-blue-600 dark:text-blue-400" weight="duotone" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-medium text-foreground">View Screen</div>
+                  <div className="text-[10px] text-muted-foreground truncate">
+                    Watch {selectedMachine.displayName} live
                   </div>
-                </SelectItem>
-              )
-            })}
-          </SelectGroup>
-        )}
-
-        {!hasAnyMachines && !isLoading && (
-          <div className="py-3 px-3 text-xs text-muted-foreground text-center">
-            <div className="space-y-1">
-              <p>No computers available</p>
-              <p className="text-[10px] opacity-70">Install the desktop app or create a cloud machine</p>
+                </div>
+                <ArrowSquareOut className="size-3.5 text-blue-500/60 dark:text-blue-400/60 shrink-0 group-hover:text-blue-500 transition-colors" weight="bold" />
+              </button>
             </div>
-          </div>
-        )}
-      </SelectContent>
-    </Select>
+          )}
 
-    <CreateMachineDialog
-      open={showCreateDialog}
-      onOpenChange={setShowCreateDialog}
-      onMachineCreated={() => {
-        fetchMachines()
-        setShowCreateDialog(false)
-      }}
-    />
+          {/* ── Machine list ── */}
+          <div className="p-2 max-h-[320px] overflow-y-auto">
+            {/* Create Machine */}
+            <button
+              id="create-machine-button"
+              onClick={() => { setOpen(false); setShowCreateDialog(true) }}
+              className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-left hover:bg-primary/5 transition-colors mb-1"
+            >
+              <div className="flex items-center justify-center size-7 rounded-md bg-primary/10 shrink-0">
+                <Plus className="h-3.5 w-3.5 text-primary" weight="bold" />
+              </div>
+              <span className="text-sm font-medium text-primary">Create Machine</span>
+            </button>
+
+            {/* Cloud Machines */}
+            {cloudMachines.length > 0 && (
+              <>
+                {electronMachines.length > 0 && (
+                  <div className="flex items-center gap-1.5 px-3 pt-2 pb-1">
+                    <Desktop className="h-3 w-3 text-muted-foreground/60" weight="duotone" />
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground/60 font-semibold">Cloud</span>
+                  </div>
+                )}
+                {cloudMachines.map((machine) => {
+                  const displayStatus = getDisplayStatus(machine)
+                  const isSelected = selectedVMId === machine.id
+                  return (
+                    <button
+                      key={machine.id}
+                      onClick={() => handleSelect(machine.id)}
+                      className={cn(
+                        "flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-left transition-colors",
+                        isSelected ? "bg-accent" : "hover:bg-accent/50"
+                      )}
+                    >
+                      <div className="relative shrink-0">
+                        <MacMiniIcon className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1 min-w-0 flex items-center gap-1.5">
+                        <span className="text-sm font-medium truncate">{machine.displayName}</span>
+                        <OsTag machine={machine} />
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <StatusDot status={displayStatus} />
+                        <span className={cn("text-[10px] font-medium", getStatusStyles(displayStatus).text)}>
+                          {getStatusText(displayStatus)}
+                        </span>
+                      </div>
+                      {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-primary" weight="bold" />}
+                    </button>
+                  )
+                })}
+              </>
+            )}
+
+            {/* Separator */}
+            {electronMachines.length > 0 && cloudMachines.length > 0 && (
+              <div className="my-1.5 border-t border-border/50" />
+            )}
+
+            {/* Electron (Your Computers) */}
+            {electronMachines.length > 0 && (
+              <>
+                <div className="flex items-center gap-1.5 px-3 pt-2 pb-1">
+                  <Laptop className="h-3 w-3 text-muted-foreground/60" weight="duotone" />
+                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground/60 font-semibold">Your Computers</span>
+                </div>
+                {electronMachines.map((machine) => {
+                  const displayStatus = getDisplayStatus(machine)
+                  const isOnline = displayStatus === 'online'
+                  const isSelected = selectedVMId === machine.id
+                  return (
+                    <button
+                      key={machine.id}
+                      onClick={() => isOnline && handleSelect(machine.id)}
+                      disabled={!isOnline}
+                      className={cn(
+                        "flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-left transition-colors",
+                        !isOnline && "opacity-50 cursor-not-allowed",
+                        isSelected ? "bg-accent" : isOnline ? "hover:bg-accent/50" : ""
+                      )}
+                    >
+                      <div className="relative shrink-0">
+                        <Laptop className="h-5 w-5" weight="duotone" />
+                        {isOnline ? (
+                          <WifiHigh className="h-2.5 w-2.5 text-green-500 absolute -bottom-0.5 -right-0.5" weight="bold" />
+                        ) : (
+                          <WifiSlash className="h-2.5 w-2.5 text-gray-400 absolute -bottom-0.5 -right-0.5" weight="bold" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0 flex items-center gap-1.5">
+                        <span className={cn("text-sm font-medium truncate", !isOnline && "text-muted-foreground")}>
+                          {machine.displayName}
+                        </span>
+                        <OsTag machine={machine} />
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <StatusDot status={displayStatus} />
+                        <span className={cn("text-[10px] font-medium", getStatusStyles(displayStatus).text)}>
+                          {getStatusText(displayStatus)}
+                        </span>
+                      </div>
+                      {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-primary" weight="bold" />}
+                    </button>
+                  )
+                })}
+              </>
+            )}
+
+            {!hasAnyMachines && !isLoading && (
+              <div className="py-4 px-3 text-center">
+                <p className="text-xs text-muted-foreground">No computers available</p>
+                <p className="text-[10px] text-muted-foreground/70 mt-0.5">Install the desktop app or create a cloud machine</p>
+              </div>
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
+
+      <CreateMachineDialog
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+        onMachineCreated={() => {
+          fetchMachines()
+          setShowCreateDialog(false)
+        }}
+      />
     </>
   )
 }
