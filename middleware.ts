@@ -26,8 +26,18 @@ function detectLocaleFromHeader(request: NextRequest): Locale {
 export async function middleware(request: NextRequest) {
   const response = await updateSession(request)
 
+  // Support ?hl=xx parameter for search engine crawlers (hreflang support)
+  const hlParam = request.nextUrl.searchParams.get("hl")
+  if (hlParam && locales.includes(hlParam as Locale)) {
+    response.cookies.set("NEXT_LOCALE", hlParam, {
+      path: "/",
+      maxAge: 365 * 24 * 60 * 60,
+      sameSite: "lax",
+    })
+  }
+
   // Auto-detect locale from Accept-Language if no cookie is set
-  if (!request.cookies.get("NEXT_LOCALE")?.value) {
+  if (!request.cookies.get("NEXT_LOCALE")?.value && !hlParam) {
     const detected = detectLocaleFromHeader(request)
     if (detected !== defaultLocale) {
       response.cookies.set("NEXT_LOCALE", detected, {
@@ -37,6 +47,15 @@ export async function middleware(request: NextRequest) {
       })
     }
   }
+
+  // Determine active locale for headers
+  const activeLocale = hlParam && locales.includes(hlParam as Locale)
+    ? hlParam
+    : request.cookies.get("NEXT_LOCALE")?.value || defaultLocale
+
+  // Content-Language and Vary headers for SEO
+  response.headers.set("Content-Language", activeLocale)
+  response.headers.set("Vary", "Accept-Language, Cookie")
 
   // CSRF protection for state-changing requests
   if (["POST", "PUT", "PATCH", "DELETE"].includes(request.method)) {

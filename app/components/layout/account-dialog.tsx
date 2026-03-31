@@ -19,12 +19,14 @@ import {
   X,
 } from "lucide-react"
 import { useState, useEffect, useCallback, useRef } from "react"
-import { usePathname, useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams, useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 
 import { CombinedAccount } from "@/app/components/layout/settings/general/combined-account"
 import { PrivacySection } from "@/app/components/layout/settings/general/privacy-section"
 import { BillingSection } from "@/app/components/layout/settings/billing/billing-section"
+import { ThemeSelection } from "@/app/components/layout/settings/appearance/theme-selection"
+import { BackgroundSelection } from "@/app/components/layout/settings/appearance/background-selection"
 import { FeedbackForm } from "@/components/common/feedback-form"
 import { AppInfoContent } from "@/app/components/layout/app-info/app-info-content"
 import { useUser } from "@/lib/user-store/provider"
@@ -45,12 +47,29 @@ import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
 
 type SectionType = AccountSectionType
 
+function AppearanceSection() {
+  return (
+    <div className="space-y-8">
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <div className="h-6 w-6 rounded-md bg-foreground/[0.04] flex items-center justify-center">
+            <Palette className="h-3 w-3 text-muted-foreground/50" />
+          </div>
+          <h3 className="text-sm font-semibold">Theme</h3>
+        </div>
+        <ThemeSelection />
+      </div>
+      <BackgroundSelection />
+    </div>
+  )
+}
+
 const sections = [
   { id: "account" as SectionType, label: "Account", icon: User, description: "Manage your profile and account settings", component: CombinedAccount },
   { id: "billing" as SectionType, label: "Billing & Credits", icon: CreditCard, description: "Manage billing and credits", component: BillingSection },
   { id: "privacy" as SectionType, label: "Privacy & Security", icon: Shield, description: "Privacy and security settings", component: PrivacySection },
   { id: "notifications" as SectionType, label: "Notifications", icon: Bell, description: "Notification preferences", component: null },
-  { id: "appearance" as SectionType, label: "Appearance", icon: Palette, description: "Customize the app appearance", component: null },
+  { id: "appearance" as SectionType, label: "Appearance", icon: Palette, description: "Customize the app appearance", component: AppearanceSection },
   { id: "api-keys" as SectionType, label: "API Keys", icon: Key, description: "Manage your API keys", component: null },
   { id: "data" as SectionType, label: "Data & Export", icon: Database, description: "Export and manage your data", component: null },
   { id: "feedback" as SectionType, label: "Feedback", icon: MessageSquare, description: "Send us your feedback", component: "feedback" as const },
@@ -126,7 +145,7 @@ export function AccountDialog() {
   const { isOpen, section, close, setSection, _syncFromUrl } = useAccountDialog()
   const { user, isLoading } = useUser()
   const [mobileView, setMobileView] = useState<"menu" | "content">("content")
-  const closingRef = useRef(false)
+  const router = useRouter()
 
   const activeSection = section
   const activeConfig = sections.find((s) => s.id === activeSection)
@@ -140,26 +159,43 @@ export function AccountDialog() {
     [setSection]
   )
 
+  // Wrapper around store close that also handles real Next.js navigation
+  // when the user was on the actual /account or /credits route
+  const handleClose = useCallback(() => {
+    const state = useAccountDialog.getState()
+    const didPush = state._didPushState
+    const prevPath = state._previousPath || "/"
+
+    close() // sets isOpen: false, cleans up, calls history.back() if didPush
+
+    if (!didPush) {
+      // User was on actual /account or /credits route — need real Next.js navigation
+      router.replace(prevPath)
+    }
+  }, [close, router])
+
   // Handle browser back/forward navigation
   useEffect(() => {
     const handlePopState = () => {
+      // Always read latest state to avoid stale closure issues
+      const { isOpen: currentlyOpen } = useAccountDialog.getState()
+
       const path = window.location.pathname
       if (path === "/account") {
         // We're on /account — sync section from URL
         const params = new URLSearchParams(window.location.search)
         const sec = params.get("section") as SectionType | null
         _syncFromUrl(sec && validSections.includes(sec) ? sec : "account")
-      } else if (isOpen) {
-        // Navigated away from /account — close dialog without pushing URL
-        closingRef.current = true
-        useAccountDialog.setState({ isOpen: false, _previousPath: null })
-        closingRef.current = false
+      } else if (currentlyOpen) {
+        // Navigated away from /account — close dialog without further URL manipulation
+        useAccountDialog.setState({ isOpen: false, _previousPath: null, _didPushState: false })
+        document.body.style.pointerEvents = ""
       }
     }
 
     window.addEventListener("popstate", handlePopState)
     return () => window.removeEventListener("popstate", handlePopState)
-  }, [isOpen, _syncFromUrl])
+  }, [_syncFromUrl])
 
   // If the page loads on /account, open the dialog
   useEffect(() => {
@@ -181,6 +217,13 @@ export function AccountDialog() {
     if (isOpen) setMobileView("content")
   }, [isOpen])
 
+  // Safety cleanup: ensure pointer-events is restored when dialog unmounts or closes
+  useEffect(() => {
+    if (!isOpen) {
+      document.body.style.pointerEvents = ""
+    }
+  }, [isOpen])
+
   if (!user && !isLoading) return null
 
   const userInitial = user?.display_name?.charAt(0)?.toUpperCase() ?? "?"
@@ -198,22 +241,22 @@ export function AccountDialog() {
     }
     if (activeConfig?.component === "social") {
       const socialLinks = [
-        { href: "https://x.com/llmhub_dev", icon: XIcon, label: "Follow us on X", sub: "@llmhub_dev", external: true, accent: "bg-foreground/[0.04]" },
-        { href: "https://github.com/coasty-ai", icon: GithubLogoIcon, label: "Star us on GitHub", sub: "coasty-ai", external: true, accent: "bg-foreground/[0.04]" },
-        { href: "mailto:founders@coasty.ai", icon: Mail, label: "Contact Us", sub: "founders@coasty.ai", external: false, accent: "bg-primary/[0.06]" },
+        { href: "https://x.com/llmhub_dev", icon: XIcon, label: "Follow us on X", sub: "@llmhub_dev", external: true },
+        { href: "https://github.com/coasty-ai", icon: GithubLogoIcon, label: "Star us on GitHub", sub: "coasty-ai", external: true },
+        { href: "mailto:founders@coasty.ai", icon: Mail, label: "Contact Us", sub: "founders@coasty.ai", external: false },
       ]
       return (
         <div className="space-y-3">
           <div className="rounded-xl border border-border/30 bg-card/20 divide-y divide-border/20 overflow-hidden">
-            {socialLinks.map(({ href, icon: Icon, label, sub, external, accent }) => (
+            {socialLinks.map(({ href, icon: Icon, label, sub, external }) => (
               <a
                 key={href}
                 href={href}
                 {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 className="group flex items-center gap-4 px-5 py-4 hover:bg-muted/20 transition-colors"
               >
-                <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${accent}`}>
-                  <Icon className="h-4 w-4 text-muted-foreground/60" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg shrink-0 bg-muted/50">
+                  <Icon className="h-4 w-4 text-foreground/40" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium leading-tight">{label}</p>

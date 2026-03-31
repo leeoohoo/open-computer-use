@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 import {
   PaperPlaneRight,
   Globe,
@@ -80,6 +81,7 @@ const cssAnimations = `
 /* ─── main export ─── */
 
 export function ChatTasksTab({ inApp }: { inApp: boolean }) {
+  const t = useTranslations("guide.chatTasks")
   return (
     <div className="space-y-16 sm:space-y-20">
       <style dangerouslySetInnerHTML={{ __html: cssAnimations }} />
@@ -96,14 +98,14 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2"
         >
-          Your command center
+          {t("commandCenter")}
         </motion.h2>
         <motion.p
           variants={fade}
           custom={1}
           className="text-sm text-foreground/50 mb-6"
         >
-          Describe any task. Watch it happen.
+          {t("describeTask")}
         </motion.p>
 
         <motion.div
@@ -134,7 +136,7 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
               style={{ animation: "gv-msg-in 0.4s ease-out both", animationDelay: "0.2s" }}
             >
               <div className="rounded-2xl rounded-br-md bg-foreground text-background px-4 py-2.5 max-w-[80%] text-[13px] leading-relaxed">
-                Find the top 5 wireless keyboards under $50 on Amazon and compare them in a spreadsheet.
+                {t("examplePrompt")}
               </div>
             </div>
 
@@ -144,7 +146,7 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
               style={{ animation: "gv-msg-in 0.4s ease-out both", animationDelay: "0.8s" }}
             >
               <div className="rounded-2xl rounded-bl-md bg-foreground/[0.04] text-foreground/70 px-4 py-2.5 max-w-[80%] text-[13px] leading-relaxed">
-                I&apos;ll search Amazon and build a comparison. Opening the browser now.
+                {t("exampleResponse")}
               </div>
             </div>
 
@@ -186,7 +188,7 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
               style={{ animation: "gv-msg-in 0.4s ease-out both", animationDelay: "3.8s" }}
             >
               <div className="rounded-2xl rounded-bl-md bg-foreground/[0.04] text-foreground/70 px-4 py-2.5 max-w-[80%] text-[13px] leading-relaxed">
-                Done. The spreadsheet is saved with price, rating, and features for all 5 keyboards.
+                {t("exampleDone")}
               </div>
             </div>
           </div>
@@ -194,7 +196,7 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
           {/* Input bar */}
           <div className="px-4 py-3 border-t border-foreground/[0.06] bg-foreground/[0.02]">
             <div className="flex items-center gap-3 rounded-xl border border-foreground/[0.08] bg-foreground/[0.02] px-4 py-2.5">
-              <span className="flex-1 text-sm text-foreground/20">Describe your task...</span>
+              <span className="flex-1 text-sm text-foreground/20">{t("describePlaceholder")}</span>
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-foreground/[0.06]">
                 <PaperPlaneRight size={14} className="text-foreground/30" />
               </div>
@@ -215,14 +217,14 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2"
         >
-          Three specialized agents
+          {t("threeAgents")}
         </motion.h2>
         <motion.p
           variants={fade}
           custom={1}
           className="text-sm text-foreground/50 mb-8"
         >
-          Automatically assigned per step.
+          {t("autoAssigned")}
         </motion.p>
 
         <motion.div variants={fade} custom={2} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -232,7 +234,7 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/[0.05]">
                 <Globe size={16} weight="duotone" className="text-foreground/60" />
               </div>
-              <span className="text-sm font-semibold text-foreground">Browser</span>
+              <span className="text-sm font-semibold text-foreground">{t("browser")}</span>
             </div>
             {/* Mini browser with clicking cursor */}
             <div className="rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] overflow-hidden h-28 relative">
@@ -256,7 +258,7 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
                 style={{ animation: "gv-browser-click 3s ease-in-out infinite", bottom: "16px", left: "12px" }}
               />
             </div>
-            <p className="text-[12px] text-foreground/35 mt-3">Navigate, click, fill forms, scrape</p>
+            <p className="text-[12px] text-foreground/35 mt-3">{t("browserDesc")}</p>
           </div>
 
           {/* Terminal Agent */}
@@ -265,7 +267,7 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/[0.05]">
                 <Terminal size={16} weight="duotone" className="text-foreground/60" />
               </div>
-              <span className="text-sm font-semibold text-foreground">Terminal</span>
+              <span className="text-sm font-semibold text-foreground">{t("terminal")}</span>
             </div>
             {/* Mini terminal with text appearing */}
             <div className="rounded-lg border border-foreground/[0.06] bg-foreground/[0.03] overflow-hidden h-28 font-mono text-[10px] text-foreground/40 p-2.5 space-y-1.5">
@@ -307,7 +309,7 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
                 />
               </div>
             </div>
-            <p className="text-[12px] text-foreground/35 mt-3">Run commands, install, process files</p>
+            <p className="text-[12px] text-foreground/35 mt-3">{t("terminalDesc")}</p>
           </div>
 
           {/* Desktop Agent */}
@@ -316,7 +318,7 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/[0.05]">
                 <Desktop size={16} weight="duotone" className="text-foreground/60" />
               </div>
-              <span className="text-sm font-semibold text-foreground">Desktop</span>
+              <span className="text-sm font-semibold text-foreground">{t("desktop")}</span>
             </div>
             {/* Mini desktop with mouse moving */}
             <div className="rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] overflow-hidden h-28 relative">
@@ -348,7 +350,7 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
                 </svg>
               </div>
             </div>
-            <p className="text-[12px] text-foreground/35 mt-3">Click, type, scroll, open apps</p>
+            <p className="text-[12px] text-foreground/35 mt-3">{t("desktopDesc")}</p>
           </div>
         </motion.div>
       </motion.section>
@@ -365,14 +367,14 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2"
         >
-          Write better prompts
+          {t("betterPrompts")}
         </motion.h2>
         <motion.p
           variants={fade}
           custom={1}
           className="text-sm text-foreground/50 mb-8"
         >
-          Specific beats vague. Every time.
+          {t("specificBeatsVague")}
         </motion.p>
 
         <motion.div variants={fade} custom={2} className="space-y-3">
@@ -381,19 +383,19 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
             <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.02] p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Check size={13} weight="bold" className="text-foreground/50" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground/40">Do</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground/40">{t("do")}</span>
               </div>
               <p className="text-[13px] text-foreground/70 leading-relaxed">
-                &ldquo;Apply to 10 software engineering jobs on LinkedIn. Tailor each cover letter to mention their tech stack.&rdquo;
+                &ldquo;{t("doExample1")}&rdquo;
               </p>
             </div>
             <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.015] p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Warning size={13} weight="bold" className="text-foreground/30" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground/25">Don&apos;t</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground/25">{t("dont")}</span>
               </div>
               <p className="text-[13px] text-foreground/30 leading-relaxed">
-                &ldquo;Apply to jobs&rdquo;
+                &ldquo;{t("dontExample1")}&rdquo;
               </p>
             </div>
           </div>
@@ -403,19 +405,19 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
             <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.02] p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Check size={13} weight="bold" className="text-foreground/50" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground/40">Do</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground/40">{t("do")}</span>
               </div>
               <p className="text-[13px] text-foreground/70 leading-relaxed">
-                &ldquo;Search Google Flights for SFO to JFK, Mar 20-25, round trip. Screenshot the top 3 cheapest.&rdquo;
+                &ldquo;{t("doExample2")}&rdquo;
               </p>
             </div>
             <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.015] p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Warning size={13} weight="bold" className="text-foreground/30" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground/25">Don&apos;t</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground/25">{t("dont")}</span>
               </div>
               <p className="text-[13px] text-foreground/30 leading-relaxed">
-                &ldquo;Find flights&rdquo;
+                &ldquo;{t("dontExample2")}&rdquo;
               </p>
             </div>
           </div>
@@ -431,16 +433,16 @@ export function ChatTasksTab({ inApp }: { inApp: boolean }) {
         className="text-center py-8"
       >
         <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-3">
-          Ready to try it?
+          {t("readyToTry")}
         </h2>
         <p className="text-sm text-foreground/40 mb-6">
-          Open a chat and describe what you need done.
+          {t("openChat")}
         </p>
         <Link
           href="/"
           className="inline-flex items-center gap-2 h-10 px-6 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
         >
-          Start a chat
+          {t("startChat")}
           <ArrowRight size={14} weight="bold" />
         </Link>
       </motion.section>

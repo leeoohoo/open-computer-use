@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 import {
   MagnifyingGlass,
   Briefcase,
@@ -27,14 +28,14 @@ const stagger = {
   show: { transition: { staggerChildren: 0.07 } },
 }
 
-const useCases = [
-  { icon: MagnifyingGlass, title: "Parallel research", line: "5 competitors, 5 machines, simultaneously" },
-  { icon: Briefcase, title: "Bulk applications", line: "Apply across platforms at the same time" },
-  { icon: MapPin, title: "Multi-city search", line: "Search listings in 5 cities at once" },
-  { icon: EnvelopeSimple, title: "Parallel outreach", line: "Personalized emails to different segments" },
-  { icon: ShareNetwork, title: "Cross-platform", line: "Post to 5 platforms simultaneously" },
-  { icon: TestTube, title: "Distributed testing", line: "Test multiple scenarios in parallel" },
-]
+const useCaseKeys = [
+  { icon: MagnifyingGlass, key: "parallelResearch" },
+  { icon: Briefcase, key: "bulkApplications" },
+  { icon: MapPin, key: "multiCitySearch" },
+  { icon: EnvelopeSimple, key: "parallelOutreach" },
+  { icon: ShareNetwork, key: "crossPlatform" },
+  { icon: TestTube, key: "distributedTesting" },
+] as const
 
 const cssAnimations = `
   @keyframes gv-bar-1 { 0% { width: 0% } 40% { width: 100% } 100% { width: 100% } }
@@ -68,6 +69,7 @@ const machines: { id: number; status: "done" | "run" | "wait"; delay: string }[]
 ]
 
 export function SwarmModeTab({ inApp }: { inApp: boolean }) {
+  const t = useTranslations("guide.swarmTab")
   return (
     <div className="space-y-0">
       <style dangerouslySetInnerHTML={{ __html: cssAnimations }} />
@@ -85,7 +87,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/50 mb-4"
         >
-          Swarm Mode
+          {t("title")}
         </motion.p>
 
         <motion.h2
@@ -93,7 +95,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
           custom={1}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2"
         >
-          Run 5 machines in parallel
+          {t("runParallel", { count: 5 })}
         </motion.h2>
 
         <motion.p
@@ -101,7 +103,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
           custom={2}
           className="text-sm text-foreground/50 mb-10 max-w-md"
         >
-          Same task, 5x the output, same time.
+          {t("sameTask", { multiplier: 5 })}
         </motion.p>
 
         {/* Animated machine cards */}
@@ -151,7 +153,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
                 </div>
 
                 <div className="text-[9px] font-medium text-foreground/30 mt-1">
-                  {m.status === "done" ? "Done" : m.status === "run" ? "Running" : "Pending"}
+                  {m.status === "done" ? t("done") : m.status === "run" ? t("running") : t("pending")}
                 </div>
               </div>
             ))}
@@ -175,7 +177,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
                 <circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" strokeWidth="1" />
                 <path d="M3.5 6l2 2 3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="text-xs font-semibold text-foreground/60">RESULT</span>
+              <span className="text-xs font-semibold text-foreground/60">{t("result")}</span>
             </div>
           </div>
         </motion.div>
@@ -194,11 +196,11 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-6"
         >
-          What to swarm
+          {t("whatToSwarm")}
         </motion.h2>
 
         <motion.div variants={stagger} className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {useCases.map((uc, i) => {
+          {useCaseKeys.map((uc, i) => {
             const Icon = uc.icon
             return (
               <motion.div
@@ -208,8 +210,8 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
                 className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.02] p-4"
               >
                 <Icon size={20} weight="duotone" className="text-foreground/40 mb-2.5" />
-                <p className="text-[13px] font-semibold text-foreground mb-0.5">{uc.title}</p>
-                <p className="text-[11px] text-foreground/40 leading-snug">{uc.line}</p>
+                <p className="text-[13px] font-semibold text-foreground mb-0.5">{t(`useCases.${uc.key}.title`)}</p>
+                <p className="text-[11px] text-foreground/40 leading-snug">{t(`useCases.${uc.key}.desc`, { count: 5 })}</p>
               </motion.div>
             )
           })}
@@ -229,7 +231,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-6"
         >
-          Availability
+          {t("availability")}
         </motion.h2>
 
         <motion.div variants={stagger} className="grid grid-cols-2 gap-3 max-w-md">
@@ -240,7 +242,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
           >
             <Lock size={20} weight="duotone" className="text-foreground/25 mx-auto mb-2" />
             <p className="text-sm font-semibold text-foreground/40">Free</p>
-            <p className="text-[11px] text-foreground/25 mt-0.5">Not available</p>
+            <p className="text-[11px] text-foreground/25 mt-0.5">{t("freeNotAvailable")}</p>
           </motion.div>
           <motion.div
             variants={fade}
@@ -248,8 +250,8 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
             className="rounded-xl border border-foreground/[0.08] bg-foreground/[0.03] p-4 text-center"
           >
             <CheckCircle size={20} weight="duotone" className="text-foreground/50 mx-auto mb-2" />
-            <p className="text-sm font-semibold text-foreground">Lite+</p>
-            <p className="text-[11px] text-foreground/40 mt-0.5">2 -- 9 agents</p>
+            <p className="text-sm font-semibold text-foreground">{t("litePlus")}</p>
+            <p className="text-[11px] text-foreground/40 mt-0.5">{t("agentRange")}</p>
           </motion.div>
         </motion.div>
       </motion.section>
@@ -267,7 +269,7 @@ export function SwarmModeTab({ inApp }: { inApp: boolean }) {
             href="/"
             className="inline-flex items-center gap-2 h-10 px-6 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
           >
-            Start a swarm
+            {t("startSwarm")}
             <ArrowRight size={14} weight="bold" />
           </a>
         </motion.section>

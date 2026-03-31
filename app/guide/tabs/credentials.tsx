@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 import {
   ArrowRight,
   Lock,
@@ -72,22 +73,22 @@ const savedCreds = [
   { domain: "hubspot.com", initial: "H", username: "john@company.com" },
 ]
 
-const securityItems = [
-  { icon: Lock, label: "Encrypted", desc: "AES-256 at rest" },
-  { icon: ShieldCheck, label: "VM-isolated", desc: "Sandboxed per session" },
-  { icon: EyeSlash, label: "Never logged", desc: "Zero trace in logs" },
-]
+const securityKeys = [
+  { icon: Lock, labelKey: "encrypted", descKey: "aes256" },
+  { icon: ShieldCheck, labelKey: "vmIsolated", descKey: "sandboxed" },
+  { icon: EyeSlash, labelKey: "neverLogged", descKey: "zeroTrace" },
+] as const
 
 /* ─── hero: auto-fill flow ─── */
 
-function AutoFillFlowMock() {
+function AutoFillFlowMock({ t }: { t: any }) {
   return (
     <div className="rounded-2xl border border-foreground/[0.06] bg-foreground/[0.02] p-4 sm:p-6">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {/* Panel 1: Login page skeleton */}
         <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.015] p-4 relative overflow-hidden">
           <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-foreground/25 mb-3 block">
-            Login detected
+            {t("loginDetected")}
           </span>
           <div className="space-y-2.5">
             {/* URL bar */}
@@ -134,7 +135,7 @@ function AutoFillFlowMock() {
         {/* Panel 2: Credential matched */}
         <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.015] p-4 flex flex-col items-center justify-center">
           <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-foreground/25 mb-4 block">
-            Matched
+            {t("matched")}
           </span>
           <div className="w-full space-y-3">
             {/* Domain bubble */}
@@ -160,7 +161,7 @@ function AutoFillFlowMock() {
                 style={{ animation: "gv-fade-in 0.5s ease forwards 1s", opacity: 0 }}
               >
                 <Lock size={10} className="text-foreground/30" />
-                <span className="text-[10px] text-foreground/40">Credential found</span>
+                <span className="text-[10px] text-foreground/40">{t("credentialFound")}</span>
               </div>
             </div>
           </div>
@@ -169,7 +170,7 @@ function AutoFillFlowMock() {
         {/* Panel 3: Auto-filled */}
         <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.015] p-4 relative">
           <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-foreground/25 mb-3 block">
-            Auto-filled
+            {t("autoFilled")}
           </span>
           <div className="space-y-2.5">
             {/* URL bar */}
@@ -258,6 +259,7 @@ function CredCard({ domain, initial, username }: { domain: string; initial: stri
 /* ─── main export ─── */
 
 export function CredentialsTab({ inApp }: { inApp: boolean }) {
+  const t = useTranslations("guide.credentialsTab")
   return (
     <div className="space-y-0">
       <style dangerouslySetInnerHTML={{ __html: credentialStyles }} />
@@ -274,17 +276,17 @@ export function CredentialsTab({ inApp }: { inApp: boolean }) {
           variants={fadeUp}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2"
         >
-          Auto-fill in action
+          {t("autoFillTitle")}
         </motion.h2>
         <motion.p
           variants={fadeUp}
           className="text-sm text-foreground/40 mb-8"
         >
-          Login detected, credential matched, form filled. Automatic.
+          {t("autoFillDesc")}
         </motion.p>
 
         <motion.div variants={fadeUp}>
-          <AutoFillFlowMock />
+          <AutoFillFlowMock t={t} />
         </motion.div>
       </motion.section>
 
@@ -300,11 +302,11 @@ export function CredentialsTab({ inApp }: { inApp: boolean }) {
           variants={fadeUp}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-8"
         >
-          Security
+          {t("security")}
         </motion.h2>
 
         <motion.div variants={fadeUp} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {securityItems.map((item, i) => {
+          {securityKeys.map((item, i) => {
             const Icon = item.icon
             return (
               <div
@@ -319,8 +321,8 @@ export function CredentialsTab({ inApp }: { inApp: boolean }) {
                   <Icon size={15} weight="duotone" className="text-foreground/40" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-foreground/60">{item.label}</p>
-                  <p className="text-[10px] text-foreground/30">{item.desc}</p>
+                  <p className="text-xs font-semibold text-foreground/60">{t(item.labelKey)}</p>
+                  <p className="text-[10px] text-foreground/30">{t(item.descKey)}</p>
                 </div>
               </div>
             )
@@ -340,13 +342,13 @@ export function CredentialsTab({ inApp }: { inApp: boolean }) {
           variants={fadeUp}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2"
         >
-          Saved credentials
+          {t("savedCredentials")}
         </motion.h2>
         <motion.p
           variants={fadeUp}
           className="text-sm text-foreground/40 mb-8"
         >
-          Add once, auto-fill everywhere.
+          {t("addOnce")}
         </motion.p>
 
         <motion.div
@@ -368,13 +370,13 @@ export function CredentialsTab({ inApp }: { inApp: boolean }) {
         className="rounded-2xl border border-foreground/[0.06] bg-foreground/[0.02] text-center p-8"
       >
         <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-6">
-          Save your first credential
+          {t("saveFirst")}
         </h2>
         <Link
           href="/secrets"
           className="inline-flex items-center gap-2 h-10 px-6 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
         >
-          Go to Saved Credentials
+          {t("goToCredentials")}
           <ArrowRight size={14} weight="bold" />
         </Link>
       </motion.section>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { AppInfoTrigger } from "@/app/components/layout/app-info/app-info-trigger"
 import { useBreakpoint } from "@/app/hooks/use-breakpoint"
 import { CoastyIcon } from "@/components/icons/coasty"
@@ -25,7 +25,40 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
+import { LanguageSwitcherCompact } from "@/components/language-switcher"
+import { useGuideStore } from "@/lib/guide-store"
+import { BookOpen } from "lucide-react"
 import { useTranslations } from "next-intl"
+
+function GuideToggle() {
+  const dismissed = useGuideStore((s) => s.dismissed)
+  const toggle = useGuideStore((s) => s.toggle)
+  const hydrate = useGuideStore((s) => s.hydrate)
+
+  // Hydrate on mount so we read localStorage
+  useEffect(() => { hydrate() }, [hydrate])
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          onClick={toggle}
+          className={cn(
+            "h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-150",
+            dismissed
+              ? "text-muted-foreground/40 hover:text-muted-foreground/70"
+              : "text-foreground/60 bg-foreground/[0.06] hover:bg-foreground/[0.1]",
+          )}
+          aria-label="Toggle guide"
+        >
+          <BookOpen className="h-[15px] w-[15px]" strokeWidth={1.7} />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent>{dismissed ? "Show guide" : "Hide guide"}</TooltipContent>
+    </Tooltip>
+  )
+}
 
 interface HeaderProps {
   hasSidebar: boolean
@@ -86,6 +119,7 @@ export function Header({ hasSidebar }: HeaderProps) {
           </div>
           {!isLoggedIn ? (
             <div className="pointer-events-auto flex items-center justify-end gap-1 sm:gap-2 min-w-0 flex-shrink-0">
+              <LanguageSwitcherCompact />
               <AnimatedThemeToggler
                 className="text-muted-foreground hover:text-foreground h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-150"
               />
@@ -157,7 +191,11 @@ export function Header({ hasSidebar }: HeaderProps) {
                 />
               )}
 
-              {/* Theme Toggle */}
+              {/* Guide toggle — homepage only */}
+              {!chatId && <GuideToggle />}
+
+              {/* Language & Theme */}
+              <LanguageSwitcherCompact />
               <AnimatedThemeToggler
                 className="text-muted-foreground hover:text-foreground h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-150"
               />

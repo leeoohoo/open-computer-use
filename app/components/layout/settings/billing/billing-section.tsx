@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useMemo, useCallback } from "react"
+import React, { useEffect, useState, useMemo, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -368,7 +368,7 @@ function UsageChart({
         {showBalance && (
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-indigo-500" />
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "#6198de" }} />
               <span className="text-muted-foreground/70">{t("stats.balance")}</span>
             </div>
             <span className="font-semibold text-foreground tabular-nums">{d.balance.toLocaleString()}</span>
@@ -376,17 +376,17 @@ function UsageChart({
         )}
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "#3cb57c" }} />
             <span className="text-muted-foreground/70">{t("stats.earned")}</span>
           </div>
-          <span className="font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">+{d.earned.toLocaleString()}</span>
+          <span className="font-semibold text-foreground tabular-nums">+{d.earned.toLocaleString()}</span>
         </div>
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-rose-500" />
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "#d46b5f" }} />
             <span className="text-muted-foreground/70">{t("stats.used")}</span>
           </div>
-          <span className="font-semibold text-rose-500 dark:text-rose-400 tabular-nums">-{d.spent.toLocaleString()}</span>
+          <span className="font-semibold text-muted-foreground tabular-nums">-{d.spent.toLocaleString()}</span>
         </div>
       </div>
     </div>
@@ -405,12 +405,12 @@ function UsageChart({
         <svg viewBox={`0 0 ${vbW} ${vbH}`} preserveAspectRatio="xMidYMid meet" className="w-full h-full">
           <defs>
             <linearGradient id="barEarnedGrad" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stopColor="rgb(16, 185, 129)" stopOpacity={0.85} />
-              <stop offset="100%" stopColor="rgb(52, 211, 153)" stopOpacity={1} />
+              <stop offset="0%" stopColor="#3cb57c" stopOpacity={0.45} />
+              <stop offset="100%" stopColor="#3cb57c" stopOpacity={0.7} />
             </linearGradient>
             <linearGradient id="barSpentGrad" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stopColor="rgb(225, 29, 72)" stopOpacity={0.75} />
-              <stop offset="100%" stopColor="rgb(251, 113, 133)" stopOpacity={0.95} />
+              <stop offset="0%" stopColor="#d46b5f" stopOpacity={0.3} />
+              <stop offset="100%" stopColor="#d46b5f" stopOpacity={0.5} />
             </linearGradient>
           </defs>
 
@@ -473,37 +473,72 @@ function UsageChart({
   }
 
   // ── Area chart (default) ──
-  const maxBalance = Math.max(...data.map((d) => d.balance), 1)
-  const balanceTicks = computeNiceTicks(maxBalance, 4)
-  const balanceAxisMax = balanceTicks[balanceTicks.length - 1] || maxBalance
+  const allMax = Math.max(...data.map((d) => Math.max(d.balance, d.earned, d.spent)), 1)
+  const ticks = computeNiceTicks(allMax, 4)
+  const rawAxisMax = ticks[ticks.length - 1] || allMax
+  const axisMax = rawAxisMax <= allMax ? rawAxisMax * 1.1 : rawAxisMax
 
-  const points = data.map((d, i) => ({
-    x: padding.left + (i / Math.max(data.length - 1, 1)) * chartW,
-    y: padding.top + chartH - (d.balance / balanceAxisMax) * chartH,
-  }))
+  const baselineY = padding.top + chartH
 
-  const smoothLine = buildSmoothPath(points)
-  const lastPt = points[points.length - 1]
-  const firstPt = points[0]
-  const smoothArea = `${smoothLine} L ${lastPt.x} ${padding.top + chartH} L ${firstPt.x} ${padding.top + chartH} Z`
+  // Colors: balance = blue, earned = emerald, spent = rose (hex for SVG compat)
+  const series = [
+    {
+      key: "balance" as const,
+      color: "#6198de",                 // soft blue
+      points: data.map((d, i) => ({
+        x: padding.left + (i / Math.max(data.length - 1, 1)) * chartW,
+        y: padding.top + chartH - (d.balance / axisMax) * chartH,
+      })),
+      width: 2,
+      areaOpacity: [0.18, 0.09, 0.035, 0.008, 0],
+    },
+    {
+      key: "earned" as const,
+      color: "#3cb57c",                 // soft emerald
+      points: data.map((d, i) => ({
+        x: padding.left + (i / Math.max(data.length - 1, 1)) * chartW,
+        y: padding.top + chartH - (d.earned / axisMax) * chartH,
+      })),
+      width: 1.5,
+      areaOpacity: [0.14, 0.065, 0.025, 0.005, 0],
+    },
+    {
+      key: "spent" as const,
+      color: "#d46b5f",                 // soft rose
+      points: data.map((d, i) => ({
+        x: padding.left + (i / Math.max(data.length - 1, 1)) * chartW,
+        y: padding.top + chartH - (d.spent / axisMax) * chartH,
+      })),
+      width: 1.5,
+      areaOpacity: [0.14, 0.065, 0.025, 0.005, 0],
+    },
+  ]
 
   return (
     <div className="relative" style={{ height }}>
       <svg viewBox={`0 0 ${vbW} ${vbH}`} preserveAspectRatio="xMidYMid meet" className="w-full h-full">
         <defs>
-          <linearGradient id="fadeMask" gradientUnits="userSpaceOnUse" x1="0" y1={padding.top} x2="0" y2={padding.top + chartH}>
-            <stop offset="0%" stopColor="white" />
-            <stop offset="50%" stopColor="white" stopOpacity={0.5} />
-            <stop offset="85%" stopColor="white" stopOpacity={0.1} />
-            <stop offset="100%" stopColor="white" stopOpacity={0} />
-          </linearGradient>
-          <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="rgb(129, 140, 248)" />
-            <stop offset="50%" stopColor="rgb(99, 102, 241)" />
-            <stop offset="100%" stopColor="rgb(79, 70, 229)" />
-          </linearGradient>
+          {series.map((s) => {
+            const minY = Math.min(...s.points.map((p) => p.y))
+            return (
+              <React.Fragment key={s.key}>
+                <linearGradient id={`areaGrad-${s.key}`} gradientUnits="userSpaceOnUse" x1="0" y1={minY} x2="0" y2={baselineY}>
+                  <stop offset="0%" stopColor={s.color} stopOpacity={s.areaOpacity[0]} />
+                  <stop offset="25%" stopColor={s.color} stopOpacity={s.areaOpacity[1]} />
+                  <stop offset="55%" stopColor={s.color} stopOpacity={s.areaOpacity[2]} />
+                  <stop offset="80%" stopColor={s.color} stopOpacity={s.areaOpacity[3]} />
+                  <stop offset="100%" stopColor={s.color} stopOpacity={s.areaOpacity[4]} />
+                </linearGradient>
+                <linearGradient id={`lineGrad-${s.key}`} x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor={s.color} stopOpacity={0.7} />
+                  <stop offset="50%" stopColor={s.color} stopOpacity={1} />
+                  <stop offset="100%" stopColor={s.color} stopOpacity={0.75} />
+                </linearGradient>
+              </React.Fragment>
+            )
+          })}
           <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -511,39 +546,45 @@ function UsageChart({
           </filter>
         </defs>
 
-        {renderYAxis(balanceTicks, balanceAxisMax)}
+        {renderYAxis(ticks, axisMax)}
 
-        {/* Area fill */}
-        <mask id="areaMask">
-          <rect x={padding.left} y={padding.top} width={chartW} height={chartH} fill="url(#fadeMask)" />
-        </mask>
-        <path d={smoothArea} fill="#818cf8" opacity={0.35} mask="url(#areaMask)" />
+        {/* Render each series: area fill, glow, line */}
+        {series.map((s) => {
+          const line = buildSmoothPath(s.points)
+          const last = s.points[s.points.length - 1]
+          const first = s.points[0]
+          const area = `${line} L ${last.x} ${baselineY} L ${first.x} ${baselineY} Z`
 
-        {/* Glow line */}
-        <path
-          d={smoothLine}
-          fill="none"
-          stroke="rgb(99, 102, 241)"
-          strokeWidth={5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeOpacity={0.2}
-          filter="url(#glow)"
-        />
+          return (
+            <g key={s.key}>
+              {/* Area fill */}
+              <path d={area} fill={`url(#areaGrad-${s.key})`} />
+              {/* Glow */}
+              <path
+                d={line}
+                fill="none"
+                stroke={s.color}
+                strokeWidth={s.width + 3}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeOpacity={0.08}
+                filter="url(#glow)"
+              />
+              {/* Line */}
+              <path
+                d={line}
+                fill="none"
+                stroke={`url(#lineGrad-${s.key})`}
+                strokeWidth={s.width}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </g>
+          )
+        })}
 
-        {/* Main line */}
-        <path
-          d={smoothLine}
-          fill="none"
-          stroke="url(#lineGrad)"
-          strokeWidth={2.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeOpacity={1}
-        />
-
-        {/* Hover interaction layer */}
-        {points.map((p, i) => (
+        {/* Hover interaction layer — uses balance points for positioning */}
+        {series[0].points.map((p, i) => (
           <g
             key={i}
             onMouseEnter={() => setHoveredIndex(i)}
@@ -561,16 +602,19 @@ function UsageChart({
               <>
                 <line
                   x1={p.x} x2={p.x}
-                  y1={p.y} y2={padding.top + chartH}
-                  stroke="rgb(99, 102, 241)"
-                  strokeOpacity={0.3}
+                  y1={padding.top} y2={baselineY}
+                  stroke="currentColor"
+                  strokeOpacity={0.1}
                   strokeWidth={1}
                   strokeDasharray="3 3"
                 />
-                {/* Outer glow ring */}
-                <circle cx={p.x} cy={p.y} r={8} fill="rgb(99, 102, 241)" fillOpacity={0.18} />
-                {/* Dot */}
-                <circle cx={p.x} cy={p.y} r={4.5} fill="rgb(99, 102, 241)" stroke="white" strokeWidth={2} />
+                {/* Dots for each series */}
+                {series.map((s) => (
+                  <React.Fragment key={s.key}>
+                    <circle cx={s.points[i].x} cy={s.points[i].y} r={6} fill={s.color} fillOpacity={0.12} />
+                    <circle cx={s.points[i].x} cy={s.points[i].y} r={3.5} fill={s.color} fillOpacity={0.8} stroke="var(--popover)" strokeWidth={1.5} />
+                  </React.Fragment>
+                ))}
               </>
             )}
           </g>
@@ -580,8 +624,8 @@ function UsageChart({
       </svg>
 
       {hoveredIndex !== null && data[hoveredIndex] && renderTooltip(
-        (points[hoveredIndex].x / vbW) * 100,
-        Math.max((points[hoveredIndex].y / vbH) * height - 12, 0),
+        (series[0].points[hoveredIndex].x / vbW) * 100,
+        Math.max((series[0].points[hoveredIndex].y / vbH) * height - 12, 0),
         data[hoveredIndex],
         true,
       )}
@@ -608,23 +652,14 @@ function StatCard({
   trendLabel?: string
   accent?: "default" | "green" | "red" | "blue" | "purple"
 }) {
-  const accentMap = {
-    default: { icon: "text-foreground/50", bg: "bg-foreground/[0.04]" },
-    green: { icon: "text-emerald-500", bg: "bg-emerald-500/[0.08]" },
-    red: { icon: "text-rose-500", bg: "bg-rose-500/[0.08]" },
-    blue: { icon: "text-blue-500", bg: "bg-blue-500/[0.08]" },
-    purple: { icon: "text-indigo-500", bg: "bg-indigo-500/[0.08]" },
-  }
-  const a = accentMap[accent]
-
   return (
     <div className="rounded-xl border border-border/40 bg-card/30 p-4 flex flex-col min-h-[120px]">
       <div className="flex items-center justify-between mb-auto">
         <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">
           {label}
         </span>
-        <div className={cn("h-7 w-7 rounded-lg flex items-center justify-center", a.bg)}>
-          <Icon className={cn("h-3.5 w-3.5", a.icon)} />
+        <div className="h-7 w-7 rounded-lg flex items-center justify-center bg-foreground/[0.04]">
+          <Icon className="h-3.5 w-3.5 text-foreground/40" />
         </div>
       </div>
       <div>
@@ -640,22 +675,13 @@ function StatCard({
           {trend && trendLabel ? (
             <div className="flex items-center gap-1">
               {trend === "up" ? (
-                <ArrowUpRight className="h-3 w-3 text-emerald-500" />
+                <ArrowUpRight className="h-3 w-3 text-foreground/40" />
               ) : trend === "down" ? (
-                <ArrowDownRight className="h-3 w-3 text-rose-500" />
+                <ArrowDownRight className="h-3 w-3 text-foreground/40" />
               ) : (
                 <Activity className="h-3 w-3 text-muted-foreground/40" />
               )}
-              <span
-                className={cn(
-                  "text-[10px] leading-none",
-                  trend === "up"
-                    ? "text-emerald-600 dark:text-emerald-500"
-                    : trend === "down"
-                    ? "text-rose-600 dark:text-rose-500"
-                    : "text-muted-foreground/50"
-                )}
-              >
+              <span className="text-[10px] leading-none text-muted-foreground/50">
                 {trendLabel}
               </span>
             </div>
@@ -668,80 +694,259 @@ function StatCard({
 
 // ─── Transaction Row ────────────────────────────────────────────────────────
 
-function TransactionRow({ transaction, isLast }: { transaction: Transaction; isLast: boolean }) {
+// ─── Transaction Grouping ──────────────────────────────────────────────────
+
+// Extract session/machine UUID from usage_description like "Step 91: 1 min on <uuid>" or "Final charge: 3 min on <uuid>"
+const UUID_RE = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+
+function extractSessionId(desc?: string): string | null {
+  if (!desc) return null
+  const match = desc.match(UUID_RE)
+  return match ? match[0] : null
+}
+
+interface TransactionGroup {
+  id: string
+  type: "session" | "standalone"
+  label: string
+  icon: React.ElementType
+  totalAmount: number
+  totalDuration: number // minutes
+  balanceAfter: number
+  pricePaid?: number
+  sessionId?: string
+  firstDate: string
+  lastDate: string
+  transactions: Transaction[]
+}
+
+function groupTransactions(transactions: Transaction[]): TransactionGroup[] {
+  const groups: TransactionGroup[] = []
+  const sessionMap = new Map<string, Transaction[]>()
+  const standaloneQueue: Transaction[] = []
+
+  // First pass: bucket usage transactions by session UUID, everything else standalone
+  for (const tx of transactions) {
+    if (tx.type === "usage") {
+      const sid = extractSessionId(tx.usage_description)
+      if (sid) {
+        if (!sessionMap.has(sid)) sessionMap.set(sid, [])
+        sessionMap.get(sid)!.push(tx)
+        continue
+      }
+    }
+    standaloneQueue.push(tx)
+  }
+
+  // Build session groups (sorted by newest transaction in group)
+  for (const [sid, txs] of sessionMap) {
+    // txs are already sorted newest-first from the API
+    const totalAmount = txs.reduce((s, t) => s + t.amount, 0)
+    // Sum duration from all steps: "Final charge: 3 min" + "Step X: 1 min" etc.
+    let totalMinutes = 0
+    for (const t of txs) {
+      const m = t.usage_description?.match(/(\d+)\s*min/)
+      if (m) totalMinutes += parseInt(m[1], 10)
+    }
+
+    groups.push({
+      id: `session-${sid}`,
+      type: "session",
+      label: "Agent Session",
+      icon: Activity,
+      totalAmount,
+      totalDuration: totalMinutes,
+      balanceAfter: txs[0].balance_after, // newest tx has latest balance
+      sessionId: sid,
+      firstDate: txs[txs.length - 1].created_at,
+      lastDate: txs[0].created_at,
+      transactions: txs,
+    })
+  }
+
+  // Build standalone groups
+  for (const tx of standaloneQueue) {
+    // Parse duration for standalone usage without session id
+    let dur = 0
+    if (tx.type === "usage") {
+      const m = tx.usage_description?.match(/(\d+)\s*min/)
+      if (m) dur = parseInt(m[1], 10)
+    }
+
+    groups.push({
+      id: `tx-${tx.id}`,
+      type: "standalone",
+      label: tx.type, // will be resolved to display label in component
+      icon: Coins,
+      totalAmount: tx.amount,
+      totalDuration: dur,
+      balanceAfter: tx.balance_after,
+      pricePaid: tx.price_paid,
+      sessionId: undefined,
+      firstDate: tx.created_at,
+      lastDate: tx.created_at,
+      transactions: [tx],
+    })
+  }
+
+  // Sort all groups by most recent transaction date (newest first)
+  groups.sort((a, b) => new Date(b.lastDate).getTime() - new Date(a.lastDate).getTime())
+
+  return groups
+}
+
+// ─── Transaction Row (for expanded session detail) ──────────────────────────
+
+function TransactionDetailRow({ transaction, isLast }: { transaction: Transaction; isLast: boolean }) {
   const t = useTranslations("billing")
-  const isPositive = transaction.amount > 0
-
-  const typeConfig: Record<string, { icon: React.ElementType; color: string; label: string }> = {
-    purchase: { icon: ShoppingCart, color: "text-green-500 bg-green-500/10", label: t("transactionTypes.credit_purchase") },
-    usage: { icon: Activity, color: "text-blue-500 bg-blue-500/10", label: t("transactionTypes.agent_usage") },
-    refund: { icon: ArrowDownRight, color: "text-amber-500 bg-amber-500/10", label: t("transactionTypes.refund") },
-    bonus: { icon: Lightning, color: "text-purple-500 bg-purple-500/10", label: t("transactionTypes.bonus") },
-    subscription: { icon: CreditCard, color: "text-indigo-500 bg-indigo-500/10", label: t("transactionTypes.subscription") },
-    subscription_grant: { icon: Zap, color: "text-indigo-500 bg-indigo-500/10", label: t("transactionTypes.subscription_grant") },
-    subscription_renewal: { icon: Clock, color: "text-indigo-500 bg-indigo-500/10", label: t("transactionTypes.renewal") },
-    subscription_reactivation: { icon: CheckCircle, color: "text-green-500 bg-green-500/10", label: t("transactionTypes.reactivation") },
-  }
-
-  const config = typeConfig[transaction.type] || {
-    icon: Coins,
-    color: "text-muted-foreground bg-muted",
-    label: transaction.type,
-  }
-  const Icon = config.icon
-
   return (
     <div
       className={cn(
-        "flex items-center gap-3 px-4 py-3 hover:bg-muted/20 transition-colors",
-        !isLast && "border-b border-border/30"
+        "flex items-center gap-3 px-4 py-2 text-[12px]",
+        !isLast && "border-b border-border/20"
       )}
     >
-      <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg shrink-0", config.color)}>
-        <Icon className="h-3.5 w-3.5" />
-      </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-foreground truncate">
-            {config.label}
-          </span>
-        </div>
-        <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-[11px] text-muted-foreground/50">
-            {formatRelativeDate(transaction.created_at, t)}
-          </span>
-          {transaction.usage_description && (
-            <>
-              <span className="text-muted-foreground/20">·</span>
-              <span className="text-[11px] text-muted-foreground/50 truncate">
-                {transaction.usage_description}
-              </span>
-            </>
-          )}
-        </div>
+        <span className="text-muted-foreground/60 truncate">
+          {transaction.usage_description || transaction.type}
+        </span>
       </div>
-      <div className="text-right shrink-0">
-        <div
-          className={cn(
-            "text-sm font-semibold tabular-nums",
-            isPositive
-              ? "text-green-600 dark:text-green-500"
-              : "text-red-500 dark:text-red-400"
-          )}
-        >
-          {isPositive ? "+" : ""}
-          {transaction.amount.toLocaleString()}
-        </div>
-        {transaction.price_paid ? (
-          <div className="text-[11px] text-muted-foreground/40 tabular-nums">
-            ${transaction.price_paid}
-          </div>
-        ) : (
-          <div className="text-[11px] text-muted-foreground/30 tabular-nums">
-            bal {transaction.balance_after?.toLocaleString()}
-          </div>
+      <div className="flex items-center gap-3 shrink-0">
+        <span className="text-muted-foreground/40 tabular-nums text-[11px]">
+          {formatRelativeDate(transaction.created_at, t)}
+        </span>
+        <span className={cn(
+          "tabular-nums font-medium w-14 text-right",
+          transaction.amount > 0 ? "text-foreground/70" : "text-muted-foreground/60"
+        )}>
+          {transaction.amount > 0 ? "+" : ""}{transaction.amount.toLocaleString()}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+// ─── Transaction Group Row ─────────────────────────────────────────────────
+
+const typeConfigMap: Record<string, { icon: React.ElementType; labelKey: string }> = {
+  purchase: { icon: ShoppingCart, labelKey: "transactionTypes.credit_purchase" },
+  usage: { icon: Activity, labelKey: "transactionTypes.agent_usage" },
+  refund: { icon: ArrowDownRight, labelKey: "transactionTypes.refund" },
+  bonus: { icon: Lightning, labelKey: "transactionTypes.bonus" },
+  subscription: { icon: CreditCard, labelKey: "transactionTypes.subscription" },
+  subscription_grant: { icon: Zap, labelKey: "transactionTypes.subscription_grant" },
+  subscription_renewal: { icon: Clock, labelKey: "transactionTypes.renewal" },
+  subscription_reactivation: { icon: CheckCircle, labelKey: "transactionTypes.reactivation" },
+}
+
+function TransactionGroupRow({ group, isLast }: { group: TransactionGroup; isLast: boolean }) {
+  const t = useTranslations("billing")
+  const [expanded, setExpanded] = useState(false)
+  const isSession = group.type === "session"
+  const txCount = group.transactions.length
+  const isPositive = group.totalAmount > 0
+
+  // Resolve icon and label
+  let Icon: React.ElementType
+  let label: string
+  if (isSession) {
+    Icon = Activity
+    label = t("transactionTypes.agent_usage")
+  } else {
+    const txType = group.transactions[0].type
+    const cfg = typeConfigMap[txType]
+    Icon = cfg?.icon || Coins
+    label = cfg ? t(cfg.labelKey) : txType
+  }
+
+  // Subtitle info
+  const subtitle = isSession
+    ? `${group.totalDuration > 0 ? `${group.totalDuration} min` : `${txCount} step${txCount !== 1 ? "s" : ""}`}${group.sessionId ? ` · ${group.sessionId.slice(0, 8)}` : ""}`
+    : group.transactions[0].usage_description || undefined
+
+  return (
+    <div className={cn(!isLast && "border-b border-border/30")}>
+      {/* Group header */}
+      <div
+        className={cn(
+          "flex items-center gap-3 px-4 py-3 transition-colors",
+          isSession && txCount > 1 ? "cursor-pointer hover:bg-muted/20" : "hover:bg-muted/20"
         )}
+        onClick={isSession && txCount > 1 ? () => setExpanded(!expanded) : undefined}
+      >
+        <div className={cn(
+          "flex h-8 w-8 items-center justify-center rounded-lg shrink-0",
+          isPositive ? "bg-emerald-500/10" : "bg-muted/50"
+        )}>
+          <Icon className={cn("h-3.5 w-3.5", isPositive ? "text-emerald-500/70" : "text-foreground/40")} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-foreground truncate">
+              {label}
+            </span>
+            {isSession && txCount > 1 && (
+              <Badge variant="secondary" className="text-[9px] px-1.5 py-0 h-4 shrink-0">
+                {txCount} steps
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-[11px] text-muted-foreground/50">
+              {formatRelativeDate(group.lastDate, t)}
+            </span>
+            {subtitle && (
+              <>
+                <span className="text-muted-foreground/20">·</span>
+                <span className="text-[11px] text-muted-foreground/50 truncate">
+                  {subtitle}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="text-right">
+            <div
+              className={cn(
+                "text-sm font-semibold tabular-nums",
+                isPositive ? "text-foreground" : "text-muted-foreground"
+              )}
+            >
+              {isPositive ? "+" : ""}
+              {group.totalAmount.toLocaleString()}
+            </div>
+            {group.pricePaid ? (
+              <div className="text-[11px] text-muted-foreground/40 tabular-nums">
+                ${group.pricePaid}
+              </div>
+            ) : (
+              <div className="text-[11px] text-muted-foreground/30 tabular-nums">
+                bal {group.balanceAfter?.toLocaleString()}
+              </div>
+            )}
+          </div>
+          {isSession && txCount > 1 && (
+            <ChevronDown className={cn(
+              "h-3.5 w-3.5 text-muted-foreground/30 transition-transform duration-200",
+              expanded && "rotate-180"
+            )} />
+          )}
+        </div>
       </div>
+
+      {/* Expanded detail rows */}
+      {expanded && isSession && txCount > 1 && (
+        <div className="bg-muted/[0.04] border-t border-border/20">
+          {group.transactions.map((tx, i) => (
+            <TransactionDetailRow
+              key={tx.id}
+              transaction={tx}
+              isLast={i === group.transactions.length - 1}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -843,6 +1048,11 @@ export function BillingSection() {
     }
     return filtered
   }, [transactions, timeRange, typeFilter])
+
+  const transactionGroups = useMemo(
+    () => groupTransactions(filteredTransactions),
+    [filteredTransactions]
+  )
 
   const chartData = useMemo<ChartDataPoint[]>(() => {
     const rangeDate = getTimeRangeDate(timeRange)
@@ -1081,45 +1291,7 @@ export function BillingSection() {
         ))}
       </div>
 
-      {/* ─── Usage Progress (subscribed users) ───────────────────────────── */}
-      {activePlan && (
-        <motion.div {...fadeUp(0.25)} className="rounded-xl border border-border/40 p-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-3">
-            <div className="flex items-center gap-2">
-              <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
-              <span className="text-sm font-medium">{t("monthlyUsage")}</span>
-            </div>
-            <span className="text-xs text-muted-foreground">
-              {t("remaining", { used: (credits?.balance || 0).toLocaleString(), total: activePlan.monthlyCredits.toLocaleString() })}
-            </span>
-          </div>
-          <div className="relative h-2 w-full rounded-full bg-muted/60 overflow-hidden">
-            <motion.div
-              className={cn(
-                "absolute inset-y-0 left-0 rounded-full",
-                creditUsagePercent > 90
-                  ? "bg-red-500"
-                  : creditUsagePercent > 70
-                  ? "bg-amber-500"
-                  : "bg-primary"
-              )}
-              initial={{ width: 0 }}
-              animate={{ width: `${creditUsagePercent}%` }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            />
-          </div>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-[11px] text-muted-foreground/50">
-              {t("usedPercent", { percent: Math.round(creditUsagePercent) })}
-            </span>
-            {subscription?.current_period_end && (
-              <span className="text-[11px] text-muted-foreground/50">
-                {t("renews", { date: formatDate(subscription.current_period_end) })}
-              </span>
-            )}
-          </div>
-        </motion.div>
-      )}
+      {/* Monthly usage progress removed — balance already shown in stats cards */}
 
       {/* ─── Subscription / Plans / Buy Credits ──────────────────────────── */}
       {!subscription || subscription.status !== "active" ? (
@@ -1138,7 +1310,7 @@ export function BillingSection() {
                 className={cn(
                   "relative rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5 px-4 py-2.5",
                   selectedPlan === i
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                    ? "bg-foreground text-background shadow-sm"
                     : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
@@ -1147,7 +1319,7 @@ export function BillingSection() {
                   className={cn(
                     "text-xs font-normal",
                     selectedPlan === i
-                      ? "text-primary-foreground/70"
+                      ? "text-background/70"
                       : "text-muted-foreground/60"
                   )}
                 >
@@ -1155,8 +1327,8 @@ export function BillingSection() {
                 </span>
                 {p.popular && selectedPlan !== i && (
                   <span className="absolute -top-1.5 -right-1.5 flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-foreground/50 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-foreground/50" />
                   </span>
                 )}
               </button>
@@ -1214,13 +1386,13 @@ export function BillingSection() {
             className={cn(
               "relative rounded-xl border p-6",
               plan.popular
-                ? "border-primary/30 bg-gradient-to-b from-primary/[0.06] to-primary/[0.02] shadow-sm shadow-primary/10"
-                : "border-border"
+                ? "border-foreground/15 bg-card/30"
+                : "border-border/40"
             )}
           >
             {plan.popular && (
               <div className="absolute -top-2.5 left-4">
-                <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-medium text-primary-foreground">
+                <span className="rounded-full bg-foreground px-2.5 py-0.5 text-[11px] font-medium text-background">
                   {t("plans.plus.badge")}
                 </span>
               </div>
@@ -1229,8 +1401,8 @@ export function BillingSection() {
             <div className="flex items-start justify-between mb-5">
               <div>
                 <div className="flex items-center gap-2">
-                  <CoastyIcon className="h-5 w-5 text-primary" />
-                  <h3 className="text-sm font-semibold text-primary">
+                  <CoastyIcon className="h-5 w-5 text-foreground/40" />
+                  <h3 className="text-sm font-semibold">
                     {t("coastyPlan", { name: plan.name })}
                   </h3>
                 </div>
@@ -1246,15 +1418,15 @@ export function BillingSection() {
               </div>
             </div>
 
-            <div className="mb-3 flex items-center gap-2 rounded-lg bg-primary/[0.08] border border-primary/10 px-3 py-2">
-              <Zap className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+            <div className="mb-3 flex items-center gap-2 rounded-lg bg-muted/50 border border-border/30 px-3 py-2">
+              <Zap className="h-3.5 w-3.5 text-foreground/40 flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">
                 {t("creditsPerMonth", { count: plan.monthlyCredits.toLocaleString() })}
               </span>
             </div>
 
-            <div className="mb-5 flex items-center gap-2 rounded-lg bg-violet-500/[0.08] border border-violet-500/15 px-3 py-2">
-              <HardDrive className="h-3.5 w-3.5 text-violet-500 flex-shrink-0" />
+            <div className="mb-5 flex items-center gap-2 rounded-lg bg-muted/50 border border-border/30 px-3 py-2">
+              <HardDrive className="h-3.5 w-3.5 text-foreground/40 flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">
                 {plan.id === "lite"
                   ? t("features.vmDeleted")
@@ -1290,7 +1462,7 @@ export function BillingSection() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {plan.features.map((feature, idx) => (
                 <div key={idx} className="flex items-start gap-2">
-                  <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                  <Check className="h-3.5 w-3.5 text-foreground/40 mt-0.5 flex-shrink-0" />
                   <span className="text-sm text-muted-foreground">{feature}</span>
                 </div>
               ))}
@@ -1300,11 +1472,11 @@ export function BillingSection() {
       ) : (
         <>
           {/* Active Subscription Card */}
-          <motion.div {...fadeUp(0.3)} className="rounded-xl border border-green-500/20 bg-gradient-to-b from-green-500/[0.04] to-transparent p-5">
+          <motion.div {...fadeUp(0.3)} className="rounded-xl border border-border/30 bg-card/20 p-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
-                  <CheckCircle className="h-5 w-5 text-green-500" />
+                <div className="h-10 w-10 rounded-full bg-muted/50 flex items-center justify-center shrink-0">
+                  <CheckCircle className="h-5 w-5 text-foreground/40" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-foreground">
@@ -1331,13 +1503,13 @@ export function BillingSection() {
               </Button>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-green-500/10 flex items-center justify-between text-xs">
+            <div className="mt-4 pt-3 border-t border-border/20 flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Status</span>
               <div className="flex items-center gap-1.5">
                 {subscription.cancel_at_period_end ? (
                   <>
-                    <XCircle className="h-3 w-3 text-yellow-600" />
-                    <span className="text-yellow-600">
+                    <XCircle className="h-3 w-3 text-muted-foreground/50" />
+                    <span className="text-muted-foreground">
                       Cancels{" "}
                       {subscription.current_period_end
                         ? new Date(subscription.current_period_end).toLocaleDateString()
@@ -1346,8 +1518,8 @@ export function BillingSection() {
                   </>
                 ) : (
                   <>
-                    <CheckCircle className="h-3 w-3 text-green-500" />
-                    <span className="text-green-600">
+                    <CheckCircle className="h-3 w-3 text-foreground/50" />
+                    <span className="text-foreground/70">
                       Renews{" "}
                       {subscription.current_period_end
                         ? new Date(subscription.current_period_end).toLocaleDateString()
@@ -1366,7 +1538,7 @@ export function BillingSection() {
               <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {activePlan?.features.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-2">
-                    <Check className="h-3 w-3 text-green-500 mt-0.5" />
+                    <Check className="h-3 w-3 text-foreground/40 mt-0.5" />
                     <span className="text-xs text-muted-foreground">{feature}</span>
                   </div>
                 )) || []}
@@ -1376,60 +1548,41 @@ export function BillingSection() {
 
           {/* Additional Credits */}
           <motion.div {...fadeUp(0.4)}>
-            <h4 className="text-base font-semibold mb-1">Need More Credits?</h4>
-            <p className="text-sm text-muted-foreground mb-4">
-              Purchase additional credits anytime
-            </p>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h4 className="text-sm font-semibold">Add Credits</h4>
+                <p className="text-xs text-muted-foreground/60 mt-0.5">Top up anytime — no subscription required</p>
+              </div>
+            </div>
+            <div className="rounded-xl border border-border/40 overflow-hidden divide-y divide-border/30">
               {additionalCreditPackages.map((pkg) => (
                 <div
                   key={pkg.id}
-                  className="rounded-xl border border-border p-4 hover:border-primary/30 hover:shadow-sm transition-all duration-200"
+                  className="flex items-center gap-4 px-4 py-3 hover:bg-muted/20 transition-colors"
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-foreground">
-                      {pkg.name}
-                    </span>
-                    <span className="text-lg font-bold text-foreground">
-                      ${pkg.price}
-                    </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-sm font-semibold tabular-nums">{pkg.credits.toLocaleString()}</span>
+                      <span className="text-xs text-muted-foreground/50">credits</span>
+                      {pkg.savings && (
+                        <span className="text-[10px] font-medium text-emerald-500/80">{pkg.savings}</span>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-muted-foreground/40">{pkg.description}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <Zap className="h-3.5 w-3.5 text-primary" />
-                    <span className="text-sm font-medium text-primary">
-                      {pkg.credits.toLocaleString()} credits
-                    </span>
-                    {pkg.savings && (
-                      <Badge
-                        variant="secondary"
-                        className="text-[10px] bg-green-500/10 text-green-600 border-green-500/20 ml-1"
-                      >
-                        {pkg.savings}
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-3">
-                    {pkg.description}
-                  </p>
                   <Button
                     size="sm"
-                    className="w-full hover:bg-primary hover:text-primary-foreground"
                     variant="outline"
+                    className="h-7 text-xs px-3 shrink-0"
                     onClick={() =>
                       handlePurchaseCredits(pkg.id, pkg.credits, pkg.price)
                     }
                     disabled={purchasingPackage === pkg.id}
                   >
                     {purchasingPackage === pkg.id ? (
-                      <>
-                        <Spinner className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                        {t("processing")}
-                      </>
+                      <Spinner className="h-3 w-3 animate-spin" />
                     ) : (
-                      <>
-                        Add Credits
-                        <ArrowRight className="ml-1.5 h-3 w-3" />
-                      </>
+                      <>${pkg.price}</>
                     )}
                   </Button>
                 </div>
@@ -1443,8 +1596,8 @@ export function BillingSection() {
       <motion.div {...fadeUp(0.45)} className="rounded-xl border border-border/30 bg-card/20 overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 pt-5 pb-1">
           <div className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-lg bg-indigo-500/[0.08] flex items-center justify-center shrink-0">
-              <ChartLine className="h-3.5 w-3.5 text-indigo-500" weight="bold" />
+            <div className="h-7 w-7 rounded-lg bg-foreground/[0.04] flex items-center justify-center shrink-0">
+              <ChartLine className="h-3.5 w-3.5 text-foreground/40" weight="bold" />
             </div>
             <span className="text-sm font-semibold">Credit Activity</span>
           </div>
@@ -1489,15 +1642,15 @@ export function BillingSection() {
         {/* Legend */}
         <div className="flex items-center gap-3 sm:gap-5 px-5 pb-1 pt-1 flex-wrap">
           <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-indigo-500" />
+            <span className="h-2 w-2 rounded-full bg-foreground/60" />
             <span className="text-[10px] text-muted-foreground/60 font-medium">{t("stats.balance")}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="h-2 w-2 rounded-full bg-foreground/40" />
             <span className="text-[10px] text-muted-foreground/60 font-medium">{t("stats.earned")}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-rose-500" />
+            <span className="h-2 w-2 rounded-full bg-foreground/20" />
             <span className="text-[10px] text-muted-foreground/60 font-medium">{t("stats.used")}</span>
           </div>
         </div>
@@ -1520,7 +1673,7 @@ export function BillingSection() {
             <Receipt className="h-4 w-4 text-muted-foreground/50 shrink-0" weight="bold" />
             <span className="text-sm font-semibold">Transactions</span>
             <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
-              {filteredTransactions.length}
+              {transactionGroups.length}
             </Badge>
           </div>
           <div className="flex items-center gap-2">
@@ -1564,7 +1717,7 @@ export function BillingSection() {
             <div className="flex justify-center py-12">
               <Spinner className="h-5 w-5 animate-spin text-muted-foreground/30" />
             </div>
-          ) : filteredTransactions.length === 0 ? (
+          ) : transactionGroups.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center px-4">
               <div className="h-10 w-10 rounded-xl bg-muted/50 flex items-center justify-center mb-3">
                 <Receipt className="h-5 w-5 text-muted-foreground/30" />
@@ -1578,11 +1731,11 @@ export function BillingSection() {
             </div>
           ) : (
             <div>
-              {(showAllTransactions ? filteredTransactions : filteredTransactions.slice(0, 8)).map(
-                (transaction, i, arr) => (
-                  <TransactionRow
-                    key={transaction.id}
-                    transaction={transaction}
+              {(showAllTransactions ? transactionGroups : transactionGroups.slice(0, 8)).map(
+                (group, i, arr) => (
+                  <TransactionGroupRow
+                    key={group.id}
+                    group={group}
                     isLast={i === arr.length - 1}
                   />
                 )
@@ -1592,7 +1745,7 @@ export function BillingSection() {
         </div>
 
         {/* Show more / less */}
-        {filteredTransactions.length > 8 && (
+        {transactionGroups.length > 8 && (
           <div className="flex justify-center mt-2">
             <Button
               variant="ghost"
@@ -1602,7 +1755,7 @@ export function BillingSection() {
             >
               {showAllTransactions
                 ? "Show less"
-                : `Show all ${filteredTransactions.length} transactions`}
+                : `Show all ${transactionGroups.length} groups`}
               <ChevronDown
                 className={cn(
                   "h-3 w-3 ml-1 transition-transform",

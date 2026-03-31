@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Loader2, Clock, Monitor, ArrowRight, History, Plus } from "lucide-react";
 import { useAccountDialog } from "@/lib/account-dialog-store";
 import { LinuxIcon, WindowsIcon } from "@/components/icons/platform-icons";
@@ -54,6 +55,7 @@ export function CreateMachineDialog({
   onOpenChange,
   onMachineCreated,
 }: CreateMachineDialogProps) {
+  const t = useTranslations("createMachine");
   const { isFreeTier, loading: subscriptionLoading } = useSubscription();
   const [creating, setCreating] = useState(false);
   const [displayName, setDisplayName] = useState("");
@@ -130,12 +132,12 @@ export function CreateMachineDialog({
 
   const handleCreate = async () => {
     if (!displayName.trim()) {
-      toast.error("Please enter a machine name");
+      toast.error(t("nameRequired"));
       return;
     }
 
     if (displayName.trim().toLowerCase().startsWith("local")) {
-      toast.error("Machine name cannot start with 'local'");
+      toast.error(t("nameError"));
       return;
     }
 
@@ -162,15 +164,14 @@ export function CreateMachineDialog({
 
       // Show immediate success and close dialog
       const restoring = snapshotAvailable && restoreFromSnapshot;
-      const osLabel = isWindows ? "Windows" : "Ubuntu";
-      toast.success(restoring ? "Restoring machine from snapshot!" : `${osLabel} machine creation started!`, {
+      toast.success(restoring ? t("toasts.restoringSnapshot") : isWindows ? t("toasts.windowsCreated") : `Ubuntu machine creation started!`, {
         description: restoring
-          ? "Your previous desktop state is being restored. Ready in ~30 seconds."
+          ? t("toasts.restoringDescription")
           : isWindows
-            ? "Your Windows desktop is launching. Ready in ~2 minutes."
+            ? t("toasts.windowsDescription")
             : desktopEnabled
-              ? "Your desktop is launching. Ready in ~30 seconds."
-              : "Your cloud machine is launching. SSH key will be available once ready.",
+              ? t("toasts.linuxCreated")
+              : t("toasts.sshCreated"),
         duration: 5000,
       });
 
@@ -191,7 +192,7 @@ export function CreateMachineDialog({
       responsePromise.then(async (response) => {
         if (!response.ok) {
           const error = await response.json();
-          toast.error(error.error || "Failed to create machine", {
+          toast.error(error.error || t("create"), {
             description: "Please check your limits and try again.",
           });
           // Refresh list to remove any failed machine
@@ -204,9 +205,7 @@ export function CreateMachineDialog({
         }
       }).catch((error) => {
         console.error("Machine creation error:", error);
-        toast.error("Network error while creating machine", {
-          description: "Please check your connection and try again.",
-        });
+        toast.error("Network error while creating machine");
         // Refresh list to remove any failed machine
         onMachineCreated();
       });
@@ -225,7 +224,7 @@ export function CreateMachineDialog({
       <DialogContent className="create-machine-dialog max-w-[95vw] sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between gap-3">
-            <DialogTitle>New Machine</DialogTitle>
+            <DialogTitle>{t("title")}</DialogTitle>
             {limits && (
               <span className="inline-flex items-center rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground mr-6">
                 {usage?.machines_count ?? 0} / {limits.max_machines}
@@ -233,7 +232,7 @@ export function CreateMachineDialog({
             )}
           </div>
           <DialogDescription>
-            Launch a cloud desktop — ready in ~30 seconds
+            {t("subtitle")}
           </DialogDescription>
         </DialogHeader>
 
@@ -250,14 +249,14 @@ export function CreateMachineDialog({
               <div className="flex items-center gap-2.5 min-w-0">
                 <Clock className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground truncate">
-                  Free machines expire after <span className="font-medium text-foreground">2 hours</span>
+                  {t("freeExpiry")}<span className="font-medium text-foreground">{t("freeExpiry2")}</span>
                 </p>
               </div>
               <button
                 onClick={() => useAccountDialog.getState().open("billing")}
                 className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-foreground hover:opacity-80 transition-opacity"
               >
-                Upgrade
+                {t("upgrade")}
                 <ArrowRight className="h-3 w-3" />
               </button>
             </div>
@@ -267,9 +266,9 @@ export function CreateMachineDialog({
         {/* Limit reached notice */}
         {!loadingLimits && wouldExceedLimit() && (
           <p className="text-sm text-muted-foreground rounded-lg border border-border bg-muted/40 px-4 py-3">
-            You've reached your machine limit. Stop or delete an existing machine to create a new one.{" "}
+            {t("limitReached")}{" "}
             <button onClick={() => useAccountDialog.getState().open("billing")} className="font-medium text-foreground hover:opacity-80 transition-opacity">
-              Upgrade for more →
+              {t("upgradeMore")}
             </button>
           </p>
         )}
@@ -277,10 +276,10 @@ export function CreateMachineDialog({
         <div className="space-y-6 py-4">
           {/* Machine Name */}
           <div className="space-y-2">
-            <Label htmlFor="name">Machine Name</Label>
+            <Label htmlFor="name">{t("nameLabel")}</Label>
             <Input
               id="name"
-              placeholder="My Cloud Server"
+              placeholder={t("namePlaceholder")}
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               disabled={creating}
@@ -288,14 +287,14 @@ export function CreateMachineDialog({
             />
             {displayName.trim().toLowerCase().startsWith("local") && (
               <p className="text-xs text-destructive">
-                Machine name cannot start with "local"
+                {t("nameError")}
               </p>
             )}
           </div>
 
           {/* OS Selection */}
           <div className="space-y-2">
-            <Label>Operating System</Label>
+            <Label>{t("osLabel")}</Label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
@@ -308,8 +307,8 @@ export function CreateMachineDialog({
               >
                 <LinuxIcon className="h-5 w-5 shrink-0 text-foreground/70" />
                 <div className="text-xs space-y-0.5">
-                  <p className="font-medium text-foreground">Linux (Ubuntu)</p>
-                  <p className="text-muted-foreground">Ubuntu 22.04 desktop</p>
+                  <p className="font-medium text-foreground">{t("linux.name")}</p>
+                  <p className="text-muted-foreground">{t("linux.description")}</p>
                 </div>
               </button>
               <button
@@ -323,8 +322,8 @@ export function CreateMachineDialog({
               >
                 <WindowsIcon className="h-4.5 w-4.5 shrink-0 text-foreground/70" />
                 <div className="text-xs space-y-0.5">
-                  <p className="font-medium text-foreground">Windows Server <span className="text-[10px] font-medium text-amber-500 bg-amber-500/10 px-1 py-0.5 rounded">BETA</span></p>
-                  <p className="text-muted-foreground">Windows desktop — expect bugs</p>
+                  <p className="font-medium text-foreground">{t("windows.name")} <span className="text-[10px] font-medium text-amber-500 bg-amber-500/10 px-1 py-0.5 rounded">{t("windows.badge")}</span></p>
+                  <p className="text-muted-foreground">{t("windows.description")}</p>
                 </div>
               </button>
             </div>
@@ -335,15 +334,15 @@ export function CreateMachineDialog({
             <Monitor className="h-4 w-4 shrink-0 text-muted-foreground" />
             <p className="text-xs text-muted-foreground">
               {osType === 'windows'
-                ? "Windows desktop with Chrome (beta). Ready in ~2 minutes."
-                : "Ubuntu desktop, accessible via browser. Ready in ~30 seconds."}
+                ? t("osHintWindows")
+                : t("osHintLinux")}
             </p>
           </div>
 
           {/* Snapshot restore choice — only for matching OS (Linux snapshots can't restore to Windows) */}
           {snapshotAvailable && osType === 'linux' && (
             <div className="space-y-2">
-              <Label>Machine State</Label>
+              <Label>{t("stateLabel")}</Label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
@@ -356,9 +355,9 @@ export function CreateMachineDialog({
                 >
                   <History className={`h-4 w-4 mt-0.5 shrink-0 ${restoreFromSnapshot ? "text-blue-500" : "text-muted-foreground"}`} />
                   <div className="text-xs space-y-0.5">
-                    <p className="font-medium text-foreground">Restore Previous</p>
+                    <p className="font-medium text-foreground">{t("restorePrevious")}</p>
                     <p className="text-muted-foreground">
-                      Resume from last snapshot
+                      {t("restoreDescription")}
                       {snapshotDate && (
                         <span className="block text-[10px]">
                           {new Date(snapshotDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
@@ -378,8 +377,8 @@ export function CreateMachineDialog({
                 >
                   <Plus className={`h-4 w-4 mt-0.5 shrink-0 ${!restoreFromSnapshot ? "text-blue-500" : "text-muted-foreground"}`} />
                   <div className="text-xs space-y-0.5">
-                    <p className="font-medium text-foreground">Start Fresh</p>
-                    <p className="text-muted-foreground">Clean desktop environment</p>
+                    <p className="font-medium text-foreground">{t("startFresh")}</p>
+                    <p className="text-muted-foreground">{t("startFreshDescription")}</p>
                   </div>
                 </button>
               </div>
@@ -394,19 +393,19 @@ export function CreateMachineDialog({
             onClick={() => onOpenChange(false)}
             disabled={creating}
           >
-            Cancel
+            {t("cancel")}
           </Button>
-          <Button 
-            onClick={handleCreate} 
+          <Button
+            onClick={handleCreate}
             disabled={creating || !displayName.trim() || displayName.trim().toLowerCase().startsWith("local") || wouldExceedLimit()}
           >
             {creating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating...
+                {t("creating")}
               </>
             ) : (
-              "Create Machine"
+              t("create")
             )}
           </Button>
         </DialogFooter>

@@ -11,7 +11,6 @@ import {
   ArrowSquareOut,
 } from "@phosphor-icons/react"
 import { motion } from "framer-motion"
-import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
 
 const fadeUp = (delay: number) => ({
@@ -21,10 +20,10 @@ const fadeUp = (delay: number) => ({
 })
 
 const securityFeaturesMeta = [
-  { icon: LockKey, key: "encryption" as const, accent: "text-emerald-500 bg-emerald-500/[0.08]" },
-  { icon: Database, key: "rls" as const, accent: "text-blue-500 bg-blue-500/[0.08]" },
-  { icon: Eye, key: "privacy" as const, accent: "text-indigo-500 bg-indigo-500/[0.08]" },
-  { icon: ShieldCheck, key: "session" as const, accent: "text-amber-500 bg-amber-500/[0.08]" },
+  { icon: LockKey, key: "encryption" as const },
+  { icon: Database, key: "rls" as const },
+  { icon: Eye, key: "privacy" as const },
+  { icon: ShieldCheck, key: "session" as const },
 ]
 
 export function PrivacySection() {
@@ -35,10 +34,10 @@ export function PrivacySection() {
 
       {/* ─── Security Overview ────────────────────────────────────────── */}
       <motion.div {...fadeUp(0)}>
-        <div className="rounded-xl border border-emerald-500/15 bg-gradient-to-b from-emerald-500/[0.03] to-transparent p-5">
+        <div className="rounded-xl border border-border/30 bg-card/20 p-5">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-              <ShieldCheck className="h-5 w-5 text-emerald-500" weight="duotone" />
+            <div className="h-10 w-10 rounded-xl bg-muted/50 flex items-center justify-center">
+              <ShieldCheck className="h-5 w-5 text-foreground/40" weight="duotone" />
             </div>
             <div>
               <h3 className="text-sm font-semibold">{t("dataProtected")}</h3>
@@ -60,8 +59,8 @@ export function PrivacySection() {
               {...fadeUp(0.08 + i * 0.06)}
               className="rounded-xl border border-border/30 bg-card/20 p-4 space-y-3"
             >
-              <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center", feature.accent)}>
-                <Icon className="h-4 w-4" weight="duotone" />
+              <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-muted/50">
+                <Icon className="h-4 w-4 text-foreground/40" weight="duotone" />
               </div>
               <div>
                 <h4 className="text-sm font-medium">{t(`features.${feature.key}.title`)}</h4>

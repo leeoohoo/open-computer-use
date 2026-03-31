@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 import {
   ArrowRight,
   Lightning,
@@ -63,34 +64,20 @@ const billingAnimations = `
 
 /* ─── plans data ─── */
 
-const plans = [
-  { name: "Free", price: "$0", credits: "100", vms: "1 temp", feature: "Basic search" },
-  { name: "Lite", price: "$9", credits: "100", vms: "1 always-on", feature: "2 parallel agents" },
-  { name: "Starter", price: "$19", credits: "200", vms: "1 always-on", feature: "Advanced search" },
-  { name: "Plus", price: "$50", credits: "600", vms: "2 always-on", feature: "Priority support", popular: true },
-  { name: "Pro", price: "$100", credits: "1,500", vms: "3 always-on", feature: "SLA guarantee" },
+const planKeys: readonly { key: string; name: string; price: string; popular?: boolean }[] = [
+  { key: "free", name: "Free", price: "$0" },
+  { key: "lite", name: "Lite", price: "$9" },
+  { key: "starter", name: "Starter", price: "$19" },
+  { key: "plus", name: "Plus", price: "$50", popular: true },
+  { key: "pro", name: "Pro", price: "$100" },
 ]
 
-/* ─── FAQ data ─── */
-
-const faqs = [
-  {
-    q: "How are credits charged?",
-    a: "10 credits per minute of agent execution, rounded up. Checked every 30 seconds during a session.",
-  },
-  {
-    q: "What happens when I run out?",
-    a: "You need at least 20 credits to start a task. Hit 0 and the task pauses — buy an add-on to continue.",
-  },
-  {
-    q: "Do unused credits roll over?",
-    a: "Credits reset each billing cycle. Use them or lose them.",
-  },
-]
+const faqKeys = ["howCharged", "runOut", "rollOver"] as const
 
 /* ─── main component ─── */
 
 export function BillingTab({ inApp }: { inApp: boolean }) {
+  const t = useTranslations("guide.billingTab")
   return (
     <div className="space-y-16 sm:space-y-20">
       <style dangerouslySetInnerHTML={{ __html: billingAnimations }} />
@@ -107,14 +94,14 @@ export function BillingTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2 text-center"
         >
-          Credits
+          {t("credits")}
         </motion.h2>
         <motion.p
           variants={fade}
           custom={1}
           className="text-sm text-foreground/50 text-center mb-10"
         >
-          Time is the only metric.
+          {t("timeMetric")}
         </motion.p>
 
         <motion.div
@@ -149,9 +136,9 @@ export function BillingTab({ inApp }: { inApp: boolean }) {
               </div>
               {/* Center text */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[11px] font-medium text-foreground/30 mb-1">Rate</span>
-                <span className="text-2xl font-bold text-foreground/70 gv-credit-count">10</span>
-                <span className="text-[10px] text-foreground/30 mt-0.5">credits/min</span>
+                <span className="text-[11px] font-medium text-foreground/30 mb-1">{t("rate")}</span>
+                <span className="text-2xl font-bold text-foreground/70 gv-credit-count">{t("rateValue")}</span>
+                <span className="text-[10px] text-foreground/30 mt-0.5">{t("creditsPerMin")}</span>
               </div>
             </div>
             {/* Tick marks */}
@@ -161,18 +148,18 @@ export function BillingTab({ inApp }: { inApp: boolean }) {
                 <div className="gv-tick-2 w-1 h-3 rounded-full bg-foreground/20" />
                 <div className="gv-tick-3 w-1 h-3 rounded-full bg-foreground/20" />
               </div>
-              <span className="text-[11px] text-foreground/30">metered every 30s</span>
+              <span className="text-[11px] text-foreground/30">{t("metered")}</span>
             </div>
           </div>
 
           {/* Right: Example */}
           <div className="rounded-2xl border border-foreground/[0.06] bg-foreground/[0.02] p-6">
             <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-foreground/30 mb-5">
-              Example
+              {t("example")}
             </p>
             <div className="flex items-baseline gap-2 mb-4">
               <span className="text-3xl font-bold text-foreground/70">8</span>
-              <span className="text-sm text-foreground/30">min task</span>
+              <span className="text-sm text-foreground/30">{t("minTask")}</span>
             </div>
 
             {/* Progress bar */}
@@ -181,15 +168,15 @@ export function BillingTab({ inApp }: { inApp: boolean }) {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-foreground/30">Start: 600 credits</span>
-              <span className="text-[11px] text-foreground/30">End: 520 credits</span>
+              <span className="text-[11px] text-foreground/30">{t("startCredits", { count: 600 })}</span>
+              <span className="text-[11px] text-foreground/30">{t("endCredits", { count: 520 })}</span>
             </div>
 
             <div className="mt-5 flex items-center gap-3 rounded-xl bg-foreground/[0.03] px-4 py-3">
               <Lightning size={16} weight="duotone" className="text-foreground/40" />
               <div>
-                <p className="text-sm font-semibold text-foreground/60">80 credits used</p>
-                <p className="text-[11px] text-foreground/30">8 min x 10 credits/min</p>
+                <p className="text-sm font-semibold text-foreground/60">{t("creditsUsed", { count: 80 })}</p>
+                <p className="text-[11px] text-foreground/30">{t("calculation", { mins: 8 })}</p>
               </div>
             </div>
           </div>
@@ -208,16 +195,16 @@ export function BillingTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-8 text-center"
         >
-          Plans
+          {t("plans")}
         </motion.h2>
 
         <motion.div
           variants={stagger}
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"
         >
-          {plans.map((plan, i) => (
+          {planKeys.map((plan, i) => (
             <motion.div
-              key={plan.name}
+              key={plan.key}
               variants={fade}
               custom={i + 1}
               className={`relative rounded-2xl border p-4 text-center transition-colors ${
@@ -236,12 +223,12 @@ export function BillingTab({ inApp }: { inApp: boolean }) {
               )}
 
               <p className="text-[12px] font-semibold text-foreground/60 mb-1 mt-1">{plan.name}</p>
-              <p className="text-xl font-bold text-foreground/70 mb-3">{plan.price}<span className="text-[11px] font-normal text-foreground/30">/mo</span></p>
+              <p className="text-xl font-bold text-foreground/70 mb-3">{t("perMonth", { price: plan.price })}</p>
 
               <div className="space-y-2 text-[11px] text-foreground/40">
-                <p><span className="font-semibold text-foreground/55">{plan.credits}</span> credits</p>
-                <p>{plan.vms} VM{plan.vms !== "1 temp" && plan.vms !== "1 always-on" ? "s" : ""}</p>
-                <p className="text-foreground/35">{plan.feature}</p>
+                <p><span className="font-semibold text-foreground/55">{t(`planData.${plan.key}.credits`)}</span> {t("credits").toLowerCase()}</p>
+                <p>{t(`planData.${plan.key}.machines`)}</p>
+                <p className="text-foreground/35">{t(`planData.${plan.key}.feature`)}</p>
               </div>
             </motion.div>
           ))}
@@ -260,19 +247,19 @@ export function BillingTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-8 text-center"
         >
-          FAQ
+          {t("faqTitle")}
         </motion.h2>
 
         <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {faqs.map((faq, i) => (
+          {faqKeys.map((key, i) => (
             <motion.div
-              key={i}
+              key={key}
               variants={fade}
               custom={i + 1}
               className="rounded-2xl border border-foreground/[0.06] bg-foreground/[0.02] p-5"
             >
-              <p className="text-[13px] font-semibold text-foreground/60 mb-2">{faq.q}</p>
-              <p className="text-[12px] text-foreground/35 leading-relaxed">{faq.a}</p>
+              <p className="text-[13px] font-semibold text-foreground/60 mb-2">{t(`faqs.${key}.q`)}</p>
+              <p className="text-[12px] text-foreground/35 leading-relaxed">{t(`faqs.${key}.a`)}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -290,7 +277,7 @@ export function BillingTab({ inApp }: { inApp: boolean }) {
           href="/billing"
           className="inline-flex items-center gap-2.5 h-11 px-6 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
         >
-          Go to Billing
+          {t("goToBilling")}
           <ArrowRight size={15} weight="bold" />
         </Link>
       </motion.div>

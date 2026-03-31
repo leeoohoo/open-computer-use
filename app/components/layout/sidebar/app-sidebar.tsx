@@ -1336,91 +1336,98 @@ export function AppSidebar() {
             </div>
           </div>
 
-{/* Desktop App Promo */}
-          {expanded ? (
-            <HoverCard openDelay={300} closeDelay={200}>
-              <HoverCardTrigger asChild>
-                <Link
-                  href="/download"
-                  className="group/promo flex items-center gap-2.5 mx-1 mt-3 mb-1 px-2.5 py-2 rounded-lg border border-sidebar-border/20 bg-sidebar-accent/10 hover:bg-sidebar-accent/25 hover:border-sidebar-border/35 transition-all duration-200"
-                  onClick={closeMobileIfNeeded}
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-md bg-sidebar-primary/[0.08] shrink-0">
-                    <Download size={14} className="text-sidebar-primary/70" />
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[12px] font-semibold text-foreground/70 leading-tight block group-hover/promo:text-foreground/90 transition-colors">
-                      {t("desktopApp.getDesktopApp")}
-                    </span>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="inline-flex items-center gap-1 text-[9.5px] text-foreground/30">
-                        <WindowsIcon width={9} height={9} className="opacity-50" />
-                        {t("desktopApp.windows")}
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-[9.5px] text-foreground/30">
-                        <AppleIcon width={9} height={9} className="opacity-50" />
-                        {t("desktopApp.macos")}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </HoverCardTrigger>
-              <HoverCardContent
-                side="right"
-                align="end"
-                sideOffset={12}
-                className="w-72 p-0 border-0 bg-transparent shadow-none overflow-hidden rounded-xl"
-              >
-                <div className="relative rounded-xl overflow-hidden">
-                  <Image
-                    src="/demo-screenshot.png"
-                    alt="Coasty Desktop App"
-                    width={728}
-                    height={408}
-                    className="w-full h-auto"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/10" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-3.5">
-                    <div className="rounded-lg backdrop-blur-[3px] bg-white/[0.04] border border-white/[0.06] px-3 py-2.5">
-                      <p className="text-[11px] font-semibold text-white/90 leading-tight">
-                        {t("desktopApp.controlRemotely")}
-                      </p>
-                      <p className="text-[10px] text-white/50 leading-snug mt-1">
-                        {t("desktopApp.controlDescription")}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="inline-flex items-center gap-1 text-[9px] text-white/50">
-                          <WindowsIcon width={9} height={9} className="opacity-60" />
-                          {t("desktopApp.windows")}
-                        </span>
-                        <span className="inline-flex items-center gap-1 text-[9px] text-white/50">
-                          <AppleIcon width={9} height={9} className="opacity-60" />
-                          {t("desktopApp.macos")}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/download"
-                  className="flex w-full items-center justify-center p-2 rounded-lg text-foreground/45 hover:text-foreground/80 hover:bg-sidebar-accent/40 transition-all duration-200"
-                >
-                  <Download size={16} className="shrink-0" />
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right" sideOffset={8}>{t("desktopApp.getDesktopApp")}</TooltipContent>
-            </Tooltip>
-          )}
         </SidebarContent>
 
         {/* ─── Footer ─────────────────────────────────────── */}
         <SidebarFooter className="relative pt-0 border-t border-sidebar-border/15">
-          <div className={cn("flex flex-col", expanded ? "p-2 pt-2.5 gap-0.5" : "p-1.5 pt-2 gap-1")}>
+          <div className={cn("flex flex-col", expanded ? "p-2 pt-2.5 gap-1.5" : "p-1.5 pt-2 gap-1.5")}>
+
+            {/* Desktop App Download */}
+            {expanded ? (
+              <HoverCard openDelay={300} closeDelay={200}>
+                <HoverCardTrigger asChild>
+                  <Link
+                    href="/download"
+                    className="group/dl relative flex w-full flex-col rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_2px_12px_rgba(0,0,0,0.15)] active:scale-[0.98] ring-1 ring-white/[0.06] hover:ring-white/[0.12]"
+                    onClick={closeMobileIfNeeded}
+                  >
+                    {/* Demo screenshot background */}
+                    <div className="relative w-full h-[72px] overflow-hidden">
+                      <Image
+                        src="/demo-screenshot.png"
+                        alt="Coasty Desktop"
+                        width={400}
+                        height={100}
+                        className="w-full h-full object-cover object-center scale-[1.05] transition-transform duration-500 group-hover/dl:scale-[1.12]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
+                      {/* Subtle animated shimmer on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.04] to-transparent translate-x-[-100%] group-hover/dl:translate-x-[100%] transition-transform duration-700" />
+                    </div>
+
+                    {/* Content overlay at bottom of image */}
+                    <div className="absolute inset-x-0 bottom-0 px-2.5 py-2 flex items-end justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="text-[11.5px] font-semibold text-white/90 leading-tight block drop-shadow-sm">
+                          {t("desktopApp.getDesktopApp")}
+                        </span>
+                        <div className="flex items-center gap-1.5 mt-[3px]">
+                          <span className="inline-flex items-center gap-1 text-[8.5px] text-white/45 font-medium">
+                            <WindowsIcon width={7} height={7} className="opacity-60" />
+                            {t("desktopApp.windows")}
+                          </span>
+                          <span className="text-white/15 text-[7px]">|</span>
+                          <span className="inline-flex items-center gap-1 text-[8.5px] text-white/45 font-medium">
+                            <AppleIcon width={7} height={7} className="opacity-60" />
+                            {t("desktopApp.macos")}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-lg bg-white/[0.12] backdrop-blur-sm border border-white/[0.1] transition-all duration-300 group-hover/dl:bg-white/[0.2] group-hover/dl:scale-105">
+                        <Download size={13} strokeWidth={2.2} className="text-white/80 transition-transform duration-300 group-hover/dl:translate-y-[1px]" />
+                      </span>
+                    </div>
+                  </Link>
+                </HoverCardTrigger>
+                <HoverCardContent
+                  side="right"
+                  align="end"
+                  sideOffset={12}
+                  className="w-72 p-0 border-0 bg-transparent shadow-none overflow-hidden rounded-xl"
+                >
+                  <div className="relative rounded-xl overflow-hidden">
+                    <Image
+                      src="/demo-screenshot.png"
+                      alt="Coasty Desktop App"
+                      width={728}
+                      height={408}
+                      className="w-full h-auto"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/10" />
+                    <div className="absolute inset-0 flex flex-col justify-end p-3.5">
+                      <div className="rounded-lg backdrop-blur-[3px] bg-white/[0.04] border border-white/[0.06] px-3 py-2.5">
+                        <p className="text-[11px] font-semibold text-white/90 leading-tight">
+                          {t("desktopApp.controlRemotely")}
+                        </p>
+                        <p className="text-[10px] text-white/50 leading-snug mt-1">
+                          {t("desktopApp.controlDescription")}
+                        </p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="inline-flex items-center gap-1 text-[9px] text-white/50">
+                            <WindowsIcon width={9} height={9} className="opacity-60" />
+                            {t("desktopApp.windows")}
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-[9px] text-white/50">
+                            <AppleIcon width={9} height={9} className="opacity-60" />
+                            {t("desktopApp.macos")}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            ) : null}
 
             {/* Credits */}
             {user && (() => {
@@ -1513,8 +1520,8 @@ export function AppSidebar() {
               )
             })()}
 
-            {/* Quick links */}
-            {expanded ? (
+            {/* Quick links — expanded only */}
+            {expanded && (
               <div className="flex items-center gap-0.5 px-0.5">
                 <a
                   href="https://cal.com/coasty/15min"
@@ -1539,35 +1546,6 @@ export function AppSidebar() {
                     <IconGift size={14} stroke={1.5} />
                     <span>{t("inviteEarn")}</span>
                   </Link>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-0.5">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a
-                      href="https://cal.com/coasty/15min"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex w-full items-center justify-center p-2 rounded-lg text-foreground/45 hover:text-foreground/80 hover:bg-sidebar-accent/40 transition-all duration-200"
-                    >
-                      <IconVideo size={16} stroke={1.5} className="shrink-0" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent side="right" sideOffset={8}>{t("talkToUs")}</TooltipContent>
-                </Tooltip>
-                {user && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link
-                        href="/referral"
-                        className="flex w-full items-center justify-center p-2 rounded-lg text-foreground/45 hover:text-foreground/80 hover:bg-sidebar-accent/40 transition-all duration-200"
-                      >
-                        <IconGift size={16} stroke={1.5} className="shrink-0" />
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" sideOffset={8}>{t("inviteEarn")}</TooltipContent>
-                  </Tooltip>
                 )}
               </div>
             )}

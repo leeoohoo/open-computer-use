@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { useTranslations } from "next-intl"
 import {
   Dialog,
   DialogContent,
@@ -69,6 +70,7 @@ export function ScheduleDialog({
   onScheduleCreated,
   onScheduleDeleted,
 }: ScheduleDialogProps) {
+  const t = useTranslations("scheduleDialog")
   const [employeeName, setEmployeeName] = useState(() =>
     chatTitle && chatTitle.length <= 30 ? chatTitle : randomEmployeeName()
   )
@@ -175,11 +177,11 @@ export function ScheduleDialog({
 
   async function handleSave() {
     if (!config.machineId) {
-      setError("Please select a workstation")
+      setError(t("selectWorkstation"))
       return
     }
     if (config.frequency === "custom" && !config.customCron) {
-      setError("Please enter a cron expression")
+      setError(t("enterCron"))
       return
     }
 
@@ -216,7 +218,7 @@ export function ScheduleDialog({
       onScheduleCreated?.(schedule)
       onOpenChange(false)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to hire employee")
+      setError(err instanceof Error ? err.message : t("hireFailed"))
     } finally {
       setLoading(false)
     }
@@ -231,7 +233,7 @@ export function ScheduleDialog({
       onScheduleDeleted?.()
       onOpenChange(false)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to remove employee")
+      setError(err instanceof Error ? err.message : t("removeFailed"))
     } finally {
       setLoading(false)
     }
@@ -267,12 +269,12 @@ export function ScheduleDialog({
                 </div>
                 <div>
                   <DialogTitle className="text-[15px] sm:text-[17px] font-bold tracking-tight">
-                    {isEditing ? "Edit Employee" : "Configure Employee"}
+                    {isEditing ? t("editEmployee") : t("configureEmployee")}
                   </DialogTitle>
                   <DialogDescription className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
                     {isEditing
-                      ? "Update schedule, workstation, or instructions"
-                      : "Set up an AI employee for this chat"}
+                      ? t("editDescription")
+                      : t("configureDescription")}
                   </DialogDescription>
                 </div>
               </div>
@@ -287,7 +289,7 @@ export function ScheduleDialog({
                 <div className="absolute inset-0 rounded-full border-2 border-border/30" />
                 <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-foreground/60 animate-spin" />
               </div>
-              <span className="text-xs text-muted-foreground">Loading configuration...</span>
+              <span className="text-xs text-muted-foreground">{t("loading")}</span>
             </div>
           </div>
         ) : (
@@ -299,7 +301,7 @@ export function ScheduleDialog({
                   <User className="h-3 w-3 text-foreground/50" />
                 </div>
                 <label className="text-[11px] font-semibold text-muted-foreground tracking-widest uppercase">
-                  Name
+                  {t("name")}
                 </label>
               </div>
               <div className="flex items-center gap-2">
@@ -307,7 +309,7 @@ export function ScheduleDialog({
                   type="text"
                   value={employeeName}
                   onChange={(e) => setEmployeeName(e.target.value)}
-                  placeholder="Employee name"
+                  placeholder={t("employeeName")}
                   className={cn(
                     "flex-1 h-10 rounded-xl px-4 text-sm font-medium",
                     "bg-muted/40 text-foreground",

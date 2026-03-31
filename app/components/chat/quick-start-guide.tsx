@@ -4,25 +4,33 @@ import Link from "next/link"
 import { AnimatePresence, motion } from "motion/react"
 import { useState, useEffect, useCallback, useMemo } from "react"
 import {
-  ArrowRight,
-  CalendarDays,
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
+  Monitor,
   KeyRound,
   MessageSquareText,
-  Monitor,
-  MonitorSmartphone,
   Smartphone,
-  Sparkles,
   Workflow,
+  CalendarDays,
+  Clock,
+  Download,
+  Zap,
+  ArrowRight,
+  Play,
+  ChevronLeft,
+  ChevronRight,
+  MessageSquareDashed,
+  X,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { CoastyIcon } from "@/components/icons/coasty"
+import { Caveat } from "next/font/google"
 import { CreateMachineDialog } from "@/app/components/machines/create-machine-dialog"
 import type { UserMachine } from "@/types/machines.types"
+import { useTranslations } from "next-intl"
+import { useGuideStore } from "@/lib/guide-store"
+
+const handwriting = Caveat({ subsets: ["latin"], weight: ["600"] })
+
+/* ─── Types ──────────────────────────────────────────────────────────── */
 
 interface QuickStartGuideProps {
   userName?: string
@@ -31,410 +39,217 @@ interface QuickStartGuideProps {
   hasCredentials: boolean | null
 }
 
-type StatusTone = "ready" | "pending" | "optional" | "neutral"
-type GuideSlideId = "quickstart" | "desktop" | "swarms" | "schedules"
+type Tone = "ready" | "pending" | "optional" | "neutral"
+type SlideId = "quickstart" | "desktop" | "swarms" | "schedules"
 
-interface GuideAction {
+const selectableStatuses = new Set(["running", "creating", "starting", "stopped"])
+
+/* ─── Step data ──────────────────────────────────────────────────────── */
+
+interface StepData {
+  icon: LucideIcon
   label: string
+  description: string
+  tone: Tone
   href?: string
   onClick?: () => void
-  variant?: "default" | "secondary" | "outline"
 }
 
-interface GuideMiniCardProps {
-  kicker: string
-  icon: LucideIcon
-  title: string
-  subtitle: string
-  statusLabel: string
-  statusTone: StatusTone
-  delay: number
-  action?: GuideAction
+interface SlideData {
+  id: SlideId
+  tab: string
+  tabIcon: LucideIcon
+  items: StepData[] | ((ctx: SlideContext) => StepData[])
+  cta?: { text: string; href: string }
 }
 
-interface FeatureSlideProps {
-  id: string
-  title: string
-  description: string
-  action: GuideAction
-  cards: Array<Omit<GuideMiniCardProps, "delay" | "action">>
-}
-
-interface QuickStartSlideProps {
-  title: string
-  hasMachineSelection: boolean
-  hasAvailableMachines: boolean
+interface SlideContext {
+  hasMachine: boolean
+  hasAvailable: boolean
   hasCredentials: boolean | null
   onCreateMachine: () => void
 }
 
-const selectableStatuses = new Set(["running", "creating", "starting", "stopped"])
+/* ─── Tone styling — icon-only color, no box ───────────────────────── */
 
-const guideSlides: Array<{ id: GuideSlideId; label: string }> = [
-  { id: "quickstart", label: "Quick start" },
-  { id: "desktop", label: "Desktop + mobile" },
-  { id: "swarms", label: "Agent swarms" },
-  { id: "schedules", label: "Scheduled runs" },
-]
-
-const desktopCards: FeatureSlideProps["cards"] = [
-  {
-    kicker: "Local",
-    icon: Monitor,
-    title: "Desktop",
-    subtitle: "Run on your own computer.",
-    statusLabel: "Mac/Win",
-    statusTone: "ready",
-  },
-  {
-    kicker: "Phone",
-    icon: Smartphone,
-    title: "Mobile",
-    subtitle: "Check progress anywhere.",
-    statusLabel: "Remote",
-    statusTone: "optional",
-  },
-  {
-    kicker: "Live",
-    icon: MonitorSmartphone,
-    title: "Control",
-    subtitle: "Jump in on the go.",
-    statusLabel: "Anywhere",
-    statusTone: "ready",
-  },
-]
-
-const swarmCards: FeatureSlideProps["cards"] = [
-  {
-    kicker: "Start",
-    icon: Sparkles,
-    title: "One prompt",
-    subtitle: "Begin with one big task.",
-    statusLabel: "1 task",
-    statusTone: "neutral",
-  },
-  {
-    kicker: "Spread",
-    icon: Workflow,
-    title: "Many machines",
-    subtitle: "Run agents in parallel.",
-    statusLabel: "Parallel",
-    statusTone: "ready",
-  },
-  {
-    kicker: "Finish",
-    icon: CheckCircle2,
-    title: "One result",
-    subtitle: "Get answers back faster.",
-    statusLabel: "Faster",
-    statusTone: "pending",
-  },
-]
-
-const scheduleCards: FeatureSlideProps["cards"] = [
-  {
-    kicker: "Set",
-    icon: CalendarDays,
-    title: "Timetable",
-    subtitle: "Pick the cadence once.",
-    statusLabel: "Daily",
-    statusTone: "optional",
-  },
-  {
-    kicker: "Run",
-    icon: Sparkles,
-    title: "Auto-start",
-    subtitle: "Starts on its own.",
-    statusLabel: "Auto",
-    statusTone: "ready",
-  },
-  {
-    kicker: "Repeat",
-    icon: MessageSquareText,
-    title: "Fresh results",
-    subtitle: "Wake up to updates.",
-    statusLabel: "Weekly",
-    statusTone: "pending",
-  },
-]
-
-function getStatusClasses(tone: StatusTone) {
-  switch (tone) {
-    case "ready":
-      return "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-    case "pending":
-      return "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300"
-    case "optional":
-      return "border-sky-500/20 bg-sky-500/10 text-sky-700 dark:text-sky-300"
-    default:
-      return "border-border/50 bg-muted/70 text-muted-foreground"
-  }
+const toneStyles: Record<Tone, string> = {
+  ready: "text-emerald-500 dark:text-emerald-400",
+  pending: "text-amber-500 dark:text-amber-400",
+  optional: "text-sky-500 dark:text-sky-400",
+  neutral: "text-foreground/30 dark:text-foreground/40",
 }
 
-function SmokeBackground() {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <motion.div
-        className="absolute -left-8 top-0 h-16 w-20 rounded-full bg-sky-500/16 blur-3xl"
-        animate={{ x: [0, 14, -8, 0], y: [0, -6, 8, 0], scale: [1, 1.08, 0.96, 1] }}
-        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute right-[-4%] top-0 h-20 w-24 rounded-full bg-emerald-500/16 blur-3xl"
-        animate={{ x: [0, -18, 8, 0], y: [0, 10, -6, 0], scale: [1, 0.94, 1.06, 1] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute left-1/4 top-1/2 h-20 w-24 rounded-full bg-violet-500/14 blur-3xl"
-        animate={{ x: [0, 12, -10, 0], y: [0, -10, 6, 0], scale: [1, 1.06, 0.94, 1] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute right-1/4 bottom-[-8%] h-20 w-28 rounded-full bg-amber-500/14 blur-3xl"
-        animate={{ x: [0, -14, 9, 0], y: [0, 8, -8, 0], scale: [1, 0.96, 1.08, 1] }}
-        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute left-[42%] top-[18%] h-16 w-20 rounded-full bg-rose-500/13 blur-3xl"
-        animate={{ x: [0, 10, -6, 0], y: [0, 6, -10, 0], scale: [1, 1.04, 0.95, 1] }}
-        transition={{ duration: 19, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
-    </div>
-  )
+/* ─── Slide definitions ──────────────────────────────────────────────── */
+
+function buildSlides(t: ReturnType<typeof useTranslations>): SlideData[] {
+  return [
+    {
+      id: "quickstart",
+      tab: t("tabs.start"),
+      tabIcon: Play,
+      items: (ctx) => [
+        {
+          icon: Monitor,
+          label: ctx.hasMachine ? t("items.computerReady") : ctx.hasAvailable ? t("items.pickComputer") : t("items.createComputer"),
+          description: ctx.hasMachine ? t("items.computerReadyDesc") : ctx.hasAvailable ? t("items.pickComputerDesc") : t("items.createComputerDesc"),
+          tone: ctx.hasMachine ? "ready" : "pending",
+          onClick: ctx.hasAvailable ? undefined : ctx.onCreateMachine,
+        },
+        {
+          icon: KeyRound,
+          label: ctx.hasCredentials ? t("items.loginsSaved") : t("items.addLogins"),
+          description: ctx.hasCredentials ? t("items.loginsSavedDesc") : t("items.addLoginsDesc"),
+          tone: ctx.hasCredentials ? "ready" : "optional",
+          href: "/secrets",
+        },
+        {
+          icon: MessageSquareText,
+          label: t("items.askAnything"),
+          description: t("items.askAnythingDesc"),
+          tone: ctx.hasMachine ? "ready" : "neutral",
+        },
+      ],
+    },
+    {
+      id: "desktop",
+      tab: t("tabs.desktop"),
+      tabIcon: Monitor,
+      items: [
+        { icon: Monitor, label: t("items.macWindows"), description: t("items.macWindowsDesc"), tone: "ready" },
+        { icon: Smartphone, label: t("items.mobileRemote"), description: t("items.mobileRemoteDesc"), tone: "optional" },
+        { icon: Download, label: t("items.freeDownload"), description: t("items.freeDownloadDesc"), tone: "ready", href: "/download" },
+      ],
+      cta: { text: t("cta.downloadApp"), href: "/download" },
+    },
+    {
+      id: "swarms",
+      tab: t("tabs.swarms"),
+      tabIcon: Workflow,
+      items: [
+        { icon: MessageSquareDashed, label: t("items.onePrompt"), description: t("items.onePromptDesc"), tone: "neutral" },
+        { icon: Workflow, label: t("items.manyAgents"), description: t("items.manyAgentsDesc"), tone: "ready" },
+        { icon: Zap, label: t("items.combinedResult"), description: t("items.combinedResultDesc"), tone: "pending" },
+      ],
+      cta: { text: t("cta.trySwarms"), href: "/swarms" },
+    },
+    {
+      id: "schedules",
+      tab: t("tabs.schedules"),
+      tabIcon: CalendarDays,
+      items: [
+        { icon: CalendarDays, label: t("items.setCadence"), description: t("items.setCadenceDesc"), tone: "optional" },
+        { icon: Play, label: t("items.autoRuns"), description: t("items.autoRunsDesc"), tone: "ready" },
+        { icon: Clock, label: t("items.recurringResults"), description: t("items.recurringResultsDesc"), tone: "pending" },
+      ],
+      cta: { text: t("cta.setUp"), href: "/schedules" },
+    },
+  ]
 }
 
-function GuideMiniCard({
-  kicker,
+/* ─── Step component — compact & refined ────────────────────────────── */
+
+function Step({
   icon: Icon,
-  title,
-  subtitle,
-  statusLabel,
-  statusTone,
+  label,
+  description,
+  tone,
+  href,
+  onClick,
   delay,
-  action,
-}: GuideMiniCardProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-      className="min-w-0 rounded-[15px] border border-border/35 bg-background/52 p-2 backdrop-blur-sm"
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div className="relative">
-          <motion.div
-            className="absolute inset-0 rounded-2xl bg-foreground/10 blur-md"
-            animate={{ scale: [1, 1.08, 1], opacity: [0.25, 0.45, 0.25] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <div className="relative flex h-7 w-7 items-center justify-center rounded-xl border border-border/35 bg-background/85">
-            <Icon className="size-3 text-foreground" />
-          </div>
-        </div>
+}: StepData & { delay: number }) {
+  const Wrapper = href ? Link : onClick ? "button" : "div"
+  const wrapperProps = href
+    ? { href }
+    : onClick
+      ? { type: "button" as const, onClick }
+      : {}
+  const iconColor = toneStyles[tone]
 
+  return (
+    <Wrapper
+      {...(wrapperProps as any)}
+      className={cn(
+        "group relative flex flex-col items-center text-center gap-1.5 py-2.5 px-1 rounded-lg transition-all duration-200",
+        (href || onClick) && "cursor-pointer hover:bg-foreground/[0.03]",
+      )}
+    >
+      {/* Icon — no box, just color */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.7 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className={cn(
+          "transition-transform duration-200",
+          (href || onClick) && "group-hover:scale-110",
+        )}
+      >
+        <Icon className={cn("h-5 w-5", iconColor)} strokeWidth={1.4} />
+      </motion.div>
+
+      {/* Text */}
+      <motion.div
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: delay + 0.05, duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+        className="flex flex-col items-center gap-px"
+      >
         <span
           className={cn(
-            "rounded-full border px-1.5 py-0.5 text-[8px] font-medium",
-            getStatusClasses(statusTone)
+            "text-[10.5px] font-semibold leading-tight tracking-tight transition-colors duration-150",
+            (href || onClick) ? "text-foreground/70 group-hover:text-foreground/90" : "text-foreground/65",
           )}
         >
-          {statusLabel}
+          {label}
         </span>
-      </div>
+        <p className="text-[9.5px] text-muted-foreground/50 leading-snug line-clamp-2 max-w-[8rem]">
+          {description}
+        </p>
+      </motion.div>
 
-      <div className="mt-2">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-          {kicker}
-        </p>
-        <p className="mt-1 text-[11px] font-medium tracking-tight text-foreground sm:text-[12px]">
-          {title}
-        </p>
-        <p className="mt-0.5 text-[9px] leading-snug text-muted-foreground">
-          {subtitle}
-        </p>
-      </div>
-
-      {action?.href ? (
-        <Button
-          asChild
-          size="sm"
-          variant={action.variant ?? "secondary"}
-          className="mt-2 h-5 rounded-full px-1.5 text-[9px]"
-        >
-          <Link href={action.href}>
-            {action.label}
-            <ArrowRight className="size-2.5" />
-          </Link>
-        </Button>
-      ) : action?.onClick ? (
-        <Button
-          type="button"
-          size="sm"
-          variant={action.variant ?? "default"}
-          className="mt-2 h-5 rounded-full px-1.5 text-[9px]"
-          onClick={action.onClick}
-        >
-          {action.label}
-          <ArrowRight className="size-2.5" />
-        </Button>
-      ) : null}
-    </motion.div>
+      {/* Hover arrow */}
+      {(href || onClick) && (
+        <ArrowRight className="h-2.5 w-2.5 text-foreground/30 opacity-0 group-hover:opacity-100 transition-all duration-150 -mt-0.5" />
+      )}
+    </Wrapper>
   )
 }
 
-function QuickStartSlide({
-  title,
-  hasMachineSelection,
-  hasAvailableMachines,
-  hasCredentials,
-  onCreateMachine,
-}: QuickStartSlideProps) {
+/* ─── Slide content ─────────────────────────────────────────────────── */
+
+function SlideContent({
+  items,
+  cta,
+}: {
+  items: StepData[]
+  variant: SlideId
+  cta?: { text: string; href: string }
+}) {
   return (
-    <motion.div
-      key="quickstart"
-      initial={{ opacity: 0, x: 14 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -14 }}
-      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-      className="mt-1"
-    >
-      <p className="text-[11px] font-medium tracking-tight text-foreground sm:text-[12px]">
-        {title}
-      </p>
-      <p className="mt-0.5 text-[9px] leading-snug text-muted-foreground">
-        Choose a computer, add logins if needed, then try a prompt below.
-      </p>
-
-      <div className="relative mt-2">
-        <div className="pointer-events-none absolute left-[52px] right-[52px] top-5 h-px overflow-hidden">
-          <motion.div
-            className="h-full w-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent)] bg-[length:200%_100%]"
-            animate={{ backgroundPosition: ["0% 0%", "100% 0%"] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-          />
-        </div>
-
-        <div className="grid grid-cols-3 gap-1.5">
-          <GuideMiniCard
-            kicker="1"
-            icon={Monitor}
-            title="Computer"
-            subtitle={
-              hasMachineSelection
-                ? "Connected."
-                : hasAvailableMachines
-                  ? "Choose one."
-                  : "Create one."
-            }
-            statusLabel={hasMachineSelection ? "Ready" : hasAvailableMachines ? "Pick" : "New"}
-            statusTone={hasMachineSelection ? "ready" : "pending"}
-            delay={0.06}
-            action={
-              hasAvailableMachines
-                ? undefined
-                : {
-                    label: "New",
-                    onClick: onCreateMachine,
-                  }
-            }
-          />
-
-          <GuideMiniCard
-            kicker="2"
-            icon={KeyRound}
-            title="Logins"
-            subtitle="Optional."
-            statusLabel={
-              hasCredentials === true
-                ? "Ready"
-                : hasCredentials === false
-                  ? "Optional"
-                  : "Checking"
-            }
-            statusTone={
-              hasCredentials === true
-                ? "ready"
-                : hasCredentials === false
-                  ? "optional"
-                  : "neutral"
-            }
-            delay={0.1}
-            action={{
-              label: hasCredentials === true ? "Manage" : "Add",
-              href: "/secrets",
-              variant: hasCredentials === true ? "outline" : "secondary",
-            }}
-          />
-
-          <GuideMiniCard
-            kicker="3"
-            icon={MessageSquareText}
-            title="Ask"
-            subtitle="Use prompts below."
-            statusLabel={hasMachineSelection ? "Go" : "Next"}
-            statusTone={hasMachineSelection ? "ready" : "pending"}
-            delay={0.14}
-          />
-        </div>
-      </div>
-    </motion.div>
-  )
-}
-
-function FeatureSlide({ id, title, description, action, cards }: FeatureSlideProps) {
-  return (
-    <motion.div
-      key={id}
-      initial={{ opacity: 0, x: 14 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -14 }}
-      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-      className="mt-1"
-    >
-      <p className="text-[11px] font-medium tracking-tight text-foreground sm:text-[12px]">
-        {title}
-      </p>
-      <p className="mt-0.5 text-[9px] leading-snug text-muted-foreground">
-        {description}
-      </p>
-
-      <div className="relative mt-2">
-        <div className="pointer-events-none absolute left-[52px] right-[52px] top-5 h-px overflow-hidden">
-          <motion.div
-            className="h-full w-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent)] bg-[length:200%_100%]"
-            animate={{ backgroundPosition: ["0% 0%", "100% 0%"] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-          />
-        </div>
-
-        <div className="grid grid-cols-3 gap-1.5">
-          {cards.map((card, index) => (
-            <GuideMiniCard
-              key={card.title}
-              {...card}
-              delay={0.06 + index * 0.04}
-            />
+    <div>
+      <div>
+        <div className="grid grid-cols-3">
+          {items.map((item, i) => (
+            <Step key={item.label} {...item} delay={0.02 + i * 0.05} />
           ))}
         </div>
       </div>
 
-      {action.href ? (
-        <Button
-          asChild
-          size="sm"
-          variant={action.variant ?? "secondary"}
-          className="mt-2 h-5 rounded-full px-1.5 text-[9px]"
-        >
-          <Link href={action.href}>
-            {action.label}
-            <ArrowRight className="size-2.5" />
+      {cta && (
+        <div className="mt-2 px-1">
+          <Link
+            href={cta.href}
+            className="flex items-center justify-center gap-1 rounded-lg border border-foreground/[0.08] bg-foreground/[0.03] hover:bg-foreground/[0.06] hover:border-foreground/15 py-1.5 text-[9.5px] font-semibold text-foreground/45 hover:text-foreground/70 transition-all duration-200"
+          >
+            {cta.text}
+            <ArrowRight className="h-2.5 w-2.5" />
           </Link>
-        </Button>
-      ) : null}
-    </motion.div>
+        </div>
+      )}
+    </div>
   )
 }
+
+/* ─── Main ───────────────────────────────────────────────────────────── */
 
 export function QuickStartGuide({
   userName,
@@ -444,195 +259,173 @@ export function QuickStartGuide({
 }: QuickStartGuideProps) {
   const [machines, setMachines] = useState<UserMachine[]>([])
   const [showCreateDialog, setShowCreateDialog] = useState(false)
-  const [activeSlide, setActiveSlide] = useState(0)
+  const [active, setActive] = useState(0)
+  const [direction, setDirection] = useState(0)
+  const t = useTranslations("quickStart")
+  const slides = useMemo(() => buildSlides(t), [t])
+
+  const goTo = useCallback((index: number) => {
+    setDirection(index > active ? 1 : -1)
+    setActive(index)
+  }, [active])
+
+  const goPrev = useCallback(() => {
+    setDirection(-1)
+    setActive((p) => (p === 0 ? slides.length - 1 : p - 1))
+  }, [slides.length])
+
+  const goNext = useCallback(() => {
+    setDirection(1)
+    setActive((p) => (p === slides.length - 1 ? 0 : p + 1))
+  }, [slides.length])
 
   const fetchMachines = useCallback(async () => {
     if (!isUserAuthenticated) return
-
     try {
-      const response = await fetch("/api/machines")
-      if (!response.ok) return
-
-      const data = await response.json()
-      const availableMachines = (data.machines || []).filter((machine: UserMachine) => {
-        if (machine.settings?.provider === "electron") {
-          return true
-        }
-
-        if (machine.settings?.isLocal && machine.settings?.provider !== "docker") {
-          return false
-        }
-
-        return selectableStatuses.has(machine.status)
-      })
-
-      setMachines(availableMachines)
-    } catch {
-      // Silently fail
-    }
+      const res = await fetch("/api/machines")
+      if (!res.ok) return
+      const data = await res.json()
+      setMachines(
+        (data.machines || []).filter((m: UserMachine) => {
+          if (m.settings?.provider === "electron") return true
+          if (m.settings?.isLocal && m.settings?.provider !== "docker") return false
+          return selectableStatuses.has(m.status)
+        })
+      )
+    } catch { /* silent */ }
   }, [isUserAuthenticated])
 
   useEffect(() => {
     fetchMachines()
-    const interval = setInterval(fetchMachines, 10000)
-    return () => clearInterval(interval)
+    const iv = setInterval(fetchMachines, 10000)
+    return () => clearInterval(iv)
   }, [fetchMachines])
 
-  const selectedMachine = useMemo(
-    () => machines.find((machine) => machine.id === selectedVMId) ?? null,
-    [machines, selectedVMId]
-  )
+  const hasMachine = Boolean(selectedVMId)
+  const hasAvailable = machines.length > 0
+  const slide = slides[active]
 
-  const currentSlide = guideSlides[activeSlide]
-  const hasMachineSelection = Boolean(selectedVMId)
-  const hasAvailableMachines = machines.length > 0
+  const ctx: SlideContext = useMemo(() => ({
+    hasMachine,
+    hasAvailable,
+    hasCredentials,
+    onCreateMachine: () => setShowCreateDialog(true),
+  }), [hasMachine, hasAvailable, hasCredentials])
 
-  const currentSlideCompanion = useMemo(() => {
-    switch (currentSlide.id) {
-      case "quickstart":
-        return hasMachineSelection ? selectedMachine?.displayName ?? "Ready" : null
-      case "desktop":
-        return "Local + mobile"
-      case "swarms":
-        return "Parallel"
-      case "schedules":
-        return "Timed"
-      default:
-        return null
-    }
-  }, [currentSlide.id, hasMachineSelection, selectedMachine])
-
-  const goToPreviousSlide = useCallback(() => {
-    setActiveSlide((current) => (current - 1 + guideSlides.length) % guideSlides.length)
-  }, [])
-
-  const goToNextSlide = useCallback(() => {
-    setActiveSlide((current) => (current + 1) % guideSlides.length)
-  }, [])
+  const items = typeof slide.items === "function" ? slide.items(ctx) : slide.items
 
   return (
     <>
-      <div className="mx-auto w-full max-w-[34rem] px-2.5 sm:px-3.5">
-        <div className="relative overflow-hidden rounded-[16px] border border-border/40 bg-background/76 shadow-[0_16px_34px_-32px_rgba(0,0,0,0.55)]">
-          <SmokeBackground />
+      <div className="mx-auto w-full max-w-[26rem] px-2">
+        {/* ─ Greeting ─ */}
+        <motion.div
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center mb-3"
+        >
+          <h2 className={cn("text-xl sm:text-2xl text-primary -rotate-[0.8deg]", handwriting.className)}>
+            {userName ? t("greetingName", { name: userName }) : t("greetingDefault")}
+          </h2>
+          <p className="text-[10px] text-muted-foreground/50 mt-0.5 tracking-wide">
+            {t("subtitle")}
+          </p>
+        </motion.div>
 
-          <div className="relative p-2 sm:p-2.5">
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="flex items-center justify-between gap-2"
-            >
-              <div className="flex min-w-0 items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-border/35 bg-background/55 px-2 py-0.5 text-[9px] font-medium text-muted-foreground backdrop-blur-sm">
-                  <CoastyIcon className="size-3" />
-                  {currentSlide.label}
-                </span>
-                {currentSlideCompanion ? (
-                  <span className="hidden max-w-[10rem] truncate sm:inline-flex items-center gap-1 rounded-full border border-foreground/10 bg-background/55 px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
-                    {currentSlideCompanion}
+        <div className="relative">
+          {/* ─ Close ─ */}
+          <button
+            type="button"
+            onClick={useGuideStore.getState().toggle}
+            className="absolute -top-1.5 -right-0.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-foreground/10 bg-background/90 backdrop-blur-sm text-foreground/35 hover:text-foreground/65 hover:border-foreground/20 hover:bg-background transition-all duration-150 shadow-sm"
+          >
+            <X className="h-2.5 w-2.5" strokeWidth={2.5} />
+          </button>
+
+          {/* ─ Card ─ */}
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: 0.04, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-xl border border-foreground/[0.08] bg-background/70 dark:bg-background/50 backdrop-blur-xl overflow-hidden pt-2.5 pb-2 shadow-sm dark:shadow-none"
+          >
+            {/* ─ Tab header ─ */}
+            <div className="flex items-center justify-center px-2 mb-1">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={slide.id}
+                  initial={{ opacity: 0, x: direction * 14 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: direction * -14 }}
+                  transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex items-center gap-1.5"
+                >
+                  {(() => { const TabIcon = slide.tabIcon; return <TabIcon className="h-3 w-3 text-foreground/40" strokeWidth={1.6} /> })()}
+                  <span className="text-[9.5px] font-semibold text-foreground/45 tracking-widest uppercase">
+                    {slide.tab}
                   </span>
-                ) : null}
-              </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-              <div className="flex items-center gap-1">
-                <span className="hidden text-[9px] text-muted-foreground sm:inline">
-                  {activeSlide + 1}/{guideSlides.length}
-                </span>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 rounded-full text-muted-foreground hover:text-foreground"
-                  onClick={goToPreviousSlide}
-                  aria-label="Previous guide card"
-                >
-                  <ChevronLeft className="size-3.5" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 rounded-full text-muted-foreground hover:text-foreground"
-                  onClick={goToNextSlide}
-                  aria-label="Next guide card"
-                >
-                  <ChevronRight className="size-3.5" />
-                </Button>
-              </div>
-            </motion.div>
-
-            <AnimatePresence initial={false} mode="wait">
-              {currentSlide.id === "quickstart" ? (
-                <QuickStartSlide
-                  title={userName ? `${userName}, start here.` : "Start here."}
-                  hasMachineSelection={hasMachineSelection}
-                  hasAvailableMachines={hasAvailableMachines}
-                  hasCredentials={hasCredentials}
-                  onCreateMachine={() => setShowCreateDialog(true)}
-                />
-              ) : null}
-
-              {currentSlide.id === "desktop" ? (
-                <FeatureSlide
-                  id="desktop"
-                  title="Run locally. Check in from your phone."
-                  description="Download Coasty for your own desktop, then remote-control it from mobile."
-                  cards={desktopCards}
-                  action={{
-                    label: "Download app",
-                    href: "/download",
-                    variant: "secondary",
-                  }}
-                />
-              ) : null}
-
-              {currentSlide.id === "swarms" ? (
-                <FeatureSlide
-                  id="swarms"
-                  title="Let one job fan out across many machines."
-                  description="Launch agent swarms when you want more speed, scale, or parallel research."
-                  cards={swarmCards}
-                  action={{
-                    label: "Open swarms",
-                    href: "/swarms",
-                    variant: "secondary",
-                  }}
-                />
-              ) : null}
-
-              {currentSlide.id === "schedules" ? (
-                <FeatureSlide
-                  id="schedules"
-                  title="Put recurring work on a timetable."
-                  description="Set daily, weekly, or monthly runs and let Coasty work in the background."
-                  cards={scheduleCards}
-                  action={{
-                    label: "Open schedules",
-                    href: "/schedules",
-                    variant: "secondary",
-                  }}
-                />
-              ) : null}
+            {/* ─ Steps ─ */}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={slide.id}
+                initial={{ opacity: 0, x: direction * 36 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: direction * -36 }}
+                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                className="px-2"
+              >
+                <SlideContent items={items} variant={slide.id} cta={slide.cta} />
+              </motion.div>
             </AnimatePresence>
 
-            <div className="mt-2 flex items-center justify-center gap-1">
-              {guideSlides.map((slide, index) => (
-                <button
-                  key={slide.id}
-                  type="button"
-                  aria-label={`Show ${slide.label}`}
-                  onClick={() => setActiveSlide(index)}
-                  className={cn(
-                    "h-1.5 rounded-full transition-all",
-                    index === activeSlide
-                      ? "w-4 bg-foreground/55"
-                      : "w-1.5 bg-foreground/15 hover:bg-foreground/30"
-                  )}
-                />
-              ))}
+            {/* ─ Nav: prev · dots · next ─ */}
+            <div className="flex items-center justify-center gap-2.5 mt-2 px-2">
+              <button
+                type="button"
+                onClick={goPrev}
+                className="flex h-5 w-5 items-center justify-center rounded-md text-foreground/25 hover:text-foreground/50 hover:bg-foreground/[0.05] transition-all duration-150 active:scale-90"
+              >
+                <ChevronLeft className="h-3 w-3" strokeWidth={2} />
+              </button>
+
+              <div className="flex items-center gap-1">
+                {slides.map((s, i) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => goTo(i)}
+                    className="group/dot p-0.5"
+                  >
+                    <motion.div
+                      className={cn(
+                        "rounded-full transition-colors duration-200",
+                        i === active
+                          ? "bg-foreground/35"
+                          : "bg-foreground/10 group-hover/dot:bg-foreground/20",
+                      )}
+                      animate={{
+                        width: i === active ? 12 : 4,
+                        height: 4,
+                      }}
+                      transition={{ type: "spring", stiffness: 500, damping: 32 }}
+                    />
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={goNext}
+                className="flex h-5 w-5 items-center justify-center rounded-md text-foreground/25 hover:text-foreground/50 hover:bg-foreground/[0.05] transition-all duration-150 active:scale-90"
+              >
+                <ChevronRight className="h-3 w-3" strokeWidth={2} />
+              </button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 

@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 import {
   ChatText,
   TreeStructure,
@@ -180,18 +181,18 @@ function ExecuteVisual() {
 
 /* ─── capability categories ─── */
 
-const categories = [
-  { icon: Crosshair, name: "Sales", example: "Find 50 leads, send personalized emails" },
-  { icon: Megaphone, name: "Marketing", example: "Publish blog posts, schedule social media" },
-  { icon: Briefcase, name: "Job Apps", example: "Apply to 20 jobs, tailor each resume" },
-  { icon: EnvelopeSimple, name: "Email", example: "Draft replies, bulk outreach, unsubscribe" },
-  { icon: Table, name: "Data Entry", example: "Transfer data between apps, build spreadsheets" },
-  { icon: MagnifyingGlass, name: "Research", example: "Deep reports, competitor monitoring" },
-  { icon: Bug, name: "QA Testing", example: "Test signups, fuzz forms, site health checks" },
-  { icon: UsersThree, name: "HR", example: "Source candidates, personalized outreach" },
-  { icon: Headset, name: "Support", example: "Draft responses, update help docs" },
-  { icon: Rocket, name: "Productivity", example: "Book travel, pay bills, manage calendars" },
-]
+const categoryConfig = [
+  { icon: Crosshair, key: "sales" },
+  { icon: Megaphone, key: "marketing" },
+  { icon: Briefcase, key: "jobApps" },
+  { icon: EnvelopeSimple, key: "email" },
+  { icon: Table, key: "dataEntry" },
+  { icon: MagnifyingGlass, key: "research" },
+  { icon: Bug, key: "qaTesting" },
+  { icon: UsersThree, key: "hr" },
+  { icon: Headset, key: "support" },
+  { icon: Rocket, key: "productivity" },
+] as const
 
 /* ─── differentiators ─── */
 
@@ -285,16 +286,17 @@ function DiffVisualIsolated() {
   )
 }
 
-const differentiators = [
-  { title: "Works like a human", description: "Sees, clicks, types, navigates — exactly like you", Visual: DiffVisualHuman },
-  { title: "No scripts or setup", description: "Plain English in, results out", Visual: DiffVisualNoSetup },
-  { title: "Handles the unexpected", description: "Adapts to CAPTCHAs, popups, layout changes", Visual: DiffVisualAdapts },
-  { title: "Runs in isolation", description: "Sandboxed VM per session — nothing leaks", Visual: DiffVisualIsolated },
-]
+const differentiatorConfig = [
+  { key: "worksLikeHuman", Visual: DiffVisualHuman },
+  { key: "noScripts", Visual: DiffVisualNoSetup },
+  { key: "handlesUnexpected", Visual: DiffVisualAdapts },
+  { key: "runsInIsolation", Visual: DiffVisualIsolated },
+] as const
 
 /* ─── main ─── */
 
 export function OverviewTab({ inApp }: { inApp: boolean }) {
+  const t = useTranslations("guide.overview")
   return (
     <div className="space-y-12 sm:space-y-16">
       <style dangerouslySetInnerHTML={{ __html: illustrationStyles }} />
@@ -307,25 +309,25 @@ export function OverviewTab({ inApp }: { inApp: boolean }) {
         variants={stagger}
       >
         <motion.p variants={fadeUp} className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground/50 mb-6">
-          How it works
+          {t("howItWorks")}
         </motion.p>
 
         <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { step: 1, title: "Describe the task", Visual: DescribeVisual },
-            { step: 2, title: "Coasty plans the steps", Visual: PlanVisual },
-            { step: 3, title: "Executes autonomously", Visual: ExecuteVisual },
-          ].map(({ step, title, Visual }) => (
+            { step: 1, titleKey: "step1", Visual: DescribeVisual },
+            { step: 2, titleKey: "step2", Visual: PlanVisual },
+            { step: 3, titleKey: "step3", Visual: ExecuteVisual },
+          ].map(({ step, titleKey, Visual }) => (
             <motion.div
               key={step}
               variants={fadeUp}
               className="group rounded-2xl border border-border/30 bg-card/30 p-5 hover:border-border/50 transition-colors"
             >
               <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/30 mb-2 block">
-                Step {step}
+                {t("step")} {step}
               </span>
               <Visual />
-              <p className="text-sm font-medium text-foreground mt-3">{title}</p>
+              <p className="text-sm font-medium text-foreground mt-3">{t(titleKey)}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -339,27 +341,27 @@ export function OverviewTab({ inApp }: { inApp: boolean }) {
         variants={stagger}
       >
         <motion.p variants={fadeUp} className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground/50 mb-2">
-          What Coasty can do
+          {t("whatCanDo")}
         </motion.p>
         <motion.h2 variants={fadeUp} className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-6">
-          40+ tasks across 10 categories
+          {t("taskCount")}
         </motion.h2>
 
         <motion.div variants={stagger} className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-          {categories.map((cat, i) => {
+          {categoryConfig.map((cat, i) => {
             const Icon = cat.icon
             return (
               <motion.div
-                key={cat.name}
+                key={cat.key}
                 variants={fadeUp}
                 className="group rounded-xl border border-border/20 bg-card/20 p-3 hover:border-border/40 hover:bg-card/40 transition-all cursor-default"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <Icon size={14} weight="duotone" className="text-foreground/50 group-hover:text-foreground/70 transition-colors shrink-0" />
-                  <span className="text-[12px] font-semibold text-foreground/80">{cat.name}</span>
+                  <span className="text-[12px] font-semibold text-foreground/80">{t(`categories.${cat.key}.name`)}</span>
                 </div>
                 <p className="text-[10px] text-muted-foreground/50 leading-relaxed line-clamp-2">
-                  {cat.example}
+                  {t(`categories.${cat.key}.desc`)}
                 </p>
               </motion.div>
             )
@@ -375,22 +377,22 @@ export function OverviewTab({ inApp }: { inApp: boolean }) {
         variants={stagger}
       >
         <motion.p variants={fadeUp} className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground/50 mb-2">
-          Why Coasty
+          {t("whyCoasty")}
         </motion.p>
         <motion.h2 variants={fadeUp} className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-6">
-          Not a chatbot. Not an RPA script.
+          {t("notChatbot")}
         </motion.h2>
 
         <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {differentiators.map((d, i) => (
+          {differentiatorConfig.map((d, i) => (
             <motion.div
               key={i}
               variants={fadeUp}
               className="rounded-xl border border-border/20 bg-card/20 p-4"
             >
               <d.Visual />
-              <p className="text-[13px] font-semibold text-foreground mt-1">{d.title}</p>
-              <p className="text-[11px] text-muted-foreground/50 mt-0.5">{d.description}</p>
+              <p className="text-[13px] font-semibold text-foreground mt-1">{t(`${d.key}.title`)}</p>
+              <p className="text-[11px] text-muted-foreground/50 mt-0.5">{t(`${d.key}.desc`)}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -405,13 +407,10 @@ export function OverviewTab({ inApp }: { inApp: boolean }) {
         className="rounded-2xl border border-border/30 bg-card/20 text-center p-6 sm:p-8"
       >
         <h2 className="text-lg sm:text-xl font-bold text-foreground tracking-tight mb-2">
-          {inApp ? "Pick any task and try it" : "Ready to put Coasty to work?"}
+          {inApp ? t("ctaTitle") : t("ctaSubtitle")}
         </h2>
         <p className="text-sm text-muted-foreground/50 max-w-md mx-auto mb-5">
-          {inApp
-            ? "Describe any task from this guide and watch Coasty handle it."
-            : "Start free. No credit card required."
-          }
+          {inApp ? t("ctaDescription") : t("ctaNote")}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           {inApp ? (
@@ -419,7 +418,7 @@ export function OverviewTab({ inApp }: { inApp: boolean }) {
               href="/"
               className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
             >
-              Start a task
+              {t("startTask")}
               <ArrowRight size={14} weight="bold" />
             </Link>
           ) : (
@@ -428,7 +427,7 @@ export function OverviewTab({ inApp }: { inApp: boolean }) {
                 href="/auth"
                 className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
               >
-                Start free
+                {t("startFree")}
                 <ArrowRight size={14} weight="bold" />
               </Link>
               <Link
@@ -436,7 +435,7 @@ export function OverviewTab({ inApp }: { inApp: boolean }) {
                 className="inline-flex items-center gap-2 h-10 px-5 rounded-xl border border-border/50 text-sm font-medium text-muted-foreground hover:text-foreground transition-all"
               >
                 <Keyboard size={16} weight="duotone" />
-                Desktop app
+                {t("desktopApp")}
               </Link>
             </>
           )}

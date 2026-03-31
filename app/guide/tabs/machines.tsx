@@ -3,6 +3,7 @@
 import { Fragment } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 import {
   ArrowRight,
   Desktop,
@@ -69,17 +70,17 @@ const planLimits = [
   { plan: "Pro", machines: "3", swarm: "9" },
 ]
 
-const lifecycleSteps = [
-  { label: "Creating", dotClass: "bg-foreground/30" },
-  { label: "Starting", dotClass: "bg-foreground/40" },
-  { label: "Running", dotClass: "bg-foreground/60" },
-  { label: "Stopping", dotClass: "bg-foreground/40" },
-  { label: "Stopped", dotClass: "bg-foreground/20" },
-]
+const lifecycleKeys = [
+  { key: "creating", dotClass: "bg-foreground/30" },
+  { key: "starting", dotClass: "bg-foreground/40" },
+  { key: "running", dotClass: "bg-foreground/60" },
+  { key: "stopping", dotClass: "bg-foreground/40" },
+  { key: "stopped", dotClass: "bg-foreground/20" },
+] as const
 
 /* ─── hero mock components ─── */
 
-function DashboardMock() {
+function DashboardMock({ t }: { t: any }) {
   return (
     <div className="rounded-2xl border border-foreground/[0.06] bg-foreground/[0.02] p-4 sm:p-6">
       {/* Header bar */}
@@ -87,11 +88,11 @@ function DashboardMock() {
         <div className="flex items-center gap-2">
           <Desktop size={14} weight="duotone" className="text-foreground/40" />
           <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground/40">
-            Machines
+            {t("title")}
           </span>
         </div>
         <div className="h-6 px-3 rounded-md bg-foreground/[0.06] flex items-center">
-          <span className="text-[10px] text-foreground/30">+ New</span>
+          <span className="text-[10px] text-foreground/30">{t("newMachine")}</span>
         </div>
       </div>
 
@@ -99,22 +100,22 @@ function DashboardMock() {
         {/* Card 1: Running */}
         <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.02] p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-foreground/70">Research VM</span>
+            <span className="text-xs font-semibold text-foreground/70">{t("researchVm")}</span>
             <div className="flex items-center gap-1.5">
               <span
                 className="h-2 w-2 rounded-full bg-foreground/50"
                 style={{ animation: "gv-pulse-green 2s ease-in-out infinite" }}
               />
-              <span className="text-[10px] text-foreground/40">Running</span>
+              <span className="text-[10px] text-foreground/40">{t("states.running")}</span>
             </div>
           </div>
           <div className="flex items-center gap-3 text-[10px] text-foreground/25">
-            <span className="flex items-center gap-1"><Cpu size={10} /> 2 cores</span>
-            <span className="flex items-center gap-1"><HardDrives size={10} /> 4 GB</span>
+            <span className="flex items-center gap-1"><Cpu size={10} /> {t("cores", { count: 2 })}</span>
+            <span className="flex items-center gap-1"><HardDrives size={10} /> {t("gb", { count: 4 })}</span>
           </div>
           <div className="flex gap-1.5">
             <div className="h-6 px-2 rounded-md border border-foreground/[0.06] flex items-center gap-1 text-[10px] text-foreground/30">
-              <Stop size={10} /> Stop
+              <Stop size={10} /> {t("stop")}
             </div>
             <div className="h-6 px-2 rounded-md border border-foreground/[0.06] flex items-center gap-1 text-[10px] text-foreground/30">
               <GearSix size={10} />
@@ -125,19 +126,19 @@ function DashboardMock() {
         {/* Card 2: Stopped */}
         <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.015] p-4 space-y-3 opacity-60">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-foreground/70">Email VM</span>
+            <span className="text-xs font-semibold text-foreground/70">{t("emailVm")}</span>
             <div className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-foreground/15" />
-              <span className="text-[10px] text-foreground/30">Stopped</span>
+              <span className="text-[10px] text-foreground/30">{t("states.stopped")}</span>
             </div>
           </div>
           <div className="flex items-center gap-3 text-[10px] text-foreground/20">
-            <span className="flex items-center gap-1"><Cpu size={10} /> 2 cores</span>
-            <span className="flex items-center gap-1"><HardDrives size={10} /> 4 GB</span>
+            <span className="flex items-center gap-1"><Cpu size={10} /> {t("cores", { count: 2 })}</span>
+            <span className="flex items-center gap-1"><HardDrives size={10} /> {t("gb", { count: 4 })}</span>
           </div>
           <div className="flex gap-1.5">
             <div className="h-6 px-2 rounded-md border border-foreground/[0.06] flex items-center gap-1 text-[10px] text-foreground/30">
-              <Play size={10} /> Start
+              <Play size={10} /> {t("start")}
             </div>
             <div className="h-6 px-2 rounded-md border border-foreground/[0.06] flex items-center gap-1 text-[10px] text-foreground/30">
               <GearSix size={10} />
@@ -148,7 +149,7 @@ function DashboardMock() {
         {/* Card 3: Creating with progress bar */}
         <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.02] p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-foreground/70">Testing VM</span>
+            <span className="text-xs font-semibold text-foreground/70">{t("testingVm")}</span>
             <div className="flex items-center gap-1.5">
               <CircleNotch
                 size={10}
@@ -156,12 +157,12 @@ function DashboardMock() {
                 className="text-foreground/40"
                 style={{ animation: "gv-spin 1s linear infinite" }}
               />
-              <span className="text-[10px] text-foreground/40">Creating</span>
+              <span className="text-[10px] text-foreground/40">{t("states.creating")}</span>
             </div>
           </div>
           <div className="flex items-center gap-3 text-[10px] text-foreground/25">
-            <span className="flex items-center gap-1"><Cpu size={10} /> 4 cores</span>
-            <span className="flex items-center gap-1"><HardDrives size={10} /> 8 GB</span>
+            <span className="flex items-center gap-1"><Cpu size={10} /> {t("cores", { count: 4 })}</span>
+            <span className="flex items-center gap-1"><HardDrives size={10} /> {t("gb", { count: 8 })}</span>
           </div>
           {/* Progress bar */}
           <div className="space-y-1.5">
@@ -171,7 +172,7 @@ function DashboardMock() {
                 style={{ animation: "gv-progress-fill 4s ease-in-out infinite" }}
               />
             </div>
-            <span className="text-[9px] text-foreground/25">Provisioning...</span>
+            <span className="text-[9px] text-foreground/25">{t("provisioning")}</span>
           </div>
         </div>
       </div>
@@ -181,13 +182,13 @@ function DashboardMock() {
 
 /* ─── lifecycle flow ─── */
 
-function LifecycleFlow() {
+function LifecycleFlow({ t }: { t: any }) {
   return (
     <div className="rounded-2xl border border-foreground/[0.06] bg-foreground/[0.02] p-5 sm:p-8">
       {/* Desktop: horizontal */}
       <div className="hidden sm:flex items-center justify-between">
-        {lifecycleSteps.map((step, i) => (
-          <Fragment key={step.label}>
+        {lifecycleKeys.map((step, i) => (
+          <Fragment key={step.key}>
             <div className="flex flex-col items-center gap-2">
               <div
                 className={`h-3 w-3 rounded-full ${step.dotClass}`}
@@ -203,10 +204,10 @@ function LifecycleFlow() {
                   opacity: 0,
                 }}
               >
-                {step.label}
+                {t(`states.${step.key}`)}
               </span>
             </div>
-            {i < lifecycleSteps.length - 1 && (
+            {i < lifecycleKeys.length - 1 && (
               <div
                 className="text-foreground/15 text-sm mx-1"
                 style={{ animation: `gv-arrow-flow 2s ease-in-out infinite ${i * 0.3}s` }}
@@ -220,8 +221,8 @@ function LifecycleFlow() {
 
       {/* Mobile: vertical */}
       <div className="flex flex-col gap-3 sm:hidden">
-        {lifecycleSteps.map((step, i) => (
-          <div key={step.label} className="flex items-center gap-3">
+        {lifecycleKeys.map((step, i) => (
+          <div key={step.key} className="flex items-center gap-3">
             <div
               className={`h-3 w-3 rounded-full shrink-0 ${step.dotClass}`}
               style={{
@@ -236,9 +237,9 @@ function LifecycleFlow() {
                 opacity: 0,
               }}
             >
-              {step.label}
+              {t(`states.${step.key}`)}
             </span>
-            {i < lifecycleSteps.length - 1 && (
+            {i < lifecycleKeys.length - 1 && (
               <span
                 className="text-foreground/15 text-xs ml-auto"
                 style={{ animation: `gv-arrow-flow 2s ease-in-out infinite ${i * 0.3}s` }}
@@ -256,6 +257,7 @@ function LifecycleFlow() {
 /* ─── main export ─── */
 
 export function MachinesTab({ inApp }: { inApp: boolean }) {
+  const t = useTranslations("guide.machinesTab")
   return (
     <div className="space-y-0">
       <style dangerouslySetInnerHTML={{ __html: machineStyles }} />
@@ -272,17 +274,17 @@ export function MachinesTab({ inApp }: { inApp: boolean }) {
           variants={fadeUp}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2"
         >
-          Your machines
+          {t("title")}
         </motion.h2>
         <motion.p
           variants={fadeUp}
           className="text-sm text-foreground/40 mb-8"
         >
-          Full Ubuntu desktops you can spin up in seconds.
+          {t("subtitle")}
         </motion.p>
 
         <motion.div variants={fadeUp}>
-          <DashboardMock />
+          <DashboardMock t={t} />
         </motion.div>
       </motion.section>
 
@@ -298,17 +300,17 @@ export function MachinesTab({ inApp }: { inApp: boolean }) {
           variants={fadeUp}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2"
         >
-          Lifecycle
+          {t("lifecycle")}
         </motion.h2>
         <motion.p
           variants={fadeUp}
           className="text-sm text-foreground/40 mb-8"
         >
-          Five states, fully automatic.
+          {t("lifecycleDesc")}
         </motion.p>
 
         <motion.div variants={fadeUp}>
-          <LifecycleFlow />
+          <LifecycleFlow t={t} />
         </motion.div>
       </motion.section>
 
@@ -324,7 +326,7 @@ export function MachinesTab({ inApp }: { inApp: boolean }) {
           variants={fadeUp}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-8"
         >
-          Plan limits
+          {t("planLimits")}
         </motion.h2>
 
         <motion.div
@@ -332,9 +334,9 @@ export function MachinesTab({ inApp }: { inApp: boolean }) {
           className="rounded-2xl border border-foreground/[0.06] bg-foreground/[0.02] overflow-hidden"
         >
           <div className="grid grid-cols-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground/30 border-b border-foreground/[0.06]">
-            <div className="px-4 py-3">Plan</div>
-            <div className="px-4 py-3">Machines</div>
-            <div className="px-4 py-3">Swarm agents</div>
+            <div className="px-4 py-3">{t("planCol")}</div>
+            <div className="px-4 py-3">{t("machinesCol")}</div>
+            <div className="px-4 py-3">{t("swarmAgentsCol")}</div>
           </div>
           {planLimits.map((row, i) => (
             <div
@@ -362,13 +364,13 @@ export function MachinesTab({ inApp }: { inApp: boolean }) {
         className="rounded-2xl border border-foreground/[0.06] bg-foreground/[0.02] text-center p-8"
       >
         <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-6">
-          Spin up a machine
+          {t("spinUp")}
         </h2>
         <Link
           href="/machines"
           className="inline-flex items-center gap-2 h-10 px-6 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
         >
-          Go to Machines
+          {t("goToMachines")}
           <ArrowRight size={14} weight="bold" />
         </Link>
       </motion.section>

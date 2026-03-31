@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 import {
   ArrowRight,
   Copy,
@@ -323,45 +324,19 @@ function MockChatFlow() {
 
 /* ─── step data ─── */
 
-const steps = [
-  {
-    number: 1,
-    label: "Sign Up",
-    headline: "One click to start",
-    mock: MockSignUp,
-  },
-  {
-    number: 2,
-    label: "Create a Machine",
-    headline: "Your agent gets its own computer",
-    mock: MockMachineBoot,
-  },
-  {
-    number: 3,
-    label: "Save Credentials",
-    headline: "Encrypted logins for any site",
-    mock: MockCredentialForm,
-  },
-  {
-    number: 4,
-    label: "Give a Task",
-    headline: "Describe it. Watch it happen.",
-    mock: MockChatFlow,
-  },
-]
-
-const quickPrompts = [
-  "Apply to 10 matching jobs on LinkedIn with my resume",
-  "Research competitor pricing and build a comparison spreadsheet",
-  "Write and publish a blog post about [topic] on WordPress",
-  "Unsubscribe me from all marketing emails in Gmail",
-  "Test the signup flow on my website and report any bugs",
-  "Find 50 leads matching [ICP] on LinkedIn and add to my CRM",
-]
+const stepConfig = [
+  { number: 1, key: "signUp", mock: MockSignUp },
+  { number: 2, key: "createMachine", mock: MockMachineBoot },
+  { number: 3, key: "saveCredentials", mock: MockCredentialForm },
+  { number: 4, key: "giveTask", mock: MockChatFlow },
+] as const
 
 /* ─── main component ─── */
 
 export function GettingStartedTab({ inApp }: { inApp: boolean }) {
+  const t = useTranslations("guide.gettingStarted")
+  const examplePrompts = [0, 1, 2, 3, 4, 5].map((i) => t(`examplePrompts.${i}`))
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: keyframes }} />
@@ -375,7 +350,7 @@ export function GettingStartedTab({ inApp }: { inApp: boolean }) {
           variants={stagger}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4"
         >
-          {steps.map((step, idx) => {
+          {stepConfig.map((step, idx) => {
             const Mock = step.mock
             return (
               <motion.div
@@ -391,11 +366,11 @@ export function GettingStartedTab({ inApp }: { inApp: boolean }) {
                       {step.number}
                     </span>
                     <span className="text-[11px] font-medium uppercase tracking-widest text-foreground/30">
-                      {step.label}
+                      {t(`steps.${step.key}.title`)}
                     </span>
                   </div>
                   <h3 className="text-base font-semibold text-foreground/70 leading-snug">
-                    {step.headline}
+                    {t(`steps.${step.key}.desc`)}
                   </h3>
                 </div>
 
@@ -415,12 +390,12 @@ export function GettingStartedTab({ inApp }: { inApp: boolean }) {
         >
           <motion.div variants={fadeUp} custom={0} className="mb-4">
             <h2 className="text-lg font-semibold text-foreground/70 tracking-tight">
-              Quick prompts to try
+              {t("quickPrompts")}
             </h2>
           </motion.div>
 
           <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-            {quickPrompts.map((prompt, i) => (
+            {examplePrompts.map((prompt, i) => (
               <motion.button
                 key={i}
                 variants={fadeUp}
@@ -457,7 +432,7 @@ export function GettingStartedTab({ inApp }: { inApp: boolean }) {
             href="/"
             className="inline-flex items-center gap-2 h-10 px-6 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
           >
-            Start your first task
+            {t("startFirstTask")}
             <ArrowRight size={14} weight="bold" />
           </Link>
         </motion.div>

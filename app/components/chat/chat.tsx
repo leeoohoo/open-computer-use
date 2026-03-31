@@ -28,7 +28,7 @@ import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
 import { useChatStreaming } from "@/lib/chat-streaming-store/provider"
 // import { ResearchSuggestions } from "./research-suggestions" // Removed trending searches
 import { themeConfig } from "@/lib/theme-config"
-import { Switch } from "@/components/ui/switch"
+import { useGuideStore } from "@/lib/guide-store"
 import { QuickStartGuide } from "./quick-start-guide"
 import { Search, Bug, Globe, FileText, BarChart3, Mail, Zap, Sparkles, PenTool, MonitorSmartphone, Clipboard, Users, TrendingUp, Eye, FileCode, LayoutGrid, Send, ShoppingCart, MessageCircle, Bot } from "lucide-react"
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card"
@@ -300,6 +300,23 @@ function getTaskDescription(label: string): string {
   return "Opens your site, executes the task step by step, delivers results"
 }
 
+/** Try to derive a short brand name from a domain, e.g. "acme.com" → "Acme" */
+function brandFromDomain(url: string | null): string | null {
+  if (!url) return null
+  try {
+    const host = url.includes("://") ? new URL(url).hostname : url.split("/")[0]
+    // Strip www. and take the part before the TLD
+    const parts = host.replace(/^www\./, "").split(".")
+    if (parts.length === 0) return null
+    const name = parts[0]
+    if (!name || name.length < 2) return null
+    // Capitalize first letter
+    return name.charAt(0).toUpperCase() + name.slice(1)
+  } catch {
+    return null
+  }
+}
+
 function getTaskTemplates(
   role: string | null | undefined,
   useCase: string | null | undefined,
@@ -310,16 +327,29 @@ function getTaskTemplates(
 ): TaskTemplate[] {
   const siteUrl = website ? (website.startsWith("http") ? website : `https://${website}`) : null
   const companyName = company?.trim() || null
+  // Fallback: derive a brand name from the domain if no company was provided
+  const displayName = companyName || brandFromDomain(website ?? null)
 
-  const personalize = (prompt: string) => {
-    let p = prompt
+  const personalize = (text: string, isLabel = false) => {
+    let p = text
     if (siteUrl) {
       p = p.replace(/\{url\}/g, siteUrl)
     } else {
-      p = p.replace(/\{url\}/g, "[your website URL]")
+      p = p.replace(/\{url\}/g, isLabel ? "your site" : "[your website URL]")
     }
-    if (companyName) {
-      p = p.replace(/\{company\}/g, companyName)
+    if (displayName) {
+      p = p.replace(/\{company\}/g, displayName)
+    } else if (isLabel) {
+      // No company info at all — strip "{company} " or " {company}" or " for {company}" cleanly
+      p = p.replace(/\{company\}\s*/g, "")
+      p = p.replace(/\s*for \{company\}/g, "")
+      p = p.replace(/\s*on \{company\}/g, "")
+      p = p.replace(/\s*into \{company\}/g, "")
+      p = p.replace(/\s*about \{company\}/g, "")
+      p = p.replace(/\s*\{company\}/g, "")
+      // Capitalize first letter if it got lowered
+      p = p.trim()
+      if (p.length > 0) p = p.charAt(0).toUpperCase() + p.slice(1)
     } else {
       p = p.replace(/\{company\}/g, "[your company]")
     }
@@ -333,7 +363,7 @@ function getTaskTemplates(
   const roles = (role || "").split(",").map(r => r.trim()).filter(Boolean)
   for (const r of roles) {
     for (const td of ROLE_TEMPLATE_DATA[r] || []) {
-      const label = translateRole(r, td.labelKey)
+      const label = personalize(translateRole(r, td.labelKey), true)
       if (!seen.has(label)) {
         seen.add(label)
         templates.push({ label, prompt: personalize(td.prompt), icon: td.icon, color: td.color })
@@ -345,7 +375,7 @@ function getTaskTemplates(
   const useCases = (useCase || "").split(",").map(u => u.trim()).filter(Boolean)
   for (const uc of useCases) {
     for (const td of USE_CASE_TEMPLATE_DATA[uc] || []) {
-      const label = translateUseCase(td.labelKey)
+      const label = personalize(translateUseCase(td.labelKey), true)
       if (!seen.has(label)) {
         seen.add(label)
         templates.push({ label, prompt: personalize(td.prompt), icon: td.icon, color: td.color })
@@ -356,10 +386,10 @@ function getTaskTemplates(
   // Fallback if nothing matched
   if (templates.length === 0) {
     return [
-      { label: translateRole("founder", "competitorReport"), prompt: personalize("Find the top 5 competitors of {company}. Compare their pricing, features, and traffic to {url}. Deliver a side-by-side spreadsheet."), icon: Search, color: "blue" },
-      { label: translateRole("developer", "findBugs"), prompt: personalize("Go to {url} and test every user flow for {company}. Screenshot each step, flag any bugs or broken UI, and deliver a prioritized bug report."), icon: Bug, color: "rose" },
-      { label: translateUseCase("web_scraping"), prompt: personalize("Go to {url} and extract all structured data from {company}'s pages — products, pricing, metadata. Deliver as a clean CSV file."), icon: Globe, color: "violet" },
-      { label: translateRole("developer", "performance"), prompt: personalize("Audit {url} for {company} — page speed, SEO, broken links, accessibility. Deliver a scored report with fixes ranked by impact."), icon: TrendingUp, color: "emerald" },
+      { label: personalize(translateRole("founder", "competitorReport"), true), prompt: personalize("Find the top 5 competitors of {company}. Compare their pricing, features, and traffic to {url}. Deliver a side-by-side spreadsheet."), icon: Search, color: "blue" },
+      { label: personalize(translateRole("developer", "findBugs"), true), prompt: personalize("Go to {url} and test every user flow for {company}. Screenshot each step, flag any bugs or broken UI, and deliver a prioritized bug report."), icon: Bug, color: "rose" },
+      { label: personalize(translateUseCase("web_scraping"), true), prompt: personalize("Go to {url} and extract all structured data from {company}'s pages — products, pricing, metadata. Deliver as a clean CSV file."), icon: Globe, color: "violet" },
+      { label: personalize(translateRole("developer", "performance"), true), prompt: personalize("Audit {url} for {company} — page speed, SEO, broken links, accessibility. Deliver a scored report with fixes ranked by impact."), icon: TrendingUp, color: "emerald" },
     ]
   }
 
@@ -943,15 +973,10 @@ export function Chat() {
 
   const showOnboarding = !effectiveChatId && redirectCheckMessages.length === 0
 
-  // Quick start guide for first-time users
-  // Start as false on both server and client to avoid hydration mismatch,
-  // then sync from localStorage after mount.
-  const [quickStartDismissed, setQuickStartDismissed] = useState(false)
-  useEffect(() => {
-    if (localStorage.getItem("coasty-quickstart-dismissed") === "true") {
-      setQuickStartDismissed(true)
-    }
-  }, [])
+  // Quick start guide — synced via store so the header toggle works too
+  const guideDismissed = useGuideStore((s) => s.dismissed)
+  const hydrateGuide = useGuideStore((s) => s.hydrate)
+  useEffect(() => { hydrateGuide() }, [hydrateGuide])
 
   // Check if user has saved credentials (for nudge in greeting)
   const [hasCredentials, setHasCredentials] = useState<boolean | null>(null)
@@ -966,11 +991,11 @@ export function Chat() {
   const showQuickStart =
     showOnboarding &&
     !!user &&
-    !quickStartDismissed
+    !guideDismissed
 
   // Task templates based on onboarding role + use-case (activation metric)
-  const translateRole = useCallback((role: string, key: string) => t(`taskTemplates.${role}.${key}`), [t])
-  const translateUseCase = useCallback((key: string) => t(`useCaseTemplates.${key}`), [t])
+  const translateRole = useCallback((role: string, key: string) => t(`taskTemplates.${role}.${key}`, { company: "{company}" }), [t])
+  const translateUseCase = useCallback((key: string) => t(`useCaseTemplates.${key}`, { company: "{company}" }), [t])
   const taskTemplates = useMemo(
     () => getTaskTemplates(user?.role, user?.use_case, user?.website, user?.company, translateRole, translateUseCase),
     [user?.role, user?.use_case, user?.website, user?.company, translateRole, translateUseCase]
@@ -1022,6 +1047,7 @@ export function Chat() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="mb-6 sm:mb-8"
                 >
                   <QuickStartGuide
                     userName={user?.display_name || undefined}
@@ -1146,31 +1172,6 @@ export function Chat() {
               )}
             </AnimatePresence>
 
-            {/* Guide toggle */}
-            {user && (
-              <motion.div
-                className="flex items-center justify-center gap-3 mt-4 sm:mt-6 mb-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.4 }}
-              >
-                <label className="inline-flex items-center gap-2.5 cursor-pointer select-none">
-                  <span className="text-xs text-muted-foreground">{t("guide")}</span>
-                  <Switch
-                    checked={!quickStartDismissed}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        localStorage.removeItem("coasty-quickstart-dismissed")
-                        setQuickStartDismissed(false)
-                      } else {
-                        localStorage.setItem("coasty-quickstart-dismissed", "true")
-                        setQuickStartDismissed(true)
-                      }
-                    }}
-                  />
-                </label>
-              </motion.div>
-            )}
           </motion.div>
         )}
         {!showOnboarding && !swarmFullscreen && (
@@ -1261,20 +1262,64 @@ export function Chat() {
         {/* Show inline active swarm banner only when not in fullscreen swarm mode */}
         {showOnboarding && !swarmFullscreen && <ActiveSwarmBanner onSwarmDetected={handleActiveSwarmDetected} />}
         <RemoteApproval machineId={selectedVMId} isElectronMachine={machinesList.some((m: any) => m.id === selectedVMId && m.settings?.provider === 'electron')} />
-        <ChatInput {...chatInputProps} />
 
-        {/* Task templates — reduces friction to first task completion */}
+        {/* Task templates — above input on mobile, below on desktop */}
         <AnimatePresence>
           {showOnboarding && !swarmMode && !swarmFullscreen && user && (
             <motion.div
-              key="task-templates"
+              key="task-templates-mobile"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 6, transition: { duration: 0.15 } }}
               transition={{ delay: 0.3, duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="mt-3 mb-1"
+              className="mb-2 -mx-4 sm:hidden"
             >
-              <div className="flex flex-wrap justify-center gap-1.5">
+              <div
+                className="flex gap-2 overflow-x-auto px-4"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {taskTemplates.map((t, i) => {
+                  const Icon = t.icon
+                  const colors = TASK_COLORS[t.color] || TASK_COLORS.blue
+                  return (
+                    <motion.button
+                      key={t.label}
+                      type="button"
+                      onClick={() => handleCollaborativeInputChange(t.prompt)}
+                      initial={{ opacity: 0, scale: 0.92 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.35 + i * 0.04, duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      className={cn(
+                        "group inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs whitespace-nowrap transition-all duration-200 cursor-pointer",
+                        colors.border, colors.hover, "bg-card/40",
+                      )}
+                    >
+                      <Icon className={cn("size-3", colors.icon)} />
+                      <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                        {t.label}
+                      </span>
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <ChatInput {...chatInputProps} />
+
+        {/* Task templates — desktop only (below input) */}
+        <AnimatePresence>
+          {showOnboarding && !swarmMode && !swarmFullscreen && user && (
+            <motion.div
+              key="task-templates-desktop"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6, transition: { duration: 0.15 } }}
+              transition={{ delay: 0.3, duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="mt-3 mb-1 hidden sm:block"
+            >
+              <div className="flex flex-wrap justify-center gap-2">
                 {taskTemplates.map((t, i) => {
                   const Icon = t.icon
                   const colors = TASK_COLORS[t.color] || TASK_COLORS.blue
@@ -1290,10 +1335,8 @@ export function Chat() {
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: 0.35 + i * 0.04, duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
                           className={cn(
-                            "group inline-flex items-center gap-1.5 rounded-2xl border px-2.5 py-1 text-xs transition-all duration-200 cursor-pointer",
-                            colors.border,
-                            colors.hover,
-                            "bg-card/40",
+                            "group inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs transition-all duration-200 cursor-pointer",
+                            colors.border, colors.hover, "bg-card/40",
                           )}
                         >
                           <Icon className={cn("size-3", colors.icon)} />
@@ -1309,11 +1352,9 @@ export function Chat() {
                         className="w-64 p-0 border border-border/50 shadow-xl rounded-xl overflow-hidden"
                       >
                         <div className="flex flex-col">
-                          {/* Animated visual demo */}
                           <div className="relative h-[120px] w-full bg-muted/50 border-b border-border/40 overflow-hidden">
                             <Visual />
                           </div>
-                          {/* Text info */}
                           <div className="p-3.5 pt-3">
                             <h4 className="text-[13px] font-semibold text-foreground leading-tight">{t.label}</h4>
                             <p className="text-[11.5px] text-foreground/50 mt-1.5 leading-relaxed">{description}</p>

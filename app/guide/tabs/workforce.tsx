@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import {
   UsersThree,
   Briefcase,
@@ -31,21 +32,21 @@ const stagger = {
   show: { transition: { staggerChildren: 0.07 } },
 }
 
-const concepts = [
-  { icon: UsersThree, title: "Employees", line: "AI agents that run tasks on a schedule, 24/7" },
-  { icon: Briefcase, title: "Teams", line: "Groups of employees with shared instructions" },
-  { icon: Brain, title: "Shared Memory", line: "Key-value store employees read and write to" },
-  { icon: Lightning, title: "Triggers", line: "Chain employees: one finishes, next starts" },
-  { icon: ShareNetwork, title: "Delegates", line: "Employees assign sub-tasks to specialists" },
-  { icon: TreeStructure, title: "Org Chart", line: "Visual map of your company hierarchy" },
-]
+const conceptKeys = [
+  { icon: UsersThree, key: "employees" },
+  { icon: Briefcase, key: "teams" },
+  { icon: Brain, key: "sharedMemory" },
+  { icon: Lightning, key: "triggers" },
+  { icon: ShareNetwork, key: "delegates" },
+  { icon: TreeStructure, key: "orgChart" },
+] as const
 
-const templates = [
-  { icon: PencilSimple, name: "Content Ops", tier: "Starter", count: 3 },
-  { icon: HeadphonesIcon, name: "Customer Support", tier: "Starter", count: 3 },
-  { icon: Megaphone, name: "Marketing", tier: "Plus", count: 7 },
-  { icon: ShoppingCart, name: "E-Commerce", tier: "Plus", count: 7 },
-]
+const templateKeys = [
+  { icon: PencilSimple, key: "contentOps" },
+  { icon: HeadphonesIcon, key: "customerSupport" },
+  { icon: Megaphone, key: "marketing" },
+  { icon: ShoppingCart, key: "ecommerce" },
+] as const
 
 const cssAnimations = `
   @keyframes gv-org-company { 0% { opacity: 0; transform: scale(0.8) } 15%, 100% { opacity: 1; transform: scale(1) } }
@@ -76,19 +77,20 @@ const cssAnimations = `
   .gv-chain-step-3 { animation: gv-chain-step-3 5s ease-out infinite }
 `
 
-const orgEmployees: { initials: string; role: string; freq: string; animClass: string }[][] = [
+const orgEmployees: { initials: string; roleKey: string; freq: string; animClass: string }[][] = [
   [
-    { initials: "AT", role: "Writer", freq: "daily", animClass: "gv-org-emp" },
-    { initials: "EC", role: "SEO", freq: "weekly", animClass: "gv-org-emp-d2" },
-    { initials: "NV", role: "Social", freq: "12h", animClass: "gv-org-emp-d3" },
+    { initials: "AT", roleKey: "writer", freq: "daily", animClass: "gv-org-emp" },
+    { initials: "EC", roleKey: "seo", freq: "weekly", animClass: "gv-org-emp-d2" },
+    { initials: "NV", roleKey: "social", freq: "12h", animClass: "gv-org-emp-d3" },
   ],
   [
-    { initials: "SG", role: "Inbox", freq: "30m", animClass: "gv-org-emp" },
-    { initials: "IR", role: "Docs", freq: "weekly", animClass: "gv-org-emp-d2" },
+    { initials: "SG", roleKey: "inbox", freq: "30m", animClass: "gv-org-emp" },
+    { initials: "IR", roleKey: "docs", freq: "weekly", animClass: "gv-org-emp-d2" },
   ],
 ]
 
 export function WorkforceTab({ inApp }: { inApp: boolean }) {
+  const t = useTranslations("guide.workforceTab")
   return (
     <div className="space-y-0">
       <style dangerouslySetInnerHTML={{ __html: cssAnimations }} />
@@ -106,7 +108,7 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/50 mb-4"
         >
-          Workforce
+          {t("title")}
         </motion.p>
 
         <motion.h2
@@ -114,7 +116,7 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
           custom={1}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2"
         >
-          Your AI company, on autopilot
+          {t("subtitle")}
         </motion.h2>
 
         <motion.p
@@ -122,7 +124,7 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
           custom={2}
           className="text-sm text-foreground/50 mb-10 max-w-md"
         >
-          Employees, teams, triggers -- running 24/7.
+          {t("description")}
         </motion.p>
 
         {/* Animated org chart */}
@@ -134,17 +136,17 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
           <div className="flex flex-col items-center">
             {/* Company box */}
             <div className="gv-org-company rounded-xl border border-foreground/[0.08] bg-foreground/[0.04] px-5 py-2.5 text-center mb-1">
-              <p className="text-[13px] font-bold text-foreground/70">My Company</p>
+              <p className="text-[13px] font-bold text-foreground/70">{t("myCompany")}</p>
             </div>
 
             <div className="h-6 w-px bg-foreground/[0.08]" />
 
             {/* Teams row */}
             <div className="flex gap-10 sm:gap-16 items-start">
-              {["Content Ops", "Support"].map((team, ti) => (
-                <div key={team} className="flex flex-col items-center">
+              {(["contentOps", "support"] as const).map((teamKey, ti) => (
+                <div key={teamKey} className="flex flex-col items-center">
                   <div className={`${ti === 0 ? "gv-org-team-1" : "gv-org-team-2"} rounded-lg border border-foreground/[0.08] bg-foreground/[0.03] px-4 py-2 text-center mb-1`}>
-                    <p className="text-[11px] font-semibold text-foreground/60">{team}</p>
+                    <p className="text-[11px] font-semibold text-foreground/60">{t(teamKey)}</p>
                   </div>
 
                   <div className="h-4 w-px bg-foreground/[0.06]" />
@@ -157,7 +159,7 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
                           <span className="text-[9px] font-bold text-foreground/50">{emp.initials}</span>
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-[10px] font-medium text-foreground/50">{emp.role}</span>
+                          <span className="text-[10px] font-medium text-foreground/50">{t(emp.roleKey)}</span>
                           <span className="flex items-center gap-0.5 text-[9px] text-foreground/30 gv-clock">
                             <Clock size={8} weight="fill" />
                             {emp.freq}
@@ -186,22 +188,22 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-6"
         >
-          Core concepts
+          {t("concepts")}
         </motion.h2>
 
         <motion.div variants={stagger} className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {concepts.map((c, i) => {
+          {conceptKeys.map((c, i) => {
             const Icon = c.icon
             return (
               <motion.div
-                key={c.title}
+                key={c.key}
                 variants={fade}
                 custom={i + 1}
                 className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.02] p-4"
               >
                 <Icon size={20} weight="duotone" className="text-foreground/40 mb-2.5" />
-                <p className="text-[13px] font-semibold text-foreground mb-0.5">{c.title}</p>
-                <p className="text-[11px] text-foreground/40 leading-snug">{c.line}</p>
+                <p className="text-[13px] font-semibold text-foreground mb-0.5">{t(`conceptItems.${c.key}.title`)}</p>
+                <p className="text-[11px] text-foreground/40 leading-snug">{t(`conceptItems.${c.key}.desc`)}</p>
               </motion.div>
             )
           })}
@@ -221,7 +223,7 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-2"
         >
-          Chain employees together
+          {t("chainTitle")}
         </motion.h2>
 
         <motion.p
@@ -229,7 +231,7 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
           custom={1}
           className="text-sm text-foreground/50 mb-8 max-w-md"
         >
-          Output flows from one to the next automatically.
+          {t("chainDesc")}
         </motion.p>
 
         <motion.div
@@ -244,17 +246,17 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
               <path d="M5.5 9l2.5 2.5 4.5-4.5" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="gv-chain-check" />
             </svg>
             <div className="flex-1 min-w-0">
-              <span className="text-[13px] font-semibold text-foreground/70">Scout</span>
-              <span className="text-[11px] text-foreground/35 ml-2">researches competitors</span>
+              <span className="text-[13px] font-semibold text-foreground/70">{t("scout")}</span>
+              <span className="text-[11px] text-foreground/35 ml-2">{t("scoutDesc")}</span>
             </div>
-            <span className="text-[10px] font-medium text-foreground/40">Done</span>
+            <span className="text-[10px] font-medium text-foreground/40">{t("done")}</span>
           </div>
 
           {/* Arrow 1 */}
           <div className="flex items-center gap-2 pl-7 py-1 gv-chain-line-1">
             <div className="h-5 w-px bg-foreground/[0.1]" />
             <span className="text-[9px] font-medium text-foreground/30 bg-foreground/[0.03] px-2 py-0.5 rounded-full">
-              on_complete
+              {t("onComplete")}
             </span>
           </div>
 
@@ -266,8 +268,8 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <span className="text-[13px] font-semibold text-foreground/60">Atlas</span>
-              <span className="text-[11px] text-foreground/30 ml-2">writes blog post</span>
+              <span className="text-[13px] font-semibold text-foreground/60">{t("atlas")}</span>
+              <span className="text-[11px] text-foreground/30 ml-2">{t("atlasDesc")}</span>
             </div>
             <span className="text-[10px] font-medium text-foreground/35">Running</span>
           </div>
@@ -276,7 +278,7 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
           <div className="flex items-center gap-2 pl-7 py-1 gv-chain-line-2">
             <div className="h-5 w-px bg-foreground/[0.06]" />
             <span className="text-[9px] font-medium text-foreground/20 bg-foreground/[0.02] px-2 py-0.5 rounded-full">
-              on_complete
+              {t("onComplete")}
             </span>
           </div>
 
@@ -284,10 +286,10 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
           <div className="flex items-center gap-3 rounded-xl border border-foreground/[0.04] bg-foreground/[0.01] px-4 py-3 gv-chain-step-3">
             <div className="h-2 w-2 rounded-full bg-foreground/15 shrink-0" />
             <div className="flex-1 min-w-0">
-              <span className="text-[13px] font-semibold text-foreground/35">Nova</span>
-              <span className="text-[11px] text-foreground/20 ml-2">publishes to social</span>
+              <span className="text-[13px] font-semibold text-foreground/35">{t("nova")}</span>
+              <span className="text-[11px] text-foreground/20 ml-2">{t("novaDesc")}</span>
             </div>
-            <span className="text-[10px] font-medium text-foreground/20">Waiting</span>
+            <span className="text-[10px] font-medium text-foreground/20">{t("waiting")}</span>
           </div>
         </motion.div>
       </motion.section>
@@ -305,26 +307,26 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-6"
         >
-          Start from a template
+          {t("templates")}
         </motion.h2>
 
         <motion.div variants={stagger} className="grid grid-cols-2 gap-3 max-w-lg">
-          {templates.map((t, i) => {
-            const Icon = t.icon
+          {templateKeys.map((tmpl, i) => {
+            const Icon = tmpl.icon
             return (
               <motion.div
-                key={t.name}
+                key={tmpl.key}
                 variants={fade}
                 custom={i + 1}
                 className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.02] p-4"
               >
                 <Icon size={20} weight="duotone" className="text-foreground/40 mb-3" />
-                <p className="text-[13px] font-semibold text-foreground mb-1">{t.name}</p>
+                <p className="text-[13px] font-semibold text-foreground mb-1">{t(`templateItems.${tmpl.key}.name`)}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-medium text-foreground/30 bg-foreground/[0.04] px-2 py-0.5 rounded-full">
-                    {t.tier}
+                    {t(`templateItems.${tmpl.key}.plan`)}
                   </span>
-                  <span className="text-[10px] text-foreground/30">{t.count} employees</span>
+                  <span className="text-[10px] text-foreground/30">{t("employees", { count: t(`templateItems.${tmpl.key}.count`) })}</span>
                 </div>
               </motion.div>
             )
@@ -345,7 +347,7 @@ export function WorkforceTab({ inApp }: { inApp: boolean }) {
             href="/schedules"
             className="inline-flex items-center gap-2 h-10 px-6 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
           >
-            Open Workforce
+            {t("openWorkforce")}
             <ArrowRight size={14} weight="bold" />
           </Link>
         </motion.section>

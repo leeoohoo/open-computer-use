@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import {
   ArrowRight,
   Globe,
@@ -75,18 +76,19 @@ const overlayAnimations = `
 
 /* ─── capability data ─── */
 
-const capabilities = [
-  { icon: Globe, title: "Browser", line: "Navigate, click, fill forms" },
-  { icon: FolderOpen, title: "Files", line: "Read, write, edit anywhere" },
-  { icon: Terminal, title: "Terminal", line: "Run any shell command" },
-  { icon: Desktop, title: "Desktop", line: "Click, type, scroll" },
-  { icon: Camera, title: "Screenshots", line: "See what you see" },
-  { icon: AppWindow, title: "Apps", line: "Control any installed app" },
-]
+const capabilityKeys = [
+  { icon: Globe, key: "browser" },
+  { icon: FolderOpen, key: "files" },
+  { icon: Terminal, key: "terminal" },
+  { icon: Desktop, key: "desktop" },
+  { icon: Camera, key: "screenshots" },
+  { icon: AppWindow, key: "apps" },
+] as const
 
 /* ─── main component ─── */
 
 export function DesktopAppTab({ inApp }: { inApp: boolean }) {
+  const t = useTranslations("guide.desktopAppTab")
   return (
     <div className="space-y-16 sm:space-y-20">
       <style dangerouslySetInnerHTML={{ __html: overlayAnimations }} />
@@ -103,14 +105,14 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-2 text-center"
         >
-          The Overlay
+          {t("overlay")}
         </motion.h2>
         <motion.p
           variants={fade}
           custom={1}
           className="text-sm text-foreground/50 text-center mb-10"
         >
-          Always there. Click to expand.
+          {t("overlayDesc")}
         </motion.p>
 
         <motion.div
@@ -121,7 +123,7 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
           {/* Compact Pill */}
           <div className="flex flex-col items-center">
             <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-foreground/30 mb-5">
-              Compact
+              {t("compact")}
             </p>
             <div className="relative">
               {/* Simulated desktop background */}
@@ -146,7 +148,7 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="gv-dot-pulse h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      <span className="text-[11px] font-medium text-foreground/60">Ready</span>
+                      <span className="text-[11px] font-medium text-foreground/60">{t("ready")}</span>
                     </div>
                   </div>
                 </div>
@@ -157,7 +159,7 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
           {/* Expanded Panel */}
           <div className="flex flex-col items-center">
             <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-foreground/30 mb-5">
-              Expanded
+              {t("expanded")}
             </p>
             <div className="w-full max-w-[280px] mx-auto">
               <div className="rounded-2xl border border-foreground/[0.08] bg-background/90 backdrop-blur-md shadow-lg overflow-hidden">
@@ -178,12 +180,12 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
                 <div className="space-y-2 p-3 min-h-[140px]">
                   <div className="gv-msg-1 flex justify-end">
                     <div className="max-w-[85%] rounded-2xl rounded-br-sm bg-foreground/[0.05] px-3 py-2">
-                      <p className="text-[10px] text-foreground/60">Update my resume</p>
+                      <p className="text-[10px] text-foreground/60">{t("exampleTask")}</p>
                     </div>
                   </div>
                   <div className="gv-msg-2 max-w-[85%]">
                     <div className="rounded-2xl rounded-bl-sm border border-foreground/[0.06] px-3 py-2">
-                      <p className="text-[10px] text-foreground/50">Opening resume.docx...</p>
+                      <p className="text-[10px] text-foreground/50">{t("exampleResponse")}</p>
                     </div>
                   </div>
                   <div className="gv-msg-3 max-w-[70%]">
@@ -198,7 +200,7 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
                 <div className="border-t border-foreground/[0.06] p-2.5">
                   <div className="flex items-center gap-2">
                     <div className="flex-1 rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] px-2.5 py-1.5 flex items-center">
-                      <span className="text-[10px] text-foreground/25">Describe your task...</span>
+                      <span className="text-[10px] text-foreground/25">{t("describePlaceholder")}</span>
                       <span className="gv-cursor-blink ml-0.5 w-px h-3 bg-foreground/30" />
                     </div>
                     <div className="flex h-6 w-6 items-center justify-center rounded-md bg-foreground/90">
@@ -229,15 +231,15 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-8 text-center"
         >
-          What it controls
+          {t("whatItControls")}
         </motion.h2>
 
         <motion.div variants={stagger} className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {capabilities.map((cap, i) => {
+          {capabilityKeys.map((cap, i) => {
             const Icon = cap.icon
             return (
               <motion.div
-                key={cap.title}
+                key={cap.key}
                 variants={fade}
                 custom={i + 1}
                 className="group rounded-2xl border border-foreground/[0.06] bg-foreground/[0.02] p-4 text-center transition-colors hover:bg-foreground/[0.04]"
@@ -245,8 +247,8 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
                 <div className="flex h-10 w-10 mx-auto items-center justify-center rounded-xl bg-foreground/[0.05] mb-3">
                   <Icon size={20} weight="duotone" className="text-foreground/50" />
                 </div>
-                <p className="text-[13px] font-semibold text-foreground/70 mb-0.5">{cap.title}</p>
-                <p className="text-[11px] text-foreground/35">{cap.line}</p>
+                <p className="text-[13px] font-semibold text-foreground/70 mb-0.5">{t(`controls.${cap.key}.name`)}</p>
+                <p className="text-[11px] text-foreground/35">{t(`controls.${cap.key}.desc`)}</p>
               </motion.div>
             )
           })}
@@ -265,7 +267,7 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
           custom={0}
           className="text-xl sm:text-2xl font-bold text-foreground tracking-tight mb-8 text-center"
         >
-          Two ways to run
+          {t("twoWays")}
         </motion.h2>
 
         <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -278,19 +280,19 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-foreground/[0.05] mb-4">
               <Cloud size={22} weight="duotone" className="text-foreground/50" />
             </div>
-            <p className="text-[15px] font-semibold text-foreground/70 mb-4">Cloud VM</p>
+            <p className="text-[15px] font-semibold text-foreground/70 mb-4">{t("cloudVm")}</p>
             <div className="space-y-3">
               <div className="flex items-start gap-2.5">
                 <ShieldCheck size={14} weight="duotone" className="text-foreground/30 mt-0.5 shrink-0" />
-                <p className="text-[12px] text-foreground/45 leading-relaxed">Fully isolated sandbox</p>
+                <p className="text-[12px] text-foreground/45 leading-relaxed">{t("cloudFeatures.isolated")}</p>
               </div>
               <div className="flex items-start gap-2.5">
                 <Browser size={14} weight="duotone" className="text-foreground/30 mt-0.5 shrink-0" />
-                <p className="text-[12px] text-foreground/45 leading-relaxed">Fresh browser, no history</p>
+                <p className="text-[12px] text-foreground/45 leading-relaxed">{t("cloudFeatures.freshBrowser")}</p>
               </div>
               <div className="flex items-start gap-2.5">
                 <ShieldCheck size={14} weight="duotone" className="text-foreground/30 mt-0.5 shrink-0" />
-                <p className="text-[12px] text-foreground/45 leading-relaxed">Maximum security</p>
+                <p className="text-[12px] text-foreground/45 leading-relaxed">{t("cloudFeatures.maxSecurity")}</p>
               </div>
             </div>
           </motion.div>
@@ -304,19 +306,19 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-foreground/[0.05] mb-4">
               <Monitor size={22} weight="duotone" className="text-foreground/50" />
             </div>
-            <p className="text-[15px] font-semibold text-foreground/70 mb-4">Desktop</p>
+            <p className="text-[15px] font-semibold text-foreground/70 mb-4">{t("desktopMode")}</p>
             <div className="space-y-3">
               <div className="flex items-start gap-2.5">
                 <FolderOpen size={14} weight="duotone" className="text-foreground/30 mt-0.5 shrink-0" />
-                <p className="text-[12px] text-foreground/45 leading-relaxed">Your files, direct access</p>
+                <p className="text-[12px] text-foreground/45 leading-relaxed">{t("desktopFeatures.yourFiles")}</p>
               </div>
               <div className="flex items-start gap-2.5">
                 <AppWindow size={14} weight="duotone" className="text-foreground/30 mt-0.5 shrink-0" />
-                <p className="text-[12px] text-foreground/45 leading-relaxed">Your installed apps</p>
+                <p className="text-[12px] text-foreground/45 leading-relaxed">{t("desktopFeatures.yourApps")}</p>
               </div>
               <div className="flex items-start gap-2.5">
                 <UserCircle size={14} weight="duotone" className="text-foreground/30 mt-0.5 shrink-0" />
-                <p className="text-[12px] text-foreground/45 leading-relaxed">Your logged-in sessions</p>
+                <p className="text-[12px] text-foreground/45 leading-relaxed">{t("desktopFeatures.yourSessions")}</p>
               </div>
             </div>
           </motion.div>
@@ -335,7 +337,7 @@ export function DesktopAppTab({ inApp }: { inApp: boolean }) {
           href="/download"
           className="inline-flex items-center gap-2.5 h-11 px-6 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
         >
-          Download Desktop App
+          {t("downloadCta")}
           <ArrowRight size={15} weight="bold" />
         </Link>
       </motion.div>
