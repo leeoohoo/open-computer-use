@@ -19,6 +19,8 @@ interface AccountDialogStore {
   section: AccountSectionType
   /** The path the user was on before opening the dialog */
   _previousPath: string | null
+  /** Whether open() pushed a history entry (overlay mode) vs direct URL visit */
+  _didPushState: boolean
   open: (section?: AccountSectionType) => void
   close: () => void
   setSection: (section: AccountSectionType) => void
@@ -30,6 +32,7 @@ export const useAccountDialog = create<AccountDialogStore>((set, get) => ({
   isOpen: false,
   section: "account",
   _previousPath: null,
+  _didPushState: false,
 
   open: (section = "account") => {
     if (typeof window === "undefined") return
@@ -38,27 +41,36 @@ export const useAccountDialog = create<AccountDialogStore>((set, get) => ({
     const currentPath = window.location.pathname + window.location.search
     const previousPath = currentPath.startsWith("/account") ? current._previousPath : currentPath
 
-    set({ isOpen: true, section, _previousPath: previousPath })
+    // Determine if this is an overlay (pushState) or already on /account route
+    const needsPush = !window.location.pathname.startsWith("/account") && window.location.pathname !== "/credits"
+
+    set({ isOpen: true, section, _previousPath: previousPath, _didPushState: needsPush })
 
     // Push /account?section=X to the URL
     const url = section === "account" ? "/account" : `/account?section=${section}`
-    if (window.location.pathname !== "/account" || window.location.search !== (section === "account" ? "" : `?section=${section}`)) {
+    if (needsPush) {
       window.history.pushState({ accountDialog: true, section }, "", url)
+    } else {
+      // Already on /account or /credits — just update the URL without adding history
+      window.history.replaceState({ accountDialog: true, section }, "", url)
     }
   },
 
   close: () => {
     if (typeof window === "undefined") return
-    const { _previousPath } = get()
-    set({ isOpen: false, _previousPath: null })
+    const { _didPushState } = get()
+    set({ isOpen: false, _previousPath: null, _didPushState: false })
 
-    // Navigate back to previous path
-    if (_previousPath && _previousPath !== window.location.pathname + window.location.search) {
-      window.history.pushState(null, "", _previousPath)
-    } else if (window.location.pathname === "/account" || window.location.pathname === "/credits") {
-      // If we're on /account directly (e.g. typed in URL), go to home
-      window.history.pushState(null, "", "/")
+    // Always clean up pointer-events that Radix may have set
+    document.body.style.pointerEvents = ""
+
+    if (_didPushState) {
+      // We pushed a history entry in open() — go back to undo it.
+      // This triggers popstate, but the handler checks isOpen (already false) so it's safe.
+      window.history.back()
     }
+    // If !_didPushState, user was on the actual /account or /credits route.
+    // The dialog component handles real Next.js navigation in this case.
   },
 
   setSection: (section) => {
