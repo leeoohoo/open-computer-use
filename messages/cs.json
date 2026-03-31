@@ -667,13 +667,16 @@
       "offTooltip": "Povolte režim roje pro spuštění vašeho promptu na více strojích současně",
       "decreaseMachines": "Snížit počet strojů",
       "increaseMachines": "Zvýšit počet strojů",
-      "machineLimit": "Až {max} rojových strojů na vašem plánu. Potřebujete více? Kontaktujte founders@coasty.ai"
+      "machineLimit": "Až {max} rojových strojů na vašem plánu. Potřebujete více? Kontaktujte founders@coasty.ai",
+      "label": "Multi-Run",
+      "upgradeCta": "Režim roje"
     },
     "desktop": {
       "connectLabel": "Připojit k ploše",
       "screenLabel": "Obrazovka {name}",
       "screenDefault": "Plocha",
-      "watchTooltip": "Sledujte svého agenta pracovat na samostatné obrazovce. Jen se ničeho nedotýkejte, jinak dostane trému!"
+      "watchTooltip": "Sledujte svého agenta pracovat na samostatné obrazovce. Jen se ničeho nedotýkejte, jinak dostane trému!",
+      "watchLabel": "Plocha"
     },
     "buttons": {
       "stop": "Stop",
@@ -727,50 +730,50 @@
     ],
     "taskTemplates": {
       "founder": {
-        "competitorReport": "Získat zprávu o konkurenci",
-        "warmLeads": "Vygenerovat 20 teplých leadů",
-        "pitchDeck": "Vytvořit návrh pitch decku"
+        "competitorReport": "Zpráva o konkurenci {company}",
+        "warmLeads": "Najít 20 leadů pro {company}",
+        "pitchDeck": "Návrh pitch decku {company}"
       },
       "developer": {
-        "findBugs": "Najít chyby na mém webu",
-        "performance": "Získat zprávu o výkonu",
-        "apiDocs": "Extrahovat API dokumentaci"
+        "findBugs": "Najít chyby na {company}",
+        "performance": "Audit výkonu {company}",
+        "apiDocs": "Extrahovat API docs {company}"
       },
       "marketer": {
-        "seoGap": "Získat SEO analýzu mezer",
-        "competitorAds": "Sledovat reklamy konkurence",
-        "trendingContent": "Získat trendy obsahové nápady"
+        "seoGap": "SEO analýza mezer {company}",
+        "competitorAds": "Sledovat reklamy rivalů {company}",
+        "trendingContent": "Trendové nápady pro {company}"
       },
       "product_manager": {
-        "reviewSummary": "Získat shrnutí recenzí",
-        "featureComparison": "Vytvořit srovnání funkcí",
-        "competitorLaunches": "Sledovat uvedení konkurentů na trh"
+        "reviewSummary": "Shrnutí recenzí {company}",
+        "featureComparison": "Srovnání funkcí {company}",
+        "competitorLaunches": "Sledovat uvedení rivalů {company}"
       },
       "data_analyst": {
-        "exportCsv": "Exportovat data webu do CSV",
-        "marketSizing": "Získat zprávu o velikosti trhu",
-        "benchmark": "Porovnat s odvětvím"
+        "exportCsv": "Export dat {company} do CSV",
+        "marketSizing": "Velikost trhu {company}",
+        "benchmark": "Benchmark {company} vs odvětví"
       },
       "operations": {
-        "enterRecords": "Zadat záznamy do našeho systému",
-        "cheapestVendor": "Najít nejlevnějšího dodavatele",
-        "invoiceSummary": "Získat shrnutí faktur"
+        "enterRecords": "Zadat záznamy do {company}",
+        "cheapestVendor": "Najít dodavatele pro {company}",
+        "invoiceSummary": "Shrnutí faktur {company}"
       },
       "designer": {
-        "designComparison": "Získat srovnání designu",
-        "responsiveAudit": "Spustit audit responzivity",
-        "inspiration": "Sbírat designovou inspiraci"
+        "designComparison": "{company} vs konkurence v designu",
+        "responsiveAudit": "Audit responzivity {company}",
+        "inspiration": "Designová inspirace pro {company}"
       }
     },
     "useCaseTemplates": {
-      "web_scraping": "Exportovat data webu do CSV",
-      "browser_automation": "Exportovat reporty z dashboardu",
-      "data_entry": "Zadat záznamy do naší aplikace",
-      "email_outreach": "Odeslat personalizovaný outreach",
-      "testing": "Získat kompletní QA report",
-      "ecommerce": "Získat cenové srovnání",
-      "social_media": "Publikovat a získat engagement",
-      "general_automation": "Spustit úkol na mém webu"
+      "web_scraping": "Extrahovat data webu {company}",
+      "browser_automation": "Exportovat reporty {company}",
+      "data_entry": "Zadat data do {company}",
+      "email_outreach": "Outreach pro {company}",
+      "testing": "QA test {company}",
+      "ecommerce": "Cenové srovnání {company}",
+      "social_media": "Publikovat o {company}",
+      "general_automation": "Automatizovat úkol na {company}"
     }
   },
   "chatMessages": {
@@ -873,7 +876,9 @@
       "usageThisWeek": "Spotřeba tento týden"
     },
     "talkToUs": "Mluvte s námi",
+    "talkToUsDesc": "Rezervujte 15min hovor",
     "inviteEarn": "Pozvěte a vydělávejte",
+    "inviteEarnDesc": "Získejte kredity zdarma",
     "user": "Uživatel",
     "account": "Účet",
     "tasks": "{count} úkolů",
@@ -1172,5 +1177,1642 @@
     "Připravujeme pracovní prostor",
     "Načítáme prostředky",
     "Systém se probouzí"
-  ]
+  ],
+  "quickStart": {
+    "greetingName": "Ahoj {name}!",
+    "greetingDefault": "Ahoj!",
+    "subtitle": "Vaše úkoly běží v zabezpečeném, izolovaném virtuálním počítači",
+    "tabs": {
+      "start": "Start",
+      "desktop": "Plocha",
+      "swarms": "Roje",
+      "schedules": "Plány"
+    },
+    "items": {
+      "computerReady": "Počítač připraven",
+      "pickComputer": "Vyberte počítač",
+      "createComputer": "Vytvořit počítač",
+      "loginsSaved": "Přihlášení uložena",
+      "addLogins": "Přidat přihlášení",
+      "askAnything": "Zeptejte se na cokoliv",
+      "macWindows": "Mac & Windows",
+      "mobileRemote": "Mobilní ovládání",
+      "freeDownload": "Stažení zdarma",
+      "onePrompt": "Jeden příkaz",
+      "manyAgents": "Mnoho agentů",
+      "combinedResult": "Kombinovaný výsledek",
+      "setCadence": "Nastavte interval",
+      "autoRuns": "Automatické spuštění",
+      "recurringResults": "Opakované výsledky",
+      "computerReadyDesc": "Připojeno a připraveno k provádění úkolů",
+      "pickComputerDesc": "Vyberte z dostupných strojů",
+      "createComputerDesc": "Vytvořte cloudový počítač během sekund",
+      "loginsSavedDesc": "Šifrované přihlašovací údaje připraveny k automatickému vyplnění",
+      "addLoginsDesc": "Uložte hesla pro automatický přístup k webům",
+      "askAnythingDesc": "Popište úkol a sledujte práci AI",
+      "macWindowsDesc": "Nativní aplikace pro váš desktop",
+      "mobileRemoteDesc": "Ovládejte agenta z jakéhokoli zařízení",
+      "freeDownloadDesc": "Lehká instalace, spuštění za sekundy",
+      "onePromptDesc": "Popište svůj cíl běžným jazykem",
+      "manyAgentsDesc": "Agenti pracují paralelně na více strojích",
+      "combinedResultDesc": "Všechny výsledky sloučeny do jedné zprávy",
+      "setCadenceDesc": "Hodinově, denně, týdně nebo vlastní cron",
+      "autoRunsDesc": "Agenti se spouštějí bez zásahu",
+      "recurringResultsDesc": "Zprávy doručeny podle vašeho plánu"
+    },
+    "cta": {
+      "downloadApp": "Stáhnout aplikaci",
+      "trySwarms": "Vyzkoušet roje",
+      "setUp": "Nastavit"
+    }
+  },
+  "machines": {
+    "title": "Virtuální stroje",
+    "subtitle": "Spravujte svá desktopová prostředí řízená AI",
+    "guide": "Průvodce",
+    "newMachine": "Nový stroj",
+    "filters": {
+      "all": "Vše",
+      "running": "Běžící",
+      "creating": "Vytváření",
+      "stopped": "Zastavené"
+    },
+    "desktopPromo": {
+      "text": "Přeskočte VM — spouštějte AI agenty na vlastním počítači s nativní aplikací. Ovládejte svou plochu z telefonu.",
+      "cta": "Získat aplikaci"
+    },
+    "emptyState": {
+      "title": "Skutečný AI zaměstnanec s plným přístupem k počítači",
+      "description": "Spusťte izolovaný virtuální stroj a nechte AI agenty procházet web, spouštět terminály a ovládat plochu — bez zásahu.",
+      "feature1": {
+        "title": "Plné ovládání plochy",
+        "description": "AI pohybuje myší, píše, kliká a naviguje jako skutečný uživatel."
+      },
+      "feature2": {
+        "title": "Jakýkoliv úkol automatizován",
+        "description": "Prohlížeč, terminál a UI — všichni agenti spolupracují v jednom VM."
+      },
+      "feature3": {
+        "title": "Izolované a bezpečné",
+        "description": "Každý stroj běží ve vlastním kontejneru — váš lokální systém zůstane nedotčen."
+      },
+      "cta": "Vytvořte svůj první stroj"
+    },
+    "noMachines": "Žádné stroje nenalezeny.",
+    "noFilteredMachines": "Žádné {filter} stroje",
+    "noFilteredDescription": "Žádné stroje aktuálně nejsou {filter}.",
+    "loadingMachines": "Načítání strojů...",
+    "toasts": {
+      "deleted": "Stroj úspěšně smazán",
+      "readyOpen": "Nyní se můžete připojit ke svému stroji.",
+      "open": "Otevřít",
+      "createFailed": "Zkuste prosím vytvořit stroj znovu.",
+      "fetchFailed": "Nepodařilo se načíst stroje"
+    }
+  },
+  "createMachine": {
+    "title": "Nový stroj",
+    "subtitle": "Spusťte cloudovou plochu — připraveno za ~30 sekund",
+    "freeExpiry": "Bezplatné stroje vyprší po ",
+    "freeExpiry2": "2 hodinách",
+    "upgrade": "Upgradovat",
+    "limitReached": "Dosáhli jste limitu strojů. Zastavte nebo smažte existující stroj pro vytvoření nového.",
+    "upgradeMore": "Upgradovat pro více →",
+    "nameLabel": "Název stroje",
+    "namePlaceholder": "Můj cloudový server",
+    "nameError": "Název stroje nemůže začínat na \"local\"",
+    "nameRequired": "Zadejte prosím název stroje",
+    "osLabel": "Operační systém",
+    "linux": {
+      "name": "Linux (Ubuntu)",
+      "description": "Ubuntu 22.04 plocha"
+    },
+    "windows": {
+      "name": "Windows Server",
+      "badge": "BETA",
+      "description": "Windows plocha — očekávejte chyby"
+    },
+    "osHintWindows": "Windows plocha s Chrome (beta). Připraveno za ~2 minuty.",
+    "osHintLinux": "Ubuntu plocha, přístupná přes prohlížeč. Připraveno za ~30 sekund.",
+    "stateLabel": "Stav stroje",
+    "restorePrevious": "Obnovit předchozí",
+    "restoreDescription": "Pokračovat z posledního snímku",
+    "startFresh": "Začít znovu",
+    "startFreshDescription": "Čisté desktopové prostředí",
+    "cancel": "Zrušit",
+    "creating": "Vytváření...",
+    "create": "Vytvořit stroj",
+    "toasts": {
+      "restoringSnapshot": "Obnovování stroje ze snímku!",
+      "restoringDescription": "Váš předchozí stav plochy se obnovuje. Připraveno za ~30 sekund.",
+      "windowsCreated": "Vytváření Windows stroje zahájeno!",
+      "windowsDescription": "Vaše Windows plocha se spouští. Připraveno za ~2 minuty.",
+      "linuxCreated": "Vaše plocha se spouští. Připraveno za ~30 sekund.",
+      "sshCreated": "Váš cloudový stroj se spouští. SSH klíč bude dostupný po připravení."
+    }
+  },
+  "secrets": {
+    "title": "Uložené přihlašovací údaje",
+    "subtitle": "Bezpečně uložené a automaticky používané AI agentem při přihlašování",
+    "guide": "Průvodce",
+    "import": "Importovat",
+    "addCredential": "Přidat přihlašovací údaj",
+    "securityNote": "Přihlašovací údaje nejsou nikdy odesílány AI modelu a nikdy nejsou zobrazeny v chatu — agent je vyplní přímo bez zobrazení hodnot",
+    "username": "Uživatelské jméno",
+    "password": "Heslo",
+    "hide": "Skrýt",
+    "revealFor10s": "Zobrazit na 10 s",
+    "encrypted": "Šifrované",
+    "emptyState": {
+      "title": "Automatické přihlášení, bez zásahu",
+      "description": "Uložte přihlašovací údaje jednou — AI agent se přihlásí automaticky a pokračuje bez přerušení",
+      "feature1": {
+        "title": "Žádná přerušení",
+        "description": "Agent narazí na přihlašovací formulář, vyplní ho a pokračuje v úkolu — žádné výzvy, žádné pauzy"
+      },
+      "feature2": {
+        "title": "AI nikdy nevidí",
+        "description": "Vaše přihlašovací údaje jsou vloženy přímo. AI model nikdy nevidí skutečné hodnoty"
+      },
+      "feature3": {
+        "title": "Jakýkoliv web",
+        "description": "Funguje s přihlašovacími formuláři na jakémkoliv webu — e-mail, SaaS nástroje, dashboardy, cokoliv"
+      },
+      "cta": "Přidejte svůj první přihlašovací údaj"
+    },
+    "deleteDialog": {
+      "title": "Smazat přihlašovací údaj?",
+      "description": "{name} ({service}) bude trvale smazán. AI agent ho již nebude moci používat.",
+      "cancel": "Zrušit",
+      "delete": "Smazat"
+    },
+    "toasts": {
+      "loadFailed": "Nepodařilo se načíst přihlašovací údaje",
+      "revealFailed": "Nepodařilo se zobrazit heslo",
+      "deleted": "Přihlašovací údaj smazán",
+      "deleteFailed": "Nepodařilo se smazat přihlašovací údaj"
+    },
+    "loading": "Načítání přihlašovacích údajů..."
+  },
+  "pricingPage": {
+    "hero": {
+      "title1": "Jednoduché ceny,",
+      "title2": "skutečný autopilot",
+      "subtitle": "Začněte zdarma. Upgradujte, když potřebujete více výkonu."
+    },
+    "plans": {
+      "free": {
+        "name": "Free",
+        "tagline": "Vyzkoušejte agenta č. 1 pro ovládání počítače",
+        "cta": "Začít zdarma"
+      },
+      "lite": {
+        "name": "Lite",
+        "tagline": "Lehká denní automatizace",
+        "cta": "Získat Lite"
+      },
+      "starter": {
+        "name": "Starter",
+        "tagline": "Automatizujte úkoly každý den",
+        "cta": "Získat Starter"
+      },
+      "plus": {
+        "name": "Plus",
+        "tagline": "Škálujte složité pracovní postupy",
+        "cta": "Přejít na Plus",
+        "badge": "Nejoblíbenější"
+      },
+      "pro": {
+        "name": "Pro",
+        "tagline": "Neomezená těžká automatizace",
+        "cta": "Získat Pro"
+      }
+    },
+    "features": {
+      "computerAgent": {
+        "name": "Coasty Computer Agent",
+        "description": "Plný prohlížeč, plocha a terminál",
+        "badge": "Základ"
+      },
+      "swarmMode": {
+        "name": "Režim roje",
+        "sequential": "Pouze sekvenční",
+        "parallel": "{count} agentů paralelně",
+        "badge": "Výkonný"
+      },
+      "security": {
+        "name": "Zabezpečení",
+        "description": "Sandboxované, E2E šifrované",
+        "badge": "Každý plán"
+      },
+      "monthlyCredits": {
+        "name": "Měsíční kredity",
+        "payAsYouGo": "Plaťte průběžně",
+        "creditsPerMonth": "{count} kreditů/měs."
+      },
+      "persistentMachines": {
+        "name": "Trvalé stroje",
+        "temporary": "1 dočasný VM (2 hod.)",
+        "deletedAfterInactivity": "1 VM (smazán po neaktivitě)",
+        "alwaysOn": "{count} stále zapnutý VM",
+        "alwaysOnPlural": "{count} stále zapnutých VM"
+      },
+      "webSearch": {
+        "name": "Webové vyhledávání",
+        "advanced": "Pokročilé vyhledávání a extrakce",
+        "basic": "Základní vyhledávání"
+      }
+    },
+    "animations": {
+      "agentDescription": "Váš agent ovládá skutečný počítač — prohlížeč, soubory a terminál",
+      "fillForm": "Vyplnit formulář",
+      "searchExtract": "Hledat a extrahovat",
+      "uploadReport": "Nahrát zprávu",
+      "navigateSite": "Procházet web",
+      "creditsPerMonth": "kreditů za měsíc",
+      "cr": "kr",
+      "vm": "VM {num}",
+      "twoHrLimit": "limit 2 hod.",
+      "alwaysOn": "Stále zapnutý",
+      "tempVmDescription": "Dočasný VM — resetuje se po 2 hodinách",
+      "persistentVmDescription": "Vaše soubory, aplikace a relace přetrvávají mezi úkoly",
+      "sequentialOnly": "Pouze sekvenční provádění na tomto plánu",
+      "yourTask": "Váš úkol",
+      "agentsWorking": "{count} agentů pracuje současně",
+      "upgradeForExtraction": "Upgradujte pro plnou extrakci",
+      "searchDescription": "Vyhledávání, scraping a extrakce strukturovaných dat",
+      "basicSearchIncluded": "Základní vyhledávání zahrnuto",
+      "e2eEncryption": "E2E šifrování",
+      "sandboxedVm": "Sandboxovaný VM",
+      "destroyedAfterUse": "Zničen po použití",
+      "everyPlan": "Každý plán. Bez výjimek."
+    },
+    "perMonth": "/měs.",
+    "faqs": {
+      "credits": {
+        "q": "Co se počítá jako kredit?",
+        "a": "Jeden kredit odpovídá přibližně jedné akci agenta — kliknutí, vyplnění formuláře, vyhledávacímu dotazu nebo operaci se souborem. Typický vícekrokový úkol spotřebuje 5–15 kreditů."
+      },
+      "persistent": {
+        "q": "Co znamená 'trvalý stroj'?",
+        "a": "Na placených plánech váš VM běží mezi úkoly — vaše plocha, soubory, relace prohlížeče a nainstalovaný software zůstávají zachovány. Jako váš vlastní stále zapnutý cloudový počítač."
+      },
+      "swarm": {
+        "q": "Co je režim roje?",
+        "a": "Režim roje rozdělí úkol mezi více strojů běžících současně. Místo jednoho agenta provádějícího 10 vyhledávání sekvenčně to více agentů udělá paralelně."
+      },
+      "cancel": {
+        "q": "Mohu kdykoli zrušit?",
+        "a": "Ano. Žádné smlouvy, žádné poplatky za zrušení. Zrušte ze stránky účtu a udržte přístup do konce fakturačního období."
+      },
+      "security": {
+        "q": "Jsou moje data v bezpečí?",
+        "a": "Každý úkol běží v plně izolovaném VM zničeném po použití. Všechna spojení jsou šifrována end-to-end a vaše přihlašovací údaje nikdy neukládáme."
+      }
+    },
+    "enterprise": {
+      "title": "Enterprise",
+      "description": "Vlastní kredity, dedikované VM, SLA, SSO a prioritní podpora.",
+      "cta": "Kontaktujte nás"
+    },
+    "footer": {
+      "title": "Váš AI agent je 60 sekund daleko",
+      "subtitle": "Zaregistrujte se a nechte Coasty pracovat.",
+      "noCreditCard": "Bez kreditní karty",
+      "cancelAnytime": "Zrušení kdykoli",
+      "noCreditCardRequired": "Kreditní karta není vyžadována",
+      "cancelAnytimeNoContracts": "Zrušení kdykoli — žádné smlouvy"
+    },
+    "questions": "Otázky"
+  },
+  "guide": {
+    "pageTitle": "Průvodce",
+    "pageSubtitle": "Od prvního nastavení po pokročilé funkce — naučte se, jak z Coasty vytěžit maximum",
+    "completeGuide": "Kompletní průvodce",
+    "completeGuideSubtitle": "Vše, co potřebujete vědět o Coasty",
+    "completeGuideDescription": "Od prvního nastavení po pokročilé funkce — naučte se, jak z vašeho AI agenta vytěžit maximum.",
+    "talkToCofounders": "Mluvte se zakladateli",
+    "tabs": {
+      "overview": "Přehled",
+      "gettingStarted": "Začínáme",
+      "chatTasks": "Chat a úkoly",
+      "machines": "Stroje",
+      "credentials": "Přihlašovací údaje",
+      "swarmMode": "Režim roje",
+      "workforce": "Pracovní síla",
+      "desktopApp": "Desktopová aplikace",
+      "billing": "Fakturace a kredity"
+    },
+    "overview": {
+      "howItWorks": "Jak to funguje",
+      "step1": "Popište úkol",
+      "step2": "Coasty naplánuje kroky",
+      "step3": "Provede autonomně",
+      "step": "Krok",
+      "whatCanDo": "Co Coasty umí",
+      "taskCount": "40+ úkolů v 10 kategoriích",
+      "categories": {
+        "sales": {
+          "name": "Prodej",
+          "desc": "Najděte 50 kontaktů, odešlete personalizované e-maily"
+        },
+        "marketing": {
+          "name": "Marketing",
+          "desc": "Publikujte blogové příspěvky, plánujte sociální média"
+        },
+        "jobApps": {
+          "name": "Žádosti o práci",
+          "desc": "Přihlaste se na 20 pozic, přizpůsobte každý životopis"
+        },
+        "email": {
+          "name": "E-mail",
+          "desc": "Sepisujte odpovědi, hromadné oslovení, odhlášení"
+        },
+        "dataEntry": {
+          "name": "Zadávání dat",
+          "desc": "Přenášejte data mezi aplikacemi, vytvářejte tabulky"
+        },
+        "research": {
+          "name": "Výzkum",
+          "desc": "Hloubkové zprávy, sledování konkurence"
+        },
+        "qaTesting": {
+          "name": "QA testování",
+          "desc": "Testujte registrace, zkoušejte formuláře, kontroly webu"
+        },
+        "hr": {
+          "name": "HR",
+          "desc": "Vyhledávejte kandidáty, personalizované oslovení"
+        },
+        "support": {
+          "name": "Podpora",
+          "desc": "Sepisujte odpovědi, aktualizujte nápovědu"
+        },
+        "productivity": {
+          "name": "Produktivita",
+          "desc": "Rezervujte cesty, plaťte účty, spravujte kalendáře"
+        }
+      },
+      "whyCoasty": "Proč Coasty",
+      "notChatbot": "Není to chatbot. Není to RPA skript.",
+      "worksLikeHuman": {
+        "title": "Pracuje jako člověk",
+        "desc": "Vidí, kliká, píše, naviguje — přesně jako vy"
+      },
+      "noScripts": {
+        "title": "Žádné skripty ani nastavení",
+        "desc": "Prostý text na vstupu, výsledky na výstupu"
+      },
+      "handlesUnexpected": {
+        "title": "Zvládá neočekávané",
+        "desc": "Přizpůsobí se CAPTCHA, vyskakovacím oknům, změnám rozvržení"
+      },
+      "runsInIsolation": {
+        "title": "Běží v izolaci",
+        "desc": "Sandboxovaný VM na relaci — nic neunikne"
+      },
+      "ctaTitle": "Vyberte si jakýkoli úkol a vyzkoušejte",
+      "ctaSubtitle": "Připraveni nechat Coasty pracovat?",
+      "ctaDescription": "Popište jakýkoli úkol z tohoto průvodce a sledujte, jak ho Coasty zvládne.",
+      "ctaNote": "Začněte zdarma. Kreditní karta není vyžadována.",
+      "startTask": "Zahájit úkol",
+      "startFree": "Začít zdarma",
+      "desktopApp": "Desktopová aplikace"
+    },
+    "gettingStarted": {
+      "steps": {
+        "signUp": {
+          "title": "Registrace",
+          "desc": "Jedním kliknutím začnete"
+        },
+        "createMachine": {
+          "title": "Vytvořte stroj",
+          "desc": "Váš agent dostane vlastní počítač"
+        },
+        "saveCredentials": {
+          "title": "Uložte přihlašovací údaje",
+          "desc": "Šifrované přihlášení pro jakýkoli web"
+        },
+        "giveTask": {
+          "title": "Zadejte úkol",
+          "desc": "Popište ho. Sledujte, jak se plní."
+        }
+      },
+      "examplePrompts": [
+        "Přihlas se na 10 odpovídajících pozic na LinkedIn s mým životopisem",
+        "Prozkoumej ceny konkurence a vytvoř srovnávací tabulku",
+        "Napiš a publikuj blogový příspěvek o [téma] na WordPress",
+        "Odhlásit mě ze všech marketingových e-mailů v Gmail",
+        "Otestuj registrační proces na mém webu a nahlas chyby",
+        "Najdi 50 kontaktů odpovídajících [ICP] na LinkedIn a přidej do mého CRM"
+      ],
+      "quickPrompts": "Rychlé příkazy k vyzkoušení",
+      "startFirstTask": "Zahajte svůj první úkol"
+    },
+    "chatTasks": {
+      "commandCenter": "Vaše velitelské centrum",
+      "describeTask": "Popište jakýkoli úkol. Sledujte, jak se plní.",
+      "examplePrompt": "Najdi 5 nejlepších bezdrátových klávesnic pod $50 na Amazon a porovnej je v tabulce.",
+      "exampleResponse": "Prohledám Amazon a vytvořím srovnání. Otevírám prohlížeč.",
+      "exampleDone": "Hotovo. Tabulka je uložena s cenou, hodnocením a funkcemi všech 5 klávesnic.",
+      "describePlaceholder": "Popište svůj úkol...",
+      "threeAgents": "Tři specializovaní agenti",
+      "autoAssigned": "Automaticky přiřazeni ke každému kroku.",
+      "browser": "Prohlížeč",
+      "browserDesc": "Navigace, klikání, vyplňování formulářů, scraping",
+      "terminal": "Terminál",
+      "terminalDesc": "Spouštění příkazů, instalace, zpracování souborů",
+      "desktop": "Plocha",
+      "desktopDesc": "Klikání, psaní, scrollování, otevírání aplikací",
+      "betterPrompts": "Pište lepší příkazy",
+      "specificBeatsVague": "Konkrétní vždy porazí vágní.",
+      "do": "Správně",
+      "dont": "Špatně",
+      "doExample1": "Přihlas se na 10 pozic softwarového inženýra na LinkedIn. Přizpůsob každý motivační dopis zmínkou o jejich tech stacku.",
+      "dontExample1": "Přihlas se na práce",
+      "doExample2": "Hledej na Google Flights SFO do JFK, 20.–25. března, zpáteční. Udělej screenshot 3 nejlevnějších.",
+      "dontExample2": "Najdi lety",
+      "readyToTry": "Připraveni vyzkoušet?",
+      "openChat": "Otevřete chat a popište, co potřebujete udělat.",
+      "startChat": "Zahájit chat"
+    },
+    "machinesTab": {
+      "title": "Vaše stroje",
+      "subtitle": "Plné Ubuntu desktopy, které spustíte za sekundy.",
+      "lifecycle": "Životní cyklus",
+      "lifecycleDesc": "Pět stavů, plně automaticky.",
+      "planLimits": "Limity plánu",
+      "planCol": "Plán",
+      "machinesCol": "Stroje",
+      "swarmAgentsCol": "Agenti roje",
+      "temp": "1 dočasný",
+      "states": {
+        "creating": "Vytváření",
+        "starting": "Spouštění",
+        "running": "Běží",
+        "stopping": "Zastavování",
+        "stopped": "Zastaveno"
+      },
+      "newMachine": "+ Nový",
+      "researchVm": "Výzkumný VM",
+      "emailVm": "E-mailový VM",
+      "testingVm": "Testovací VM",
+      "cores": "{count} jader",
+      "gb": "{count} GB",
+      "stop": "Zastavit",
+      "start": "Spustit",
+      "provisioning": "Zřizování...",
+      "spinUp": "Spustit stroj",
+      "goToMachines": "Přejít na stroje"
+    },
+    "credentialsTab": {
+      "loginDetected": "Přihlášení detekováno",
+      "matched": "Spárováno",
+      "credentialFound": "Přihlašovací údaj nalezen",
+      "autoFilled": "Automaticky vyplněno",
+      "autoFillTitle": "Automatické vyplňování v akci",
+      "autoFillDesc": "Přihlášení detekováno, údaj spárován, formulář vyplněn. Automaticky.",
+      "security": "Zabezpečení",
+      "encrypted": "Šifrované",
+      "aes256": "AES-256 v klidu",
+      "vmIsolated": "Izolované ve VM",
+      "sandboxed": "Sandboxované na relaci",
+      "neverLogged": "Nikdy nezaznamenáno",
+      "zeroTrace": "Žádná stopa v logech",
+      "savedCredentials": "Uložené přihlašovací údaje",
+      "addOnce": "Přidejte jednou, automaticky vyplňte všude.",
+      "saveFirst": "Uložte svůj první přihlašovací údaj",
+      "goToCredentials": "Přejít na uložené přihlašovací údaje"
+    },
+    "swarmTab": {
+      "title": "Režim roje",
+      "runParallel": "Spusťte {count} strojů paralelně",
+      "sameTask": "Stejný úkol, {multiplier}x výstup, stejný čas.",
+      "done": "Hotovo",
+      "running": "Běží",
+      "pending": "Čeká",
+      "result": "VÝSLEDEK",
+      "useCases": {
+        "parallelResearch": {
+          "title": "Paralelní výzkum",
+          "desc": "{count} konkurentů, {count} strojů, současně"
+        },
+        "bulkApplications": {
+          "title": "Hromadné přihlášky",
+          "desc": "Přihlaste se na více platformách současně"
+        },
+        "multiCitySearch": {
+          "title": "Vyhledávání ve více městech",
+          "desc": "Hledejte nabídky v {count} městech najednou"
+        },
+        "parallelOutreach": {
+          "title": "Paralelní oslovení",
+          "desc": "Personalizované e-maily různým segmentům"
+        },
+        "crossPlatform": {
+          "title": "Více platforem",
+          "desc": "Publikujte na {count} platformách současně"
+        },
+        "distributedTesting": {
+          "title": "Distribuované testování",
+          "desc": "Testujte více scénářů paralelně"
+        }
+      },
+      "whatToSwarm": "Co rojit",
+      "availability": "Dostupnost",
+      "freeNotAvailable": "Nedostupné",
+      "litePlus": "Lite+",
+      "agentRange": "2–9 agentů",
+      "startSwarm": "Spustit roj"
+    },
+    "workforceTab": {
+      "title": "Pracovní síla",
+      "subtitle": "Vaše AI firma na autopilotu",
+      "description": "Zaměstnanci, týmy, triggery — běží 24/7.",
+      "myCompany": "Moje firma",
+      "contentOps": "Content Ops",
+      "support": "Podpora",
+      "writer": "Autor",
+      "seo": "SEO",
+      "social": "Sociální sítě",
+      "inbox": "Doručená pošta",
+      "docs": "Dokumenty",
+      "concepts": "Klíčové koncepty",
+      "conceptItems": {
+        "employees": {
+          "title": "Zaměstnanci",
+          "desc": "AI agenti, kteří plní úkoly podle plánu, 24/7"
+        },
+        "teams": {
+          "title": "Týmy",
+          "desc": "Skupiny zaměstnanců se sdílenými instrukcemi"
+        },
+        "sharedMemory": {
+          "title": "Sdílená paměť",
+          "desc": "Úložiště klíč-hodnota, do kterého zaměstnanci čtou a zapisují"
+        },
+        "triggers": {
+          "title": "Triggery",
+          "desc": "Řetězte zaměstnance: jeden dokončí, další začne"
+        },
+        "delegates": {
+          "title": "Delegáti",
+          "desc": "Zaměstnanci přidělují dílčí úkoly specialistům"
+        },
+        "orgChart": {
+          "title": "Organizační diagram",
+          "desc": "Vizuální mapa hierarchie vaší firmy"
+        }
+      },
+      "chainTitle": "Řetězte zaměstnance dohromady",
+      "chainDesc": "Výstup automaticky plyne od jednoho k dalšímu.",
+      "scout": "Scout",
+      "scoutDesc": "zkoumá konkurenci",
+      "atlas": "Atlas",
+      "atlasDesc": "píše blogový příspěvek",
+      "nova": "Nova",
+      "novaDesc": "publikuje na sociální sítě",
+      "done": "Hotovo",
+      "onComplete": "on_complete",
+      "waiting": "Čeká",
+      "templates": "Začněte ze šablony",
+      "templateItems": {
+        "contentOps": {
+          "name": "Content Ops",
+          "plan": "Starter",
+          "count": "3"
+        },
+        "customerSupport": {
+          "name": "Zákaznická podpora",
+          "plan": "Starter",
+          "count": "3"
+        },
+        "marketing": {
+          "name": "Marketing",
+          "plan": "Plus",
+          "count": "7"
+        },
+        "ecommerce": {
+          "name": "E-Commerce",
+          "plan": "Plus",
+          "count": "7"
+        }
+      },
+      "employees": "{count} zaměstnanců",
+      "openWorkforce": "Otevřít pracovní sílu"
+    },
+    "billingTab": {
+      "credits": "Kredity",
+      "timeMetric": "Čas je jediná metrika.",
+      "rate": "Sazba",
+      "rateValue": "10",
+      "creditsPerMin": "kreditů/min",
+      "metered": "měřeno každých 30 s",
+      "example": "Příklad",
+      "minTask": "min úkol",
+      "startCredits": "Začátek: {count} kreditů",
+      "endCredits": "Konec: {count} kreditů",
+      "creditsUsed": "{count} kreditů spotřebováno",
+      "calculation": "{mins} min x 10 kreditů/min",
+      "plans": "Plány",
+      "planData": {
+        "free": {
+          "credits": "100",
+          "machines": "1 dočasný",
+          "feature": "Základní vyhledávání"
+        },
+        "lite": {
+          "credits": "100",
+          "machines": "1 stále zapnutý",
+          "feature": "2 paralelní agenti"
+        },
+        "starter": {
+          "credits": "200",
+          "machines": "1 stále zapnutý",
+          "feature": "Pokročilé vyhledávání"
+        },
+        "plus": {
+          "credits": "600",
+          "machines": "2 stále zapnuté",
+          "feature": "Prioritní podpora"
+        },
+        "pro": {
+          "credits": "1 500",
+          "machines": "3 stále zapnuté",
+          "feature": "Garance SLA"
+        }
+      },
+      "perMonth": "{price}/měs.",
+      "faqTitle": "FAQ",
+      "faqs": {
+        "howCharged": {
+          "q": "Jak se účtují kredity?",
+          "a": "10 kreditů za minutu provádění agenta, zaokrouhleno nahoru. Kontrolováno každých 30 sekund během relace."
+        },
+        "runOut": {
+          "q": "Co se stane, když mi dojdou?",
+          "a": "K zahájení úkolu potřebujete alespoň 20 kreditů. Při dosažení 0 se úkol pozastaví — kupte si doplněk pro pokračování."
+        },
+        "rollOver": {
+          "q": "Převádějí se nevyužité kredity?",
+          "a": "Kredity se resetují každý fakturační cyklus. Využijte je, nebo je ztratíte."
+        }
+      },
+      "goToBilling": "Přejít na fakturaci"
+    },
+    "desktopAppTab": {
+      "overlay": "Překryvná vrstva",
+      "overlayDesc": "Vždy po ruce. Klikněte pro rozbalení.",
+      "compact": "Kompaktní",
+      "expanded": "Rozbalený",
+      "ready": "Připraven",
+      "exampleTask": "Aktualizuj můj životopis",
+      "exampleResponse": "Otevírám resume.docx...",
+      "describePlaceholder": "Popište svůj úkol...",
+      "whatItControls": "Co ovládá",
+      "controls": {
+        "browser": {
+          "name": "Prohlížeč",
+          "desc": "Navigace, klikání, vyplňování formulářů"
+        },
+        "files": {
+          "name": "Soubory",
+          "desc": "Čtení, zápis, úpravy kdekoli"
+        },
+        "terminal": {
+          "name": "Terminál",
+          "desc": "Spuštění jakéhokoli příkazu shellu"
+        },
+        "desktop": {
+          "name": "Plocha",
+          "desc": "Klikání, psaní, scrollování"
+        },
+        "screenshots": {
+          "name": "Snímky obrazovky",
+          "desc": "Vidí to, co vidíte vy"
+        },
+        "apps": {
+          "name": "Aplikace",
+          "desc": "Ovládání jakékoli nainstalované aplikace"
+        }
+      },
+      "twoWays": "Dva způsoby spuštění",
+      "cloudVm": "Cloudový VM",
+      "cloudFeatures": {
+        "isolated": "Plně izolovaný sandbox",
+        "freshBrowser": "Čistý prohlížeč, žádná historie",
+        "maxSecurity": "Maximální zabezpečení"
+      },
+      "desktopMode": "Plocha",
+      "desktopFeatures": {
+        "yourFiles": "Vaše soubory, přímý přístup",
+        "yourApps": "Vaše nainstalované aplikace",
+        "yourSessions": "Vaše přihlášené relace"
+      },
+      "downloadCta": "Stáhnout desktopovou aplikaci"
+    }
+  },
+  "comparePage": {
+    "title": "Srovnání",
+    "heroTitle": "Coasty vs. konkurence",
+    "heroDescription": "Podívejte se, jak si vede AI agent č. 1 pro ovládání počítačů (82 % OSWorld) ve srovnání s alternativami. Podrobné srovnání funkcí s reálnými daty.",
+    "categories": {
+      "aiAgent": "AI agent",
+      "infrastructure": "Infrastruktura",
+      "rpa": "RPA",
+      "human": "Člověk"
+    },
+    "vsLabel": "Coasty vs {name}",
+    "ctaTitle": "Připraveni vyzkoušet AI agenta č. 1 pro ovládání počítačů?",
+    "ctaButton": "Vyzkoušejte Coasty zdarma",
+    "noCreditCard": "Není vyžadována platební karta",
+    "allComparisons": "Všechna srovnání",
+    "featureComparison": "Srovnání funkcí",
+    "whyChooseCoasty": "Proč si vybrat Coasty",
+    "strengthsOf": "Silné stránky {name}",
+    "ctaDescription": "82% OSWorld benchmark. Izolace VM. Řešení CAPTCHA. Od $20/měs.",
+    "watchCaseStudies": "Sledovat případové studie"
+  },
+  "agentSwarms": {
+    "badge": "Režim Agent Swarm",
+    "heroTitle1": "Jeden prompt.",
+    "heroTitle2": "Nekonečně strojů.",
+    "heroTitle3": "Paralelní výsledky.",
+    "heroDescription": "Rozdělte jakýkoli úkol mezi více izolovaných prostředí běžících současně. Práce na hodinu hotová za minuty.",
+    "trySwarmMode": "Vyzkoušet režim Swarm",
+    "seeInAction": "Vidět v akci",
+    "liveExecution": "swarm-tree — živé provádění",
+    "machineCount": "{count} strojů",
+    "running": "běží",
+    "threeSteps": "Tři kroky k paralelnímu provádění",
+    "steps": {
+      "typePrompt": {
+        "title": "Zadejte prompt",
+        "desc": "Popište úkol. Zapněte režim swarm a zvolte počet strojů."
+      },
+      "machinesSpinUp": {
+        "title": "Stroje se spustí",
+        "desc": "Každý získá plně izolované prostředí — prohlížeč, terminál, plochu."
+      },
+      "resultsStream": {
+        "title": "Výsledky proudí živě",
+        "desc": "Sledujte každý stroj v reálném čase přes zobrazení swarm stromu."
+      }
+    },
+    "demoTitle": "Ukázka Agent Swarms",
+    "demoDescription": "Sledujte, jak {count} strojů současně řeší výzkumný úkol CRM",
+    "prompt": "Prompt",
+    "swarm": "SWARM",
+    "run": "Spustit",
+    "reset": "Resetovat",
+    "allCompleted": "Všech {count} strojů dokončeno",
+    "speedComparison": "~{swarmTime} min místo ~{seqTime} min — {multiplier}x rychleji",
+    "seqVsSwarm": "Sekvenční vs Swarm",
+    "tableHeaders": {
+      "task": "Úkol",
+      "before": "Předtím",
+      "swarm": "Swarm",
+      "speed": "Rychlost"
+    },
+    "speedExamples": {
+      "crmResearch": "Průzkum 5 CRM nástrojů",
+      "qaPages": "QA přes 8 stránek",
+      "leadEnrichment": "Obohacení leadů (100)",
+      "priceMonitoring": "Sledování cen"
+    },
+    "builtForParallel": "Vytvořeno pro paralelní práci",
+    "useCases": {
+      "marketResearch": {
+        "title": "Průzkum trhu ve velkém",
+        "desc": "Zkoumejte více konkurentů, trhů nebo produktů současně na izolovaných strojích."
+      },
+      "leadGeneration": {
+        "title": "Generování leadů",
+        "desc": "Obohacujte profily, hledejte e-maily a ověřujte sociální přítomnost — hodiny práce za minuty."
+      },
+      "qaTesting": {
+        "title": "QA a regresní testování",
+        "desc": "Spouštějte testovací scénáře na různých stránkách nebo tocích paralelně."
+      },
+      "contentSocial": {
+        "title": "Obsah a sociální sítě",
+        "desc": "Publikujte na více platformách současně s izolací na úrovni stroje."
+      },
+      "dataExtraction": {
+        "title": "Extrakce dat",
+        "desc": "Sbírejte a strukturujte data z desítek zdrojů najednou."
+      },
+      "scheduledRuns": {
+        "title": "Plánované spuštění",
+        "desc": "Kombinujte režim swarm s plánováním pro opakované paralelní úkoly."
+      }
+    },
+    "featureStrip": {
+      "trueIsolation": {
+        "title": "Skutečná izolace",
+        "desc": "Každý stroj má vlastní prohlížeč, terminál a plochu."
+      },
+      "tripleMachineLimit": {
+        "title": "3x limit strojů",
+        "desc": "Režim swarm ztrojnásobí kapacitu strojů vašeho plánu."
+      },
+      "liveTreeView": {
+        "title": "Živé zobrazení stromu",
+        "desc": "Snímky obrazovky a volání nástrojů proudí v reálném čase."
+      },
+      "autoAggregation": {
+        "title": "Automatická agregace",
+        "desc": "Výsledky se spojí do jedné souhrnné zprávy."
+      },
+      "shareableRuns": {
+        "title": "Sdílitelné běhy",
+        "desc": "Přehrajte celé časové osy provádění přes odkaz."
+      },
+      "fullySandboxed": {
+        "title": "Plně sandboxované",
+        "desc": "Všechna prostředí jsou po dokončení zničena."
+      }
+    },
+    "readyCta": "Připraveni spouštět úkoly paralelně?",
+    "includedWithPaid": "Režim swarm je součástí každého placeného plánu.",
+    "getStarted": "Začít",
+    "viewPricing": "Zobrazit ceník",
+    "legend": {
+      "messages": "Zprávy",
+      "broadcast": "Vysílání",
+      "sharedMemory": "Sdílená paměť",
+      "help": "Nápověda"
+    },
+    "liveSwarmExecution": "Živé provádění swarm s komunikací agentů",
+    "popular": "Oblíbené",
+    "avgRating": "{rating} průměr"
+  },
+  "downloadPage": {
+    "title": "Desktopová aplikace",
+    "heroTitle": "Nechte Coasty ovládat váš počítač",
+    "heroDescription": "Váš AI asistent, který přebírá kontrolu. Automatizujte prohlížeč, plochu a terminál — nebo ovládejte počítač odkudkoli přes webové rozhraní.",
+    "seeInAction": "Vidět v akci",
+    "overlayDescription": "Lehký overlay plovoucí na vaší ploše. Ovládejte ho lokálně nebo vzdáleně z jakéhokoli prohlížeče — váš počítač, vaše pravidla.",
+    "recommended": "Doporučeno pro váš systém",
+    "coastyFor": "Coasty pro {platform}",
+    "installerLabel": "Instalátor {extension}",
+    "beforeInstall": "Před instalací",
+    "beforeInstallDescription": "Coasty Desktop je zcela nový, takže ho váš operační systém zatím nerozpozná. To je u nově vydaných aplikací zcela normální — postupujte takto:",
+    "windowsSteps": {
+      "step1": "Windows chránil váš počítač",
+      "step2": "Další informace",
+      "step3": "Přesto spustit"
+    },
+    "macSteps": {
+      "step1": "Coasty Desktop nelze otevřít",
+      "step2": "Nastavení systému > Soukromí a zabezpečení",
+      "step3": "Přesto otevřít"
+    },
+    "allPlatforms": "Všechny platformy",
+    "systemRequirements": {
+      "title": "Systémové požadavky",
+      "win1": "Windows 10 nebo novější",
+      "win2": "64bitový (x86_64)",
+      "win3": "Minimálně 4 GB RAM",
+      "mac1": "macOS 10.15 (Catalina) nebo novější",
+      "mac2": "Apple Silicon nebo Intel",
+      "mac3": "Minimálně 4 GB RAM"
+    },
+    "whatsIncluded": "Co je zahrnuto",
+    "features": {
+      "browser": "Automatizace prohlížeče",
+      "desktop": "Automatizace plochy",
+      "terminal": "Přístup k terminálu",
+      "files": "Operace se soubory",
+      "updates": "Automatické aktualizace",
+      "remote": "Ovládání odkudkoli"
+    },
+    "browserCta": "Otevřít Coasty v prohlížeči",
+    "browserCtaDescription": "Chcete ovládat svůj počítač odkudkoli?",
+    "loading": "Načítání...",
+    "downloadFor": "Stáhnout pro {platform}",
+    "download": "Stáhnout",
+    "unavailable": "Nedostupné"
+  },
+  "referralPage": {
+    "shareTitle": "Sdílejte Coasty.",
+    "earnTitle": "Vydělávejte společně.",
+    "shareDescription": "Dejte přátelům 50 kreditů zdarma na nasazení jejich prvního AI agenta. Vy získáte 50 kreditů také — pokaždé, když se někdo připojí.",
+    "features": [
+      "AI, které skutečně funguje — skutečný prohlížeč, skutečná kliknutí, skutečné výsledky",
+      "Izolované a bezpečné — každý agent běží ve vlastním sandboxovaném VM",
+      "Běží, když spíte — naplánujte úkoly a nechte agenty, ať se postarají"
+    ],
+    "recentActivity": "Vaše nedávná aktivita",
+    "friendsCould": "Vaši přátelé by to mohli dělat také",
+    "giveGet": "Dejte přátelům 50 kreditů. Získejte 50 pro sebe. Pokaždé.",
+    "stats": {
+      "invited": "Pozváno",
+      "earned": "Vyděláno",
+      "perInvite": "Za pozvánku"
+    },
+    "tabs": {
+      "invite": "Pozvat přátele",
+      "feedback": "Odeslat zpětnou vazbu"
+    },
+    "referralLink": "Váš odkaz na doporučení",
+    "howItWorks": "Jak to funguje",
+    "howSteps": [
+      "Sdílejte odkaz s přítelem",
+      "Zaregistrují se a získají 50 kreditů zdarma",
+      "Vy okamžitě získáte 50 kreditů také"
+    ],
+    "shareDirectly": "Sdílet přímo",
+    "yourReferrals": "Vaše doporučení",
+    "invitedYou": "Pozval vás",
+    "joinedViaLink": "Připojil se přes váš odkaz",
+    "noReferrals": "Zatím žádná doporučení",
+    "noReferralsHint": "Sdílejte odkaz výše a oba získáte 50 kreditů",
+    "feedbackThanks": "Děkujeme za zpětnou vazbu!",
+    "feedbackWeRead": "Čteme každou zprávu.",
+    "sendAnother": "Odeslat další",
+    "feedbackTitle": "Řekněte nám, co si myslíte",
+    "feedbackSubtitle": "Hlášení chyb, nápady na funkce, nebo jen pozdrav",
+    "feedbackPlaceholder": "Co vás zajímá?",
+    "weReadEvery": "Čteme každou zprávu",
+    "send": "Odeslat",
+    "shareMessage": "Ahoj, používám Coasty a je to super. Je to AI, které za tebe skutečně ovládá počítač. Prohlížení, klikání, psaní, prostě všechno. Vyzkoušej to přes můj odkaz a oba dostaneme kredity zdarma!",
+    "socialLabels": {
+      "x": "X",
+      "linkedin": "LinkedIn",
+      "whatsapp": "WhatsApp",
+      "telegram": "Telegram",
+      "reddit": "Reddit",
+      "email": "E-mail"
+    },
+    "emailSubject": "Podívej se na tento AI nástroj",
+    "emailBody": "Toto AI za tebe skutečně ovládá počítač. Prohlížení, klikání, psaní, prostě všechno."
+  },
+  "statusPage": {
+    "title": "Stav systému",
+    "brandTitle": "Stav Coasty",
+    "subtitle": "Provozní stav všech služeb Coasty v reálném čase. Tato stránka se automaticky obnovuje každých 60 sekund.",
+    "refresh": "Obnovit",
+    "statuses": {
+      "operational": "V provozu",
+      "degraded": "Snížený výkon",
+      "outage": "Výpadek"
+    },
+    "overallStatuses": {
+      "allOperational": "Všechny systémy v provozu",
+      "someDegraded": "Některé systémy se sníženým výkonem",
+      "disruption": "Zjištěno narušení služby"
+    },
+    "overallDescriptions": {
+      "allOperational": "Všechny služby běží hladce bez zjištěných problémů.",
+      "someDegraded": "Některé služby zaznamenávají zpomalení. Vyšetřujeme.",
+      "disruption": "Jsme si vědomi problému a aktivně pracujeme na opravě."
+    },
+    "responseTime": "{ms}ms doba odezvy",
+    "uptimeLabel": "Dostupnost za 90 dní",
+    "daysAgo": "Před 90 dny",
+    "today": "Dnes",
+    "overallUptime": "Celková dostupnost za 90 dní",
+    "overallUptimeDesc": "Souhrnná dostupnost napříč všemi službami",
+    "services": "Služby",
+    "clickUptime": "kliknutím zobrazíte dostupnost",
+    "lastChecked": "Naposledy zkontrolováno {time} · Automatická obnova každých 60s",
+    "experiencingIssues": "Máte problémy?",
+    "issuesDescription": "Pokud něco nefunguje správně, kontaktujte nás přímo.",
+    "talkToCofounders": "Mluvit se zakladateli",
+    "emailUs": "Napište nám",
+    "serviceNames": {
+      "website": "Webové stránky",
+      "aiBackend": "AI Backend",
+      "database": "Databáze",
+      "authentication": "Autentizace",
+      "aiModels": "AI modely",
+      "fileStorage": "Úložiště souborů"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Coasty - #1 AI agent ovládající počítač | AI zaměstnanec pro automatizaci desktopu a prohlížeče",
+      "titleTemplate": "{title} | Coasty - AI agent pro ovládání počítače",
+      "description": "Coasty je #1 hodnocený AI agent ovládající počítač — 82% v benchmarku OSWorld. Ovládá plný desktop jako člověk: otevírá prohlížeče, kliká, píše, vyplňuje formuláře, posílá e-maily, spravuje tabulky. Skutečná izolace na úrovni VM pro každou relaci. Od $20/měs.",
+      "ogTitle": "Coasty - #1 AI agent ovládající počítač | 82% OSWorld benchmark",
+      "ogDescription": "AI zaměstnanec, který ovládá desktop jako člověk. #1 v benchmarku OSWorld (82%). Automatizace prohlížeče, ovládání desktopu, řešení CAPTCHA, izolace VM. Od $20/měs.",
+      "twitterDescription": "AI zaměstnanec, který ovládá desktop jako člověk. Otevírá prohlížeče, kliká, píše, vyplňuje formuláře, posílá e-maily. Skutečná izolace VM. $20/měs. vs $3 000/měs. lidský asistent."
+    },
+    "compare": {
+      "title": "Porovnání Coasty - Alternativy AI agentů a srovnání s konkurencí",
+      "description": "Podívejte se, jak se #1 hodnocený AI agent ovládající počítač od Coasty srovnává s Anthropic Computer Use, OpenAI Operator, Adept AI, UiPath a dalšími. Srovnání funkcí s cenami.",
+      "ogTitle": "Porovnejte Coasty s alternativami AI agentů",
+      "ogDescription": "Srovnání funkcí #1 AI agenta ovládajícího počítač s konkurencí. Výsledky benchmarků, ceny, schopnosti."
+    },
+    "download": {
+      "title": "Stáhnout desktopovou aplikaci Coasty — AI agent pro Mac a Windows",
+      "description": "Stáhněte si Coasty Desktop, #1 AI agenta ovládajícího počítač, který řídí váš lokální stroj. Automatizace prohlížeče, ovládání desktopu, přístup k terminálu a souborové operace. K dispozici pro Windows a macOS.",
+      "ogTitle": "Stáhnout Coasty Desktop — AI agent pro Mac a Windows",
+      "ogDescription": "AI, které ovládá váš počítač jako člověk. Automatizace prohlížeče, desktopu a terminálu v jedné nativní aplikaci. #1 v benchmarku OSWorld."
+    },
+    "guide": {
+      "title": "Co Coasty umí? — Kompletní průvodce automatizací počítače pomocí AI",
+      "description": "Objevte vše, co Coasty dokáže automatizovat: vyhledávání obchodních příležitostí, e-mailové kampaně, žádosti o zaměstnání, QA testování, zadávání dat, sociální média, nábor, výzkum a více než 100 dalších úkolů.",
+      "ogTitle": "Co Coasty umí? — Kompletní průvodce AI automatizací",
+      "ogDescription": "Prozkoumejte více než 100 úkolů, které Coasty dokáže automatizovat. Od obchodních kampaní po QA testování — podívejte se, jak AI agent zvládá reálnou práci."
+    },
+    "blog": {
+      "title": "Blog - Poznatky o AI agentech, výzkum ovládání počítačů a případové studie",
+      "description": "Hluboké ponory do autonomních AI agentů, technologie ovládání počítačů, reálných případových studií automatizace a budoucnosti AI zaměstnanců. Od týmu za #1 AI agentem ovládajícím počítač.",
+      "ogTitle": "Blog Coasty - Poznatky o AI agentech a případové studie",
+      "ogDescription": "Hluboké ponory do autonomních AI agentů, technologie ovládání počítačů a reálných případových studií automatizace od #1 hodnoceného AI agenta."
+    },
+    "results": {
+      "title": "Ukázky a výsledky — Sledujte AI agenta Coasty při autonomní práci",
+      "description": "Sledujte, jak Coasty autonomně řídí marketingové kampaně, podává žádosti o zaměstnání, vyplňuje přihlášky, QA testuje produkty, posílá personalizované e-maily a mnohem více. Reálné případové studie s video ukázkami.",
+      "ogTitle": "Ukázky — Sledujte AI agenta Coasty při autonomní práci",
+      "ogDescription": "Reálné ukázky AI ovládajícího počítač: marketing, žádosti o zaměstnání, QA testování, e-mailové kampaně a další. #1 v benchmarku OSWorld."
+    },
+    "terms": {
+      "title": "Podmínky služby",
+      "description": "Podmínky služby Coasty. Přečtěte si podmínky upravující používání platformy AI zaměstnance Coasty, agenta ovládajícího počítač a desktopové aplikace."
+    },
+    "privacy": {
+      "title": "Zásady ochrany osobních údajů",
+      "description": "Zásady ochrany osobních údajů Coasty. Zjistěte, jak chráníme vaše data izolací na úrovni VM, šifrovanými relacemi, sandboxovanými prostředími a zabezpečením podnikové úrovně."
+    },
+    "useCases": {
+      "title": "Případy použití - AI agent Coasty pro firemní operace",
+      "description": "Objevte 12 způsobů, jak AI agent Coasty automatizuje vaše operace — průzkum konkurence, QA testování, generování leadů, e-mailové kampaně a další. Skutečné výsledky.",
+      "ogTitle": "Případy použití - AI agent Coasty",
+      "ogDescription": "12 způsobů, jak 10× zvýšit váš výkon na autopilota. Skutečné výsledky, skutečná čísla."
+    },
+    "computerUse": {
+      "title": "AI agent pro ovládání počítače — #1 hodnocená automatizace desktopu, prohlížeče a terminálu",
+      "description": "Coasty je nejlepší AI agent pro ovládání počítače, #1 v OSWorld (82%). Automatizujte jakoukoli úlohu na desktopu, v prohlížeči nebo terminálu s autonomním AI, které ovládá počítače jako člověk.",
+      "ogTitle": "Coasty — #1 AI agent pro ovládání počítače",
+      "ogDescription": "Nejlepší agent pro ovládání počítače, #1 v OSWorld. Automatizujte jakoukoli úlohu na desktopu, v prohlížeči nebo terminálu s AI."
+    },
+    "pricing": {
+      "title": "Ceník — Plány a ceny AI agenta Coasty",
+      "description": "Cenové plány Coasty od $20/měs. Nahraďte virtuální asistenty za $3 000/měs. AI zaměstnancem. K dispozici bezplatný tarif. Kreditové využití bez skrytých poplatků.",
+      "ogTitle": "Ceník Coasty — Plány AI agenta",
+      "ogDescription": "AI zaměstnanec od $20/měs. Nahraďte drahé virtuální asistenty autonomním AI. Bezplatný tarif k dispozici."
+    },
+    "faq": {
+      "q1": "Co je Coasty?",
+      "a1": "Coasty je platforma AI zaměstnance — agent ovládající počítač, který řídí desktop jako člověk. Otevírá prohlížeče, kliká, píše, naviguje v aplikacích, vyplňuje formuláře, posílá e-maily a spravuje tabulky autonomně. #1 v benchmarku OSWorld s 82% mírou dokončení u 369 reálných úkolů.",
+      "q2": "Jak se Coasty srovnává s Anthropic Computer Use?",
+      "a2": "Zatímco Anthropic Computer Use poskytuje surové API pro ovládání počítače, Coasty je produkčně připravená platforma se spravovanou VM infrastrukturou, vestavěným řešením CAPTCHA, desktopovou aplikací pro Mac a Windows, podporou více modelů a nejvyšším skóre v benchmarku OSWorld (82%). Coasty poskytuje kompletní řešení — nejen API.",
+      "q3": "Kolik stojí Coasty?",
+      "a3": "Coasty začíná na $20/měsíc s plánem Starter a bezplatný tarif je k dispozici. To ve srovnání s více než $3 000/měsíc za lidského virtuálního asistenta. Coasty pracuje 24/7 bez přestávek, bez školení a s okamžitou škálovatelností.",
+      "q4": "Je Coasty bezpečný?",
+      "a4": "Ano. Každá relace Coasty běží ve vlastním izolovaném, sandboxovaném virtuálním stroji. Vaše data zůstávají v bezpečí, váš stroj zůstává nedotčen a nic neuniká mezi relacemi. Toto je skutečná izolace na úrovni VM, nikoli jen kontejnery ve sdíleném prostředí.",
+      "q5": "Co je benchmark OSWorld?",
+      "a5": "OSWorld je benchmark pro hodnocení AI agentů na reálných počítačových úkolech. Testuje 369 úkolů v prohlížečích, kancelářských aplikacích a systémových operacích. Coasty dosáhl 82%, nejvyššího skóre ze všech agentů ovládajících počítač — dosahujícího nejlepšího výkonu v oboru.",
+      "q6": "Jak se Coasty liší od RPA nástrojů jako UiPath?",
+      "a6": "Tradiční RPA nástroje jako UiPath vyžadují křehké skripty a selhávají při změnách rozhraní. Coasty používá AI vidění k pochopení a interakci s jakýmkoli rozhraním, adaptuje se v reálném čase bez předem definovaných skriptů. Funguje jako člověk, ne jako makro. Nastavení trvá minuty místo týdnů.",
+      "q7": "Má Coasty desktopovou aplikaci?",
+      "a7": "Ano. Coasty Desktop je k dispozici pro Mac i Windows. Funguje jako plovoucí překrytí na vašem desktopu a může přímo ovládat váš lokální prohlížeč, soubory, terminál a aplikace — pro lokální úkoly není potřeba VM.",
+      "q8": "Co může Coasty automatizovat?",
+      "a8": "Coasty může automatizovat prakticky jakýkoli počítačový úkol: procházení webu, vyplňování formulářů, odesílání e-mailů, správu tabulek, zadávání dat, příspěvky na sociálních sítích, žádosti o zaměstnání, vyhledávání obchodních příležitostí, QA testování, zákaznickou podporu, nábor na LinkedIn a mnohem více. Pokud to člověk dokáže na počítači, Coasty to zvládne také.",
+      "q9": "Jak se Coasty srovnává s OpenAI Operator?",
+      "a9": "Coasty překonává OpenAI Operator v benchmarku OSWorld (82% vs ~40%), nabízí skutečnou izolaci na úrovni VM pro každou relaci, podporuje více AI modelů, zahrnuje plné ovládání desktopu nejen prohlížeče a poskytuje open-source framework.",
+      "q10": "Umí Coasty řešit CAPTCHA?",
+      "a10": "Ano. Coasty má vestavěný pipeline pro řešení CAPTCHA, takže se nezasekne jako konkurenční AI agenti. To je zásadní pro reálnou automatizaci, kde jsou CAPTCHA na webových stránkách běžné."
+    },
+    "structuredData": {
+      "appDescription": "#1 hodnocený AI agent ovládající počítač. Coasty ovládá plný desktop jako člověk — otevírá prohlížeče, kliká, píše, vyplňuje formuláře, posílá e-maily a spravuje tabulky autonomně. 82% v benchmarku OSWorld. Skutečná izolace na úrovni VM. Vestavěné řešení CAPTCHA. Od $20/měsíc.",
+      "orgDescription": "Coasty vyvíjí #1 AI agenta ovládajícího počítač. Naše platforma poskytuje autonomní ovládání desktopu, automatizaci prohlížeče a orchestraci více agentů se skutečnou izolací na úrovni VM.",
+      "productDescription": "AI agent ovládající počítač, který řídí desktop jako člověk. #1 v benchmarku OSWorld (82%). Autonomní automatizace prohlížeče, ovládání desktopu, odesílání e-mailů, vyplňování formulářů a správa tabulek se skutečnou izolací na úrovni VM.",
+      "websiteDescription": "#1 platforma AI agenta ovládajícího počítač. 82% OSWorld benchmark. Autonomní automatizace prohlížeče, desktopu a terminálu s izolací VM. Od $20/měs.",
+      "softwareDescription": "AI agent ovládající počítač, který řídí plný desktop jako člověk. #1 v benchmarku OSWorld s 82% mírou dokončení u 369 reálných úkolů. Autonomní automatizace prohlížeče, ovládání desktopu, terminálové operace, odesílání e-mailů, vyplňování formulářů a správa tabulek.",
+      "breadcrumbs": {
+        "home": "Domů",
+        "caseStudies": "Případové studie AI agenta",
+        "blog": "Blog",
+        "download": "Stáhnout desktopovou aplikaci",
+        "compare": "Porovnat AI agenty"
+      }
+    }
+  },
+  "errorPages": {
+    "notFound": {
+      "title": "404 – Stránka nenalezena",
+      "description": "Omlouváme se, tato stránka neexistuje."
+    },
+    "error": {
+      "title": "Něco se pokazilo",
+      "description": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
+      "tryAgain": "Zkusit znovu"
+    }
+  },
+  "schedulesPage": {
+    "title": "Pracovní síla",
+    "subtitle": "Vaše AI pracovní síla — přidělte úkoly a nechte je, ať se postarají o zbytek",
+    "guide": "Průvodce",
+    "hireEmployee": "Přijmout zaměstnance",
+    "loading": "Načítání vašich zaměstnanců...",
+    "onDuty": "{count} ve službě",
+    "standby": "{count} v pohotovosti",
+    "company": "Společnost",
+    "teams": "{count} týmů",
+    "employees": "{count} zaměstnanců",
+    "members": "{count} členů",
+    "unassigned": "Nepřiřazeno",
+    "add": "Přidat",
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "run": "Spustit",
+    "delegate": "delegovat",
+    "untitledEmployee": "Nepojmenovaný zaměstnanec",
+    "untitled": "Bez názvu",
+    "guidelinesPlaceholder": "Pokyny...",
+    "today": "Dnes",
+    "timesDaily": "{count} × denně",
+    "noEmployeesDay": "Žádní zaměstnanci v tento den",
+    "noEmployeesScheduled": "Žádní naplánovaní zaměstnanci",
+    "recentActivity": "Nedávná aktivita",
+    "schedule": "Rozvrh",
+    "emptyState": {
+      "openChat": "Otevřete libovolný chat a klikněte na",
+      "assignEmployee": "Přiřadit zaměstnance",
+      "onThe": "v",
+      "topRight": "pravém horním rohu",
+      "toPutOnAutopilot": "pro automatický režim",
+      "newChat": "Nový chat"
+    },
+    "emptyWorkforce": {
+      "title": "Přijměte svého prvního zaměstnance",
+      "description": "AI zaměstnanci pracují vaším jménem — přidělte úkol, nastavte rozvrh a oni ho provedou automaticky",
+      "flexibleShifts": {
+        "title": "Flexibilní směny",
+        "desc": "Naplánujte zaměstnance každou hodinu, denně, týdně, měsíčně — nebo použijte vlastní cron výraz"
+      },
+      "fullAutonomy": {
+        "title": "Plná autonomie",
+        "desc": "Každý zaměstnanec má plný přístup k prohlížení, terminálu a vašim připojeným pracovním stanicím"
+      },
+      "activityLogs": {
+        "title": "Záznamy aktivit",
+        "desc": "Každé provedení je zaznamenáno, abyste mohli zkontrolovat, co vaši zaměstnanci udělali"
+      },
+      "startFromChat": "Začít z chatu"
+    },
+    "filters": {
+      "all": "Vše",
+      "onDuty": "Ve službě",
+      "standby": "V pohotovosti"
+    },
+    "noMatch": "Žádní zaměstnanci neodpovídají tomuto filtru",
+    "createTeam": {
+      "title": "Nový tým",
+      "subtitle": "Začněte se šablonou nebo vytvořte od nuly",
+      "backToTemplates": "Zpět na šablony",
+      "customTeam": "Vlastní tým",
+      "customDescription": "Vytvořte tým s vlastní konfigurací.",
+      "teamNameLabel": "Název týmu",
+      "teamNamePlaceholder": "např. Výzkum, Marketing, Inženýrství",
+      "guidelinesLabel": "Pokyny",
+      "optional": "(volitelné)",
+      "guidelinesPlaceholder": "Sdílené instrukce, které budou všichni členové týmu dodržovat...",
+      "suggestedEmployees": "Doporučení zaměstnanci",
+      "suggestedCredentials": "Doporučené přístupové údaje",
+      "added": "Přidáno",
+      "addButton": "+ Přidat",
+      "credentials": "Přístupové údaje",
+      "addCredential": "+ Přidat přístupové údaje",
+      "credentialHint": "Přístupové údaje jsou šifrovány. Budou zahrnuty v pokynech týmu, aby zaměstnanci věděli, co je k dispozici.",
+      "settingUp": "Nastavování...",
+      "createEmployees": "Vytvořit {count} zaměstnanců",
+      "createTeamButton": "Vytvořit tým"
+    },
+    "noTeams": {
+      "title": "Zatím žádné týmy",
+      "description": "Týmy umožňují zaměstnancům sdílet kontext a paměť. Vytvořte jeden pro sestavení organizace.",
+      "newTeam": "Nový tým"
+    },
+    "howItWorks": {
+      "title": "Jak to funguje",
+      "dragEmployees": "Přetáhněte zaměstnance do týmu",
+      "clickToEdit": "Kliknutím upravte rozvrh a nastavení",
+      "teamsShare": "Týmy sdílejí paměť a pokyny",
+      "dashedLines": "Přerušované čáry — delegování mezi zaměstnanci"
+    },
+    "inactive": {
+      "title": "{count} neaktivních zaměstnanců",
+      "missingMachine": "{count} chybí stroj — nepoběží, dokud nebude aktivován",
+      "wontRun": "Nepoběží, dokud nebude aktivován",
+      "fixInEmployees": "Opravit v Zaměstnanci"
+    },
+    "dragHint": "Přetáhněte nepřiřazené zaměstnance do týmů",
+    "limits": {
+      "upgradePlan": "Upgradovat plán",
+      "manageMachines": "Spravovat stroje",
+      "manageEmployees": "Spravovat zaměstnance",
+      "machineLimit": "Potřebujete cloudový stroj, ale dosáhli jste limitu {max} strojů. Upgradujte plán nebo smažte nepoužívaný stroj.",
+      "employeeLimit": "Dosáhli jste limitu zaměstnanců ({max} pro úroveň {tier}). Upgradujte plán nebo odstraňte nepoužívané zaměstnance.",
+      "templateLimit": "Tato šablona potřebuje {needed} zaměstnanců, ale zbývá vám pouze {available} míst ({max} max pro úroveň {tier}). Upgradujte plán nebo odstraňte nepoužívané zaměstnance.",
+      "createFailed": "Nepodařilo se vytvořit žádné zaměstnance. Zkontrolujte limity účtu a zkuste to znovu.",
+      "teamFailed": "Nepodařilo se vytvořit tým"
+    },
+    "provisioning": {
+      "checking": "Kontrola limitů účtu...",
+      "usingMachine": "Používá se stroj \"{name}\"...",
+      "assigningMachine": "Přiřazování ke stroji \"{name}\" (spustí se, až bude stroj připraven)...",
+      "creatingMachine": "Vytváření nového stroje...",
+      "machineStarted": "Zahájeno zřizování stroje...",
+      "hiring": "Přijímání {name} ({current}/{total})...",
+      "creatingTeam": "Vytváření týmu..."
+    },
+    "toasts": {
+      "teamCreatedPartial": "Tým vytvořen s {count} zaměstnanci ({failedCount} selhalo: {names})",
+      "teamCreated": "Tým {name} vytvořen s {count} zaměstnanci"
+    },
+    "credentialInstructions": "[DOSTUPNÉ PŘÍSTUPOVÉ ÚDAJE]\nNásledující přístupové údaje služeb byly nakonfigurovány a jsou k dispozici:\n{list}\nPoužijte tyto přístupové údaje, když se potřebujete přihlásit k těmto službám pro splnění vašich úkolů.",
+    "templates": {
+      "contentOps": {
+        "name": "Obsahové operace",
+        "tagline": "Publikuťe konzistentně bez hnutí prstem",
+        "description": "Efektivní obsahový stroj — píše, optimalizuje a distribuuje obsah na autopilotu.",
+        "roles": {
+          "atlas": "Autor obsahu — píše blogové příspěvky, newslettery a texty pro sociální sítě",
+          "echo": "SEO analytik — audituje stránky, sleduje pozice, navrhuje příležitosti klíčových slov",
+          "nova": "Distribuce na sociálních sítích — zveřejňuje obsah na platformách a sleduje zapojeno"
+        },
+        "credentials": {
+          "wordpress": "Publikování a správa blogových příspěvků",
+          "twitter": "Zveřejňování tweetů a sledování zapojeno",
+          "linkedin": "Publikování profesionálního obsahu a článků",
+          "searchConsole": "Sledování výkonu vyhledávání a indexace"
+        }
+      },
+      "customerSupport": {
+        "name": "Zákaznická podpora",
+        "tagline": "Podpora 24/7 od 3 zaměstnanců",
+        "description": "Monitoruje schránky, řeší běžné problémy a udržuje vaši znalostní bázi aktuální.",
+        "roles": {
+          "sage": "Monitor schránky — kontroluje e-maily podpory, kategorizuje a odpovídá na běžné dotazy",
+          "iris": "Správce znalostní báze — aktualizuje nápovědu a FAQ na základě opakujících se problémů",
+          "milo": "Analytik zpětné vazby — shromažďuje recenze a trendy podpory do týdenních zpráv"
+        },
+        "credentials": {
+          "gmail": "Monitorování a odpovídání na e-maily podpory",
+          "zendesk": "Správa tiketů podpory (nebo váš helpdesk)",
+          "notion": "Aktualizace znalostní báze a dokumentace"
+        }
+      },
+      "researchIntel": {
+        "name": "Výzkum a zpravodajství",
+        "tagline": "Zůstaňte informováni bez manuální práce",
+        "description": "Monitoruje konkurenci, sleduje oborové trendy a sestavuje aktualizované výzkumné briefy.",
+        "roles": {
+          "scout": "Monitor konkurence — sleduje weby konkurentů, ceny a změny funkcí",
+          "wren": "Výzkumník trendů — skenuje oborové zprávy, publikace a sociální média",
+          "quinn": "Sestavovač briefů — syntetizuje zjištění do strukturovaných týdenních zpravodajských zpráv"
+        },
+        "credentials": {
+          "google": "Webový výzkum a vyhledávání",
+          "linkedin": "Sledování náboru a oznámení konkurence",
+          "notion": "Publikování výzkumných briefů a zpráv"
+        }
+      },
+      "marketing": {
+        "name": "Marketingové oddělení",
+        "tagline": "Kompletní marketingový tým ve dvou strojích",
+        "description": "Tvorba obsahu, sociální média, SEO, sledování konkurence a analytika kampaní — dva koordinované týmy.",
+        "roles": {
+          "atlas": "Obsahový strateg — plánuje kalendář obsahu, píše dlouhé texty",
+          "nova": "Manažer sociálních médií — přispívá, komunikuje a rozvíjí sociální kanály",
+          "echo": "SEO specialista — optimalizuje stránky, buduje interní odkazy, sleduje klíčová slova",
+          "pixel": "Manažer e-mailových kampaní — píše a odesílá newslettery, sleduje otevření/kliknutí",
+          "scout": "Analytik konkurence — monitoruje marketingové kroky konkurence a podává zprávy",
+          "dash": "Monitor reklamních kampaní — sleduje výdaje na reklamu, ROAS a příležitosti optimalizace",
+          "iris": "Analytik reportů — sestavuje výkonnostní přehledy napříč kanály"
+        },
+        "credentials": {
+          "wordpress": "Publikování blogového obsahu",
+          "twitter": "Správa sociálních médií",
+          "linkedin": "Distribuce profesionálního obsahu",
+          "mailchimp": "E-mailové kampaně a newslettery",
+          "analytics": "Analytika návštěvnosti a konverzí",
+          "googleAds": "Správa kampaní Google Ads",
+          "metaAds": "Správa Meta Ads a sociálních sítí"
+        }
+      },
+      "ecommerce": {
+        "name": "E-commerce operace",
+        "tagline": "Provozujte obchod, zatímco spíte",
+        "description": "Správa produktů, cenové zpravodajství, sledování zásob, správa recenzí a růstový marketing pro online obchody.",
+        "roles": {
+          "cleo": "Správce produktů — vytváří a aktualizuje popisy produktů, obrázky a metadata",
+          "onyx": "Monitor cen — sleduje ceny konkurence a upozorňuje na příležitosti k úpravám",
+          "luna": "Sledování zásob — monitoruje stav zásob a upozorňuje na nízké zásoby",
+          "sage": "Správce recenzí — odpovídá na zákaznické recenze a shromažďuje sentiment",
+          "dash": "Optimalizátor reklamních kampaní — spravuje produktové reklamy a nákupní kampaně",
+          "flux": "E-mailový marketér — odesílá opuštěné košíky, promo a ponakupní sekvence",
+          "wren": "Analytik reportů — sleduje příjmy, míru konverze a metriky růstu"
+        },
+        "credentials": {
+          "shopify": "Správa obchodu a produktových záznamů",
+          "amazon": "Správa Amazon marketplace",
+          "googleAds": "Nákupní reklamy a kampaně",
+          "mailchimp": "Zákaznické e-mailové sekvence",
+          "analytics": "Analytika konverzí a návštěvnosti"
+        }
+      },
+      "engineering": {
+        "name": "Inženýrský tým",
+        "tagline": "Automatizujte nudné části inženýrství",
+        "description": "Automatizované revize kódu, monitorování závislostí, dokumentace, testování, monitorování nasazení a reakce na incidenty.",
+        "roles": {
+          "rune": "Revident kódu — kontroluje otevřené PR, navrhuje vylepšení, kontroluje bezpečnostní problémy",
+          "koda": "Monitor závislostí — sleduje zastaralé balíčky, bezpečnostní upozornění a zásadní změny",
+          "aria": "Autor dokumentace — udržuje API dokumentaci, README a changelogy aktuální",
+          "blaze": "Monitor testů — spouští testovací sady, sleduje nestabilní testy, reportuje trendy pokrytí",
+          "frost": "Monitor nasazení — sleduje CI/CD pipelines, upozorňuje na selhání, sleduje frekvenci nasazení",
+          "neon": "Strážce dostupnosti a logů — monitoruje služby, skenuje logy na chyby, vytváří zprávy o incidentech"
+        },
+        "credentials": {
+          "github": "Přístup k repozitářům, revize PR, issues",
+          "vercel": "Monitorování nasazení (nebo váš CI/CD)",
+          "sentry": "Sledování chyb a upozornění na incidenty",
+          "npm": "Registr balíčků pro kontrolu závislostí"
+        }
+      },
+      "fullBusiness": {
+        "name": "Kompletní obchodní operace",
+        "tagline": "Celá společnost, plně automatizovaná",
+        "description": "Prodej, marketing, podpora a administrativa — čtyři oddělení pracující v souladu na třech strojích se sdílenou inteligencí.",
+        "roles": {
+          "atlas": "Generátor leadů — nachází a kvalifikuje potenciální zákazníky z online zdrojů",
+          "dash": "CRM manažer — aktualizuje obchody, sleduje pipeline a odesílá následné sekvence",
+          "scout": "Autor nabídek — píše obchodní návrhy a prezentace ze šablon",
+          "nova": "Obsahový marketér — píše blogové příspěvky, případové studie a marketingové texty",
+          "echo": "Manažer sociálních médií — zveřejňuje obsah a komunikuje s publikem",
+          "pixel": "Manažer e-mailových kampaní — provozuje kapací kampaně a newsletterové sekvence",
+          "sage": "Vedoucí podpory — vyřizuje dotazy zákazníků a řeší problémy",
+          "iris": "Správce znalostí — udržuje nápovědu, FAQ a interní wiki",
+          "milo": "Datový analytik — sestavuje mezioddělové reporty a KPI přehledy",
+          "wren": "Tržní výzkumník — sleduje oborové trendy a konkurenci",
+          "quinn": "Koordinátor operací — připravuje týdenní souhrny a mezitýmové synchronizace"
+        },
+        "credentials": {
+          "gmail": "E-mailová komunikace a podpora",
+          "hubspot": "CRM a obchodní pipeline (nebo váš CRM)",
+          "linkedin": "Generování leadů a profesionální networking",
+          "mailchimp": "E-mailové marketingové kampaně",
+          "notion": "Interní wiki a dokumentace",
+          "analytics": "Webová analytika a reportování",
+          "twitter": "Přítomnost na sociálních sítích",
+          "zendesk": "Tikety zákaznické podpory"
+        }
+      },
+      "growth": {
+        "name": "Růst a akvizice",
+        "tagline": "Agresivní růst na plném autopilotu",
+        "description": "Odchozí prospecting, příchozí marketing, optimalizace konverzí a analytika — dedikovaný růstový motor na třech strojích.",
+        "roles": {
+          "blaze": "Odchozí prospektor — nachází rozhodovací osoby, zkoumá firmy, staví seznamy leadů",
+          "flux": "E-mailový oslovování — odesílá personalizované studené e-maily, spravuje následné sekvence",
+          "orion": "LinkedIn oslovování — spojuje se s potenciálními zákazníky a odesílá personalizované zprávy",
+          "coral": "Tvůrce obsahu — tvoří SEO obsah, texty pro landing pages a lead magnety",
+          "taro": "Optimalizátor landing pages — monitoruje míry konverze, navrhuje a testuje vylepšení",
+          "vale": "Manažer reklamních kampaní — spravuje Google a Meta reklamní kampaně od začátku do konce",
+          "ember": "Hodnotitel leadů — kvalifikuje příchozí leady a směruje k vhodnému následování",
+          "haze": "Analytik trychtýře — sleduje metriky konverze v každé fázi, identifikuje úzká místa",
+          "dune": "Konkurenci zpravodajství — monitoruje kampaně konkurence, ceny a změny pozicování",
+          "kit": "Reportér růstu — sestavuje denní/týdenní metriky růstu a výsledky experimentů"
+        },
+        "credentials": {
+          "linkedin": "Prospecting a oslovování",
+          "gmail": "Studené e-maily a následné sekvence",
+          "hubspot": "Správa leadů a CRM",
+          "googleAds": "Placené vyhledávací kampaně",
+          "metaAds": "Meta reklama",
+          "analytics": "Analytika trychtýře a konverzí",
+          "ahrefs": "SEO výzkum a analýza konkurence"
+        }
+      },
+      "saas": {
+        "name": "SaaS operace",
+        "tagline": "Provozujte svůj SaaS jako dobře promazaný stroj",
+        "description": "Úspěch zákazníků, produktová analytika, prevence odchodu, sledování funkcí a automatizované reportování pro SaaS firmy.",
+        "roles": {
+          "luna": "Monitor úspěchu zákazníků — sleduje zapojení uživatelů, identifikuje ohrožené účty",
+          "sage": "Asistent onboardingu — provádí nové uživatele nastavením, monitoruje míry aktivace",
+          "ivy": "Prevence odchodu — oslovuje odcházející uživatele reaktivačními kampaněmi",
+          "rune": "Sledování požadavků na funkce — shromažďuje zpětnou vazbu uživatelů a požadavky ze všech kanálů",
+          "koda": "Produktová analytika — sleduje adopci funkcí, cesty uživatelů a metriky zapojení",
+          "neon": "Monitor chyb a problémů — sleduje logy chyb, hlaseni uživatelů a incidenty na stavové stránce",
+          "aria": "Autor changelogu — dokumentuje vydání, aktualizuje znalostní bázi a centrum nápovědy",
+          "frost": "Analytik příjmů — sleduje MRR, míru odchodu, LTV a expanzní příjmy",
+          "zara": "Sledovač konkurence — monitoruje funkce konkurence, ceny a tržní pozicování"
+        },
+        "credentials": {
+          "stripe": "Data o předplatném a příjmech",
+          "intercom": "Zákaznická komunikace a podpora (nebo váš nástroj)",
+          "mixpanel": "Produktová analytika a sledování uživatelů",
+          "gmail": "Zákaznická komunikace",
+          "notion": "Znalostní báze a changelog",
+          "sentry": "Monitorování chyb a sledování bugů",
+          "github": "Sledování problémů a požadavků na funkce"
+        }
+      }
+    },
+    "tiers": {
+      "starter": {
+        "label": "Starter",
+        "employees": "až 3",
+        "price": "$19/měs"
+      },
+      "plus": {
+        "label": "Plus",
+        "employees": "až 10",
+        "price": "$50/měs"
+      },
+      "pro": {
+        "label": "Pro",
+        "employees": "až 50",
+        "price": "$100/měs"
+      }
+    },
+    "frequencies": {
+      "daily": "denně",
+      "weekly": "týdně",
+      "every_30_minutes": "každých 30 minut",
+      "every_6_hours": "každých 6 hodin",
+      "every_12_hours": "každých 12 hodin"
+    },
+    "teamsTab": "Týmy"
+  },
+  "collaborative": {
+    "createRoom": {
+      "titleRequired": "Room title is required",
+      "taskCreated": "Task created successfully",
+      "taskFailed": "Failed to create task",
+      "assignTask": "Assign New Task",
+      "assignTaskDesc": "Start a new task with your AI assistant.",
+      "taskName": "Task Name",
+      "taskNamePlaceholder": "Enter task name",
+      "cancel": "Cancel",
+      "creating": "Creating...",
+      "createTask": "Create Task"
+    },
+    "joinRoom": {
+      "enterCode": "Please enter an invite code",
+      "joinSuccess": "Successfully joined the project!",
+      "joinFailed": "Failed to join project",
+      "invalidCode": "Invalid invite code or project not found",
+      "title": "Join Project",
+      "description": "Enter an invite code to join an existing project.",
+      "inviteCode": "Invite Code",
+      "placeholder": "e.g. ABC123",
+      "hint": "Ask your team leader for the project invite code",
+      "cancel": "Cancel",
+      "joining": "Joining...",
+      "joinButton": "Join Project"
+    },
+    "participants": {
+      "title": "Room Participants",
+      "copyCode": "Copy Code",
+      "copyLink": "Copy Link",
+      "codeCopied": "Invite code copied!",
+      "codeFailed": "Failed to copy invite code",
+      "linkCopied": "Invite link copied!",
+      "linkFailed": "Failed to copy invite link",
+      "online": "Online",
+      "offline": "Offline",
+      "you": "(you)"
+    },
+    "createProject": {
+      "titleRequired": "Room title is required",
+      "created": "Project created successfully!",
+      "failed": "Failed to create room",
+      "title": "Create New Project",
+      "description": "Start a new project to build your product with AI.",
+      "projectName": "Project Name",
+      "projectNamePlaceholder": "Enter project name",
+      "teamSize": "Team Size",
+      "cancel": "Cancel",
+      "creating": "Creating...",
+      "createButton": "Create Project"
+    }
+  },
+  "whatsNew": {
+    "trigger": "What's New",
+    "title": "What's New in Coasty",
+    "updateCount": "{count} updates",
+    "tagNew": "New",
+    "tagUpdate": "Update",
+    "tagFix": "Fix",
+    "stayTuned": "Stay tuned for more updates",
+    "tagline": "Your AI employee that collaborates with everyone"
+  },
+  "feedbackForm": {
+    "ratings": {
+      "bad": "Bad",
+      "okay": "Okay",
+      "good": "Good",
+      "amazing": "Amazing"
+    },
+    "loginRequired": "Please login to submit feedback",
+    "alreadySubmitted": "You already submitted feedback for this",
+    "thankYou": "Thank you for your feedback!",
+    "creditsEarned": "+{credits} credits earned",
+    "helpImprove": "Your input helps us improve Coasty.",
+    "howsExperience": "How's your experience?",
+    "plusOne": "+1",
+    "tellMore": "Tell us more",
+    "plusFive": "+5",
+    "placeholder": "What's working well? What could improve?",
+    "cancel": "Cancel",
+    "sending": "Sending...",
+    "send": "Send"
+  },
+  "scheduleDialog": {
+    "selectWorkstation": "Please select a workstation",
+    "enterCron": "Please enter a cron expression",
+    "hireFailed": "Failed to hire employee",
+    "removeFailed": "Failed to remove employee",
+    "editEmployee": "Edit Employee",
+    "configureEmployee": "Configure Employee",
+    "editDescription": "Update schedule, workstation, or instructions",
+    "configureDescription": "Set up an AI employee for this chat",
+    "loading": "Loading configuration...",
+    "name": "Name",
+    "employeeName": "Employee name"
+  },
+  "deleteChat": {
+    "title": "Delete chat?",
+    "description": "This will delete \"{chatTitle}\"",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "paymentHandler": {
+    "success": "Payment successful! Your credits have been added.",
+    "canceled": "Payment was canceled. No charges were made."
+  },
+  "machineSettings": {
+    "generalSettings": "General Settings",
+    "generalDescription": "Configure basic machine settings",
+    "displayName": "Display Name",
+    "defaultName": "My Machine",
+    "saveChanges": "Save Changes",
+    "security": "Security",
+    "securityDescription": "Security and access settings",
+    "sshAuth": "SSH Authentication",
+    "username": "Username:",
+    "keyPair": "Key Pair:",
+    "sshKeyDownloaded": "SSH key downloaded",
+    "sshKeyFailed": "Failed to download SSH key",
+    "downloadSshKey": "Download SSH Key",
+    "vncPassword": "VNC Password",
+    "vncPasswordHint": "This password is required to connect to the machine"
+  },
+  "referralPopup": {
+    "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",
+    "socialLabels": {
+      "x": "X",
+      "linkedin": "LinkedIn",
+      "whatsapp": "WhatsApp",
+      "telegram": "Telegram",
+      "reddit": "Reddit",
+      "email": "Email"
+    },
+    "emailSubject": "Check out this AI tool",
+    "timeAgo": {
+      "justNow": "just now",
+      "minutesAgo": "{minutes}m ago",
+      "hoursAgo": "{hours}h ago",
+      "daysAgo": "{days}d ago",
+      "monthsAgo": "{months}mo ago"
+    },
+    "linkCopied": "Referral link copied!",
+    "headline": "Good friends share memes. Great friends share AI agents.",
+    "subheadline": "You both get {credits} free credits when your friend joins.",
+    "yourLink": "Your referral link",
+    "shareDirectly": "Share directly",
+    "yourReferrals": "Your referrals",
+    "referralCount": "{count} referral(s)",
+    "creditsEarned": "{credits} credits earned",
+    "invitedYou": "Invited you",
+    "joinedViaLink": "Joined via your link",
+    "noInvites": "No users invited yet",
+    "noInvitesHint": "Share your link and you both earn 50 credits"
+  },
+  "dialogPublish": {
+    "makePublic": "Make public",
+    "title": "Your conversation is now public!",
+    "description": "Anyone with the link can now view this conversation and may appear in community feeds, featured pages, or search results in the future.",
+    "viewPage": "View Page",
+    "shareOn": "Share on"
+  },
+  "aiCommandPanel": {
+    "title": "AI Control Panel",
+    "subtitle": "Describe what you want the AI to do",
+    "quickCommands": "Quick Commands",
+    "noActions": "No actions performed yet",
+    "success": "Success",
+    "failed": "Failed",
+    "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
+    "executing": "Executing...",
+    "executeCommand": "Execute Command"
+  }
 }
