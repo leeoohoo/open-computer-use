@@ -45,14 +45,14 @@ function GuideToggle() {
           type="button"
           onClick={toggle}
           className={cn(
-            "h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-150",
+            "h-8 w-8 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150",
             dismissed
-              ? "text-muted-foreground/40 hover:text-muted-foreground/70"
-              : "text-foreground/60 bg-foreground/[0.06] hover:bg-foreground/[0.1]",
+              ? "text-muted-foreground hover:text-foreground"
+              : "text-foreground bg-foreground/[0.06]",
           )}
           aria-label="Toggle guide"
         >
-          <BookOpen className="h-[15px] w-[15px]" strokeWidth={1.7} />
+          <BookOpen className="size-4" strokeWidth={1.75} />
         </button>
       </TooltipTrigger>
       <TooltipContent>{dismissed ? "Show guide" : "Hide guide"}</TooltipContent>
@@ -94,8 +94,9 @@ export function Header({ hasSidebar }: HeaderProps) {
   const currentChat = chatId ? getChatById(chatId) : null
   const isCollaborativeRoom = currentChat?.collaborative === true
 
-  // Clean, minimal header button — no background, no shadow, just icon + text
-  const headerBtnClass = "text-muted-foreground hover:text-foreground rounded-full px-2 py-1.5 h-8 sm:h-8 transition-colors duration-150 font-medium"
+  // Consistent icon-button base for all header actions
+  const iconBtnClass = "text-muted-foreground hover:text-foreground h-8 w-8 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150"
+  const labelBtnClass = "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] dark:hover:bg-white/[0.08] rounded-full h-7 !px-2.5 !gap-1.5 transition-all duration-150 font-medium"
 
   return (
     <>
@@ -104,7 +105,6 @@ export function Header({ hasSidebar }: HeaderProps) {
         <div className="flex w-full items-center justify-between min-w-0">
           <div className="-ml-0.5 flex items-center gap-1 sm:gap-2 lg:-ml-2.5 min-w-0 flex-shrink-0">
             <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-              {/* Only show logo when sidebar is not present */}
               {!hasSidebar && (
                 <Link
                   href="/"
@@ -118,17 +118,15 @@ export function Header({ hasSidebar }: HeaderProps) {
             </div>
           </div>
           {!isLoggedIn ? (
-            <div className="pointer-events-auto flex items-center justify-end gap-1 sm:gap-2 min-w-0 flex-shrink-0">
+            <div className="pointer-events-auto flex items-center justify-end gap-1 min-w-0 shrink-0">
               <LanguageSwitcherCompact />
-              <AnimatedThemeToggler
-                className="text-muted-foreground hover:text-foreground h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-150"
-              />
+              <AnimatedThemeToggler className={iconBtnClass} />
               <AppInfoTrigger
                 trigger={
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-muted-foreground hover:text-foreground h-8 w-8 rounded-full flex-shrink-0 transition-colors duration-150"
+                    className={iconBtnClass}
                     aria-label={`About ${APP_NAME}`}
                   >
                     <Info className="size-4" />
@@ -137,68 +135,64 @@ export function Header({ hasSidebar }: HeaderProps) {
               />
               <Link
                 href="/auth"
-                className="font-base text-muted-foreground hover:text-foreground text-sm sm:text-base transition-colors flex-shrink-0"
+                className="text-muted-foreground hover:text-foreground text-sm transition-colors shrink-0 ml-1"
               >
                 {t("login")}
               </Link>
             </div>
           ) : (
-            <div className="pointer-events-auto flex items-center justify-end gap-0.5 sm:gap-1 min-w-0 flex-shrink-0">
-              {/* Assign Employee */}
+            <div className="pointer-events-auto flex items-center justify-end gap-1.5 min-w-0 shrink-0">
+              {/* Action group pill */}
               {chatId && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={headerBtnClass}
-                      onClick={openScheduleDialog}
-                    >
-                      <AgentIcon className="size-4" />
-                      <span className="hidden sm:inline ml-1.5 text-sm">{t("assign")}</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{t("assignDescription")}</TooltipContent>
-                </Tooltip>
+                <div className="flex items-center gap-px rounded-full bg-foreground/[0.04] dark:bg-white/[0.06] border border-border/40 dark:border-white/[0.08] p-0.5">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={labelBtnClass}
+                        onClick={openScheduleDialog}
+                      >
+                        <AgentIcon className="size-4" />
+                        <span className="hidden sm:inline text-[13px] leading-none">{t("assign")}</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{t("assignDescription")}</TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          labelBtnClass,
+                          isNavigatorOpen && "text-foreground bg-foreground/[0.08] dark:bg-white/[0.1]"
+                        )}
+                        onClick={toggleNavigator}
+                      >
+                        <Desktop className="size-4" />
+                        <span className="hidden sm:inline text-[13px] leading-none">{t("computer")}</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{isNavigatorOpen ? t("hideComputer") : t("showComputer")}</TooltipContent>
+                  </Tooltip>
+
+                  {!isCollaborativeRoom && currentChat && (
+                    <ChatVisibilityToggle
+                      chatId={chatId}
+                      initialPublic={currentChat.public || false}
+                    />
+                  )}
+                </div>
               )}
 
-              {/* Computer */}
-              {chatId && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={cn(
-                        headerBtnClass,
-                        isNavigatorOpen && "text-foreground bg-muted/60"
-                      )}
-                      onClick={toggleNavigator}
-                    >
-                      <Desktop className="size-4" />
-                      <span className="hidden sm:inline ml-1.5 text-sm">{t("computer")}</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{isNavigatorOpen ? t("hideComputer") : t("showComputer")}</TooltipContent>
-                </Tooltip>
-              )}
-
-              {/* Share — slight accent to encourage usage */}
-              {chatId && !isCollaborativeRoom && currentChat && (
-                <ChatVisibilityToggle
-                  chatId={chatId}
-                  initialPublic={currentChat.public || false}
-                />
-              )}
-
-              {/* Guide toggle — homepage only */}
+              {/* Guide — homepage only */}
               {!chatId && <GuideToggle />}
 
               {/* Language & Theme */}
               <LanguageSwitcherCompact />
-              <AnimatedThemeToggler
-                className="text-muted-foreground hover:text-foreground h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-150"
-              />
+              <AnimatedThemeToggler className={iconBtnClass} />
             </div>
           )}
         </div>

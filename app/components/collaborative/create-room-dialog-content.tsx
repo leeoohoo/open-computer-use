@@ -46,10 +46,8 @@ export function CreateRoomDialogContent({ open, onOpenChange, onRoomCreated }: C
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: user.id,
           title: title.trim(),
           model: "gpt-4o-mini", // Default model
-          isAuthenticated: true,
         }),
       })
 

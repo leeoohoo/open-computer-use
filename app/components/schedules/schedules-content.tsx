@@ -1005,7 +1005,7 @@ export function SchedulesContent() {
           const chatRes = await fetch("/api/create-chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: user?.id, title: emp.name, model: null, isAuthenticated: true }),
+            body: JSON.stringify({ title: emp.name, model: null }),
           })
           if (!chatRes.ok) {
             const errData = await chatRes.json().catch(() => ({}))

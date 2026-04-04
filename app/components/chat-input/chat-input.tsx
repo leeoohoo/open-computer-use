@@ -651,7 +651,7 @@ export function ChatInput({
       
       {/* Typing indicators for collaborative rooms - will be implemented with real-time data */}
 
-      <div className="relative order-2 pb-3 sm:pb-4 md:order-1">
+      <div className="relative order-2 pb-0 sm:pb-2 md:order-1">
         <PromptInput
             className={cn("relative shadow-xl hover:shadow-2xl focus-within:shadow-2xl focus-within:ring-0 !border-0 [&>*]:border-0 transition-all duration-300 z-10 bg-neutral-100 dark:bg-neutral-800 border border-border/50", hasToolInvocations ? "rounded-b-2xl rounded-t-none" : "rounded-2xl")}
             maxHeight={200}

@@ -133,10 +133,8 @@ export function CreateScheduleDialog({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: user.id,
           title: employeeName.trim() || randomEmployeeName(),
           model: null,
-          isAuthenticated: true,
         }),
       })
       const chatData = await chatRes.json()

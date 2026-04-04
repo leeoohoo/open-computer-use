@@ -4,7 +4,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { getOrCreateGuestUserId } from '@/lib/api';
 
 // Python backend URL
 const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:8001';
@@ -28,22 +27,16 @@ export async function POST(req: NextRequest) {
     const { pathname } = new URL(req.url);
     const operation = pathname.split('/').pop(); // Get the operation from the URL
     
-    // Get current user
+    // Require authenticated user
     const supabase = await createClient();
-    let user = null;
-    if (supabase) {
-      const { data } = await supabase.auth.getUser();
-      user = data?.user;
+    if (!supabase) {
+      return NextResponse.json({ error: 'Server error' }, { status: 500 });
     }
-    
-    // Get or create user ID
-    const userId = await getOrCreateGuestUserId(user as any);
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User authentication required' },
-        { status: 401 }
-      );
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError || !authData?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const userId = authData.user.id;
     
     // Get request body
     const body = await req.json();
@@ -72,7 +65,7 @@ export async function POST(req: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
         'X-User-ID': userId,
-        'X-Authenticated': user ? 'true' : 'false',
+        'X-Authenticated': 'true',
         ...(INTERNAL_API_KEY && { 'X-Internal-Key': INTERNAL_API_KEY }),
       },
       body: JSON.stringify(body),

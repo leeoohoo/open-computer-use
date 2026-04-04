@@ -7,7 +7,6 @@ import {
   GraduationCap,
 } from "lucide-react"
 
-export const NON_AUTH_DAILY_MESSAGE_LIMIT = 5
 export const AUTH_DAILY_MESSAGE_LIMIT = 100
 export const REMAINING_QUERY_ALERT_THRESHOLD = 3
 export const DAILY_FILE_UPLOAD_LIMIT = 5
