@@ -10,6 +10,17 @@ import { getOrCreateGuestUserId } from '@/lib/api';
 const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:8001';
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || '';
 
+// Allowed file operations — prevents path traversal to arbitrary backend endpoints
+const ALLOWED_FILE_OPS = new Set([
+  'list',
+  'upload',
+  'upload-multipart',
+  'download',
+  'download-stream',
+  'delete',
+  'create-folder',
+]);
+
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
@@ -40,13 +51,19 @@ export async function POST(req: NextRequest) {
     // Determine the backend endpoint based on the operation
     let endpoint = '/api/files';
     const searchParams = new URL(req.url).searchParams;
-    const fileOp = searchParams.get('op');
-    
-    if (fileOp) {
-      endpoint += `/${fileOp}`;
-    } else if (body.operation) {
-      endpoint += `/${body.operation}`;
+    const fileOp = searchParams.get('op') || body.operation || null;
+    if (body.operation) {
       delete body.operation; // Remove from body before forwarding
+    }
+
+    if (fileOp) {
+      if (!ALLOWED_FILE_OPS.has(fileOp)) {
+        return NextResponse.json(
+          { error: `Invalid file operation: ${fileOp}` },
+          { status: 400 }
+        );
+      }
+      endpoint += `/${fileOp}`;
     }
     
     // Forward the request to Python backend

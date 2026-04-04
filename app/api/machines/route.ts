@@ -6,6 +6,7 @@ import { transformMachineFromDB } from "@/lib/utils/db-transforms";
 import type { UserMachine, CreateMachineRequest, MachineStatus } from "@/types/machines.types";
 import { dockerService } from "@/lib/docker/docker-service";
 import { createSwarmMailbox, deleteSwarmMailbox } from "@/lib/services/workmail-service";
+import crypto from "crypto";
 
 // GET /api/machines - List user's machines
 export async function GET(request: NextRequest) {
@@ -472,35 +473,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate the container/instance name
-    const uniqueId = `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
+    // Generate the container/instance name using crypto-safe random bytes
+    const uniqueId = `${Date.now().toString(36)}-${crypto.randomBytes(4).toString('hex')}`;
     const containerName = `vm-${userId.substring(0, 8)}-${uniqueId}`.toLowerCase().replace(/[^a-z0-9-]/g, '');
     // Generate VNC password for Azure, AWS desktop, and Windows machines
     const needsVnc = !isAws || isDesktop || isWindows;
     let vncPassword = '';
     if (needsVnc) {
-      if (isWindows) {
-        // Windows Server requires password complexity: uppercase + lowercase + digit + special char.
-        // IMPORTANT: Only use special chars that are safe in PowerShell double quotes,
-        // batch files, URLs, and registry values. Avoid: $ (PS variable), % (batch var),
-        // & (batch separator), ! (batch delayed expansion), ` (PS escape), ' " (quotes).
-        const lower = 'abcdefghijkmnpqrstuvwxyz';
-        const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-        const digits = '23456789';
-        const special = '-_=+';
-        const all = lower + upper + digits + special;
-        // Start with one from each category to guarantee complexity
-        let pw = lower[Math.floor(Math.random() * lower.length)]
-               + upper[Math.floor(Math.random() * upper.length)]
-               + digits[Math.floor(Math.random() * digits.length)]
-               + special[Math.floor(Math.random() * special.length)];
-        // Fill remaining 12 chars randomly
-        for (let i = 0; i < 12; i++) pw += all[Math.floor(Math.random() * all.length)];
-        // Shuffle
-        vncPassword = pw.split('').sort(() => Math.random() - 0.5).join('');
-      } else {
-        vncPassword = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 8);
-      }
+      vncPassword = generateSecureVncPassword(isWindows);
     }
 
     // First, create a placeholder in the database so it appears immediately
@@ -802,6 +782,45 @@ export async function POST(request: NextRequest) {
       { error: "Internal server error" },
       { status: 500 }
     );
+  }
+}
+
+/**
+ * Generate a cryptographically secure VNC password.
+ * Uses crypto.randomBytes instead of Math.random to prevent prediction.
+ */
+function generateSecureVncPassword(isWindows: boolean): string {
+  if (isWindows) {
+    // Windows Server requires password complexity: uppercase + lowercase + digit + special char.
+    // IMPORTANT: Only use special chars safe in PowerShell/batch/URLs/registry.
+    const lower = 'abcdefghijkmnpqrstuvwxyz';
+    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const digits = '23456789';
+    const special = '-_=+';
+    const all = lower + upper + digits + special;
+
+    // Guarantee one from each category
+    const randomBytes = crypto.randomBytes(16 + 4); // 4 for categories, 12 for fill, 4 for shuffle
+    const chars: string[] = [
+      lower[randomBytes[0] % lower.length],
+      upper[randomBytes[1] % upper.length],
+      digits[randomBytes[2] % digits.length],
+      special[randomBytes[3] % special.length],
+    ];
+    // Fill remaining 12 chars
+    for (let i = 0; i < 12; i++) {
+      chars.push(all[randomBytes[4 + i] % all.length]);
+    }
+    // Fisher-Yates shuffle with crypto randomness
+    const shuffleBytes = crypto.randomBytes(chars.length * 2);
+    for (let i = chars.length - 1; i > 0; i--) {
+      const j = shuffleBytes.readUInt16BE(i * 2) % (i + 1);
+      [chars[i], chars[j]] = [chars[j], chars[i]];
+    }
+    return chars.join('');
+  } else {
+    // 20 bytes = 40 hex chars of entropy (much stronger than Math.random)
+    return crypto.randomBytes(15).toString('base64url');
   }
 }
 
