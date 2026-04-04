@@ -1,5 +1,32 @@
 import { execFile, spawn } from 'child_process'
 import * as os from 'os'
+import { isAccessibilityGranted, requestAccessibility } from './permissions'
+
+/**
+ * Check macOS Accessibility permission before any desktop automation action.
+ * Returns null if granted, or an error result object if denied.
+ * On first denial, triggers the macOS system prompt so the user can grant it.
+ */
+let _hasPromptedAccessibility = false
+function requireAccessibility(): { success: false; error: string; permissionDenied: true; permissionType: 'accessibility' } | null {
+  if (process.platform !== 'darwin') return null
+  if (isAccessibilityGranted()) return null
+
+  // Trigger the macOS permission prompt once per session
+  if (!_hasPromptedAccessibility) {
+    _hasPromptedAccessibility = true
+    requestAccessibility()
+  }
+
+  return {
+    success: false,
+    error: 'macOS Accessibility permission is required for desktop automation (clicks, typing, scrolling). '
+      + 'A permission prompt should have appeared — grant access to Coasty, then restart the app. '
+      + 'You can also enable it manually: System Settings > Privacy & Security > Accessibility > enable Coasty.',
+    permissionDenied: true,
+    permissionType: 'accessibility',
+  }
+}
 
 function runPowershell(script: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -47,6 +74,9 @@ export async function desktopClick(params: {
   button?: string
 }): Promise<any> {
   try {
+    const denied = requireAccessibility()
+    if (denied) return denied
+
     const { x, y, button = 'left' } = params
 
     if (process.platform === 'win32') {
@@ -99,6 +129,9 @@ export async function desktopClickWithModifiers(params: {
   clicks?: number
 }): Promise<any> {
   try {
+    const denied = requireAccessibility()
+    if (denied) return denied
+
     const { x, y, button = 'left', hold_keys = [], clicks = 1 } = params
     const keys = normalizeKeysForPlatform(hold_keys)
 
@@ -212,6 +245,9 @@ export async function desktopDoubleClick(params: {
   y: number
 }): Promise<any> {
   try {
+    const denied = requireAccessibility()
+    if (denied) return denied
+
     const { x, y } = params
 
     if (process.platform === 'win32') {
@@ -264,6 +300,9 @@ up2?.post(tap: .cghidEventTap)
 
 export async function desktopType(params: { text: string }): Promise<any> {
   try {
+    const denied = requireAccessibility()
+    if (denied) return denied
+
     const { text } = params
 
     if (process.platform === 'win32') {
@@ -444,6 +483,9 @@ function normalizeKeysForPlatform(keys: string[]): string[] {
 
 export async function desktopKeyPress(params: { keys: string[] }): Promise<any> {
   try {
+    const denied = requireAccessibility()
+    if (denied) return denied
+
     const { keys: rawKeys } = params
     const keys = normalizeKeysForPlatform(rawKeys)
 
@@ -511,6 +553,9 @@ const KEY_MAP_MACOS: Record<string, number> = {
 
 export async function desktopKeyCombo(params: { keys: string[] }): Promise<any> {
   try {
+    const denied = requireAccessibility()
+    if (denied) return denied
+
     const { keys: rawKeys } = params
     const keys = normalizeKeysForPlatform(rawKeys)
 
@@ -583,6 +628,9 @@ export async function desktopScroll(params: {
   y?: number
 }): Promise<any> {
   try {
+    const denied = requireAccessibility()
+    if (denied) return denied
+
     const { clicks, direction = 'vertical', x, y } = params
     const amount = Math.abs(clicks)
     const scrollUp = clicks > 0
@@ -644,6 +692,9 @@ export async function desktopDrag(params: {
   hold_keys?: string[]
 }): Promise<any> {
   try {
+    const denied = requireAccessibility()
+    if (denied) return denied
+
     const { x1, y1, x2, y2, hold_keys = [] } = params
 
     if (process.platform === 'win32') {

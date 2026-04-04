@@ -455,8 +455,19 @@ export function Overlay() {
 
       {/* ═══ PILL BAR ═══ */}
       <div className="titlebar-drag flex items-center gap-2.5 w-full h-14 px-3 flex-shrink-0 select-none">
-        {/* Logo */}
-        <div className="titlebar-no-drag relative flex-shrink-0 cursor-default" title={statusLabel(connectionState)}>
+        {/* Drag grip — compact only */}
+        {!isExpanded && (
+          <div className="drag-grip flex-shrink-0 grid grid-cols-2 gap-[2px] opacity-30 hover:opacity-60 transition-opacity" title="Drag to reposition">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="w-[2.5px] h-[2.5px] rounded-full bg-neutral-400" />
+            ))}
+          </div>
+        )}
+
+        {/* Logo + status badge */}
+        <div className="titlebar-no-drag relative flex-shrink-0 cursor-default" title={statusLabel(connectionState)}
+          onClick={(connectionState === 'disconnected' || connectionState === 'error') ? reconnect : undefined}
+          style={(connectionState === 'disconnected' || connectionState === 'error') ? { cursor: 'pointer' } : undefined}>
           <svg className="w-5 h-5" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
             <defs><linearGradient id="coastyGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(255,255,255,0)" stopOpacity={0} /><stop offset="30%" stopColor="rgba(255,255,255,0.1)" stopOpacity={1} /><stop offset="50%" stopColor="rgba(255,255,255,0.3)" stopOpacity={1} /><stop offset="70%" stopColor="rgba(255,255,255,0.6)" stopOpacity={1} /><stop offset="100%" stopColor="rgba(255,255,255,1)" stopOpacity={1} /></linearGradient></defs>
             <circle cx="100" cy="100" r="100" fill="url(#coastyGrad)" />
@@ -464,13 +475,6 @@ export function Overlay() {
           <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-neutral-900 ${statusDot(connectionState)}`} />
           {updateStatus === 'ready' && <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-neutral-900" />}
         </div>
-
-        {/* Status dot — reconnect on click */}
-        {(connectionState === 'disconnected' || connectionState === 'error') ? (
-          <button onClick={reconnect} className={`titlebar-no-drag w-1.5 h-1.5 rounded-full flex-shrink-0 cursor-pointer ${statusDot(connectionState)}`} title="Click to reconnect" />
-        ) : (
-          <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot(connectionState)}`} />
-        )}
 
         {/* Input / title */}
         {isExpanded ? (

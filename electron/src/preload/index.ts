@@ -102,6 +102,11 @@ contextBridge.exposeInMainWorld('coasty', {
   requestAccessibility: () => ipcRenderer.invoke('permissions:request-accessibility'),
   openScreenRecordingSettings: () => ipcRenderer.invoke('permissions:open-screen-recording'),
   openAccessibilitySettings: () => ipcRenderer.invoke('permissions:open-accessibility'),
+  onPermissionDenied: (callback: (data: { type: string; message: string }) => void) => {
+    const handler = (_event: any, data: { type: string; message: string }) => callback(data)
+    ipcRenderer.on('permission:denied', handler)
+    return () => ipcRenderer.removeListener('permission:denied', handler)
+  },
   getPlatform: () => process.platform,
 
   // Action approval
@@ -231,6 +236,7 @@ export interface CoastyAPI {
   requestAccessibility: () => Promise<boolean>
   openScreenRecordingSettings: () => Promise<void>
   openAccessibilitySettings: () => Promise<void>
+  onPermissionDenied: (callback: (data: { type: string; message: string }) => void) => () => void
   getPlatform: () => string
 
   // Action approval

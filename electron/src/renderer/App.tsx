@@ -6,6 +6,7 @@ import { useApprovalStore } from './stores/approval-store'
 import { AuthScreen } from './components/AuthScreen'
 import { Overlay } from './components/Overlay'
 import { PermissionsGuard } from './components/PermissionsGuard'
+import { PermissionToast } from './components/PermissionToast'
 
 export default function App() {
   const { isAuthenticated, loading, checkSession } = useAuthStore()
@@ -63,6 +64,7 @@ export default function App() {
   return (
     <PermissionsGuard>
       <Overlay />
+      <PermissionToast />
     </PermissionsGuard>
   )
 }

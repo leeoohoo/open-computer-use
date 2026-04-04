@@ -17,6 +17,7 @@ import {
 } from './desktop-automation'
 import { hideForScreenshot, showAfterScreenshot } from './window-manager'
 import { execFile } from 'child_process'
+import { BrowserWindow } from 'electron'
 
 type CommandHandler = (params: any) => Promise<any>
 
@@ -107,7 +108,21 @@ export class LocalExecutor {
     return async (params) => {
       await hideForScreenshot()
       try {
-        return await handler(params)
+        const result = await handler(params)
+
+        // If a desktop action was denied due to missing macOS permissions,
+        // notify the renderer so it can show an in-app prompt to the user.
+        if (result?.permissionDenied) {
+          const win = BrowserWindow.getAllWindows()[0]
+          if (win && !win.isDestroyed()) {
+            win.webContents.send('permission:denied', {
+              type: result.permissionType,
+              message: result.error,
+            })
+          }
+        }
+
+        return result
       } finally {
         showAfterScreenshot()
       }

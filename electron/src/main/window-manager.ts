@@ -26,6 +26,7 @@ let savedExpandedSize: { width: number; height: number } | null = null
 let animTimer: ReturnType<typeof setInterval> | null = null
 let inPostAuthTransition = false
 let enforcerInterval: ReturnType<typeof setInterval> | null = null
+let isNativeDialogOpen = false
 let isHiddenForScreenshot = false
 let savedOpacityBeforeScreenshot = 1
 let intendedOpacity = 1  // The user's actual desired opacity (not mid-fade)
@@ -72,7 +73,7 @@ function startTopmostEnforcer(win: BrowserWindow): void {
   stopTopmostEnforcer()
 
   enforcerInterval = setInterval(() => {
-    if (win.isDestroyed() || isHiddenForScreenshot) return
+    if (win.isDestroyed() || isHiddenForScreenshot || isNativeDialogOpen) return
     if (currentMode === 'auth') return
     if (!win.isVisible()) return
     win.setAlwaysOnTop(true, 'screen-saver', 1)
@@ -116,7 +117,7 @@ export function setMainWindow(win: BrowserWindow): void {
   // transparent frameless windows when another app is clicked).
   // During the post-auth transition, use 'floating' level to beat the browser.
   win.on('blur', () => {
-    if (currentMode !== 'auth' && !win.isDestroyed()) {
+    if (currentMode !== 'auth' && !win.isDestroyed() && !isNativeDialogOpen) {
       const level = inPostAuthTransition ? 'floating' : 'screen-saver'
       win.setAlwaysOnTop(true, level)
       win.moveTop()
@@ -136,8 +137,12 @@ export function setWindowMode(mode: WindowMode): void {
   currentMode = mode
   let cfg = MODE_CONFIG[mode]
 
-  // Configure always-on-top, taskbar visibility, and workspace visibility
-  win.setAlwaysOnTop(cfg.alwaysOnTop, cfg.alwaysOnTop ? 'screen-saver' : undefined)
+  // Configure always-on-top, taskbar visibility, and workspace visibility.
+  // Skip re-asserting always-on-top while a native dialog is open — resumeTopmost()
+  // will restore the correct level once the dialog closes.
+  if (!isNativeDialogOpen) {
+    win.setAlwaysOnTop(cfg.alwaysOnTop, cfg.alwaysOnTop ? 'screen-saver' : undefined)
+  }
   win.setSkipTaskbar(cfg.skipTaskbar)
 
   // Enable resizing only in expanded mode with minimum bounds
@@ -239,7 +244,7 @@ export function setWindowMode(mode: WindowMode): void {
 
     // Show after a brief delay so Windows processes the hidden state + bounds
     setTimeout(() => {
-      if (win.isDestroyed()) return
+      if (win.isDestroyed() || isNativeDialogOpen) return
       win.setAlwaysOnTop(true, 'screen-saver')
       win.show()   // SW_SHOW activates window + brings to front
       win.focus()
@@ -247,7 +252,7 @@ export function setWindowMode(mode: WindowMode): void {
 
     // Retries: re-assert topmost in case browser reclaims foreground
     const keepOnTop = () => {
-      if (win.isDestroyed()) return
+      if (win.isDestroyed() || isNativeDialogOpen) return
       win.setAlwaysOnTop(true, 'screen-saver')
       win.moveTop()
     }
@@ -371,10 +376,38 @@ export function bringToFront(): void {
   const win = mainWindow
   if (!win || win.isDestroyed()) return
   if (currentMode === 'auth') return
+  // Don't steal focus from native dialogs — approval prompts stay in the
+  // pending queue and the overlay will come to front when the dialog closes.
+  if (isNativeDialogOpen) return
 
   win.setAlwaysOnTop(true, 'screen-saver', 1)
   win.moveTop()
   win.focus()
+}
+
+/**
+ * Temporarily suspend always-on-top enforcement.
+ * Use before opening native dialogs (file picker, etc.) so they aren't
+ * buried behind the overlay by the periodic enforcer or blur handler.
+ */
+export function suspendTopmost(): void {
+  const win = mainWindow
+  isNativeDialogOpen = true
+  if (win && !win.isDestroyed() && currentMode !== 'auth') {
+    win.setAlwaysOnTop(false)
+  }
+}
+
+/**
+ * Resume always-on-top enforcement after a native dialog closes.
+ */
+export function resumeTopmost(): void {
+  const win = mainWindow
+  isNativeDialogOpen = false
+  if (win && !win.isDestroyed() && currentMode !== 'auth') {
+    win.setAlwaysOnTop(true, 'screen-saver', 1)
+    win.moveTop()
+  }
 }
 
 /** Hide the overlay window before taking a screenshot. */
@@ -414,8 +447,9 @@ export function showAfterScreenshot(): void {
   win.setOpacity(0)
   win.showInactive()
 
-  // Re-assert topmost after show — showInactive() doesn't restore z-order on Windows
-  if (currentMode !== 'auth') {
+  // Re-assert topmost after show — showInactive() doesn't restore z-order on Windows.
+  // Skip if a native dialog is open — resumeTopmost() will handle it.
+  if (currentMode !== 'auth' && !isNativeDialogOpen) {
     win.setAlwaysOnTop(true, 'screen-saver', 1)
     win.moveTop()
   }

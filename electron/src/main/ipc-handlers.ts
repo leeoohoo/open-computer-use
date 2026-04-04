@@ -5,6 +5,7 @@ import * as fs from 'fs'
 import { ElectronAuth } from './auth'
 import { WebSocketBridge } from './ws-bridge'
 import { ApprovalManager } from './approval-manager'
+import { suspendTopmost, resumeTopmost } from './window-manager'
 
 export function registerIpcHandlers(
   auth: ElectronAuth,
@@ -506,20 +507,26 @@ export function registerIpcHandlers(
     } else {
       properties.push('openFile')
     }
-    const result = await dialog.showOpenDialog({ properties })
-    if (result.canceled || result.filePaths.length === 0) {
-      return { success: true, files: [] }
-    }
-    const files = result.filePaths.map((fp) => {
-      let isDir = false
-      try { isDir = fs.statSync(fp).isDirectory() } catch {}
-      return {
-        path: fp,
-        name: path.basename(fp),
-        ext: isDir ? '' : path.extname(fp).replace('.', ''),
-        isDirectory: isDir,
+    // Suspend always-on-top so the native dialog isn't buried behind the overlay
+    suspendTopmost()
+    try {
+      const result = await dialog.showOpenDialog({ properties })
+      if (result.canceled || result.filePaths.length === 0) {
+        return { success: true, files: [] }
       }
-    })
-    return { success: true, files }
+      const files = result.filePaths.map((fp) => {
+        let isDir = false
+        try { isDir = fs.statSync(fp).isDirectory() } catch {}
+        return {
+          path: fp,
+          name: path.basename(fp),
+          ext: isDir ? '' : path.extname(fp).replace('.', ''),
+          isDirectory: isDir,
+        }
+      })
+      return { success: true, files }
+    } finally {
+      resumeTopmost()
+    }
   })
 }
