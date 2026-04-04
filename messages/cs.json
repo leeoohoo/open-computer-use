@@ -443,6 +443,21 @@
     },
     "complete": "Hotovo",
     "doneIn": "Hotovo za 8 minut",
+    "demoCaption": "Spouštějte AI agenty na svém počítači nebo jej ovládejte z telefonu, odkudkoli.",
+    "features": {
+      "localControl": {
+        "title": "Run locally on your PC",
+        "desc": "Download the desktop app and let AI control your computer directly — no cloud VM needed."
+      },
+      "phoneControl": {
+        "title": "Control your PC from your phone",
+        "desc": "Start a task from your phone and watch the AI agent work on your computer in real time."
+      },
+      "cloudOrLocal": {
+        "title": "Cloud or local — your choice",
+        "desc": "Use cloud VMs for isolated tasks, or go local for full access to your apps and files."
+      }
+    },
     "viewTitles": {
       "signIn": "Váš operátor je připraven",
       "signUp": "Přepněte své pracovní postupy na autopilot",

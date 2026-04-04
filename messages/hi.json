@@ -443,6 +443,21 @@
     },
     "complete": "पूर्ण",
     "doneIn": "8 मिनट में पूरा",
+    "demoCaption": "अपने कंप्यूटर पर AI एजेंट चलाएँ या कहीं से भी अपने फ़ोन से कंट्रोल करें।",
+    "features": {
+      "localControl": {
+        "title": "Run locally on your PC",
+        "desc": "Download the desktop app and let AI control your computer directly — no cloud VM needed."
+      },
+      "phoneControl": {
+        "title": "Control your PC from your phone",
+        "desc": "Start a task from your phone and watch the AI agent work on your computer in real time."
+      },
+      "cloudOrLocal": {
+        "title": "Cloud or local — your choice",
+        "desc": "Use cloud VMs for isolated tasks, or go local for full access to your apps and files."
+      }
+    },
     "viewTitles": {
       "signIn": "आपका ऑपरेटर तैयार है",
       "signUp": "अपने वर्कफ़्लो को ऑटोपायलट पर लगाएं",

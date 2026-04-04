@@ -443,6 +443,21 @@
     },
     "complete": "Complete",
     "doneIn": "Done in 8 minutes",
+    "demoCaption": "Run AI agents on your computer, or control it from your phone, anywhere.",
+    "features": {
+      "localControl": {
+        "title": "Run locally on your PC",
+        "desc": "Download the desktop app and let AI control your computer directly — no cloud VM needed."
+      },
+      "phoneControl": {
+        "title": "Control your PC from your phone",
+        "desc": "Start a task from your phone and watch the AI agent work on your computer in real time."
+      },
+      "cloudOrLocal": {
+        "title": "Cloud or local — your choice",
+        "desc": "Use cloud VMs for isolated tasks, or go local for full access to your apps and files."
+      }
+    },
     "viewTitles": {
       "signIn": "Your operator is standing by",
       "signUp": "Put your workflows on autopilot",

@@ -443,6 +443,21 @@
     },
     "complete": "Klart",
     "doneIn": "Klart pa 8 minuter",
+    "demoCaption": "Kör AI-agenter på din dator eller styr den från mobilen, var du än är.",
+    "features": {
+      "localControl": {
+        "title": "Run locally on your PC",
+        "desc": "Download the desktop app and let AI control your computer directly — no cloud VM needed."
+      },
+      "phoneControl": {
+        "title": "Control your PC from your phone",
+        "desc": "Start a task from your phone and watch the AI agent work on your computer in real time."
+      },
+      "cloudOrLocal": {
+        "title": "Cloud or local — your choice",
+        "desc": "Use cloud VMs for isolated tasks, or go local for full access to your apps and files."
+      }
+    },
     "viewTitles": {
       "signIn": "Din operator star redo",
       "signUp": "Satt dina arbetsfloden pa autopilot",

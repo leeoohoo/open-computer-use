@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest"
 import {
   API_ROUTE_CHAT,
-  API_ROUTE_CREATE_GUEST,
   API_ROUTE_UPDATE_CHAT_MODEL,
   API_ROUTE_CSRF,
 } from "@/lib/routes"
@@ -9,10 +8,6 @@ import {
 describe("routes", () => {
   it("exports correct chat route", () => {
     expect(API_ROUTE_CHAT).toBe("/api/chat")
-  })
-
-  it("exports correct create-guest route", () => {
-    expect(API_ROUTE_CREATE_GUEST).toBe("/api/create-guest")
   })
 
   it("exports correct update-chat-model route", () => {
@@ -26,7 +21,6 @@ describe("routes", () => {
   it("all routes start with /api", () => {
     const routes = [
       API_ROUTE_CHAT,
-      API_ROUTE_CREATE_GUEST,
       API_ROUTE_UPDATE_CHAT_MODEL,
       API_ROUTE_CSRF,
     ]

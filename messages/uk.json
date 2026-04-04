@@ -443,6 +443,21 @@
     },
     "complete": "Завершено",
     "doneIn": "Готово за 8 хвилин",
+    "demoCaption": "Запускайте ШІ-агентів на комп'ютері або керуйте ним з телефону, звідки завгодно.",
+    "features": {
+      "localControl": {
+        "title": "Run locally on your PC",
+        "desc": "Download the desktop app and let AI control your computer directly — no cloud VM needed."
+      },
+      "phoneControl": {
+        "title": "Control your PC from your phone",
+        "desc": "Start a task from your phone and watch the AI agent work on your computer in real time."
+      },
+      "cloudOrLocal": {
+        "title": "Cloud or local — your choice",
+        "desc": "Use cloud VMs for isolated tasks, or go local for full access to your apps and files."
+      }
+    },
     "viewTitles": {
       "signIn": "Ваш оператор на зв'язку",
       "signUp": "Поставте робочі процеси на автопілот",

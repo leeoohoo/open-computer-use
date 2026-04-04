@@ -443,6 +443,21 @@
     },
     "complete": "Completato",
     "doneIn": "Fatto in 8 minuti",
+    "demoCaption": "Esegui agenti IA sul tuo computer o controllalo dal telefono, ovunque tu sia.",
+    "features": {
+      "localControl": {
+        "title": "Run locally on your PC",
+        "desc": "Download the desktop app and let AI control your computer directly — no cloud VM needed."
+      },
+      "phoneControl": {
+        "title": "Control your PC from your phone",
+        "desc": "Start a task from your phone and watch the AI agent work on your computer in real time."
+      },
+      "cloudOrLocal": {
+        "title": "Cloud or local — your choice",
+        "desc": "Use cloud VMs for isolated tasks, or go local for full access to your apps and files."
+      }
+    },
     "viewTitles": {
       "signIn": "Il tuo operatore è pronto",
       "signUp": "Metti i tuoi flussi di lavoro in automatico",
