@@ -12,9 +12,9 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:frontend": "vitest run",
-    "test:backend": "cd backend && python -m pytest tests/ -v",
-    "test:electron": "cd electron && vitest run",
-    "test:all": "bash scripts/run-all-tests.sh"
+    "test:backend": "node scripts/run-all-tests.mjs backend",
+    "test:electron": "node scripts/run-all-tests.mjs electron",
+    "test:all": "node scripts/run-all-tests.mjs"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^4.0.61",
