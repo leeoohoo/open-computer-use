@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { LandingHeader } from "@/app/components/landing/landing-header"
+import { LandingFooter } from "@/app/components/landing/landing-footer"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { GuideLines } from "@/app/components/landing/guide-lines"
@@ -124,6 +125,8 @@ export default function ComparePage() {
           </motion.div>
         </div>
       </main>
+
+      <LandingFooter />
     </div>
   )
 }

@@ -16,7 +16,7 @@ import { LandingHeader } from "./landing-header"
 import { LandingFooter } from "./landing-footer"
 import { HeroUseCaseCarousel } from "./hero-use-case-carousel"
 import { GuideLines, SectionDivider as SharedSectionDivider } from "./guide-lines"
-import Orb from "@/components/Orb"
+import Beams from "@/components/Beams"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { Caveat } from "next/font/google"
@@ -116,10 +116,8 @@ export function LandingPage() {
       }
 
   // ── Global section navigation: continuous scroll progress ──
-  // Reads offsetTop live on each scroll frame (works for sticky elements
-  // because offsetTop returns the normal-flow position relative to offsetParent).
-  // For click navigation, we temporarily force position:static to read the
-  // true flow position, then restore sticky.
+  // Caches document-relative flow positions on mount/resize by temporarily
+  // removing sticky so offsetTop chain gives the true layout position.
   const [scrollProgress, setScrollProgress] = useState(0)
   const activeLandingSection = Math.round(scrollProgress)
 
@@ -129,16 +127,37 @@ export function LandingPage() {
       .filter(Boolean) as HTMLElement[]
     if (!sectionEls.length) return
 
+    let sectionTops: number[] = []
+
+    const measurePositions = () => {
+      // Remove sticky from all sections at once (single reflow)
+      const originals = sectionEls.map(el => {
+        const orig = el.style.position
+        el.style.position = 'relative'
+        return orig
+      })
+      // Walk offsetParent chain for document-relative positions
+      sectionTops = sectionEls.map(el => {
+        let top = 0
+        let node: HTMLElement | null = el
+        while (node) {
+          top += node.offsetTop
+          node = node.offsetParent as HTMLElement | null
+        }
+        return top
+      })
+      // Restore (single reflow)
+      sectionEls.forEach((el, i) => { el.style.position = originals[i] })
+    }
+
     const onScroll = () => {
       const trigger = window.scrollY + window.innerHeight * 0.35
       let progress = 0
-      for (let i = sectionEls.length - 1; i >= 0; i--) {
-        const top = sectionEls[i].offsetTop
-        if (top <= trigger) {
-          if (i < sectionEls.length - 1) {
-            const nextTop = sectionEls[i + 1].offsetTop
-            const span = nextTop - top
-            const frac = span > 0 ? Math.min(1, (trigger - top) / span) : 0
+      for (let i = sectionTops.length - 1; i >= 0; i--) {
+        if (sectionTops[i] <= trigger) {
+          if (i < sectionTops.length - 1) {
+            const span = sectionTops[i + 1] - sectionTops[i]
+            const frac = span > 0 ? Math.min(1, (trigger - sectionTops[i]) / span) : 0
             progress = i + frac
           } else {
             progress = i
@@ -149,15 +168,21 @@ export function LandingPage() {
       setScrollProgress(progress)
     }
 
+    const onResize = () => { measurePositions(); onScroll() }
+
+    measurePositions()
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+    }
   }, [mounted])
 
   const scrollToLandingSection = useCallback((index: number) => {
     const el = document.getElementById(LANDING_NAV_SECTIONS[index]?.id)
     if (!el) return
-    // Temporarily remove sticky so offsetTop gives the true flow position
     const original = el.style.position
     el.style.position = 'relative'
     let top = 0
@@ -192,6 +217,24 @@ export function LandingPage() {
 
       <GuideLines />
 
+      {/* Beams background — covers full viewport including behind navbar, inverted in light mode */}
+      <div className={cn("fixed inset-0 z-0 pointer-events-none", resolvedTheme !== "dark" && "invert")} aria-hidden="true">
+        <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
+          <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_100%_90%_at_50%_45%,black_0%,black_40%,transparent_85%)]">
+            <Beams
+              beamWidth={3}
+              beamHeight={30}
+              beamNumber={20}
+              lightColor="#ffffff"
+              speed={2}
+              noiseIntensity={1.75}
+              scale={0.2}
+              rotation={30}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Fixed header */}
       <LandingHeader />
 
@@ -200,24 +243,9 @@ export function LandingPage() {
 
         {/* Hero Section */}
         <section id="hero" className={cn(
-          "relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-hidden",
+          "relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-x-hidden",
           isMobile ? "px-7 pt-8 pb-16" : "px-10 pt-16 pb-24"
         )}>
-
-          {/* Orb background — clipped to guide lines */}
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
-              <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_100%_90%_at_50%_45%,black_0%,black_40%,transparent_85%)]">
-                <Orb
-                  hue={220}
-                  hoverIntensity={0.3}
-                  rotateOnHover={true}
-                  forceHoverState={false}
-                  backgroundColor={resolvedTheme === "dark" ? "#000000" : "#ffffff"}
-                />
-              </div>
-            </div>
-          </div>
 
           <motion.div
             variants={containerVariants}
@@ -287,120 +315,92 @@ export function LandingPage() {
           {/* ── LEFT: Sticky section navigator ── */}
           {!isMobile && (() => {
             const count = LANDING_NAV_SECTIONS.length
-            const step = 38
-            const h = (count - 1) * step
-            const cx = 8
-            const wave = 5
-            // Smooth S-curve through dots
-            const pts = LANDING_NAV_SECTIONS.map((_, i) => ({
-              x: cx + (i % 2 === 0 ? -wave : wave) * (i > 0 && i < count - 1 ? 1 : 0),
-              y: i * step,
-            }))
-            let curve = `M ${pts[0].x} ${pts[0].y}`
-            for (let i = 1; i < pts.length; i++) {
-              const mid = (pts[i - 1].y + pts[i].y) / 2
-              curve += ` C ${pts[i - 1].x} ${mid}, ${pts[i].x} ${mid}, ${pts[i].x} ${pts[i].y}`
-            }
-            const len = h * 1.12
+            const rowH = 18
+            const gap = 28
+            const stride = rowH + gap
+            const trackH = (count - 1) * stride
             const progress = count > 1 ? Math.min(1, scrollProgress / (count - 1)) : 0
+            // Soft-edge mask: solid up to progress point, then fades out
+            const pct = progress * 100
+            const softMask = `linear-gradient(to bottom, black ${Math.max(0, pct - 6)}%, transparent ${Math.min(100, pct + 2)}%)`
 
             return (
-            <div className="w-48 flex-shrink-0">
+            <div className="w-44 flex-shrink-0">
               <div className="sticky top-0 h-screen flex flex-col justify-center">
-                <div className="relative" style={{ paddingLeft: 28 }}>
-                  {/* SVG curve */}
-                  <svg
+                <nav className="relative text-foreground">
+
+                  {/* ── Track + Progress ── */}
+                  <div
                     className="absolute pointer-events-none"
-                    style={{ left: 6, top: 5, width: 20, height: h }}
-                    viewBox={`0 0 16 ${h}`}
-                    fill="none"
-                    aria-hidden="true"
+                    style={{
+                      left: 6,
+                      top: rowH / 2,
+                      height: trackH,
+                    }}
                   >
-                    <path d={curve} stroke="currentColor" className="text-foreground/10 dark:text-foreground/[0.06]" strokeWidth="1" strokeLinecap="round" fill="none" />
-                    <path
-                      d={curve}
-                      stroke="currentColor"
-                      className="text-foreground/40 dark:text-foreground/30"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      fill="none"
-                      strokeDasharray={len}
-                      strokeDashoffset={len * (1 - progress)}
+                    {/* Background rail */}
+                    <div
+                      className="absolute bg-foreground/[0.05] dark:bg-foreground/[0.03]"
+                      style={{ left: 0, top: 0, width: 1, height: '100%' }}
                     />
-                  </svg>
+                    {/* Progress glow (wide, ambient) */}
+                    <div
+                      className="absolute bg-foreground/[0.03] dark:bg-foreground/[0.025]"
+                      style={{
+                        left: -2,
+                        top: 0,
+                        width: 5,
+                        height: '100%',
+                        borderRadius: 3,
+                        maskImage: softMask,
+                        WebkitMaskImage: softMask,
+                      }}
+                    />
+                    {/* Progress core line */}
+                    <div
+                      className="absolute bg-foreground/[0.18] dark:bg-foreground/[0.12]"
+                      style={{
+                        left: 0,
+                        top: 0,
+                        width: 1,
+                        height: '100%',
+                        maskImage: softMask,
+                        WebkitMaskImage: softMask,
+                      }}
+                    />
+                  </div>
 
-                  {/* Orb — travels smoothly along the curve matching SVG coordinates */}
-                  {(() => {
-                    const clampedProgress = Math.max(0, Math.min(count - 1, scrollProgress))
-                    const segIdx = Math.floor(clampedProgress)
-                    const segFrac = clampedProgress - segIdx
-                    const p0 = pts[segIdx]
-                    const p1 = pts[Math.min(segIdx + 1, count - 1)]
-                    // Cubic bezier interpolation matching SVG C command control points
-                    const midY = (p0.y + p1.y) / 2
-                    const t = segFrac
-                    const mt = 1 - t
-                    const svgX = mt*mt*mt*p0.x + 3*mt*mt*t*p0.x + 3*mt*t*t*p1.x + t*t*t*p1.x
-                    const svgY = mt*mt*mt*p0.y + 3*mt*mt*t*midY + 3*mt*t*t*midY + t*t*t*p1.y
-                    // Convert SVG viewBox coords → pixel coords in the container
-                    // SVG element: left=6, top=5, width=20, viewBox="0 0 16 h"
-                    const pixelX = 6 + svgX * (20 / 16)
-                    const pixelY = 5 + svgY
-                    return (
-                      <div
-                        className="absolute pointer-events-none z-10"
-                        style={{
-                          left: pixelX,
-                          top: pixelY,
-                          width: 10,
-                          height: 10,
-                          transform: 'translate(-50%, -50%)',
-                        }}
-                      >
-                        {/* Dark mode: white glass orb */}
-                        <div
-                          className="w-full h-full rounded-full hidden dark:block shadow-[0_0_8px_rgba(255,255,255,0.25),0_0_3px_rgba(255,255,255,0.5)]"
-                          style={{
-                            background: 'radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.55) 45%, rgba(210,220,240,0.25) 75%, rgba(160,175,210,0.1))',
-                          }}
-                        />
-                        {/* Light mode: dark glass orb */}
-                        <div
-                          className="w-full h-full rounded-full dark:hidden shadow-[0_0_6px_rgba(0,0,0,0.15),0_0_2px_rgba(0,0,0,0.25)]"
-                          style={{
-                            background: 'radial-gradient(circle at 35% 30%, rgba(30,30,50,0.9), rgba(50,50,80,0.6) 45%, rgba(80,90,120,0.3) 75%, rgba(100,110,140,0.1))',
-                          }}
-                        />
-                      </div>
-                    )
-                  })()}
 
-                  {/* Nav labels */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: step - 16 }}>
+                  {/* ── Section rows ── */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap }}>
                     {LANDING_NAV_SECTIONS.map((section, i) => {
                       const isActive = activeLandingSection === i
                       const isPast = i <= activeLandingSection
                       return (
-                      <button
-                        key={section.id}
-                        onClick={() => scrollToLandingSection(i)}
-                        className={cn(
-                          "text-left transition-all duration-300 cursor-pointer group",
-                          isActive ? "opacity-100" : isPast ? "opacity-45" : "opacity-25 hover:opacity-50"
-                        )}
-                        style={{ height: 16 }}
-                      >
-                        <span className={cn(
-                          "text-[13px] font-medium leading-tight transition-all duration-300 whitespace-nowrap",
-                          isActive ? "text-foreground" : "text-muted-foreground/60"
-                        )}>
-                          {section.label}
-                        </span>
-                      </button>
+                        <button
+                          key={section.id}
+                          onClick={() => scrollToLandingSection(i)}
+                          className="flex items-center cursor-pointer group"
+                          style={{ height: rowH, paddingLeft: 24 }}
+                        >
+                          <span
+                            className={cn(
+                              "text-[12.5px] font-medium leading-none whitespace-nowrap transition-all duration-500",
+                              isActive
+                                ? "text-foreground"
+                                : isPast
+                                  ? "text-foreground/35 dark:text-foreground/25"
+                                  : "text-foreground/[0.18] dark:text-foreground/[0.12] group-hover:text-foreground/35 dark:group-hover:text-foreground/25"
+                            )}
+                            style={{ letterSpacing: '0.01em' }}
+                          >
+                            {section.label}
+                          </span>
+                        </button>
                       )
                     })}
                   </div>
-                </div>
+                </nav>
               </div>
             </div>
             )
@@ -417,9 +417,9 @@ export function LandingPage() {
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
           )}
-          style={!isMobile ? { top: 'calc(5.5rem)', zIndex: 1 } : undefined}
+          style={!isMobile ? { top: '5.5rem', zIndex: 1 } : undefined}
         >
           <motion.div
             variants={containerVariants}
@@ -598,9 +598,9 @@ export function LandingPage() {
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
           )}
-          style={!isMobile ? { top: 'calc(5.5rem + 8px)', zIndex: 2 } : undefined}
+          style={!isMobile ? { top: '5.5rem', zIndex: 2 } : undefined}
         >
           <motion.div
             variants={containerVariants}
@@ -778,9 +778,9 @@ export function LandingPage() {
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
           )}
-          style={!isMobile ? { top: 'calc(5.5rem + 16px)', zIndex: 3 } : undefined}
+          style={!isMobile ? { top: '5.5rem', zIndex: 3 } : undefined}
         >
           <motion.div
             variants={containerVariants}
@@ -973,9 +973,9 @@ export function LandingPage() {
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
           )}
-          style={!isMobile ? { top: 'calc(5.5rem + 24px)', zIndex: 4 } : undefined}
+          style={!isMobile ? { top: '5.5rem', zIndex: 4 } : undefined}
         >
           <motion.div
             variants={containerVariants}
@@ -1128,9 +1128,9 @@ export function LandingPage() {
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
           )}
-          style={!isMobile ? { top: 'calc(5.5rem + 32px)', zIndex: 5 } : undefined}
+          style={!isMobile ? { top: '5.5rem', zIndex: 5 } : undefined}
         >
           <motion.div
             variants={containerVariants}
@@ -1231,9 +1231,9 @@ export function LandingPage() {
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
           )}
-          style={!isMobile ? { top: 'calc(5.5rem + 40px)', zIndex: 6 } : undefined}
+          style={!isMobile ? { top: '5.5rem', zIndex: 6 } : undefined}
         >
           <motion.div
             variants={containerVariants}
@@ -1457,9 +1457,9 @@ export function LandingPage() {
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] py-10 px-8 lg:px-10 mb-5 will-change-[transform]"
+              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
           )}
-          style={!isMobile ? { top: 'calc(5.5rem + 48px)', zIndex: 7 } : undefined}
+          style={!isMobile ? { top: '5.5rem', zIndex: 7 } : undefined}
         >
           <motion.div
             variants={containerVariants}
@@ -1523,26 +1523,17 @@ export function LandingPage() {
                   </div>
 
                   {/* Key details */}
-                  <div className="space-y-2 mb-4 flex-1">
+                  <div className="space-y-1.5 mb-4 flex-1">
                     {plan.credits > 0 && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Zap className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-                      <span className="text-muted-foreground">{tc("creditsPerMonth", { count: plan.credits.toLocaleString() })}</span>
-                    </div>
+                      <p className="text-xs text-muted-foreground">{tc("creditsPerMonth", { count: plan.credits.toLocaleString() })}</p>
                     )}
-                    <div className="flex items-center gap-2 text-sm">
-                      <HardDrive className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-                      <span className="text-muted-foreground">
-                        {plan.machines === 0 ? t("pricing.vmTemporary") : plan.key === "lite" ? t("pricing.vmDeletedAfterInactivity") : plan.machines > 1 ? t("pricing.vmAlwaysOnPlural", { count: plan.machines }) : t("pricing.vmAlwaysOn", { count: plan.machines })}
-                      </span>
-                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {plan.machines === 0 ? t("pricing.vmTemporary") : plan.key === "lite" ? t("pricing.vmDeletedAfterInactivity") : plan.machines > 1 ? t("pricing.vmAlwaysOnPlural", { count: plan.machines }) : t("pricing.vmAlwaysOn", { count: plan.machines })}
+                    </p>
                     {plan.swarm > 0 && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Bot className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-                        <span className="text-muted-foreground">
-                          {tc("agentsInParallel", { count: plan.swarm })}
-                        </span>
-                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {tc("agentsInParallel", { count: plan.swarm })}
+                      </p>
                     )}
                   </div>
 
@@ -1561,47 +1552,6 @@ export function LandingPage() {
               ))}
             </div>
 
-            {/* Bargain callout — why this is a steal */}
-            <motion.div variants={itemVariants} className={cn(
-              "mt-6 rounded-xl border border-border/40 overflow-hidden",
-              isMobile ? "p-5" : "p-5 sm:p-6"
-            )}>
-              <div className="text-center max-w-2xl mx-auto">
-                <p className={cn(
-                  "font-bold tracking-tight",
-                  isMobile ? "text-xl" : "text-2xl sm:text-3xl"
-                )}>
-                  {t("pricing.bargain.title", { oldPrice: "" })}<span className="text-muted-foreground line-through decoration-muted-foreground/40">$8,000/mo</span>
-                </p>
-                <p className={cn(
-                  "text-muted-foreground mt-3 leading-relaxed",
-                  isMobile ? "text-xs" : "text-sm"
-                )}>
-                  {t("pricing.bargain.description")}
-                </p>
-                <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-                  <Link href="/auth">
-                    <motion.button
-                      className={cn(
-                        "inline-flex items-center gap-2 rounded-full font-semibold cursor-pointer bg-foreground text-background",
-                        isMobile ? "px-5 py-2.5 text-sm" : "px-6 py-3 text-sm"
-                      )}
-                      whileHover={{ scale: 1.02, y: -1 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {tc("startFree")}
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </motion.button>
-                  </Link>
-                  <Link
-                    href="/pricing"
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
-                  >
-                    {tc("compareAllPlans")}
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
           </motion.div>
         </section>
 

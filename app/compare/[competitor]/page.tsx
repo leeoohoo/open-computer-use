@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { LandingHeader } from "@/app/components/landing/landing-header"
+import { LandingFooter } from "@/app/components/landing/landing-footer"
 import { ArrowRight, ArrowLeft, Check, X, Minus } from "lucide-react"
 import { motion } from "framer-motion"
 import { notFound } from "next/navigation"
@@ -497,6 +498,8 @@ export default function CompetitorPage() {
           </motion.div>
         </div>
       </main>
+
+      <LandingFooter />
     </div>
   )
 }
