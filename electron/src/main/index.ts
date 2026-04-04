@@ -3,7 +3,7 @@ import { join } from 'path'
 import { ElectronAuth } from './auth'
 import { WebSocketBridge } from './ws-bridge'
 import { registerIpcHandlers } from './ipc-handlers'
-import { setMainWindow, setWindowMode, setWindowOpacity, getWindowOpacity, getWindowSize, getWindowBounds, startResize, stopResize } from './window-manager'
+import { setMainWindow, setWindowMode, setWindowOpacity, getWindowOpacity, getWindowSize, getWindowBounds, startResize, stopResize, moveToDisplay } from './window-manager'
 import { initAutoUpdater, getUpdateStatus, getUpdateVersion, checkForUpdates, quitAndInstall } from './auto-updater'
 import {
   checkAllPermissions,
@@ -12,7 +12,9 @@ import {
   openAccessibilitySettings,
 } from './permissions'
 import { ApprovalManager } from './approval-manager'
-import { destroyRainbowBorder, showAmbientRainbow, hideAmbientRainbow } from './rainbow-border'
+import { destroyRainbowBorder, showAmbientRainbow, hideAmbientRainbow, moveRainbowToDisplay } from './rainbow-border'
+import { warmupNativeScreenshot } from './native-screenshot'
+import { getDisplayList, getActiveDisplayId, setActiveDisplayId, getActiveDisplay } from './display-manager'
 
 // Prevent multiple instances — second instance just focuses the existing window.
 // This also avoids GPU cache lock conflicts on Windows.
@@ -190,6 +192,17 @@ app.whenReady().then(async () => {
   ipcMain.handle('permissions:open-screen-recording', () => openScreenRecordingSettings())
   ipcMain.handle('permissions:open-accessibility', () => openAccessibilitySettings())
 
+  // Display selection (multi-monitor)
+  ipcMain.handle('displays:list', () => getDisplayList())
+  ipcMain.handle('displays:get-active', () => getActiveDisplayId())
+  ipcMain.handle('displays:set-active', (_event, id: number | null) => {
+    setActiveDisplayId(id)
+    // Move overlay + rainbow border to the selected display
+    const display = getActiveDisplay()
+    moveToDisplay(display)
+    moveRainbowToDisplay(display)
+  })
+
   // App restart (used after granting permissions)
   ipcMain.handle('app:relaunch', () => {
     app.relaunch()
@@ -210,6 +223,11 @@ app.whenReady().then(async () => {
 
   createWindow()
   createTray()
+
+  // Pre-compile the native screenshot helper (macOS only) so it's ready
+  // before the first screenshot request. Compilation takes ~2-3s the first
+  // time; the binary is cached to disk across app restarts.
+  warmupNativeScreenshot()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

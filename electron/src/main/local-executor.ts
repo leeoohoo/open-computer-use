@@ -15,7 +15,8 @@ import {
   desktopClick, desktopClickWithModifiers, desktopDoubleClick, desktopType,
   desktopKeyPress, desktopKeyCombo, desktopScroll, desktopDrag,
 } from './desktop-automation'
-import { hideForScreenshot, showAfterScreenshot } from './window-manager'
+import { hideForDesktopAction, showAfterDesktopAction } from './window-manager'
+import { getActiveDisplay } from './display-manager'
 import { execFile } from 'child_process'
 import { BrowserWindow } from 'electron'
 
@@ -100,13 +101,36 @@ export class LocalExecutor {
       p.index = p.tab_index
     }
 
+    // Multi-display coordinate offset: the backend sends coordinates relative
+    // to the captured display, but desktop automation APIs use global screen
+    // coordinates that span all monitors. Offset by the active display's origin
+    // so clicks/drags/scrolls land on the correct screen.
+    const COORD_COMMANDS = new Set(['click', 'click_with_modifiers', 'double_click', 'scroll', 'drag'])
+    if (COORD_COMMANDS.has(command)) {
+      const { x: ox, y: oy } = getActiveDisplay().bounds
+      if (ox !== 0 || oy !== 0) {
+        // click, double_click, click_with_modifiers, scroll
+        if (p.x !== undefined) p.x = Number(p.x) + ox
+        if (p.y !== undefined) p.y = Number(p.y) + oy
+        // drag: x1/y1 → x2/y2
+        if (p.x1 !== undefined) p.x1 = Number(p.x1) + ox
+        if (p.y1 !== undefined) p.y1 = Number(p.y1) + oy
+        if (p.x2 !== undefined) p.x2 = Number(p.x2) + ox
+        if (p.y2 !== undefined) p.y2 = Number(p.y2) + oy
+      }
+    }
+
     return p
   }
 
-  /** Wrap a handler so the overlay hides before the action and re-shows after. */
+  /**
+   * Wrap a handler so the overlay becomes invisible and click-through before
+   * the action, then fades back in after. Uses opacity + setIgnoreMouseEvents
+   * instead of win.hide()/show() for a seamless, glitch-free experience.
+   */
   private withOverlayHidden(handler: CommandHandler): CommandHandler {
     return async (params) => {
-      await hideForScreenshot()
+      await hideForDesktopAction()
       try {
         const result = await handler(params)
 
@@ -124,7 +148,7 @@ export class LocalExecutor {
 
         return result
       } finally {
-        showAfterScreenshot()
+        showAfterDesktopAction()
       }
     }
   }

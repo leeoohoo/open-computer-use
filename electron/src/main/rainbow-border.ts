@@ -1,4 +1,6 @@
 import { BrowserWindow, screen } from 'electron'
+import { contentProtectionReliable } from './window-manager'
+import { getActiveDisplay } from './display-manager'
 
 let borderWindow: BrowserWindow | null = null
 let visible = false
@@ -34,7 +36,7 @@ async function showWithIntensity(intensity: 'full' | 'ambient'): Promise<void> {
   const win = borderWindow!
   if (win.isDestroyed()) return
 
-  const { x, y, width, height } = screen.getPrimaryDisplay().bounds
+  const { x, y, width, height } = getActiveDisplay().bounds
   win.setBounds({ x, y, width, height })
 
   // Set intensity before fading in (or update if already visible)
@@ -96,6 +98,13 @@ export function showRainbowAfterScreenshot(): void {
   }, STEP)
 }
 
+/** Reposition the rainbow border to cover a different display. */
+export function moveRainbowToDisplay(display: Electron.Display): void {
+  if (!borderWindow || borderWindow.isDestroyed()) return
+  const { x, y, width, height } = display.bounds
+  borderWindow.setBounds({ x, y, width, height })
+}
+
 export function destroyRainbowBorder(): void {
   if (borderWindow && !borderWindow.isDestroyed()) {
     borderWindow.destroy()
@@ -106,7 +115,7 @@ export function destroyRainbowBorder(): void {
 }
 
 function createWindow(): void {
-  const { x, y, width, height } = screen.getPrimaryDisplay().bounds
+  const { x, y, width, height } = getActiveDisplay().bounds
 
   borderWindow = new BrowserWindow({
     x, y, width, height,
@@ -129,6 +138,13 @@ function createWindow(): void {
   // Use 'floating' level — above normal apps but below the main overlay ('screen-saver').
   borderWindow.setAlwaysOnTop(true, 'screen-saver', 0)
   borderWindow.setIgnoreMouseEvents(true)
+
+  // On Windows 10 2004+, exclude the rainbow border from screen capture so it
+  // doesn't appear in screenshots — same mechanism as the main overlay window.
+  // Gated on the same version check to avoid WDA_MONITOR black-box on older Windows.
+  if (contentProtectionReliable) {
+    borderWindow.setContentProtection(true)
+  }
 
   if (process.platform !== 'win32') {
     borderWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })

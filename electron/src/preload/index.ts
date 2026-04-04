@@ -125,6 +125,11 @@ contextBridge.exposeInMainWorld('coasty', {
     return () => ipcRenderer.removeListener('approval-mode-changed', handler)
   },
 
+  // Display selection (multi-monitor)
+  getDisplays: () => ipcRenderer.invoke('displays:list'),
+  getActiveDisplay: () => ipcRenderer.invoke('displays:get-active'),
+  setActiveDisplay: (id: number | null) => ipcRenderer.invoke('displays:set-active', id),
+
   // File/folder picker — opens native dialog, returns paths + names
   selectFiles: (opts?: { directories?: boolean }) =>
     ipcRenderer.invoke('files:select', opts),
@@ -249,6 +254,19 @@ export interface CoastyAPI {
     parameters: any
   }) => void) => () => void
   onApprovalModeChanged: (callback: (mode: string) => void) => () => void
+
+  // Display selection (multi-monitor)
+  getDisplays: () => Promise<Array<{
+    id: number
+    name: string
+    width: number
+    height: number
+    isPrimary: boolean
+    scaleFactor: number
+    bounds: { x: number; y: number; width: number; height: number }
+  }>>
+  getActiveDisplay: () => Promise<number | null>
+  setActiveDisplay: (id: number | null) => Promise<void>
 
   selectFiles: (opts?: { directories?: boolean }) => Promise<{
     success: boolean

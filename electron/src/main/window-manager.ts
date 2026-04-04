@@ -1,4 +1,6 @@
 import { BrowserWindow, screen } from 'electron'
+import { release } from 'os'
+import { getActiveDisplay } from './display-manager'
 
 export type WindowMode = 'auth' | 'compact' | 'expanded'
 
@@ -18,6 +20,34 @@ function easeOutQuint(t: number): number {
 
 const MIN_EXPANDED_WIDTH = 400
 const MIN_EXPANDED_HEIGHT = 520
+
+/**
+ * On Windows 10 2004+ (build 19041+), setContentProtection(true) calls
+ * SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE) which makes the window
+ * completely invisible to all screen capture APIs — zero flicker.
+ *
+ * On Windows 10 pre-2004 the same call uses WDA_MONITOR which renders the
+ * window as an opaque BLACK RECTANGLE in captures — worse than the original.
+ * We must detect the build number and only enable this on 19041+.
+ *
+ * On macOS / Linux this flag either doesn't work reliably or shows a black box,
+ * so we fall back to an opacity-based approach (much smoother than win.hide()).
+ */
+function detectContentProtection(): boolean {
+  if (process.platform !== 'win32') return false
+  try {
+    // os.release() on Windows returns e.g. "10.0.19041" — third segment is build number.
+    // WDA_EXCLUDEFROMCAPTURE requires build 19041+ (Windows 10 2004 / May 2020 Update).
+    const parts = release().split('.')
+    const build = parseInt(parts[2], 10)
+    return !isNaN(build) && build >= 19041
+  } catch {
+    return false
+  }
+}
+
+/** True when setContentProtection reliably excludes windows from screen capture. */
+export const contentProtectionReliable = detectContentProtection()
 
 let mainWindow: BrowserWindow | null = null
 let currentMode: WindowMode = 'auth'
@@ -96,6 +126,12 @@ export function getMainWindow(): BrowserWindow | null {
 export function setMainWindow(win: BrowserWindow): void {
   mainWindow = win
 
+  // On Windows, mark the overlay as excluded from screen capture.
+  // This makes it completely invisible to desktopCapturer — no hide/show needed.
+  if (contentProtectionReliable) {
+    win.setContentProtection(true)
+  }
+
   // Track position when the user drags the overlay
   win.on('moved', () => {
     if (currentMode !== 'auth') {
@@ -168,8 +204,8 @@ export function setWindowMode(mode: WindowMode): void {
     win.setVisibleOnAllWorkspaces(cfg.alwaysOnTop, { visibleOnFullScreen: true })
   }
 
-  // Calculate position
-  const display = screen.getPrimaryDisplay()
+  // Calculate position on the active display (not always primary)
+  const display = getActiveDisplay()
   const { width: screenW } = display.workAreaSize
   const { x: workX, y: workY } = display.workArea
 
@@ -425,9 +461,17 @@ export async function hideForScreenshot(): Promise<void> {
     screenshotFadeTimer = null
   }
 
-  win.hide()
-  // Wait for OS to finish hiding and repaint the desktop
-  await new Promise((resolve) => setTimeout(resolve, 150))
+  // On Windows, content protection excludes us from capture — no need to hide
+  if (contentProtectionReliable) return
+
+  // Opacity-based hiding: much smoother than win.hide() — no OS window
+  // animation, no taskbar flash, no compositor reflow. The window stays
+  // in the window list but is fully transparent to the compositor.
+  win.setOpacity(0)
+  // Brief wait for the compositor to apply the opacity change.
+  // 50ms is sufficient (vs 150ms for win.hide()) since there's no
+  // window state transition — just an alpha value update.
+  await new Promise((resolve) => setTimeout(resolve, 50))
 }
 
 /** Show the overlay window after screenshot capture with a smooth fade-in. */
@@ -442,20 +486,22 @@ export function showAfterScreenshot(): void {
     screenshotFadeTimer = null
   }
 
-  // Start fully transparent, then fade in over 300ms
-  const targetOpacity = savedOpacityBeforeScreenshot
-  win.setOpacity(0)
-  win.showInactive()
+  // On Windows with content protection, window was never hidden — nothing to restore
+  if (contentProtectionReliable) return
 
-  // Re-assert topmost after show — showInactive() doesn't restore z-order on Windows.
+  const targetOpacity = savedOpacityBeforeScreenshot
+
+  // Re-assert topmost — may have been lost while transparent.
   // Skip if a native dialog is open — resumeTopmost() will handle it.
   if (currentMode !== 'auth' && !isNativeDialogOpen) {
     win.setAlwaysOnTop(true, 'screen-saver', 1)
     win.moveTop()
   }
 
-  // Smooth fade-in
-  const FADE_DURATION = 300
+  // Smooth fade-in from 0 → target over 250ms (ease-out cubic).
+  // Window is already at opacity 0 from hideForScreenshot — no showInactive()
+  // needed since the window was never hidden, just made transparent.
+  const FADE_DURATION = 250
   const FADE_STEP = 16 // ~60fps
   const steps = Math.ceil(FADE_DURATION / FADE_STEP)
   let step = 0
@@ -467,4 +513,101 @@ export function showAfterScreenshot(): void {
     win.setOpacity(eased * targetOpacity)
     if (t >= 1) { clearInterval(screenshotFadeTimer!); screenshotFadeTimer = null }
   }, FADE_STEP)
+}
+
+/**
+ * Hide the overlay before a desktop action (click, type, scroll, drag).
+ * Unlike screenshots, desktop actions need the window to be click-through
+ * so mouse/keyboard events pass to the app underneath.
+ * Uses opacity + setIgnoreMouseEvents instead of win.hide() for seamless UX.
+ */
+export async function hideForDesktopAction(): Promise<void> {
+  const win = mainWindow
+  if (!win || win.isDestroyed() || !win.isVisible()) return
+  isHiddenForScreenshot = true // reuse flag to suppress topmost enforcer
+
+  savedOpacityBeforeScreenshot = intendedOpacity
+
+  if (screenshotFadeTimer) {
+    clearInterval(screenshotFadeTimer)
+    screenshotFadeTimer = null
+  }
+
+  // Make window invisible AND click-through in one go — no OS window
+  // animation, no taskbar flash, no visual glitch.
+  win.setOpacity(0)
+  win.setIgnoreMouseEvents(true)
+  await new Promise((resolve) => setTimeout(resolve, 50))
+}
+
+/**
+ * Restore the overlay after a desktop action with a smooth fade-in.
+ */
+export function showAfterDesktopAction(): void {
+  const win = mainWindow
+  if (!win || win.isDestroyed()) return
+  isHiddenForScreenshot = false
+
+  if (screenshotFadeTimer) {
+    clearInterval(screenshotFadeTimer)
+    screenshotFadeTimer = null
+  }
+
+  // Restore mouse event handling first
+  win.setIgnoreMouseEvents(false)
+
+  const targetOpacity = savedOpacityBeforeScreenshot
+
+  if (currentMode !== 'auth' && !isNativeDialogOpen) {
+    win.setAlwaysOnTop(true, 'screen-saver', 1)
+    win.moveTop()
+  }
+
+  // Smooth fade-in
+  const FADE_DURATION = 250
+  const FADE_STEP = 16
+  const steps = Math.ceil(FADE_DURATION / FADE_STEP)
+  let step = 0
+  screenshotFadeTimer = setInterval(() => {
+    step++
+    if (win.isDestroyed()) { clearInterval(screenshotFadeTimer!); screenshotFadeTimer = null; return }
+    const t = Math.min(step / steps, 1)
+    const eased = 1 - Math.pow(1 - t, 3)
+    win.setOpacity(eased * targetOpacity)
+    if (t >= 1) { clearInterval(screenshotFadeTimer!); screenshotFadeTimer = null }
+  }, FADE_STEP)
+}
+
+/**
+ * Move the overlay window to a different display, preserving the current mode
+ * layout (top-center for compact, centered for expanded).
+ * Resets savedPosition since it belonged to the old display.
+ */
+export function moveToDisplay(display: Electron.Display): void {
+  const win = mainWindow
+  if (!win || win.isDestroyed()) return
+  if (currentMode === 'auth') return
+
+  const { x: workX, y: workY } = display.workArea
+  const { width: workW, height: workH } = display.workAreaSize
+  const [curW, curH] = win.getSize()
+
+  let x: number
+  let y: number
+
+  if (currentMode === 'compact') {
+    x = workX + Math.round((workW - curW) / 2)
+    y = workY + 16
+  } else {
+    // expanded — center horizontally, near top
+    x = workX + Math.round((workW - curW) / 2)
+    y = workY + 16
+  }
+
+  // Clamp to work area
+  x = Math.max(workX, Math.min(x, workX + workW - curW))
+  y = Math.max(workY, Math.min(y, workY + workH - curH))
+
+  savedPosition = { x, y }
+  win.setBounds({ x, y, width: curW, height: curH })
 }

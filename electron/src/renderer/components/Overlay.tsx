@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import { useConnectionStore } from '../stores/connection-store'
 import { useWindowStore } from '../stores/window-store'
 import { useAuthStore } from '../stores/auth-store'
@@ -9,6 +10,7 @@ import { ChatHistory } from './ChatHistory'
 import { ApprovalPrompt } from './ApprovalPrompt'
 import { useApprovalStore, APPROVAL_MODE_ORDER, APPROVAL_MODE_LABELS } from '../stores/approval-store'
 import type { ApprovalMode } from '../stores/approval-store'
+import { useDisplayStore } from '../stores/display-store'
 
 /* ─── Helpers ─── */
 
@@ -87,6 +89,138 @@ function UserAvatar({ avatar, name, size = 22 }: { avatar?: string; name?: strin
     </div>
   )
 }
+
+/* ─── Display selector (multi-monitor) ─── */
+
+const MonitorIcon = ({ size = 14, className = '' }: { size?: number; className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
+  </svg>
+)
+
+/**
+ * Shared dropdown panel rendered via a portal to document.body so it
+ * is never clipped by the overlay's overflow-hidden container.
+ * Positions itself relative to the trigger button's bounding rect.
+ */
+function DisplayDropdown({ displays, activeId, setActiveDisplay, onClose, triggerRef, anchor }: {
+  displays: Array<{ id: number; name: string; width: number; height: number; isPrimary: boolean; scaleFactor: number }>
+  activeId: number | null
+  setActiveDisplay: (id: number | null) => void
+  onClose: () => void
+  triggerRef: React.RefObject<HTMLElement | null>
+  anchor: 'above' | 'below' // above = opens upward, below = opens downward
+}) {
+  const menuRef = React.useRef<HTMLDivElement>(null)
+  const [pos, setPos] = React.useState<{ top: number; left: number } | null>(null)
+
+  // Calculate position from trigger button
+  React.useLayoutEffect(() => {
+    const btn = triggerRef.current
+    const menu = menuRef.current
+    if (!btn || !menu) return
+    const r = btn.getBoundingClientRect()
+    const menuH = menu.offsetHeight
+    const MENU_W = 224 // w-56 = 14rem = 224px
+    const GAP = 4
+
+    let top: number
+    if (anchor === 'above') {
+      top = r.top - menuH - GAP
+      // If it would overflow above the window, flip below
+      if (top < 4) top = r.bottom + GAP
+    } else {
+      top = r.bottom + GAP
+      // If it would overflow below the window, flip above
+      if (top + menuH > window.innerHeight - 4) top = r.top - menuH - GAP
+    }
+
+    // Right-align to the button, but don't overflow left edge
+    let left = r.right - MENU_W
+    if (left < 4) left = 4
+
+    setPos({ top, left })
+  }, [anchor])
+
+  const menu = (
+    <div ref={menuRef} data-display-dropdown
+      className="fixed w-56 rounded-xl bg-neutral-800 border border-neutral-700/50 shadow-2xl overflow-hidden z-[9999]"
+      style={pos ? { top: pos.top, left: pos.left } : { visibility: 'hidden', top: 0, left: 0 }}>
+      <div className="px-3 py-2 border-b border-neutral-700/30">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">Capture Display</span>
+      </div>
+      {displays.map((d) => {
+        const isActive = d.id === (activeId ?? displays.find((x) => x.isPrimary)?.id)
+        return (
+          <button
+            key={d.id}
+            onClick={() => { setActiveDisplay(d.isPrimary ? null : d.id); onClose() }}
+            className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors ${isActive ? 'bg-neutral-700/40' : 'hover:bg-neutral-700/20'}`}
+          >
+            <MonitorIcon size={16} className={isActive ? 'text-brand-400' : 'text-neutral-500'} />
+            <div className="flex-1 min-w-0">
+              <div className={`text-xs font-medium ${isActive ? 'text-neutral-100' : 'text-neutral-300'}`}>
+                {d.name}
+              </div>
+              <div className="text-[10px] text-neutral-600">{d.width}x{d.height}{d.scaleFactor > 1 ? ` @${d.scaleFactor}x` : ''}</div>
+            </div>
+            {isActive && (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-brand-400 flex-shrink-0">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
+          </button>
+        )
+      })}
+    </div>
+  )
+
+  return ReactDOM.createPortal(menu, document.body)
+}
+
+/** Expanded mode: shown in the input toolbar with label. */
+function DisplaySelector({ disabled, autoOpen, onAutoOpened }: { disabled?: boolean; autoOpen?: boolean; onAutoOpened?: () => void }) {
+  const { displays, activeId, hasMultiple, setActiveDisplay, refreshDisplays } = useDisplayStore()
+  const [open, setOpen] = React.useState(false)
+  const ref = React.useRef<HTMLDivElement>(null)
+  const btnRef = React.useRef<HTMLButtonElement>(null)
+
+  // Auto-open when triggered from compact mode
+  React.useEffect(() => {
+    if (autoOpen && hasMultiple) {
+      refreshDisplays().then(() => setOpen(true))
+      onAutoOpened?.()
+    }
+  }, [autoOpen])
+
+  React.useEffect(() => { if (open) refreshDisplays() }, [open])
+  React.useEffect(() => {
+    if (!open) return
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)
+        && !(e.target instanceof HTMLElement && e.target.closest('[data-display-dropdown]'))) setOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [open])
+
+  if (!hasMultiple) return null
+
+  const activeDisplay = displays.find((d) => d.id === activeId) ?? displays.find((d) => d.isPrimary) ?? displays[0]
+
+  return (
+    <div ref={ref} className="relative">
+      <button ref={btnRef} type="button" onClick={() => setOpen(!open)} disabled={disabled}
+        className="h-8 px-2 rounded-full text-neutral-500 hover:text-neutral-300 hover:bg-neutral-700/50 flex items-center gap-1.5 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+        title={`Screen: ${activeDisplay?.name ?? 'Primary'}`}>
+        <MonitorIcon />
+        <span className="text-[10px] font-medium max-w-[60px] truncate">{activeDisplay?.name ?? 'Primary'}</span>
+      </button>
+      {open && <DisplayDropdown displays={displays} activeId={activeId} setActiveDisplay={setActiveDisplay} onClose={() => setOpen(false)} triggerRef={btnRef} anchor="above" />}
+    </div>
+  )
+}
+
 
 /* ─── Compact placeholder ─── */
 
@@ -373,6 +507,7 @@ export function Overlay() {
   type FileRef = { path: string; name: string; ext: string; isDirectory: boolean }
   const loadChat = useChatStore((s) => s.loadChat)
   const { mode: approvalMode, setMode: setApprovalMode, pendingApprovals } = useApprovalStore()
+  const refreshDisplays = useDisplayStore((s) => s.refreshDisplays)
 
   const isExpanded = mode === 'expanded'
   const [input, setInput] = React.useState('')
@@ -384,6 +519,7 @@ export function Overlay() {
   const [showGuide, setShowGuide] = React.useState(() => {
     try { return localStorage.getItem('coasty-guide-dismissed') !== 'true' } catch { return true }
   })
+  const [displayAutoOpen, setDisplayAutoOpen] = React.useState(false)
 
   // Reset page on collapse
   React.useEffect(() => { if (!isExpanded) setPage('chat') }, [isExpanded])
@@ -408,6 +544,9 @@ export function Overlay() {
     window.coasty.getUpdateStatus().then(setUpdateStatus)
     return window.coasty.onUpdateStatusChanged(setUpdateStatus)
   }, [])
+
+  // Load display list for multi-monitor selector
+  React.useEffect(() => { refreshDisplays() }, [])
 
   // Ctrl+scroll opacity
   React.useEffect(() => {
@@ -502,6 +641,15 @@ export function Overlay() {
             <button onClick={clearMessages} className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800/60 transition-colors" title="Start a new task">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
               New
+            </button>
+          )}
+
+          {/* Display selector — compact: expand overlay and open dropdown */}
+          {!isExpanded && useDisplayStore.getState().hasMultiple && (
+            <button onClick={() => { setDisplayAutoOpen(true); toggleExpanded(); setPage('chat') }}
+              className="p-1.5 rounded-lg hover:bg-neutral-800/60 text-neutral-400 hover:text-neutral-200 transition-colors"
+              title="Select display">
+              <MonitorIcon size={13} />
             </button>
           )}
 
@@ -642,6 +790,7 @@ export function Overlay() {
                   <button type="button" onClick={() => pickItems(true)} disabled={connectionState !== 'connected'} className="size-8 rounded-full text-neutral-500 hover:text-neutral-300 hover:bg-neutral-700/50 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200" title="Attach folder">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" /></svg>
                   </button>
+                  <DisplaySelector disabled={connectionState !== 'connected'} autoOpen={displayAutoOpen} onAutoOpened={() => setDisplayAutoOpen(false)} />
                 </div>
                 {isStreaming ? (
                   <button type="button" onClick={handleStop} className="size-8 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-500 transition-all duration-300" aria-label="Stop">
