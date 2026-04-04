@@ -272,7 +272,7 @@ function DetailRow({
   children,
   defaultOpen = false,
 }: {
-  icon: React.ElementType
+  icon: React.ComponentType<any>
   label: string
   children: React.ReactNode
   defaultOpen?: boolean

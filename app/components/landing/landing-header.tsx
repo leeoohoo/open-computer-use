@@ -67,7 +67,7 @@ function DropdownItem({
   onClick,
 }: {
   href: string
-  icon: React.ElementType
+  icon: React.ComponentType<any>
   label: string
   isHovered: boolean
   onHover: () => void

@@ -218,7 +218,7 @@ export function LandingPage() {
       <GuideLines />
 
       {/* Beams background — covers full viewport including behind navbar, inverted in light mode */}
-      <div className={cn("fixed inset-0 z-0 pointer-events-none", resolvedTheme !== "dark" && "invert")} aria-hidden="true">
+      <div className={cn("fixed inset-0 z-0 pointer-events-none", mounted && resolvedTheme !== "dark" && "invert")} aria-hidden="true">
         <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
           <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_100%_90%_at_50%_45%,black_0%,black_40%,transparent_85%)]">
             <Beams

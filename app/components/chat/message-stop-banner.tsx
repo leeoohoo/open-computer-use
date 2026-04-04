@@ -15,7 +15,7 @@ type StopReason = "stopped_by_user" | "insufficient_credits" | "scheduled_insuff
 interface StopReasonConfig {
   tag: string
   reason: StopReason
-  icon: React.ElementType
+  icon: React.ComponentType<any>
   title: string
   description: string
   color: {
@@ -27,7 +27,7 @@ interface StopReasonConfig {
   }
   actions: Array<{
     label: string
-    icon: React.ElementType
+    icon: React.ComponentType<any>
     href?: string
     onClick?: string
   }>

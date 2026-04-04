@@ -59,7 +59,7 @@ interface HistoryResponse {
 
 /* ─── constants ─── */
 
-const SERVICE_ICONS: Record<string, React.ElementType> = {
+const SERVICE_ICONS: Record<string, React.ComponentType<any>> = {
   Website: Globe,
   "AI Backend": Cpu,
   Database: Database,

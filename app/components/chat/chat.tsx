@@ -40,8 +40,8 @@ import { RemoteApproval } from "./remote-approval"
 // Templates use {url} and {company} tokens — replaced at runtime with onboarding data.
 // Every template references both so suggestions always feel personal.
 // Labels are added at runtime via useTranslations (hooks cannot be called at module level).
-type TaskTemplate = { label: string; prompt: string; icon: React.ElementType; color: string }
-type TaskTemplateData = { labelKey: string; prompt: string; icon: React.ElementType; color: string }
+type TaskTemplate = { label: string; prompt: string; icon: React.ComponentType<any>; color: string }
+type TaskTemplateData = { labelKey: string; prompt: string; icon: React.ComponentType<any>; color: string }
 
 const ROLE_TEMPLATE_DATA: Record<string, TaskTemplateData[]> = {
   founder: [

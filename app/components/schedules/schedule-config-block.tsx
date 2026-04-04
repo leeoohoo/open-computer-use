@@ -206,7 +206,7 @@ function SectionHeader({
   showStep = true,
 }: {
   step?: number
-  icon: React.ElementType
+  icon: React.ComponentType<any>
   title: string
   subtitle: string
   showStep?: boolean

@@ -647,7 +647,7 @@ function StatCard({
   label: string
   value: string
   subtext?: string
-  icon: React.ElementType
+  icon: React.ComponentType<any>
   trend?: "up" | "down" | "neutral"
   trendLabel?: string
   accent?: "default" | "green" | "red" | "blue" | "purple"
@@ -828,7 +828,7 @@ function TransactionDetailRow({ transaction, isLast }: { transaction: Transactio
 
 // ─── Transaction Group Row ─────────────────────────────────────────────────
 
-const typeConfigMap: Record<string, { icon: React.ElementType; labelKey: string }> = {
+const typeConfigMap: Record<string, { icon: React.ComponentType<any>; labelKey: string }> = {
   purchase: { icon: ShoppingCart, labelKey: "transactionTypes.credit_purchase" },
   usage: { icon: Activity, labelKey: "transactionTypes.agent_usage" },
   refund: { icon: ArrowDownRight, labelKey: "transactionTypes.refund" },
@@ -847,7 +847,7 @@ function TransactionGroupRow({ group, isLast }: { group: TransactionGroup; isLas
   const isPositive = group.totalAmount > 0
 
   // Resolve icon and label
-  let Icon: React.ElementType
+  let Icon: React.ComponentType<any>
   let label: string
   if (isSession) {
     Icon = Activity
