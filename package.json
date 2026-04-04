@@ -7,7 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:frontend": "vitest run",
+    "test:backend": "cd backend && python -m pytest tests/ -v",
+    "test:electron": "cd electron && vitest run",
+    "test:all": "bash scripts/run-all-tests.sh"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^4.0.61",
