@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Điều khoản dịch vụ",
-      "description": "Điều khoản dịch vụ của Coasty. Đọc các điều khoản chi phối việc sử dụng nền tảng nhân viên AI Coasty, trợ lý sử dụng máy tính và ứng dụng máy tính."
+      "description": "Điều khoản dịch vụ của Coasty. Đọc các điều khoản chi phối việc sử dụng nền tảng nhân viên AI Coasty, trợ lý sử dụng máy tính và ứng dụng máy tính.",
+      "ogTitle": "Coasty — Điều khoản dịch vụ",
+      "ogDescription": "Điều khoản dịch vụ của Coasty. Đọc các điều khoản chi phối việc sử dụng nền tảng nhân viên AI Coasty, trợ lý sử dụng máy tính và ứng dụng máy tính."
     },
     "privacy": {
       "title": "Chính sách bảo mật",
-      "description": "Chính sách bảo mật của Coasty. Tìm hiểu cách chúng tôi bảo vệ dữ liệu của bạn với cách ly VM, phiên được mã hóa, môi trường thực thi sandbox và bảo mật cấp doanh nghiệp."
+      "description": "Chính sách bảo mật của Coasty. Tìm hiểu cách chúng tôi bảo vệ dữ liệu của bạn với cách ly VM, phiên được mã hóa, môi trường thực thi sandbox và bảo mật cấp doanh nghiệp.",
+      "ogTitle": "Coasty — Chính sách bảo mật",
+      "ogDescription": "Chính sách bảo mật của Coasty. Tìm hiểu cách chúng tôi bảo vệ dữ liệu của bạn với cách ly VM, phiên được mã hóa, môi trường thực thi sandbox và bảo mật cấp doanh nghiệp."
     },
     "useCases": {
       "title": "Trường hợp sử dụng - Trợ lý AI Coasty cho vận hành doanh nghiệp",

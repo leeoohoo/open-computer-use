@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Ketentuan Layanan",
-      "description": "Ketentuan Layanan Coasty. Baca ketentuan yang mengatur penggunaan platform karyawan AI Coasty, agen penggunaan komputer, dan aplikasi desktop."
+      "description": "Ketentuan Layanan Coasty. Baca ketentuan yang mengatur penggunaan platform karyawan AI Coasty, agen penggunaan komputer, dan aplikasi desktop.",
+      "ogTitle": "Coasty — Ketentuan Layanan",
+      "ogDescription": "Ketentuan Layanan Coasty. Baca ketentuan yang mengatur penggunaan platform karyawan AI Coasty, agen penggunaan komputer, dan aplikasi desktop."
     },
     "privacy": {
       "title": "Kebijakan Privasi",
-      "description": "Kebijakan Privasi Coasty. Pelajari bagaimana kami melindungi data Anda dengan isolasi tingkat VM, sesi terenkripsi, lingkungan eksekusi sandbox, dan keamanan tingkat enterprise."
+      "description": "Kebijakan Privasi Coasty. Pelajari bagaimana kami melindungi data Anda dengan isolasi tingkat VM, sesi terenkripsi, lingkungan eksekusi sandbox, dan keamanan tingkat enterprise.",
+      "ogTitle": "Coasty — Kebijakan Privasi",
+      "ogDescription": "Kebijakan Privasi Coasty. Pelajari bagaimana kami melindungi data Anda dengan isolasi tingkat VM, sesi terenkripsi, lingkungan eksekusi sandbox, dan keamanan tingkat enterprise."
     },
     "useCases": {
       "title": "Kasus Penggunaan - Agen AI Coasty untuk Operasi Bisnis",

@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "服务条款",
-      "description": "Coasty服务条款。阅读管理Coasty AI员工平台、计算机操控代理和桌面应用程序使用的条款。"
+      "description": "Coasty服务条款。阅读管理Coasty AI员工平台、计算机操控代理和桌面应用程序使用的条款。",
+      "ogTitle": "Coasty — 服务条款",
+      "ogDescription": "Coasty服务条款。阅读管理Coasty AI员工平台、计算机操控代理和桌面应用程序使用的条款。."
     },
     "privacy": {
       "title": "隐私政策",
-      "description": "Coasty隐私政策。了解我们如何通过虚拟机级别隔离、加密会话、沙箱执行环境和企业级安全保护您的数据。"
+      "description": "Coasty隐私政策。了解我们如何通过虚拟机级别隔离、加密会话、沙箱执行环境和企业级安全保护您的数据。",
+      "ogTitle": "Coasty — 隐私政策",
+      "ogDescription": "Coasty隐私政策。了解我们如何通过虚拟机级别隔离、加密会话、沙箱执行环境和企业级安全保护您的数据。."
     },
     "useCases": {
       "title": "使用场景 — Coasty AI代理助力业务运营",

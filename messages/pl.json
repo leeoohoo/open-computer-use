@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Warunki Korzystania z Usługi",
-      "description": "Warunki Korzystania z Usługi Coasty. Przeczytaj warunki regulujące korzystanie z platformy pracownika AI Coasty, agenta obsługi komputera i aplikacji desktopowej."
+      "description": "Warunki Korzystania z Usługi Coasty. Przeczytaj warunki regulujące korzystanie z platformy pracownika AI Coasty, agenta obsługi komputera i aplikacji desktopowej.",
+      "ogTitle": "Coasty — Warunki Korzystania z Usługi",
+      "ogDescription": "Warunki Korzystania z Usługi Coasty. Przeczytaj warunki regulujące korzystanie z platformy pracownika AI Coasty, agenta obsługi komputera i aplikacji desktopowej."
     },
     "privacy": {
       "title": "Polityka Prywatności",
-      "description": "Polityka Prywatności Coasty. Dowiedz się, jak chronimy Twoje dane dzięki izolacji na poziomie VM, szyfrowanym sesjom, izolowanym środowiskom wykonawczym i zabezpieczeniom klasy korporacyjnej."
+      "description": "Polityka Prywatności Coasty. Dowiedz się, jak chronimy Twoje dane dzięki izolacji na poziomie VM, szyfrowanym sesjom, izolowanym środowiskom wykonawczym i zabezpieczeniom klasy korporacyjnej.",
+      "ogTitle": "Coasty — Polityka Prywatności",
+      "ogDescription": "Polityka Prywatności Coasty. Dowiedz się, jak chronimy Twoje dane dzięki izolacji na poziomie VM, szyfrowanym sesjom, izolowanym środowiskom wykonawczym i zabezpieczeniom klasy korporacyjnej."
     },
     "useCases": {
       "title": "Zastosowania - Agent AI Coasty dla Operacji Biznesowych",

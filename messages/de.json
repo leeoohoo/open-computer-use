@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Nutzungsbedingungen",
-      "description": "Coasty Nutzungsbedingungen. Lesen Sie die Bedingungen, die die Nutzung der Coasty KI-Mitarbeiter-Plattform, des Computernutzungs-Agenten und der Desktop-Anwendung regeln."
+      "description": "Coasty Nutzungsbedingungen. Lesen Sie die Bedingungen, die die Nutzung der Coasty KI-Mitarbeiter-Plattform, des Computernutzungs-Agenten und der Desktop-Anwendung regeln.",
+      "ogTitle": "Coasty — Nutzungsbedingungen",
+      "ogDescription": "Coasty Nutzungsbedingungen. Lesen Sie die Bedingungen, die die Nutzung der Coasty KI-Mitarbeiter-Plattform, des Computernutzungs-Agenten und der Desktop-Anwendung regeln."
     },
     "privacy": {
       "title": "Datenschutzrichtlinie",
-      "description": "Coasty Datenschutzrichtlinie. Erfahren Sie, wie wir Ihre Daten mit VM-Isolation, verschlüsselten Sitzungen, isolierten Ausführungsumgebungen und Sicherheit auf Enterprise-Niveau schützen."
+      "description": "Coasty Datenschutzrichtlinie. Erfahren Sie, wie wir Ihre Daten mit VM-Isolation, verschlüsselten Sitzungen, isolierten Ausführungsumgebungen und Sicherheit auf Enterprise-Niveau schützen.",
+      "ogTitle": "Coasty — Datenschutzrichtlinie",
+      "ogDescription": "Coasty Datenschutzrichtlinie. Erfahren Sie, wie wir Ihre Daten mit VM-Isolation, verschlüsselten Sitzungen, isolierten Ausführungsumgebungen und Sicherheit auf Enterprise-Niveau schützen."
     },
     "useCases": {
       "title": "Anwendungsfälle - Coasty KI-Agent für Geschäftsabläufe",

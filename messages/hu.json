@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Felhasználási feltételek",
-      "description": "Coasty Felhasználási Feltételek. Olvassa el a Coasty AI alkalmazott platform, a számítógépet használó ügynök és az asztali alkalmazás használatát szabályozó feltételeket."
+      "description": "Coasty Felhasználási Feltételek. Olvassa el a Coasty AI alkalmazott platform, a számítógépet használó ügynök és az asztali alkalmazás használatát szabályozó feltételeket.",
+      "ogTitle": "Coasty — Felhasználási feltételek",
+      "ogDescription": "Coasty Felhasználási Feltételek. Olvassa el a Coasty AI alkalmazott platform, a számítógépet használó ügynök és az asztali alkalmazás használatát szabályozó feltételeket."
     },
     "privacy": {
       "title": "Adatvédelmi irányelvek",
-      "description": "Coasty Adatvédelmi Irányelvek. Tudja meg, hogyan védjük adatait VM-szintű izolációval, titkosított munkamenetekkel, sandboxolt végrehajtási környezetekkel és vállalati szintű biztonsággal."
+      "description": "Coasty Adatvédelmi Irányelvek. Tudja meg, hogyan védjük adatait VM-szintű izolációval, titkosított munkamenetekkel, sandboxolt végrehajtási környezetekkel és vállalati szintű biztonsággal.",
+      "ogTitle": "Coasty — Adatvédelmi irányelvek",
+      "ogDescription": "Coasty Adatvédelmi Irányelvek. Tudja meg, hogyan védjük adatait VM-szintű izolációval, titkosított munkamenetekkel, sandboxolt végrehajtási környezetekkel és vállalati szintű biztonsággal."
     },
     "useCases": {
       "title": "Használati esetek - Coasty AI ügynök üzleti műveletekhez",

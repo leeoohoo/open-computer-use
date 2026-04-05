@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Käyttöehdot",
-      "description": "Coastyn käyttöehdot. Lue ehdot, jotka koskevat Coasty-tekoälytyöntekijäalustan, tietokonetta käyttävän agentin ja työpöytäsovelluksen käyttöä."
+      "description": "Coastyn käyttöehdot. Lue ehdot, jotka koskevat Coasty-tekoälytyöntekijäalustan, tietokonetta käyttävän agentin ja työpöytäsovelluksen käyttöä.",
+      "ogTitle": "Coasty — Käyttöehdot",
+      "ogDescription": "Coastyn käyttöehdot. Lue ehdot, jotka koskevat Coasty-tekoälytyöntekijäalustan, tietokonetta käyttävän agentin ja työpöytäsovelluksen käyttöä."
     },
     "privacy": {
       "title": "Tietosuojakäytäntö",
-      "description": "Coastyn tietosuojakäytäntö. Opi miten suojaamme tietosi VM-tason eristyksellä, salattuilla istunnoilla, hiekkalaatikkoympäristöillä ja yritystason tietoturvalla."
+      "description": "Coastyn tietosuojakäytäntö. Opi miten suojaamme tietosi VM-tason eristyksellä, salattuilla istunnoilla, hiekkalaatikkoympäristöillä ja yritystason tietoturvalla.",
+      "ogTitle": "Coasty — Tietosuojakäytäntö",
+      "ogDescription": "Coastyn tietosuojakäytäntö. Opi miten suojaamme tietosi VM-tason eristyksellä, salattuilla istunnoilla, hiekkalaatikkoympäristöillä ja yritystason tietoturvalla."
     },
     "useCases": {
       "title": "Käyttötapaukset - Coasty-tekoälyagentti liiketoiminnan toimintoihin",

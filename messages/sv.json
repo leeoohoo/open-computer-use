@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Användarvillkor",
-      "description": "Coastys användarvillkor. Läs villkoren som reglerar användningen av Coastys AI-anställdplattform, datoranvändningsagent och skrivbordsapplikation."
+      "description": "Coastys användarvillkor. Läs villkoren som reglerar användningen av Coastys AI-anställdplattform, datoranvändningsagent och skrivbordsapplikation.",
+      "ogTitle": "Coasty — Användarvillkor",
+      "ogDescription": "Coastys användarvillkor. Läs villkoren som reglerar användningen av Coastys AI-anställdplattform, datoranvändningsagent och skrivbordsapplikation."
     },
     "privacy": {
       "title": "Integritetspolicy",
-      "description": "Coastys integritetspolicy. Läs om hur vi skyddar dina data med VM-nivåisolering, krypterade sessioner, sandlådemiljöer och säkerhet i företagsklass."
+      "description": "Coastys integritetspolicy. Läs om hur vi skyddar dina data med VM-nivåisolering, krypterade sessioner, sandlådemiljöer och säkerhet i företagsklass.",
+      "ogTitle": "Coasty — Integritetspolicy",
+      "ogDescription": "Coastys integritetspolicy. Läs om hur vi skyddar dina data med VM-nivåisolering, krypterade sessioner, sandlådemiljöer och säkerhet i företagsklass."
     },
     "useCases": {
       "title": "Användningsområden - Coasty AI-agent för affärsverksamhet",

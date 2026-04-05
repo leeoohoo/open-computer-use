@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Terma Perkhidmatan",
-      "description": "Terma Perkhidmatan Coasty. Baca terma yang mengawal penggunaan platform pekerja AI Coasty, ejen penggunaan komputer dan aplikasi desktop."
+      "description": "Terma Perkhidmatan Coasty. Baca terma yang mengawal penggunaan platform pekerja AI Coasty, ejen penggunaan komputer dan aplikasi desktop.",
+      "ogTitle": "Coasty — Terma Perkhidmatan",
+      "ogDescription": "Terma Perkhidmatan Coasty. Baca terma yang mengawal penggunaan platform pekerja AI Coasty, ejen penggunaan komputer dan aplikasi desktop."
     },
     "privacy": {
       "title": "Dasar Privasi",
-      "description": "Dasar Privasi Coasty. Ketahui bagaimana kami melindungi data anda dengan pengasingan tahap VM, sesi yang disulitkan, persekitaran pelaksanaan kotak pasir dan keselamatan tahap perusahaan."
+      "description": "Dasar Privasi Coasty. Ketahui bagaimana kami melindungi data anda dengan pengasingan tahap VM, sesi yang disulitkan, persekitaran pelaksanaan kotak pasir dan keselamatan tahap perusahaan.",
+      "ogTitle": "Coasty — Dasar Privasi",
+      "ogDescription": "Dasar Privasi Coasty. Ketahui bagaimana kami melindungi data anda dengan pengasingan tahap VM, sesi yang disulitkan, persekitaran pelaksanaan kotak pasir dan keselamatan tahap perusahaan."
     },
     "useCases": {
       "title": "Kes Penggunaan - Ejen AI Coasty untuk Operasi Perniagaan",

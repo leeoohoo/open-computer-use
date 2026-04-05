@@ -1955,11 +1955,15 @@
     },
     "terms": {
       "title": "Terms of Service",
-      "description": "Coasty Terms of Service. Read the terms governing use of the Coasty AI employee platform, computer-using agent, and desktop application."
+      "description": "Coasty Terms of Service. Read the terms governing use of the Coasty AI employee platform, computer-using agent, and desktop application.",
+      "ogTitle": "Coasty — Terms of Service",
+      "ogDescription": "Terms governing use of the Coasty AI employee platform, computer-using agent, and desktop application."
     },
     "privacy": {
       "title": "Privacy Policy",
-      "description": "Coasty Privacy Policy. Learn how we protect your data with VM-level isolation, encrypted sessions, sandboxed execution environments, and enterprise-grade security."
+      "description": "Coasty Privacy Policy. Learn how we protect your data with VM-level isolation, encrypted sessions, sandboxed execution environments, and enterprise-grade security.",
+      "ogTitle": "Coasty — Privacy Policy",
+      "ogDescription": "How Coasty protects your data with VM-level isolation, encrypted sessions, and enterprise-grade security."
     },
     "useCases": {
       "title": "Use Cases - Coasty AI Agent for Business Operations",

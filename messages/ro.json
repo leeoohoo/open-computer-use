@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Termeni și condiții",
-      "description": "Termenii și condițiile Coasty. Citiți termenii care guvernează utilizarea platformei de angajat AI Coasty, agentul care folosește computerul și aplicația desktop."
+      "description": "Termenii și condițiile Coasty. Citiți termenii care guvernează utilizarea platformei de angajat AI Coasty, agentul care folosește computerul și aplicația desktop.",
+      "ogTitle": "Coasty — Termeni și condiții",
+      "ogDescription": "Termenii și condițiile Coasty. Citiți termenii care guvernează utilizarea platformei de angajat AI Coasty, agentul care folosește computerul și aplicația desktop."
     },
     "privacy": {
       "title": "Politica de confidențialitate",
-      "description": "Politica de confidențialitate Coasty. Aflați cum vă protejăm datele cu izolare la nivel de VM, sesiuni criptate, medii de execuție sandboxate și securitate de nivel enterprise."
+      "description": "Politica de confidențialitate Coasty. Aflați cum vă protejăm datele cu izolare la nivel de VM, sesiuni criptate, medii de execuție sandboxate și securitate de nivel enterprise.",
+      "ogTitle": "Coasty — Politica de confidențialitate",
+      "ogDescription": "Politica de confidențialitate Coasty. Aflați cum vă protejăm datele cu izolare la nivel de VM, sesiuni criptate, medii de execuție sandboxate și securitate de nivel enterprise."
     },
     "useCases": {
       "title": "Cazuri de utilizare - Agentul AI Coasty pentru operațiuni de afaceri",

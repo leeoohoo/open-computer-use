@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Podmínky služby",
-      "description": "Podmínky služby Coasty. Přečtěte si podmínky upravující používání platformy AI zaměstnance Coasty, agenta ovládajícího počítač a desktopové aplikace."
+      "description": "Podmínky služby Coasty. Přečtěte si podmínky upravující používání platformy AI zaměstnance Coasty, agenta ovládajícího počítač a desktopové aplikace.",
+      "ogTitle": "Coasty — Podmínky služby",
+      "ogDescription": "Podmínky služby Coasty. Přečtěte si podmínky upravující používání platformy AI zaměstnance Coasty, agenta ovládajícího počítač a desktopové aplikace."
     },
     "privacy": {
       "title": "Zásady ochrany osobních údajů",
-      "description": "Zásady ochrany osobních údajů Coasty. Zjistěte, jak chráníme vaše data izolací na úrovni VM, šifrovanými relacemi, sandboxovanými prostředími a zabezpečením podnikové úrovně."
+      "description": "Zásady ochrany osobních údajů Coasty. Zjistěte, jak chráníme vaše data izolací na úrovni VM, šifrovanými relacemi, sandboxovanými prostředími a zabezpečením podnikové úrovně.",
+      "ogTitle": "Coasty — Zásady ochrany osobních údajů",
+      "ogDescription": "Zásady ochrany osobních údajů Coasty. Zjistěte, jak chráníme vaše data izolací na úrovni VM, šifrovanými relacemi, sandboxovanými prostředími a zabezpečením podnikové úrovně."
     },
     "useCases": {
       "title": "Případy použití - AI agent Coasty pro firemní operace",

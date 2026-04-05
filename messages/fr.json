@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Conditions d'Utilisation",
-      "description": "Conditions d'Utilisation de Coasty. Lisez les conditions régissant l'utilisation de la plateforme d'employé IA Coasty, l'agent d'utilisation d'ordinateur et l'application de bureau."
+      "description": "Conditions d'Utilisation de Coasty. Lisez les conditions régissant l'utilisation de la plateforme d'employé IA Coasty, l'agent d'utilisation d'ordinateur et l'application de bureau.",
+      "ogTitle": "Coasty — Conditions d'Utilisation",
+      "ogDescription": "Conditions d'Utilisation de Coasty. Lisez les conditions régissant l'utilisation de la plateforme d'employé IA Coasty, l'agent d'utilisation d'ordinateur et l'application de bureau."
     },
     "privacy": {
       "title": "Politique de Confidentialité",
-      "description": "Politique de Confidentialité de Coasty. Découvrez comment nous protégeons vos données avec une isolation au niveau VM, des sessions chiffrées, des environnements d'exécution isolés et une sécurité de niveau entreprise."
+      "description": "Politique de Confidentialité de Coasty. Découvrez comment nous protégeons vos données avec une isolation au niveau VM, des sessions chiffrées, des environnements d'exécution isolés et une sécurité de niveau entreprise.",
+      "ogTitle": "Coasty — Politique de Confidentialité",
+      "ogDescription": "Politique de Confidentialité de Coasty. Découvrez comment nous protégeons vos données avec une isolation au niveau VM, des sessions chiffrées, des environnements d'exécution isolés et une sécurité de niveau entreprise."
     },
     "useCases": {
       "title": "Cas d'Utilisation - Agent IA Coasty pour les Opérations Commerciales",

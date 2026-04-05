@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Servicevilkår",
-      "description": "Coasty Servicevilkår. Læs vilkårene der regulerer brugen af Coasty AI-medarbejderplatformen, computerbrugsagenten og desktopapplikationen."
+      "description": "Coasty Servicevilkår. Læs vilkårene der regulerer brugen af Coasty AI-medarbejderplatformen, computerbrugsagenten og desktopapplikationen.",
+      "ogTitle": "Coasty — Servicevilkår",
+      "ogDescription": "Coasty Servicevilkår. Læs vilkårene der regulerer brugen af Coasty AI-medarbejderplatformen, computerbrugsagenten og desktopapplikationen."
     },
     "privacy": {
       "title": "Privatlivspolitik",
-      "description": "Coasty Privatlivspolitik. Læs om hvordan vi beskytter dine data med VM-niveau isolering, krypterede sessioner, sandkasse-eksekveringsmiljøer og virksomhedsniveau sikkerhed."
+      "description": "Coasty Privatlivspolitik. Læs om hvordan vi beskytter dine data med VM-niveau isolering, krypterede sessioner, sandkasse-eksekveringsmiljøer og virksomhedsniveau sikkerhed.",
+      "ogTitle": "Coasty — Privatlivspolitik",
+      "ogDescription": "Coasty Privatlivspolitik. Læs om hvordan vi beskytter dine data med VM-niveau isolering, krypterede sessioner, sandkasse-eksekveringsmiljøer og virksomhedsniveau sikkerhed."
     },
     "useCases": {
       "title": "Brugsscenarier - Coasty AI-agent til forretningsdrift",

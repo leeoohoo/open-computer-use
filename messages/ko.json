@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "이용 약관",
-      "description": "Coasty 이용 약관. Coasty AI 직원 플랫폼, 컴퓨터 사용 에이전트 및 데스크톱 애플리케이션의 사용을 규정하는 약관을 읽어보세요."
+      "description": "Coasty 이용 약관. Coasty AI 직원 플랫폼, 컴퓨터 사용 에이전트 및 데스크톱 애플리케이션의 사용을 규정하는 약관을 읽어보세요.",
+      "ogTitle": "Coasty — 이용 약관",
+      "ogDescription": "Coasty 이용 약관. Coasty AI 직원 플랫폼, 컴퓨터 사용 에이전트 및 데스크톱 애플리케이션의 사용을 규정하는 약관을 읽어보세요."
     },
     "privacy": {
       "title": "개인정보 처리방침",
-      "description": "Coasty 개인정보 처리방침. VM 수준 격리, 암호화된 세션, 샌드박스 실행 환경, 엔터프라이즈급 보안으로 데이터를 보호하는 방법을 알아보세요."
+      "description": "Coasty 개인정보 처리방침. VM 수준 격리, 암호화된 세션, 샌드박스 실행 환경, 엔터프라이즈급 보안으로 데이터를 보호하는 방법을 알아보세요.",
+      "ogTitle": "Coasty — 개인정보 처리방침",
+      "ogDescription": "Coasty 개인정보 처리방침. VM 수준 격리, 암호화된 세션, 샌드박스 실행 환경, 엔터프라이즈급 보안으로 데이터를 보호하는 방법을 알아보세요."
     },
     "useCases": {
       "title": "사용 사례 — 비즈니스 운영을 위한 Coasty AI 에이전트",

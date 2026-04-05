@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Hizmet Şartları",
-      "description": "Coasty Hizmet Şartları. Coasty AI çalışan platformu, bilgisayar kullanan ajanı ve masaüstü uygulamasının kullanımını düzenleyen şartları okuyun."
+      "description": "Coasty Hizmet Şartları. Coasty AI çalışan platformu, bilgisayar kullanan ajanı ve masaüstü uygulamasının kullanımını düzenleyen şartları okuyun.",
+      "ogTitle": "Coasty — Hizmet Şartları",
+      "ogDescription": "Coasty Hizmet Şartları. Coasty AI çalışan platformu, bilgisayar kullanan ajanı ve masaüstü uygulamasının kullanımını düzenleyen şartları okuyun."
     },
     "privacy": {
       "title": "Gizlilik Politikası",
-      "description": "Coasty Gizlilik Politikası. VM düzeyinde izolasyon, şifreli oturumlar, sandbox yürütme ortamları ve kurumsal düzey güvenlikle verilerinizi nasıl koruduğumuzu öğrenin."
+      "description": "Coasty Gizlilik Politikası. VM düzeyinde izolasyon, şifreli oturumlar, sandbox yürütme ortamları ve kurumsal düzey güvenlikle verilerinizi nasıl koruduğumuzu öğrenin.",
+      "ogTitle": "Coasty — Gizlilik Politikası",
+      "ogDescription": "Coasty Gizlilik Politikası. VM düzeyinde izolasyon, şifreli oturumlar, sandbox yürütme ortamları ve kurumsal düzey güvenlikle verilerinizi nasıl koruduğumuzu öğrenin."
     },
     "useCases": {
       "title": "Kullanım Alanları - İş Operasyonları için Coasty AI Ajanı",

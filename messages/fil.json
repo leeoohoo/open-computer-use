@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Mga Tuntunin ng Serbisyo",
-      "description": "Mga Tuntunin ng Serbisyo ng Coasty. Basahin ang mga tuntuning namamahala sa paggamit ng Coasty AI employee platform, computer-using agent, at desktop application."
+      "description": "Mga Tuntunin ng Serbisyo ng Coasty. Basahin ang mga tuntuning namamahala sa paggamit ng Coasty AI employee platform, computer-using agent, at desktop application.",
+      "ogTitle": "Coasty — Mga Tuntunin ng Serbisyo",
+      "ogDescription": "Mga Tuntunin ng Serbisyo ng Coasty. Basahin ang mga tuntuning namamahala sa paggamit ng Coasty AI employee platform, computer-using agent, at desktop application."
     },
     "privacy": {
       "title": "Patakaran sa Privacy",
-      "description": "Patakaran sa Privacy ng Coasty. Alamin kung paano namin pinoprotektahan ang iyong data gamit ang VM-level isolation, encrypted sessions, sandboxed execution environments, at enterprise-grade security."
+      "description": "Patakaran sa Privacy ng Coasty. Alamin kung paano namin pinoprotektahan ang iyong data gamit ang VM-level isolation, encrypted sessions, sandboxed execution environments, at enterprise-grade security.",
+      "ogTitle": "Coasty — Patakaran sa Privacy",
+      "ogDescription": "Patakaran sa Privacy ng Coasty. Alamin kung paano namin pinoprotektahan ang iyong data gamit ang VM-level isolation, encrypted sessions, sandboxed execution environments, at enterprise-grade security."
     },
     "useCases": {
       "title": "Mga Use Case - Coasty AI Agent para sa Business Operations",

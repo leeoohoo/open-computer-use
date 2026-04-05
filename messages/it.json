@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Termini di Servizio",
-      "description": "Termini di Servizio di Coasty. Leggi i termini che regolano l'uso della piattaforma di dipendente IA Coasty, l'agente di uso del computer e l'applicazione desktop."
+      "description": "Termini di Servizio di Coasty. Leggi i termini che regolano l'uso della piattaforma di dipendente IA Coasty, l'agente di uso del computer e l'applicazione desktop.",
+      "ogTitle": "Coasty — Termini di Servizio",
+      "ogDescription": "Termini di Servizio di Coasty. Leggi i termini che regolano l'uso della piattaforma di dipendente IA Coasty, l'agente di uso del computer e l'applicazione desktop."
     },
     "privacy": {
       "title": "Informativa sulla Privacy",
-      "description": "Informativa sulla Privacy di Coasty. Scopri come proteggiamo i tuoi dati con isolamento a livello VM, sessioni crittografate, ambienti di esecuzione isolati e sicurezza di livello enterprise."
+      "description": "Informativa sulla Privacy di Coasty. Scopri come proteggiamo i tuoi dati con isolamento a livello VM, sessioni crittografate, ambienti di esecuzione isolati e sicurezza di livello enterprise.",
+      "ogTitle": "Coasty — Informativa sulla Privacy",
+      "ogDescription": "Informativa sulla Privacy di Coasty. Scopri come proteggiamo i tuoi dati con isolamento a livello VM, sessioni crittografate, ambienti di esecuzione isolati e sicurezza di livello enterprise."
     },
     "useCases": {
       "title": "Casi d'Uso - Agente IA Coasty per le Operazioni Aziendali",

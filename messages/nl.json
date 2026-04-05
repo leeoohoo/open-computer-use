@@ -2246,11 +2246,15 @@
     },
     "terms": {
       "title": "Gebruiksvoorwaarden",
-      "description": "Coasty Gebruiksvoorwaarden. Lees de voorwaarden die het gebruik van het Coasty AI-medewerkerplatform, de computergebruik-agent en de desktopapplicatie regelen."
+      "description": "Coasty Gebruiksvoorwaarden. Lees de voorwaarden die het gebruik van het Coasty AI-medewerkerplatform, de computergebruik-agent en de desktopapplicatie regelen.",
+      "ogTitle": "Coasty — Gebruiksvoorwaarden",
+      "ogDescription": "Coasty Gebruiksvoorwaarden. Lees de voorwaarden die het gebruik van het Coasty AI-medewerkerplatform, de computergebruik-agent en de desktopapplicatie regelen."
     },
     "privacy": {
       "title": "Privacybeleid",
-      "description": "Coasty Privacybeleid. Ontdek hoe we uw gegevens beschermen met VM-isolatie, versleutelde sessies, geïsoleerde uitvoeringsomgevingen en beveiliging op bedrijfsniveau."
+      "description": "Coasty Privacybeleid. Ontdek hoe we uw gegevens beschermen met VM-isolatie, versleutelde sessies, geïsoleerde uitvoeringsomgevingen en beveiliging op bedrijfsniveau.",
+      "ogTitle": "Coasty — Privacybeleid",
+      "ogDescription": "Coasty Privacybeleid. Ontdek hoe we uw gegevens beschermen met VM-isolatie, versleutelde sessies, geïsoleerde uitvoeringsomgevingen en beveiliging op bedrijfsniveau."
     },
     "useCases": {
       "title": "Toepassingen - Coasty AI-Agent voor Bedrijfsoperaties",
