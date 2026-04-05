@@ -379,6 +379,29 @@ export function registerIpcHandlers(
     }
   })
 
+  // ── Resume from human handoff ────────────────────────────────────
+  secureHandle('chat:resume-human', async (_event, machineId: string) => {
+    try {
+      const token = await auth.getAccessToken()
+      const res = await fetch(`${backendUrl}/api/chat/resume-human/${machineId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
+      })
+      if (!res.ok) {
+        const text = await res.text()
+        return { success: false, error: text }
+      }
+      const data = await res.json()
+      return { success: true, resumed: data.resumed ?? true }
+    } catch (err: any) {
+      console.error('[ResumeHuman] Failed:', err.message)
+      return { success: false, error: err.message }
+    }
+  })
+
   // ── Chat SSE Streaming (main process, no CORS) ───────────────────
   // The renderer cannot fetch() external URLs without CORS issues
   // (it loads from file://). All streaming goes through the main process

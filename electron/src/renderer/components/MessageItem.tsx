@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import type { ChatMessage } from '../stores/chat-store'
+import { useChatStore } from '../stores/chat-store'
 import { ToolInvocationDisplay } from './ToolInvocationDisplay'
 import { hasCuaSections, CuaSectionRenderer } from './CuaSectionRenderer'
 import { Markdown } from './Markdown'
@@ -56,11 +57,15 @@ function fileExtColor(ext: string): string {
 
 interface Props {
   message: ChatMessage
+  isStreaming?: boolean
+  isLast?: boolean
 }
 
-export function MessageItem({ message }: Props) {
+export function MessageItem({ message, isStreaming, isLast }: Props) {
   const isUser = message.role === 'user'
   const isCua = !isUser && message.content && hasCuaSections(message.content)
+  const setAwaitingHuman = useChatStore((s) => s.setAwaitingHuman)
+  const clearAwaitingHuman = useCallback(() => setAwaitingHuman(null), [setAwaitingHuman])
 
   const screenshots = useMemo(() => {
     if (!isCua || !message.toolInvocations) return []
@@ -95,6 +100,8 @@ export function MessageItem({ message }: Props) {
             <CuaSectionRenderer
               content={message.content}
               screenshots={screenshots}
+              isStreaming={isStreaming && isLast}
+              onResumeHuman={clearAwaitingHuman}
             />
           ) : (
             <div className="markdown-prose text-sm leading-relaxed text-neutral-300">

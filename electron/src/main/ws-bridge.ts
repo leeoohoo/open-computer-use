@@ -160,6 +160,7 @@ export class WebSocketBridge {
             })
           } else if (this.approvalManager.shouldAutoApprove(command)) {
             console.log(`[WS Bridge] Auto-approved: ${command}`)
+            this.startRainbow()
             try {
               const result = await this.executor.executeCommand(command, parameters)
               this.send({ type: 'result', data: result })

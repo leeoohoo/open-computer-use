@@ -127,7 +127,7 @@ function DisplayDropdown({ displays, activeId, setActiveDisplay, onClose, trigge
   const [pos, setPos] = React.useState<{ top: number; left: number } | null>(null)
 
   // Calculate position from trigger button
-  React.useLayoutEffect(() => {
+  const reposition = React.useCallback(() => {
     const btn = triggerRef.current
     const menu = menuRef.current
     if (!btn || !menu) return
@@ -153,6 +153,14 @@ function DisplayDropdown({ displays, activeId, setActiveDisplay, onClose, trigge
 
     setPos({ top, left })
   }, [anchor])
+
+  React.useLayoutEffect(() => {
+    reposition()
+    // Recalculate after a frame in case the layout is still settling
+    // (e.g. window resize animation or CSS transitions in progress)
+    const raf = requestAnimationFrame(reposition)
+    return () => cancelAnimationFrame(raf)
+  }, [reposition])
 
   const menu = (
     <div ref={menuRef} data-display-dropdown
@@ -197,10 +205,14 @@ function DisplaySelector({ disabled, autoOpen, onAutoOpened }: { disabled?: bool
   const ref = React.useRef<HTMLDivElement>(null)
   const btnRef = React.useRef<HTMLButtonElement>(null)
 
-  // Auto-open when triggered from compact mode
+  // Auto-open when triggered from compact mode — delay until window
+  // expansion animation (320ms) and CSS chat-reveal (60ms+350ms) finish
+  // so the button's measured position matches the stable expanded layout.
   React.useEffect(() => {
     if (autoOpen && hasMultiple) {
-      refreshDisplays().then(() => setOpen(true))
+      refreshDisplays().then(() => {
+        setTimeout(() => setOpen(true), 420)
+      })
       onAutoOpened?.()
     }
   }, [autoOpen])
@@ -614,8 +626,8 @@ export function Overlay() {
             <defs><linearGradient id="coastyGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(255,255,255,0)" stopOpacity={0} /><stop offset="30%" stopColor="rgba(255,255,255,0.1)" stopOpacity={1} /><stop offset="50%" stopColor="rgba(255,255,255,0.3)" stopOpacity={1} /><stop offset="70%" stopColor="rgba(255,255,255,0.6)" stopOpacity={1} /><stop offset="100%" stopColor="rgba(255,255,255,1)" stopOpacity={1} /></linearGradient></defs>
             <circle cx="100" cy="100" r="100" fill="url(#coastyGrad)" />
           </svg>
-          <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-neutral-900 ${statusDot(connectionState)}`} />
-          {updateStatus === 'ready' && <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-neutral-900" />}
+          <div className={`absolute -bottom-px -right-px w-1.5 h-1.5 rounded-full ring-[1.5px] ring-neutral-900 ${statusDot(connectionState)}`} />
+          {updateStatus === 'ready' && <div className="absolute -top-px -right-px w-1.5 h-1.5 rounded-full bg-emerald-400 ring-[1.5px] ring-neutral-900" />}
         </div>
 
         {/* Input / title */}

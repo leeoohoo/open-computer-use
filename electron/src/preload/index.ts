@@ -37,6 +37,9 @@ contextBridge.exposeInMainWorld('coasty', {
     ipcRenderer.invoke('chats:update', params),
   deleteChat: (chatId: string) => ipcRenderer.invoke('chats:delete', chatId),
 
+  // Resume from human handoff
+  resumeHuman: (machineId: string) => ipcRenderer.invoke('chat:resume-human', machineId),
+
   // Credits / Billing
   getCredits: () => ipcRenderer.invoke('credits:get-balance'),
 
@@ -189,6 +192,8 @@ export interface CoastyAPI {
     Promise<{ success: boolean; error?: string }>
   deleteChat: (chatId: string) =>
     Promise<{ success: boolean; error?: string }>
+
+  resumeHuman: (machineId: string) => Promise<{ success: boolean; resumed?: boolean; error?: string }>
 
   getCredits: () => Promise<{
     success: boolean

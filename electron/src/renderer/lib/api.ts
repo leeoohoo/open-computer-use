@@ -17,6 +17,7 @@ export interface SSECallbacks {
   onReasoning: (text: string) => void
   onFinish: (data: { finishReason: string; content: string; toolInvocations?: any[] }) => void
   onError: (error: string) => void
+  onAwaitingHuman?: (data: { reason: string; machineId: string }) => void
 }
 
 /**
@@ -82,6 +83,15 @@ export async function sendChatMessage(
             finishReason: finishData.finishReason || 'stop',
             content: finishData.content || '',
             toolInvocations: finishData.toolInvocations,
+          })
+          break
+        }
+        case 'h': {
+          // Awaiting human input
+          const awaitData = JSON.parse(event.data)
+          callbacks.onAwaitingHuman?.({
+            reason: awaitData.reason || 'Human intervention needed',
+            machineId: awaitData.machineId || '',
           })
           break
         }
