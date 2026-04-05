@@ -2606,7 +2606,12 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
 
                                 {/* Main screenshot card — elevated focal point */}
                                 <div
-                                  className="absolute z-[2] rounded-xl overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.2),0_8px_20px_-6px_rgba(0,0,0,0.1)] dark:shadow-[0_25px_60px_-12px_rgba(0,0,0,0.7),0_12px_28px_-8px_rgba(0,0,0,0.5)]"
+                                  className={cn(
+                                    "absolute z-[2] rounded-xl overflow-hidden",
+                                    displayScreenshot
+                                      ? "shadow-[0_20px_50px_-12px_rgba(0,0,0,0.2),0_8px_20px_-6px_rgba(0,0,0,0.1)] dark:shadow-[0_25px_60px_-12px_rgba(0,0,0,0.7),0_12px_28px_-8px_rgba(0,0,0,0.5)]"
+                                      : "",
+                                  )}
                                   style={{
                                     left: '10%',
                                     right: '10%',
@@ -2666,15 +2671,15 @@ export function ProjectNavigator({ isOpen, onToggle, disableAutoOpen = false }: 
                                       }}
                                     />
                                   ) : (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-white/40 dark:bg-black/40">
+                                    <div className="absolute inset-0 flex items-center justify-center">
                                       <div className="text-center">
                                         <div className="flex items-center gap-1 justify-center">
-                                          <span className="text-[11px] text-neutral-500 dark:text-white/40 font-medium">Working</span>
+                                          <span className="text-[11px] text-neutral-500 dark:text-neutral-500 font-medium">Working</span>
                                           <div className="flex gap-0.5">
                                             {[0, 1, 2].map((i) => (
                                               <motion.span
                                                 key={i}
-                                                className="text-[11px] text-neutral-400 dark:text-white/30"
+                                                className="text-[11px] text-neutral-400 dark:text-neutral-600"
                                                 animate={{ opacity: [0.2, 1, 0.2] }}
                                                 transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.4 }}
                                               >

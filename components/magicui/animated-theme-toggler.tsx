@@ -44,6 +44,8 @@ export const AnimatedThemeToggler = ({ className }: props) => {
       return;
     }
 
+    if (!buttonRef.current) return;
+
     const { top, left, width, height } =
       buttonRef.current.getBoundingClientRect();
     const y = top + height / 2;

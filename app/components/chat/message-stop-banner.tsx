@@ -7,10 +7,11 @@ import {
   ArrowClockwise,
   CreditCard,
   CalendarCheck,
+  HandPalm,
 } from "@phosphor-icons/react"
 import { useAccountDialog } from "@/lib/account-dialog-store"
 
-type StopReason = "stopped_by_user" | "insufficient_credits" | "scheduled_insufficient_credits"
+type StopReason = "stopped_by_user" | "insufficient_credits" | "scheduled_insufficient_credits" | "awaiting_human_timeout"
 
 interface StopReasonConfig {
   tag: string
@@ -74,6 +75,21 @@ const STOP_REASONS: StopReasonConfig[] = [
         onClick: "retry",
       },
     ],
+  },
+  {
+    tag: "[Agent paused: waiting for human]",
+    reason: "awaiting_human_timeout" as StopReason,
+    icon: HandPalm,
+    title: "Agent waited for you",
+    description: "The agent paused for human intervention but no response was received in time.",
+    color: {
+      bg: "bg-amber-500/5 dark:bg-amber-400/5",
+      border: "border-amber-200/60 dark:border-amber-700/40",
+      icon: "text-amber-500 dark:text-amber-400",
+      title: "text-amber-700 dark:text-amber-300",
+      description: "text-amber-600 dark:text-amber-400/80",
+    },
+    actions: [],
   },
   {
     tag: "[Scheduled run ended: insufficient credits]",

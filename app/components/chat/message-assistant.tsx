@@ -22,7 +22,6 @@ import { TaskPlanFormatter } from "./task-plan-formatter"
 import { MessageStatusIndicator } from "./message-status-indicator"
 import { CuaSectionRenderer, hasCuaSections, extractScreenshots } from "./cua-section-renderer"
 import { MessageStopBanner, detectStopReason, stripStopTags } from "./message-stop-banner"
-import { RunFeedbackBar } from "./run-feedback-bar"
 
 type MessageAssistantProps = {
   children: string
@@ -144,6 +143,7 @@ export function MessageAssistant({
             <CuaSectionRenderer
               content={displayContent}
               screenshots={cuaScreenshots}
+              isStreaming={status === "streaming"}
             />
           </div>
         ) : (
@@ -212,15 +212,6 @@ export function MessageAssistant({
           </MessageActions>
         )}
 
-        {/* Run feedback bar — shown after the last completed message */}
-        {isLast && status === "ready" && !contentNullOrEmpty && (
-          <RunFeedbackBar
-            chatId={chatId}
-            messageId={messageId}
-            feedbackType="run"
-            className="mt-1 -ml-1"
-          />
-        )}
       </div>
     </Message>
   )

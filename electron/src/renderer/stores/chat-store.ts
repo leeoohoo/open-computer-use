@@ -26,6 +26,12 @@ export interface ChatSummary {
   last_message_preview?: string
 }
 
+interface AwaitingHumanState {
+  reason: string
+  machineId: string
+  since: number
+}
+
 interface ChatState {
   messages: ChatMessage[]
   isStreaming: boolean
@@ -35,6 +41,8 @@ interface ChatState {
   isSynced: boolean
   /** AbortController for the current streaming request */
   abortController: AbortController | null
+  /** Set when agent is paused waiting for human intervention */
+  awaitingHuman: AwaitingHumanState | null
 
   // Chat list
   chatList: ChatSummary[]
@@ -42,6 +50,7 @@ interface ChatState {
 
   addUserMessage: (content: string) => void
   setStreaming: (streaming: boolean) => void
+  setAwaitingHuman: (state: AwaitingHumanState | null) => void
   setAbortController: (controller: AbortController | null) => void
   /** Abort the current stream and stop */
   stopStreaming: () => void
@@ -91,6 +100,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   chatTitle: null,
   isSynced: false,
   abortController: null,
+  awaitingHuman: null,
   chatList: [],
   chatListLoading: false,
 
@@ -109,6 +119,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   setStreaming: (streaming) => set({ isStreaming: streaming }),
+
+  setAwaitingHuman: (state) => set({ awaitingHuman: state }),
 
   setAbortController: (controller) => set({ abortController: controller }),
 
@@ -187,7 +199,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         }
       }
 
-      return { messages, isStreaming: false }
+      return { messages, isStreaming: false, awaitingHuman: null }
     })
   },
 

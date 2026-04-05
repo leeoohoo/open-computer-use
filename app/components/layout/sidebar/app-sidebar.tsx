@@ -36,6 +36,7 @@ import { ReferralPopup } from "../../referral/referral-popup"
 import Image from "next/image"
 import Link from "next/link"
 import { Download } from "lucide-react"
+import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
 import { WindowsIcon, AppleIcon } from "@/components/icons/platform-icons"
 import {
   Tooltip,
@@ -1558,40 +1559,50 @@ export function AppSidebar() {
                 : "w-5 mx-auto h-px bg-sidebar-border/15 rounded-full"
             )} />
 
-            {/* User Account */}
+            {/* User Account + Theme */}
             {expanded ? (
-              <button
-                onClick={() => openAccountDialog()}
-                onMouseEnter={() => {
-                  avatarHoverTimer.current = setTimeout(() => setAvatarWobble(true), 3000)
-                }}
-                onMouseLeave={() => {
-                  clearTimeout(avatarHoverTimer.current)
-                  setAvatarWobble(false)
-                }}
-                className={cn(
-                  "flex items-center gap-2.5 px-2.5 py-2 w-full rounded-lg transition-all duration-200 ease-out",
-                  "hover:bg-sidebar-accent/40"
-                )}
-              >
-                <Avatar className={cn(
-                  "h-7 w-7 flex-shrink-0 ring-1 ring-sidebar-border/20 transition-all",
-                  avatarWobble && "animate-wiggle"
-                )}>
-                  <AvatarImage src={user?.profile_image || undefined} />
-                  <AvatarFallback className="bg-sidebar-accent/60 text-foreground text-[10px] font-semibold">
-                    {(user?.display_name || user?.email || "U")[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col min-w-0 flex-1 text-left">
-                  <span className="text-[12.5px] font-medium truncate text-foreground/80">
-                    {user?.display_name || user?.email?.split("@")[0] || t("user")}
-                  </span>
-                  <span className="text-[10px] text-foreground/30 truncate">
-                    {getGreeting()}
-                  </span>
-                </div>
-              </button>
+              <div className="flex items-center gap-1 w-full">
+                <button
+                  onClick={() => openAccountDialog()}
+                  onMouseEnter={() => {
+                    avatarHoverTimer.current = setTimeout(() => setAvatarWobble(true), 3000)
+                  }}
+                  onMouseLeave={() => {
+                    clearTimeout(avatarHoverTimer.current)
+                    setAvatarWobble(false)
+                  }}
+                  className={cn(
+                    "flex items-center gap-2.5 px-2.5 py-2 flex-1 min-w-0 rounded-lg transition-all duration-200 ease-out",
+                    "hover:bg-sidebar-accent/40"
+                  )}
+                >
+                  <Avatar className={cn(
+                    "h-7 w-7 flex-shrink-0 ring-1 ring-sidebar-border/20 transition-all",
+                    avatarWobble && "animate-wiggle"
+                  )}>
+                    <AvatarImage src={user?.profile_image || undefined} />
+                    <AvatarFallback className="bg-sidebar-accent/60 text-foreground text-[10px] font-semibold">
+                      {(user?.display_name || user?.email || "U")[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col min-w-0 flex-1 text-left">
+                    <span className="text-[12.5px] font-medium truncate text-foreground/80">
+                      {user?.display_name || user?.email?.split("@")[0] || t("user")}
+                    </span>
+                    <span className="text-[10px] text-foreground/30 truncate">
+                      {getGreeting()}
+                    </span>
+                  </div>
+                </button>
+                <AnimatedThemeToggler
+                  className={cn(
+                    "flex items-center justify-center h-7 w-7 shrink-0 rounded-lg",
+                    "text-foreground/30 hover:text-foreground/70",
+                    "hover:bg-sidebar-accent/40",
+                    "transition-all duration-200 cursor-pointer",
+                  )}
+                />
+              </div>
             ) : (
               <Tooltip>
                 <TooltipTrigger asChild>

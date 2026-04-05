@@ -114,10 +114,22 @@ export function LanguageSwitcher({ className }: { className?: string }) {
 /**
  * Compact globe button with centered modal — used in header/nav
  */
-export function LanguageSwitcherCompact({ className }: { className?: string }) {
+export function LanguageSwitcherCompact({
+  className,
+  open: controlledOpen,
+  onOpenChange,
+}: {
+  className?: string
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}) {
   const { locale, isPending, changeLocale } = useLocaleChange()
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
   const activeRef = useRef<HTMLButtonElement>(null)
+
+  const open = controlledOpen ?? internalOpen
+  const setOpen = onOpenChange ?? setInternalOpen
+  const showTrigger = controlledOpen === undefined
 
   // Close on escape
   useEffect(() => {
@@ -141,22 +153,24 @@ export function LanguageSwitcherCompact({ className }: { className?: string }) {
   return (
     <div className={cn("relative", className)}>
       {/* Trigger */}
-      <button
-        onClick={() => setOpen(!open)}
-        className={cn(
-          "inline-flex items-center justify-center gap-1.5 rounded-full h-8 px-2.5",
-          "text-muted-foreground/50 hover:text-foreground/80",
-          "hover:bg-foreground/[0.05]",
-          "transition-all duration-200 cursor-pointer",
-          open && "text-foreground/80 bg-foreground/[0.06]",
-          isPending && "opacity-50 pointer-events-none",
-        )}
-        aria-label="Change language"
-        aria-expanded={open}
-      >
-        <Globe className="h-[15px] w-[15px]" />
-        <span className="text-[11px] font-semibold uppercase tracking-wider leading-none">{locale}</span>
-      </button>
+      {showTrigger && (
+        <button
+          onClick={() => setOpen(!open)}
+          className={cn(
+            "inline-flex items-center justify-center gap-1.5 rounded-full h-8 px-2.5",
+            "text-muted-foreground/50 hover:text-foreground/80",
+            "hover:bg-foreground/[0.05]",
+            "transition-all duration-200 cursor-pointer",
+            open && "text-foreground/80 bg-foreground/[0.06]",
+            isPending && "opacity-50 pointer-events-none",
+          )}
+          aria-label="Change language"
+          aria-expanded={open}
+        >
+          <Globe className="h-[15px] w-[15px]" />
+          <span className="text-[11px] font-semibold uppercase tracking-wider leading-none">{locale}</span>
+        </button>
+      )}
 
       {/* Centered modal */}
       <AnimatePresence>

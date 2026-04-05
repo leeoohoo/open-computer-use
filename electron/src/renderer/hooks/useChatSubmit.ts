@@ -16,6 +16,7 @@ export function useChatSubmit() {
     addUserMessage, setStreaming, setAbortController, stopStreaming,
     appendAssistantContent, addToolCall, updateToolResult,
     finishAssistantMessage, clearMessages, ensureChat, loadChatList,
+    setAwaitingHuman,
   } = useChatStore()
   const { user, machineId } = useAuthStore()
   const connectionState = useConnectionStore((s) => s.state)
@@ -75,6 +76,13 @@ export function useChatSubmit() {
           onFinish: (data) => {
             finishAssistantMessage(data.content, data.toolInvocations)
             loadChatList()
+          },
+          onAwaitingHuman: (data) => {
+            setAwaitingHuman({
+              reason: data.reason,
+              machineId: data.machineId,
+              since: Date.now(),
+            })
           },
           onError: (error) => {
             appendAssistantContent(`\n\nError: ${error}`)
