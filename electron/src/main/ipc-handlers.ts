@@ -1,4 +1,4 @@
-import { ipcMain, dialog } from 'electron'
+import { ipcMain, dialog, BrowserWindow } from 'electron'
 import * as os from 'os'
 import * as path from 'path'
 import * as fs from 'fs'
@@ -13,9 +13,27 @@ export function registerIpcHandlers(
   setWsBridge: (bridge: WebSocketBridge) => void,
   backendUrl: string,
   approvalManager: ApprovalManager,
+  getMainWindow: () => BrowserWindow | null,
 ): void {
+  // Validate that IPC calls come from the app's own renderer window.
+  // Prevents other processes on the IPC socket from invoking handlers.
+  const _ipcHandle = ipcMain.handle.bind(ipcMain)
+  function secureHandle(
+    channel: string,
+    handler: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any,
+  ): void {
+    _ipcHandle(channel, async (event: Electron.IpcMainInvokeEvent, ...args: any[]) => {
+      const mw = getMainWindow()
+      if (!mw || event.sender !== mw.webContents) {
+        console.error(`[Security] Blocked unauthorized IPC call to '${channel}'`)
+        return { success: false, error: 'Unauthorized' }
+      }
+      return handler(event, ...args)
+    })
+  }
+
   // Auth handlers
-  ipcMain.handle('auth:sign-in', async () => {
+  secureHandle('auth:sign-in', async () => {
     try {
       const result = await auth.signInWithGoogle()
       return {
@@ -32,7 +50,7 @@ export function registerIpcHandlers(
     }
   })
 
-  ipcMain.handle('auth:sign-in-email', async (_event, email: string, password: string) => {
+  secureHandle('auth:sign-in-email', async (_event, email: string, password: string) => {
     try {
       const result = await auth.signInWithEmail(email, password)
       return {
@@ -50,7 +68,7 @@ export function registerIpcHandlers(
   })
 
   // Sign-up: long-running — waits for user to click confirmation email link
-  ipcMain.handle('auth:sign-up-email', async (_event, email: string, password: string) => {
+  secureHandle('auth:sign-up-email', async (_event, email: string, password: string) => {
     try {
       const result = await auth.signUpWithEmail(email, password)
       return {
@@ -68,7 +86,7 @@ export function registerIpcHandlers(
   })
 
   // Magic link phase 1: send OTP (returns quickly)
-  ipcMain.handle('auth:send-magic-link', async (_event, email: string) => {
+  secureHandle('auth:send-magic-link', async (_event, email: string) => {
     try {
       await auth.sendMagicLink(email)
       return { success: true }
@@ -78,7 +96,7 @@ export function registerIpcHandlers(
   })
 
   // Magic link phase 2: wait for user to click link (long-running)
-  ipcMain.handle('auth:await-magic-link', async () => {
+  secureHandle('auth:await-magic-link', async () => {
     try {
       const result = await auth.awaitMagicLinkSession()
       return {
@@ -95,7 +113,7 @@ export function registerIpcHandlers(
     }
   })
 
-  ipcMain.handle('auth:reset-password', async (_event, email: string) => {
+  secureHandle('auth:reset-password', async (_event, email: string) => {
     try {
       await auth.resetPassword(email)
       return { success: true }
@@ -105,12 +123,12 @@ export function registerIpcHandlers(
   })
 
   // Cancel any pending auth flow (sign-up confirmation wait, magic link wait)
-  ipcMain.handle('auth:cancel-auth', async () => {
+  secureHandle('auth:cancel-auth', async () => {
     auth.cancelPendingAuth()
     return { success: true }
   })
 
-  ipcMain.handle('auth:sign-out', async () => {
+  secureHandle('auth:sign-out', async () => {
     try {
       const bridge = getWsBridge()
       if (bridge) {
@@ -123,7 +141,7 @@ export function registerIpcHandlers(
     }
   })
 
-  ipcMain.handle('auth:get-session', async () => {
+  secureHandle('auth:get-session', async () => {
     return {
       isAuthenticated: auth.isAuthenticated(),
       userId: auth.getUserId(),
@@ -134,12 +152,12 @@ export function registerIpcHandlers(
     }
   })
 
-  ipcMain.handle('auth:get-token', async () => {
+  secureHandle('auth:get-token', async () => {
     return await auth.getAccessToken()
   })
 
   // WebSocket bridge handlers
-  ipcMain.handle('bridge:connect', async () => {
+  secureHandle('bridge:connect', async () => {
     try {
       const token = await auth.getAccessToken()
       const userId = auth.getUserId()
@@ -155,6 +173,9 @@ export function registerIpcHandlers(
       }
 
       bridge = new WebSocketBridge(backendUrl, token, machineId, userId, approvalManager)
+      // Let the bridge fetch fresh tokens on reconnect (e.g. after sleep/hibernate)
+      // so it doesn't try to authenticate with an expired JWT.
+      bridge.setTokenProvider(() => auth.getAccessToken())
       setWsBridge(bridge)
       bridge.connect()
 
@@ -164,7 +185,7 @@ export function registerIpcHandlers(
     }
   })
 
-  ipcMain.handle('bridge:disconnect', async () => {
+  secureHandle('bridge:disconnect', async () => {
     const bridge = getWsBridge()
     if (bridge) {
       bridge.disconnect()
@@ -172,24 +193,24 @@ export function registerIpcHandlers(
     return { success: true }
   })
 
-  ipcMain.handle('bridge:get-state', async () => {
+  secureHandle('bridge:get-state', async () => {
     const bridge = getWsBridge()
     return bridge?.getState() || 'disconnected'
   })
 
   // Config handlers
-  ipcMain.handle('config:get-backend-url', async () => {
+  secureHandle('config:get-backend-url', async () => {
     return backendUrl
   })
 
-  ipcMain.handle('config:get-machine-id', async () => {
+  secureHandle('config:get-machine-id', async () => {
     return auth.getMachineId()
   })
 
   // ── Chat CRUD handlers ──────────────────────────────────────────────
   // Query Supabase directly — no proxy, no CORS, no routing issues.
 
-  ipcMain.handle('chats:create', async (_event, params: { title?: string; model?: string }) => {
+  secureHandle('chats:create', async (_event, params: { title?: string; model?: string }) => {
     try {
       const userId = auth.getUserId()
       const machineId = auth.getMachineId()
@@ -220,7 +241,7 @@ export function registerIpcHandlers(
     }
   })
 
-  ipcMain.handle('chats:list', async () => {
+  secureHandle('chats:list', async () => {
     try {
       const userId = auth.getUserId()
       const machineId = auth.getMachineId()
@@ -248,7 +269,7 @@ export function registerIpcHandlers(
     }
   })
 
-  ipcMain.handle('chats:get-messages', async (_event, chatId: string) => {
+  secureHandle('chats:get-messages', async (_event, chatId: string) => {
     try {
       const supabase = await auth.getSupabaseClient()
       const { data: messages, error } = await supabase
@@ -265,7 +286,7 @@ export function registerIpcHandlers(
     }
   })
 
-  ipcMain.handle('chats:update', async (_event, params: { chatId: string; title: string }) => {
+  secureHandle('chats:update', async (_event, params: { chatId: string; title: string }) => {
     try {
       const userId = auth.getUserId()
       if (!userId) return { success: false, error: 'Not authenticated' }
@@ -285,7 +306,7 @@ export function registerIpcHandlers(
     }
   })
 
-  ipcMain.handle('chats:delete', async (_event, chatId: string) => {
+  secureHandle('chats:delete', async (_event, chatId: string) => {
     try {
       const userId = auth.getUserId()
       if (!userId) return { success: false, error: 'Not authenticated' }
@@ -308,7 +329,7 @@ export function registerIpcHandlers(
   // ── Credits / Billing ─────────────────────────────────────────────
   // Query Supabase directly from the main process — no proxy needed.
   // This is the same query the Next.js /api/credits/balance route does.
-  ipcMain.handle('credits:get-balance', async () => {
+  secureHandle('credits:get-balance', async () => {
     try {
       const userId = auth.getUserId()
       if (!userId) return { success: false, error: 'Not authenticated' }
@@ -367,7 +388,7 @@ export function registerIpcHandlers(
   // Active abort controllers for chat streams, keyed by requestId
   const chatAbortControllers = new Map<string, AbortController>()
 
-  ipcMain.handle('chat:send-message', async (event, params: {
+  secureHandle('chat:send-message', async (event, params: {
     requestId: string
     messages: Array<{ role: string; content: string }>
     chatId: string
@@ -490,7 +511,7 @@ export function registerIpcHandlers(
     }
   })
 
-  ipcMain.handle('chat:abort', async (_event, requestId: string) => {
+  secureHandle('chat:abort', async (_event, requestId: string) => {
     const controller = chatAbortControllers.get(requestId)
     if (controller) {
       controller.abort()
@@ -500,7 +521,7 @@ export function registerIpcHandlers(
   })
 
   // File/folder picker — opens native OS dialog, returns selected paths + metadata
-  ipcMain.handle('files:select', async (_event, opts?: { directories?: boolean }) => {
+  secureHandle('files:select', async (_event, opts?: { directories?: boolean }) => {
     const properties: Electron.OpenDialogOptions['properties'] = ['multiSelections']
     if (opts?.directories) {
       properties.push('openDirectory')

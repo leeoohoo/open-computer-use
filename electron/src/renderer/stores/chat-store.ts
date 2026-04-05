@@ -67,6 +67,23 @@ function generateId(): string {
   return `msg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 }
 
+/** Default timeout (ms) for IPC calls to the main process. */
+const IPC_TIMEOUT_MS = 30_000
+
+/**
+ * Wrap an IPC promise with a timeout so a hung main process handler
+ * cannot block the renderer indefinitely.
+ */
+function withTimeout<T>(promise: Promise<T>, ms: number = IPC_TIMEOUT_MS, label = 'IPC call'): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    promise.then(
+      (v) => { clearTimeout(timer); resolve(v) },
+      (e) => { clearTimeout(timer); reject(e) },
+    )
+  })
+}
+
 export const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
   isStreaming: false,
@@ -199,7 +216,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         ? clean.slice(0, 60) + (clean.length > 60 ? '...' : '')
         : 'New Task'
 
-      const result = await window.coasty.createChat({ title })
+      const result = await withTimeout(window.coasty.createChat({ title }), IPC_TIMEOUT_MS, 'createChat')
       if (result.success && result.chat) {
         const newChatId = result.chat.id
         set({ chatId: newChatId, chatTitle: result.chat.title, isSynced: true })
@@ -218,7 +235,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   loadChatList: async () => {
     set({ chatListLoading: true })
     try {
-      const result = await window.coasty.listChats()
+      const result = await withTimeout(window.coasty.listChats(), IPC_TIMEOUT_MS, 'listChats')
       if (result.success && result.chats) {
         set({ chatList: result.chats, chatListLoading: false })
       } else {
@@ -237,7 +254,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ isStreaming: false, abortController: null })
 
     try {
-      const result = await window.coasty.getChatMessages(chatId)
+      const result = await withTimeout(window.coasty.getChatMessages(chatId), IPC_TIMEOUT_MS, 'getChatMessages')
       if (result.success && result.messages) {
         // Transform DB messages to ChatMessage format
         const messages: ChatMessage[] = result.messages.map((msg: any) => ({
@@ -269,7 +286,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   removeChat: async (chatId: string) => {
     try {
-      const result = await window.coasty.deleteChat(chatId)
+      const result = await withTimeout(window.coasty.deleteChat(chatId), IPC_TIMEOUT_MS, 'deleteChat')
       if (result.success) {
         const state = get()
         // If we deleted the current chat, abort any active stream and clear
@@ -290,7 +307,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   renameChat: async (chatId: string, title: string) => {
     try {
-      const result = await window.coasty.updateChat({ chatId, title })
+      const result = await withTimeout(window.coasty.updateChat({ chatId, title }), IPC_TIMEOUT_MS, 'updateChat')
       if (result.success) {
         const state = get()
         set({

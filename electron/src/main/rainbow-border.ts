@@ -41,7 +41,7 @@ async function showWithIntensity(intensity: 'full' | 'ambient'): Promise<void> {
 
   // Set intensity before fading in (or update if already visible)
   const opacityVal = intensity === 'ambient' ? 0.15 : 1.0
-  win.webContents.executeJavaScript('setIntensity(' + opacityVal + ')').catch(() => {})
+  win.webContents.executeJavaScript(`setIntensity(${JSON.stringify(opacityVal)})`).catch(() => {})
 
   if (!visible) {
     visible = true

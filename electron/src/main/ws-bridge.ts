@@ -42,6 +42,8 @@ export class WebSocketBridge {
   // Rainbow border: on for the entire task, off on task_end / disconnect
   private rainbowActive = false
 
+  private getToken: (() => Promise<string | null>) | null = null
+
   constructor(backendUrl: string, token: string, machineId: string, userId: string, approvalManager: ApprovalManager) {
     this.backendUrl = backendUrl
     this.token = token
@@ -49,6 +51,11 @@ export class WebSocketBridge {
     this.userId = userId
     this.executor = new LocalExecutor()
     this.approvalManager = approvalManager
+  }
+
+  /** Provide a callback to fetch a fresh token on reconnect. */
+  setTokenProvider(fn: () => Promise<string | null>): void {
+    this.getToken = fn
   }
 
   /** Turn on the rainbow aura for the duration of the task. */
@@ -85,8 +92,20 @@ export class WebSocketBridge {
 
     this.ws = new WebSocket(wsUrl)
 
-    this.ws.on('open', () => {
+    this.ws.on('open', async () => {
       console.log('[WS Bridge] Connected, authenticating...')
+      // On reconnect (e.g. after sleep/hibernate), the stored token may be
+      // expired. Ask the auth layer for a fresh token before authenticating.
+      if (this.getToken) {
+        try {
+          const freshToken = await this.getToken()
+          if (freshToken) {
+            this.token = freshToken
+          }
+        } catch (err) {
+          console.error('[WS Bridge] Failed to refresh token on reconnect:', err)
+        }
+      }
       // Send auth credentials in the message body, not the URL
       this.send({
         type: 'auth',
@@ -231,10 +250,16 @@ export class WebSocketBridge {
 
   updateToken(token: string): void {
     this.token = token
-    // Reconnect with new token
+    // Re-authenticate on the existing connection instead of tearing it down.
+    // This avoids a visible 'disconnected' flicker in the UI every ~55 minutes
+    // when the scheduled token refresh fires.
     if (this.ws?.readyState === WebSocket.OPEN) {
-      this.disconnect()
-      this.connect()
+      this.send({
+        type: 'auth',
+        token: this.token,
+        machine_id: this.machineId,
+        user_id: this.userId,
+      })
     }
   }
 

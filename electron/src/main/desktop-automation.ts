@@ -68,6 +68,38 @@ function runSwift(code: string): Promise<string> {
   })
 }
 
+/** Validate and coerce a value to a finite integer — prevents shell injection via coordinates/counts. */
+function validateInt(v: any, name: string): number {
+  const n = Number(v)
+  if (!Number.isFinite(n)) throw new Error(`Invalid ${name}: expected a number`)
+  return Math.round(n)
+}
+
+/** Run osascript directly via execFile — bypasses bash, prevents $() and backtick injection. */
+function runOsascript(script: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    execFile('/usr/bin/osascript', ['-e', script], { timeout: 10000 }, (error, stdout) => {
+      if (error) reject(error)
+      else resolve(stdout.trim())
+    })
+  })
+}
+
+/** Escape a string for use inside AppleScript double-quoted string literals. */
+function escapeAppleScript(s: string): string {
+  return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
+}
+
+/** Map a key name to a safe xdotool key identifier. Rejects unknown keys to prevent shell injection. */
+function safeXdotoolKey(key: string): string {
+  const lower = key.toLowerCase()
+  const mapped = KEY_MAP_XDOTOOL[lower] || MODIFIER_MAP_XDOTOOL[lower]
+  if (mapped) return mapped
+  // Allow single ASCII letter/digit as literal key name
+  if (/^[a-zA-Z0-9]$/.test(key)) return key
+  throw new Error(`Unknown key for automation: "${key}"`)
+}
+
 export async function desktopClick(params: {
   x: number
   y: number
@@ -77,7 +109,9 @@ export async function desktopClick(params: {
     const denied = requireAccessibility()
     if (denied) return denied
 
-    const { x, y, button = 'left' } = params
+    const x = validateInt(params.x, 'x')
+    const y = validateInt(params.y, 'y')
+    const button = params.button === 'right' ? 'right' : 'left'
 
     if (process.platform === 'win32') {
       const clickType = button === 'right' ? 'RightClick' : 'Click'
@@ -132,8 +166,11 @@ export async function desktopClickWithModifiers(params: {
     const denied = requireAccessibility()
     if (denied) return denied
 
-    const { x, y, button = 'left', hold_keys = [], clicks = 1 } = params
-    const keys = normalizeKeysForPlatform(hold_keys)
+    const x = validateInt(params.x, 'x')
+    const y = validateInt(params.y, 'y')
+    const button = params.button === 'right' ? 'right' : (params.button === 'middle' ? 'middle' : 'left')
+    const clicks = validateInt(params.clicks ?? 1, 'clicks')
+    const keys = normalizeKeysForPlatform(params.hold_keys ?? [])
 
     if (process.platform === 'win32') {
       // Use keybd_event to hold modifiers, mouse_event to click, then release
@@ -179,8 +216,7 @@ export async function desktopClickWithModifiers(params: {
     } else if (process.platform === 'linux') {
       const parts: string[] = []
       for (const key of keys) {
-        const mapped = KEY_MAP_XDOTOOL[key.toLowerCase()] || MODIFIER_MAP_XDOTOOL[key.toLowerCase()] || key
-        parts.push(`xdotool keydown ${mapped}`)
+        parts.push(`xdotool keydown ${safeXdotoolKey(key)}`)
       }
       const xdoBtn = button === 'right' ? 3 : button === 'middle' ? 2 : 1
       parts.push(`xdotool mousemove --sync ${x} ${y}`)
@@ -190,8 +226,7 @@ export async function desktopClickWithModifiers(params: {
         parts.push(`xdotool click ${xdoBtn}`)
       }
       for (const key of keys) {
-        const mapped = KEY_MAP_XDOTOOL[key.toLowerCase()] || MODIFIER_MAP_XDOTOOL[key.toLowerCase()] || key
-        parts.push(`xdotool keyup ${mapped}`)
+        parts.push(`xdotool keyup ${safeXdotoolKey(key)}`)
       }
       await runBash(parts.join(' && '))
     } else if (process.platform === 'darwin') {
@@ -248,7 +283,8 @@ export async function desktopDoubleClick(params: {
     const denied = requireAccessibility()
     if (denied) return denied
 
-    const { x, y } = params
+    const x = validateInt(params.x, 'x')
+    const y = validateInt(params.y, 'y')
 
     if (process.platform === 'win32') {
       await runPowershell(`
@@ -316,7 +352,8 @@ Add-Type -AssemblyName System.Windows.Forms
     } else if (process.platform === 'linux') {
       await runBash(`xdotool type --clearmodifiers -- ${JSON.stringify(text)}`)
     } else if (process.platform === 'darwin') {
-      await runBash(`osascript -e 'tell application "System Events" to keystroke "${text.replace(/"/g, '\\"')}"'`)
+      // Use runOsascript (execFile) instead of runBash to prevent $() and backtick shell injection
+      await runOsascript(`tell application "System Events" to keystroke "${escapeAppleScript(text)}"`)
     }
 
     return { success: true, message: `Typed "${text.slice(0, 50)}"` }
@@ -506,7 +543,7 @@ Add-Type -AssemblyName System.Windows.Forms
       }
     } else if (process.platform === 'linux') {
       for (const key of keys) {
-        const mapped = KEY_MAP_XDOTOOL[key.toLowerCase()] || key
+        const mapped = safeXdotoolKey(key)
         await runBash(`xdotool key ${mapped}`)
       }
     } else if (process.platform === 'darwin') {
@@ -514,10 +551,10 @@ Add-Type -AssemblyName System.Windows.Forms
         const lower = key.toLowerCase()
         const macKeyCode = KEY_MAP_MACOS[lower]
         if (macKeyCode !== undefined) {
-          await runBash(`osascript -e 'tell application "System Events" to key code ${macKeyCode}'`)
+          await runOsascript(`tell application "System Events" to key code ${macKeyCode}`)
         } else {
-          // Single character — use keystroke
-          await runBash(`osascript -e 'tell application "System Events" to keystroke "${key.replace(/"/g, '\\"')}"'`)
+          // Single character — use keystroke (runOsascript bypasses bash shell injection)
+          await runOsascript(`tell application "System Events" to keystroke "${escapeAppleScript(key)}"`)
         }
       }
     }
@@ -583,7 +620,7 @@ export async function desktopKeyCombo(params: { keys: string[] }): Promise<any> 
         if (MODIFIER_MAP_XDOTOOL[lower]) {
           modifiers.push(MODIFIER_MAP_XDOTOOL[lower])
         } else {
-          finalKey = KEY_MAP_XDOTOOL[lower] || lower
+          finalKey = safeXdotoolKey(key)
         }
       }
       const combo = [...modifiers, finalKey].join('+')
@@ -608,10 +645,10 @@ export async function desktopKeyCombo(params: { keys: string[] }): Promise<any> 
       const macKeyCode = KEY_MAP_MACOS[finalKey.toLowerCase()]
       if (macKeyCode !== undefined) {
         // Special key (Enter, Backspace, arrows, etc.) — must use key code
-        await runBash(`osascript -e 'tell application "System Events" to key code ${macKeyCode}${using}'`)
+        await runOsascript(`tell application "System Events" to key code ${macKeyCode}${using}`)
       } else {
-        // Regular character — use keystroke
-        await runBash(`osascript -e 'tell application "System Events" to keystroke "${finalKey.replace(/"/g, '\\"')}"${using}'`)
+        // Regular character — use keystroke (runOsascript bypasses bash shell injection)
+        await runOsascript(`tell application "System Events" to keystroke "${escapeAppleScript(finalKey)}"${using}`)
       }
     }
 
@@ -631,9 +668,14 @@ export async function desktopScroll(params: {
     const denied = requireAccessibility()
     if (denied) return denied
 
-    const { clicks, direction = 'vertical', x, y } = params
-    const amount = Math.abs(clicks)
-    const scrollUp = clicks > 0
+    const rawClicks = validateInt(params.clicks, 'clicks')
+    const direction = params.direction ?? 'vertical'
+    const x = params.x !== undefined ? validateInt(params.x, 'x') : undefined
+    const y = params.y !== undefined ? validateInt(params.y, 'y') : undefined
+    // Clamp to prevent Int32 overflow when multiplied by platform scroll units.
+    const MAX_SCROLL_CLICKS = 500
+    const amount = Math.min(Math.abs(rawClicks), MAX_SCROLL_CLICKS)
+    const scrollUp = rawClicks > 0
 
     if (process.platform === 'win32') {
       // Move mouse to position first (if specified), then scroll via mouse_event
@@ -695,7 +737,11 @@ export async function desktopDrag(params: {
     const denied = requireAccessibility()
     if (denied) return denied
 
-    const { x1, y1, x2, y2, hold_keys = [] } = params
+    const x1 = validateInt(params.x1, 'x1')
+    const y1 = validateInt(params.y1, 'y1')
+    const x2 = validateInt(params.x2, 'x2')
+    const y2 = validateInt(params.y2, 'y2')
+    const hold_keys = params.hold_keys ?? []
 
     if (process.platform === 'win32') {
       // Windows: hold modifiers, move to start via MOUSEEVENTF_MOVE|ABSOLUTE,
@@ -763,7 +809,7 @@ export async function desktopDrag(params: {
     } else if (process.platform === 'linux') {
       const parts: string[] = []
       for (const key of hold_keys) {
-        parts.push(`xdotool keydown ${key}`)
+        parts.push(`xdotool keydown ${safeXdotoolKey(key)}`)
       }
       parts.push(`xdotool mousemove --sync ${x1} ${y1}`)
       parts.push('sleep 0.2')
@@ -776,7 +822,7 @@ export async function desktopDrag(params: {
       parts.push('sleep 0.15')
       parts.push('xdotool mouseup 1')
       for (const key of hold_keys) {
-        parts.push(`xdotool keyup ${key}`)
+        parts.push(`xdotool keyup ${safeXdotoolKey(key)}`)
       }
       await runBash(parts.join(' && '))
     } else if (process.platform === 'darwin') {

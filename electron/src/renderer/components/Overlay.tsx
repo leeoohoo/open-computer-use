@@ -78,8 +78,20 @@ function shieldLabel(mode: string): string {
   return 'Auto'
 }
 
+/** Only allow avatar URLs with safe protocols (https, http, data:image). */
+function isSafeAvatarUrl(url: string): boolean {
+  try {
+    // data:image/* URLs are OK (e.g. base64 avatars from OAuth providers)
+    if (/^data:image\//i.test(url)) return true
+    const parsed = new URL(url)
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:'
+  } catch {
+    return false
+  }
+}
+
 function UserAvatar({ avatar, name, size = 22 }: { avatar?: string; name?: string | null; size?: number }) {
-  if (avatar) {
+  if (avatar && isSafeAvatarUrl(avatar)) {
     return <img src={avatar} alt="" width={size} height={size} className="rounded-full object-cover flex-shrink-0" referrerPolicy="no-referrer" />
   }
   const initial = name?.charAt(0)?.toUpperCase() || '?'

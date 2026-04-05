@@ -105,18 +105,29 @@ export class LocalExecutor {
     // to the captured display, but desktop automation APIs use global screen
     // coordinates that span all monitors. Offset by the active display's origin
     // so clicks/drags/scrolls land on the correct screen.
+    //
+    // Defence-in-depth: ALWAYS coerce coordinate fields to Number, even when
+    // offset is (0, 0). This prevents non-numeric strings (e.g. shell injection
+    // payloads) from reaching desktop-automation functions. The automation layer
+    // also validates with validateInt(), but early coercion here ensures NaN
+    // propagates rather than a raw string.
     const COORD_COMMANDS = new Set(['click', 'click_with_modifiers', 'double_click', 'scroll', 'drag'])
     if (COORD_COMMANDS.has(command)) {
+      // Unconditional type coercion — turns injection strings into NaN
+      for (const field of ['x', 'y', 'x1', 'y1', 'x2', 'y2'] as const) {
+        if (p[field] !== undefined) p[field] = Number(p[field])
+      }
+      if (p.clicks !== undefined) p.clicks = Number(p.clicks)
+
+      // Apply display offset for multi-monitor setups
       const { x: ox, y: oy } = getActiveDisplay().bounds
       if (ox !== 0 || oy !== 0) {
-        // click, double_click, click_with_modifiers, scroll
-        if (p.x !== undefined) p.x = Number(p.x) + ox
-        if (p.y !== undefined) p.y = Number(p.y) + oy
-        // drag: x1/y1 → x2/y2
-        if (p.x1 !== undefined) p.x1 = Number(p.x1) + ox
-        if (p.y1 !== undefined) p.y1 = Number(p.y1) + oy
-        if (p.x2 !== undefined) p.x2 = Number(p.x2) + ox
-        if (p.y2 !== undefined) p.y2 = Number(p.y2) + oy
+        if (p.x !== undefined) p.x += ox
+        if (p.y !== undefined) p.y += oy
+        if (p.x1 !== undefined) p.x1 += ox
+        if (p.y1 !== undefined) p.y1 += oy
+        if (p.x2 !== undefined) p.x2 += ox
+        if (p.y2 !== undefined) p.y2 += oy
       }
     }
 
