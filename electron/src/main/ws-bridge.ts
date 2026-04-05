@@ -41,6 +41,8 @@ export class WebSocketBridge {
   private pendingRemoteApprovals = new Map<string, { resolve: (result: { approved: boolean; reason?: string }) => void }>()
   // Rainbow border: on for the entire task, off on task_end / disconnect
   private rainbowActive = false
+  // When true, reject all incoming commands (user clicked Stop)
+  private taskStopped = false
 
   private getToken: (() => Promise<string | null>) | null = null
 
@@ -74,6 +76,24 @@ export class WebSocketBridge {
 
   getState(): ConnectionState {
     return this.state
+  }
+
+  /** Signal that the user stopped the current task. Tells the backend to
+   *  cancel the CUA executor and rejects any further commands on the bridge
+   *  until a new task begins. */
+  stopTask(): void {
+    if (this.taskStopped) return
+    this.taskStopped = true
+    this.send({ type: 'task_stop' })
+    this.stopRainbow()
+    this.approvalManager.cancelAll()
+    this.cancelAllRemoteApprovals()
+    console.log('[WS Bridge] Task stopped by user')
+  }
+
+  /** Reset the stopped flag so the bridge accepts commands for the next task. */
+  resumeTask(): void {
+    this.taskStopped = false
   }
 
   connect(): void {
@@ -123,11 +143,16 @@ export class WebSocketBridge {
           const { command, parameters } = message.data
           console.log(`[WS Bridge] Received command: ${command}`)
 
-          // Keep rainbow aura on for the whole task — each command resets the idle timer
-          this.startRainbow()
-
-          // Check approval mode before executing
-          if (this.approvalManager.isDenyAll()) {
+          // Reject commands that arrive after the user stopped the task.
+          // The backend may still have in-flight commands queued before
+          // it processes our task_stop message.
+          if (this.taskStopped) {
+            console.log(`[WS Bridge] Rejected (task stopped): ${command}`)
+            this.send({
+              type: 'result',
+              data: { success: false, error: 'Task was stopped by user' },
+            })
+          } else if (this.approvalManager.isDenyAll()) {
             console.log(`[WS Bridge] Denied (mode=off): ${command}`)
             this.send({
               type: 'result',
@@ -190,6 +215,7 @@ export class WebSocketBridge {
           }
         } else if (message.type === 'task_end') {
           console.log('[WS Bridge] Task ended')
+          this.taskStopped = false
           this.stopRainbow()
         } else if (message.type === 'approval_response') {
           // Remote approval response from web/phone UI (forwarded by backend)

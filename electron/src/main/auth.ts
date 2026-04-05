@@ -61,6 +61,16 @@ const SUCCESS_HTML = `
         </div>
       </div>
     </div>
+    <script>
+      // After a short delay so the user can read the success message:
+      // 1. Try to close the tab (works if browser allows it)
+      // 2. If blocked, redirect to the branded site so the address bar
+      //    shows coasty.ai instead of 127.0.0.1
+      setTimeout(function(){
+        window.close();
+        setTimeout(function(){ window.location.href='https://coasty.ai'; }, 400);
+      }, 2500);
+    </script>
   </body>
 </html>`
 

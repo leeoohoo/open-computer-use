@@ -398,6 +398,10 @@ export function registerIpcHandlers(
   }) => {
     const token = await auth.getAccessToken()
 
+    // Clear the stopped flag so the WebSocket bridge accepts commands for this new task
+    const bridge = getWsBridge()
+    if (bridge) bridge.resumeTask()
+
     // Use the Next.js /api/chat/ route which accepts Bearer tokens
     const url = `${backendUrl}/api/chat/`
     const controller = new AbortController()
@@ -517,6 +521,10 @@ export function registerIpcHandlers(
       controller.abort()
       chatAbortControllers.delete(requestId)
     }
+    // Tell the WebSocket bridge to stop the task — this sends task_stop to
+    // the backend and rejects any further commands that arrive on the bridge.
+    const bridge = getWsBridge()
+    if (bridge) bridge.stopTask()
     return { success: true }
   })
 

@@ -292,9 +292,9 @@ function SubPageHeader({ title, onBack }: { title: string; onBack: () => void })
 /* ─── Welcome screen ─── */
 
 const SUGGESTIONS = [
-  'Open Chrome and search for flights to Tokyo',
-  'Fill out the form on the page I have open',
-  'Organize the files in my Downloads folder',
+  'Search for flights to Tokyo',
+  'Fill out the form I have open',
+  'Organize my Downloads folder',
 ]
 
 function WelcomeScreen({ user, showGuide, onTry, onDismiss, onEnable, connected }: {
@@ -306,49 +306,40 @@ function WelcomeScreen({ user, showGuide, onTry, onDismiss, onEnable, connected 
   connected: boolean
 }) {
   return (
-    <div className="flex-1 flex flex-col items-center px-5 py-6 text-center overflow-y-auto">
-      <div className="flex-1 flex flex-col items-center justify-center gap-5 max-w-[300px]">
+    <div className="flex-1 flex flex-col items-center px-4 py-4 text-center overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-center gap-3 max-w-[300px]">
         {/* Greeting */}
-        <h3 className="text-3xl font-bold tracking-tight leading-relaxed" style={{ fontFamily: "'Caveat', cursive" }}>
+        <h3 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Caveat', cursive" }}>
           <span className="inline-block -rotate-1 text-neutral-100/90">
             Hello{user?.name ? `, ${user.name.split(' ')[0]}` : ''}!
           </span>
         </h3>
 
-        {showGuide ? (
-          <p className="text-[12px] text-neutral-400 leading-[1.8] animate-chat-reveal">
-            I can <span className="text-neutral-200">see your screen</span>, <span className="text-neutral-200">click</span>, <span className="text-neutral-200">type</span>, <span className="text-neutral-200">browse the web</span>, and <span className="text-neutral-200">manage files</span> for you. Just ask like you'd ask a friend.<br /><span className="text-neutral-600 italic text-[11px]">No coffee breaks needed — I don't even drink the stuff.</span>
-          </p>
-        ) : (
-          <p className="text-xs text-neutral-500 leading-relaxed">
-            Tell me what to do — I'll handle your screen.
-          </p>
-        )}
-
-        {/* Suggestions */}
-        <div className="w-full space-y-1.5">
-          <div className="text-[9px] font-medium text-neutral-600 uppercase tracking-widest mb-1">Try something like</div>
+        {/* Suggestions — inline chips */}
+        <div className="w-full flex flex-wrap justify-center gap-1.5">
           {SUGGESTIONS.map((s) => (
             <button key={s} onClick={() => onTry(s)} disabled={!connected}
-              className="w-full text-left px-3 py-2 rounded-xl bg-neutral-800/40 border border-neutral-700/25 text-[11px] text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/80 hover:border-neutral-600/40 transition-all disabled:opacity-30">
+              className="px-2.5 py-1 rounded-full bg-neutral-800/50 border border-neutral-700/25 text-[10px] text-neutral-500 hover:text-neutral-200 hover:bg-neutral-700/60 hover:border-neutral-600/40 transition-all disabled:opacity-30">
               {s}
             </button>
           ))}
         </div>
+
+        {/* Remote control CTA */}
+        <a href="https://coasty.ai" target="_blank" rel="noopener noreferrer"
+          className="w-full rounded-xl overflow-hidden border border-neutral-700/30 bg-neutral-800/30 hover:border-neutral-600/50 transition-all group cursor-pointer block">
+          <img src="https://coasty.ai/demo-screenshot-mobile.png" alt="Control this PC from your phone"
+            className="w-full block" loading="lazy"
+            onError={(e) => { (e.target as HTMLImageElement).onerror = null; (e.target as HTMLImageElement).src = 'https://coasty.ai/demo-screenshot.png' }} />
+          <div className="px-3 py-2 flex items-center gap-2">
+            <svg className="w-3.5 h-3.5 text-neutral-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <span className="text-[10px] text-neutral-500 group-hover:text-neutral-300 transition-colors">
+              Control this PC remotely from your phone at <span className="text-neutral-300 font-medium">coasty.ai</span>
+            </span>
+          </div>
+        </a>
       </div>
 
-      {/* Toggle */}
-      <div className="pt-3 flex-shrink-0">
-        {showGuide ? (
-          <button onClick={onDismiss} className="text-[10px] text-neutral-600 hover:text-neutral-400 transition-colors">
-            Got it, don't show again
-          </button>
-        ) : (
-          <button onClick={onEnable} className="text-[10px] text-neutral-600 hover:text-neutral-400 transition-colors">
-            How does this work?
-          </button>
-        )}
-      </div>
     </div>
   )
 }
@@ -736,7 +727,7 @@ export function Overlay() {
             <WelcomeScreen
               user={user}
               showGuide={showGuide}
-              onTry={(text) => handleSubmit(text)}
+              onTry={(text) => setInput(text)}
               onDismiss={dismissGuide}
               onEnable={enableGuide}
               connected={connectionState === 'connected'}
