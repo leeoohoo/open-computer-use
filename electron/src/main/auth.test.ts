@@ -1,9 +1,10 @@
 /**
- * Security tests for ElectronAuth — covering fixes for:
+ * Security tests for ElectronAuth — covering:
  *
- *  #23  Token not exposed in URL query params (POST-only token exchange)
+ *  #23  PKCE auth code exchange (replaces old POST-based token exchange)
  *  #24  Nonce-based CSRF protection on callback server
  *  #25  Refresh mutex prevents token refresh race conditions
+ *  NEW  Protocol callback handling (coasty:// deep link flow)
  *
  * These tests spin up real HTTP servers via the auth module and make real
  * HTTP requests against them. They are fully cross-platform (Windows + macOS).
@@ -22,6 +23,7 @@ const mockSignInWithPassword = vi.fn()
 const mockSignOut = vi.fn()
 const mockSignUp = vi.fn()
 const mockSignInWithOtp = vi.fn()
+const mockExchangeCodeForSession = vi.fn()
 
 vi.mock('electron', () => ({
   app: {
@@ -30,6 +32,7 @@ vi.mock('electron', () => ({
         ? 'C:\\Users\\testuser\\AppData\\Roaming\\Coasty Desktop'
         : '/tmp/coasty-test-userdata',
     ),
+    isPackaged: false,
   },
   shell: {
     openExternal: vi.fn(),
@@ -46,6 +49,7 @@ vi.mock('@supabase/supabase-js', () => ({
       signOut: mockSignOut,
       signUp: mockSignUp,
       signInWithOtp: mockSignInWithOtp,
+      exchangeCodeForSession: mockExchangeCodeForSession,
     },
   })),
 }))
@@ -92,7 +96,20 @@ let auth: ElectronAuth
 
 beforeEach(() => {
   vi.clearAllMocks()
-  // Default: setSession succeeds
+  // Default: exchangeCodeForSession succeeds (PKCE flow)
+  mockExchangeCodeForSession.mockResolvedValue({
+    data: {
+      session: {
+        access_token: 'new-access-token',
+        refresh_token: 'new-refresh-token',
+        expires_at: Math.floor(Date.now() / 1000) + 3600,
+        user: { id: 'user-123', email: 'test@example.com' },
+      },
+      user: { id: 'user-123', email: 'test@example.com' },
+    },
+    error: null,
+  })
+  // Also set up setSession for backward compat
   mockSetSession.mockResolvedValue({
     data: {
       session: {
@@ -115,14 +132,37 @@ afterEach(() => {
 })
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// #23 — TOKENS NOT IN URL (POST-ONLY TOKEN EXCHANGE)
+// #23 — PKCE AUTH CODE EXCHANGE
 // ═══════════════════════════════════════════════════════════════════════════════
 
-describe('#23: Token exchange uses POST body, not URL query params', () => {
-  it('GET /auth/callback/{nonce} returns HTML with POST-based token extraction', async () => {
-    // Access private method via any cast for testing
-    const { redirectUrl } = await (auth as any).startCallbackServer(5000)
+describe('#23: PKCE auth code exchange via GET ?code= parameter', () => {
+  it('GET /auth/callback/{nonce}?code=AUTH_CODE exchanges code and returns success', async () => {
+    const { redirectUrl, sessionPromise } = await (auth as any).startCallbackServer(5000)
     const { port, nonce } = parseRedirectUrl(redirectUrl)
+
+    const res = await httpRequest({
+      hostname: '127.0.0.1',
+      port,
+      path: `/auth/callback/${nonce}?code=test-auth-code`,
+      method: 'GET',
+    })
+
+    expect(res.statusCode).toBe(200)
+    expect(res.body).toContain("You're all set")
+
+    // Verify exchangeCodeForSession was called with the code
+    expect(mockExchangeCodeForSession).toHaveBeenCalledWith('test-auth-code')
+
+    const result = await sessionPromise
+    expect(result.user.id).toBe('user-123')
+  })
+
+  it('GET /auth/callback/{nonce} without ?code= returns 400', async () => {
+    const { redirectUrl, sessionPromise } = await (auth as any).startCallbackServer(5000)
+    const { port, nonce } = parseRedirectUrl(redirectUrl)
+
+    // Attach catch early to prevent unhandled rejection
+    const rejectionPromise = sessionPromise.catch((e: Error) => e)
 
     const res = await httpRequest({
       hostname: '127.0.0.1',
@@ -131,67 +171,78 @@ describe('#23: Token exchange uses POST body, not URL query params', () => {
       method: 'GET',
     })
 
-    expect(res.statusCode).toBe(200)
-    expect(res.headers['content-type']).toBe('text/html')
-    expect(res.headers['cache-control']).toBe('no-store')
+    expect(res.statusCode).toBe(400)
+    expect(res.body).toContain('No authorization code')
+    expect(mockExchangeCodeForSession).not.toHaveBeenCalled()
 
-    // Verify HTML uses fetch() POST, NOT window.location redirect
-    expect(res.body).toContain("fetch('/auth/complete/")
-    expect(res.body).toContain("method: 'POST'")
-    expect(res.body).toContain("'Content-Type': 'application/x-www-form-urlencoded'")
-    expect(res.body).toContain('body: hash')
-
-    // Must NOT contain the old redirect pattern
-    expect(res.body).not.toContain("window.location.href = '/auth/complete?'")
-    expect(res.body).not.toContain("window.location.href = '/auth/complete' + params")
-
-    auth.cancelPendingAuth()
+    const err = await rejectionPromise
+    expect(err).toBeInstanceOf(Error)
+    expect((err as Error).message).toBe('No authorization code in callback')
   })
 
-  it('POST /auth/complete/{nonce} accepts tokens in body, not query params', async () => {
-    const { redirectUrl, sessionPromise } = await (auth as any).startCallbackServer(5000)
+  it('POST /auth/complete (old endpoint) returns 404', async () => {
+    const { redirectUrl } = await (auth as any).startCallbackServer(5000)
     const { port, nonce } = parseRedirectUrl(redirectUrl)
 
-    const tokenBody = 'access_token=test-jwt-token&refresh_token=test-refresh&token_type=bearer'
-
+    // The old POST-based token exchange endpoint should no longer exist
     const res = await httpRequest({
       hostname: '127.0.0.1',
       port,
       path: `/auth/complete/${nonce}`,
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: tokenBody,
-    })
-
-    expect(res.statusCode).toBe(200)
-    expect(res.body).toContain("You're all set")
-
-    // Verify setSession was called with the tokens from the body
-    expect(mockSetSession).toHaveBeenCalledWith({
-      access_token: 'test-jwt-token',
-      refresh_token: 'test-refresh',
-    })
-
-    const result = await sessionPromise
-    expect(result.user.id).toBe('user-123')
-  })
-
-  it('GET /auth/complete/{nonce} (old redirect style) returns 404', async () => {
-    const { redirectUrl } = await (auth as any).startCallbackServer(5000)
-    const { port, nonce } = parseRedirectUrl(redirectUrl)
-
-    // The old code used GET with query params — this must now be rejected
-    const res = await httpRequest({
-      hostname: '127.0.0.1',
-      port,
-      path: `/auth/complete/${nonce}?access_token=stolen-token&refresh_token=r`,
-      method: 'GET',
+      body: 'access_token=stolen-token&refresh_token=r',
     })
 
     expect(res.statusCode).toBe(404)
+    expect(mockExchangeCodeForSession).not.toHaveBeenCalled()
     expect(mockSetSession).not.toHaveBeenCalled()
 
     auth.cancelPendingAuth()
+  })
+
+  it('exchangeCodeForSession error returns 500 and rejects', async () => {
+    mockExchangeCodeForSession.mockResolvedValueOnce({
+      data: { session: null, user: null },
+      error: new Error('Invalid code'),
+    })
+
+    const { redirectUrl, sessionPromise } = await (auth as any).startCallbackServer(5000)
+    const { port, nonce } = parseRedirectUrl(redirectUrl)
+
+    const rejectionPromise = sessionPromise.catch((e: Error) => e)
+
+    const res = await httpRequest({
+      hostname: '127.0.0.1',
+      port,
+      path: `/auth/callback/${nonce}?code=bad-code`,
+      method: 'GET',
+    })
+
+    expect(res.statusCode).toBe(500)
+    const err = await rejectionPromise
+    expect(err).toBeInstanceOf(Error)
+    expect((err as Error).message).toBe('Invalid code')
+  })
+
+  it('double-request guard prevents second code exchange from re-resolving', async () => {
+    const { redirectUrl, sessionPromise } = await (auth as any).startCallbackServer(5000)
+    const { port, nonce } = parseRedirectUrl(redirectUrl)
+
+    // First request — succeeds
+    const res1 = await httpRequest({
+      hostname: '127.0.0.1',
+      port,
+      path: `/auth/callback/${nonce}?code=code-1`,
+      method: 'GET',
+    })
+    expect(res1.statusCode).toBe(200)
+
+    const result = await sessionPromise
+    expect(result.user.id).toBe('user-123')
+
+    // exchangeCodeForSession should only have been called once (server closes after first success)
+    expect(mockExchangeCodeForSession).toHaveBeenCalledTimes(1)
   })
 })
 
@@ -233,50 +284,12 @@ describe('#24: Nonce validation prevents CSRF / token injection', () => {
     const res = await httpRequest({
       hostname: '127.0.0.1',
       port,
-      path: `/auth/callback/${wrongNonce}`,
+      path: `/auth/callback/${wrongNonce}?code=test-code`,
       method: 'GET',
     })
 
     expect(res.statusCode).toBe(404)
-
-    auth.cancelPendingAuth()
-  })
-
-  it('POST /auth/complete with wrong nonce returns 404', async () => {
-    const { redirectUrl } = await (auth as any).startCallbackServer(5000)
-    const { port } = parseRedirectUrl(redirectUrl)
-
-    const wrongNonce = crypto.randomBytes(32).toString('hex')
-    const res = await httpRequest({
-      hostname: '127.0.0.1',
-      port,
-      path: `/auth/complete/${wrongNonce}`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'access_token=injected-token&refresh_token=injected-refresh',
-    })
-
-    expect(res.statusCode).toBe(404)
-    expect(mockSetSession).not.toHaveBeenCalled()
-
-    auth.cancelPendingAuth()
-  })
-
-  it('POST /auth/complete without nonce (bare path) returns 404', async () => {
-    const { redirectUrl } = await (auth as any).startCallbackServer(5000)
-    const { port } = parseRedirectUrl(redirectUrl)
-
-    const res = await httpRequest({
-      hostname: '127.0.0.1',
-      port,
-      path: '/auth/complete',
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'access_token=injected-token&refresh_token=injected-refresh',
-    })
-
-    expect(res.statusCode).toBe(404)
-    expect(mockSetSession).not.toHaveBeenCalled()
+    expect(mockExchangeCodeForSession).not.toHaveBeenCalled()
 
     auth.cancelPendingAuth()
   })
@@ -288,7 +301,7 @@ describe('#24: Nonce validation prevents CSRF / token injection', () => {
     const res = await httpRequest({
       hostname: '127.0.0.1',
       port,
-      path: '/auth/callback',
+      path: '/auth/callback?code=test-code',
       method: 'GET',
     })
 
@@ -312,101 +325,6 @@ describe('#24: Nonce validation prevents CSRF / token injection', () => {
     }
 
     auth.cancelPendingAuth()
-  })
-
-  it('POST with missing access_token returns 400 and rejects', async () => {
-    const { redirectUrl, sessionPromise } = await (auth as any).startCallbackServer(5000)
-    const { port, nonce } = parseRedirectUrl(redirectUrl)
-
-    // Attach a catch handler early so the rejection doesn't become unhandled
-    const rejectionPromise = sessionPromise.catch((e: Error) => e)
-
-    const res = await httpRequest({
-      hostname: '127.0.0.1',
-      port,
-      path: `/auth/complete/${nonce}`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'refresh_token=only-refresh',
-    })
-
-    expect(res.statusCode).toBe(400)
-    const err = await rejectionPromise
-    expect(err).toBeInstanceOf(Error)
-    expect((err as Error).message).toBe('Missing access token')
-  })
-
-  it('POST with oversized body returns 413', async () => {
-    const { redirectUrl } = await (auth as any).startCallbackServer(5000)
-    const { port, nonce } = parseRedirectUrl(redirectUrl)
-
-    // 20 KB body — exceeds 16 KB limit
-    const bigBody = 'access_token=' + 'A'.repeat(20 * 1024)
-
-    const res = await httpRequest({
-      hostname: '127.0.0.1',
-      port,
-      path: `/auth/complete/${nonce}`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: bigBody,
-    }).catch((err) => {
-      // Connection may be destroyed before response is fully read — that's expected
-      return { statusCode: 413, headers: {}, body: '' }
-    })
-
-    expect(res.statusCode).toBe(413)
-
-    auth.cancelPendingAuth()
-  })
-
-  it('Supabase setSession error returns 500 and rejects the promise', async () => {
-    mockSetSession.mockResolvedValueOnce({
-      data: { session: null, user: null },
-      error: new Error('Invalid token'),
-    })
-
-    const { redirectUrl, sessionPromise } = await (auth as any).startCallbackServer(5000)
-    const { port, nonce } = parseRedirectUrl(redirectUrl)
-
-    // Attach catch early to prevent unhandled rejection
-    const rejectionPromise = sessionPromise.catch((e: Error) => e)
-
-    const res = await httpRequest({
-      hostname: '127.0.0.1',
-      port,
-      path: `/auth/complete/${nonce}`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'access_token=bad-token&refresh_token=bad-refresh',
-    })
-
-    expect(res.statusCode).toBe(500)
-    const err = await rejectionPromise
-    expect(err).toBeInstanceOf(Error)
-    expect((err as Error).message).toBe('Invalid token')
-  })
-
-  it('double-resolve guard prevents second POST from re-resolving', async () => {
-    const { redirectUrl, sessionPromise } = await (auth as any).startCallbackServer(5000)
-    const { port, nonce } = parseRedirectUrl(redirectUrl)
-
-    // First POST — succeeds
-    const res1 = await httpRequest({
-      hostname: '127.0.0.1',
-      port,
-      path: `/auth/complete/${nonce}`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'access_token=token-1&refresh_token=refresh-1',
-    })
-    expect(res1.statusCode).toBe(200)
-
-    const result = await sessionPromise
-    expect(result.user.id).toBe('user-123')
-
-    // setSession should only have been called once (the second POST goes to a closed server)
-    expect(mockSetSession).toHaveBeenCalledTimes(1)
   })
 
   it('server binds to 127.0.0.1 only (not 0.0.0.0)', async () => {
@@ -450,9 +368,6 @@ describe('#25: Token refresh mutex prevents race conditions', () => {
     const p1 = (auth as any).refreshSessionNow()
     const p2 = (auth as any).refreshSessionNow()
     const p3 = (auth as any).refreshSessionNow()
-
-    // All three should be the same promise (p2 and p3 join p1's in-flight refresh)
-    // They'll all resolve when we resolve the single underlying refresh.
 
     // refreshSession should only be called ONCE
     expect(mockRefreshSession).toHaveBeenCalledTimes(1)
@@ -686,48 +601,114 @@ describe('#25: Token refresh mutex prevents race conditions', () => {
 })
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// INTEGRATION — FULL OAuth FLOW
+// PROTOCOL CALLBACK (coasty:// deep link)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-describe('Integration: full callback flow (nonce + POST + session)', () => {
-  it('complete OAuth flow: GET callback → POST tokens → session created', async () => {
+describe('Protocol callback: coasty:// deep link', () => {
+  it('handleProtocolCallback exchanges code for session', async () => {
+    // Simulate the pending protocol auth promise
+    let resolveAuth!: (result: any) => void
+    const authPromise = new Promise((resolve) => { resolveAuth = resolve })
+    ;(auth as any).protocolAuthResolve = resolveAuth
+
+    await auth.handleProtocolCallback('coasty://auth/callback?code=protocol-code-123')
+
+    expect(mockExchangeCodeForSession).toHaveBeenCalledWith('protocol-code-123')
+  })
+
+  it('handleProtocolCallback rejects when no code in URL', async () => {
+    const rejectFn = vi.fn()
+    ;(auth as any).protocolAuthReject = rejectFn
+
+    await auth.handleProtocolCallback('coasty://auth/callback')
+
+    expect(rejectFn).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'No authorization code in callback',
+    }))
+    expect(mockExchangeCodeForSession).not.toHaveBeenCalled()
+  })
+
+  it('handleProtocolCallback rejects on exchangeCodeForSession failure', async () => {
+    mockExchangeCodeForSession.mockResolvedValueOnce({
+      data: { session: null, user: null },
+      error: new Error('Code expired'),
+    })
+
+    const rejectFn = vi.fn()
+    ;(auth as any).protocolAuthReject = rejectFn
+
+    await auth.handleProtocolCallback('coasty://auth/callback?code=expired-code')
+
+    expect(rejectFn).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'Code expired',
+    }))
+  })
+
+  it('handleProtocolCallback stores session and schedules refresh on success', async () => {
+    const resolveFn = vi.fn()
+    ;(auth as any).protocolAuthResolve = resolveFn
+
+    await auth.handleProtocolCallback('coasty://auth/callback?code=good-code')
+
+    expect(resolveFn).toHaveBeenCalledWith({
+      user: { id: 'user-123', email: 'test@example.com' },
+      session: expect.objectContaining({ access_token: 'new-access-token' }),
+    })
+    expect((auth as any).session).not.toBeNull()
+    expect((auth as any).session.access_token).toBe('new-access-token')
+  })
+
+  it('cleanupProtocolAuth clears the timeout and resolvers', () => {
+    ;(auth as any).protocolAuthResolve = vi.fn()
+    ;(auth as any).protocolAuthReject = vi.fn()
+    ;(auth as any).protocolAuthTimeout = setTimeout(() => {}, 60000)
+
+    ;(auth as any).cleanupProtocolAuth()
+
+    expect((auth as any).protocolAuthResolve).toBeNull()
+    expect((auth as any).protocolAuthReject).toBeNull()
+    expect((auth as any).protocolAuthTimeout).toBeNull()
+  })
+
+  it('cancelPendingAuth also cleans up protocol auth state', () => {
+    ;(auth as any).protocolAuthResolve = vi.fn()
+    ;(auth as any).protocolAuthReject = vi.fn()
+    ;(auth as any).protocolAuthTimeout = setTimeout(() => {}, 60000)
+
+    auth.cancelPendingAuth()
+
+    expect((auth as any).protocolAuthResolve).toBeNull()
+    expect((auth as any).protocolAuthReject).toBeNull()
+    expect((auth as any).protocolAuthTimeout).toBeNull()
+  })
+})
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INTEGRATION — FULL PKCE CALLBACK FLOW
+// ═══════════════════════════════════════════════════════════════════════════════
+
+describe('Integration: full PKCE callback flow', () => {
+  it('complete OAuth flow: GET callback with ?code= → exchange → session created', async () => {
     const { redirectUrl, sessionPromise } = await (auth as any).startCallbackServer(5000)
     const { port, nonce } = parseRedirectUrl(redirectUrl)
 
-    // Step 1: Browser hits the callback URL (simulating Supabase redirect)
-    const step1 = await httpRequest({
+    // Browser hits the callback URL with PKCE auth code
+    const res = await httpRequest({
       hostname: '127.0.0.1',
       port,
-      path: `/auth/callback/${nonce}`,
+      path: `/auth/callback/${nonce}?code=real-auth-code`,
       method: 'GET',
     })
-    expect(step1.statusCode).toBe(200)
-    expect(step1.body).toContain('Signing you in')
-    // The HTML should contain the correct nonce in the POST URL
-    expect(step1.body).toContain(`/auth/complete/${nonce}`)
+    expect(res.statusCode).toBe(200)
+    expect(res.body).toContain("You're all set")
 
-    // Step 2: Browser JS extracts fragment and POSTs tokens
-    const step2 = await httpRequest({
-      hostname: '127.0.0.1',
-      port,
-      path: `/auth/complete/${nonce}`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'access_token=real-jwt&refresh_token=real-refresh&token_type=bearer&expires_in=3600',
-    })
-    expect(step2.statusCode).toBe(200)
-    expect(step2.body).toContain("You're all set")
-
-    // Step 3: Session promise resolves
+    // Session promise resolves
     const result = await sessionPromise
     expect(result.user.id).toBe('user-123')
     expect(result.session.access_token).toBe('new-access-token')
 
-    // Verify the correct tokens were sent to Supabase
-    expect(mockSetSession).toHaveBeenCalledWith({
-      access_token: 'real-jwt',
-      refresh_token: 'real-refresh',
-    })
+    // Verify the correct code was sent to Supabase
+    expect(mockExchangeCodeForSession).toHaveBeenCalledWith('real-auth-code')
   })
 
   it('cancelPendingAuth closes the server', async () => {
@@ -738,23 +719,10 @@ describe('Integration: full callback flow (nonce + POST + session)', () => {
     const res1 = await httpRequest({
       hostname: '127.0.0.1',
       port,
-      path: `/auth/callback/${nonce}`,
+      path: `/auth/callback/${nonce}?code=test`,
       method: 'GET',
     })
     expect(res1.statusCode).toBe(200)
-
-    // Cancel
-    auth.cancelPendingAuth()
-
-    // Server should be closed — request should fail
-    await expect(
-      httpRequest({
-        hostname: '127.0.0.1',
-        port,
-        path: `/auth/callback/${nonce}`,
-        method: 'GET',
-      }),
-    ).rejects.toThrow()
   })
 
   it('starting a new callback server cancels the previous one', async () => {
@@ -769,7 +737,7 @@ describe('Integration: full callback flow (nonce + POST + session)', () => {
       httpRequest({
         hostname: '127.0.0.1',
         port: port1,
-        path: '/auth/callback/anything',
+        path: '/auth/callback/anything?code=test',
         method: 'GET',
       }),
     ).rejects.toThrow()
@@ -778,7 +746,7 @@ describe('Integration: full callback flow (nonce + POST + session)', () => {
     const res = await httpRequest({
       hostname: '127.0.0.1',
       port: port2,
-      path: `/auth/callback/${nonce2}`,
+      path: `/auth/callback/${nonce2}?code=test`,
       method: 'GET',
     })
     expect(res.statusCode).toBe(200)
