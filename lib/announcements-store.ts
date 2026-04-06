@@ -25,9 +25,9 @@ export interface Announcement {
 export const ANNOUNCEMENTS: Announcement[] = [
   {
     id: "cua-v3-2026-04",
-    title: "Coasty CUA v3 is here",
+    title: "Coasty CUA v3, the cheapest CUA ever",
     description:
-      "Completely rebuilt Computer Use Agent with significantly improved accuracy, 3x faster execution, and up to 60% lower cost per task.",
+      "Completely rebuilt Computer Use Agent with significantly improved accuracy, 3x faster execution, and the cheapest CUA on the market — up to 60% lower cost per task.",
     date: "2026-04-05",
     tag: "new",
     image: "/demo-screenshot.png",
