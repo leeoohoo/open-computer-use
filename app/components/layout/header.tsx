@@ -13,6 +13,7 @@ import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
 import { Info, Desktop, ShareNetwork } from "@phosphor-icons/react"
 import { AgentIcon } from "@/components/icons/agent"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { HeaderSidebarTrigger } from "./header-sidebar-trigger"
 import { toast } from "sonner"
 import { ChatVisibilityToggle } from "@/app/components/chat/chat-visibility-toggle"
@@ -26,7 +27,9 @@ import {
 import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
 import { LanguageSwitcherCompact } from "@/components/language-switcher"
 import { useGuideStore } from "@/lib/guide-store"
-import { BookOpen, Globe } from "lucide-react"
+import { useAnnouncementsStore } from "@/lib/announcements-store"
+import { AnnouncementsDialog } from "@/app/components/layout/announcements-dialog"
+import { BookOpen, Globe, Megaphone } from "lucide-react"
 import { useTranslations, useLocale } from "next-intl"
 
 // --- Expanding bar shared styles ---
@@ -57,6 +60,7 @@ export function Header({ hasSidebar }: HeaderProps) {
   const { chatId } = useChatSession()
   const { isOpen: isNavigatorOpen, toggleNavigator, selectedVMId } = useProjectNavigator()
   const isLoggedIn = !!user
+  const pathname = usePathname()
   const t = useTranslations("appHeader")
   const locale = useLocale()
 
@@ -66,6 +70,11 @@ export function Header({ hasSidebar }: HeaderProps) {
   const guideHydrate = useGuideStore((s) => s.hydrate)
   useEffect(() => { guideHydrate() }, [guideHydrate])
 
+  // Announcements store (homepage)
+  const announcementsHydrate = useAnnouncementsStore((s) => s.hydrate)
+  const unreadCount = useAnnouncementsStore((s) => s.unreadCount)
+  useEffect(() => { announcementsHydrate() }, [announcementsHydrate])
+
   // Schedule dialog state
   const [scheduleOpen, setScheduleOpen] = useState(false)
   const [scheduleMachines, setScheduleMachines] = useState<UserMachine[]>([])
@@ -73,6 +82,7 @@ export function Header({ hasSidebar }: HeaderProps) {
   // Controlled dialog states
   const [shareOpen, setShareOpen] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
+  const [announcementsOpen, setAnnouncementsOpen] = useState(false)
 
   const openScheduleDialog = useCallback(async () => {
     try {
@@ -186,7 +196,7 @@ export function Header({ hasSidebar }: HeaderProps) {
                 )}
 
                 {/* ── Guide toggle (homepage, logged in) ── */}
-                {isLoggedIn && !chatId && (
+                {isLoggedIn && !chatId && pathname === "/" && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
@@ -203,6 +213,33 @@ export function Header({ hasSidebar }: HeaderProps) {
                     <TooltipContent>
                       {guideDismissed ? "Show guide" : "Hide guide"}
                     </TooltipContent>
+                  </Tooltip>
+                )}
+
+                {/* ── What's New (homepage, logged in) ── */}
+                {isLoggedIn && !chatId && pathname === "/" && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        className={cn(actionBtn, announcementsOpen && activeBtn)}
+                        onClick={() => setAnnouncementsOpen(true)}
+                      >
+                        <span className="relative">
+                          <Megaphone className="size-3.5 shrink-0" strokeWidth={1.75} />
+                          {unreadCount > 0 && (
+                            <span className="absolute -top-1 -right-1 flex size-2">
+                              <span className="absolute inline-flex size-full animate-ping rounded-full bg-blue-400 opacity-60" />
+                              <span className="relative inline-flex size-2 rounded-full bg-blue-500" />
+                            </span>
+                          )}
+                        </span>
+                        <span className={cn(expandLabel, "group-hover/bar:delay-[40ms]")}>
+                          <span className={labelText}>New</span>
+                        </span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>What&apos;s new</TooltipContent>
                   </Tooltip>
                 )}
 
@@ -230,7 +267,9 @@ export function Header({ hasSidebar }: HeaderProps) {
                           expandLabel,
                           isLoggedIn && chatId
                             ? "group-hover/bar:delay-[120ms]"
-                            : "group-hover/bar:delay-[40ms]",
+                            : isLoggedIn && !chatId && pathname === "/"
+                              ? "group-hover/bar:delay-[80ms]"
+                              : "group-hover/bar:delay-[40ms]",
                         )}
                       >
                         <span className="pl-1.5 text-[11px] font-semibold whitespace-nowrap leading-none uppercase tracking-wider">
@@ -269,6 +308,9 @@ export function Header({ hasSidebar }: HeaderProps) {
           </div>
         </div>
       </header>
+
+      {/* What's New dialog (controlled) */}
+      <AnnouncementsDialog open={announcementsOpen} onOpenChange={setAnnouncementsOpen} />
 
       {/* Language modal (controlled) */}
       <LanguageSwitcherCompact open={langOpen} onOpenChange={setLangOpen} />

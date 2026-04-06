@@ -274,7 +274,7 @@ export function BillingTab({ inApp }: { inApp: boolean }) {
         className="flex justify-center"
       >
         <Link
-          href="/billing"
+          href="/account?section=billing"
           className="inline-flex items-center gap-2.5 h-11 px-6 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
         >
           {t("goToBilling")}
