@@ -759,7 +759,7 @@ export function FileExplorer({ machineId, userId, className, isElectron }: FileE
                     </span>
                   )}
                   {/* Hover actions */}
-                  <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex-shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button

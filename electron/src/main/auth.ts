@@ -259,10 +259,16 @@ export class ElectronAuth {
   private async signInWithProtocol(provider: 'google'): Promise<{ user: User; session: Session }> {
     this.cancelPendingAuth()
 
+    // Redirect to the web app's intermediate callback page instead of directly
+    // to coasty://. The web page triggers the custom protocol and shows a
+    // "You can close this tab" message — preventing the browser from being
+    // stuck on a blank/loading page after the protocol handoff.
+    const webCallbackUrl = (process.env.COASTY_WEB_URL || 'https://coasty.ai') + '/auth/desktop-callback'
+
     const { data, error } = await this.supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: 'coasty://auth/callback',
+        redirectTo: webCallbackUrl,
         skipBrowserRedirect: true,
       },
     })

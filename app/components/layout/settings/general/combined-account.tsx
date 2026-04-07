@@ -110,7 +110,7 @@ export function CombinedAccount() {
                   <CoastyIcon className="h-6 w-6 text-foreground/30" />
                 )}
               </div>
-              <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer">
+              <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 cursor-pointer">
                 <Camera className="h-4 w-4 text-white drop-shadow" />
               </div>
             </div>

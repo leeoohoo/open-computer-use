@@ -375,7 +375,7 @@ function DayTaskItem({ task, onUpdate }: { task: DayTask; onUpdate: () => void }
       <button
         onClick={run}
         disabled={!!loading}
-        className="h-6 px-2 rounded-md text-[11px] font-medium bg-muted/60 hover:bg-muted text-foreground/60 hover:text-foreground opacity-0 group-hover:opacity-100 transition-all disabled:opacity-40"
+        className="h-6 px-2 rounded-md text-[11px] font-medium bg-muted/60 hover:bg-muted text-foreground/60 hover:text-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-all disabled:opacity-40"
       >
         {loading === "run" ? "\u2026" : t("run")}
       </button>
@@ -654,7 +654,7 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                       </div>
                     )}
                     {!isEditing && (
-                      <div className="flex items-center gap-0.5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                      <div className="flex items-center gap-0.5 ml-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
                         <button onClick={() => startEdit(team)} className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/30 hover:text-muted-foreground hover:bg-muted/60 transition-all" title="Edit">
                           <Pencil className="h-2.5 w-2.5" />
                         </button>

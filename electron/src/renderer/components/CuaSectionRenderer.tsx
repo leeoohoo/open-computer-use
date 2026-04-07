@@ -139,6 +139,20 @@ function stripAgentCode(text: string): string {
   return text.replace(/```(?:python)?\s*agent\.[\s\S]*?```/g, '').trim()
 }
 
+/** Truncate long text with ellipsis, respecting word boundaries */
+function truncateText(text: string, maxLen: number): string {
+  if (text.length <= maxLen) return text
+  const cut = text.lastIndexOf(' ', maxLen)
+  return text.slice(0, cut > maxLen * 0.5 ? cut : maxLen) + '…'
+}
+
+/** Clean agent code for display: truncate long string args */
+function formatAgentCode(code: string): string {
+  return code.replace(/"([^"]{200,})"/g, (_match, content: string) => {
+    return `"${content.slice(0, 150)}…"`
+  })
+}
+
 function parseAttributes(attrString: string): Record<string, string> {
   const attrs: Record<string, string> = {}
   let m: RegExpExecArray | null
@@ -424,10 +438,10 @@ function StepCard({
         <PlainDot status={status} />
       )}
 
-      {/* Action — the natural language line */}
+      {/* Action — the natural language line (truncated for readability) */}
       {actionText && (
         <p className="text-[15px] leading-relaxed text-neutral-100/90">
-          {actionText}
+          {truncateText(actionText, 200)}
         </p>
       )}
 
@@ -445,7 +459,7 @@ function StepCard({
               )}
             >
               <StatusDot status={r.status} />
-              {r.content}
+              {truncateText(r.content, 120)}
             </span>
           ))}
         </div>
@@ -461,7 +475,7 @@ function StepCard({
           )}
           {step.code && (
             <DetailRow icon={IconCode} label="Grounded action">
-              <Markdown>{step.code}</Markdown>
+              <Markdown>{formatAgentCode(step.code)}</Markdown>
             </DetailRow>
           )}
         </div>
@@ -606,7 +620,7 @@ function ItemRenderer({
       if (!cleaned) return null
       return (
         <div className="pl-6 py-0.5 text-[15px] leading-relaxed text-neutral-200/80">
-          <Markdown>{cleaned}</Markdown>
+          <Markdown>{truncateText(cleaned, 500)}</Markdown>
         </div>
       )
     }

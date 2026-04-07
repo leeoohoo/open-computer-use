@@ -413,7 +413,7 @@ export function GettingStartedTab({ inApp }: { inApp: boolean }) {
                 <Copy
                   size={13}
                   weight="duotone"
-                  className="text-foreground/15 shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="text-foreground/15 shrink-0 mt-0.5 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                 />
               </motion.button>
             ))}

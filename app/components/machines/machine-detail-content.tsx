@@ -345,7 +345,7 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
                     {copiedIp ? (
                       <Check className="h-3 w-3 text-emerald-500" />
                     ) : (
-                      <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <Copy className="h-3 w-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" />
                     )}
                   </button>
                 )}
