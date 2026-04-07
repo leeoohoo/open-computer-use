@@ -356,6 +356,24 @@ function StatusDot({ status }: { status: string }) {
 
 // ── Step ──
 
+/** Extract a short task description from agent.call_code_agent(...) code */
+function extractCodeAgentTask(code: string): string | null {
+  const match = code.match(/agent\.call_code_agent\s*\(\s*task\s*=\s*"([\s\S]*?)(?:"\s*[,)])/s)
+    || code.match(/agent\.call_code_agent\s*\(\s*task\s*=\s*'([\s\S]*?)(?:'\s*[,)])/s)
+  if (!match) return null
+  return match[1].replace(/\\n/g, " ").trim()
+}
+
+/** Check if grounded action code is an agent function call (code_agent, wait, etc.) */
+function extractAgentAction(code: string): { type: string; label: string; detail?: string } | null {
+  // Code agent
+  const codeAgentTask = extractCodeAgentTask(code)
+  if (codeAgentTask || /agent\.call_code_agent/.test(code)) {
+    return { type: "code-agent", label: "Code Agent", detail: codeAgentTask || undefined }
+  }
+  return null
+}
+
 function StepCard({
   step,
   screenshot,
@@ -376,6 +394,7 @@ function StepCard({
       ? "success"
       : "pending"
   const hasScreenshot = !!screenshot
+  const agentAction = step.code ? extractAgentAction(step.code) : null
 
   return (
     <div className={cn("group/step relative pb-1", hasScreenshot ? "pl-8" : "pl-6")}>
@@ -390,6 +409,25 @@ function StepCard({
         <p className="text-[15px] leading-relaxed text-foreground/90">
           {truncateText(actionText, 200)}
         </p>
+      )}
+
+      {/* Agent function call pill + prompt card (e.g. code_agent) */}
+      {agentAction && (
+        <div className="mt-1.5 rounded-lg border border-emerald-500/15 dark:border-emerald-400/12 bg-emerald-500/[0.03] dark:bg-emerald-400/[0.03] overflow-hidden">
+          <div className="flex items-center gap-2 px-2.5 py-1.5">
+            <span className="inline-flex items-center gap-1.5 text-[11.5px] leading-none font-medium px-2 py-[3px] rounded-full bg-emerald-500/12 text-emerald-600 dark:text-emerald-400">
+              <Terminal className="size-3 shrink-0" />
+              {agentAction.label}
+            </span>
+          </div>
+          {agentAction.detail && (
+            <div className="px-3 pb-2.5 -mt-0.5">
+              <p className="text-[12.5px] leading-relaxed text-foreground/60 dark:text-foreground/50">
+                {truncateText(agentAction.detail, 300)}
+              </p>
+            </div>
+          )}
+        </div>
       )}
 
       {/* Inline result badges */}
@@ -413,18 +451,11 @@ function StepCard({
       )}
 
       {/* Expandable details */}
-      {(step.observation || step.code) && (
+      {step.observation && (
         <div className="mt-0.5">
-          {step.observation && (
-            <DetailRow icon={Eye} label="Observation">
-              <Markdown>{step.observation}</Markdown>
-            </DetailRow>
-          )}
-          {step.code && (
-            <DetailRow icon={Code} label="Grounded action">
-              <Markdown>{formatAgentCode(step.code)}</Markdown>
-            </DetailRow>
-          )}
+          <DetailRow icon={Eye} label="What it noticed">
+            <Markdown>{step.observation}</Markdown>
+          </DetailRow>
         </div>
       )}
     </div>

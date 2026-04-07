@@ -27,6 +27,7 @@ import {
   TrendDown,
   CalendarBlank,
   Lightning,
+  ArrowsClockwise,
   Clock,
   ChartLine,
   Funnel,
@@ -124,29 +125,29 @@ const subscriptionPlans = [
 const additionalCreditPackages = [
   {
     id: "boost-small",
-    name: "Small Boost",
-    credits: 100,
-    price: 9,
-    agentMinutes: 10,
-    description: "Quick top-up",
+    name: "Boost",
+    credits: 150,
+    price: 19,
+    agentMinutes: 15,
+    description: "15 min of agent time",
   },
   {
     id: "boost-medium",
-    name: "Medium Boost",
-    credits: 300,
-    price: 25,
-    agentMinutes: 30,
-    description: "Standard refill",
-    savings: "8% savings",
+    name: "Power Boost",
+    credits: 500,
+    price: 49,
+    agentMinutes: 50,
+    description: "50 min of agent time",
+    savings: "23% off",
   },
   {
     id: "boost-large",
-    name: "Large Boost",
-    credits: 600,
-    price: 45,
-    agentMinutes: 60,
-    description: "Bulk purchase",
-    savings: "17% savings",
+    name: "Ultra Boost",
+    credits: 1200,
+    price: 99,
+    agentMinutes: 120,
+    description: "2 hrs of agent time",
+    savings: "35% off",
   },
 ]
 
@@ -973,6 +974,11 @@ export function BillingSection() {
   const [showAllTransactions, setShowAllTransactions] = useState(false)
   const [chartView, setChartView] = useState<"area" | "bar">("area")
 
+  // Auto-refill state
+  const [autoRefill, setAutoRefill] = useState({ enabled: false, package_id: "boost-small", threshold: 50, max_refills_per_day: 5 })
+  const [loadingAutoRefill, setLoadingAutoRefill] = useState(true)
+  const [savingAutoRefill, setSavingAutoRefill] = useState(false)
+
   // Fetch subscription status
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -991,6 +997,53 @@ export function BillingSection() {
     }
     fetchSubscription()
   }, [user])
+
+  // Fetch auto-refill settings
+  useEffect(() => {
+    const fetchAutoRefill = async () => {
+      if (!user) return
+      try {
+        const response = await fetch("/api/credits/auto-refill")
+        if (response.ok) {
+          const data = await response.json()
+          setAutoRefill(data)
+        }
+      } catch (error) {
+        console.error("Error fetching auto-refill settings:", error)
+      } finally {
+        setLoadingAutoRefill(false)
+      }
+    }
+    fetchAutoRefill()
+  }, [user])
+
+  const handleAutoRefillSave = async (updates: Partial<typeof autoRefill>) => {
+    const previousSettings = { ...autoRefill }
+    const newSettings = { ...autoRefill, ...updates }
+    setAutoRefill(newSettings)
+    setSavingAutoRefill(true)
+    try {
+      const response = await fetch("/api/credits/auto-refill", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newSettings),
+      })
+      if (!response.ok) {
+        const err = await response.json()
+        throw new Error(err.error || "Failed to save")
+      }
+      toast.success(
+        "enabled" in updates
+          ? (newSettings.enabled ? "Auto-refill enabled" : "Auto-refill disabled")
+          : "Auto-refill updated"
+      )
+    } catch (error: any) {
+      toast.error(error.message || "Failed to save auto-refill settings")
+      setAutoRefill(previousSettings)
+    } finally {
+      setSavingAutoRefill(false)
+    }
+  }
 
   // Check for success/cancel from Stripe
   useEffect(() => {
@@ -1544,6 +1597,115 @@ export function BillingSection() {
                 )) || []}
               </div>
             </details>
+          </motion.div>
+
+          {/* ─── Auto-Refill ──────────────────────────────────────────────── */}
+          <motion.div {...fadeUp(0.38)}>
+            <div className="rounded-xl border border-border/40 overflow-hidden">
+              <div className={cn("flex items-center justify-between px-4 py-3", autoRefill.enabled && "border-b border-border/30")}>
+                <div className="flex items-center gap-2.5">
+                  <div className="h-7 w-7 rounded-lg bg-foreground/[0.04] flex items-center justify-center shrink-0">
+                    <ArrowsClockwise className="h-3.5 w-3.5 text-foreground/40" weight="bold" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold">Auto-Refill</h4>
+                    <p className="text-[11px] text-muted-foreground/50">Automatically top up when credits run low</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleAutoRefillSave({ enabled: !autoRefill.enabled })}
+                  disabled={savingAutoRefill || loadingAutoRefill || !subscription || subscription.status !== "active"}
+                  className={cn(
+                    "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
+                    autoRefill.enabled ? "bg-foreground" : "bg-muted-foreground/20"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "pointer-events-none inline-block h-4 w-4 rounded-full bg-background shadow-sm ring-0 transition-transform duration-200 ease-in-out",
+                      autoRefill.enabled ? "translate-x-4" : "translate-x-0"
+                    )}
+                  />
+                </button>
+              </div>
+
+              {autoRefill.enabled && (
+                <div className="px-4 py-3 space-y-3">
+                  {/* Package selection */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Refill package</span>
+                    <Select
+                      value={autoRefill.package_id}
+                      onValueChange={(v) => handleAutoRefillSave({ package_id: v })}
+                      disabled={savingAutoRefill}
+                    >
+                      <SelectTrigger className="h-7 w-[180px] text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="boost-small">Boost — 150 credits ($19)</SelectItem>
+                        <SelectItem value="boost-medium">Power Boost — 500 credits ($49)</SelectItem>
+                        <SelectItem value="boost-large">Ultra Boost — 1,200 credits ($99)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Threshold */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Refill when balance drops below</span>
+                    <Select
+                      value={String(autoRefill.threshold)}
+                      onValueChange={(v) => handleAutoRefillSave({ threshold: Number(v) })}
+                      disabled={savingAutoRefill}
+                    >
+                      <SelectTrigger className="h-7 w-[140px] text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="20">20 credits</SelectItem>
+                        <SelectItem value="50">50 credits</SelectItem>
+                        <SelectItem value="100">100 credits</SelectItem>
+                        <SelectItem value="200">200 credits</SelectItem>
+                        <SelectItem value="500">500 credits</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Max per day */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Max refills per day</span>
+                    <input
+                      type="number"
+                      min={1}
+                      max={999}
+                      value={autoRefill.max_refills_per_day}
+                      onChange={(e) => {
+                        const val = Math.max(1, Math.min(999, parseInt(e.target.value) || 1))
+                        setAutoRefill((prev) => ({ ...prev, max_refills_per_day: val }))
+                      }}
+                      onBlur={() => handleAutoRefillSave({ max_refills_per_day: autoRefill.max_refills_per_day })}
+                      disabled={savingAutoRefill}
+                      className="h-7 w-[100px] rounded-md border border-input dark:border-0 dark:bg-secondary dark:hover:bg-secondary/50 bg-transparent px-3 text-xs text-right tabular-nums shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+                  </div>
+
+                  {/* Daily spending cap info */}
+                  <div className="rounded-lg bg-muted/20 px-3 py-2">
+                    <p className="text-[11px] text-muted-foreground/60">
+                      Max daily spend:{" "}
+                      <span className="font-medium text-foreground/60">
+                        ${autoRefill.max_refills_per_day * (
+                          autoRefill.package_id === "boost-small" ? 19
+                            : autoRefill.package_id === "boost-medium" ? 49
+                            : 99
+                        )}
+                      </span>
+                      {" · "}Card on file will be charged automatically
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           </motion.div>
 
           {/* Additional Credits */}
