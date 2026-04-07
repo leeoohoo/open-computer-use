@@ -9,8 +9,8 @@ import { PermissionsGuard } from './components/PermissionsGuard'
 import { PermissionToast } from './components/PermissionToast'
 
 export default function App() {
-  const { isAuthenticated, loading, checkSession } = useAuthStore()
-  const { connect, init: initConnection } = useConnectionStore()
+  const { isAuthenticated, loading, checkSession, signOut } = useAuthStore()
+  const { connect, init: initConnection, state: connectionState } = useConnectionStore()
   const { mode, setMode, init: initWindow } = useWindowStore()
 
   // Check session on mount
@@ -42,6 +42,13 @@ export default function App() {
       setMode('auth')
     }
   }, [isAuthenticated])
+
+  // Auto sign-out when backend rejects authentication
+  React.useEffect(() => {
+    if (connectionState === 'error' && isAuthenticated) {
+      signOut()
+    }
+  }, [connectionState])
 
   if (loading) {
     return (
