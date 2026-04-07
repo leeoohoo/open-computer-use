@@ -128,16 +128,14 @@ const additionalCreditPackages = [
     name: "Boost",
     credits: 150,
     price: 19,
-    agentMinutes: 15,
-    description: "15 min of agent time",
+    description: "Quick top-up",
   },
   {
     id: "boost-medium",
     name: "Power Boost",
     credits: 500,
     price: 49,
-    agentMinutes: 50,
-    description: "50 min of agent time",
+    description: "Most popular",
     savings: "23% off",
   },
   {
@@ -145,8 +143,7 @@ const additionalCreditPackages = [
     name: "Ultra Boost",
     credits: 1200,
     price: 99,
-    agentMinutes: 120,
-    description: "2 hrs of agent time",
+    description: "Best value",
     savings: "35% off",
   },
 ]
@@ -221,7 +218,7 @@ function formatRelativeDate(dateString: string, t?: (key: string, values?: any) 
   return formatShortDate(dateString)
 }
 
-// ─── Custom SVG Chart ───────────────────────────────────────────────────────
+// ─── Interactive Chart ──────────────────────────────────────────────────────
 
 interface ChartDataPoint {
   date: string
@@ -250,7 +247,6 @@ function computeNiceTicks(maxVal: number, count: number): number[] {
   return ticks
 }
 
-// Build a smooth cubic bezier spline through points
 function buildSmoothPath(pts: { x: number; y: number }[]): string {
   if (pts.length < 2) return pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ")
   let d = `M ${pts[0].x} ${pts[0].y}`
@@ -269,9 +265,15 @@ function buildSmoothPath(pts: { x: number; y: number }[]): string {
   return d
 }
 
+const SERIES_CONFIG = [
+  { key: "balance" as const, color: "#6198de", label: "Balance", width: 2.5, areaOpacity: [0.22, 0.12, 0.05, 0.01, 0] },
+  { key: "earned" as const, color: "#3cb57c", label: "Earned", width: 2, areaOpacity: [0.18, 0.09, 0.035, 0.008, 0] },
+  { key: "spent" as const, color: "#d46b5f", label: "Used", width: 2, areaOpacity: [0.18, 0.09, 0.035, 0.008, 0] },
+] as const
+
 function UsageChart({
   data,
-  height = 240,
+  height = 260,
   chartView = "area",
 }: {
   data: ChartDataPoint[]
@@ -279,14 +281,35 @@ function UsageChart({
   chartView?: "area" | "bar"
 }) {
   const t = useTranslations("billing")
+  const containerRef = React.useRef<HTMLDivElement>(null)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null)
+  const [visibleSeries, setVisibleSeries] = useState<Set<string>>(new Set(["balance", "earned", "spent"]))
+
+  // Zoom & pan state
+  const [zoom, setZoom] = useState(1)
+  const [panOffset, setPanOffset] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const dragStart = React.useRef<{ x: number; offset: number } | null>(null)
+
+  // Reset zoom/pan when data or view changes
+  React.useEffect(() => { setZoom(1); setPanOffset(0) }, [data.length, chartView])
+
+  const toggleSeries = (key: string) => {
+    setVisibleSeries((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) {
+        if (next.size > 1) next.delete(key)
+      } else {
+        next.add(key)
+      }
+      return next
+    })
+  }
 
   if (data.length === 0) {
     return (
-      <div
-        className="flex flex-col items-center justify-center text-muted-foreground/30 gap-2"
-        style={{ height }}
-      >
+      <div className="flex flex-col items-center justify-center text-muted-foreground/30 gap-2" style={{ height }}>
         <ChartLine className="h-8 w-8" weight="thin" />
         <span className="text-xs">{t("noActivity")}</span>
       </div>
@@ -295,231 +318,188 @@ function UsageChart({
 
   const vbW = 640
   const vbH = height
-  const padding = { top: 20, right: 20, bottom: 36, left: 54 }
+  const padding = { top: 24, right: 20, bottom: 36, left: 54 }
   const chartH = vbH - padding.top - padding.bottom
   const chartW = vbW - padding.left - padding.right
 
-  const maxVal = Math.max(...data.map((d) => Math.max(d.earned, d.spent, 1)), 1)
+  // Apply zoom & pan — compute visible data window
+  const totalPoints = data.length
+  const visibleCount = Math.max(3, Math.ceil(totalPoints / zoom))
+  const maxPan = Math.max(0, totalPoints - visibleCount)
+  const clampedPan = Math.max(0, Math.min(maxPan, panOffset))
+  const startIdx = Math.floor(clampedPan)
+  const endIdx = Math.min(totalPoints, startIdx + visibleCount)
+  const visibleData = data.slice(startIdx, endIdx)
 
-  // ── Shared axis rendering ──
-  const renderYAxis = (ticks: number[], axisMax: number) =>
-    ticks.map((tick) => {
+  // Mouse handlers
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault()
+    const delta = e.deltaY < 0 ? 1.15 : 0.87
+    const newZoom = Math.max(1, Math.min(totalPoints / 3, zoom * delta))
+    // Zoom toward mouse position
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (rect) {
+      const mouseRatio = (e.clientX - rect.left) / rect.width
+      const newVisibleCount = Math.max(3, Math.ceil(totalPoints / newZoom))
+      const oldVisibleCount = Math.max(3, Math.ceil(totalPoints / zoom))
+      const pointsDelta = oldVisibleCount - newVisibleCount
+      const newPan = clampedPan + pointsDelta * mouseRatio
+      setPanOffset(newPan)
+    }
+    setZoom(newZoom)
+  }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return
+    setIsDragging(true)
+    dragStart.current = { x: e.clientX, offset: clampedPan }
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect) return
+
+    // Update mouse position for crosshair
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    setMousePos({ x, y })
+
+    // Find nearest data point
+    const chartLeft = (padding.left / vbW) * rect.width
+    const chartRight = ((vbW - padding.right) / vbW) * rect.width
+    const relX = (x - chartLeft) / (chartRight - chartLeft)
+    const idx = Math.round(relX * (visibleData.length - 1))
+    setHoveredIndex(Math.max(0, Math.min(visibleData.length - 1, idx)))
+
+    // Drag to pan
+    if (isDragging && dragStart.current) {
+      const dx = e.clientX - dragStart.current.x
+      const pxPerPoint = rect.width / visibleCount
+      const pointsDelta = -dx / pxPerPoint
+      setPanOffset(dragStart.current.offset + pointsDelta)
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+    dragStart.current = null
+  }
+
+  const handleMouseLeave = () => {
+    setHoveredIndex(null)
+    setMousePos(null)
+    setIsDragging(false)
+    dragStart.current = null
+  }
+
+  // Compute max for visible data
+  const getVal = (d: ChartDataPoint, key: string) =>
+    key === "balance" ? d.balance : key === "earned" ? d.earned : d.spent
+
+  const visibleMax = Math.max(
+    ...visibleData.flatMap((d) =>
+      SERIES_CONFIG.filter((s) => visibleSeries.has(s.key)).map((s) => getVal(d, s.key))
+    ),
+    1,
+  )
+
+  const renderContent = () => {
+    const ticks = computeNiceTicks(visibleMax, 4)
+    const rawAxisMax = ticks[ticks.length - 1] || visibleMax
+    const axisMax = chartView === "area" && rawAxisMax <= visibleMax ? rawAxisMax * 1.1 : rawAxisMax
+
+    const baselineY = padding.top + chartH
+
+    // Y-axis
+    const yAxis = ticks.map((tick) => {
       const y = padding.top + chartH - (tick / axisMax) * chartH
       return (
         <g key={tick}>
-          <line
-            x1={padding.left}
-            x2={vbW - padding.right}
-            y1={y}
-            y2={y}
-            stroke="currentColor"
-            strokeOpacity={tick === 0 ? 0.15 : 0.08}
-            strokeWidth={0.5}
-          />
-          <text
-            x={padding.left - 10}
-            y={y + 3.5}
-            textAnchor="end"
-            fontSize={9.5}
-            fill="currentColor"
-            fillOpacity={0.5}
-            fontFamily="system-ui, -apple-system, sans-serif"
-            fontWeight={400}
-          >
+          <line x1={padding.left} x2={vbW - padding.right} y1={y} y2={y} stroke="currentColor" strokeOpacity={tick === 0 ? 0.15 : 0.06} strokeWidth={0.5} />
+          <text x={padding.left - 10} y={y + 3.5} textAnchor="end" fontSize={9.5} fill="currentColor" fillOpacity={0.4} fontFamily="system-ui, -apple-system, sans-serif" fontWeight={400}>
             {formatAxisValue(tick)}
           </text>
         </g>
       )
     })
 
-  const renderXAxis = () => {
-    const step = Math.max(1, Math.ceil(data.length / 8))
-    return data.map((d, i) => {
-      if (i % step !== 0 && i !== data.length - 1) return null
+    // X-axis
+    const xStep = Math.max(1, Math.ceil(visibleData.length / 8))
+    const xAxis = visibleData.map((d, i) => {
+      if (i % xStep !== 0 && i !== visibleData.length - 1) return null
       const x = chartView === "bar"
-        ? padding.left + (i + 0.5) * (chartW / data.length)
-        : padding.left + (i / Math.max(data.length - 1, 1)) * chartW
+        ? padding.left + (i + 0.5) * (chartW / visibleData.length)
+        : padding.left + (i / Math.max(visibleData.length - 1, 1)) * chartW
       return (
-        <text
-          key={i}
-          x={x}
-          y={vbH - 10}
-          textAnchor="middle"
-          fontSize={9}
-          fill="currentColor"
-          fillOpacity={0.5}
-          fontFamily="system-ui, -apple-system, sans-serif"
-          fontWeight={400}
-        >
+        <text key={i} x={x} y={vbH - 8} textAnchor="middle" fontSize={9} fill="currentColor" fillOpacity={0.4} fontFamily="system-ui, -apple-system, sans-serif" fontWeight={400}>
           {formatShortDate(d.date)}
         </text>
       )
     })
-  }
 
-  const renderTooltip = (leftPct: number, topPx: number, d: ChartDataPoint, showBalance: boolean) => (
-    <div
-      className="absolute z-20 pointer-events-none"
-      style={{ left: `${leftPct}%`, top: topPx, transform: "translateX(-50%)" }}
-    >
-      <div className="bg-popover/95 backdrop-blur-md border border-border/40 rounded-xl shadow-xl shadow-black/5 px-3.5 py-2.5 text-xs space-y-1.5 min-w-[130px]">
-        <div className="font-medium text-foreground/70 text-[10px] uppercase tracking-wider">
-          {formatShortDate(d.date)}
-        </div>
-        {showBalance && (
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "#6198de" }} />
-              <span className="text-muted-foreground/70">{t("stats.balance")}</span>
-            </div>
-            <span className="font-semibold text-foreground tabular-nums">{d.balance.toLocaleString()}</span>
-          </div>
-        )}
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "#3cb57c" }} />
-            <span className="text-muted-foreground/70">{t("stats.earned")}</span>
-          </div>
-          <span className="font-semibold text-foreground tabular-nums">+{d.earned.toLocaleString()}</span>
-        </div>
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "#d46b5f" }} />
-            <span className="text-muted-foreground/70">{t("stats.used")}</span>
-          </div>
-          <span className="font-semibold text-muted-foreground tabular-nums">-{d.spent.toLocaleString()}</span>
-        </div>
-      </div>
-    </div>
-  )
+    if (chartView === "bar") {
+      const barGroupWidth = chartW / visibleData.length
+      const barW = Math.min(barGroupWidth * 0.28, 16)
+      const gap = Math.max(barW * 0.25, 2)
 
-  // ── Bar chart ──
-  if (chartView === "bar") {
-    const ticks = computeNiceTicks(maxVal, 4)
-    const axisMax = ticks[ticks.length - 1] || maxVal
-    const barGroupWidth = chartW / data.length
-    const barW = Math.min(barGroupWidth * 0.32, 14)
-    const gap = Math.max(barW * 0.2, 1.5)
-
-    return (
-      <div className="relative" style={{ height }}>
+      return (
         <svg viewBox={`0 0 ${vbW} ${vbH}`} preserveAspectRatio="xMidYMid meet" className="w-full h-full">
           <defs>
             <linearGradient id="barEarnedGrad" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stopColor="#3cb57c" stopOpacity={0.45} />
-              <stop offset="100%" stopColor="#3cb57c" stopOpacity={0.7} />
+              <stop offset="0%" stopColor="#3cb57c" stopOpacity={0.4} />
+              <stop offset="100%" stopColor="#3cb57c" stopOpacity={0.75} />
             </linearGradient>
             <linearGradient id="barSpentGrad" x1="0" y1="1" x2="0" y2="0">
               <stop offset="0%" stopColor="#d46b5f" stopOpacity={0.3} />
-              <stop offset="100%" stopColor="#d46b5f" stopOpacity={0.5} />
+              <stop offset="100%" stopColor="#d46b5f" stopOpacity={0.6} />
             </linearGradient>
           </defs>
-
-          {renderYAxis(ticks, axisMax)}
-
-          {data.map((d, i) => {
+          {yAxis}
+          {visibleData.map((d, i) => {
             const cx = padding.left + (i + 0.5) * barGroupWidth
-            const earnedH = (d.earned / axisMax) * chartH
-            const spentH = (d.spent / axisMax) * chartH
+            const earnedH = visibleSeries.has("earned") ? (d.earned / axisMax) * chartH : 0
+            const spentH = visibleSeries.has("spent") ? (d.spent / axisMax) * chartH : 0
             const isHovered = hoveredIndex === i
-
             return (
-              <g
-                key={i}
-                onMouseEnter={() => setHoveredIndex(i)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                className="cursor-pointer"
-              >
+              <g key={i}>
                 <rect x={cx - barGroupWidth / 2} y={padding.top} width={barGroupWidth} height={chartH} fill="transparent" />
-                {isHovered && (
-                  <rect x={cx - barGroupWidth / 2} y={padding.top} width={barGroupWidth} height={chartH} fill="currentColor" fillOpacity={0.04} rx={4} />
+                {isHovered && <rect x={cx - barGroupWidth / 2} y={padding.top} width={barGroupWidth} height={chartH} fill="currentColor" fillOpacity={0.03} rx={4} />}
+                {visibleSeries.has("earned") && (
+                  <rect x={cx - gap / 2 - barW} y={padding.top + chartH - earnedH} width={barW} height={Math.max(earnedH, 0)} rx={barW / 3} fill="url(#barEarnedGrad)" fillOpacity={isHovered ? 1 : 0.85} className="transition-all duration-150" />
                 )}
-                {/* Earned */}
-                <rect
-                  x={cx - gap / 2 - barW}
-                  y={padding.top + chartH - earnedH}
-                  width={barW}
-                  height={Math.max(earnedH, 0)}
-                  rx={barW / 3}
-                  fill="url(#barEarnedGrad)"
-                  fillOpacity={isHovered ? 1 : 0.85}
-                  style={{ transition: "fill-opacity 0.15s ease" }}
-                />
-                {/* Spent */}
-                <rect
-                  x={cx + gap / 2}
-                  y={padding.top + chartH - spentH}
-                  width={barW}
-                  height={Math.max(spentH, 0)}
-                  rx={barW / 3}
-                  fill="url(#barSpentGrad)"
-                  fillOpacity={isHovered ? 1 : 0.8}
-                  style={{ transition: "fill-opacity 0.15s ease" }}
-                />
+                {visibleSeries.has("spent") && (
+                  <rect x={cx + gap / 2} y={padding.top + chartH - spentH} width={barW} height={Math.max(spentH, 0)} rx={barW / 3} fill="url(#barSpentGrad)" fillOpacity={isHovered ? 1 : 0.8} className="transition-all duration-150" />
+                )}
               </g>
             )
           })}
-
-          {renderXAxis()}
+          {/* Crosshair */}
+          {hoveredIndex !== null && (
+            <line
+              x1={padding.left + (hoveredIndex + 0.5) * barGroupWidth}
+              x2={padding.left + (hoveredIndex + 0.5) * barGroupWidth}
+              y1={padding.top} y2={baselineY}
+              stroke="currentColor" strokeOpacity={0.08} strokeWidth={1} strokeDasharray="4 3"
+            />
+          )}
+          {xAxis}
         </svg>
+      )
+    }
 
-        {hoveredIndex !== null && data[hoveredIndex] && renderTooltip(
-          ((padding.left + (hoveredIndex + 0.5) * barGroupWidth) / vbW) * 100,
-          6,
-          data[hoveredIndex],
-          false,
-        )}
-      </div>
-    )
-  }
-
-  // ── Area chart (default) ──
-  const allMax = Math.max(...data.map((d) => Math.max(d.balance, d.earned, d.spent)), 1)
-  const ticks = computeNiceTicks(allMax, 4)
-  const rawAxisMax = ticks[ticks.length - 1] || allMax
-  const axisMax = rawAxisMax <= allMax ? rawAxisMax * 1.1 : rawAxisMax
-
-  const baselineY = padding.top + chartH
-
-  // Colors: balance = blue, earned = emerald, spent = rose (hex for SVG compat)
-  const series = [
-    {
-      key: "balance" as const,
-      color: "#6198de",                 // soft blue
-      points: data.map((d, i) => ({
-        x: padding.left + (i / Math.max(data.length - 1, 1)) * chartW,
-        y: padding.top + chartH - (d.balance / axisMax) * chartH,
+    // Area chart
+    const activeSeries = SERIES_CONFIG.filter((s) => visibleSeries.has(s.key)).map((cfg) => ({
+      ...cfg,
+      points: visibleData.map((d, i) => ({
+        x: padding.left + (i / Math.max(visibleData.length - 1, 1)) * chartW,
+        y: padding.top + chartH - (getVal(d, cfg.key) / axisMax) * chartH,
       })),
-      width: 2,
-      areaOpacity: [0.18, 0.09, 0.035, 0.008, 0],
-    },
-    {
-      key: "earned" as const,
-      color: "#3cb57c",                 // soft emerald
-      points: data.map((d, i) => ({
-        x: padding.left + (i / Math.max(data.length - 1, 1)) * chartW,
-        y: padding.top + chartH - (d.earned / axisMax) * chartH,
-      })),
-      width: 1.5,
-      areaOpacity: [0.14, 0.065, 0.025, 0.005, 0],
-    },
-    {
-      key: "spent" as const,
-      color: "#d46b5f",                 // soft rose
-      points: data.map((d, i) => ({
-        x: padding.left + (i / Math.max(data.length - 1, 1)) * chartW,
-        y: padding.top + chartH - (d.spent / axisMax) * chartH,
-      })),
-      width: 1.5,
-      areaOpacity: [0.14, 0.065, 0.025, 0.005, 0],
-    },
-  ]
+    }))
 
-  return (
-    <div className="relative" style={{ height }}>
+    return (
       <svg viewBox={`0 0 ${vbW} ${vbH}`} preserveAspectRatio="xMidYMid meet" className="w-full h-full">
         <defs>
-          {series.map((s) => {
+          {activeSeries.map((s) => {
             const minY = Math.min(...s.points.map((p) => p.y))
             return (
               <React.Fragment key={s.key}>
@@ -530,106 +510,158 @@ function UsageChart({
                   <stop offset="80%" stopColor={s.color} stopOpacity={s.areaOpacity[3]} />
                   <stop offset="100%" stopColor={s.color} stopOpacity={s.areaOpacity[4]} />
                 </linearGradient>
-                <linearGradient id={`lineGrad-${s.key}`} x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor={s.color} stopOpacity={0.7} />
-                  <stop offset="50%" stopColor={s.color} stopOpacity={1} />
-                  <stop offset="100%" stopColor={s.color} stopOpacity={0.75} />
-                </linearGradient>
               </React.Fragment>
             )
           })}
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2.5" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
+          <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
         </defs>
 
-        {renderYAxis(ticks, axisMax)}
+        {yAxis}
 
-        {/* Render each series: area fill, glow, line */}
-        {series.map((s) => {
+        {activeSeries.map((s) => {
           const line = buildSmoothPath(s.points)
           const last = s.points[s.points.length - 1]
           const first = s.points[0]
           const area = `${line} L ${last.x} ${baselineY} L ${first.x} ${baselineY} Z`
-
           return (
-            <g key={s.key}>
-              {/* Area fill */}
+            <g key={s.key} className="transition-opacity duration-300">
               <path d={area} fill={`url(#areaGrad-${s.key})`} />
-              {/* Glow */}
-              <path
-                d={line}
-                fill="none"
-                stroke={s.color}
-                strokeWidth={s.width + 3}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeOpacity={0.08}
-                filter="url(#glow)"
-              />
-              {/* Line */}
-              <path
-                d={line}
-                fill="none"
-                stroke={`url(#lineGrad-${s.key})`}
-                strokeWidth={s.width}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              <path d={line} fill="none" stroke={s.color} strokeWidth={s.width + 3} strokeLinecap="round" strokeLinejoin="round" strokeOpacity={0.06} filter="url(#glow)" />
+              <path d={line} fill="none" stroke={s.color} strokeWidth={s.width} strokeLinecap="round" strokeLinejoin="round" />
             </g>
           )
         })}
 
-        {/* Hover interaction layer — uses balance points for positioning */}
-        {series[0].points.map((p, i) => (
-          <g
-            key={i}
-            onMouseEnter={() => setHoveredIndex(i)}
-            onMouseLeave={() => setHoveredIndex(null)}
-            className="cursor-pointer"
-          >
-            <rect
-              x={p.x - chartW / data.length / 2}
-              y={padding.top}
-              width={chartW / data.length}
-              height={chartH}
-              fill="transparent"
+        {/* Crosshair + dots */}
+        {hoveredIndex !== null && hoveredIndex < visibleData.length && (
+          <g>
+            <line
+              x1={padding.left + (hoveredIndex / Math.max(visibleData.length - 1, 1)) * chartW}
+              x2={padding.left + (hoveredIndex / Math.max(visibleData.length - 1, 1)) * chartW}
+              y1={padding.top} y2={baselineY}
+              stroke="currentColor" strokeOpacity={0.08} strokeWidth={1} strokeDasharray="4 3"
             />
-            {hoveredIndex === i && (
-              <>
-                <line
-                  x1={p.x} x2={p.x}
-                  y1={padding.top} y2={baselineY}
-                  stroke="currentColor"
-                  strokeOpacity={0.1}
-                  strokeWidth={1}
-                  strokeDasharray="3 3"
-                />
-                {/* Dots for each series */}
-                {series.map((s) => (
-                  <React.Fragment key={s.key}>
-                    <circle cx={s.points[i].x} cy={s.points[i].y} r={6} fill={s.color} fillOpacity={0.12} />
-                    <circle cx={s.points[i].x} cy={s.points[i].y} r={3.5} fill={s.color} fillOpacity={0.8} stroke="var(--popover)" strokeWidth={1.5} />
-                  </React.Fragment>
-                ))}
-              </>
-            )}
+            {/* Horizontal crosshair at nearest balance point */}
+            {activeSeries.map((s) => (
+              <React.Fragment key={s.key}>
+                <circle cx={s.points[hoveredIndex].x} cy={s.points[hoveredIndex].y} r={7} fill={s.color} fillOpacity={0.08} />
+                <circle cx={s.points[hoveredIndex].x} cy={s.points[hoveredIndex].y} r={4} fill={s.color} fillOpacity={0.9} stroke="var(--background)" strokeWidth={2} />
+              </React.Fragment>
+            ))}
           </g>
-        ))}
+        )}
 
-        {renderXAxis()}
+        {/* Invisible hover rects */}
+        {visibleData.map((_, i) => {
+          const x = padding.left + (i / Math.max(visibleData.length - 1, 1)) * chartW
+          return (
+            <rect key={i} x={x - chartW / visibleData.length / 2} y={padding.top} width={chartW / visibleData.length} height={chartH} fill="transparent" />
+          )
+        })}
+
+        {xAxis}
       </svg>
+    )
+  }
 
-      {hoveredIndex !== null && data[hoveredIndex] && renderTooltip(
-        (series[0].points[hoveredIndex].x / vbW) * 100,
-        Math.max((series[0].points[hoveredIndex].y / vbH) * height - 12, 0),
-        data[hoveredIndex],
-        true,
-      )}
+  // Tooltip
+  const renderTooltip = () => {
+    if (hoveredIndex === null || !visibleData[hoveredIndex] || isDragging) return null
+    const d = visibleData[hoveredIndex]
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect || !mousePos) return null
+
+    // Position tooltip — flip if near edge
+    const tooltipW = 160
+    const leftPx = mousePos.x
+    const flipLeft = leftPx + tooltipW + 16 > rect.width
+
+    return (
+      <div
+        className="absolute z-30 pointer-events-none animate-in fade-in-0 zoom-in-95 duration-100"
+        style={{
+          left: flipLeft ? leftPx - tooltipW - 12 : leftPx + 12,
+          top: Math.max(8, mousePos.y - 40),
+        }}
+      >
+        <div className="bg-popover/95 backdrop-blur-xl border border-border/30 rounded-xl shadow-2xl shadow-black/10 px-3.5 py-2.5 text-xs space-y-1.5 min-w-[150px]">
+          <div className="font-medium text-foreground/60 text-[10px] uppercase tracking-wider pb-0.5 border-b border-border/20">
+            {formatShortDate(d.date)}
+          </div>
+          {SERIES_CONFIG.filter((s) => visibleSeries.has(s.key)).map((s) => {
+            const val = getVal(d, s.key)
+            const prefix = s.key === "earned" ? "+" : s.key === "spent" ? "-" : ""
+            return (
+              <div key={s.key} className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: s.color }} />
+                  <span className="text-muted-foreground/70">{s.label}</span>
+                </div>
+                <span className="font-semibold text-foreground tabular-nums">{prefix}{val.toLocaleString()}</span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      {/* Interactive legend — click to toggle series */}
+      <div className="flex items-center gap-1 px-3">
+        {SERIES_CONFIG.map((s) => {
+          const active = visibleSeries.has(s.key)
+          return (
+            <button
+              key={s.key}
+              onClick={() => toggleSeries(s.key)}
+              className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium transition-all duration-150",
+                active
+                  ? "bg-muted/40 text-foreground/70"
+                  : "text-muted-foreground/30 hover:text-muted-foreground/50"
+              )}
+            >
+              <span
+                className={cn("h-2 w-2 rounded-full transition-opacity duration-150", !active && "opacity-30")}
+                style={{ backgroundColor: s.color }}
+              />
+              {s.label}
+            </button>
+          )
+        })}
+        {zoom > 1.05 && (
+          <button
+            onClick={() => { setZoom(1); setPanOffset(0) }}
+            className="ml-auto text-[10px] text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors px-2 py-1"
+          >
+            Reset zoom
+          </button>
+        )}
+      </div>
+
+      {/* Chart */}
+      <div
+        ref={containerRef}
+        className={cn("relative select-none", isDragging ? "cursor-grabbing" : "cursor-crosshair")}
+        style={{ height }}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+      >
+        {renderContent()}
+        {renderTooltip()}
+
+        {/* Zoom indicator */}
+        {zoom > 1.05 && (
+          <div className="absolute top-2 right-3 text-[9px] text-muted-foreground/30 font-medium tabular-nums">
+            {zoom.toFixed(1)}x · {visibleData.length} pts
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -1599,160 +1631,161 @@ export function BillingSection() {
             </details>
           </motion.div>
 
-          {/* ─── Auto-Refill ──────────────────────────────────────────────── */}
-          <motion.div {...fadeUp(0.38)}>
-            <div className="rounded-xl border border-border/40 overflow-hidden">
-              <div className={cn("flex items-center justify-between px-4 py-3", autoRefill.enabled && "border-b border-border/30")}>
-                <div className="flex items-center gap-2.5">
-                  <div className="h-7 w-7 rounded-lg bg-foreground/[0.04] flex items-center justify-center shrink-0">
-                    <ArrowsClockwise className="h-3.5 w-3.5 text-foreground/40" weight="bold" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold">Auto-Refill</h4>
-                    <p className="text-[11px] text-muted-foreground/50">Automatically top up when credits run low</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleAutoRefillSave({ enabled: !autoRefill.enabled })}
-                  disabled={savingAutoRefill || loadingAutoRefill || !subscription || subscription.status !== "active"}
-                  className={cn(
-                    "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
-                    autoRefill.enabled ? "bg-foreground" : "bg-muted-foreground/20"
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "pointer-events-none inline-block h-4 w-4 rounded-full bg-background shadow-sm ring-0 transition-transform duration-200 ease-in-out",
-                      autoRefill.enabled ? "translate-x-4" : "translate-x-0"
-                    )}
-                  />
-                </button>
-              </div>
-
-              {autoRefill.enabled && (
-                <div className="px-4 py-3 space-y-3">
-                  {/* Package selection */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Refill package</span>
-                    <Select
-                      value={autoRefill.package_id}
-                      onValueChange={(v) => handleAutoRefillSave({ package_id: v })}
-                      disabled={savingAutoRefill}
-                    >
-                      <SelectTrigger className="h-7 w-[180px] text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="boost-small">Boost — 150 credits ($19)</SelectItem>
-                        <SelectItem value="boost-medium">Power Boost — 500 credits ($49)</SelectItem>
-                        <SelectItem value="boost-large">Ultra Boost — 1,200 credits ($99)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Threshold */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Refill when balance drops below</span>
-                    <Select
-                      value={String(autoRefill.threshold)}
-                      onValueChange={(v) => handleAutoRefillSave({ threshold: Number(v) })}
-                      disabled={savingAutoRefill}
-                    >
-                      <SelectTrigger className="h-7 w-[140px] text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="20">20 credits</SelectItem>
-                        <SelectItem value="50">50 credits</SelectItem>
-                        <SelectItem value="100">100 credits</SelectItem>
-                        <SelectItem value="200">200 credits</SelectItem>
-                        <SelectItem value="500">500 credits</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Max per day */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Max refills per day</span>
-                    <input
-                      type="number"
-                      min={1}
-                      max={999}
-                      value={autoRefill.max_refills_per_day}
-                      onChange={(e) => {
-                        const val = Math.max(1, Math.min(999, parseInt(e.target.value) || 1))
-                        setAutoRefill((prev) => ({ ...prev, max_refills_per_day: val }))
-                      }}
-                      onBlur={() => handleAutoRefillSave({ max_refills_per_day: autoRefill.max_refills_per_day })}
-                      disabled={savingAutoRefill}
-                      className="h-7 w-[100px] rounded-md border border-input dark:border-0 dark:bg-secondary dark:hover:bg-secondary/50 bg-transparent px-3 text-xs text-right tabular-nums shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    />
-                  </div>
-
-                  {/* Daily spending cap info */}
-                  <div className="rounded-lg bg-muted/20 px-3 py-2">
-                    <p className="text-[11px] text-muted-foreground/60">
-                      Max daily spend:{" "}
-                      <span className="font-medium text-foreground/60">
-                        ${autoRefill.max_refills_per_day * (
-                          autoRefill.package_id === "boost-small" ? 19
-                            : autoRefill.package_id === "boost-medium" ? 49
-                            : 99
-                        )}
-                      </span>
-                      {" · "}Card on file will be charged automatically
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </motion.div>
-
-          {/* Additional Credits */}
-          <motion.div {...fadeUp(0.4)}>
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h4 className="text-sm font-semibold">Add Credits</h4>
-                <p className="text-xs text-muted-foreground/60 mt-0.5">Top up anytime — no subscription required</p>
-              </div>
-            </div>
-            <div className="rounded-xl border border-border/40 overflow-hidden divide-y divide-border/30">
-              {additionalCreditPackages.map((pkg) => (
-                <div
-                  key={pkg.id}
-                  className="flex items-center gap-4 px-4 py-3 hover:bg-muted/20 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-sm font-semibold tabular-nums">{pkg.credits.toLocaleString()}</span>
-                      <span className="text-xs text-muted-foreground/50">credits</span>
-                      {pkg.savings && (
-                        <span className="text-[10px] font-medium text-emerald-500/80">{pkg.savings}</span>
-                      )}
-                    </div>
-                    <span className="text-[11px] text-muted-foreground/40">{pkg.description}</span>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-7 text-xs px-3 shrink-0"
-                    onClick={() =>
-                      handlePurchaseCredits(pkg.id, pkg.credits, pkg.price)
-                    }
-                    disabled={purchasingPackage === pkg.id}
-                  >
-                    {purchasingPackage === pkg.id ? (
-                      <Spinner className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <>${pkg.price}</>
-                    )}
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </motion.div>
         </>
       )}
+
+      {/* ─── Auto-Refill ──────────────────────────────────────────────── */}
+      <motion.div {...fadeUp(0.38)}>
+        <div className="rounded-xl border border-border/40 overflow-hidden">
+          <div className={cn("flex items-center justify-between px-4 py-3", autoRefill.enabled && "border-b border-border/30")}>
+            <div className="flex items-center gap-2.5">
+              <div className="h-7 w-7 rounded-lg bg-foreground/[0.04] flex items-center justify-center shrink-0">
+                <ArrowsClockwise className="h-3.5 w-3.5 text-foreground/40" weight="bold" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold">Auto-Refill</h4>
+                <p className="text-[11px] text-muted-foreground/50">Automatically top up when credits run low</p>
+              </div>
+            </div>
+            <button
+              onClick={() => handleAutoRefillSave({ enabled: !autoRefill.enabled })}
+              disabled={savingAutoRefill || loadingAutoRefill || !subscription || subscription.status !== "active"}
+              className={cn(
+                "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
+                autoRefill.enabled ? "bg-foreground" : "bg-muted-foreground/20"
+              )}
+            >
+              <span
+                className={cn(
+                  "pointer-events-none inline-block h-4 w-4 rounded-full bg-background shadow-sm ring-0 transition-transform duration-200 ease-in-out",
+                  autoRefill.enabled ? "translate-x-4" : "translate-x-0"
+                )}
+              />
+            </button>
+          </div>
+
+          {autoRefill.enabled && (
+            <div className="px-4 py-3 space-y-3">
+              {/* Package selection */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Refill package</span>
+                <Select
+                  value={autoRefill.package_id}
+                  onValueChange={(v) => handleAutoRefillSave({ package_id: v })}
+                  disabled={savingAutoRefill}
+                >
+                  <SelectTrigger className="h-7 w-[180px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="boost-small">Boost — 150 credits ($19)</SelectItem>
+                    <SelectItem value="boost-medium">Power Boost — 500 credits ($49)</SelectItem>
+                    <SelectItem value="boost-large">Ultra Boost — 1,200 credits ($99)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Threshold */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Refill when balance drops below</span>
+                <Select
+                  value={String(autoRefill.threshold)}
+                  onValueChange={(v) => handleAutoRefillSave({ threshold: Number(v) })}
+                  disabled={savingAutoRefill}
+                >
+                  <SelectTrigger className="h-7 w-[140px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="20">20 credits</SelectItem>
+                    <SelectItem value="50">50 credits</SelectItem>
+                    <SelectItem value="100">100 credits</SelectItem>
+                    <SelectItem value="200">200 credits</SelectItem>
+                    <SelectItem value="500">500 credits</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Max per day */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Max refills per day</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={999}
+                  value={autoRefill.max_refills_per_day}
+                  onChange={(e) => {
+                    const val = Math.max(1, Math.min(999, parseInt(e.target.value) || 1))
+                    setAutoRefill((prev) => ({ ...prev, max_refills_per_day: val }))
+                  }}
+                  onBlur={() => handleAutoRefillSave({ max_refills_per_day: autoRefill.max_refills_per_day })}
+                  disabled={savingAutoRefill}
+                  className="h-7 w-[100px] rounded-md border border-input dark:border-0 dark:bg-secondary dark:hover:bg-secondary/50 bg-transparent px-3 text-xs text-right tabular-nums shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                />
+              </div>
+
+              {/* Daily spending cap info */}
+              <div className="rounded-lg bg-muted/20 px-3 py-2">
+                <p className="text-[11px] text-muted-foreground/60">
+                  Max daily spend:{" "}
+                  <span className="font-medium text-foreground/60">
+                    ${autoRefill.max_refills_per_day * (
+                      autoRefill.package_id === "boost-small" ? 19
+                        : autoRefill.package_id === "boost-medium" ? 49
+                        : 99
+                    )}
+                  </span>
+                  {" · "}Card on file will be charged automatically
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* ─── Additional Credits ──────────────────────────────────────────── */}
+      <motion.div {...fadeUp(0.4)}>
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h4 className="text-sm font-semibold">Add Credits</h4>
+            <p className="text-xs text-muted-foreground/60 mt-0.5">Top up anytime — no subscription required</p>
+          </div>
+        </div>
+        <div className="rounded-xl border border-border/40 overflow-hidden divide-y divide-border/30">
+          {additionalCreditPackages.map((pkg) => (
+            <div
+              key={pkg.id}
+              className="flex items-center gap-4 px-4 py-3 hover:bg-muted/20 transition-colors"
+            >
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-sm font-semibold tabular-nums">{pkg.credits.toLocaleString()}</span>
+                  <span className="text-xs text-muted-foreground/50">credits</span>
+                  {pkg.savings && (
+                    <span className="text-[10px] font-medium text-emerald-500/80">{pkg.savings}</span>
+                  )}
+                </div>
+                <span className="text-[11px] text-muted-foreground/40">{pkg.description}</span>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs px-3 shrink-0"
+                onClick={() =>
+                  handlePurchaseCredits(pkg.id, pkg.credits, pkg.price)
+                }
+                disabled={purchasingPackage === pkg.id}
+              >
+                {purchasingPackage === pkg.id ? (
+                  <Spinner className="h-3 w-3 animate-spin" />
+                ) : (
+                  <>${pkg.price}</>
+                )}
+              </Button>
+            </div>
+          ))}
+        </div>
+      </motion.div>
 
       {/* ─── Usage Chart ─────────────────────────────────────────────────── */}
       <motion.div {...fadeUp(0.45)} className="rounded-xl border border-border/30 bg-card/20 overflow-hidden">
@@ -1798,22 +1831,6 @@ export function BillingSection() {
                 </button>
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* Legend */}
-        <div className="flex items-center gap-3 sm:gap-5 px-5 pb-1 pt-1 flex-wrap">
-          <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-foreground/60" />
-            <span className="text-[10px] text-muted-foreground/60 font-medium">{t("stats.balance")}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-foreground/40" />
-            <span className="text-[10px] text-muted-foreground/60 font-medium">{t("stats.earned")}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-foreground/20" />
-            <span className="text-[10px] text-muted-foreground/60 font-medium">{t("stats.used")}</span>
           </div>
         </div>
 

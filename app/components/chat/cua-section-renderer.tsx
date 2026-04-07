@@ -358,8 +358,8 @@ function StatusDot({ status }: { status: string }) {
 
 /** Extract a short task description from agent.call_code_agent(...) code */
 function extractCodeAgentTask(code: string): string | null {
-  const match = code.match(/agent\.call_code_agent\s*\(\s*task\s*=\s*"([\s\S]*?)(?:"\s*[,)])/s)
-    || code.match(/agent\.call_code_agent\s*\(\s*task\s*=\s*'([\s\S]*?)(?:'\s*[,)])/s)
+  const match = code.match(/agent\.call_code_agent\s*\(\s*task\s*=\s*"([\s\S]*?)(?:"\s*[,)])/)
+    || code.match(/agent\.call_code_agent\s*\(\s*task\s*=\s*'([\s\S]*?)(?:'\s*[,)])/)
   if (!match) return null
   return match[1].replace(/\\n/g, " ").trim()
 }

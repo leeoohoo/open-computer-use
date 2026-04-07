@@ -33,7 +33,7 @@ const creditPackages = [
     credits: 150,
     price: 19,
     displayCredits: 150,
-    description: "15 min of agent time",
+    description: "Quick top-up",
   },
   {
     id: "boost-medium",
@@ -41,7 +41,7 @@ const creditPackages = [
     credits: 500,
     price: 49,
     displayCredits: 500,
-    description: "50 min of agent time",
+    description: "Most popular",
     savings: "23% off",
     popular: true,
   },
@@ -51,7 +51,7 @@ const creditPackages = [
     credits: 1200,
     price: 99,
     displayCredits: 1200,
-    description: "2 hrs of agent time",
+    description: "Best value",
     savings: "35% off",
   },
 ]
