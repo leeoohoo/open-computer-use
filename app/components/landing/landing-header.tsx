@@ -5,7 +5,7 @@ import {
   Menu, X, ArrowRight, ChevronDown, Search, Bug, TrendingUp,
   FileText, Mail, ShoppingCart, Users, BarChart3, Globe, Eye,
   Send, MonitorSmartphone, Monitor, Keyboard, GitCompare,
-  BookOpen, Newspaper,
+  BookOpen, Newspaper, Compass,
 } from "lucide-react"
 import Image from "next/image"
 import { useState, useEffect, useCallback, useRef } from "react"
@@ -41,11 +41,13 @@ const blogDropdownDef = [
   { href: "/computer-use/web-scraping", labelKey: "webScraping", icon: Globe, stat: "1,000+", statKey: "webScraping" },
   { href: "/computer-use/job-applications", labelKey: "jobApplications", icon: Send, stat: "50+", statKey: "jobApplications" },
   { href: "/results", labelKey: "demosResults", icon: Eye, stat: "20+", statKey: "demosResults" },
+  { href: "/discover", labelKey: "discover", icon: Compass, stat: "", statKey: "discover" },
   { href: "/guide", labelKey: "guide", icon: BookOpen, stat: "12", statKey: "guide" },
 ]
 
 const navItemsDef = [
   { href: "/agent-swarms", labelKey: "agentSwarms", external: true },
+  { href: "/discover", labelKey: "discover", external: true },
   { href: "/compare", labelKey: "compare", external: true },
   { href: "/results", labelKey: "demos", external: true },
   { href: "/pricing", labelKey: "pricing", external: true },

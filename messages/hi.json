@@ -18,6 +18,7 @@
     "useCases": "उपयोग के मामले",
     "blog": "ब्लॉग",
     "agentSwarms": "एजेंट स्वार्म",
+    "discover": "Discover",
     "compare": "तुलना",
     "demos": "डेमो",
     "pricing": "मूल्य निर्धारण",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "समुदाय",
+    "title": "देखें लोग इसे कैसे इस्तेमाल करते हैं",
+    "subtitle": "लीड रिसर्च से QA टेस्टिंग तक — देखें समुदाय क्या ऑटोमेट कर रहा है और अपने अगले वर्कफ़्लो के लिए प्रेरणा पाएं।",
+    "sessionCount": "समुदाय द्वारा साझा किए गए {count} सत्र",
+    "searchPlaceholder": "कार्य, टूल या परिणाम से खोजें...",
+    "emptyTitle": "अभी तक किसी ने साझा नहीं किया — पहले बनें",
+    "emptySubtitle": "जब उपयोगकर्ता अपने सत्र सार्वजनिक करते हैं, तो वे यहाँ दिखाई देते हैं",
+    "noResultsTitle": "कोई मिलान परिणाम नहीं",
+    "noResultsSubtitle": "अलग कीवर्ड आज़माएं",
+    "watchSession": "सत्र देखें",
+    "steps": "{count} चरण",
+    "tryCoasty": "Coasty आज़माएं"
   }
 }

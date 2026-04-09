@@ -18,6 +18,7 @@
     "useCases": "Anvandningsfall",
     "blog": "Blogg",
     "agentSwarms": "Agentsvarm",
+    "discover": "Discover",
     "compare": "Jamfor",
     "demos": "Demos",
     "pricing": "Priser",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Community",
+    "title": "Se hur folk använder det",
+    "subtitle": "Från leadforskning till QA-testning — se vad communityn automatiserar och inspireras till ditt nästa arbetsflöde.",
+    "sessionCount": "{count} sessioner delade av communityn",
+    "searchPlaceholder": "Sök efter uppgift, verktyg eller resultat...",
+    "emptyTitle": "Ingen har delat ännu — var den första",
+    "emptySubtitle": "När användare gör sina sessioner offentliga visas de här",
+    "noResultsTitle": "Inga träffar för den sökningen",
+    "noResultsSubtitle": "Försök med andra sökord",
+    "watchSession": "Titta på session",
+    "steps": "{count} steg",
+    "tryCoasty": "Testa Coasty"
   }
 }

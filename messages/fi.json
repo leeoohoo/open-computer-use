@@ -18,6 +18,7 @@
     "useCases": "Käyttötapaukset",
     "blog": "Blogi",
     "agentSwarms": "Agenttiparvet",
+    "discover": "Discover",
     "compare": "Vertaile",
     "demos": "Demot",
     "pricing": "Hinnoittelu",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Yhteisö",
+    "title": "Katso miten ihmiset käyttävät sitä",
+    "subtitle": "Liidien tutkimuksesta QA-testaukseen — katso mitä yhteisö automatisoi ja inspiroidu seuraavaan työnkulkuusi.",
+    "sessionCount": "{count} istuntoa yhteisön jakamana",
+    "searchPlaceholder": "Hae tehtävän, työkalun tai tuloksen mukaan...",
+    "emptyTitle": "Kukaan ei ole jakanut vielä — ole ensimmäinen",
+    "emptySubtitle": "Kun käyttäjät julkistavat istuntonsa, ne näkyvät täällä",
+    "noResultsTitle": "Ei vastaavia tuloksia",
+    "noResultsSubtitle": "Kokeile eri hakusanoja",
+    "watchSession": "Katso istunto",
+    "steps": "{count} vaihetta",
+    "tryCoasty": "Kokeile Coastya"
   }
 }

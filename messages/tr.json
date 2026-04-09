@@ -18,6 +18,7 @@
     "useCases": "Kullanim Alanlari",
     "blog": "Blog",
     "agentSwarms": "Ajan Suruleri",
+    "discover": "Discover",
     "compare": "Karsilastir",
     "demos": "Demolar",
     "pricing": "Fiyatlandirma",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Topluluk",
+    "title": "İnsanların nasıl kullandığını görün",
+    "subtitle": "Lead araştırmasından QA testine — topluluğun neyi otomatikleştirdiğini görün ve bir sonraki iş akışınız için ilham alın.",
+    "sessionCount": "Topluluk tarafından paylaşılan {count} oturum",
+    "searchPlaceholder": "Görev, araç veya sonuca göre ara...",
+    "emptyTitle": "Henüz kimse paylaşmadı — ilk siz olun",
+    "emptySubtitle": "Kullanıcılar oturumlarını herkese açık yaptığında burada görünürler",
+    "noResultsTitle": "Bu aramayla eşleşen sonuç yok",
+    "noResultsSubtitle": "Farklı anahtar kelimeler deneyin",
+    "watchSession": "Oturumu izle",
+    "steps": "{count} adım",
+    "tryCoasty": "Coasty'yi dene"
   }
 }

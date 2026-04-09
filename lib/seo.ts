@@ -61,7 +61,7 @@ export async function getLocalizedMetadata(
       url: canonicalUrl,
       type: "website",
       locale: locale === "en" ? "en_US" : locale,
-      images: [{ url: "/og-image.png", width: 1200, height: 630, alt: ogTitle }],
+      images: [{ url: "/demo-screenshot.png", width: 1200, height: 630, alt: ogTitle }],
     }
     metadata.twitter = {
       card: "summary_large_image",

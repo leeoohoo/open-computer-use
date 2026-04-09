@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       publishedTime: post.date,
       authors: [post.author],
       siteName: "Coasty Blog",
-      images: [{ url: "/og-image.png", width: 1200, height: 630, alt: post.title }],
+      images: [{ url: "/demo-screenshot.png", width: 1200, height: 630, alt: post.title }],
     },
     twitter: {
       card: "summary_large_image",

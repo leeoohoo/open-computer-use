@@ -18,6 +18,7 @@
     "useCases": "Felhasználási esetek",
     "blog": "Blog",
     "agentSwarms": "Ügynökrajok",
+    "discover": "Discover",
     "compare": "Összehasonlítás",
     "demos": "Demók",
     "pricing": "Árak",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Közösség",
+    "title": "Nézd meg, hogyan használják mások",
+    "subtitle": "Lead kutatástól a QA tesztelésig — nézd meg, mit automatizál a közösség, és merítsd ihletet a következő munkafolyamatodhoz.",
+    "sessionCount": "{count} munkamenet megosztva a közösség által",
+    "searchPlaceholder": "Keresés feladat, eszköz vagy eredmény alapján...",
+    "emptyTitle": "Még senki nem osztott meg semmit — légy az első",
+    "emptySubtitle": "Amikor a felhasználók nyilvánossá teszik a munkameneteiket, itt jelennek meg",
+    "noResultsTitle": "Nincs találat erre a keresésre",
+    "noResultsSubtitle": "Próbáld más kulcsszavakkal",
+    "watchSession": "Munkamenet megtekintése",
+    "steps": "{count} lépés",
+    "tryCoasty": "Coasty kipróbálása"
   }
 }

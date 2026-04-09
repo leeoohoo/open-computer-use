@@ -18,6 +18,7 @@
     "useCases": "حالات الاستخدام",
     "blog": "المدوّنة",
     "agentSwarms": "أسراب الوكلاء",
+    "discover": "Discover",
     "compare": "مقارنة",
     "demos": "عروض توضيحية",
     "pricing": "الأسعار",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "المجتمع",
+    "title": "شاهد كيف يستخدمه الناس",
+    "subtitle": "من البحث عن العملاء إلى اختبار الجودة — شاهد ما يقوم المجتمع بأتمتته واستلهم سير عملك التالي.",
+    "sessionCount": "{count} جلسة شاركها المجتمع",
+    "searchPlaceholder": "ابحث حسب المهمة أو الأداة أو النتيجة...",
+    "emptyTitle": "لم يشارك أحد بعد — كن الأول",
+    "emptySubtitle": "عندما يجعل المستخدمون جلساتهم عامة، تظهر هنا",
+    "noResultsTitle": "لا توجد نتائج مطابقة",
+    "noResultsSubtitle": "جرب كلمات مختلفة",
+    "watchSession": "شاهد الجلسة",
+    "steps": "{count} خطوة",
+    "tryCoasty": "جرب Coasty"
   }
 }

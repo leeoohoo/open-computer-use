@@ -18,6 +18,7 @@
     "useCases": "Casi d'uso",
     "blog": "Blog",
     "agentSwarms": "Agent Swarms",
+    "discover": "Discover",
     "compare": "Confronta",
     "demos": "Demo",
     "pricing": "Prezzi",
@@ -2833,5 +2834,19 @@
     "placeholder": "Di' all'IA cosa fare... (Ctrl+Enter per inviare)",
     "executing": "Esecuzione...",
     "executeCommand": "Esegui comando"
+  },
+  "discover": {
+    "badge": "Community",
+    "title": "Guarda come lo usano le persone",
+    "subtitle": "Dalla ricerca di lead ai test QA — guarda cosa automatizza la community e lasciati ispirare per il tuo prossimo workflow.",
+    "sessionCount": "{count} sessioni condivise dalla community",
+    "searchPlaceholder": "Cerca per attività, strumento o risultato...",
+    "emptyTitle": "Nessuno ha ancora condiviso — sii il primo",
+    "emptySubtitle": "Quando gli utenti rendono pubbliche le loro sessioni, appaiono qui",
+    "noResultsTitle": "Nessun risultato per questa ricerca",
+    "noResultsSubtitle": "Prova con parole chiave diverse",
+    "watchSession": "Guarda la sessione",
+    "steps": "{count} passaggi",
+    "tryCoasty": "Prova Coasty"
   }
 }

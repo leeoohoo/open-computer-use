@@ -29,19 +29,38 @@ function LeftBrandPanel() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="hidden lg:flex flex-1 flex-col justify-center items-center px-12 xl:px-16 max-w-[640px]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      className="hidden lg:flex relative flex-[1.4] xl:flex-[1.6] flex-col justify-center items-center min-h-dvh overflow-hidden bg-zinc-950"
     >
-      {/* Demo image */}
+      {/* Ambient glow layers */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/40 via-zinc-950 to-violet-950/30" />
+      <div className="absolute top-0 right-0 w-[60%] h-[50%] bg-indigo-500/[0.07] rounded-full blur-[120px]" />
+      <div className="absolute bottom-0 left-0 w-[50%] h-[40%] bg-violet-500/[0.05] rounded-full blur-[100px]" />
+
+      {/* Subtle noise texture */}
+      <div
+        className="absolute inset-0 opacity-[0.035]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* Demo image — large, floating with perspective */}
       <motion.div
-        initial={{ opacity: 0, y: 16, scale: 0.97 }}
+        initial={{ opacity: 0, y: 40, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full"
+        transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 w-[92%] xl:w-[88%] mx-auto"
       >
-        <div className="relative overflow-hidden rounded-2xl border border-border/30 dark:border-white/[0.06] shadow-2xl shadow-black/10 dark:shadow-black/50">
+        {/* Smoke gradient layers behind the image */}
+        <div className="absolute -inset-16 rounded-[40px] blur-[80px] opacity-60 bg-gradient-to-br from-indigo-600/20 via-purple-500/10 to-transparent animate-pulse [animation-duration:8s]" />
+        <div className="absolute -inset-12 rounded-[40px] blur-[60px] opacity-40 bg-gradient-to-tl from-violet-500/15 via-blue-500/10 to-transparent animate-pulse [animation-duration:12s] [animation-delay:2s]" />
+        <div className="absolute -inset-20 rounded-[50px] blur-[100px] opacity-30 bg-gradient-to-r from-fuchsia-500/10 via-indigo-400/15 to-cyan-500/5 animate-pulse [animation-duration:10s] [animation-delay:4s]" />
+        <div className="absolute -inset-10 rounded-3xl blur-[40px] opacity-50 bg-gradient-to-b from-indigo-500/10 via-purple-600/8 to-violet-500/10" />
+
+        <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] shadow-[0_32px_80px_-12px_rgba(0,0,0,0.6)] ring-1 ring-white/[0.05]">
           <Image
             src="/demo-3-2.png"
             alt="Coasty desktop app"
@@ -53,15 +72,28 @@ function LeftBrandPanel() {
         </div>
       </motion.div>
 
-      {/* Caption */}
-      <motion.p
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="mt-6 text-center text-[15px] text-muted-foreground/70 leading-relaxed tracking-[-0.01em] max-w-md"
-      >
-        {t("demoCaption")}
-      </motion.p>
+      {/* Bottom content overlay */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 p-10 xl:p-14">
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent" />
+        <div className="relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex items-center gap-3 mb-5">
+              <CoastyIcon className="size-7 text-white/90" />
+              <span className="text-white/50 text-[11px] font-semibold tracking-[0.25em] uppercase">Coasty</span>
+            </div>
+            <h2 className="text-white text-2xl xl:text-[28px] font-medium leading-[1.3] tracking-[-0.02em] max-w-lg">
+              Autopilot computers that work for you. No humans needed.
+            </h2>
+            <p className="text-white/40 text-[15px] xl:text-base font-normal leading-relaxed max-w-md mt-3">
+              Delegate hours of repetitive work to AI agents that research, browse, and execute tasks on your computer — while you focus on what actually matters.
+            </p>
+          </motion.div>
+        </div>
+      </div>
     </motion.div>
   )
 }
@@ -294,35 +326,35 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh w-full flex-col bg-background">
-      {/* Ambient gradient mesh background */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div
-          className="absolute -top-[40%] -left-[20%] h-[80%] w-[60%] rounded-full opacity-[0.03] dark:opacity-[0.06] blur-[100px]"
-          style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
-        />
-        <div
-          className="absolute -bottom-[30%] -right-[10%] h-[70%] w-[50%] rounded-full opacity-[0.025] dark:opacity-[0.05] blur-[100px]"
-          style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
-        />
-        {/* Subtle grid texture */}
-        <div
-          className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(128,128,128,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(128,128,128,0.3) 1px, transparent 1px)`,
-            backgroundSize: "80px 80px",
-          }}
-        />
-      </div>
+    <div className="relative flex min-h-dvh w-full flex-row bg-background">
+      {/* Left brand panel — visible on lg+ */}
+      <LeftBrandPanel />
 
-      <HeaderGoBack href="/" />
+      {/* Right form panel */}
+      <div className="relative flex flex-1 flex-col min-h-dvh">
+        {/* Ambient gradient mesh background — right side only */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div
+            className="absolute -top-[40%] -left-[20%] h-[80%] w-[60%] rounded-full opacity-[0.03] dark:opacity-[0.06] blur-[100px]"
+            style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
+          />
+          <div
+            className="absolute -bottom-[30%] -right-[10%] h-[70%] w-[50%] rounded-full opacity-[0.025] dark:opacity-[0.05] blur-[100px]"
+            style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
+          />
+          <div
+            className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
+            style={{
+              backgroundImage: `linear-gradient(rgba(128,128,128,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(128,128,128,0.3) 1px, transparent 1px)`,
+              backgroundSize: "80px 80px",
+            }}
+          />
+        </div>
 
-      <main className="relative flex flex-1 flex-col lg:flex-row items-center lg:justify-center z-10 py-4 sm:py-10">
-        {/* Left brand panel — visible on lg+ */}
-        <LeftBrandPanel />
+        <HeaderGoBack href="/" />
 
-        {/* Right form panel */}
-        <div className="flex flex-none lg:flex-1 items-center justify-center w-full lg:max-w-xl px-4 sm:px-6 lg:px-16">
+        <main className="relative flex flex-1 flex-col items-center justify-center z-10 py-4 sm:py-10 px-4 sm:px-6 lg:px-16">
+          <div className="flex items-center justify-center w-full max-w-[420px]">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -670,8 +702,9 @@ export default function LoginPage() {
               </p>
             </div>
           </motion.div>
-        </div>
-      </main>
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

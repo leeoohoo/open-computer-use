@@ -18,6 +18,7 @@
     "useCases": "Застосування",
     "blog": "Блог",
     "agentSwarms": "Agent Swarms",
+    "discover": "Discover",
     "compare": "Порівняти",
     "demos": "Демо",
     "pricing": "Ціни",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Спільнота",
+    "title": "Подивіться, як люди це використовують",
+    "subtitle": "Від дослідження лідів до QA-тестування — подивіться, що автоматизує спільнота, та надихніться для свого наступного робочого процесу.",
+    "sessionCount": "{count} сесій, якими поділилася спільнота",
+    "searchPlaceholder": "Шукати за завданням, інструментом або результатом...",
+    "emptyTitle": "Ще ніхто не поділився — будьте першим",
+    "emptySubtitle": "Коли користувачі роблять свої сесії публічними, вони з'являються тут",
+    "noResultsTitle": "Нічого не знайдено",
+    "noResultsSubtitle": "Спробуйте інші ключові слова",
+    "watchSession": "Дивитися сесію",
+    "steps": "{count} кроків",
+    "tryCoasty": "Спробувати Coasty"
   }
 }

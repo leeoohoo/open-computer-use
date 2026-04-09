@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: uc.outcome,
       url: `https://coasty.ai/use-cases/${uc.slug}`,
       type: "website",
-      images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+      images: [{ url: "/demo-screenshot.png", width: 1200, height: 630 }],
     },
     alternates: { canonical: `https://coasty.ai/use-cases/${uc.slug}` },
   }

@@ -18,6 +18,7 @@
     "useCases": "Use Cases",
     "blog": "Blog",
     "agentSwarms": "Agent Swarms",
+    "discover": "Community",
     "compare": "Compare",
     "demos": "Demos",
     "pricing": "Pricing",
@@ -60,6 +61,7 @@
       "webScraping": "Web Scraping",
       "jobApplications": "Job Applications",
       "demosResults": "Demos & Results",
+      "discover": "Community",
       "guide": "Guide"
     },
     "blogStats": {
@@ -70,6 +72,7 @@
       "webScraping": "{stat} pages per session",
       "jobApplications": "{stat} applications per session",
       "demosResults": "{stat} real case studies",
+      "discover": "See how people use it",
       "guide": "{stat} use case walkthroughs"
     }
   },
@@ -362,6 +365,20 @@
       "title": "The same work costs {oldPrice} with manual labor",
       "description": "A virtual assistant costs $2,000–$4,000/mo. A part-time hire costs more. Coasty does the same work 24/7 starting at $0 — with perfect consistency, full audit trails, and zero training time."
     }
+  },
+  "discover": {
+    "badge": "Community",
+    "title": "See How People Use It",
+    "subtitle": "From lead research to QA testing — see what the community is automating and get inspired for your next workflow.",
+    "sessionCount": "{count} sessions shared by the community",
+    "searchPlaceholder": "Search by task, tool, or outcome...",
+    "emptyTitle": "No one has shared yet — be the first",
+    "emptySubtitle": "When users make their sessions public, they show up here",
+    "noResultsTitle": "Nothing matches that query",
+    "noResultsSubtitle": "Try different keywords",
+    "watchSession": "Watch session",
+    "steps": "{count} steps",
+    "tryCoasty": "Try Coasty"
   },
   "faq": {
     "title": "Frequently asked questions",

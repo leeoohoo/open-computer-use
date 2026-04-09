@@ -18,6 +18,7 @@
     "useCases": "Bruksomrader",
     "blog": "Blogg",
     "agentSwarms": "Agentsverm",
+    "discover": "Discover",
     "compare": "Sammenlign",
     "demos": "Demoer",
     "pricing": "Priser",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Fellesskap",
+    "title": "Se hvordan folk bruker det",
+    "subtitle": "Fra leadforskning til QA-testing — se hva fellesskapet automatiserer og la deg inspirere til din neste arbeidsflyt.",
+    "sessionCount": "{count} økter delt av fellesskapet",
+    "searchPlaceholder": "Søk etter oppgave, verktøy eller resultat...",
+    "emptyTitle": "Ingen har delt ennå — vær den første",
+    "emptySubtitle": "Når brukere gjør øktene sine offentlige, vises de her",
+    "noResultsTitle": "Ingen treff på det søket",
+    "noResultsSubtitle": "Prøv andre søkeord",
+    "watchSession": "Se økt",
+    "steps": "{count} trinn",
+    "tryCoasty": "Prøv Coasty"
   }
 }

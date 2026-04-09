@@ -18,6 +18,7 @@
     "useCases": "Anvendelser",
     "blog": "Blog",
     "agentSwarms": "Agent-sværme",
+    "discover": "Discover",
     "compare": "Sammenlign",
     "demos": "Demoer",
     "pricing": "Priser",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Fællesskab",
+    "title": "Se hvordan folk bruger det",
+    "subtitle": "Fra leadresearch til QA-test — se hvad fællesskabet automatiserer og bliv inspireret til dit næste workflow.",
+    "sessionCount": "{count} sessioner delt af fællesskabet",
+    "searchPlaceholder": "Søg efter opgave, værktøj eller resultat...",
+    "emptyTitle": "Ingen har delt endnu — vær den første",
+    "emptySubtitle": "Når brugere gør deres sessioner offentlige, vises de her",
+    "noResultsTitle": "Intet matcher den søgning",
+    "noResultsSubtitle": "Prøv andre søgeord",
+    "watchSession": "Se session",
+    "steps": "{count} trin",
+    "tryCoasty": "Prøv Coasty"
   }
 }

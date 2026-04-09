@@ -18,6 +18,7 @@
     "useCases": "Сценарии использования",
     "blog": "Блог",
     "agentSwarms": "Рои агентов",
+    "discover": "Discover",
     "compare": "Сравнение",
     "demos": "Демо",
     "pricing": "Цены",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Сообщество",
+    "title": "Смотрите, как люди это используют",
+    "subtitle": "От исследования лидов до QA-тестирования — смотрите, что автоматизирует сообщество, и вдохновляйтесь для своего следующего рабочего процесса.",
+    "sessionCount": "{count} сессий, которыми поделилось сообщество",
+    "searchPlaceholder": "Поиск по задаче, инструменту или результату...",
+    "emptyTitle": "Пока никто не поделился — будьте первым",
+    "emptySubtitle": "Когда пользователи делают свои сессии публичными, они появляются здесь",
+    "noResultsTitle": "Ничего не найдено",
+    "noResultsSubtitle": "Попробуйте другие ключевые слова",
+    "watchSession": "Смотреть сессию",
+    "steps": "{count} шагов",
+    "tryCoasty": "Попробовать Coasty"
   }
 }

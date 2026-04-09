@@ -75,9 +75,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: t("home.ogDescription"),
       images: [
         {
-          url: "/og-image.png",
-          width: 1200,
-          height: 630,
+          url: "/demo-screenshot.png",
+          width: 1920,
+          height: 1080,
           alt: t("home.ogTitle"),
         },
       ],
@@ -86,7 +86,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: t("home.ogTitle"),
       description: t("home.twitterDescription"),
-      images: ["/og-image.png"],
+      images: ["/demo-screenshot.png"],
       creator: "@coasty_ai",
     },
     robots: {
@@ -250,7 +250,7 @@ export default async function RootLayout({
               "Open Source Framework",
               "24/7 Autonomous Operation"
             ],
-            "screenshot": "https://coasty.ai/og-image.png",
+            "screenshot": "https://coasty.ai/demo-screenshot.png",
             "sameAs": [
               "https://x.com/coasty_ai",
               "https://github.com/anthropics/open-computer-use"
@@ -349,7 +349,7 @@ export default async function RootLayout({
               "24/7 Operation",
               "Open Source Framework"
             ],
-            "screenshot": "https://coasty.ai/og-image.png"
+            "screenshot": "https://coasty.ai/demo-screenshot.png"
           })
         }}
       />

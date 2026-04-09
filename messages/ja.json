@@ -18,6 +18,7 @@
     "useCases": "ユースケース",
     "blog": "ブログ",
     "agentSwarms": "エージェントスウォーム",
+    "discover": "Discover",
     "compare": "比較",
     "demos": "デモ",
     "pricing": "料金",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "コミュニティ",
+    "title": "みんなの使い方を見る",
+    "subtitle": "リード調査からQAテストまで — コミュニティが何を自動化しているか見て、次のワークフローのインスピレーションを得ましょう。",
+    "sessionCount": "コミュニティが共有した{count}セッション",
+    "searchPlaceholder": "タスク、ツール、結果で検索...",
+    "emptyTitle": "まだ誰も共有していません — 最初の一人になりましょう",
+    "emptySubtitle": "ユーザーがセッションを公開すると、ここに表示されます",
+    "noResultsTitle": "一致する結果がありません",
+    "noResultsSubtitle": "別のキーワードをお試しください",
+    "watchSession": "セッションを見る",
+    "steps": "{count}ステップ",
+    "tryCoasty": "Coastyを試す"
   }
 }

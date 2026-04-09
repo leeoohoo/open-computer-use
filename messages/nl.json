@@ -18,6 +18,7 @@
     "useCases": "Toepassingen",
     "blog": "Blog",
     "agentSwarms": "Agent Swarms",
+    "discover": "Discover",
     "compare": "Vergelijken",
     "demos": "Demo's",
     "pricing": "Prijzen",
@@ -2833,5 +2834,19 @@
     "placeholder": "Vertel de AI wat te doen... (Ctrl+Enter om te verzenden)",
     "executing": "Uitvoeren...",
     "executeCommand": "Commando uitvoeren"
+  },
+  "discover": {
+    "badge": "Community",
+    "title": "Bekijk hoe mensen het gebruiken",
+    "subtitle": "Van leadonderzoek tot QA-tests — bekijk wat de community automatiseert en laat je inspireren voor je volgende workflow.",
+    "sessionCount": "{count} sessies gedeeld door de community",
+    "searchPlaceholder": "Zoek op taak, tool of resultaat...",
+    "emptyTitle": "Nog niemand heeft gedeeld — wees de eerste",
+    "emptySubtitle": "Wanneer gebruikers hun sessies openbaar maken, verschijnen ze hier",
+    "noResultsTitle": "Geen resultaten voor deze zoekopdracht",
+    "noResultsSubtitle": "Probeer andere zoekwoorden",
+    "watchSession": "Sessie bekijken",
+    "steps": "{count} stappen",
+    "tryCoasty": "Probeer Coasty"
   }
 }

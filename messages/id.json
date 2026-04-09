@@ -18,6 +18,7 @@
     "useCases": "Kasus Penggunaan",
     "blog": "Blog",
     "agentSwarms": "Kawanan Agen",
+    "discover": "Discover",
     "compare": "Bandingkan",
     "demos": "Demo",
     "pricing": "Harga",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Komunitas",
+    "title": "Lihat bagaimana orang menggunakannya",
+    "subtitle": "Dari riset lead hingga pengujian QA — lihat apa yang diotomatisasi komunitas dan dapatkan inspirasi untuk alur kerja Anda berikutnya.",
+    "sessionCount": "{count} sesi dibagikan oleh komunitas",
+    "searchPlaceholder": "Cari berdasarkan tugas, alat, atau hasil...",
+    "emptyTitle": "Belum ada yang berbagi — jadilah yang pertama",
+    "emptySubtitle": "Saat pengguna membuat sesi mereka publik, sesi akan muncul di sini",
+    "noResultsTitle": "Tidak ada yang cocok dengan pencarian itu",
+    "noResultsSubtitle": "Coba kata kunci yang berbeda",
+    "watchSession": "Tonton sesi",
+    "steps": "{count} langkah",
+    "tryCoasty": "Coba Coasty"
   }
 }

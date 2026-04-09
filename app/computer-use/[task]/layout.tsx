@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ task: str
       url: `https://coasty.ai/computer-use/${task}`,
       type: "article",
       siteName: "Coasty",
-      images: [{ url: "/og-image.png", width: 1200, height: 630, alt: page.title }],
+      images: [{ url: "/demo-screenshot.png", width: 1200, height: 630, alt: page.title }],
     },
     twitter: {
       card: "summary_large_image",

@@ -18,6 +18,7 @@
     "useCases": "Cazuri de utilizare",
     "blog": "Blog",
     "agentSwarms": "Roiuri de agenti",
+    "discover": "Discover",
     "compare": "Compara",
     "demos": "Demo-uri",
     "pricing": "Preturi",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Comunitate",
+    "title": "Vezi cum îl folosesc oamenii",
+    "subtitle": "De la cercetarea lead-urilor la testarea QA — vezi ce automatizează comunitatea și inspiră-te pentru următorul tău workflow.",
+    "sessionCount": "{count} sesiuni distribuite de comunitate",
+    "searchPlaceholder": "Caută după sarcină, instrument sau rezultat...",
+    "emptyTitle": "Nimeni nu a distribuit încă — fii primul",
+    "emptySubtitle": "Când utilizatorii își fac sesiunile publice, apar aici",
+    "noResultsTitle": "Niciun rezultat pentru această căutare",
+    "noResultsSubtitle": "Încearcă alte cuvinte cheie",
+    "watchSession": "Urmărește sesiunea",
+    "steps": "{count} pași",
+    "tryCoasty": "Încearcă Coasty"
   }
 }

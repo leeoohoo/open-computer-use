@@ -18,6 +18,7 @@
     "useCases": "Mga Gamit",
     "blog": "Blog",
     "agentSwarms": "Agent Swarms",
+    "discover": "Discover",
     "compare": "Ihambing",
     "demos": "Mga Demo",
     "pricing": "Presyo",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Komunidad",
+    "title": "Tingnan kung paano ito ginagamit ng mga tao",
+    "subtitle": "Mula sa pananaliksik ng leads hanggang sa QA testing — tingnan kung ano ang ina-automate ng komunidad at magpasiglahi para sa iyong susunod na workflow.",
+    "sessionCount": "{count} na session na ibinahagi ng komunidad",
+    "searchPlaceholder": "Maghanap ayon sa gawain, tool, o resulta...",
+    "emptyTitle": "Wala pang nagbahagi — maging una ka",
+    "emptySubtitle": "Kapag ginawang pampubliko ng mga user ang kanilang mga session, lalabas ang mga ito dito",
+    "noResultsTitle": "Walang tumutugma sa paghahanap na iyon",
+    "noResultsSubtitle": "Subukan ang ibang mga keyword",
+    "watchSession": "Panoorin ang session",
+    "steps": "{count} hakbang",
+    "tryCoasty": "Subukan ang Coasty"
   }
 }

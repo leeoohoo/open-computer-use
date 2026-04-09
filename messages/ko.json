@@ -18,6 +18,7 @@
     "useCases": "활용 사례",
     "blog": "블로그",
     "agentSwarms": "에이전트 스웜",
+    "discover": "Discover",
     "compare": "비교",
     "demos": "데모",
     "pricing": "요금제",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "커뮤니티",
+    "title": "사람들이 어떻게 사용하는지 보세요",
+    "subtitle": "리드 리서치부터 QA 테스트까지 — 커뮤니티가 무엇을 자동화하고 있는지 보고 다음 워크플로우에 영감을 받으세요.",
+    "sessionCount": "커뮤니티가 공유한 {count}개 세션",
+    "searchPlaceholder": "작업, 도구 또는 결과로 검색...",
+    "emptyTitle": "아직 아무도 공유하지 않았습니다 — 첫 번째가 되세요",
+    "emptySubtitle": "사용자가 세션을 공개하면 여기에 표시됩니다",
+    "noResultsTitle": "일치하는 결과가 없습니다",
+    "noResultsSubtitle": "다른 키워드를 시도해 보세요",
+    "watchSession": "세션 보기",
+    "steps": "{count}단계",
+    "tryCoasty": "Coasty 사용해보기"
   }
 }

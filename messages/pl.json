@@ -18,6 +18,7 @@
     "useCases": "Zastosowania",
     "blog": "Blog",
     "agentSwarms": "Agent Swarms",
+    "discover": "Discover",
     "compare": "Porównaj",
     "demos": "Dema",
     "pricing": "Cennik",
@@ -2833,5 +2834,19 @@
     "placeholder": "Powiedz AI, co ma zrobić... (Ctrl+Enter aby wysłać)",
     "executing": "Wykonywanie...",
     "executeCommand": "Wykonaj polecenie"
+  },
+  "discover": {
+    "badge": "Społeczność",
+    "title": "Zobacz, jak ludzie tego używają",
+    "subtitle": "Od badania leadów po testy QA — zobacz, co społeczność automatyzuje i zainspiruj się do swojego następnego workflow.",
+    "sessionCount": "{count} sesji udostępnionych przez społeczność",
+    "searchPlaceholder": "Szukaj według zadania, narzędzia lub wyniku...",
+    "emptyTitle": "Nikt jeszcze nie udostępnił — bądź pierwszy",
+    "emptySubtitle": "Gdy użytkownicy upublicznią swoje sesje, pojawią się tutaj",
+    "noResultsTitle": "Brak wyników dla tego wyszukiwania",
+    "noResultsSubtitle": "Spróbuj innych słów kluczowych",
+    "watchSession": "Obejrzyj sesję",
+    "steps": "{count} kroków",
+    "tryCoasty": "Wypróbuj Coasty"
   }
 }

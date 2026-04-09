@@ -18,6 +18,7 @@
     "useCases": "กรณีใช้งาน",
     "blog": "บล็อก",
     "agentSwarms": "Agent Swarms",
+    "discover": "Discover",
     "compare": "เปรียบเทียบ",
     "demos": "สาธิต",
     "pricing": "ราคา",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "ชุมชน",
+    "title": "ดูว่าคนอื่นใช้งานอย่างไร",
+    "subtitle": "จากการวิจัย lead ถึงการทดสอบ QA — ดูว่าชุมชนกำลังทำอะไรให้เป็นอัตโนมัติ และรับแรงบันดาลใจสำหรับเวิร์กโฟลว์ถัดไปของคุณ",
+    "sessionCount": "{count} เซสชันที่ชุมชนแชร์",
+    "searchPlaceholder": "ค้นหาตามงาน เครื่องมือ หรือผลลัพธ์...",
+    "emptyTitle": "ยังไม่มีใครแชร์ — เป็นคนแรกเลย",
+    "emptySubtitle": "เมื่อผู้ใช้ทำให้เซสชันเป็นสาธารณะ จะแสดงที่นี่",
+    "noResultsTitle": "ไม่พบผลลัพธ์ที่ตรงกัน",
+    "noResultsSubtitle": "ลองใช้คำค้นหาอื่น",
+    "watchSession": "ดูเซสชัน",
+    "steps": "{count} ขั้นตอน",
+    "tryCoasty": "ลองใช้ Coasty"
   }
 }

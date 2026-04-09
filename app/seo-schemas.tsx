@@ -49,7 +49,7 @@ export async function LocalizedSEOSchemas({ locale }: { locale: string }) {
     "description": t("structuredData.productDescription"),
     "brand": { "@type": "Brand", "name": "Coasty" },
     "category": "Software > Productivity > AI Automation",
-    "image": "https://coasty.ai/og-image.png",
+    "image": "https://coasty.ai/demo-screenshot.png",
     "url": "https://coasty.ai",
     "inLanguage": locale,
     "offers": [

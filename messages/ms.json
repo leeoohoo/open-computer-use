@@ -18,6 +18,7 @@
     "useCases": "Kes Penggunaan",
     "blog": "Blog",
     "agentSwarms": "Kawanan Agen",
+    "discover": "Discover",
     "compare": "Bandingkan",
     "demos": "Demo",
     "pricing": "Harga",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Komuniti",
+    "title": "Lihat bagaimana orang menggunakannya",
+    "subtitle": "Dari penyelidikan lead hingga ujian QA — lihat apa yang diautomasikan oleh komuniti dan dapatkan inspirasi untuk aliran kerja anda yang seterusnya.",
+    "sessionCount": "{count} sesi dikongsi oleh komuniti",
+    "searchPlaceholder": "Cari mengikut tugas, alat, atau hasil...",
+    "emptyTitle": "Belum ada yang berkongsi — jadilah yang pertama",
+    "emptySubtitle": "Apabila pengguna menjadikan sesi mereka awam, ia akan muncul di sini",
+    "noResultsTitle": "Tiada padanan untuk carian itu",
+    "noResultsSubtitle": "Cuba kata kunci yang berbeza",
+    "watchSession": "Tonton sesi",
+    "steps": "{count} langkah",
+    "tryCoasty": "Cuba Coasty"
   }
 }

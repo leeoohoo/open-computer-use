@@ -18,6 +18,7 @@
     "useCases": "Truong hop su dung",
     "blog": "Blog",
     "agentSwarms": "Bay tac tu",
+    "discover": "Discover",
     "compare": "So sanh",
     "demos": "Demo",
     "pricing": "Gia",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Cộng đồng",
+    "title": "Xem mọi người sử dụng như thế nào",
+    "subtitle": "Từ nghiên cứu lead đến kiểm thử QA — xem cộng đồng đang tự động hóa những gì và lấy cảm hứng cho quy trình làm việc tiếp theo của bạn.",
+    "sessionCount": "{count} phiên được cộng đồng chia sẻ",
+    "searchPlaceholder": "Tìm kiếm theo nhiệm vụ, công cụ hoặc kết quả...",
+    "emptyTitle": "Chưa ai chia sẻ — hãy là người đầu tiên",
+    "emptySubtitle": "Khi người dùng công khai phiên của họ, chúng sẽ xuất hiện ở đây",
+    "noResultsTitle": "Không có kết quả phù hợp",
+    "noResultsSubtitle": "Thử các từ khóa khác",
+    "watchSession": "Xem phiên",
+    "steps": "{count} bước",
+    "tryCoasty": "Thử Coasty"
   }
 }

@@ -79,7 +79,7 @@ export async function generateMetadata({ params }: { params: Promise<{ competito
       description: meta.description,
       url: `https://coasty.ai/compare/${competitor}`,
       type: "website",
-      images: [{ url: "/og-image.png", width: 1200, height: 630, alt: meta.title }],
+      images: [{ url: "/demo-screenshot.png", width: 1200, height: 630, alt: meta.title }],
     },
     twitter: {
       card: "summary_large_image",

@@ -8,6 +8,7 @@ import {
   IconClockPlay,
   IconBinaryTree,
   IconBook2,
+  IconCompass,
   IconDeviceDesktop,
   IconCalendarClock,
   IconShieldLock,
@@ -862,6 +863,21 @@ export const SidebarNavSection = memo(function SidebarNavSection({
             hoverInfo={{
               description: t("guidePopup.title"),
               detail: t("guidePopup.description"),
+              visual: "guide",
+            }}
+          />
+          <NavButton
+            id="sidebar-discover-link"
+            icon={<IconCompass size={16} stroke={1.5} className="shrink-0" />}
+            label="Community"
+            tooltip="See how people use Coasty"
+            href="/discover"
+            isActive={isItemActive("/discover")}
+            accentColor="text-sky-500"
+            onClick={closeMobileIfNeeded}
+            hoverInfo={{
+              description: "Community Sessions",
+              detail: "See what others are automating and get inspired for your next workflow.",
               visual: "guide",
             }}
           />

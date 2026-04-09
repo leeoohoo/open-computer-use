@@ -18,6 +18,7 @@
     "useCases": "使用场景",
     "blog": "博客",
     "agentSwarms": "智能体集群",
+    "discover": "Discover",
     "compare": "对比",
     "demos": "演示",
     "pricing": "价格",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "社区",
+    "title": "看看大家怎么用",
+    "subtitle": "从线索调研到QA测试 — 看看社区在自动化什么，为你的下一个工作流获取灵感。",
+    "sessionCount": "社区分享了 {count} 个会话",
+    "searchPlaceholder": "按任务、工具或结果搜索...",
+    "emptyTitle": "还没有人分享 — 成为第一个",
+    "emptySubtitle": "当用户公开他们的会话时，会显示在这里",
+    "noResultsTitle": "没有匹配的结果",
+    "noResultsSubtitle": "试试其他关键词",
+    "watchSession": "观看会话",
+    "steps": "{count} 个步骤",
+    "tryCoasty": "试用 Coasty"
   }
 }

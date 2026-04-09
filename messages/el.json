@@ -18,6 +18,7 @@
     "useCases": "Περιπτώσεις χρήσης",
     "blog": "Blog",
     "agentSwarms": "Σμήνη agents",
+    "discover": "Discover",
     "compare": "Σύγκριση",
     "demos": "Επιδείξεις",
     "pricing": "Τιμολόγηση",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Κοινότητα",
+    "title": "Δείτε πώς το χρησιμοποιούν",
+    "subtitle": "Από έρευνα leads έως QA testing — δείτε τι αυτοματοποιεί η κοινότητα και εμπνευστείτε για το επόμενο workflow σας.",
+    "sessionCount": "{count} συνεδρίες που μοιράστηκε η κοινότητα",
+    "searchPlaceholder": "Αναζήτηση κατά εργασία, εργαλείο ή αποτέλεσμα...",
+    "emptyTitle": "Κανείς δεν έχει μοιραστεί ακόμα — γίνετε ο πρώτος",
+    "emptySubtitle": "Όταν οι χρήστες κάνουν τις συνεδρίες τους δημόσιες, εμφανίζονται εδώ",
+    "noResultsTitle": "Δεν βρέθηκαν αποτελέσματα",
+    "noResultsSubtitle": "Δοκιμάστε διαφορετικές λέξεις",
+    "watchSession": "Παρακολούθηση συνεδρίας",
+    "steps": "{count} βήματα",
+    "tryCoasty": "Δοκιμάστε το Coasty"
   }
 }

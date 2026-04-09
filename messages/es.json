@@ -18,6 +18,7 @@
     "useCases": "Casos de uso",
     "blog": "Blog",
     "agentSwarms": "Enjambres de agentes",
+    "discover": "Discover",
     "compare": "Comparar",
     "demos": "Demos",
     "pricing": "Precios",
@@ -2833,5 +2834,19 @@
     "placeholder": "Dile a la IA qué hacer... (Ctrl+Enter para enviar)",
     "executing": "Ejecutando...",
     "executeCommand": "Ejecutar comando"
+  },
+  "discover": {
+    "badge": "Comunidad",
+    "title": "Mira cómo la gente lo usa",
+    "subtitle": "Desde investigación de leads hasta pruebas QA — mira lo que la comunidad está automatizando e inspírate para tu próximo flujo de trabajo.",
+    "sessionCount": "{count} sesiones compartidas por la comunidad",
+    "searchPlaceholder": "Buscar por tarea, herramienta o resultado...",
+    "emptyTitle": "Nadie ha compartido aún — sé el primero",
+    "emptySubtitle": "Cuando los usuarios hacen públicas sus sesiones, aparecen aquí",
+    "noResultsTitle": "Nada coincide con esa búsqueda",
+    "noResultsSubtitle": "Prueba con otras palabras clave",
+    "watchSession": "Ver sesión",
+    "steps": "{count} pasos",
+    "tryCoasty": "Probar Coasty"
   }
 }

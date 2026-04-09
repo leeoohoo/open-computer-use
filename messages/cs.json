@@ -18,6 +18,7 @@
     "useCases": "Případy užití",
     "blog": "Blog",
     "agentSwarms": "Roje agentů",
+    "discover": "Discover",
     "compare": "Porovnat",
     "demos": "Ukázky",
     "pricing": "Ceník",
@@ -2833,5 +2834,19 @@
     "placeholder": "Tell the AI what to do... (Ctrl+Enter to send)",
     "executing": "Executing...",
     "executeCommand": "Execute Command"
+  },
+  "discover": {
+    "badge": "Komunita",
+    "title": "Podívejte se, jak to lidé používají",
+    "subtitle": "Od průzkumu leadů po testování kvality — podívejte se, co komunita automatizuje, a inspirujte se pro svůj další workflow.",
+    "sessionCount": "{count} relací sdílených komunitou",
+    "searchPlaceholder": "Hledejte podle úkolu, nástroje nebo výsledku...",
+    "emptyTitle": "Zatím nikdo nesdílel — buďte první",
+    "emptySubtitle": "Když uživatelé zveřejní své relace, zobrazí se zde",
+    "noResultsTitle": "Žádné výsledky neodpovídají",
+    "noResultsSubtitle": "Zkuste jiná klíčová slova",
+    "watchSession": "Sledovat relaci",
+    "steps": "{count} kroků",
+    "tryCoasty": "Vyzkoušet Coasty"
   }
 }
