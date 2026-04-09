@@ -281,21 +281,15 @@ app.whenReady().then(async () => {
   // time; the binary is cached to disk across app restarts.
   warmupNativeScreenshot()
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
-    }
-  })
 })
 
 app.on('window-all-closed', () => {
-  // Don't quit on macOS when all windows are closed
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  app.quit()
 })
 
 app.on('before-quit', () => {
   wsBridge?.disconnect()
   destroyRainbowBorder()
+  tray?.destroy()
+  tray = null
 })
