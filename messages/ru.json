@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Виртуальные машины",
+    "title": "Мои компьютеры",
     "subtitle": "Управляйте рабочими столами под контролем ИИ",
     "guide": "Руководство",
     "newMachine": "Новая машина",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Новая машина",
+    "title": "Новый компьютер",
     "subtitle": "Запустите облачный рабочий стол — готов за ~30 секунд",
-    "freeExpiry": "Бесплатные машины истекают через ",
+    "freeExpiry": "Бесплатные компьютеры истекают через ",
     "freeExpiry2": "2 часа",
     "upgrade": "Улучшить",
-    "limitReached": "Вы достигли лимита машин. Остановите или удалите существующую машину, чтобы создать новую.",
+    "limitReached": "Вы достигли лимита компьютеров. Остановите или удалите существующий компьютер, чтобы создать новый.",
     "upgradeMore": "Улучшить для большего →",
-    "nameLabel": "Имя машины",
+    "nameLabel": "Имя компьютера",
     "namePlaceholder": "Мой облачный сервер",
-    "nameError": "Имя машины не может начинаться с \"local\"",
-    "nameRequired": "Пожалуйста, введите имя машины",
+    "nameError": "Имя компьютера не может начинаться с \"local\"",
+    "nameRequired": "Пожалуйста, введите имя компьютера",
     "osLabel": "Операционная система",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Рабочий стол Windows с Chrome (бета). Готов за ~2 минуты.",
     "osHintLinux": "Рабочий стол Ubuntu, доступный через браузер. Готов за ~30 секунд.",
-    "stateLabel": "Состояние машины",
+    "stateLabel": "Состояние компьютера",
     "restorePrevious": "Восстановить предыдущее",
     "restoreDescription": "Продолжить с последнего снимка",
     "startFresh": "Начать заново",
     "startFreshDescription": "Чистая среда рабочего стола",
     "cancel": "Отмена",
     "creating": "Создание...",
-    "create": "Создать машину",
+    "create": "Создать компьютер",
     "toasts": {
-      "restoringSnapshot": "Восстановление машины из снимка!",
+      "restoringSnapshot": "Восстановление компьютера из снимка!",
       "restoringDescription": "Восстанавливается предыдущее состояние рабочего стола. Готово за ~30 секунд.",
-      "windowsCreated": "Создание машины Windows начато!",
+      "windowsCreated": "Создание компьютера Windows начато!",
       "windowsDescription": "Ваш рабочий стол Windows запускается. Готов за ~2 минуты.",
       "linuxCreated": "Ваш рабочий стол запускается. Готов за ~30 секунд.",
-      "sshCreated": "Ваша облачная машина запускается. SSH-ключ будет доступен после готовности."
+      "sshCreated": "Ваш облачный компьютер запускается. SSH-ключ будет доступен после готовности."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Настройте основные параметры компьютера",
+    "displayName": "Отображаемое имя",
+    "defaultName": "Мой компьютер",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Этот пароль необходим для подключения к компьютеру"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

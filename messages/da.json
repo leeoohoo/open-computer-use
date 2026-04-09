@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Virtuelle maskiner",
+    "title": "Mine computere",
     "subtitle": "Administrer dine AI-styrede skrivebordsmiljøer",
     "guide": "Guide",
     "newMachine": "Ny maskine",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Ny maskine",
+    "title": "Ny computer",
     "subtitle": "Start et cloud-skrivebord — klar på ~30 sekunder",
-    "freeExpiry": "Gratis maskiner udløber efter ",
+    "freeExpiry": "Gratis computere udløber efter ",
     "freeExpiry2": "2 timer",
     "upgrade": "Opgrader",
-    "limitReached": "Du har nået din maskingrænse. Stop eller slet en eksisterende maskine for at oprette en ny.",
+    "limitReached": "Du har nået din computergrænse. Stop eller slet en eksisterende computer for at oprette en ny.",
     "upgradeMore": "Opgrader for mere →",
-    "nameLabel": "Maskinnavn",
+    "nameLabel": "Computernavn",
     "namePlaceholder": "Min cloud-server",
-    "nameError": "Maskinnavn kan ikke starte med \"local\"",
-    "nameRequired": "Indtast venligst et maskinnavn",
+    "nameError": "Computernavn kan ikke starte med \"local\"",
+    "nameRequired": "Indtast venligst et computernavn",
     "osLabel": "Operativsystem",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Windows skrivebord med Chrome (beta). Klar på ~2 minutter.",
     "osHintLinux": "Ubuntu skrivebord, tilgængeligt via browser. Klar på ~30 sekunder.",
-    "stateLabel": "Maskintilstand",
+    "stateLabel": "Computertilstand",
     "restorePrevious": "Gendan forrige",
     "restoreDescription": "Genoptag fra sidste snapshot",
     "startFresh": "Start forfra",
     "startFreshDescription": "Rent skrivebordsmiljø",
     "cancel": "Annuller",
     "creating": "Opretter...",
-    "create": "Opret maskine",
+    "create": "Opret computer",
     "toasts": {
-      "restoringSnapshot": "Gendanner maskine fra snapshot!",
+      "restoringSnapshot": "Gendanner computer fra snapshot!",
       "restoringDescription": "Din tidligere skrivebordstilstand gendannes. Klar på ~30 sekunder.",
-      "windowsCreated": "Oprettelse af Windows-maskine startet!",
+      "windowsCreated": "Oprettelse af Windows-computer startet!",
       "windowsDescription": "Dit Windows-skrivebord starter. Klar på ~2 minutter.",
       "linuxCreated": "Dit skrivebord starter. Klar på ~30 sekunder.",
-      "sshCreated": "Din cloud-maskine starter. SSH-nøgle vil være tilgængelig når den er klar."
+      "sshCreated": "Din cloud-computer starter. SSH-nøgle vil være tilgængelig når den er klar."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Konfigurer grundlæggende computerindstillinger",
+    "displayName": "Visningsnavn",
+    "defaultName": "Min computer",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Denne adgangskode er påkrævet for at oprette forbindelse til computeren"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "仮想マシン",
+    "title": "マイコンピュータ",
     "subtitle": "AI制御のデスクトップ環境を管理",
     "guide": "ガイド",
     "newMachine": "新しいマシン",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "新しいマシン",
+    "title": "新しいコンピュータ",
     "subtitle": "クラウドデスクトップを起動 — 約30秒で準備完了",
-    "freeExpiry": "無料マシンの有効期限: ",
+    "freeExpiry": "無料コンピュータの有効期限: ",
     "freeExpiry2": "2時間",
     "upgrade": "アップグレード",
-    "limitReached": "マシンの上限に達しました。新しいマシンを作成するには、既存のマシンを停止または削除してください。",
+    "limitReached": "コンピュータの上限に達しました。新しいコンピュータを作成するには、既存のコンピュータを停止または削除してください。",
     "upgradeMore": "アップグレードでさらに追加 →",
-    "nameLabel": "マシン名",
+    "nameLabel": "コンピュータ名",
     "namePlaceholder": "マイクラウドサーバー",
-    "nameError": "マシン名は \"local\" で始めることはできません",
-    "nameRequired": "マシン名を入力してください",
+    "nameError": "コンピュータ名は \"local\" で始めることはできません",
+    "nameRequired": "コンピュータ名を入力してください",
     "osLabel": "オペレーティングシステム",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Chrome搭載のWindowsデスクトップ（beta）。約2分で準備完了。",
     "osHintLinux": "ブラウザからアクセス可能なUbuntuデスクトップ。約30秒で準備完了。",
-    "stateLabel": "マシンの状態",
+    "stateLabel": "コンピュータの状態",
     "restorePrevious": "前回の状態を復元",
     "restoreDescription": "最後のスナップショットから再開",
     "startFresh": "新規で開始",
     "startFreshDescription": "クリーンなデスクトップ環境",
     "cancel": "キャンセル",
     "creating": "作成中...",
-    "create": "マシンを作成",
+    "create": "コンピュータを作成",
     "toasts": {
-      "restoringSnapshot": "スナップショットからマシンを復元中！",
+      "restoringSnapshot": "スナップショットからコンピュータを復元中！",
       "restoringDescription": "前回のデスクトップ状態を復元しています。約30秒で準備完了。",
-      "windowsCreated": "Windowsマシンの作成を開始しました！",
+      "windowsCreated": "Windowsコンピュータの作成を開始しました！",
       "windowsDescription": "Windowsデスクトップを起動中です。約2分で準備完了。",
       "linuxCreated": "デスクトップを起動中です。約30秒で準備完了。",
-      "sshCreated": "クラウドマシンを起動中です。準備が整い次第SSHキーが利用可能になります。"
+      "sshCreated": "クラウドコンピュータを起動中です。準備が整い次第SSHキーが利用可能になります。"
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "基本的なコンピュータ設定を構成する",
+    "displayName": "表示名",
+    "defaultName": "マイコンピュータ",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "このパスワードはコンピュータに接続するために必要です"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

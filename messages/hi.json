@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "वर्चुअल मशीनें",
+    "title": "मेरे कंप्यूटर",
     "subtitle": "AI-नियंत्रित डेस्कटॉप वातावरण प्रबंधित करें",
     "guide": "गाइड",
     "newMachine": "नई मशीन",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "नई मशीन",
+    "title": "नया कंप्यूटर",
     "subtitle": "क्लाउड डेस्कटॉप लॉन्च करें — ~30 सेकंड में तैयार",
-    "freeExpiry": "मुफ्त मशीनें इसके बाद समाप्त हो जाती हैं: ",
+    "freeExpiry": "मुफ्त कंप्यूटर इसके बाद समाप्त हो जाते हैं: ",
     "freeExpiry2": "2 घंटे",
     "upgrade": "अपग्रेड",
-    "limitReached": "आपने मशीन सीमा पूरी कर ली है। नई बनाने के लिए किसी मौजूदा मशीन को रोकें या हटाएं।",
+    "limitReached": "आपने कंप्यूटर सीमा पूरी कर ली है। नया बनाने के लिए किसी मौजूदा कंप्यूटर को रोकें या हटाएं।",
     "upgradeMore": "अधिक के लिए अपग्रेड करें →",
-    "nameLabel": "मशीन का नाम",
+    "nameLabel": "कंप्यूटर का नाम",
     "namePlaceholder": "मेरा क्लाउड सर्वर",
-    "nameError": "मशीन का नाम \"local\" से शुरू नहीं हो सकता",
-    "nameRequired": "कृपया मशीन का नाम दर्ज करें",
+    "nameError": "कंप्यूटर का नाम \"local\" से शुरू नहीं हो सकता",
+    "nameRequired": "कृपया कंप्यूटर का नाम दर्ज करें",
     "osLabel": "ऑपरेटिंग सिस्टम",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Chrome के साथ Windows डेस्कटॉप (बीटा)। ~2 मिनट में तैयार।",
     "osHintLinux": "ब्राउज़र से एक्सेस योग्य Ubuntu डेस्कटॉप। ~30 सेकंड में तैयार।",
-    "stateLabel": "मशीन स्थिति",
+    "stateLabel": "कंप्यूटर स्थिति",
     "restorePrevious": "पिछली स्थिति पुनर्स्थापित करें",
     "restoreDescription": "अंतिम स्नैपशॉट से फिर शुरू करें",
     "startFresh": "नई शुरुआत",
     "startFreshDescription": "साफ़ डेस्कटॉप वातावरण",
     "cancel": "रद्द करें",
     "creating": "बन रही है...",
-    "create": "मशीन बनाएं",
+    "create": "कंप्यूटर बनाएं",
     "toasts": {
-      "restoringSnapshot": "स्नैपशॉट से मशीन पुनर्स्थापित हो रही है!",
+      "restoringSnapshot": "स्नैपशॉट से कंप्यूटर पुनर्स्थापित हो रहा है!",
       "restoringDescription": "आपकी पिछली डेस्कटॉप स्थिति पुनर्स्थापित की जा रही है। ~30 सेकंड में तैयार।",
-      "windowsCreated": "Windows मशीन का निर्माण शुरू हुआ!",
+      "windowsCreated": "Windows कंप्यूटर का निर्माण शुरू हुआ!",
       "windowsDescription": "आपका Windows डेस्कटॉप लॉन्च हो रहा है। ~2 मिनट में तैयार।",
       "linuxCreated": "आपका डेस्कटॉप लॉन्च हो रहा है। ~30 सेकंड में तैयार।",
-      "sshCreated": "आपकी क्लाउड मशीन लॉन्च हो रही है। तैयार होने पर SSH कुंजी उपलब्ध होगी।"
+      "sshCreated": "आपका क्लाउड कंप्यूटर लॉन्च हो रहा है। तैयार होने पर SSH कुंजी उपलब्ध होगी।"
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "बुनियादी कंप्यूटर सेटिंग्स कॉन्फ़िगर करें",
+    "displayName": "प्रदर्शन नाम",
+    "defaultName": "मेरा कंप्यूटर",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "कंप्यूटर से कनेक्ट करने के लिए यह पासवर्ड आवश्यक है"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

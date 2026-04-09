@@ -14,7 +14,7 @@ import { useTheme } from "next-themes"
 import { useSearchParams } from "next/navigation"
 import { LandingHeader } from "./landing-header"
 import { LandingFooter } from "./landing-footer"
-import { HeroUseCaseCarousel } from "./hero-use-case-carousel"
+import { HeroVideoMatrix } from "./hero-video-matrix"
 import { GuideLines, SectionDivider as SharedSectionDivider } from "./guide-lines"
 import Beams from "@/components/Beams"
 import { motion, AnimatePresence } from "framer-motion"
@@ -218,7 +218,7 @@ export function LandingPage() {
       <GuideLines />
 
       {/* Beams background — covers full viewport including behind navbar, inverted in light mode */}
-      <div className={cn("fixed inset-0 z-0 pointer-events-none", mounted && resolvedTheme !== "dark" && "invert")} aria-hidden="true">
+      <div id="beams-bg" className={cn("fixed inset-0 z-0 pointer-events-none", mounted && resolvedTheme !== "dark" && "invert")} aria-hidden="true">
         <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
           <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_100%_90%_at_50%_45%,black_0%,black_40%,transparent_85%)]">
             <Beams
@@ -238,27 +238,11 @@ export function LandingPage() {
       {/* Fixed header */}
       <LandingHeader />
 
+      {/* Hero Section — cinematic zoom-out video matrix */}
+      <HeroVideoMatrix isMobile={isMobile} />
+
       {/* Main content */}
       <main className={cn("relative", isMobile ? "pt-16" : "pt-20")}>
-
-        {/* Hero Section */}
-        <section id="hero" className={cn(
-          "relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-x-hidden",
-          isMobile ? "px-7 pt-8 pb-16" : "px-10 pt-16 pb-24"
-        )}>
-
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-            className="relative z-10 w-full"
-          >
-            <motion.div variants={itemVariants}>
-              <HeroUseCaseCarousel isMobile={isMobile} />
-            </motion.div>
-          </motion.div>
-        </section>
 
         <SectionDivider />
 

@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Virtuella maskiner",
+    "title": "Mina datorer",
     "subtitle": "Hantera dina AI-styrda skrivbordsmiljöer",
     "guide": "Guide",
     "newMachine": "Ny maskin",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Ny maskin",
+    "title": "Ny dator",
     "subtitle": "Starta ett molnskrivbord — redo på ~30 sekunder",
-    "freeExpiry": "Gratismaskiner upphör efter ",
+    "freeExpiry": "Gratisdatorer upphör efter ",
     "freeExpiry2": "2 timmar",
     "upgrade": "Uppgradera",
-    "limitReached": "Du har nått din maskingräns. Stoppa eller ta bort en befintlig maskin för att skapa en ny.",
+    "limitReached": "Du har nått din datorgräns. Stoppa eller ta bort en befintlig dator för att skapa en ny.",
     "upgradeMore": "Uppgradera för fler →",
-    "nameLabel": "Maskinnamn",
+    "nameLabel": "Datornamn",
     "namePlaceholder": "Min molnserver",
-    "nameError": "Maskinnamnet kan inte börja med \"local\"",
-    "nameRequired": "Ange ett maskinnamn",
+    "nameError": "Datornamnet kan inte börja med \"local\"",
+    "nameRequired": "Ange ett datornamn",
     "osLabel": "Operativsystem",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Windows-skrivbord med Chrome (beta). Redo på ~2 minuter.",
     "osHintLinux": "Ubuntu-skrivbord, tillgängligt via webbläsaren. Redo på ~30 sekunder.",
-    "stateLabel": "Maskinstatus",
+    "stateLabel": "Datorstatus",
     "restorePrevious": "Återställ föregående",
     "restoreDescription": "Återuppta från senaste ögonblicksbild",
     "startFresh": "Börja om",
     "startFreshDescription": "Ren skrivbordsmiljö",
     "cancel": "Avbryt",
     "creating": "Skapar...",
-    "create": "Skapa maskin",
+    "create": "Skapa dator",
     "toasts": {
-      "restoringSnapshot": "Återställer maskin från ögonblicksbild!",
+      "restoringSnapshot": "Återställer dator från ögonblicksbild!",
       "restoringDescription": "Ditt tidigare skrivbordsläge återställs. Redo på ~30 sekunder.",
-      "windowsCreated": "Skapande av Windows-maskin har startats!",
+      "windowsCreated": "Skapande av Windows-dator har startats!",
       "windowsDescription": "Ditt Windows-skrivbord startar. Redo på ~2 minuter.",
       "linuxCreated": "Ditt skrivbord startar. Redo på ~30 sekunder.",
-      "sshCreated": "Din molnmaskin startar. SSH-nyckeln blir tillgänglig när den är redo."
+      "sshCreated": "Din molndator startar. SSH-nyckeln blir tillgänglig när den är redo."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Konfigurera grundläggande datorinställningar",
+    "displayName": "Visningsnamn",
+    "defaultName": "Min dator",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Detta lösenord krävs för att ansluta till datorn"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Mesin Virtual",
+    "title": "Komputer saya",
     "subtitle": "Kelola lingkungan desktop yang dikontrol AI Anda",
     "guide": "Panduan",
     "newMachine": "Mesin Baru",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Mesin Baru",
+    "title": "Komputer Baru",
     "subtitle": "Luncurkan desktop cloud — siap dalam ~30 detik",
-    "freeExpiry": "Mesin gratis kedaluwarsa setelah ",
+    "freeExpiry": "Komputer gratis kedaluwarsa setelah ",
     "freeExpiry2": "2 jam",
     "upgrade": "Upgrade",
-    "limitReached": "Anda telah mencapai batas mesin. Hentikan atau hapus mesin yang ada untuk membuat yang baru.",
+    "limitReached": "Anda telah mencapai batas komputer. Hentikan atau hapus komputer yang ada untuk membuat yang baru.",
     "upgradeMore": "Upgrade untuk lebih banyak →",
-    "nameLabel": "Nama Mesin",
+    "nameLabel": "Nama Komputer",
     "namePlaceholder": "Server Cloud Saya",
-    "nameError": "Nama mesin tidak boleh dimulai dengan \"local\"",
-    "nameRequired": "Silakan masukkan nama mesin",
+    "nameError": "Nama komputer tidak boleh dimulai dengan \"local\"",
+    "nameRequired": "Silakan masukkan nama komputer",
     "osLabel": "Sistem Operasi",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Desktop Windows dengan Chrome (beta). Siap dalam ~2 menit.",
     "osHintLinux": "Desktop Ubuntu, dapat diakses melalui browser. Siap dalam ~30 detik.",
-    "stateLabel": "Status Mesin",
+    "stateLabel": "Status Komputer",
     "restorePrevious": "Pulihkan Sebelumnya",
     "restoreDescription": "Lanjutkan dari snapshot terakhir",
     "startFresh": "Mulai Baru",
     "startFreshDescription": "Lingkungan desktop bersih",
     "cancel": "Batal",
     "creating": "Membuat...",
-    "create": "Buat Mesin",
+    "create": "Buat Komputer",
     "toasts": {
-      "restoringSnapshot": "Memulihkan mesin dari snapshot!",
+      "restoringSnapshot": "Memulihkan komputer dari snapshot!",
       "restoringDescription": "Status desktop sebelumnya sedang dipulihkan. Siap dalam ~30 detik.",
-      "windowsCreated": "Pembuatan mesin Windows dimulai!",
+      "windowsCreated": "Pembuatan komputer Windows dimulai!",
       "windowsDescription": "Desktop Windows Anda sedang diluncurkan. Siap dalam ~2 menit.",
       "linuxCreated": "Desktop Anda sedang diluncurkan. Siap dalam ~30 detik.",
-      "sshCreated": "Mesin cloud Anda sedang diluncurkan. Kunci SSH akan tersedia setelah siap."
+      "sshCreated": "Komputer cloud Anda sedang diluncurkan. Kunci SSH akan tersedia setelah siap."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Konfigurasikan pengaturan dasar komputer",
+    "displayName": "Nama Tampilan",
+    "defaultName": "Komputer saya",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Kata sandi ini diperlukan untuk terhubung ke komputer"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

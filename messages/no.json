@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Virtuelle maskiner",
+    "title": "Mine datamaskiner",
     "subtitle": "Administrer dine AI-styrte skrivebordsmiljøer",
     "guide": "Guide",
     "newMachine": "Ny maskin",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Ny Maskin",
-    "subtitle": "Launch a cloud desktop — ready in ~30 seconds",
-    "freeExpiry": "Free machines expire after ",
-    "freeExpiry2": "2 hours",
-    "upgrade": "Upgrade",
-    "limitReached": "You've reached your machine limit. Stop or delete an existing machine to create a new one.",
-    "upgradeMore": "Upgrade for more →",
-    "nameLabel": "Machine Name",
-    "namePlaceholder": "My Cloud Server",
-    "nameError": "Machine name cannot start with \"local\"",
-    "nameRequired": "Please enter a machine name",
+    "title": "Ny datamaskin",
+    "subtitle": "Start et skrivebord i skyen — klar på ~30 sekunder",
+    "freeExpiry": "Gratis datamaskiner utløper etter ",
+    "freeExpiry2": "2 timer",
+    "upgrade": "Oppgrader",
+    "limitReached": "Du har nådd datamaskingrensen din. Stopp eller slett en eksisterende datamaskin for å opprette en ny.",
+    "upgradeMore": "Oppgrader for mer →",
+    "nameLabel": "Datamaskinnavn",
+    "namePlaceholder": "Min skyserver",
+    "nameError": "Datamaskinnavn kan ikke starte med \"local\"",
+    "nameRequired": "Vennligst skriv inn et datamaskinnavn",
     "osLabel": "Operating System",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Windows desktop with Chrome (beta). Ready in ~2 minutes.",
     "osHintLinux": "Ubuntu desktop, accessible via browser. Ready in ~30 seconds.",
-    "stateLabel": "Machine State",
+    "stateLabel": "Datamaskinstatus",
     "restorePrevious": "Restore Previous",
     "restoreDescription": "Resume from last snapshot",
     "startFresh": "Start Fresh",
     "startFreshDescription": "Clean desktop environment",
     "cancel": "Cancel",
     "creating": "Creating...",
-    "create": "Create Machine",
+    "create": "Opprett datamaskin",
     "toasts": {
-      "restoringSnapshot": "Restoring machine from snapshot!",
-      "restoringDescription": "Your previous desktop state is being restored. Ready in ~30 seconds.",
-      "windowsCreated": "Windows machine creation started!",
-      "windowsDescription": "Your Windows desktop is launching. Ready in ~2 minutes.",
-      "linuxCreated": "Your desktop is launching. Ready in ~30 seconds.",
-      "sshCreated": "Your cloud machine is launching. SSH key will be available once ready."
+      "restoringSnapshot": "Gjenoppretter datamaskin fra øyeblikksbilde!",
+      "restoringDescription": "Din forrige skrivebordstilstand gjenopprettes. Klar på ~30 sekunder.",
+      "windowsCreated": "Oppretting av Windows-datamaskin startet!",
+      "windowsDescription": "Windows-skrivebordet ditt starter. Klar på ~2 minutter.",
+      "linuxCreated": "Skrivebordet ditt starter. Klar på ~30 sekunder.",
+      "sshCreated": "Skydatamaskinen din starter. SSH-nøkkel vil være tilgjengelig når den er klar."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Konfigurer grunnleggende datamaskininnstillinger",
+    "displayName": "Visningsnavn",
+    "defaultName": "Min datamaskin",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Dette passordet kreves for å koble til datamaskinen"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

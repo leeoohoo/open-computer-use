@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "الأجهزة الافتراضية",
+    "title": "أجهزتي",
     "subtitle": "إدارة بيئات سطح المكتب التي يتحكم بها الذكاء الاصطناعي",
     "guide": "الدليل",
     "newMachine": "جهاز جديد",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "جهاز جديد",
+    "title": "كمبيوتر جديد",
     "subtitle": "أطلق سطح مكتب سحابي — جاهز خلال ~30 ثانية",
-    "freeExpiry": "تنتهي صلاحية الأجهزة المجانية بعد ",
+    "freeExpiry": "تنتهي صلاحية أجهزة الكمبيوتر المجانية بعد ",
     "freeExpiry2": "ساعتين",
     "upgrade": "ترقية",
-    "limitReached": "لقد وصلت إلى الحد الأقصى للأجهزة. أوقف أو احذف جهازًا موجودًا لإنشاء جهاز جديد.",
+    "limitReached": "لقد وصلت إلى الحد الأقصى لأجهزة الكمبيوتر. أوقف أو احذف كمبيوتر موجودًا لإنشاء كمبيوتر جديد.",
     "upgradeMore": "قم بالترقية للمزيد →",
-    "nameLabel": "اسم الجهاز",
+    "nameLabel": "اسم الكمبيوتر",
     "namePlaceholder": "خادمي السحابي",
-    "nameError": "لا يمكن أن يبدأ اسم الجهاز بـ \"local\"",
-    "nameRequired": "يرجى إدخال اسم الجهاز",
+    "nameError": "لا يمكن أن يبدأ اسم الكمبيوتر بـ \"local\"",
+    "nameRequired": "يرجى إدخال اسم الكمبيوتر",
     "osLabel": "نظام التشغيل",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "سطح مكتب Windows مع Chrome (تجريبي). جاهز خلال ~دقيقتين.",
     "osHintLinux": "سطح مكتب Ubuntu، يمكن الوصول إليه عبر المتصفح. جاهز خلال ~30 ثانية.",
-    "stateLabel": "حالة الجهاز",
+    "stateLabel": "حالة الكمبيوتر",
     "restorePrevious": "استعادة السابق",
     "restoreDescription": "استئناف من آخر لقطة",
     "startFresh": "بداية جديدة",
     "startFreshDescription": "بيئة سطح مكتب نظيفة",
     "cancel": "إلغاء",
     "creating": "جارٍ الإنشاء...",
-    "create": "إنشاء جهاز",
+    "create": "إنشاء كمبيوتر",
     "toasts": {
-      "restoringSnapshot": "جارٍ استعادة الجهاز من اللقطة!",
+      "restoringSnapshot": "جارٍ استعادة الكمبيوتر من اللقطة!",
       "restoringDescription": "يتم استعادة حالة سطح المكتب السابقة. جاهز خلال ~30 ثانية.",
-      "windowsCreated": "بدأ إنشاء جهاز Windows!",
+      "windowsCreated": "بدأ إنشاء كمبيوتر Windows!",
       "windowsDescription": "يتم تشغيل سطح مكتب Windows الخاص بك. جاهز خلال ~دقيقتين.",
       "linuxCreated": "يتم تشغيل سطح المكتب الخاص بك. جاهز خلال ~30 ثانية.",
-      "sshCreated": "يتم تشغيل جهازك السحابي. سيتوفر مفتاح SSH عندما يصبح جاهزًا."
+      "sshCreated": "يتم تشغيل كمبيوترك السحابي. سيتوفر مفتاح SSH عندما يصبح جاهزًا."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "تكوين إعدادات الكمبيوتر الأساسية",
+    "displayName": "اسم العرض",
+    "defaultName": "جهاز كمبيوتري",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "كلمة المرور هذه مطلوبة للاتصال بالكمبيوتر"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

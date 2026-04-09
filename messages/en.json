@@ -1237,10 +1237,10 @@
     }
   },
   "machines": {
-    "title": "Virtual Machines",
+    "title": "My Computers",
     "subtitle": "Manage your AI-controlled desktop environments",
     "guide": "Guide",
-    "newMachine": "New Machine",
+    "newMachine": "New Computer",
     "filters": {
       "all": "All",
       "running": "Running",
@@ -1248,50 +1248,50 @@
       "stopped": "Stopped"
     },
     "desktopPromo": {
-      "text": "Skip the VM — run AI agents on your own computer with the native app. Control your desktop from your phone.",
+      "text": "Skip the cloud — run AI agents on your own computer with the native app. Control your desktop from your phone.",
       "cta": "Get the app"
     },
     "emptyState": {
       "title": "True AI Employee with full computer access",
-      "description": "Spin up an isolated virtual machine and let AI agents browse the web, run terminals, and control the desktop — hands-free.",
+      "description": "Spin up an isolated computer and let AI agents browse the web, run terminals, and control the desktop — hands-free.",
       "feature1": {
         "title": "Full desktop control",
         "description": "AI moves the mouse, types, clicks, and navigates like a real user."
       },
       "feature2": {
         "title": "Any task automated",
-        "description": "Browser, terminal, and UI — all agents work together in one VM."
+        "description": "Browser, terminal, and UI — all agents work together on one computer."
       },
       "feature3": {
         "title": "Isolated & safe",
-        "description": "Each machine runs in its own container — your local system stays untouched."
+        "description": "Each computer runs in its own container — your local system stays untouched."
       },
-      "cta": "Create your first machine"
+      "cta": "Create your first computer"
     },
-    "noMachines": "No machines found.",
-    "noFilteredMachines": "No {filter} machines",
-    "noFilteredDescription": "No machines are currently {filter}.",
-    "loadingMachines": "Loading machines...",
+    "noMachines": "No computers found.",
+    "noFilteredMachines": "No {filter} computers",
+    "noFilteredDescription": "No computers are currently {filter}.",
+    "loadingMachines": "Loading computers...",
     "toasts": {
-      "deleted": "Machine deleted successfully",
-      "readyOpen": "You can now connect to your machine.",
+      "deleted": "Computer deleted successfully",
+      "readyOpen": "You can now connect to your computer.",
       "open": "Open",
-      "createFailed": "Please try creating the machine again.",
-      "fetchFailed": "Failed to load machines"
+      "createFailed": "Please try creating the computer again.",
+      "fetchFailed": "Failed to load computers"
     }
   },
   "createMachine": {
-    "title": "New Machine",
+    "title": "New Computer",
     "subtitle": "Launch a cloud desktop — ready in ~30 seconds",
-    "freeExpiry": "Free machines expire after ",
+    "freeExpiry": "Free computers expire after ",
     "freeExpiry2": "2 hours",
     "upgrade": "Upgrade",
-    "limitReached": "You've reached your machine limit. Stop or delete an existing machine to create a new one.",
+    "limitReached": "You've reached your computer limit. Stop or delete an existing computer to create a new one.",
     "upgradeMore": "Upgrade for more →",
-    "nameLabel": "Machine Name",
+    "nameLabel": "Computer Name",
     "namePlaceholder": "My Cloud Server",
-    "nameError": "Machine name cannot start with \"local\"",
-    "nameRequired": "Please enter a machine name",
+    "nameError": "Computer name cannot start with \"local\"",
+    "nameRequired": "Please enter a computer name",
     "osLabel": "Operating System",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1304,21 +1304,21 @@
     },
     "osHintWindows": "Windows desktop with Chrome (beta). Ready in ~2 minutes.",
     "osHintLinux": "Ubuntu desktop, accessible via browser. Ready in ~30 seconds.",
-    "stateLabel": "Machine State",
+    "stateLabel": "Computer State",
     "restorePrevious": "Restore Previous",
     "restoreDescription": "Resume from last snapshot",
     "startFresh": "Start Fresh",
     "startFreshDescription": "Clean desktop environment",
     "cancel": "Cancel",
     "creating": "Creating...",
-    "create": "Create Machine",
+    "create": "Create Computer",
     "toasts": {
-      "restoringSnapshot": "Restoring machine from snapshot!",
+      "restoringSnapshot": "Restoring computer from snapshot!",
       "restoringDescription": "Your previous desktop state is being restored. Ready in ~30 seconds.",
-      "windowsCreated": "Windows machine creation started!",
+      "windowsCreated": "Windows computer creation started!",
       "windowsDescription": "Your Windows desktop is launching. Ready in ~2 minutes.",
       "linuxCreated": "Your desktop is launching. Ready in ~30 seconds.",
-      "sshCreated": "Your cloud machine is launching. SSH key will be available once ready."
+      "sshCreated": "Your cloud computer is launching. SSH key will be available once ready."
     }
   },
   "secrets": {
@@ -2456,9 +2456,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
+    "generalDescription": "Configure basic computer settings",
     "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "defaultName": "My Computer",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2469,7 +2469,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "This password is required to connect to the computer"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

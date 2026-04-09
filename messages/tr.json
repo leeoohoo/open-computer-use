@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Sanal Makineler",
+    "title": "Bilgisayarlarım",
     "subtitle": "AI kontrollü masaüstü ortamlarınızı yönetin",
     "guide": "Rehber",
     "newMachine": "Yeni Makine",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Yeni Makine",
+    "title": "Yeni Bilgisayar",
     "subtitle": "Bulut masaüstü başlatın — ~30 saniyede hazır",
-    "freeExpiry": "Ücretsiz makineler şu süre sonra sona erer: ",
+    "freeExpiry": "Ücretsiz bilgisayarlar şu süre sonra sona erer: ",
     "freeExpiry2": "2 saat",
     "upgrade": "Yükselt",
-    "limitReached": "Makine limitinize ulaştınız. Yeni bir tane oluşturmak için mevcut bir makineyi durdurun veya silin.",
+    "limitReached": "Bilgisayar limitinize ulaştınız. Yeni bir tane oluşturmak için mevcut bir bilgisayarı durdurun veya silin.",
     "upgradeMore": "Daha fazlası için yükseltin →",
-    "nameLabel": "Makine Adı",
+    "nameLabel": "Bilgisayar Adı",
     "namePlaceholder": "Bulut Sunucum",
-    "nameError": "Makine adı \"local\" ile başlayamaz",
-    "nameRequired": "Lütfen bir makine adı girin",
+    "nameError": "Bilgisayar adı \"local\" ile başlayamaz",
+    "nameRequired": "Lütfen bir bilgisayar adı girin",
     "osLabel": "İşletim Sistemi",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Chrome ile Windows masaüstü (beta). ~2 dakikada hazır.",
     "osHintLinux": "Tarayıcı üzerinden erişilebilir Ubuntu masaüstü. ~30 saniyede hazır.",
-    "stateLabel": "Makine Durumu",
+    "stateLabel": "Bilgisayar Durumu",
     "restorePrevious": "Öncekini Geri Yükle",
     "restoreDescription": "Son anlık görüntüden devam et",
     "startFresh": "Sıfırdan Başla",
     "startFreshDescription": "Temiz masaüstü ortamı",
     "cancel": "İptal",
     "creating": "Oluşturuluyor...",
-    "create": "Makine Oluştur",
+    "create": "Bilgisayar Oluştur",
     "toasts": {
-      "restoringSnapshot": "Makine anlık görüntüden geri yükleniyor!",
+      "restoringSnapshot": "Bilgisayar anlık görüntüden geri yükleniyor!",
       "restoringDescription": "Önceki masaüstü durumunuz geri yükleniyor. ~30 saniyede hazır.",
-      "windowsCreated": "Windows makine oluşturma başladı!",
+      "windowsCreated": "Windows bilgisayar oluşturma başladı!",
       "windowsDescription": "Windows masaüstünüz başlatılıyor. ~2 dakikada hazır.",
       "linuxCreated": "Masaüstünüz başlatılıyor. ~30 saniyede hazır.",
-      "sshCreated": "Bulut makineniz başlatılıyor. SSH anahtarı hazır olduğunda kullanılabilir olacak."
+      "sshCreated": "Bulut bilgisayarınız başlatılıyor. SSH anahtarı hazır olduğunda kullanılabilir olacak."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Temel bilgisayar ayarlarını yapılandırın",
+    "displayName": "Görünen Ad",
+    "defaultName": "Bilgisayarım",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Bu şifre bilgisayara bağlanmak için gereklidir"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

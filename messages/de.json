@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Virtuelle Maschinen",
+    "title": "Meine Computer",
     "subtitle": "Verwalte deine KI-gesteuerten Desktop-Umgebungen",
     "guide": "Anleitung",
     "newMachine": "Neue Maschine",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Neue Maschine",
+    "title": "Neuer Computer",
     "subtitle": "Starte einen Cloud-Desktop — bereit in ~30 Sekunden",
-    "freeExpiry": "Kostenlose Maschinen laufen ab nach ",
+    "freeExpiry": "Kostenlose Computer laufen ab nach ",
     "freeExpiry2": "2 Stunden",
     "upgrade": "Upgraden",
-    "limitReached": "Du hast dein Maschinenlimit erreicht. Stoppe oder loesche eine bestehende Maschine, um eine neue zu erstellen.",
+    "limitReached": "Du hast dein Computerlimit erreicht. Stoppe oder loesche einen bestehenden Computer, um einen neuen zu erstellen.",
     "upgradeMore": "Upgrade fuer mehr →",
-    "nameLabel": "Maschinenname",
+    "nameLabel": "Computername",
     "namePlaceholder": "Mein Cloud-Server",
-    "nameError": "Maschinenname darf nicht mit \"local\" beginnen",
-    "nameRequired": "Bitte gib einen Maschinennamen ein",
+    "nameError": "Computername darf nicht mit \"local\" beginnen",
+    "nameRequired": "Bitte gib einen Computernamen ein",
     "osLabel": "Betriebssystem",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Windows Desktop mit Chrome (beta). Bereit in ~2 Minuten.",
     "osHintLinux": "Ubuntu Desktop, ueber Browser zugaenglich. Bereit in ~30 Sekunden.",
-    "stateLabel": "Maschinenstatus",
+    "stateLabel": "Computerstatus",
     "restorePrevious": "Vorherigen wiederherstellen",
     "restoreDescription": "Vom letzten Snapshot fortsetzen",
     "startFresh": "Neu starten",
     "startFreshDescription": "Saubere Desktop-Umgebung",
     "cancel": "Abbrechen",
     "creating": "Wird erstellt...",
-    "create": "Maschine erstellen",
+    "create": "Computer erstellen",
     "toasts": {
-      "restoringSnapshot": "Maschine wird vom Snapshot wiederhergestellt!",
+      "restoringSnapshot": "Computer wird vom Snapshot wiederhergestellt!",
       "restoringDescription": "Dein vorheriger Desktop-Zustand wird wiederhergestellt. Bereit in ~30 Sekunden.",
-      "windowsCreated": "Erstellung der Windows-Maschine gestartet!",
+      "windowsCreated": "Erstellung des Windows-Computers gestartet!",
       "windowsDescription": "Dein Windows-Desktop wird gestartet. Bereit in ~2 Minuten.",
       "linuxCreated": "Dein Desktop wird gestartet. Bereit in ~30 Sekunden.",
-      "sshCreated": "Deine Cloud-Maschine wird gestartet. Der SSH-Schluessel ist verfuegbar, sobald sie bereit ist."
+      "sshCreated": "Dein Cloud-Computer wird gestartet. Der SSH-Schluessel ist verfuegbar, sobald er bereit ist."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Grundlegende Computereinstellungen konfigurieren",
+    "displayName": "Anzeigename",
+    "defaultName": "Mein Computer",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Dieses Passwort wird benoetigt, um sich mit dem Computer zu verbinden"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

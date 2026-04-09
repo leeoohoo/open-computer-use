@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Εικονικές μηχανές",
+    "title": "Οι υπολογιστές μου",
     "subtitle": "Διαχειριστείτε τα περιβάλλοντα επιφάνειας εργασίας ελεγχόμενα από AI",
     "guide": "Οδηγός",
     "newMachine": "Νέα μηχανή",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Νέα μηχανή",
+    "title": "Νέος υπολογιστής",
     "subtitle": "Εκκινήστε μια cloud επιφάνεια εργασίας — έτοιμη σε ~30 δευτερόλεπτα",
-    "freeExpiry": "Οι δωρεάν μηχανές λήγουν μετά από ",
+    "freeExpiry": "Οι δωρεάν υπολογιστές λήγουν μετά από ",
     "freeExpiry2": "2 ώρες",
     "upgrade": "Αναβάθμιση",
-    "limitReached": "Έχετε φτάσει το όριο μηχανών σας. Σταματήστε ή διαγράψτε μια υπάρχουσα μηχανή για να δημιουργήσετε νέα.",
+    "limitReached": "Έχετε φτάσει το όριο υπολογιστών σας. Σταματήστε ή διαγράψτε έναν υπάρχοντα υπολογιστή για να δημιουργήσετε νέο.",
     "upgradeMore": "Αναβάθμιση για περισσότερα →",
-    "nameLabel": "Όνομα μηχανής",
+    "nameLabel": "Όνομα υπολογιστή",
     "namePlaceholder": "Ο Cloud Server μου",
-    "nameError": "Το όνομα μηχανής δεν μπορεί να ξεκινά με \"local\"",
-    "nameRequired": "Παρακαλώ εισάγετε όνομα μηχανής",
+    "nameError": "Το όνομα υπολογιστή δεν μπορεί να ξεκινά με \"local\"",
+    "nameRequired": "Παρακαλώ εισάγετε όνομα υπολογιστή",
     "osLabel": "Λειτουργικό σύστημα",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Windows επιφάνεια εργασίας με Chrome (beta). Έτοιμο σε ~2 λεπτά.",
     "osHintLinux": "Ubuntu επιφάνεια εργασίας, προσβάσιμη μέσω browser. Έτοιμο σε ~30 δευτερόλεπτα.",
-    "stateLabel": "Κατάσταση μηχανής",
+    "stateLabel": "Κατάσταση υπολογιστή",
     "restorePrevious": "Επαναφορά προηγούμενου",
     "restoreDescription": "Συνέχεια από τελευταίο snapshot",
     "startFresh": "Νέα αρχή",
     "startFreshDescription": "Καθαρό περιβάλλον επιφάνειας εργασίας",
     "cancel": "Ακύρωση",
     "creating": "Δημιουργία...",
-    "create": "Δημιουργία μηχανής",
+    "create": "Δημιουργία υπολογιστή",
     "toasts": {
-      "restoringSnapshot": "Επαναφορά μηχανής από snapshot!",
+      "restoringSnapshot": "Επαναφορά υπολογιστή από snapshot!",
       "restoringDescription": "Η προηγούμενη κατάσταση επιφάνειας εργασίας σας αποκαθίσταται. Έτοιμο σε ~30 δευτερόλεπτα.",
-      "windowsCreated": "Η δημιουργία μηχανής Windows ξεκίνησε!",
+      "windowsCreated": "Η δημιουργία υπολογιστή Windows ξεκίνησε!",
       "windowsDescription": "Η Windows επιφάνεια εργασίας σας εκκινείται. Έτοιμο σε ~2 λεπτά.",
       "linuxCreated": "Η επιφάνεια εργασίας σας εκκινείται. Έτοιμο σε ~30 δευτερόλεπτα.",
-      "sshCreated": "Η cloud μηχανή σας εκκινείται. Το SSH κλειδί θα είναι διαθέσιμο μόλις είναι έτοιμο."
+      "sshCreated": "Ο cloud υπολογιστής σας εκκινείται. Το SSH κλειδί θα είναι διαθέσιμο μόλις είναι έτοιμο."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Διαμόρφωση βασικών ρυθμίσεων υπολογιστή",
+    "displayName": "Εμφανιζόμενο όνομα",
+    "defaultName": "Ο υπολογιστής μου",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Αυτός ο κωδικός απαιτείται για σύνδεση στον υπολογιστή"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

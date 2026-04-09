@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Maquinas Virtuais",
+    "title": "Meus computadores",
     "subtitle": "Gerencie seus ambientes de desktop controlados por IA",
     "guide": "Guia",
     "newMachine": "Nova Maquina",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Nova Maquina",
+    "title": "Novo Computador",
     "subtitle": "Lance um desktop na nuvem — pronto em ~30 segundos",
-    "freeExpiry": "Maquinas gratuitas expiram apos ",
+    "freeExpiry": "Computadores gratuitos expiram apos ",
     "freeExpiry2": "2 horas",
     "upgrade": "Fazer upgrade",
-    "limitReached": "Voce atingiu seu limite de maquinas. Pare ou exclua uma maquina existente para criar uma nova.",
+    "limitReached": "Voce atingiu seu limite de computadores. Pare ou exclua um computador existente para criar um novo.",
     "upgradeMore": "Faca upgrade para mais →",
-    "nameLabel": "Nome da Maquina",
+    "nameLabel": "Nome do Computador",
     "namePlaceholder": "Meu Servidor na Nuvem",
-    "nameError": "O nome da maquina nao pode comecar com \"local\"",
-    "nameRequired": "Por favor insira um nome para a maquina",
+    "nameError": "O nome do computador nao pode comecar com \"local\"",
+    "nameRequired": "Por favor insira um nome para o computador",
     "osLabel": "Sistema Operacional",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Desktop Windows com Chrome (beta). Pronto em ~2 minutos.",
     "osHintLinux": "Desktop Ubuntu, acessivel via navegador. Pronto em ~30 segundos.",
-    "stateLabel": "Estado da Maquina",
+    "stateLabel": "Estado do Computador",
     "restorePrevious": "Restaurar Anterior",
     "restoreDescription": "Retomar do ultimo snapshot",
     "startFresh": "Comecar do Zero",
     "startFreshDescription": "Ambiente de desktop limpo",
     "cancel": "Cancelar",
     "creating": "Criando...",
-    "create": "Criar Maquina",
+    "create": "Criar Computador",
     "toasts": {
-      "restoringSnapshot": "Restaurando maquina a partir do snapshot!",
+      "restoringSnapshot": "Restaurando computador a partir do snapshot!",
       "restoringDescription": "O estado anterior do seu desktop esta sendo restaurado. Pronto em ~30 segundos.",
-      "windowsCreated": "Criacao da maquina Windows iniciada!",
+      "windowsCreated": "Criacao do computador Windows iniciada!",
       "windowsDescription": "Seu desktop Windows esta sendo lancado. Pronto em ~2 minutos.",
       "linuxCreated": "Seu desktop esta sendo lancado. Pronto em ~30 segundos.",
-      "sshCreated": "Sua maquina na nuvem esta sendo lancada. A chave SSH estara disponivel quando estiver pronta."
+      "sshCreated": "Seu computador na nuvem esta sendo lancado. A chave SSH estara disponivel quando estiver pronto."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "Configurações gerais",
-    "generalDescription": "Configurar ajustes básicos da máquina",
+    "generalDescription": "Configurar ajustes básicos do computador",
     "displayName": "Nome de exibição",
-    "defaultName": "Minha máquina",
+    "defaultName": "Meu computador",
     "saveChanges": "Salvar alterações",
     "security": "Segurança",
     "securityDescription": "Configurações de segurança e acesso",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Falha ao baixar a chave SSH",
     "downloadSshKey": "Baixar chave SSH",
     "vncPassword": "Senha VNC",
-    "vncPasswordHint": "Esta senha é necessária para conectar-se à máquina"
+    "vncPasswordHint": "Esta senha é necessária para conectar-se ao computador"
   },
   "referralPopup": {
     "shareMessage": "Ei, estou usando o Coasty e é muito legal. É uma IA que pode usar um computador por você. Navegar, clicar, digitar, tudo. Experimente com meu link e nós dois ganhamos créditos grátis!",

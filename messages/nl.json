@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Virtuele machines",
+    "title": "Mijn computers",
     "subtitle": "Beheer je AI-gestuurde desktopomgevingen",
     "guide": "Gids",
     "newMachine": "Nieuwe machine",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Nieuwe Machine",
-    "subtitle": "Launch a cloud desktop — ready in ~30 seconds",
-    "freeExpiry": "Free machines expire after ",
-    "freeExpiry2": "2 hours",
-    "upgrade": "Upgrade",
-    "limitReached": "You've reached your machine limit. Stop or delete an existing machine to create a new one.",
-    "upgradeMore": "Upgrade for more →",
-    "nameLabel": "Machine Name",
-    "namePlaceholder": "My Cloud Server",
-    "nameError": "Machine name cannot start with \"local\"",
-    "nameRequired": "Please enter a machine name",
+    "title": "Nieuwe Computer",
+    "subtitle": "Start een cloud-desktop — klaar in ~30 seconden",
+    "freeExpiry": "Gratis computers verlopen na ",
+    "freeExpiry2": "2 uur",
+    "upgrade": "Upgraden",
+    "limitReached": "Je hebt je computerlimiet bereikt. Stop of verwijder een bestaande computer om een nieuwe te maken.",
+    "upgradeMore": "Upgrade voor meer →",
+    "nameLabel": "Computernaam",
+    "namePlaceholder": "Mijn Cloud Server",
+    "nameError": "Computernaam kan niet beginnen met \"local\"",
+    "nameRequired": "Voer een computernaam in",
     "osLabel": "Operating System",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Windows desktop with Chrome (beta). Ready in ~2 minutes.",
     "osHintLinux": "Ubuntu desktop, accessible via browser. Ready in ~30 seconds.",
-    "stateLabel": "Machine State",
+    "stateLabel": "Computerstatus",
     "restorePrevious": "Restore Previous",
     "restoreDescription": "Resume from last snapshot",
     "startFresh": "Start Fresh",
     "startFreshDescription": "Clean desktop environment",
     "cancel": "Cancel",
     "creating": "Creating...",
-    "create": "Create Machine",
+    "create": "Computer aanmaken",
     "toasts": {
-      "restoringSnapshot": "Restoring machine from snapshot!",
-      "restoringDescription": "Your previous desktop state is being restored. Ready in ~30 seconds.",
-      "windowsCreated": "Windows machine creation started!",
-      "windowsDescription": "Your Windows desktop is launching. Ready in ~2 minutes.",
-      "linuxCreated": "Your desktop is launching. Ready in ~30 seconds.",
-      "sshCreated": "Your cloud machine is launching. SSH key will be available once ready."
+      "restoringSnapshot": "Computer wordt hersteld vanuit snapshot!",
+      "restoringDescription": "Je vorige desktopstatus wordt hersteld. Klaar in ~30 seconden.",
+      "windowsCreated": "Aanmaken van Windows-computer gestart!",
+      "windowsDescription": "Je Windows-desktop wordt gestart. Klaar in ~2 minuten.",
+      "linuxCreated": "Je desktop wordt gestart. Klaar in ~30 seconden.",
+      "sshCreated": "Je cloudcomputer wordt gestart. SSH-sleutel is beschikbaar zodra deze klaar is."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "Algemene instellingen",
-    "generalDescription": "Basisinstellingen van de machine configureren",
+    "generalDescription": "Basisinstellingen van de computer configureren",
     "displayName": "Weergavenaam",
-    "defaultName": "Mijn machine",
+    "defaultName": "Mijn computer",
     "saveChanges": "Wijzigingen opslaan",
     "security": "Beveiliging",
     "securityDescription": "Beveiligings- en toegangsinstellingen",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "SSH-sleutel downloaden mislukt",
     "downloadSshKey": "SSH-sleutel downloaden",
     "vncPassword": "VNC-wachtwoord",
-    "vncPasswordHint": "Dit wachtwoord is nodig om verbinding te maken met de machine"
+    "vncPasswordHint": "Dit wachtwoord is nodig om verbinding te maken met de computer"
   },
   "referralPopup": {
     "shareMessage": "Hey, ik gebruik Coasty en het is echt cool. Het is een AI die een computer voor je kan bedienen. Browsen, klikken, typen, alles. Probeer het met mijn link en we krijgen allebei gratis credits!",

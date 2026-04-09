@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Virtuális gépek",
+    "title": "Számítógépeim",
     "subtitle": "Kezeld az AI-vezérelt asztali környezeteidet",
     "guide": "Útmutató",
     "newMachine": "Új gép",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Új gép",
+    "title": "Új számítógép",
     "subtitle": "Indíts felhő asztalt — kész ~30 másodperc alatt",
-    "freeExpiry": "Az ingyenes gépek lejárnak ",
+    "freeExpiry": "Az ingyenes számítógépek lejárnak ",
     "freeExpiry2": "2 óra után",
     "upgrade": "Frissítés",
-    "limitReached": "Elérted a gépkorlátot. Állíts le vagy törölj egy meglévő gépet új létrehozásához.",
+    "limitReached": "Elérted a számítógépkorlátot. Állíts le vagy törölj egy meglévő számítógépet új létrehozásához.",
     "upgradeMore": "Frissítés többért →",
-    "nameLabel": "Gép neve",
+    "nameLabel": "Számítógép neve",
     "namePlaceholder": "Felhő szerverem",
-    "nameError": "A gép neve nem kezdődhet \"local\" szóval",
-    "nameRequired": "Kérjük, add meg a gép nevét",
+    "nameError": "A számítógép neve nem kezdődhet \"local\" szóval",
+    "nameRequired": "Kérjük, add meg a számítógép nevét",
     "osLabel": "Operációs rendszer",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Windows asztal Chrome-mal (béta). Kész ~2 perc alatt.",
     "osHintLinux": "Ubuntu asztal, böngészőn keresztül elérhető. Kész ~30 másodperc alatt.",
-    "stateLabel": "Gép állapota",
+    "stateLabel": "Számítógép állapota",
     "restorePrevious": "Előző visszaállítása",
     "restoreDescription": "Folytatás az utolsó pillanatfelvételből",
     "startFresh": "Újrakezdés",
     "startFreshDescription": "Tiszta asztali környezet",
     "cancel": "Mégse",
     "creating": "Létrehozás...",
-    "create": "Gép létrehozása",
+    "create": "Számítógép létrehozása",
     "toasts": {
-      "restoringSnapshot": "Gép visszaállítása pillanatfelvételből!",
+      "restoringSnapshot": "Számítógép visszaállítása pillanatfelvételből!",
       "restoringDescription": "Az előző asztali állapotod visszaállítása folyamatban. Kész ~30 másodperc alatt.",
-      "windowsCreated": "Windows gép létrehozása elindult!",
+      "windowsCreated": "Windows számítógép létrehozása elindult!",
       "windowsDescription": "A Windows asztalod indul. Kész ~2 perc alatt.",
       "linuxCreated": "Az asztalod indul. Kész ~30 másodperc alatt.",
-      "sshCreated": "A felhő géped indul. Az SSH kulcs elérhető lesz, ha a gép kész."
+      "sshCreated": "A felhő számítógéped indul. Az SSH kulcs elérhető lesz, ha a számítógép kész."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Alapvető számítógép-beállítások konfigurálása",
+    "displayName": "Megjelenítési név",
+    "defaultName": "Számítógépem",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Ez a jelszó szükséges a számítógéphez való csatlakozáshoz"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

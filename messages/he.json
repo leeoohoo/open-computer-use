@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "מכונות וירטואליות",
+    "title": "המחשבים שלי",
     "subtitle": "נהל את סביבות שולחן העבודה המבוקרות על ידי AI",
     "guide": "מדריך",
     "newMachine": "מכונה חדשה",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "מכונה חדשה",
+    "title": "מחשב חדש",
     "subtitle": "הפעל שולחן עבודה בענן — מוכן תוך ~30 שניות",
-    "freeExpiry": "מכונות חינם פגות אחרי ",
+    "freeExpiry": "מחשבים חינם פגים אחרי ",
     "freeExpiry2": "שעתיים",
     "upgrade": "שדרג",
-    "limitReached": "הגעת למגבלת המכונות שלך. עצור או מחק מכונה קיימת כדי ליצור חדשה.",
+    "limitReached": "הגעת למגבלת המחשבים שלך. עצור או מחק מחשב קיים כדי ליצור חדש.",
     "upgradeMore": "שדרג לעוד →",
-    "nameLabel": "שם המכונה",
+    "nameLabel": "שם המחשב",
     "namePlaceholder": "השרת שלי בענן",
-    "nameError": "שם המכונה לא יכול להתחיל ב-\"local\"",
-    "nameRequired": "אנא הכנס שם מכונה",
+    "nameError": "שם המחשב לא יכול להתחיל ב-\"local\"",
+    "nameRequired": "אנא הכנס שם מחשב",
     "osLabel": "מערכת הפעלה",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "שולחן עבודה Windows עם Chrome (בטא). מוכן תוך ~2 דקות.",
     "osHintLinux": "שולחן עבודה Ubuntu, נגיש דרך דפדפן. מוכן תוך ~30 שניות.",
-    "stateLabel": "מצב המכונה",
+    "stateLabel": "מצב המחשב",
     "restorePrevious": "שחזר קודם",
     "restoreDescription": "המשך מתמונת מצב אחרונה",
     "startFresh": "התחל מחדש",
     "startFreshDescription": "סביבת שולחן עבודה נקייה",
     "cancel": "ביטול",
     "creating": "יוצר...",
-    "create": "צור מכונה",
+    "create": "צור מחשב",
     "toasts": {
-      "restoringSnapshot": "משחזר מכונה מתמונת מצב!",
+      "restoringSnapshot": "משחזר מחשב מתמונת מצב!",
       "restoringDescription": "מצב שולחן העבודה הקודם שלך משוחזר. מוכן תוך ~30 שניות.",
-      "windowsCreated": "יצירת מכונת Windows התחילה!",
+      "windowsCreated": "יצירת מחשב Windows התחילה!",
       "windowsDescription": "שולחן העבודה Windows שלך מופעל. מוכן תוך ~2 דקות.",
       "linuxCreated": "שולחן העבודה שלך מופעל. מוכן תוך ~30 שניות.",
-      "sshCreated": "מכונת הענן שלך מופעלת. מפתח SSH יהיה זמין כשהמכונה מוכנה."
+      "sshCreated": "המחשב בענן שלך מופעל. מפתח SSH יהיה זמין כשהמחשב מוכן."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "הגדר הגדרות מחשב בסיסיות",
+    "displayName": "שם תצוגה",
+    "defaultName": "המחשב שלי",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "סיסמה זו נדרשת לחיבור למחשב"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "เครื่องเสมือน",
+    "title": "คอมพิวเตอร์ของฉัน",
     "subtitle": "จัดการสภาพแวดล้อมเดสก์ท็อปที่ควบคุมโดย AI",
     "guide": "คู่มือ",
     "newMachine": "เครื่องใหม่",
@@ -1258,45 +1258,45 @@
     },
     "emptyState": {
       "title": "พนักงาน AI ตัวจริงที่เข้าถึงคอมพิวเตอร์ได้เต็มที่",
-      "description": "เปิดเครื่องเสมือนที่แยกจากระบบ และให้เอเจนต์ AI ท่องเว็บ รันเทอร์มินัล และควบคุมเดสก์ท็อป — โดยไม่ต้องลงมือเอง",
+      "description": "เปิดคอมพิวเตอร์ที่แยกจากระบบ และให้เอเจนต์ AI ท่องเว็บ รันเทอร์มินัล และควบคุมเดสก์ท็อป — โดยไม่ต้องลงมือเอง",
       "feature1": {
         "title": "ควบคุมเดสก์ท็อปเต็มรูปแบบ",
         "description": "AI เลื่อนเมาส์ พิมพ์ คลิก และนำทางเหมือนผู้ใช้จริง"
       },
       "feature2": {
         "title": "อัตโนมัติทุกงาน",
-        "description": "เบราว์เซอร์ เทอร์มินัล และ UI — เอเจนต์ทั้งหมดทำงานร่วมกันใน VM เดียว"
+        "description": "เบราว์เซอร์ เทอร์มินัล และ UI — เอเจนต์ทั้งหมดทำงานร่วมกันบนคอมพิวเตอร์เดียว"
       },
       "feature3": {
         "title": "แยกจากระบบและปลอดภัย",
-        "description": "แต่ละเครื่องทำงานในคอนเทนเนอร์ของตัวเอง — ระบบในเครื่องของคุณไม่ถูกแตะต้อง"
+        "description": "แต่ละคอมพิวเตอร์ทำงานในคอนเทนเนอร์ของตัวเอง — ระบบในเครื่องของคุณไม่ถูกแตะต้อง"
       },
-      "cta": "สร้างเครื่องแรกของคุณ"
+      "cta": "สร้างคอมพิวเตอร์เครื่องแรกของคุณ"
     },
-    "noMachines": "ไม่พบเครื่อง",
-    "noFilteredMachines": "ไม่มีเครื่องที่ {filter}",
-    "noFilteredDescription": "ไม่มีเครื่องที่มีสถานะ {filter} ในขณะนี้",
-    "loadingMachines": "กำลังโหลดเครื่อง...",
+    "noMachines": "ไม่พบคอมพิวเตอร์",
+    "noFilteredMachines": "ไม่มีคอมพิวเตอร์ที่ {filter}",
+    "noFilteredDescription": "ไม่มีคอมพิวเตอร์ที่มีสถานะ {filter} ในขณะนี้",
+    "loadingMachines": "กำลังโหลดคอมพิวเตอร์...",
     "toasts": {
-      "deleted": "ลบเครื่องสำเร็จแล้ว",
-      "readyOpen": "คุณสามารถเชื่อมต่อกับเครื่องของคุณได้แล้ว",
+      "deleted": "ลบคอมพิวเตอร์สำเร็จแล้ว",
+      "readyOpen": "คุณสามารถเชื่อมต่อกับคอมพิวเตอร์ของคุณได้แล้ว",
       "open": "เปิด",
-      "createFailed": "กรุณาลองสร้างเครื่องอีกครั้ง",
-      "fetchFailed": "ไม่สามารถโหลดเครื่องได้"
+      "createFailed": "กรุณาลองสร้างคอมพิวเตอร์อีกครั้ง",
+      "fetchFailed": "ไม่สามารถโหลดคอมพิวเตอร์ได้"
     }
   },
   "createMachine": {
-    "title": "เครื่องใหม่",
+    "title": "คอมพิวเตอร์ใหม่",
     "subtitle": "เปิดเดสก์ท็อปบนคลาวด์ — พร้อมใน ~30 วินาที",
-    "freeExpiry": "เครื่องฟรีจะหมดอายุหลังจาก ",
+    "freeExpiry": "คอมพิวเตอร์ฟรีจะหมดอายุหลังจาก ",
     "freeExpiry2": "2 ชั่วโมง",
     "upgrade": "อัปเกรด",
-    "limitReached": "คุณถึงขีดจำกัดเครื่องแล้ว หยุดหรือลบเครื่องที่มีอยู่เพื่อสร้างเครื่องใหม่",
+    "limitReached": "คุณถึงขีดจำกัดคอมพิวเตอร์แล้ว หยุดหรือลบคอมพิวเตอร์ที่มีอยู่เพื่อสร้างคอมพิวเตอร์ใหม่",
     "upgradeMore": "อัปเกรดเพื่อเพิ่มเติม →",
-    "nameLabel": "ชื่อเครื่อง",
+    "nameLabel": "ชื่อคอมพิวเตอร์",
     "namePlaceholder": "เซิร์ฟเวอร์คลาวด์ของฉัน",
-    "nameError": "ชื่อเครื่องไม่สามารถขึ้นต้นด้วย \"local\"",
-    "nameRequired": "กรุณาใส่ชื่อเครื่อง",
+    "nameError": "ชื่อคอมพิวเตอร์ไม่สามารถขึ้นต้นด้วย \"local\"",
+    "nameRequired": "กรุณาใส่ชื่อคอมพิวเตอร์",
     "osLabel": "ระบบปฏิบัติการ",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "เดสก์ท็อป Windows พร้อม Chrome (เบต้า) พร้อมใน ~2 นาที",
     "osHintLinux": "เดสก์ท็อป Ubuntu เข้าถึงได้ผ่านเบราว์เซอร์ พร้อมใน ~30 วินาที",
-    "stateLabel": "สถานะเครื่อง",
+    "stateLabel": "สถานะคอมพิวเตอร์",
     "restorePrevious": "กู้คืนก่อนหน้า",
     "restoreDescription": "ดำเนินการต่อจากสแนปช็อตล่าสุด",
     "startFresh": "เริ่มต้นใหม่",
     "startFreshDescription": "สภาพแวดล้อมเดสก์ท็อปใหม่",
     "cancel": "ยกเลิก",
     "creating": "กำลังสร้าง...",
-    "create": "สร้างเครื่อง",
+    "create": "สร้างคอมพิวเตอร์",
     "toasts": {
-      "restoringSnapshot": "กำลังกู้คืนเครื่องจากสแนปช็อต!",
+      "restoringSnapshot": "กำลังกู้คืนคอมพิวเตอร์จากสแนปช็อต!",
       "restoringDescription": "สถานะเดสก์ท็อปก่อนหน้าของคุณกำลังถูกกู้คืน พร้อมใน ~30 วินาที",
-      "windowsCreated": "เริ่มสร้างเครื่อง Windows แล้ว!",
+      "windowsCreated": "เริ่มสร้างคอมพิวเตอร์ Windows แล้ว!",
       "windowsDescription": "เดสก์ท็อป Windows ของคุณกำลังเปิดใช้งาน พร้อมใน ~2 นาที",
       "linuxCreated": "เดสก์ท็อปของคุณกำลังเปิดใช้งาน พร้อมใน ~30 วินาที",
-      "sshCreated": "เครื่องคลาวด์ของคุณกำลังเปิดใช้งาน คีย์ SSH จะพร้อมใช้งานเมื่อเครื่องพร้อม"
+      "sshCreated": "คอมพิวเตอร์คลาวด์ของคุณกำลังเปิดใช้งาน คีย์ SSH จะพร้อมใช้งานเมื่อคอมพิวเตอร์พร้อม"
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "กำหนดค่าพื้นฐานของคอมพิวเตอร์",
+    "displayName": "ชื่อที่แสดง",
+    "defaultName": "คอมพิวเตอร์ของฉัน",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "รหัสผ่านนี้จำเป็นสำหรับการเชื่อมต่อกับคอมพิวเตอร์"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

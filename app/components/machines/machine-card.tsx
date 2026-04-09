@@ -138,7 +138,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
 
       if ((action === "start" || action === "restart") && data.recreated && data.vncPassword) {
         toast.success(
-          `Machine ${action === "restart" ? "restarted" : "recreated"} with new password. Please use the new password to connect.`,
+          `Computer ${action === "restart" ? "restarted" : "recreated"} with new password. Please use the new password to connect.`,
           { duration: 8000 }
         );
 
@@ -151,12 +151,12 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
       } else {
         const message =
           action === "start"
-            ? "Machine starting..."
+            ? "Computer starting..."
             : action === "stop"
-              ? "Machine stopping..."
+              ? "Computer stopping..."
               : action === "restart"
-                ? "Machine restarting..."
-                : "Machine deleted";
+                ? "Computer restarting..."
+                : "Computer deleted";
 
         toast.success(message);
 
@@ -202,7 +202,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
           if (statusResponse.ok) {
             const statusData = await statusResponse.json();
             if (statusData.needsRecreation) {
-              toast.error("Machine was deallocated. Please try starting it again.");
+              toast.error("Computer was deallocated. Please try starting it again.");
             }
           }
         }
@@ -406,7 +406,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
                 <Clock className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" />
                 <p className="text-[11px] text-muted-foreground/70 truncate">
                   {timeRemaining.timeString === "Expired" ? (
-                    <span className="font-medium text-red-500">Machine expired</span>
+                    <span className="font-medium text-red-500">Computer expired</span>
                   ) : (
                     <>
                       Deletes in{" "}
@@ -443,7 +443,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
               <div className="flex items-start gap-2">
                 <AlertCircle className="h-3.5 w-3.5 text-red-500/60 shrink-0 mt-0.5" />
                 <p className="text-[11px] text-red-500/70 leading-relaxed">
-                  Machine encountered an error. Try starting it again or contact support.
+                  Computer encountered an error. Try starting it again or contact support.
                 </p>
               </div>
             </div>
@@ -537,7 +537,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Machine</AlertDialogTitle>
+            <AlertDialogTitle>Delete Computer</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete &ldquo;{machine.displayName}&rdquo;? This action cannot be
               undone.

@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Máy ảo",
+    "title": "Máy tính của tôi",
     "subtitle": "Quản lý các môi trường máy tính được điều khiển bởi AI",
     "guide": "Hướng dẫn",
     "newMachine": "Máy mới",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Máy mới",
+    "title": "Máy tính mới",
     "subtitle": "Khởi động máy tính đám mây — sẵn sàng trong ~30 giây",
-    "freeExpiry": "Máy miễn phí hết hạn sau ",
+    "freeExpiry": "Máy tính miễn phí hết hạn sau ",
     "freeExpiry2": "2 giờ",
     "upgrade": "Nâng cấp",
-    "limitReached": "Bạn đã đạt giới hạn số máy. Dừng hoặc xóa một máy hiện có để tạo máy mới.",
+    "limitReached": "Bạn đã đạt giới hạn số máy tính. Dừng hoặc xóa một máy tính hiện có để tạo máy tính mới.",
     "upgradeMore": "Nâng cấp để có thêm →",
-    "nameLabel": "Tên máy",
+    "nameLabel": "Tên máy tính",
     "namePlaceholder": "Máy chủ đám mây của tôi",
-    "nameError": "Tên máy không thể bắt đầu bằng \"local\"",
-    "nameRequired": "Vui lòng nhập tên máy",
+    "nameError": "Tên máy tính không thể bắt đầu bằng \"local\"",
+    "nameRequired": "Vui lòng nhập tên máy tính",
     "osLabel": "Hệ điều hành",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Máy tính Windows với Chrome (beta). Sẵn sàng trong ~2 phút.",
     "osHintLinux": "Máy tính Ubuntu, truy cập qua trình duyệt. Sẵn sàng trong ~30 giây.",
-    "stateLabel": "Trạng thái máy",
+    "stateLabel": "Trạng thái máy tính",
     "restorePrevious": "Khôi phục trước đó",
     "restoreDescription": "Tiếp tục từ ảnh chụp cuối cùng",
     "startFresh": "Bắt đầu mới",
     "startFreshDescription": "Môi trường máy tính sạch",
     "cancel": "Hủy",
     "creating": "Đang tạo...",
-    "create": "Tạo máy",
+    "create": "Tạo máy tính",
     "toasts": {
-      "restoringSnapshot": "Đang khôi phục máy từ ảnh chụp!",
+      "restoringSnapshot": "Đang khôi phục máy tính từ ảnh chụp!",
       "restoringDescription": "Trạng thái máy tính trước đó đang được khôi phục. Sẵn sàng trong ~30 giây.",
-      "windowsCreated": "Đã bắt đầu tạo máy Windows!",
+      "windowsCreated": "Đã bắt đầu tạo máy tính Windows!",
       "windowsDescription": "Máy tính Windows của bạn đang khởi động. Sẵn sàng trong ~2 phút.",
       "linuxCreated": "Máy tính của bạn đang khởi động. Sẵn sàng trong ~30 giây.",
-      "sshCreated": "Máy đám mây của bạn đang khởi động. Khóa SSH sẽ khả dụng khi máy sẵn sàng."
+      "sshCreated": "Máy tính đám mây của bạn đang khởi động. Khóa SSH sẽ khả dụng khi máy tính sẵn sàng."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Cấu hình cài đặt máy tính cơ bản",
+    "displayName": "Tên hiển thị",
+    "defaultName": "Máy tính của tôi",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Mật khẩu này được yêu cầu để kết nối với máy tính"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "虚拟机",
+    "title": "我的电脑",
     "subtitle": "管理你的 AI 控制桌面环境",
     "guide": "指南",
     "newMachine": "新建机器",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "新建机器",
+    "title": "新建电脑",
     "subtitle": "启动云桌面——约 30 秒即可就绪",
-    "freeExpiry": "免费机器到期时间：",
+    "freeExpiry": "免费电脑到期时间：",
     "freeExpiry2": "2 小时",
     "upgrade": "升级",
-    "limitReached": "你已达到机器上限。请停止或删除现有机器后再创建新的。",
+    "limitReached": "你已达到电脑上限。请停止或删除现有电脑后再创建新的。",
     "upgradeMore": "升级以获得更多 →",
-    "nameLabel": "机器名称",
+    "nameLabel": "电脑名称",
     "namePlaceholder": "我的云服务器",
-    "nameError": "机器名称不能以「local」开头",
-    "nameRequired": "请输入机器名称",
+    "nameError": "电脑名称不能以「local」开头",
+    "nameRequired": "请输入电脑名称",
     "osLabel": "操作系统",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "带有 Chrome 的 Windows 桌面（测试版）。约 2 分钟后就绪。",
     "osHintLinux": "可通过浏览器访问的 Ubuntu 桌面。约 30 秒后就绪。",
-    "stateLabel": "机器状态",
+    "stateLabel": "电脑状态",
     "restorePrevious": "恢复上次状态",
     "restoreDescription": "从上次快照恢复",
     "startFresh": "全新开始",
     "startFreshDescription": "干净的桌面环境",
     "cancel": "取消",
     "creating": "创建中...",
-    "create": "创建机器",
+    "create": "创建电脑",
     "toasts": {
-      "restoringSnapshot": "正在从快照恢复机器！",
+      "restoringSnapshot": "正在从快照恢复电脑！",
       "restoringDescription": "正在恢复你之前的桌面状态。约 30 秒后就绪。",
-      "windowsCreated": "Windows 机器创建已开始！",
+      "windowsCreated": "Windows 电脑创建已开始！",
       "windowsDescription": "你的 Windows 桌面正在启动。约 2 分钟后就绪。",
       "linuxCreated": "你的桌面正在启动。约 30 秒后就绪。",
-      "sshCreated": "你的云机器正在启动。就绪后即可使用 SSH 密钥。"
+      "sshCreated": "你的云电脑正在启动。就绪后即可使用 SSH 密钥。"
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "配置基本电脑设置",
+    "displayName": "显示名称",
+    "defaultName": "我的电脑",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "连接到电脑需要此密码"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

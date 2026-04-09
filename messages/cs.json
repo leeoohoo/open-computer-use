@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Virtuální stroje",
+    "title": "Moje počítače",
     "subtitle": "Spravujte svá desktopová prostředí řízená AI",
     "guide": "Průvodce",
     "newMachine": "Nový stroj",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Nový stroj",
+    "title": "Nový počítač",
     "subtitle": "Spusťte cloudovou plochu — připraveno za ~30 sekund",
-    "freeExpiry": "Bezplatné stroje vyprší po ",
+    "freeExpiry": "Bezplatné počítače vyprší po ",
     "freeExpiry2": "2 hodinách",
     "upgrade": "Upgradovat",
-    "limitReached": "Dosáhli jste limitu strojů. Zastavte nebo smažte existující stroj pro vytvoření nového.",
+    "limitReached": "Dosáhli jste limitu počítačů. Zastavte nebo smažte existující počítač pro vytvoření nového.",
     "upgradeMore": "Upgradovat pro více →",
-    "nameLabel": "Název stroje",
+    "nameLabel": "Název počítače",
     "namePlaceholder": "Můj cloudový server",
-    "nameError": "Název stroje nemůže začínat na \"local\"",
-    "nameRequired": "Zadejte prosím název stroje",
+    "nameError": "Název počítače nemůže začínat na \"local\"",
+    "nameRequired": "Zadejte prosím název počítače",
     "osLabel": "Operační systém",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Windows plocha s Chrome (beta). Připraveno za ~2 minuty.",
     "osHintLinux": "Ubuntu plocha, přístupná přes prohlížeč. Připraveno za ~30 sekund.",
-    "stateLabel": "Stav stroje",
+    "stateLabel": "Stav počítače",
     "restorePrevious": "Obnovit předchozí",
     "restoreDescription": "Pokračovat z posledního snímku",
     "startFresh": "Začít znovu",
     "startFreshDescription": "Čisté desktopové prostředí",
     "cancel": "Zrušit",
     "creating": "Vytváření...",
-    "create": "Vytvořit stroj",
+    "create": "Vytvořit počítač",
     "toasts": {
-      "restoringSnapshot": "Obnovování stroje ze snímku!",
+      "restoringSnapshot": "Obnovování počítače ze snímku!",
       "restoringDescription": "Váš předchozí stav plochy se obnovuje. Připraveno za ~30 sekund.",
-      "windowsCreated": "Vytváření Windows stroje zahájeno!",
+      "windowsCreated": "Vytváření Windows počítače zahájeno!",
       "windowsDescription": "Vaše Windows plocha se spouští. Připraveno za ~2 minuty.",
       "linuxCreated": "Vaše plocha se spouští. Připraveno za ~30 sekund.",
-      "sshCreated": "Váš cloudový stroj se spouští. SSH klíč bude dostupný po připravení."
+      "sshCreated": "Váš cloudový počítač se spouští. SSH klíč bude dostupný po připravení."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Konfigurujte základní nastavení počítače",
+    "displayName": "Zobrazovaný název",
+    "defaultName": "Můj počítač",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Toto heslo je vyžadováno pro připojení k počítači"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

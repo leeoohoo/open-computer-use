@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Maquinas Virtuales",
+    "title": "Mis computadoras",
     "subtitle": "Administra tus entornos de escritorio controlados por IA",
     "guide": "Guia",
     "newMachine": "Nueva Maquina",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Nueva Maquina",
+    "title": "Nueva Computadora",
     "subtitle": "Lanza un escritorio en la nube — listo en ~30 segundos",
-    "freeExpiry": "Las maquinas gratuitas expiran despues de ",
+    "freeExpiry": "Las computadoras gratuitas expiran despues de ",
     "freeExpiry2": "2 horas",
     "upgrade": "Mejorar plan",
-    "limitReached": "Has alcanzado el limite de maquinas. Detiene o elimina una maquina existente para crear una nueva.",
+    "limitReached": "Has alcanzado el limite de computadoras. Detiene o elimina una computadora existente para crear una nueva.",
     "upgradeMore": "Mejora tu plan para mas →",
-    "nameLabel": "Nombre de la Maquina",
+    "nameLabel": "Nombre de la Computadora",
     "namePlaceholder": "Mi Servidor en la Nube",
-    "nameError": "El nombre de la maquina no puede empezar con \"local\"",
-    "nameRequired": "Por favor ingresa un nombre para la maquina",
+    "nameError": "El nombre de la computadora no puede empezar con \"local\"",
+    "nameRequired": "Por favor ingresa un nombre para la computadora",
     "osLabel": "Sistema Operativo",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Escritorio Windows con Chrome (beta). Listo en ~2 minutos.",
     "osHintLinux": "Escritorio Ubuntu, accesible via navegador. Listo en ~30 segundos.",
-    "stateLabel": "Estado de la Maquina",
+    "stateLabel": "Estado de la Computadora",
     "restorePrevious": "Restaurar Anterior",
     "restoreDescription": "Reanudar desde la ultima instantanea",
     "startFresh": "Empezar de Cero",
     "startFreshDescription": "Entorno de escritorio limpio",
     "cancel": "Cancelar",
     "creating": "Creando...",
-    "create": "Crear Maquina",
+    "create": "Crear Computadora",
     "toasts": {
-      "restoringSnapshot": "Restaurando maquina desde instantanea!",
+      "restoringSnapshot": "Restaurando computadora desde instantanea!",
       "restoringDescription": "Se esta restaurando el estado anterior de tu escritorio. Listo en ~30 segundos.",
-      "windowsCreated": "Creacion de maquina Windows iniciada!",
+      "windowsCreated": "Creacion de computadora Windows iniciada!",
       "windowsDescription": "Tu escritorio Windows se esta lanzando. Listo en ~2 minutos.",
       "linuxCreated": "Tu escritorio se esta lanzando. Listo en ~30 segundos.",
-      "sshCreated": "Tu maquina en la nube se esta lanzando. La clave SSH estara disponible cuando este lista."
+      "sshCreated": "Tu computadora en la nube se esta lanzando. La clave SSH estara disponible cuando este lista."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "Configuración general",
-    "generalDescription": "Configurar ajustes básicos de la máquina",
+    "generalDescription": "Configurar ajustes básicos de la computadora",
     "displayName": "Nombre para mostrar",
-    "defaultName": "Mi máquina",
+    "defaultName": "Mi computadora",
     "saveChanges": "Guardar cambios",
     "security": "Seguridad",
     "securityDescription": "Configuración de seguridad y acceso",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Error al descargar la clave SSH",
     "downloadSshKey": "Descargar clave SSH",
     "vncPassword": "Contraseña VNC",
-    "vncPasswordHint": "Esta contraseña es necesaria para conectarse a la máquina"
+    "vncPasswordHint": "Esta contraseña es necesaria para conectarse a la computadora"
   },
   "referralPopup": {
     "shareMessage": "Oye, he estado usando Coasty y es genial. Es una IA que puede usar una computadora por ti. Navegar, hacer clic, escribir, todo. ¡Pruébalo con mi enlace y ambos obtenemos créditos gratis!",

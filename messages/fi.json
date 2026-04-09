@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Virtuaalikoneet",
+    "title": "Omat tietokoneet",
     "subtitle": "Hallitse AI-ohjattuja työpöytäympäristöjäsi",
     "guide": "Opas",
     "newMachine": "Uusi kone",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Uusi kone",
+    "title": "Uusi tietokone",
     "subtitle": "Käynnistä pilvityöpöytä — valmis ~30 sekunnissa",
-    "freeExpiry": "Ilmaiset koneet vanhenevat ",
+    "freeExpiry": "Ilmaiset tietokoneet vanhenevat ",
     "freeExpiry2": "2 tunnin jälkeen",
     "upgrade": "Päivitä",
-    "limitReached": "Olet saavuttanut konerajasi. Pysäytä tai poista olemassa oleva kone luodaksesi uuden.",
+    "limitReached": "Olet saavuttanut tietokonerajasi. Pysäytä tai poista olemassa oleva tietokone luodaksesi uuden.",
     "upgradeMore": "Päivitä saadaksesi lisää →",
-    "nameLabel": "Koneen nimi",
+    "nameLabel": "Tietokoneen nimi",
     "namePlaceholder": "Oma pilvipalvelin",
-    "nameError": "Koneen nimi ei voi alkaa sanalla \"local\"",
-    "nameRequired": "Anna koneen nimi",
+    "nameError": "Tietokoneen nimi ei voi alkaa sanalla \"local\"",
+    "nameRequired": "Anna tietokoneen nimi",
     "osLabel": "Käyttöjärjestelmä",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Windows-työpöytä Chromella (beta). Valmis ~2 minuutissa.",
     "osHintLinux": "Ubuntu-työpöytä, käytettävissä selaimella. Valmis ~30 sekunnissa.",
-    "stateLabel": "Koneen tila",
+    "stateLabel": "Tietokoneen tila",
     "restorePrevious": "Palauta edellinen",
     "restoreDescription": "Jatka viimeisestä tilannekuvasta",
     "startFresh": "Aloita alusta",
     "startFreshDescription": "Puhdas työpöytäympäristö",
     "cancel": "Peruuta",
     "creating": "Luodaan...",
-    "create": "Luo kone",
+    "create": "Luo tietokone",
     "toasts": {
-      "restoringSnapshot": "Palautetaan konetta tilannekuvasta!",
+      "restoringSnapshot": "Palautetaan tietokonetta tilannekuvasta!",
       "restoringDescription": "Aiempi työpöytätilasi palautetaan. Valmis ~30 sekunnissa.",
-      "windowsCreated": "Windows-koneen luonti aloitettu!",
+      "windowsCreated": "Windows-tietokoneen luonti aloitettu!",
       "windowsDescription": "Windows-työpöytäsi käynnistyy. Valmis ~2 minuutissa.",
       "linuxCreated": "Työpöytäsi käynnistyy. Valmis ~30 sekunnissa.",
-      "sshCreated": "Pilvikoneesi käynnistyy. SSH-avain on saatavilla kun kone on valmis."
+      "sshCreated": "Pilvitietokoneesi käynnistyy. SSH-avain on saatavilla kun tietokone on valmis."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Määritä tietokoneen perusasetukset",
+    "displayName": "Näyttönimi",
+    "defaultName": "Oma tietokone",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Tämä salasana vaaditaan tietokoneeseen yhdistämiseen"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

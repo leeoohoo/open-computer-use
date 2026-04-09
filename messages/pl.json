@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Maszyny wirtualne",
+    "title": "Moje komputery",
     "subtitle": "Zarządzaj środowiskami pulpitu sterowanymi przez AI",
     "guide": "Przewodnik",
     "newMachine": "Nowa maszyna",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Nowa maszyna",
+    "title": "Nowy komputer",
     "subtitle": "Uruchom pulpit w chmurze — gotowy w ~30 sekund",
-    "freeExpiry": "Darmowe maszyny wygasają po ",
+    "freeExpiry": "Darmowe komputery wygasają po ",
     "freeExpiry2": "2 godzinach",
     "upgrade": "Ulepsz plan",
-    "limitReached": "Osiągnięto limit maszyn. Zatrzymaj lub usuń istniejącą maszynę, aby utworzyć nową.",
+    "limitReached": "Osiągnięto limit komputerów. Zatrzymaj lub usuń istniejący komputer, aby utworzyć nowy.",
     "upgradeMore": "Ulepsz, aby mieć więcej →",
-    "nameLabel": "Nazwa maszyny",
+    "nameLabel": "Nazwa komputera",
     "namePlaceholder": "Mój serwer w chmurze",
-    "nameError": "Nazwa maszyny nie może zaczynać się od \"local\"",
-    "nameRequired": "Wprowadź nazwę maszyny",
+    "nameError": "Nazwa komputera nie może zaczynać się od \"local\"",
+    "nameRequired": "Wprowadź nazwę komputera",
     "osLabel": "System operacyjny",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Pulpit Windows z Chrome (beta). Gotowy w ~2 minuty.",
     "osHintLinux": "Pulpit Ubuntu, dostępny przez przeglądarkę. Gotowy w ~30 sekund.",
-    "stateLabel": "Stan maszyny",
+    "stateLabel": "Stan komputera",
     "restorePrevious": "Przywróć poprzedni",
     "restoreDescription": "Wznów z ostatniej migawki",
     "startFresh": "Zacznij od nowa",
     "startFreshDescription": "Czyste środowisko pulpitu",
     "cancel": "Anuluj",
     "creating": "Tworzenie...",
-    "create": "Utwórz maszynę",
+    "create": "Utwórz komputer",
     "toasts": {
-      "restoringSnapshot": "Przywracanie maszyny z migawki!",
+      "restoringSnapshot": "Przywracanie komputera z migawki!",
       "restoringDescription": "Twój poprzedni stan pulpitu jest przywracany. Gotowy w ~30 sekund.",
-      "windowsCreated": "Tworzenie maszyny Windows rozpoczęte!",
+      "windowsCreated": "Tworzenie komputera Windows rozpoczęte!",
       "windowsDescription": "Twój pulpit Windows jest uruchamiany. Gotowy w ~2 minuty.",
       "linuxCreated": "Twój pulpit jest uruchamiany. Gotowy w ~30 sekund.",
-      "sshCreated": "Twoja maszyna w chmurze jest uruchamiana. Klucz SSH będzie dostępny po uruchomieniu."
+      "sshCreated": "Twój komputer w chmurze jest uruchamiany. Klucz SSH będzie dostępny po uruchomieniu."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "Ustawienia ogólne",
-    "generalDescription": "Skonfiguruj podstawowe ustawienia maszyny",
+    "generalDescription": "Skonfiguruj podstawowe ustawienia komputera",
     "displayName": "Nazwa wyświetlana",
-    "defaultName": "Moja maszyna",
+    "defaultName": "Mój komputer",
     "saveChanges": "Zapisz zmiany",
     "security": "Bezpieczeństwo",
     "securityDescription": "Ustawienia bezpieczeństwa i dostępu",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Nie udało się pobrać klucza SSH",
     "downloadSshKey": "Pobierz klucz SSH",
     "vncPassword": "Hasło VNC",
-    "vncPasswordHint": "To hasło jest wymagane do połączenia z maszyną"
+    "vncPasswordHint": "To hasło jest wymagane do połączenia z komputerem"
   },
   "referralPopup": {
     "shareMessage": "Hej, używam Coasty i jest super. To AI, które może używać komputera za Ciebie. Przeglądanie, klikanie, pisanie, wszystko. Wypróbuj z moim linkiem, a oboje dostaniemy darmowe kredyty!",

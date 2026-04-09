@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Mașini virtuale",
+    "title": "Computerele mele",
     "subtitle": "Gestionează mediile desktop controlate de AI",
     "guide": "Ghid",
     "newMachine": "Mașină nouă",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Mașină nouă",
+    "title": "Computer nou",
     "subtitle": "Lansează un desktop în cloud — gata în ~30 secunde",
-    "freeExpiry": "Mașinile gratuite expiră după ",
+    "freeExpiry": "Computerele gratuite expiră după ",
     "freeExpiry2": "2 ore",
     "upgrade": "Upgrade",
-    "limitReached": "Ai atins limita de mașini. Oprește sau șterge o mașină existentă pentru a crea una nouă.",
+    "limitReached": "Ai atins limita de computere. Oprește sau șterge un computer existent pentru a crea unul nou.",
     "upgradeMore": "Upgrade pentru mai multe →",
-    "nameLabel": "Numele mașinii",
+    "nameLabel": "Numele computerului",
     "namePlaceholder": "Serverul meu în cloud",
-    "nameError": "Numele mașinii nu poate începe cu \"local\"",
-    "nameRequired": "Introdu un nume pentru mașină",
+    "nameError": "Numele computerului nu poate începe cu \"local\"",
+    "nameRequired": "Introdu un nume pentru computer",
     "osLabel": "Sistem de operare",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Desktop Windows cu Chrome (beta). Gata în ~2 minute.",
     "osHintLinux": "Desktop Ubuntu, accesibil prin browser. Gata în ~30 secunde.",
-    "stateLabel": "Starea mașinii",
+    "stateLabel": "Starea computerului",
     "restorePrevious": "Restaurează anteriorul",
     "restoreDescription": "Reia din ultimul snapshot",
     "startFresh": "Începe de la zero",
     "startFreshDescription": "Mediu desktop curat",
     "cancel": "Anulează",
     "creating": "Se creează...",
-    "create": "Creează mașină",
+    "create": "Creează computer",
     "toasts": {
-      "restoringSnapshot": "Se restaurează mașina din snapshot!",
+      "restoringSnapshot": "Se restaurează computerul din snapshot!",
       "restoringDescription": "Starea anterioară a desktopului este restaurată. Gata în ~30 secunde.",
-      "windowsCreated": "Crearea mașinii Windows a început!",
+      "windowsCreated": "Crearea computerului Windows a început!",
       "windowsDescription": "Desktopul tău Windows se lansează. Gata în ~2 minute.",
       "linuxCreated": "Desktopul tău se lansează. Gata în ~30 secunde.",
-      "sshCreated": "Mașina ta în cloud se lansează. Cheia SSH va fi disponibilă după pornire."
+      "sshCreated": "Computerul tău în cloud se lansează. Cheia SSH va fi disponibilă după pornire."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Configurează setările de bază ale computerului",
+    "displayName": "Nume afișat",
+    "defaultName": "Computerul meu",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Această parolă este necesară pentru a te conecta la computer"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

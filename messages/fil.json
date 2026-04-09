@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Mga Virtual Machine",
+    "title": "Mga Computer Ko",
     "subtitle": "Pamahalaan ang iyong mga AI-controlled desktop environment",
     "guide": "Gabay",
     "newMachine": "Bagong Machine",
@@ -1258,45 +1258,45 @@
     },
     "emptyState": {
       "title": "Tunay na AI Employee na may buong access sa computer",
-      "description": "Mag-spin up ng isang nakahiwalay na virtual machine at hayaan ang mga AI agent mag-browse sa web, magpatakbo ng mga terminal, at kontrolin ang desktop — hands-free.",
+      "description": "Mag-spin up ng isang nakahiwalay na computer at hayaan ang mga AI agent mag-browse sa web, magpatakbo ng mga terminal, at kontrolin ang desktop — hands-free.",
       "feature1": {
         "title": "Buong kontrol sa desktop",
         "description": "Ang AI ay gumagalaw ng mouse, nagta-type, nag-click, at nagna-navigate tulad ng isang tunay na user."
       },
       "feature2": {
         "title": "Anumang gawain ay automated",
-        "description": "Browser, terminal, at UI — lahat ng agents ay nagtutulungan sa isang VM."
+        "description": "Browser, terminal, at UI — lahat ng agents ay nagtutulungan sa isang computer."
       },
       "feature3": {
         "title": "Nakahiwalay at ligtas",
-        "description": "Ang bawat machine ay tumatakbo sa sarili nitong container — ang iyong lokal na system ay hindi naaapektuhan."
+        "description": "Ang bawat computer ay tumatakbo sa sarili nitong container — ang iyong lokal na system ay hindi naaapektuhan."
       },
-      "cta": "Gumawa ng iyong unang machine"
+      "cta": "Gumawa ng iyong unang computer"
     },
-    "noMachines": "Walang nahanap na mga machine.",
-    "noFilteredMachines": "Walang {filter} na mga machine",
-    "noFilteredDescription": "Walang mga machine na kasalukuyang {filter}.",
-    "loadingMachines": "Nilo-load ang mga machine...",
+    "noMachines": "Walang nahanap na mga computer.",
+    "noFilteredMachines": "Walang {filter} na mga computer",
+    "noFilteredDescription": "Walang mga computer na kasalukuyang {filter}.",
+    "loadingMachines": "Nilo-load ang mga computer...",
     "toasts": {
-      "deleted": "Matagumpay na na-delete ang machine",
-      "readyOpen": "Maaari ka nang kumonekta sa iyong machine.",
+      "deleted": "Matagumpay na na-delete ang computer",
+      "readyOpen": "Maaari ka nang kumonekta sa iyong computer.",
       "open": "Buksan",
-      "createFailed": "Pakisubukang gumawa muli ng machine.",
-      "fetchFailed": "Hindi na-load ang mga machine"
+      "createFailed": "Pakisubukang gumawa muli ng computer.",
+      "fetchFailed": "Hindi na-load ang mga computer"
     }
   },
   "createMachine": {
-    "title": "Bagong Machine",
+    "title": "Bagong Computer",
     "subtitle": "Mag-launch ng cloud desktop — handa sa ~30 segundo",
-    "freeExpiry": "Ang mga libreng machine ay mag-e-expire pagkatapos ng ",
+    "freeExpiry": "Ang mga libreng computer ay mag-e-expire pagkatapos ng ",
     "freeExpiry2": "2 oras",
     "upgrade": "Mag-upgrade",
-    "limitReached": "Naabot mo na ang iyong machine limit. Ihinto o i-delete ang isang kasalukuyang machine para gumawa ng bago.",
+    "limitReached": "Naabot mo na ang iyong computer limit. Ihinto o i-delete ang isang kasalukuyang computer para gumawa ng bago.",
     "upgradeMore": "Mag-upgrade para sa higit pa →",
-    "nameLabel": "Pangalan ng Machine",
+    "nameLabel": "Pangalan ng Computer",
     "namePlaceholder": "Aking Cloud Server",
-    "nameError": "Hindi maaaring magsimula sa \"local\" ang pangalan ng machine",
-    "nameRequired": "Pakienter ang pangalan ng machine",
+    "nameError": "Hindi maaaring magsimula sa \"local\" ang pangalan ng computer",
+    "nameRequired": "Pakienter ang pangalan ng computer",
     "osLabel": "Operating System",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Windows desktop na may Chrome (beta). Handa sa ~2 minuto.",
     "osHintLinux": "Ubuntu desktop, accessible sa pamamagitan ng browser. Handa sa ~30 segundo.",
-    "stateLabel": "Estado ng Machine",
+    "stateLabel": "Estado ng Computer",
     "restorePrevious": "Ibalik ang Nakaraan",
     "restoreDescription": "Magpatuloy mula sa huling snapshot",
     "startFresh": "Magsimulang Muli",
     "startFreshDescription": "Malinis na desktop environment",
     "cancel": "Kanselahin",
     "creating": "Ginagawa...",
-    "create": "Gumawa ng Machine",
+    "create": "Gumawa ng Computer",
     "toasts": {
-      "restoringSnapshot": "Inire-restore ang machine mula sa snapshot!",
+      "restoringSnapshot": "Inire-restore ang computer mula sa snapshot!",
       "restoringDescription": "Ang iyong nakaraang desktop state ay nire-restore. Handa sa ~30 segundo.",
-      "windowsCreated": "Nagsimula na ang paggawa ng Windows machine!",
+      "windowsCreated": "Nagsimula na ang paggawa ng Windows computer!",
       "windowsDescription": "Ang iyong Windows desktop ay nagla-launch. Handa sa ~2 minuto.",
       "linuxCreated": "Ang iyong desktop ay nagla-launch. Handa sa ~30 segundo.",
-      "sshCreated": "Ang iyong cloud machine ay nagla-launch. Magiging available ang SSH key kapag handa na."
+      "sshCreated": "Ang iyong cloud computer ay nagla-launch. Magiging available ang SSH key kapag handa na."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
+    "generalDescription": "Configure basic computer settings",
     "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "defaultName": "Aking Computer",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "This password is required to connect to the computer"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",

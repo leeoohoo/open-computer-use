@@ -1242,7 +1242,7 @@
     }
   },
   "machines": {
-    "title": "Machines Virtuelles",
+    "title": "Mes ordinateurs",
     "subtitle": "Gerez vos environnements de bureau controles par IA",
     "guide": "Guide",
     "newMachine": "Nouvelle Machine",
@@ -1286,17 +1286,17 @@
     }
   },
   "createMachine": {
-    "title": "Nouvelle Machine",
+    "title": "Nouvel Ordinateur",
     "subtitle": "Lancez un bureau cloud — pret en ~30 secondes",
-    "freeExpiry": "Les machines gratuites expirent apres ",
+    "freeExpiry": "Les ordinateurs gratuits expirent apres ",
     "freeExpiry2": "2 heures",
     "upgrade": "Ameliorer",
-    "limitReached": "Vous avez atteint votre limite de machines. Arretez ou supprimez une machine existante pour en creer une nouvelle.",
+    "limitReached": "Vous avez atteint votre limite d'ordinateurs. Arretez ou supprimez un ordinateur existant pour en creer un nouveau.",
     "upgradeMore": "Ameliorez pour plus →",
-    "nameLabel": "Nom de la Machine",
+    "nameLabel": "Nom de l'Ordinateur",
     "namePlaceholder": "Mon Serveur Cloud",
-    "nameError": "Le nom de la machine ne peut pas commencer par \"local\"",
-    "nameRequired": "Veuillez entrer un nom de machine",
+    "nameError": "Le nom de l'ordinateur ne peut pas commencer par \"local\"",
+    "nameRequired": "Veuillez entrer un nom d'ordinateur",
     "osLabel": "Systeme d'exploitation",
     "linux": {
       "name": "Linux (Ubuntu)",
@@ -1309,21 +1309,21 @@
     },
     "osHintWindows": "Bureau Windows avec Chrome (beta). Pret en ~2 minutes.",
     "osHintLinux": "Bureau Ubuntu, accessible via navigateur. Pret en ~30 secondes.",
-    "stateLabel": "Etat de la Machine",
+    "stateLabel": "Etat de l'Ordinateur",
     "restorePrevious": "Restaurer le Precedent",
     "restoreDescription": "Reprendre a partir du dernier instantane",
     "startFresh": "Demarrer a Neuf",
     "startFreshDescription": "Environnement de bureau vierge",
     "cancel": "Annuler",
     "creating": "Creation en cours...",
-    "create": "Creer la Machine",
+    "create": "Creer l'Ordinateur",
     "toasts": {
-      "restoringSnapshot": "Restauration de la machine a partir de l'instantane !",
+      "restoringSnapshot": "Restauration de l'ordinateur a partir de l'instantane !",
       "restoringDescription": "L'etat precedent de votre bureau est en cours de restauration. Pret en ~30 secondes.",
-      "windowsCreated": "Creation de la machine Windows lancee !",
+      "windowsCreated": "Creation de l'ordinateur Windows lancee !",
       "windowsDescription": "Votre bureau Windows est en cours de lancement. Pret en ~2 minutes.",
       "linuxCreated": "Votre bureau est en cours de lancement. Pret en ~30 secondes.",
-      "sshCreated": "Votre machine cloud est en cours de lancement. La cle SSH sera disponible une fois prete."
+      "sshCreated": "Votre ordinateur cloud est en cours de lancement. La cle SSH sera disponible une fois pret."
     }
   },
   "secrets": {
@@ -2770,9 +2770,9 @@
   },
   "machineSettings": {
     "generalSettings": "General Settings",
-    "generalDescription": "Configure basic machine settings",
-    "displayName": "Display Name",
-    "defaultName": "My Machine",
+    "generalDescription": "Configurer les parametres de base de l'ordinateur",
+    "displayName": "Nom d'affichage",
+    "defaultName": "Mon ordinateur",
     "saveChanges": "Save Changes",
     "security": "Security",
     "securityDescription": "Security and access settings",
@@ -2783,7 +2783,7 @@
     "sshKeyFailed": "Failed to download SSH key",
     "downloadSshKey": "Download SSH Key",
     "vncPassword": "VNC Password",
-    "vncPasswordHint": "This password is required to connect to the machine"
+    "vncPasswordHint": "Ce mot de passe est requis pour se connecter a l'ordinateur"
   },
   "referralPopup": {
     "shareMessage": "Hey, I've been using Coasty and it's pretty cool. It's an AI that can actually use a computer for you. Like browsing, clicking, typing, all of it. Try it with my link and we both get free credits!",
