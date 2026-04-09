@@ -505,7 +505,7 @@ export function LandingHeader({
                     {isUseCaseActive && (
                       <motion.span
                         layoutId="nav-active-indicator"
-                        className="absolute bottom-0 left-3 right-3 h-[1.5px] rounded-full bg-foreground/50"
+                        className="absolute inset-0 rounded-lg bg-foreground/[0.06] dark:bg-foreground/[0.08]"
                         transition={smoothSpring}
                       />
                     )}
@@ -552,7 +552,7 @@ export function LandingHeader({
                           {isActive && (
                             <motion.span
                               layoutId="nav-active-indicator"
-                              className="absolute bottom-0 left-3 right-3 h-[1.5px] rounded-full bg-foreground/50"
+                              className="absolute inset-0 rounded-lg bg-foreground/[0.06] dark:bg-foreground/[0.08]"
                               transition={smoothSpring}
                             />
                           )}
@@ -567,7 +567,7 @@ export function LandingHeader({
                           {isActive && (
                             <motion.span
                               layoutId="nav-active-indicator"
-                              className="absolute bottom-0 left-3 right-3 h-[1.5px] rounded-full bg-foreground/50"
+                              className="absolute inset-0 rounded-lg bg-foreground/[0.06] dark:bg-foreground/[0.08]"
                               transition={smoothSpring}
                             />
                           )}
@@ -606,7 +606,7 @@ export function LandingHeader({
                     {isBlogActive && (
                       <motion.span
                         layoutId="nav-active-indicator"
-                        className="absolute bottom-0 left-3 right-3 h-[1.5px] rounded-full bg-foreground/50"
+                        className="absolute inset-0 rounded-lg bg-foreground/[0.06] dark:bg-foreground/[0.08]"
                         transition={smoothSpring}
                       />
                     )}

@@ -47,11 +47,11 @@ const DEMO_SESSION_DATA = [
 const WHY_COASTY_KEYS = ["worksLikeHuman", "noScripts", "handlesUnexpected", "runsInIsolation"] as const
 
 const LANDING_NAV_SECTIONS = [
+  { id: "benchmark", label: "Benchmark" },
   { id: "why-coasty", label: "Why Coasty" },
   { id: "how-it-works", label: "How It Works" },
-  { id: "benchmark", label: "Benchmark" },
-  { id: "cost", label: "Cost" },
   { id: "demo", label: "Demo" },
+  { id: "cost", label: "Cost" },
   { id: "features", label: "Features" },
   { id: "pricing", label: "Pricing" },
 ] as const
@@ -166,9 +166,45 @@ export function LandingPage() {
         }
       }
       setScrollProgress(progress)
+
+      // Scroll-driven card stacking: leaving cards recede with eased fade
+      if (window.innerWidth >= 768) {
+        for (let ci = 0; ci < sectionEls.length; ci++) {
+          const cardEl = sectionEls[ci]
+          const covered = Math.max(0, Math.min(1, progress - ci))
+          if (covered > 0) {
+            // Cubic ease-in: card stays pristine for ~50% of scroll, then gracefully exits
+            const e = covered * covered * covered
+            const s = 1 - e * 0.06            // 1.0 → 0.94
+            const ty = e * -20                // 0px → -20px (recedes upward)
+            const b = e * 3.5                 // 0 → 3.5px depth blur
+            const bright = 1 - e * 0.15       // 1.0 → 0.85 dimming
+            const sat = 1 - e * 0.25          // 1.0 → 0.75 desaturate
+            const o = 1 - e * 0.4             // 1.0 → 0.6 fade
+            cardEl.style.transform = `scale(${s}) translateY(${ty}px)`
+            cardEl.style.opacity = `${o}`
+            cardEl.style.filter = `blur(${b}px) brightness(${bright}) saturate(${sat})`
+          } else {
+            cardEl.style.transform = ''
+            cardEl.style.opacity = ''
+            cardEl.style.filter = ''
+          }
+        }
+      }
     }
 
-    const onResize = () => { measurePositions(); onScroll() }
+    const onResize = () => {
+      measurePositions()
+      onScroll()
+      // Reset transforms when switching to mobile
+      if (window.innerWidth < 768) {
+        for (const el of sectionEls) {
+          el.style.transform = ''
+          el.style.opacity = ''
+          el.style.filter = ''
+        }
+      }
+    }
 
     measurePositions()
     onScroll()
@@ -177,6 +213,11 @@ export function LandingPage() {
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
+      for (const el of sectionEls) {
+        el.style.transform = ''
+        el.style.opacity = ''
+        el.style.filter = ''
+      }
     }
   }, [mounted])
 
@@ -215,12 +256,14 @@ export function LandingPage() {
     <>
       <div className="min-h-screen bg-background relative">
 
-      <GuideLines />
+      <div id="guide-lines-wrap">
+        <GuideLines />
+      </div>
 
       {/* Beams background — covers full viewport including behind navbar, inverted in light mode */}
       <div id="beams-bg" className={cn("fixed inset-0 z-0 pointer-events-none", mounted && resolvedTheme !== "dark" && "invert")} aria-hidden="true">
         <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
-          <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_100%_90%_at_50%_45%,black_0%,black_40%,transparent_85%)]">
+          <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_80%_80%_at_50%_45%,black_0%,black_30%,transparent_75%)] sm:[mask-image:radial-gradient(ellipse_100%_90%_at_50%_45%,black_0%,black_40%,transparent_85%)]">
             <Beams
               beamWidth={3}
               beamHeight={30}
@@ -236,52 +279,56 @@ export function LandingPage() {
       </div>
 
       {/* Fixed header */}
-      <LandingHeader />
+      <div id="landing-header-wrap">
+        <LandingHeader />
+      </div>
 
       {/* Hero Section — cinematic zoom-out video matrix */}
       <HeroVideoMatrix isMobile={isMobile} />
 
       {/* Main content */}
-      <main className={cn("relative", isMobile ? "pt-16" : "pt-20")}>
+      <main className="relative">
 
-        <SectionDivider />
+        {/* First content after hero — fades in as a group after the matrix dissolves */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <SectionDivider />
 
-        {/* Social Proof Bar */}
-        <section className={cn(
-          "py-16",
-          isMobile ? "px-7" : "px-10"
-        )}>
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-            className="max-w-5xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className={cn(
-              "grid text-center",
-              isMobile ? "grid-cols-2 gap-6" : "grid-cols-4 gap-0"
-            )}>
-              {(["osworld", "tools", "schedule", "setup"] as const).map((key, i) => {
-                const stat = { value: t(`stats.${key}.value`), label: t(`stats.${key}.label`), sublabel: t(`stats.${key}.sublabel`) }
-                return (
-                <div key={stat.label} className={cn(
-                  !isMobile && i > 0 && "border-l border-border/30"
-                )}>
-                  <div className={cn(
-                    "font-bold tracking-tight text-foreground",
-                    isMobile ? "text-2xl" : "text-3xl"
+          {/* Social Proof Bar */}
+          <section className={cn(
+            "py-16",
+            isMobile ? "px-7" : "px-10"
+          )}>
+            <div className="max-w-5xl mx-auto">
+              <div className={cn(
+                "grid text-center",
+                isMobile ? "grid-cols-2 gap-6" : "grid-cols-4 gap-0"
+              )}>
+                {(["osworld", "tools", "schedule", "setup"] as const).map((key, i) => {
+                  const stat = { value: t(`stats.${key}.value`), label: t(`stats.${key}.label`), sublabel: t(`stats.${key}.sublabel`) }
+                  return (
+                  <div key={stat.label} className={cn(
+                    !isMobile && i > 0 && "border-l border-border/30"
                   )}>
-                    {stat.value}
+                    <div className={cn(
+                      "font-bold tracking-tight text-foreground",
+                      isMobile ? "text-2xl" : "text-3xl"
+                    )}>
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+                    <div className="text-xs text-muted-foreground/50 mt-0.5">{stat.sublabel}</div>
                   </div>
-                  <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-                  <div className="text-xs text-muted-foreground/50 mt-0.5">{stat.sublabel}</div>
-                </div>
-                )
-              })}
-            </motion.div>
-          </motion.div>
-        </section>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+        </motion.div>
 
         <SectionDivider />
 
@@ -395,376 +442,15 @@ export function LandingPage() {
             isMobile ? "" : "flex-1 min-w-0 pb-[40vh] pl-8 pr-8 lg:pl-10 lg:pr-10"
           )}>
 
-        {/* Why Coasty Section */}
-        <section
-          id="why-coasty"
-          className={cn(
-            isMobile
-              ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
-          )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 1 } : undefined}
-        >
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-          >
-            {/* CSS animations for visual cards (used across multiple sections) */}
-            <style dangerouslySetInnerHTML={{ __html: `
-              @keyframes lp-scan-line { 0% { top: 10% } 100% { top: 85% } }
-              @keyframes lp-check-pop { 0% { transform: scale(0); opacity: 0 } 60% { transform: scale(1.2); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
-              @keyframes lp-float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-3px) } }
-              @keyframes lp-click-ring { 0% { transform: scale(0.8); opacity: 0 } 50% { transform: scale(1); opacity: 1 } 100% { transform: scale(1.8); opacity: 0 } }
-              @keyframes lp-cursor-blink { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
-              @keyframes lp-typing { 0%, 100% { width: 0 } 30%, 70% { width: 100% } }
-              @keyframes lp-step-fill { 0% { transform: scaleX(0) } 100% { transform: scaleX(1) } }
-              @keyframes lp-msg-appear { 0% { opacity: 0; transform: translateY(6px) } 100% { opacity: 1; transform: translateY(0) } }
-              @keyframes lp-dot-pulse { 0%, 100% { opacity: 0.3 } 50% { opacity: 1 } }
-              @keyframes lp-progress { 0% { width: 0% } 100% { width: var(--progress, 75%) } }
-              @keyframes lp-retry-loop { 0%, 20% { opacity: 1 } 25%, 45% { opacity: 0.3 } 50%, 70% { opacity: 1 } 75%, 100% { opacity: 0.3 } }
-              @keyframes lp-screenshot-flash { 0%, 90% { opacity: 0 } 95% { opacity: 0.3 } 100% { opacity: 0 } }
-              @keyframes lp-bar-grow { 0% { width: 0 } 100% { width: var(--w, 60%) } }
-              @keyframes lp-swarm-stagger-1 { 0% { width: 0 } 100% { width: 85% } }
-              @keyframes lp-swarm-stagger-2 { 0% { width: 0 } 100% { width: 65% } }
-              @keyframes lp-swarm-stagger-3 { 0% { width: 0 } 100% { width: 40% } }
-            `}} />
-
-            {/* Section header */}
-            <motion.div variants={itemVariants} className="text-center mb-8">
-              <p className={cn(
-                "text-muted-foreground/60 font-medium uppercase tracking-[0.15em] mb-2",
-                isMobile ? "text-[10px]" : "text-xs"
-              )}>
-                {t("whyCoasty.sectionLabel")}
-              </p>
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
-              )}>
-                {t("whyCoasty.title")}
-              </h2>
-            </motion.div>
-
-            {/* ── Cards: 2-col grid with staggered cascade + mouse-tracking gradient ── */}
-            <div className={cn(
-              "grid gap-4",
-              isMobile ? "grid-cols-1" : "grid-cols-2"
-            )}>
-              {WHY_COASTY_KEYS.map((key, i) => (
-                <motion.div
-                  key={key}
-                  initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
-                  whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={isMobile ? { duration: 0 } : { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: i * 0.08 }}
-                  onMouseMove={!isMobile ? handleCardMouseMove : undefined}
-                  onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
-                  className={cn(
-                    "relative rounded-2xl border overflow-hidden transition-all duration-500 group",
-                    "border-border/40 hover:border-border/60 hover:shadow-lg hover:shadow-primary/[0.04]",
-                    isMobile ? "p-5" : "p-6",
-                  )}
-                  style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
-                >
-                    {/* Mouse-tracking radial gradient overlay */}
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                      style={{
-                        background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)'
-                      }}
-                    />
-
-                    <div className="relative z-10">
-                      {/* Micro-illustration */}
-                      <div className={cn("flex items-center justify-center mb-3", isMobile ? "h-16" : "h-16")}>
-                        {/* Card 0: Works like a human — scan + click */}
-                        {i === 0 && (
-                          <div className="flex items-center gap-3">
-                            <div className="relative w-[80px] h-[48px] rounded-lg border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
-                              <div className="space-y-1 p-2">
-                                <div className="h-[3px] w-[80%] rounded-full bg-foreground/10" />
-                                <div className="h-[3px] w-[60%] rounded-full bg-foreground/10" />
-                                <div className="h-[3px] w-[70%] rounded-full bg-foreground/10" />
-                                <div className="h-[3px] w-[50%] rounded-full bg-foreground/10" />
-                              </div>
-                              <div
-                                className="absolute left-0 right-0 h-px bg-foreground/25"
-                                style={{ animation: "lp-scan-line 3s ease-in-out infinite" }}
-                              />
-                            </div>
-                            <ArrowRight className="size-3 text-foreground/20" />
-                            <div className="relative w-6 h-6 rounded-lg border border-foreground/20 flex items-center justify-center">
-                              <Monitor className="size-3 text-foreground/30" />
-                              <div
-                                className="absolute inset-0 rounded-lg border border-foreground/20"
-                                style={{ animation: "lp-click-ring 2s ease-out infinite" }}
-                              />
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Card 1: No scripts — typing → done */}
-                        {i === 1 && (
-                          <div className="flex items-center gap-3">
-                            <div className="rounded-lg border border-foreground/10 bg-foreground/[0.03] px-3 py-2 overflow-hidden">
-                              <div className="relative">
-                                <span className="text-[10px] text-foreground/40 font-mono whitespace-nowrap" style={{ animation: "lp-typing 4s ease-in-out infinite", display: "inline-block", overflow: "hidden" }}>
-                                  do this task for me
-                                </span>
-                                <span className="text-[10px] text-foreground/50" style={{ animation: "lp-cursor-blink 1s step-end infinite" }}>|</span>
-                              </div>
-                            </div>
-                            <ArrowRight className="size-3 text-foreground/20" />
-                            <div
-                              className="flex items-center gap-1 text-foreground/40"
-                              style={{ animation: "lp-check-pop 0.5s ease forwards 1.5s", opacity: 0 }}
-                            >
-                              <Check className="size-4" />
-                              <span className="text-xs font-medium">done</span>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Card 2: Handles unexpected — CAPTCHA → adapts → success */}
-                        {i === 2 && (
-                          <div className="flex items-center gap-2.5">
-                            <div className="rounded-lg border border-foreground/15 bg-foreground/[0.03] px-2.5 py-1.5">
-                              <span className="text-[10px] text-foreground/30 font-medium">CAPTCHA</span>
-                            </div>
-                            <span
-                              className="text-xs text-foreground/20"
-                              style={{ animation: "lp-float 2s ease-in-out infinite" }}
-                            >→</span>
-                            <div className="rounded-lg border border-foreground/15 bg-foreground/[0.03] px-2.5 py-1.5">
-                              <span className="text-[10px] text-foreground/30 font-medium">adapts</span>
-                            </div>
-                            <span className="text-xs text-foreground/20">→</span>
-                            <div
-                              className="h-5 w-5 rounded-full border border-foreground/20 flex items-center justify-center"
-                              style={{ animation: "lp-check-pop 0.5s ease forwards 2s", opacity: 0 }}
-                            >
-                              <Check className="size-3 text-foreground/40" />
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Card 3: Runs in isolation — sandboxed VM */}
-                        {i === 3 && (
-                          <div className="relative w-[60px] h-[44px] rounded-lg border border-dashed border-foreground/15 flex items-center justify-center">
-                            <div className="w-8 h-6 rounded border border-foreground/10 bg-foreground/[0.03] flex items-center justify-center">
-                              <Monitor className="size-3 text-foreground/20" />
-                            </div>
-                            <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full border border-foreground/15 bg-background flex items-center justify-center">
-                              <Shield className="size-2.5 text-foreground/30" />
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Title + description */}
-                      <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
-                        {t(`whyCoasty.${key}.title`)}
-                      </p>
-                      <p className="text-sm text-muted-foreground/50 mt-0.5">{t(`whyCoasty.${key}.description`)}</p>
-                    </div>
-                  </motion.div>
-                ))}
-            </div>
-          </motion.div>
-        </section>
-
-
-        {/* How It Works Section */}
-        <section
-          id="how-it-works"
-          className={cn(
-            isMobile
-              ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
-          )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 2 } : undefined}
-        >
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-            className="max-w-5xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className="text-center mb-8">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
-              )}>
-                {t("howItWorks.title")}
-              </h2>
-            </motion.div>
-
-            <div className={cn(
-              "grid gap-4",
-              isMobile ? "grid-cols-1" : "grid-cols-3"
-            )}>
-              {/* Step 1: Describe — typing animation */}
-              <motion.div
-                initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
-                whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={isMobile ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
-                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
-                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 overflow-hidden group"
-                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
-                {!isMobile && (
-                  <div className="absolute top-1/2 -right-2.5 text-foreground/15 z-10">
-                    <ArrowRight className="size-4" />
-                  </div>
-                )}
-                <div className="relative z-10">
-                  <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-22")}>
-                    <div className="w-full max-w-[200px] rounded-lg border border-foreground/10 bg-foreground/[0.02] p-3">
-                      <div className="flex items-center gap-1.5 mb-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
-                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
-                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
-                      </div>
-                      <div className="relative overflow-hidden">
-                        <span
-                          className="text-[10px] text-foreground/40 font-mono whitespace-nowrap inline-block overflow-hidden"
-                          style={{ animation: "lp-typing 5s ease-in-out infinite" }}
-                        >
-                          Research 100 leads on LinkedIn...
-                        </span>
-                        <span className="text-[10px] text-foreground/50" style={{ animation: "lp-cursor-blink 1s step-end infinite" }}>|</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">1</span>
-                    <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step1.title")}</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step1.description")}</p>
-                </div>
-              </motion.div>
-
-              {/* Step 2: Agent works — mini browser with actions */}
-              <motion.div
-                initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-                whileInView={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={isMobile ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
-                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
-                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 overflow-hidden group"
-                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
-                {!isMobile && (
-                  <div className="absolute top-1/2 -right-2.5 text-foreground/15 z-10">
-                    <ArrowRight className="size-4" />
-                  </div>
-                )}
-                <div className="relative z-10">
-                  <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-22")}>
-                    <div className="w-full max-w-[200px] rounded-lg border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
-                      {/* Browser bar */}
-                      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-foreground/[0.06]">
-                        <div className="h-1 w-1 rounded-full bg-foreground/15" />
-                        <div className="h-1 w-1 rounded-full bg-foreground/15" />
-                        <div className="h-1 w-1 rounded-full bg-foreground/15" />
-                        <div className="ml-1 h-3 flex-1 rounded bg-foreground/[0.04]" />
-                      </div>
-                      {/* Page content with scan line */}
-                      <div className="relative p-2 space-y-1.5">
-                        <div className="h-[3px] w-[90%] rounded-full bg-foreground/10" />
-                        <div className="h-[3px] w-[70%] rounded-full bg-foreground/10" />
-                        <div className="h-[3px] w-[80%] rounded-full bg-foreground/10" />
-                        <div className="h-[3px] w-[55%] rounded-full bg-foreground/10" />
-                        <div className="h-[3px] w-[75%] rounded-full bg-foreground/10" />
-                        <div
-                          className="absolute left-0 right-0 h-px bg-foreground/20"
-                          style={{ animation: "lp-scan-line 2.5s ease-in-out infinite" }}
-                        />
-                        {/* Click ring */}
-                        <div className="absolute top-3 right-4">
-                          <div
-                            className="h-3 w-3 rounded-full border border-foreground/20"
-                            style={{ animation: "lp-click-ring 2s ease-out infinite 1s" }}
-                          />
-                        </div>
-                        {/* Screenshot flash */}
-                        <div
-                          className="absolute inset-0 bg-foreground/10 rounded"
-                          style={{ animation: "lp-screenshot-flash 3s ease infinite" }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">2</span>
-                    <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step2.title")}</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step2.description")}</p>
-                </div>
-              </motion.div>
-
-              {/* Step 3: Done — results appearing */}
-              <motion.div
-                initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
-                whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={isMobile ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
-                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
-                className="rounded-2xl border border-border/40 bg-card/30 p-5 overflow-hidden group relative"
-                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
-                <div className="relative z-10">
-                  <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-22")}>
-                    <div className="w-full max-w-[200px] space-y-2">
-                      {/* Result items appearing */}
-                      {[t("howItWorks.step3.results.taskCompleted"), t("howItWorks.step3.results.leadsFound"), t("howItWorks.step3.results.addedToCrm")].map((text, i) => (
-                        <div
-                          key={text}
-                          className="flex items-center gap-2 rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] px-2.5 py-1.5"
-                          style={{ animation: `lp-msg-appear 0.4s ease forwards ${0.5 + i * 0.4}s`, opacity: 0 }}
-                        >
-                          <div
-                            className="h-3 w-3 rounded-full border border-foreground/20 flex items-center justify-center flex-shrink-0"
-                            style={{ animation: `lp-check-pop 0.3s ease forwards ${0.8 + i * 0.4}s`, opacity: 0 }}
-                          >
-                            <Check className="size-2 text-foreground/40" />
-                          </div>
-                          <span className="text-[10px] text-foreground/40">{text}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">3</span>
-                    <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step3.title")}</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step3.description")}</p>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-        </section>
-
-
         {/* OSWorld Benchmark Section */}
         <section
           id="benchmark"
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
+              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top"
           )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 3 } : undefined}
+          style={!isMobile ? { top: '5.5rem', zIndex: 1 } : undefined}
         >
           <motion.div
             variants={containerVariants}
@@ -951,15 +637,501 @@ export function LandingPage() {
         </section>
 
 
+        {/* Why Coasty Section */}
+        <section
+          id="why-coasty"
+          className={cn(
+            isMobile
+              ? "py-16 px-7"
+              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top"
+          )}
+          style={!isMobile ? { top: '5.5rem', zIndex: 2 } : undefined}
+        >
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+          >
+            {/* CSS animations for visual cards (used across multiple sections) */}
+            <style dangerouslySetInnerHTML={{ __html: `
+              @keyframes lp-scan-line { 0% { top: 10% } 100% { top: 85% } }
+              @keyframes lp-check-pop { 0% { transform: scale(0); opacity: 0 } 60% { transform: scale(1.2); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
+              @keyframes lp-float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-3px) } }
+              @keyframes lp-click-ring { 0% { transform: scale(0.8); opacity: 0 } 50% { transform: scale(1); opacity: 1 } 100% { transform: scale(1.8); opacity: 0 } }
+              @keyframes lp-cursor-blink { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
+              @keyframes lp-typing { 0%, 100% { width: 0 } 30%, 70% { width: 100% } }
+              @keyframes lp-step-fill { 0% { transform: scaleX(0) } 100% { transform: scaleX(1) } }
+              @keyframes lp-msg-appear { 0% { opacity: 0; transform: translateY(6px) } 100% { opacity: 1; transform: translateY(0) } }
+              @keyframes lp-dot-pulse { 0%, 100% { opacity: 0.3 } 50% { opacity: 1 } }
+              @keyframes lp-progress { 0% { width: 0% } 100% { width: var(--progress, 75%) } }
+              @keyframes lp-retry-loop { 0%, 20% { opacity: 1 } 25%, 45% { opacity: 0.3 } 50%, 70% { opacity: 1 } 75%, 100% { opacity: 0.3 } }
+              @keyframes lp-screenshot-flash { 0%, 90% { opacity: 0 } 95% { opacity: 0.3 } 100% { opacity: 0 } }
+              @keyframes lp-bar-grow { 0% { width: 0 } 100% { width: var(--w, 60%) } }
+              @keyframes lp-swarm-stagger-1 { 0% { width: 0 } 100% { width: 85% } }
+              @keyframes lp-swarm-stagger-2 { 0% { width: 0 } 100% { width: 65% } }
+              @keyframes lp-swarm-stagger-3 { 0% { width: 0 } 100% { width: 40% } }
+              /* Premium card layered shadow */
+              .lp-card-glass { box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px -2px rgba(0,0,0,0.06), 0 20px 50px -16px rgba(0,0,0,0.1); }
+              .dark .lp-card-glass { box-shadow: 0 0 0 1px rgba(255,255,255,0.035), 0 2px 8px -2px rgba(0,0,0,0.2), 0 20px 50px -16px rgba(0,0,0,0.3); }
+              /* Card glass edge highlight + ambient top glow */
+              @media (min-width: 768px) {
+                .lp-section-card::before {
+                  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+                  background: linear-gradient(90deg, transparent 5%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.07) 50%, rgba(0,0,0,0.05) 70%, transparent 95%);
+                  z-index: 20; pointer-events: none;
+                }
+                .dark .lp-section-card::before {
+                  background: linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.06) 70%, transparent 95%);
+                }
+                .lp-section-card::after {
+                  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 200px;
+                  background: radial-gradient(ellipse 70% 100% at 50% 0%, rgba(0,0,0,0.012), transparent);
+                  z-index: 0; pointer-events: none; border-radius: 16px 16px 0 0;
+                }
+                .dark .lp-section-card::after {
+                  background: radial-gradient(ellipse 70% 100% at 50% 0%, rgba(255,255,255,0.02), transparent);
+                }
+              }
+            `}} />
+
+            {/* Section header */}
+            <motion.div variants={itemVariants} className="text-center mb-8">
+              <p className={cn(
+                "text-muted-foreground/60 font-medium uppercase tracking-[0.15em] mb-2",
+                isMobile ? "text-[10px]" : "text-xs"
+              )}>
+                {t("whyCoasty.sectionLabel")}
+              </p>
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
+              )}>
+                {t("whyCoasty.title")}
+              </h2>
+            </motion.div>
+
+            {/* ── Cards: 2-col grid with staggered cascade + mouse-tracking gradient ── */}
+            <div className={cn(
+              "grid gap-4",
+              isMobile ? "grid-cols-1" : "grid-cols-2"
+            )}>
+              {WHY_COASTY_KEYS.map((key, i) => (
+                <motion.div
+                  key={key}
+                  initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
+                  whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={isMobile ? { duration: 0 } : { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: i * 0.08 }}
+                  onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                  onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                  className={cn(
+                    "relative rounded-2xl border overflow-hidden transition-all duration-500 group",
+                    "border-border/40 hover:border-border/60 hover:shadow-lg hover:shadow-primary/[0.04]",
+                    isMobile ? "p-5" : "p-6",
+                  )}
+                  style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
+                >
+                    {/* Mouse-tracking radial gradient overlay */}
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                      style={{
+                        background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)'
+                      }}
+                    />
+
+                    <div className="relative z-10">
+                      {/* Micro-illustration */}
+                      <div className={cn("flex items-center justify-center mb-3", isMobile ? "h-16" : "h-16")}>
+                        {/* Card 0: Works like a human — scan + click */}
+                        {i === 0 && (
+                          <div className="flex items-center gap-3">
+                            <div className="relative w-[80px] h-[48px] rounded-lg border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
+                              <div className="space-y-1 p-2">
+                                <div className="h-[3px] w-[80%] rounded-full bg-foreground/10" />
+                                <div className="h-[3px] w-[60%] rounded-full bg-foreground/10" />
+                                <div className="h-[3px] w-[70%] rounded-full bg-foreground/10" />
+                                <div className="h-[3px] w-[50%] rounded-full bg-foreground/10" />
+                              </div>
+                              <div
+                                className="absolute left-0 right-0 h-px bg-foreground/25"
+                                style={{ animation: "lp-scan-line 3s ease-in-out infinite" }}
+                              />
+                            </div>
+                            <ArrowRight className="size-3 text-foreground/20" />
+                            <div className="relative w-6 h-6 rounded-lg border border-foreground/20 flex items-center justify-center">
+                              <Monitor className="size-3 text-foreground/30" />
+                              <div
+                                className="absolute inset-0 rounded-lg border border-foreground/20"
+                                style={{ animation: "lp-click-ring 2s ease-out infinite" }}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Card 1: No scripts — typing → done */}
+                        {i === 1 && (
+                          <div className="flex items-center gap-3">
+                            <div className="rounded-lg border border-foreground/10 bg-foreground/[0.03] px-3 py-2 overflow-hidden">
+                              <div className="relative">
+                                <span className="text-[10px] text-foreground/40 font-mono whitespace-nowrap" style={{ animation: "lp-typing 4s ease-in-out infinite", display: "inline-block", overflow: "hidden" }}>
+                                  do this task for me
+                                </span>
+                                <span className="text-[10px] text-foreground/50" style={{ animation: "lp-cursor-blink 1s step-end infinite" }}>|</span>
+                              </div>
+                            </div>
+                            <ArrowRight className="size-3 text-foreground/20" />
+                            <div
+                              className="flex items-center gap-1 text-foreground/40"
+                              style={{ animation: "lp-check-pop 0.5s ease forwards 1.5s", opacity: 0 }}
+                            >
+                              <Check className="size-4" />
+                              <span className="text-xs font-medium">done</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Card 2: Handles unexpected — CAPTCHA → adapts → success */}
+                        {i === 2 && (
+                          <div className="flex items-center gap-2.5">
+                            <div className="rounded-lg border border-foreground/15 bg-foreground/[0.03] px-2.5 py-1.5">
+                              <span className="text-[10px] text-foreground/30 font-medium">CAPTCHA</span>
+                            </div>
+                            <span
+                              className="text-xs text-foreground/20"
+                              style={{ animation: "lp-float 2s ease-in-out infinite" }}
+                            >→</span>
+                            <div className="rounded-lg border border-foreground/15 bg-foreground/[0.03] px-2.5 py-1.5">
+                              <span className="text-[10px] text-foreground/30 font-medium">adapts</span>
+                            </div>
+                            <span className="text-xs text-foreground/20">→</span>
+                            <div
+                              className="h-5 w-5 rounded-full border border-foreground/20 flex items-center justify-center"
+                              style={{ animation: "lp-check-pop 0.5s ease forwards 2s", opacity: 0 }}
+                            >
+                              <Check className="size-3 text-foreground/40" />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Card 3: Runs in isolation — sandboxed VM */}
+                        {i === 3 && (
+                          <div className="relative w-[60px] h-[44px] rounded-lg border border-dashed border-foreground/15 flex items-center justify-center">
+                            <div className="w-8 h-6 rounded border border-foreground/10 bg-foreground/[0.03] flex items-center justify-center">
+                              <Monitor className="size-3 text-foreground/20" />
+                            </div>
+                            <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full border border-foreground/15 bg-background flex items-center justify-center">
+                              <Shield className="size-2.5 text-foreground/30" />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Title + description */}
+                      <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>
+                        {t(`whyCoasty.${key}.title`)}
+                      </p>
+                      <p className="text-sm text-muted-foreground/50 mt-0.5">{t(`whyCoasty.${key}.description`)}</p>
+                    </div>
+                  </motion.div>
+                ))}
+            </div>
+          </motion.div>
+        </section>
+
+
+        {/* How It Works Section */}
+        <section
+          id="how-it-works"
+          className={cn(
+            isMobile
+              ? "py-16 px-7"
+              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top"
+          )}
+          style={!isMobile ? { top: '5.5rem', zIndex: 3 } : undefined}
+        >
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-8">
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
+              )}>
+                {t("howItWorks.title")}
+              </h2>
+            </motion.div>
+
+            <div className={cn(
+              "grid gap-4",
+              isMobile ? "grid-cols-1" : "grid-cols-3"
+            )}>
+              {/* Step 1: Describe — typing animation */}
+              <motion.div
+                initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
+                whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={isMobile ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
+                {!isMobile && (
+                  <div className="absolute top-1/2 -right-2.5 text-foreground/15 z-10">
+                    <ArrowRight className="size-4" />
+                  </div>
+                )}
+                <div className="relative z-10">
+                  <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-22")}>
+                    <div className="w-full max-w-[200px] rounded-lg border border-foreground/10 bg-foreground/[0.02] p-3">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
+                      </div>
+                      <div className="relative overflow-hidden">
+                        <span
+                          className="text-[10px] text-foreground/40 font-mono whitespace-nowrap inline-block overflow-hidden"
+                          style={{ animation: "lp-typing 5s ease-in-out infinite" }}
+                        >
+                          Research 100 leads on LinkedIn...
+                        </span>
+                        <span className="text-[10px] text-foreground/50" style={{ animation: "lp-cursor-blink 1s step-end infinite" }}>|</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">1</span>
+                    <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step1.title")}</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step1.description")}</p>
+                </div>
+              </motion.div>
+
+              {/* Step 2: Agent works — mini browser with actions */}
+              <motion.div
+                initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+                whileInView={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={isMobile ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="relative rounded-2xl border border-border/40 bg-card/30 p-5 overflow-hidden group"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
+                {!isMobile && (
+                  <div className="absolute top-1/2 -right-2.5 text-foreground/15 z-10">
+                    <ArrowRight className="size-4" />
+                  </div>
+                )}
+                <div className="relative z-10">
+                  <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-22")}>
+                    <div className="w-full max-w-[200px] rounded-lg border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
+                      {/* Browser bar */}
+                      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-foreground/[0.06]">
+                        <div className="h-1 w-1 rounded-full bg-foreground/15" />
+                        <div className="h-1 w-1 rounded-full bg-foreground/15" />
+                        <div className="h-1 w-1 rounded-full bg-foreground/15" />
+                        <div className="ml-1 h-3 flex-1 rounded bg-foreground/[0.04]" />
+                      </div>
+                      {/* Page content with scan line */}
+                      <div className="relative p-2 space-y-1.5">
+                        <div className="h-[3px] w-[90%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[70%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[80%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[55%] rounded-full bg-foreground/10" />
+                        <div className="h-[3px] w-[75%] rounded-full bg-foreground/10" />
+                        <div
+                          className="absolute left-0 right-0 h-px bg-foreground/20"
+                          style={{ animation: "lp-scan-line 2.5s ease-in-out infinite" }}
+                        />
+                        {/* Click ring */}
+                        <div className="absolute top-3 right-4">
+                          <div
+                            className="h-3 w-3 rounded-full border border-foreground/20"
+                            style={{ animation: "lp-click-ring 2s ease-out infinite 1s" }}
+                          />
+                        </div>
+                        {/* Screenshot flash */}
+                        <div
+                          className="absolute inset-0 bg-foreground/10 rounded"
+                          style={{ animation: "lp-screenshot-flash 3s ease infinite" }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">2</span>
+                    <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step2.title")}</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step2.description")}</p>
+                </div>
+              </motion.div>
+
+              {/* Step 3: Done — results appearing */}
+              <motion.div
+                initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
+                whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={isMobile ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+                onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                className="rounded-2xl border border-border/40 bg-card/30 p-5 overflow-hidden group relative"
+                style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
+                <div className="relative z-10">
+                  <div className={cn("flex items-center justify-center mb-4", isMobile ? "h-20" : "h-22")}>
+                    <div className="w-full max-w-[200px] space-y-2">
+                      {/* Result items appearing */}
+                      {[t("howItWorks.step3.results.taskCompleted"), t("howItWorks.step3.results.leadsFound"), t("howItWorks.step3.results.addedToCrm")].map((text, i) => (
+                        <div
+                          key={text}
+                          className="flex items-center gap-2 rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] px-2.5 py-1.5"
+                          style={{ animation: `lp-msg-appear 0.4s ease forwards ${0.5 + i * 0.4}s`, opacity: 0 }}
+                        >
+                          <div
+                            className="h-3 w-3 rounded-full border border-foreground/20 flex items-center justify-center flex-shrink-0"
+                            style={{ animation: `lp-check-pop 0.3s ease forwards ${0.8 + i * 0.4}s`, opacity: 0 }}
+                          >
+                            <Check className="size-2 text-foreground/40" />
+                          </div>
+                          <span className="text-[10px] text-foreground/40">{text}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-bold text-foreground/50">3</span>
+                    <p className={cn("font-semibold text-foreground", isMobile ? "text-base" : "text-lg")}>{t("howItWorks.step3.title")}</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground/50 pl-7">{t("howItWorks.step3.description")}</p>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </section>
+
+
+        {/* Demo Section */}
+        <section
+          id="demo"
+          className={cn(
+            isMobile
+              ? "py-16 px-7"
+              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top"
+          )}
+          style={!isMobile ? { top: '5.5rem', zIndex: 4 } : undefined}
+        >
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="text-center mb-8">
+              <h2 className={cn(
+                "font-bold tracking-tight",
+                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
+              )}>
+                {t("demo.title")}
+              </h2>
+              <p className={cn(
+                "text-muted-foreground mt-2 max-w-lg mx-auto",
+                isMobile ? "text-sm" : "text-sm"
+              )}>
+                {t("demo.subtitle")}
+              </p>
+            </motion.div>
+
+            <div className={cn(
+              "grid gap-3",
+              isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-3"
+            )}>
+              {DEMO_SESSION_DATA.map((demo, demoIdx) => (
+                <motion.div
+                  key={demo.chatId}
+                  initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: demoIdx % 2 === 0 ? -30 : 30 }}
+                  whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={isMobile ? { duration: 0 } : { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: demoIdx * 0.05 }}
+                  onMouseMove={!isMobile ? handleCardMouseMove : undefined}
+                  onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
+                  style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
+                >
+                <Link
+                  href={`/share/${demo.chatId}`}
+                  target="_blank"
+                  className="group relative block h-full"
+                >
+                  <div className={cn(
+                    "relative h-full rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden",
+                    "transition-all duration-300",
+                    "hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5",
+                    "hover:-translate-y-0.5",
+                    isMobile ? "p-5" : "p-4"
+                  )}>
+                    {/* Mouse-tracking gradient */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
+
+                    <div className="relative h-full flex flex-col gap-2.5">
+                      {/* Tag */}
+                      <div className="flex items-center justify-between">
+                        <span className="inline-flex items-center gap-1.5 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/70">
+                          <span className="h-1 w-1 rounded-full bg-emerald-500" />
+                          {t(`demo.sessions.${demo.key}.tag`)}
+                        </span>
+                        <ArrowRight className="h-3 w-3 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
+                      </div>
+
+                      {/* Title */}
+                      <h3 className={cn(
+                        "font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors duration-200 leading-snug",
+                        isMobile ? "text-base" : "text-sm"
+                      )}>
+                        {t(`demo.sessions.${demo.key}.title`)}
+                      </h3>
+
+                      {/* Description */}
+                      <p className={cn(
+                        "text-muted-foreground leading-relaxed flex-1",
+                        isMobile ? "text-sm" : "text-xs"
+                      )}>
+                        {t(`demo.sessions.${demo.key}.description`)}
+                      </p>
+
+                      {/* Footer */}
+                      <div className="flex items-center gap-1.5 pt-1">
+                        <Play className="h-2.5 w-2.5 text-muted-foreground/50" />
+                        <span className="text-[11px] text-muted-foreground/50">{tc("watchSession")}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
+
         {/* Cost Comparison */}
         <section
           id="cost"
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
+              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top"
           )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 4 } : undefined}
+          style={!isMobile ? { top: '5.5rem', zIndex: 5 } : undefined}
         >
           <motion.div
             variants={containerVariants}
@@ -1106,116 +1278,13 @@ export function LandingPage() {
         </section>
 
 
-        {/* Demo Section */}
-        <section
-          id="demo"
-          className={cn(
-            isMobile
-              ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
-          )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 5 } : undefined}
-        >
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={sectionViewport}
-            className="max-w-5xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className="text-center mb-8">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
-              )}>
-                {t("demo.title")}
-              </h2>
-              <p className={cn(
-                "text-muted-foreground mt-2 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-sm"
-              )}>
-                {t("demo.subtitle")}
-              </p>
-            </motion.div>
-
-            <div className={cn(
-              "grid gap-3",
-              isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-3"
-            )}>
-              {DEMO_SESSION_DATA.map((demo, demoIdx) => (
-                <motion.div
-                  key={demo.chatId}
-                  initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: demoIdx % 2 === 0 ? -30 : 30 }}
-                  whileInView={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={isMobile ? { duration: 0 } : { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: demoIdx * 0.05 }}
-                  onMouseMove={!isMobile ? handleCardMouseMove : undefined}
-                  onMouseLeave={!isMobile ? handleCardMouseLeave : undefined}
-                  style={{ '--mouse-x': '50%', '--mouse-y': '50%' } as React.CSSProperties}
-                >
-                <Link
-                  href={`/share/${demo.chatId}`}
-                  target="_blank"
-                  className="group relative block h-full"
-                >
-                  <div className={cn(
-                    "relative h-full rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden",
-                    "transition-all duration-300",
-                    "hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5",
-                    "hover:-translate-y-0.5",
-                    isMobile ? "p-5" : "p-4"
-                  )}>
-                    {/* Mouse-tracking gradient */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.07), transparent 40%)' }} />
-
-                    <div className="relative h-full flex flex-col gap-2.5">
-                      {/* Tag */}
-                      <div className="flex items-center justify-between">
-                        <span className="inline-flex items-center gap-1.5 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/70">
-                          <span className="h-1 w-1 rounded-full bg-emerald-500" />
-                          {t(`demo.sessions.${demo.key}.tag`)}
-                        </span>
-                        <ArrowRight className="h-3 w-3 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
-                      </div>
-
-                      {/* Title */}
-                      <h3 className={cn(
-                        "font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors duration-200 leading-snug",
-                        isMobile ? "text-base" : "text-sm"
-                      )}>
-                        {t(`demo.sessions.${demo.key}.title`)}
-                      </h3>
-
-                      {/* Description */}
-                      <p className={cn(
-                        "text-muted-foreground leading-relaxed flex-1",
-                        isMobile ? "text-sm" : "text-xs"
-                      )}>
-                        {t(`demo.sessions.${demo.key}.description`)}
-                      </p>
-
-                      {/* Footer */}
-                      <div className="flex items-center gap-1.5 pt-1">
-                        <Play className="h-2.5 w-2.5 text-muted-foreground/50" />
-                        <span className="text-[11px] text-muted-foreground/50">{tc("watchSession")}</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </section>
-
-
         {/* Features Section */}
         <section
           id="features"
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
+              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top"
           )}
           style={!isMobile ? { top: '5.5rem', zIndex: 6 } : undefined}
         >
@@ -1441,7 +1510,7 @@ export function LandingPage() {
           className={cn(
             isMobile
               ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/30 bg-background shadow-[0_4px_24px_-6px_rgba(0,0,0,0.07)] px-8 lg:px-10 pt-10 pb-8 mb-8 will-change-[transform] h-[calc(100vh-8rem)] overflow-hidden"
+              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top"
           )}
           style={!isMobile ? { top: '5.5rem', zIndex: 7 } : undefined}
         >
