@@ -18,6 +18,7 @@
     "useCases": "حالات الاستخدام",
     "blog": "المدوّنة",
     "agentSwarms": "أسراب الوكلاء",
+    "products": "Products",
     "discover": "Discover",
     "compare": "مقارنة",
     "demos": "عروض توضيحية",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} منتج تمت مقارنته لكل تشغيل",
       "marketResearch": "{stat} نقطة بيانات تم جمعها",
       "emailCampaigns": "{stat} بريد إلكتروني مخصص لكل حملة"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "جميع المقالات",

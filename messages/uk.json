@@ -18,6 +18,7 @@
     "useCases": "Застосування",
     "blog": "Блог",
     "agentSwarms": "Agent Swarms",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Порівняти",
     "demos": "Демо",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU порівняно за запуск",
       "marketResearch": "{stat} точок даних зібрано",
       "emailCampaigns": "{stat} персоналізованих листів на кампанію"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Усі статті",

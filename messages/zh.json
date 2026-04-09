@@ -18,6 +18,7 @@
     "useCases": "使用场景",
     "blog": "博客",
     "agentSwarms": "智能体集群",
+    "products": "Products",
     "discover": "Discover",
     "compare": "对比",
     "demos": "演示",
@@ -52,6 +53,16 @@
       "priceMonitoring": "每次运行比较 {stat} 个 SKU",
       "marketResearch": "已采集 {stat} 个数据点",
       "emailCampaigns": "每次营销发送 {stat} 封个性化邮件"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "所有文章",

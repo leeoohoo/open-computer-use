@@ -18,6 +18,7 @@
     "useCases": "שימושים",
     "blog": "בלוג",
     "agentSwarms": "נחילי סוכנים",
+    "products": "Products",
     "discover": "Discover",
     "compare": "השוואה",
     "demos": "הדגמות",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} מק\"טים הושוו להרצה",
       "marketResearch": "{stat} נקודות נתונים נאספו",
       "emailCampaigns": "{stat} אימיילים מותאמים אישית לקמפיין"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "כל הפוסטים",

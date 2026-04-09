@@ -18,6 +18,7 @@
     "useCases": "Felhasználási esetek",
     "blog": "Blog",
     "agentSwarms": "Ügynökrajok",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Összehasonlítás",
     "demos": "Demók",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} cikkszám összehasonlítva futásonként",
       "marketResearch": "{stat} adatpont begyűjtve",
       "emailCampaigns": "{stat} személyre szabott e-mail kampányonként"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Összes bejegyzés",

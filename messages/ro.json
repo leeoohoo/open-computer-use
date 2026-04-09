@@ -18,6 +18,7 @@
     "useCases": "Cazuri de utilizare",
     "blog": "Blog",
     "agentSwarms": "Roiuri de agenti",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Compara",
     "demos": "Demo-uri",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU-uri comparate per rulare",
       "marketResearch": "{stat} puncte de date colectate",
       "emailCampaigns": "{stat} e-mailuri personalizate per campanie"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Toate articolele",

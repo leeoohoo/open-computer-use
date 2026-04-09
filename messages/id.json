@@ -18,6 +18,7 @@
     "useCases": "Kasus Penggunaan",
     "blog": "Blog",
     "agentSwarms": "Kawanan Agen",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Bandingkan",
     "demos": "Demo",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU dibandingkan per eksekusi",
       "marketResearch": "{stat} titik data dikumpulkan",
       "emailCampaigns": "{stat} email personal per kampanye"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Semua Artikel",

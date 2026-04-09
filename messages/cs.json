@@ -18,6 +18,7 @@
     "useCases": "Případy užití",
     "blog": "Blog",
     "agentSwarms": "Roje agentů",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Porovnat",
     "demos": "Ukázky",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU porovnáno za běh",
       "marketResearch": "{stat} datových bodů získáno",
       "emailCampaigns": "{stat} personalizovaných e-mailů na kampaň"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Všechny příspěvky",

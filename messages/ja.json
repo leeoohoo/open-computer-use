@@ -18,6 +18,7 @@
     "useCases": "ユースケース",
     "blog": "ブログ",
     "agentSwarms": "エージェントスウォーム",
+    "products": "Products",
     "discover": "Discover",
     "compare": "比較",
     "demos": "デモ",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKUを1回で比較",
       "marketResearch": "{stat} 件のデータポイントを収集",
       "emailCampaigns": "{stat} 通のパーソナライズメールをキャンペーンごとに送信"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "すべての記事",

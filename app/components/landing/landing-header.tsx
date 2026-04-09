@@ -5,7 +5,7 @@ import {
   Menu, X, ArrowRight, ChevronDown, Search, Bug, TrendingUp,
   FileText, Mail, ShoppingCart, Users, BarChart3, Globe, Eye,
   Send, MonitorSmartphone, Monitor, Keyboard, GitCompare,
-  BookOpen, Newspaper, Compass,
+  BookOpen, Newspaper, Compass, Download, Layers,
 } from "lucide-react"
 import Image from "next/image"
 import { useState, useEffect, useCallback, useRef } from "react"
@@ -33,25 +33,21 @@ const useCaseDropdownDef = [
   { slug: "email-campaigns", labelKey: "emailCampaigns", icon: Mail, stat: "100", statKey: "emailCampaigns" },
 ]
 
+const productDropdownDef = [
+  { href: "/computer-use", labelKey: "computerUse", icon: Monitor, stat: "82%", statKey: "computerUse" },
+  { href: "/agent-swarms", labelKey: "agentSwarms", icon: Layers, stat: "9", statKey: "agentSwarms" },
+  { href: "/compare", labelKey: "compare", icon: GitCompare, stat: "10", statKey: "compare" },
+]
+
 const blogDropdownDef = [
   { href: "/blog", labelKey: "allPosts", icon: Newspaper, stat: "50+", statKey: "allPosts" },
-  { href: "/computer-use", labelKey: "computerUse", icon: Monitor, stat: "82%", statKey: "computerUse" },
-  { href: "/compare", labelKey: "compare", icon: GitCompare, stat: "10", statKey: "compare" },
-  { href: "/computer-use/data-entry", labelKey: "dataEntry", icon: Keyboard, stat: "10x", statKey: "dataEntry" },
-  { href: "/computer-use/web-scraping", labelKey: "webScraping", icon: Globe, stat: "1,000+", statKey: "webScraping" },
-  { href: "/computer-use/job-applications", labelKey: "jobApplications", icon: Send, stat: "50+", statKey: "jobApplications" },
-  { href: "/results", labelKey: "demosResults", icon: Eye, stat: "20+", statKey: "demosResults" },
-  { href: "/discover", labelKey: "discover", icon: Compass, stat: "", statKey: "discover" },
   { href: "/guide", labelKey: "guide", icon: BookOpen, stat: "12", statKey: "guide" },
+  { href: "/results", labelKey: "demosResults", icon: Eye, stat: "20+", statKey: "demosResults" },
 ]
 
 const navItemsDef = [
-  { href: "/agent-swarms", labelKey: "agentSwarms", external: true },
   { href: "/discover", labelKey: "discover", external: true },
-  { href: "/compare", labelKey: "compare", external: true },
-  { href: "/results", labelKey: "demos", external: true },
   { href: "/pricing", labelKey: "pricing", external: true },
-  { href: "/download", labelKey: "download", external: true },
 ]
 
 /* ─── spring configs ─── */
@@ -123,17 +119,19 @@ function DropdownPanel({
   statPrefix,
   footerHref,
   footerLabel,
+  compact,
   t,
 }: {
-  items: typeof useCaseDropdownDef | typeof blogDropdownDef
+  items: typeof useCaseDropdownDef | typeof blogDropdownDef | typeof productDropdownDef
   hoveredIndex: number
   setHoveredIndex: (i: number) => void
   onClose: () => void
   width: string
   labelPrefix: string
   statPrefix: string
-  footerHref: string
-  footerLabel: string
+  footerHref?: string
+  footerLabel?: string
+  compact?: boolean
   t: ReturnType<typeof useTranslations>
 }) {
   const hItem = items[hoveredIndex]
@@ -168,7 +166,7 @@ function DropdownPanel({
           <div className="flex gap-2">
             {/* items grid */}
             <div className="flex-1 min-w-0">
-              <div className="grid grid-cols-2 gap-0.5">
+              <div className={cn("grid gap-0.5", compact ? "grid-cols-1" : "grid-cols-2")}>
                 {items.map((item, i) => {
                   const slug = "slug" in item ? item.slug : undefined
                   const href = "href" in item ? (item as { href: string }).href : `/use-cases/${slug}`
@@ -187,45 +185,49 @@ function DropdownPanel({
               </div>
 
               {/* footer link */}
-              <div className="mt-1.5 pt-1.5 border-t border-foreground/[0.05] dark:border-foreground/[0.06]">
-                <Link
-                  href={footerHref}
-                  onClick={onClose}
-                  className="group flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl hover:bg-foreground/[0.04] transition-all duration-150"
-                >
-                  <span className="text-[11.5px] font-medium text-muted-foreground/40 group-hover:text-foreground/70 transition-colors">
-                    {footerLabel}
-                  </span>
-                  <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/30 group-hover:text-foreground/60 group-hover:translate-x-0.5 transition-all duration-150" />
-                </Link>
-              </div>
+              {footerHref && footerLabel && (
+                <div className="mt-1.5 pt-1.5 border-t border-foreground/[0.05] dark:border-foreground/[0.06]">
+                  <Link
+                    href={footerHref}
+                    onClick={onClose}
+                    className="group flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl hover:bg-foreground/[0.04] transition-all duration-150"
+                  >
+                    <span className="text-[11.5px] font-medium text-muted-foreground/40 group-hover:text-foreground/70 transition-colors">
+                      {footerLabel}
+                    </span>
+                    <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/30 group-hover:text-foreground/60 group-hover:translate-x-0.5 transition-all duration-150" />
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* preview panel */}
-            <div className="w-[150px] shrink-0 rounded-xl bg-gradient-to-br from-foreground/[0.025] to-foreground/[0.05] dark:from-foreground/[0.04] dark:to-foreground/[0.06] flex flex-col items-center justify-center relative overflow-hidden">
-              {/* watermark icon */}
-              <HIcon
-                className="absolute -right-3 -bottom-3 size-24 text-foreground/[0.04] dark:text-foreground/[0.05]"
-                strokeWidth={0.7}
-              />
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={hoveredIndex}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.14, ease: "easeOut" }}
-                  className="relative text-center px-3"
-                >
-                  <span className="text-[28px] font-bold tracking-tight text-foreground/80">
-                    {hItem.stat}
-                  </span>
-                  <p className="text-[10px] font-medium text-muted-foreground/40 mt-0.5 leading-tight">
-                    {t(`${statPrefix}.${hItem.statKey}`, { stat: hItem.stat })}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+            {!compact && (
+              <div className="w-[150px] shrink-0 rounded-xl bg-gradient-to-br from-foreground/[0.025] to-foreground/[0.05] dark:from-foreground/[0.04] dark:to-foreground/[0.06] flex flex-col items-center justify-center relative overflow-hidden">
+                {/* watermark icon */}
+                <HIcon
+                  className="absolute -right-3 -bottom-3 size-24 text-foreground/[0.04] dark:text-foreground/[0.05]"
+                  strokeWidth={0.7}
+                />
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={hoveredIndex}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.14, ease: "easeOut" }}
+                    className="relative text-center px-3"
+                  >
+                    <span className="text-[28px] font-bold tracking-tight text-foreground/80">
+                      {hItem.stat}
+                    </span>
+                    <p className="text-[10px] font-medium text-muted-foreground/40 mt-0.5 leading-tight">
+                      {t(`${statPrefix}.${hItem.statKey}`, { stat: hItem.stat })}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -302,6 +304,10 @@ export function LandingHeader({
   const [useCasesOpen, setUseCasesOpen] = useState(false)
   const [hoveredUseCase, setHoveredUseCase] = useState(0)
   const [mobileUseCasesOpen, setMobileUseCasesOpen] = useState(false)
+  const [productsOpen, setProductsOpen] = useState(false)
+  const [hoveredProduct, setHoveredProduct] = useState(0)
+  const [mobileProductsOpen, setMobileProductsOpen] = useState(false)
+  const productsDropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [blogOpen, setBlogOpen] = useState(false)
   const [hoveredBlogItem, setHoveredBlogItem] = useState(0)
   const [mobileBlogOpen, setMobileBlogOpen] = useState(false)
@@ -383,10 +389,14 @@ export function LandingHeader({
 
   /* helpers */
   const isUseCaseActive = currentPath.startsWith("/use-cases")
+  const isProductActive =
+    currentPath.startsWith("/computer-use") ||
+    currentPath.startsWith("/agent-swarms") ||
+    currentPath.startsWith("/compare")
   const isBlogActive =
     currentPath.startsWith("/blog") ||
-    currentPath.startsWith("/computer-use") ||
-    currentPath.startsWith("/compare")
+    currentPath.startsWith("/results") ||
+    currentPath.startsWith("/guide")
 
   return (
     <>
@@ -531,6 +541,57 @@ export function LandingHeader({
                   </AnimatePresence>
                 </li>
 
+                {/* Products dropdown */}
+                <li
+                  className="relative"
+                  onMouseEnter={() => {
+                    if (productsDropdownTimeoutRef.current) clearTimeout(productsDropdownTimeoutRef.current)
+                    setProductsOpen(true)
+                  }}
+                  onMouseLeave={() => {
+                    productsDropdownTimeoutRef.current = setTimeout(() => setProductsOpen(false), 200)
+                  }}
+                >
+                  <button
+                    className={cn(
+                      "relative flex items-center gap-1 whitespace-nowrap px-3 py-1.5",
+                      "text-[13px] font-medium tracking-[-0.01em] rounded-lg transition-all duration-200",
+                      isProductActive
+                        ? "text-foreground"
+                        : "text-foreground/45 hover:text-foreground/80",
+                    )}
+                  >
+                    {t("products")}
+                    <ChevronDown className={cn(
+                      "h-3 w-3 opacity-50 transition-transform duration-200",
+                      productsOpen && "rotate-180",
+                    )} />
+                    {isProductActive && (
+                      <motion.span
+                        layoutId="nav-active-indicator"
+                        className="absolute inset-0 rounded-lg bg-foreground/[0.06] dark:bg-foreground/[0.08]"
+                        transition={smoothSpring}
+                      />
+                    )}
+                  </button>
+
+                  <AnimatePresence>
+                    {productsOpen && (
+                      <DropdownPanel
+                        items={productDropdownDef}
+                        hoveredIndex={hoveredProduct}
+                        setHoveredIndex={setHoveredProduct}
+                        onClose={() => setProductsOpen(false)}
+                        width="w-[260px]"
+                        compact
+                        labelPrefix="productItems"
+                        statPrefix="productStats"
+                        t={t}
+                      />
+                    )}
+                  </AnimatePresence>
+                </li>
+
                 {/* regular nav items */}
                 {navItemsDef.map((item) => {
                   const isActive = item.external
@@ -635,6 +696,16 @@ export function LandingHeader({
 
               {/* ── desktop right ── */}
               <div className="hidden lg:flex items-center gap-0.5 flex-shrink-0">
+                <Link
+                  href="/download"
+                  className={cn(
+                    "inline-flex items-center justify-center rounded-lg transition-all duration-200 text-foreground/40 hover:text-foreground/70 hover:bg-foreground/[0.05]",
+                    scrolled ? "h-7 w-7 p-1.5" : "h-9 w-9 p-2",
+                  )}
+                  title="Download Desktop App"
+                >
+                  <Download className={cn(scrolled ? "h-3.5 w-3.5" : "h-4 w-4")} strokeWidth={1.8} />
+                </Link>
                 <LanguageSwitcherCompact />
                 <AnimatedThemeToggler
                   className={cn(
@@ -739,10 +810,11 @@ export function LandingHeader({
                       <div className="grid grid-cols-2 gap-0.5 px-1 py-1.5">
                         {useCaseDropdownDef.map((uc) => {
                           const Icon = uc.icon
+                          const ucHref = "href" in uc ? (uc as { href: string }).href : `/use-cases/${uc.slug}`
                           return (
                             <Link
                               key={uc.slug}
-                              href={`/use-cases/${uc.slug}`}
+                              href={ucHref}
                               onClick={closeMobileMenu}
                               className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-foreground/[0.04] active:bg-foreground/[0.06] transition-all duration-150"
                             >
@@ -764,6 +836,36 @@ export function LandingHeader({
                         <span className="text-[12px] font-medium text-muted-foreground/40">View all use cases</span>
                         <ArrowRight className="h-3 w-3 text-muted-foreground/30" />
                       </Link>
+                    </MobileAccordionSection>
+
+                    {/* Products accordion */}
+                    <MobileAccordionSection
+                      label={t("products")}
+                      isOpen={mobileProductsOpen}
+                      onToggle={() => setMobileProductsOpen(!mobileProductsOpen)}
+                      isActive={isProductActive}
+                      delay={0.03}
+                    >
+                      <div className="grid grid-cols-1 gap-0.5 px-1 py-1.5">
+                        {productDropdownDef.map((item) => {
+                          const Icon = item.icon
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={closeMobileMenu}
+                              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-foreground/[0.04] active:bg-foreground/[0.06] transition-all duration-150"
+                            >
+                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-foreground/[0.04]">
+                                <Icon className="size-3 text-muted-foreground/50" strokeWidth={1.8} />
+                              </span>
+                              <span className="text-[13px] font-medium text-foreground/55">
+                                {t(`productItems.${item.labelKey}`)}
+                              </span>
+                            </Link>
+                          )
+                        })}
+                      </div>
                     </MobileAccordionSection>
 
                     {/* regular nav items */}
@@ -846,6 +948,26 @@ export function LandingHeader({
                         <ArrowRight className="h-3 w-3 text-muted-foreground/30" />
                       </Link>
                     </MobileAccordionSection>
+
+                    {/* Download link */}
+                    <motion.div
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: (navItemsDef.length + 2) * 0.03,
+                        duration: 0.25,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                    >
+                      <Link
+                        href="/download"
+                        onClick={closeMobileMenu}
+                        className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-[15px] font-medium tracking-[-0.01em] text-foreground/50 hover:text-foreground hover:bg-foreground/[0.03] active:bg-foreground/[0.05] transition-all duration-150"
+                      >
+                        <Download className="size-4 text-muted-foreground/40" strokeWidth={1.8} />
+                        {t("download")}
+                      </Link>
+                    </motion.div>
 
                     {/* divider */}
                     <div className="my-1.5 mx-4 border-t border-foreground/[0.05]" />

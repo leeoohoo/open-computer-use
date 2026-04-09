@@ -18,6 +18,7 @@
     "useCases": "Casi d'uso",
     "blog": "Blog",
     "agentSwarms": "Agent Swarms",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Confronta",
     "demos": "Demo",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU confrontati per esecuzione",
       "marketResearch": "{stat} punti dati raccolti",
       "emailCampaigns": "{stat} email personalizzate per campagna"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Tutti gli articoli",

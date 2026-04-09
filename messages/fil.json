@@ -18,6 +18,7 @@
     "useCases": "Mga Gamit",
     "blog": "Blog",
     "agentSwarms": "Agent Swarms",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Ihambing",
     "demos": "Mga Demo",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKUs na inihambing bawat run",
       "marketResearch": "{stat} data points na nakuha",
       "emailCampaigns": "{stat} personalized emails bawat kampanya"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Lahat ng Posts",

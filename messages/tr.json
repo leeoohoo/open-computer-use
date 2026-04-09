@@ -18,6 +18,7 @@
     "useCases": "Kullanim Alanlari",
     "blog": "Blog",
     "agentSwarms": "Ajan Suruleri",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Karsilastir",
     "demos": "Demolar",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU calisma basina karsilastirildi",
       "marketResearch": "{stat} veri noktasi toplandi",
       "emailCampaigns": "{stat} kisisellestirilmis e-posta kampanya basina"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Tum Yazilar",

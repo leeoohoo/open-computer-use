@@ -18,6 +18,7 @@
     "useCases": "กรณีใช้งาน",
     "blog": "บล็อก",
     "agentSwarms": "Agent Swarms",
+    "products": "Products",
     "discover": "Discover",
     "compare": "เปรียบเทียบ",
     "demos": "สาธิต",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU ที่เปรียบเทียบต่อรอบ",
       "marketResearch": "{stat} จุดข้อมูลที่รวบรวม",
       "emailCampaigns": "{stat} อีเมลส่วนบุคคลต่อแคมเปญ"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "บทความทั้งหมด",

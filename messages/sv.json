@@ -18,6 +18,7 @@
     "useCases": "Anvandningsfall",
     "blog": "Blogg",
     "agentSwarms": "Agentsvarm",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Jamfor",
     "demos": "Demos",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU:er jamforda per korning",
       "marketResearch": "{stat} datapunkter insamlade",
       "emailCampaigns": "{stat} personliga e-postmeddelanden per kampanj"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Alla inlagg",

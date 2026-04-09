@@ -18,6 +18,7 @@
     "useCases": "Truong hop su dung",
     "blog": "Blog",
     "agentSwarms": "Bay tac tu",
+    "products": "Products",
     "discover": "Discover",
     "compare": "So sanh",
     "demos": "Demo",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU duoc so sanh moi lan chay",
       "marketResearch": "{stat} diem du lieu duoc thu thap",
       "emailCampaigns": "{stat} email ca nhan hoa moi chien dich"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Tat ca bai viet",

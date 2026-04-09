@@ -18,6 +18,7 @@
     "useCases": "Käyttötapaukset",
     "blog": "Blogi",
     "agentSwarms": "Agenttiparvet",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Vertaile",
     "demos": "Demot",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} tuotenumeroa vertailtu per ajo",
       "marketResearch": "{stat} datapistettä kerätty",
       "emailCampaigns": "{stat} personoitua sähköpostia per kampanja"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Kaikki artikkelit",

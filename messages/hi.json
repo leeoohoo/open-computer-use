@@ -18,6 +18,7 @@
     "useCases": "उपयोग के मामले",
     "blog": "ब्लॉग",
     "agentSwarms": "एजेंट स्वार्म",
+    "products": "Products",
     "discover": "Discover",
     "compare": "तुलना",
     "demos": "डेमो",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU प्रति रन तुलना किए गए",
       "marketResearch": "{stat} डेटा पॉइंट एकत्रित",
       "emailCampaigns": "{stat} व्यक्तिगत ईमेल प्रति अभियान"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "सभी पोस्ट",

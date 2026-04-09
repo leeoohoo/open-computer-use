@@ -18,6 +18,7 @@
     "useCases": "Сценарии использования",
     "blog": "Блог",
     "agentSwarms": "Рои агентов",
+    "products": "Products",
     "discover": "Discover",
     "compare": "Сравнение",
     "demos": "Демо",
@@ -52,6 +53,16 @@
       "priceMonitoring": "{stat} SKU сравнено за запуск",
       "marketResearch": "{stat} источников данных обработано",
       "emailCampaigns": "{stat} персонализированных писем за кампанию"
+    },
+    "productItems": {
+      "computerUse": "Computer Use",
+      "agentSwarms": "Agent Swarms",
+      "compare": "Compare"
+    },
+    "productStats": {
+      "computerUse": "{stat} OSWorld benchmark score",
+      "agentSwarms": "{stat} agents in parallel",
+      "compare": "{stat} competitors analyzed"
     },
     "blogItems": {
       "allPosts": "Все статьи",
