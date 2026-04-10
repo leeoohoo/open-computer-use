@@ -94,7 +94,7 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
       const zoomP = Math.min(1, p / 0.65)
       const zoomEased = 1 - Math.pow(1 - zoomP, 3) // cubic ease-out
       const minScale = 1.5 // don't zoom all the way to 1
-      const currentScale = maxScale - zoomEased * (maxScale - minScale)
+      const currentScale = +(maxScale - zoomEased * (maxScale - minScale)).toFixed(3)
 
       // ── Phase 2: Dissolve (last 35% of scroll, finishes slightly early) ──
       const dissolveP = Math.min(1, Math.max(0, (p - 0.65) / 0.3))
@@ -102,7 +102,7 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
 
       // Grid: zoom + dissolve; fully hidden once dissolved to prevent compositor flash
       const gridOpacity = 1 - dissolveEased
-      grid.style.transform = `scale(${currentScale})`
+      grid.style.transform = `scale3d(${currentScale}, ${currentScale}, 1)`
       grid.style.setProperty("--tile-opacity", String(Math.min(1, p * 3.3)))
       grid.style.opacity = String(gridOpacity)
       grid.style.visibility = gridOpacity <= 0 ? "hidden" : "visible"
@@ -110,9 +110,9 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
       // Hero text overlay: scales down with grid so it visually
       // "lives inside" the center tile, then fades with dissolve
       if (overlay) {
-        const s = currentScale / maxScale // 1 → 1/maxScale
+        const s = +(currentScale / maxScale).toFixed(4) // 1 → 1/maxScale
         const overlayOpacity = 1 - dissolveEased
-        overlay.style.transform = `scale(${s}) translateZ(0)`
+        overlay.style.transform = `scale3d(${s}, ${s}, 1) translateZ(0)`
         overlay.style.opacity = String(overlayOpacity)
         overlay.style.visibility = overlayOpacity <= 0 ? "hidden" : "visible"
       }
@@ -208,12 +208,15 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
             display: "grid",
             gridTemplateColumns: `repeat(${cols}, 1fr)`,
             gap,
-            width: isMobile ? "98vw" : "92vw",
-            maxWidth: 1800,
-            transform: `scale(${cols})`,
+            // Ensure center tile fills viewport on ALL aspect ratios:
+            // - 110vw covers width (with buffer for inter-tile gaps)
+            // - 200vh * 9/16 = 112.5vh covers height on tall screens (MacBooks, iPads, phones)
+            width: "max(110vw, 200vh)",
+            transform: `scale3d(${cols}, ${cols}, 1)`,
             transformOrigin: "center center",
-            willChange: "transform",
+            willChange: "transform, opacity",
             backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden" as unknown as string,
           }}
         >
           {tiles.map((tile, i) => (
@@ -234,7 +237,7 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
               {!tile.isCenter && (
                 <>
                   <img
-                    src={`https://img.youtube.com/vi/${tile.videoId}/mqdefault.jpg`}
+                    src={`https://img.youtube.com/vi/${tile.videoId}/hqdefault.jpg`}
                     alt=""
                     loading="lazy"
                     className="absolute inset-0 w-full h-full object-cover"
