@@ -872,11 +872,11 @@
     "computers": "Computere",
     "active": "aktiv",
     "view": "Vis",
-    "workforce": "Arbejdsstyrke",
-    "workforceDescription": "Planlaeag automatiserede agenter og triggers",
+    "workforce": "Tidsplaner",
+    "workforceDescription": "Planlæg automatiserede opgaver og udløsere",
     "workforcePopup": {
       "title": "Planlagt automatisering",
-      "description": "Opsaet tilbagevendende opgaver med cron-planer og agent-til-agent triggers. Din arbejdsstyrke korer mens du sover."
+      "description": "Opsæt tilbagevendende opgaver med cron-tidsplaner og agent-til-agent-udløsere. Dine tidsplaner kører, mens du sover."
     },
     "credentials": "Loginoplysninger",
     "credentialsDescription": "Gem logins sikkert til agentadgang",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Log ind",
-    "assign": "Tildel",
-    "assignDescription": "Tildel en medarbejder til at kore denne opgave",
+    "assign": "Planlæg",
+    "assignDescription": "Planlæg denne opgave til at køre automatisk",
     "computer": "Computer",
     "showComputer": "Vis computer",
     "hideComputer": "Skjul computer",
@@ -1526,7 +1526,7 @@
       "machines": "Maskiner",
       "credentials": "Loginoplysninger",
       "swarmMode": "Svaerm-tilstand",
-      "workforce": "Arbejdsstyrke",
+      "workforce": "Tidsplaner",
       "desktopApp": "Desktop-app",
       "billing": "Fakturering og credits"
     },

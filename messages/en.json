@@ -885,11 +885,11 @@
     "computers": "Computers",
     "active": "active",
     "view": "View",
-    "workforce": "Workforce",
-    "workforceDescription": "Schedule automated agents and triggers",
+    "workforce": "Schedules",
+    "workforceDescription": "Schedule automated tasks and triggers",
     "workforcePopup": {
       "title": "Scheduled automation",
-      "description": "Set up recurring tasks with cron schedules and agent-to-agent triggers. Your workforce runs while you sleep."
+      "description": "Set up recurring tasks with cron schedules and agent-to-agent triggers. Your schedules run while you sleep."
     },
     "credentials": "Credentials",
     "credentialsDescription": "Securely store logins for agent access",
@@ -954,8 +954,8 @@
   },
   "appHeader": {
     "login": "Login",
-    "assign": "Assign",
-    "assignDescription": "Assign an employee to run this task",
+    "assign": "Schedule",
+    "assignDescription": "Schedule this task to run automatically",
     "computer": "Computer",
     "showComputer": "Show Computer",
     "hideComputer": "Hide Computer",
@@ -1476,7 +1476,7 @@
       "machines": "Machines",
       "credentials": "Credentials",
       "swarmMode": "Swarm Mode",
-      "workforce": "Workforce",
+      "workforce": "Schedules",
       "desktopApp": "Desktop App",
       "billing": "Billing & Credits"
     },

@@ -872,11 +872,11 @@
     "computers": "Datorer",
     "active": "aktiv",
     "view": "Visa",
-    "workforce": "Arbetsstyrka",
-    "workforceDescription": "Schemalag automatiserade agenter och triggers",
+    "workforce": "Scheman",
+    "workforceDescription": "Schemalägg automatiserade uppgifter och utlösare",
     "workforcePopup": {
       "title": "Schemalad automatisering",
-      "description": "Konfigurera aterkommande uppgifter med cron-scheman och agent-till-agent-triggers. Din arbetsstyrka kor medan du sover."
+      "description": "Ställ in återkommande uppgifter med cron-scheman och agent-till-agent-utlösare. Dina scheman körs medan du sover."
     },
     "credentials": "Inloggningsuppgifter",
     "credentialsDescription": "Lagra inloggningar sakert for agentatkomst",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Logga in",
-    "assign": "Tilldela",
-    "assignDescription": "Tilldela en anstalld att kora denna uppgift",
+    "assign": "Schemalägg",
+    "assignDescription": "Schemalägg denna uppgift att köras automatiskt",
     "computer": "Dator",
     "showComputer": "Visa dator",
     "hideComputer": "Dolj dator",
@@ -1526,7 +1526,7 @@
       "machines": "Maskiner",
       "credentials": "Inloggningsuppgifter",
       "swarmMode": "Svarmlagt",
-      "workforce": "Arbetsstyrka",
+      "workforce": "Scheman",
       "desktopApp": "Skrivbordsapp",
       "billing": "Fakturering och krediter"
     },

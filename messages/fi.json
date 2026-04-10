@@ -872,11 +872,11 @@
     "computers": "Tietokoneet",
     "active": "aktiivinen",
     "view": "Näytä",
-    "workforce": "Työvoima",
-    "workforceDescription": "Aikatauluta automatisoituja agentteja ja triggaajia",
+    "workforce": "Aikataulut",
+    "workforceDescription": "Ajasta automaattiset tehtävät ja käynnistimet",
     "workforcePopup": {
       "title": "Aikataulutettu automaatio",
-      "description": "Määritä toistuvia tehtäviä cron-aikatauluilla ja agentti-agenttitriggaajilla. Työvoimasi toimii kun nukut."
+      "description": "Aseta toistuvia tehtäviä cron-aikatauluilla ja agenttien välisillä käynnistimillä. Aikataulusi toimivat nukkuessasi."
     },
     "credentials": "Tunnisteet",
     "credentialsDescription": "Tallenna kirjautumistiedot turvallisesti agenttien käyttöön",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Kirjaudu",
-    "assign": "Määritä",
-    "assignDescription": "Määritä työntekijä suorittamaan tämä tehtävä",
+    "assign": "Ajasta",
+    "assignDescription": "Ajasta tämä tehtävä suoritettavaksi automaattisesti",
     "computer": "Tietokone",
     "showComputer": "Näytä tietokone",
     "hideComputer": "Piilota tietokone",
@@ -1526,7 +1526,7 @@
       "machines": "Koneet",
       "credentials": "Kirjautumistiedot",
       "swarmMode": "Parvi-tila",
-      "workforce": "Tyovoima",
+      "workforce": "Aikataulut",
       "desktopApp": "Tyopoytasovellus",
       "billing": "Laskutus ja creditit"
     },

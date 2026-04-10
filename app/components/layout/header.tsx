@@ -10,8 +10,7 @@ import { useUser } from "@/lib/user-store/provider"
 import { useChats } from "@/lib/chat-store/chats/provider"
 import { useChatSession } from "@/lib/chat-store/session/provider"
 import { useProjectNavigator } from "@/lib/project-navigator-store/provider"
-import { Info, Desktop, ShareNetwork } from "@phosphor-icons/react"
-import { AgentIcon } from "@/components/icons/agent"
+import { Info, Desktop, ShareNetwork, Clock } from "@phosphor-icons/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { HeaderSidebarTrigger } from "./header-sidebar-trigger"
@@ -140,7 +139,7 @@ export function Header({ hasSidebar }: HeaderProps) {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <button type="button" className={actionBtn} onClick={openScheduleDialog}>
-                          <AgentIcon className="size-3.5 shrink-0" />
+                          <Clock className="size-3.5 shrink-0" weight="bold" />
                           <span className={cn(expandLabel, "group-hover/bar:delay-[0ms]")}>
                             <span className={labelText}>{t("assign")}</span>
                           </span>

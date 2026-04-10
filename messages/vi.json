@@ -872,11 +872,11 @@
     "computers": "May tinh",
     "active": "dang hoat dong",
     "view": "Xem",
-    "workforce": "Luc luong lao dong",
-    "workforceDescription": "Len lich tac tu tu dong va trigger",
+    "workforce": "Lịch trình",
+    "workforceDescription": "Lên lịch tác vụ và kích hoạt tự động",
     "workforcePopup": {
       "title": "Tu dong hoa theo lich",
-      "description": "Thiet lap tac vu dinh ky voi lich cron va trigger giua cac tac tu. Luc luong lao dong chay khi ban ngu."
+      "description": "Thiết lập tác vụ định kỳ với lịch trình cron và kích hoạt giữa các tác nhân. Lịch trình của bạn chạy khi bạn ngủ."
     },
     "credentials": "Thong tin dang nhap",
     "credentialsDescription": "Luu tru an toan dang nhap cho tac tu truy cap",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Dang nhap",
-    "assign": "Phan cong",
-    "assignDescription": "Phan cong nhan vien chay tac vu nay",
+    "assign": "Lên lịch",
+    "assignDescription": "Lên lịch chạy tự động cho tác vụ này",
     "computer": "May tinh",
     "showComputer": "Hien thi may tinh",
     "hideComputer": "An may tinh",
@@ -1526,7 +1526,7 @@
       "machines": "May",
       "credentials": "Thong tin dang nhap",
       "swarmMode": "Che do bay",
-      "workforce": "Luc luong lao dong",
+      "workforce": "Lịch trình",
       "desktopApp": "Ung dung may tinh",
       "billing": "Thanh toan va tin dung"
     },

@@ -872,11 +872,11 @@
     "computers": "מחשבים",
     "active": "פעיל",
     "view": "הצג",
-    "workforce": "כוח עבודה",
-    "workforceDescription": "תזמן סוכנים אוטומטיים וטריגרים",
+    "workforce": "לוחות זמנים",
+    "workforceDescription": "תזמון משימות ומפעילים אוטומטיים",
     "workforcePopup": {
       "title": "אוטומציה מתוזמנת",
-      "description": "הגדר משימות חוזרות עם תזמוני cron וטריגרים בין סוכנים. כוח העבודה שלך רץ בזמן שאתה ישן."
+      "description": "הגדרת משימות חוזרות עם לוחות זמנים של cron ומפעילים בין סוכנים. לוחות הזמנים שלך פועלים בזמן שאתה ישן."
     },
     "credentials": "אישורים",
     "credentialsDescription": "אחסן כניסות בצורה מאובטחת לגישת סוכנים",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "התחבר",
-    "assign": "הקצה",
-    "assignDescription": "הקצה עובד להרצת משימה זו",
+    "assign": "תזמון",
+    "assignDescription": "תזמון משימה זו לפעול אוטומטית",
     "computer": "מחשב",
     "showComputer": "הצג מחשב",
     "hideComputer": "הסתר מחשב",
@@ -1526,7 +1526,7 @@
       "machines": "מכונות",
       "credentials": "פרטי כניסה",
       "swarmMode": "מצב נחיל",
-      "workforce": "כוח עבודה",
+      "workforce": "לוחות זמנים",
       "desktopApp": "אפליקציית שולחן עבודה",
       "billing": "חיוב וקרדיטים"
     },

@@ -872,11 +872,11 @@
     "computers": "Комп'ютери",
     "active": "активний",
     "view": "Переглянути",
-    "workforce": "Робоча сила",
-    "workforceDescription": "Заплануйте автоматичних агентів і тригери",
+    "workforce": "Розклади",
+    "workforceDescription": "Планування автоматизованих завдань і тригерів",
     "workforcePopup": {
       "title": "Запланована автоматизація",
-      "description": "Налаштуйте повторювані завдання з cron-розкладами та тригерами агент-агент. Ваша робоча сила працює, поки ви спите."
+      "description": "Налаштуйте повторювані завдання з розкладами cron і тригерами між агентами. Ваші розклади працюють, поки ви спите."
     },
     "credentials": "Облікові дані",
     "credentialsDescription": "Безпечно зберігайте логіни для доступу агентів",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Увійти",
-    "assign": "Призначити",
-    "assignDescription": "Призначити працівника для виконання цього завдання",
+    "assign": "Запланувати",
+    "assignDescription": "Запланувати автоматичне виконання цього завдання",
     "computer": "Комп'ютер",
     "showComputer": "Показати комп'ютер",
     "hideComputer": "Приховати комп'ютер",
@@ -1526,7 +1526,7 @@
       "machines": "Mashyny",
       "credentials": "Oblikovi dani",
       "swarmMode": "Rezhym roiu",
-      "workforce": "Robocha syla",
+      "workforce": "Розклади",
       "desktopApp": "Desktopnyi zastosunok",
       "billing": "Oplata ta kredyty"
     },

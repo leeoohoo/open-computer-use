@@ -872,11 +872,11 @@
     "computers": "Mga Computer",
     "active": "aktibo",
     "view": "Tingnan",
-    "workforce": "Workforce",
-    "workforceDescription": "Mag-schedule ng mga automated agent at trigger",
+    "workforce": "Mga Iskedyul",
+    "workforceDescription": "Mag-iskedyul ng mga awtomatikong gawain at trigger",
     "workforcePopup": {
       "title": "Naka-schedule na automation",
-      "description": "Mag-set up ng mga paulit-ulit na gawain gamit ang cron schedules at agent-to-agent triggers. Tumatakbo ang iyong workforce habang natutulog ka."
+      "description": "Mag-set up ng paulit-ulit na gawain gamit ang cron na iskedyul at agent-to-agent na trigger. Tumatakbo ang iyong mga iskedyul habang natutulog ka."
     },
     "credentials": "Mga Credential",
     "credentialsDescription": "Ligtas na mag-store ng mga login para sa access ng agent",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Mag-login",
-    "assign": "I-assign",
-    "assignDescription": "Mag-assign ng empleyado para patakbuhin ang gawaing ito",
+    "assign": "Mag-iskedyul",
+    "assignDescription": "Mag-iskedyul ng gawaing ito na tumakbo nang awtomatiko",
     "computer": "Computer",
     "showComputer": "Ipakita ang Computer",
     "hideComputer": "Itago ang Computer",
@@ -1526,7 +1526,7 @@
       "machines": "Mga Makina",
       "credentials": "Mga Credential",
       "swarmMode": "Swarm Mode",
-      "workforce": "Workforce",
+      "workforce": "Mga Iskedyul",
       "desktopApp": "Desktop App",
       "billing": "Billing at Credits"
     },

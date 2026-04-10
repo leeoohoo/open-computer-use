@@ -872,11 +872,11 @@
     "computers": "أجهزة كمبيوتر",
     "active": "نشط",
     "view": "عرض",
-    "workforce": "القوى العاملة",
-    "workforceDescription": "جدولة الوكلاء الآليين والمُشغّلات",
+    "workforce": "الجداول",
+    "workforceDescription": "جدولة المهام والمشغلات التلقائية",
     "workforcePopup": {
       "title": "الأتمتة المجدولة",
-      "description": "أعدّ المهام المتكررة بجداول cron ومُشغّلات بين الوكلاء. قواك العاملة تعمل أثناء نومك."
+      "description": "إعداد مهام متكررة بجداول cron ومشغلات بين الوكلاء. تعمل جداولك أثناء نومك."
     },
     "credentials": "بيانات الاعتماد",
     "credentialsDescription": "تخزين آمن لبيانات الدخول لوصول الوكلاء",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "تسجيل الدخول",
-    "assign": "تعيين",
-    "assignDescription": "عيّن موظفاً لتنفيذ هذه المهمة",
+    "assign": "جدولة",
+    "assignDescription": "جدولة هذه المهمة للتشغيل تلقائيًا",
     "computer": "كمبيوتر",
     "showComputer": "إظهار الكمبيوتر",
     "hideComputer": "إخفاء الكمبيوتر",
@@ -1526,7 +1526,7 @@
       "machines": "الأجهزة",
       "credentials": "بيانات الاعتماد",
       "swarmMode": "وضع السرب",
-      "workforce": "القوى العاملة",
+      "workforce": "الجداول",
       "desktopApp": "تطبيق سطح المكتب",
       "billing": "الفوترة والأرصدة"
     },

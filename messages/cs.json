@@ -872,11 +872,11 @@
     "computers": "Počítače",
     "active": "aktivní",
     "view": "Zobrazit",
-    "workforce": "Pracovní síla",
-    "workforceDescription": "Naplánujte automatizované agenty a triggery",
+    "workforce": "Plány",
+    "workforceDescription": "Plánování automatizovaných úloh a spouštěčů",
     "workforcePopup": {
       "title": "Plánovaná automatizace",
-      "description": "Nastavte opakující se úkoly s cron plány a triggery mezi agenty. Vaše pracovní síla běží, zatímco spíte."
+      "description": "Nastavte opakující se úlohy s cron plány a spouštěči mezi agenty. Vaše plány běží, zatímco spíte."
     },
     "credentials": "Přihlašovací údaje",
     "credentialsDescription": "Bezpečně uložte přihlášení pro přístup agentů",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Přihlásit se",
-    "assign": "Přiřadit",
-    "assignDescription": "Přiřadit zaměstnance ke spuštění tohoto úkolu",
+    "assign": "Naplánovat",
+    "assignDescription": "Naplánovat automatické spuštění této úlohy",
     "computer": "Počítač",
     "showComputer": "Zobrazit počítač",
     "hideComputer": "Skrýt počítač",
@@ -1526,7 +1526,7 @@
       "machines": "Stroje",
       "credentials": "Přihlašovací údaje",
       "swarmMode": "Režim roje",
-      "workforce": "Pracovní síla",
+      "workforce": "Plány",
       "desktopApp": "Desktopová aplikace",
       "billing": "Fakturace a kredity"
     },

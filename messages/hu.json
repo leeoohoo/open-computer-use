@@ -872,11 +872,11 @@
     "computers": "Számítógépek",
     "active": "aktív",
     "view": "Megtekintés",
-    "workforce": "Munkaerő",
-    "workforceDescription": "Ütemezz automatizált ügynököket és triggereket",
+    "workforce": "Ütemezések",
+    "workforceDescription": "Automatizált feladatok és triggerek ütemezése",
     "workforcePopup": {
       "title": "Ütemezett automatizálás",
-      "description": "Állíts be ismétlődő feladatokat cron ütemezésekkel és ügynök-ügynök triggerekkel. A munkaerőd fut, amíg alszol."
+      "description": "Állítson be ismétlődő feladatokat cron ütemezésekkel és ügynökök közötti triggerekkel. Az ütemezései futnak, miközben Ön alszik."
     },
     "credentials": "Hitelesítő adatok",
     "credentialsDescription": "Biztonságosan tárold a bejelentkezéseket ügynök hozzáféréshez",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Bejelentkezés",
-    "assign": "Kiosztás",
-    "assignDescription": "Ossz ki egy alkalmazottat ennek a feladatnak a futtatásához",
+    "assign": "Ütemezés",
+    "assignDescription": "Feladat ütemezése automatikus futtatásra",
     "computer": "Számítógép",
     "showComputer": "Számítógép megjelenítése",
     "hideComputer": "Számítógép elrejtése",
@@ -1526,7 +1526,7 @@
       "machines": "Gépek",
       "credentials": "Hitelesítő adatok",
       "swarmMode": "Swarm mód",
-      "workforce": "Munkaerő",
+      "workforce": "Ütemezések",
       "desktopApp": "Asztali alkalmazás",
       "billing": "Számlázás és kreditek"
     },

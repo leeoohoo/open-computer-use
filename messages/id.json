@@ -872,11 +872,11 @@
     "computers": "Komputer",
     "active": "aktif",
     "view": "Lihat",
-    "workforce": "Tenaga Kerja",
-    "workforceDescription": "Jadwalkan agen otomatis dan pemicu",
+    "workforce": "Jadwal",
+    "workforceDescription": "Jadwalkan tugas dan pemicu otomatis",
     "workforcePopup": {
       "title": "Otomatisasi terjadwal",
-      "description": "Siapkan tugas berulang dengan jadwal cron dan pemicu antar-agen. Tenaga kerja Anda berjalan saat Anda tidur."
+      "description": "Atur tugas berulang dengan jadwal cron dan pemicu antar-agen. Jadwal Anda berjalan saat Anda tidur."
     },
     "credentials": "Kredensial",
     "credentialsDescription": "Simpan login secara aman untuk akses agen",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Masuk",
-    "assign": "Tugaskan",
-    "assignDescription": "Tugaskan karyawan untuk menjalankan tugas ini",
+    "assign": "Jadwalkan",
+    "assignDescription": "Jadwalkan tugas ini untuk berjalan secara otomatis",
     "computer": "Komputer",
     "showComputer": "Tampilkan Komputer",
     "hideComputer": "Sembunyikan Komputer",
@@ -1526,7 +1526,7 @@
       "machines": "Mesin",
       "credentials": "Kredensial",
       "swarmMode": "Swarm Mode",
-      "workforce": "Tenaga Kerja",
+      "workforce": "Jadwal",
       "desktopApp": "Aplikasi Desktop",
       "billing": "Tagihan & Kredit"
     },

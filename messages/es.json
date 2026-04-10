@@ -872,11 +872,11 @@
     "computers": "Computadoras",
     "active": "activa",
     "view": "Ver",
-    "workforce": "Fuerza laboral",
-    "workforceDescription": "Programa agentes automatizados y disparadores",
+    "workforce": "Programaciones",
+    "workforceDescription": "Programar tareas automatizadas y disparadores",
     "workforcePopup": {
       "title": "Automatización programada",
-      "description": "Configura tareas recurrentes con programaciones cron y disparadores entre agentes. Tu fuerza laboral trabaja mientras duermes."
+      "description": "Configure tareas recurrentes con programaciones cron y disparadores entre agentes. Sus programaciones se ejecutan mientras duerme."
     },
     "credentials": "Credenciales",
     "credentialsDescription": "Almacena credenciales de forma segura para el acceso de agentes",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Iniciar sesión",
-    "assign": "Asignar",
-    "assignDescription": "Asignar un empleado para ejecutar esta tarea",
+    "assign": "Programar",
+    "assignDescription": "Programar esta tarea para ejecutarse automáticamente",
     "computer": "Computadora",
     "showComputer": "Mostrar computadora",
     "hideComputer": "Ocultar computadora",
@@ -1526,7 +1526,7 @@
       "machines": "Máquinas",
       "credentials": "Credenciales",
       "swarmMode": "Modo Enjambre",
-      "workforce": "Workforce",
+      "workforce": "Programaciones",
       "desktopApp": "App de escritorio",
       "billing": "Facturación y créditos"
     },

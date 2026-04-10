@@ -872,11 +872,11 @@
     "computers": "Datamaskiner",
     "active": "aktiv",
     "view": "Vis",
-    "workforce": "Arbeidsstyrke",
-    "workforceDescription": "Planlegg automatiserte agenter og utlosere",
+    "workforce": "Tidsplaner",
+    "workforceDescription": "Planlegg automatiserte oppgaver og utløsere",
     "workforcePopup": {
       "title": "Planlagt automatisering",
-      "description": "Sett opp gjentakende oppgaver med cron-planer og agent-til-agent-utlosere. Arbeidsstyrken din kjorer mens du sover."
+      "description": "Sett opp gjentakende oppgaver med cron-tidsplaner og agent-til-agent-utløsere. Tidsplanene dine kjører mens du sover."
     },
     "credentials": "Legitimasjon",
     "credentialsDescription": "Lagre innlogginger sikkert for agenttilgang",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Logg inn",
-    "assign": "Tildel",
-    "assignDescription": "Tildel en ansatt til a kjore denne oppgaven",
+    "assign": "Planlegg",
+    "assignDescription": "Planlegg denne oppgaven til å kjøre automatisk",
     "computer": "Datamaskin",
     "showComputer": "Vis datamaskin",
     "hideComputer": "Skjul datamaskin",
@@ -1526,7 +1526,7 @@
       "machines": "Maskiner",
       "credentials": "Pålogginger",
       "swarmMode": "Swarm Mode",
-      "workforce": "Workforce",
+      "workforce": "Tidsplaner",
       "desktopApp": "Skrivebordsapp",
       "billing": "Fakturering og credits"
     },

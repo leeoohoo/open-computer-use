@@ -872,11 +872,11 @@
     "computers": "Computers",
     "active": "actief",
     "view": "Bekijken",
-    "workforce": "Personeelsbestand",
-    "workforceDescription": "Plan geautomatiseerde agents en triggers",
+    "workforce": "Schema's",
+    "workforceDescription": "Plan automatische taken en triggers",
     "workforcePopup": {
       "title": "Geplande automatisering",
-      "description": "Stel terugkerende taken in met cron-schema's en agent-naar-agent triggers. Je personeelsbestand werkt terwijl je slaapt."
+      "description": "Stel terugkerende taken in met cron-schema's en agent-naar-agent-triggers. Uw schema's draaien terwijl u slaapt."
     },
     "credentials": "Inloggegevens",
     "credentialsDescription": "Sla inloggegevens veilig op voor agenttoegang",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Inloggen",
-    "assign": "Toewijzen",
-    "assignDescription": "Wijs een medewerker toe om deze taak uit te voeren",
+    "assign": "Plannen",
+    "assignDescription": "Deze taak plannen om automatisch uit te voeren",
     "computer": "Computer",
     "showComputer": "Computer tonen",
     "hideComputer": "Computer verbergen",
@@ -1526,7 +1526,7 @@
       "machines": "Machines",
       "credentials": "Inloggegevens",
       "swarmMode": "Swarm Mode",
-      "workforce": "Workforce",
+      "workforce": "Schema's",
       "desktopApp": "Desktop-app",
       "billing": "Facturering & credits"
     },

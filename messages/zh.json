@@ -872,11 +872,11 @@
     "computers": "计算机",
     "active": "活跃",
     "view": "查看",
-    "workforce": "工作力",
-    "workforceDescription": "管理预定智能体和触发器",
+    "workforce": "计划表",
+    "workforceDescription": "计划自动化任务和触发器",
     "workforcePopup": {
       "title": "定时自动化",
-      "description": "使用 cron 计划和智能体间触发器设置重复任务。您的工作力在您入睡时继续运行。"
+      "description": "使用 cron 计划和代理间触发器设置循环任务。您的计划在您睡觉时运行。"
     },
     "credentials": "凭据",
     "credentialsDescription": "安全存储智能体访问所需的登录信息",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "登录",
-    "assign": "分配",
-    "assignDescription": "分配一名员工来执行此任务",
+    "assign": "计划",
+    "assignDescription": "计划自动运行此任务",
     "computer": "计算机",
     "showComputer": "显示计算机",
     "hideComputer": "隐藏计算机",
@@ -1526,7 +1526,7 @@
       "machines": "机器",
       "credentials": "凭据",
       "swarmMode": "集群模式",
-      "workforce": "工作力",
+      "workforce": "计划表",
       "desktopApp": "桌面应用",
       "billing": "计费与积分"
     },

@@ -872,11 +872,11 @@
     "computers": "Computer",
     "active": "attivo",
     "view": "Visualizza",
-    "workforce": "Forza Lavoro",
-    "workforceDescription": "Programma agenti automatizzati e trigger",
+    "workforce": "Pianificazioni",
+    "workforceDescription": "Pianifica attività automatizzate e trigger",
     "workforcePopup": {
       "title": "Automazione programmata",
-      "description": "Configura compiti ricorrenti con pianificazioni cron e trigger agente-agente. La tua forza lavoro funziona mentre dormi."
+      "description": "Configura attività ricorrenti con pianificazioni cron e trigger tra agenti. Le tue pianificazioni vengono eseguite mentre dormi."
     },
     "credentials": "Credenziali",
     "credentialsDescription": "Archivia in sicurezza le credenziali per l'accesso degli agenti",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Accedi",
-    "assign": "Assegna",
-    "assignDescription": "Assegna un dipendente per eseguire questo compito",
+    "assign": "Pianifica",
+    "assignDescription": "Pianifica l'esecuzione automatica di questa attività",
     "computer": "Computer",
     "showComputer": "Mostra Computer",
     "hideComputer": "Nascondi Computer",
@@ -1526,7 +1526,7 @@
       "machines": "Macchine",
       "credentials": "Credenziali",
       "swarmMode": "Swarm Mode",
-      "workforce": "Workforce",
+      "workforce": "Pianificazioni",
       "desktopApp": "App desktop",
       "billing": "Fatturazione e crediti"
     },

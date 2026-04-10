@@ -872,11 +872,11 @@
     "computers": "Ordinateurs",
     "active": "actif",
     "view": "Voir",
-    "workforce": "Effectifs",
-    "workforceDescription": "Planifiez des agents automatisés et des déclencheurs",
+    "workforce": "Planifications",
+    "workforceDescription": "Planifier des tâches et déclencheurs automatisés",
     "workforcePopup": {
       "title": "Automatisation planifiée",
-      "description": "Configurez des tâches récurrentes avec des planifications cron et des déclencheurs entre agents. Vos effectifs travaillent pendant que vous dormez."
+      "description": "Configurez des tâches récurrentes avec des planifications cron et des déclencheurs entre agents. Vos planifications s'exécutent pendant que vous dormez."
     },
     "credentials": "Identifiants",
     "credentialsDescription": "Stockez vos identifiants en toute sécurité pour l'accès des agents",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Connexion",
-    "assign": "Assigner",
-    "assignDescription": "Assigner un employé pour exécuter cette tâche",
+    "assign": "Planifier",
+    "assignDescription": "Planifier l'exécution automatique de cette tâche",
     "computer": "Ordinateur",
     "showComputer": "Afficher l'ordinateur",
     "hideComputer": "Masquer l'ordinateur",
@@ -1526,7 +1526,7 @@
       "machines": "Machines",
       "credentials": "Identifiants",
       "swarmMode": "Mode Essaim",
-      "workforce": "Effectif",
+      "workforce": "Planifications",
       "desktopApp": "Application bureau",
       "billing": "Facturation et crédits"
     },

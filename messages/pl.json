@@ -872,11 +872,11 @@
     "computers": "Komputery",
     "active": "aktywny",
     "view": "Wyswietl",
-    "workforce": "Sila robocza",
-    "workforceDescription": "Planuj automatycznych agentow i wyzwalacze",
+    "workforce": "Harmonogramy",
+    "workforceDescription": "Planuj zautomatyzowane zadania i wyzwalacze",
     "workforcePopup": {
       "title": "Zaplanowana automatyzacja",
-      "description": "Skonfiguruj powtarzalne zadania z harmonogramami cron i wyzwalaczami agent-agent. Twoja sila robocza dziala gdy spisz."
+      "description": "Skonfiguruj powtarzające się zadania z harmonogramami cron i wyzwalaczami między agentami. Twoje harmonogramy działają, gdy śpisz."
     },
     "credentials": "Dane logowania",
     "credentialsDescription": "Bezpiecznie przechowuj loginy do dostepu agenta",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Zaloguj sie",
-    "assign": "Przypisz",
-    "assignDescription": "Przypisz pracownika do wykonania tego zadania",
+    "assign": "Zaplanuj",
+    "assignDescription": "Zaplanuj automatyczne uruchomienie tego zadania",
     "computer": "Komputer",
     "showComputer": "Pokaz komputer",
     "hideComputer": "Ukryj komputer",
@@ -1526,7 +1526,7 @@
       "machines": "Maszyny",
       "credentials": "Dane logowania",
       "swarmMode": "Swarm Mode",
-      "workforce": "Workforce",
+      "workforce": "Harmonogramy",
       "desktopApp": "Aplikacja desktopowa",
       "billing": "Rozliczenia i credity"
     },

@@ -36,20 +36,26 @@ import {
   Sparkles,
   Crown,
   Zap,
+  ChevronLeft,
   ChevronRight,
   AlertTriangle,
   BookOpen,
+  Play,
+  Pause,
+  History,
+  ArrowUpRight,
+  CalendarDays,
+  CheckCircle2,
+  XCircle,
+  SkipForward,
 } from "lucide-react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { CoastyIcon } from "@/components/icons/coasty"
 import { AgentIcon } from "@/components/icons/agent"
 import { trackScheduleTriggered } from "@/lib/posthog/analytics"
-import { ScheduleCalendar, getTasksForDate, type DayTask } from "./schedule-calendar"
-import { ScheduleHistory } from "./schedule-history"
 import { ScheduleDialog } from "./schedule-dialog"
 import { CreateScheduleDialog } from "./create-schedule-dialog"
-import { ScheduleCard } from "./schedule-card"
 import type { UserMachine } from "@/types/machines.types"
 import {
   listSchedules,
@@ -62,8 +68,13 @@ import {
   getDelegates,
   updateTeam,
   formatFrequency,
+  formatNextRun,
   triggerScheduleNow,
+  pauseSchedule,
+  deleteSchedule,
+  getScheduleHistory,
   type ScheduleResponse,
+  type ScheduleHistoryEntry,
   type TeamResponse,
   type DelegateConfig,
 } from "@/lib/services/schedules-api"
@@ -341,44 +352,417 @@ const TIER_META: Record<string, { labelKey: string; icon: React.ComponentType<{ 
 /* ─── types ─── */
 type Tab = "teams" | "employees"
 
-/* ─── Day task row (compact) ─── */
-function DayTaskItem({ task, onUpdate }: { task: DayTask; onUpdate: () => void }) {
-  const t = useTranslations("schedulesPage")
-  const router = useRouter()
-  const s = task.schedule
-  const [loading, setLoading] = useState<string | null>(null)
-  const isActive = s.enabled && !s.paused_reason
+/* ═══════════════════════════════════════════════════════
+   Inline: ScheduleCard
+   ═══════════════════════════════════════════════════════ */
 
-  async function run() {
-    setLoading("run"); try { trackScheduleTriggered(s.chat_id); await triggerScheduleNow(s.chat_id); onUpdate() } catch {} finally { setLoading(null) }
+function ScheduleCard({
+  schedule,
+  onUpdate,
+  onViewHistory,
+  onEdit,
+}: {
+  schedule: ScheduleResponse
+  onUpdate: () => void
+  onViewHistory: (chatId: string) => void
+  onEdit?: (chatId: string) => void
+}) {
+  const router = useRouter()
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
+
+  async function handleRunNow() {
+    setActionLoading("run")
+    try { await triggerScheduleNow(schedule.chat_id); onUpdate() } catch {} finally { setActionLoading(null) }
+  }
+  async function handleTogglePause() {
+    setActionLoading("pause")
+    try { await pauseSchedule(schedule.chat_id); onUpdate() } catch {} finally { setActionLoading(null) }
+  }
+  async function handleDelete() {
+    setActionLoading("delete")
+    try { await deleteSchedule(schedule.chat_id); onUpdate() } catch {} finally { setActionLoading(null) }
+  }
+
+  const isActive = schedule.enabled && !schedule.paused_reason
+  const isFailed = schedule.paused_reason === "too_many_failures"
+  const statusLabel = isActive ? "On Duty"
+    : schedule.paused_reason === "too_many_failures" ? "Needs Attention"
+    : schedule.paused_reason === "insufficient_credits" ? "No Credits"
+    : schedule.paused_reason === "machine_unavailable" ? "Offline"
+    : "Standby"
+
+  return (
+    <motion.div
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className={cn(
+        "group relative flex flex-col rounded-xl overflow-hidden h-full",
+        "border border-border/30 bg-card/50",
+        "hover:border-border/50 hover:shadow-lg hover:shadow-black/[0.04] dark:hover:shadow-black/[0.15]",
+        "transition-[border-color,box-shadow] duration-300",
+        !isActive && !isFailed && "opacity-80 hover:opacity-100",
+      )}
+    >
+      <div className="flex flex-col h-full">
+        <div className="px-5 pt-5 pb-4 flex-1 space-y-4">
+          <div className="flex items-start gap-3">
+            <div className="relative shrink-0">
+              <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center transition-colors duration-300", "bg-muted/50 group-hover:bg-muted/80")}>
+                <CoastyIcon className="h-4 w-4 text-foreground/50 group-hover:text-foreground/70 transition-colors duration-300" />
+              </div>
+              <div className={cn("absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-card transition-all duration-500", isActive ? "bg-emerald-500" : isFailed ? "bg-amber-500" : "bg-muted-foreground/30")} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-semibold text-foreground truncate cursor-pointer group-hover:text-foreground/80 transition-colors inline-flex items-center gap-1" onClick={() => router.push(`/c/${schedule.chat_id}`)}>
+                {schedule.title || "Untitled Employee"}
+                <ArrowUpRight className="h-3 w-3 text-muted-foreground/0 group-hover:text-muted-foreground/50 transition-all duration-300 -translate-y-px" />
+              </h3>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className={cn("text-[11px] font-medium", isActive ? "text-emerald-600 dark:text-emerald-400" : isFailed ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground/60")}>{statusLabel}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 text-[11px] text-muted-foreground/60">
+            <span className="flex items-center gap-1.5 bg-muted/40 px-2 py-1 rounded-md"><Clock className="h-3 w-3 text-muted-foreground/40" />{formatFrequency(schedule.frequency)}</span>
+            <span className="bg-muted/40 px-2 py-1 rounded-md tabular-nums">{schedule.run_count} runs</span>
+            {schedule.consecutive_failures > 0 && <span className="bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-1 rounded-md tabular-nums">{schedule.consecutive_failures} failed</span>}
+          </div>
+
+          <div className="space-y-2 pt-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted-foreground/50">Next shift</span>
+              <span className="text-[11px] text-foreground/80 font-medium tabular-nums">{formatNextRun(schedule.next_run_at)}</span>
+            </div>
+            {schedule.last_run_at && (
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] text-muted-foreground/50">Last active</span>
+                <span className="text-[11px] text-muted-foreground/70 tabular-nums">{new Date(schedule.last_run_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
+              </div>
+            )}
+          </div>
+
+          {schedule.paused_reason && schedule.paused_reason !== "deleted" && (
+            <div className="flex items-center gap-2 rounded-lg px-3 py-2 bg-muted/30 border border-border/30">
+              <AlertTriangle className="h-3 w-3 shrink-0 text-muted-foreground/50" />
+              <span className="text-[11px] text-muted-foreground/70 truncate">
+                {schedule.paused_reason === "insufficient_credits" ? "Insufficient credits" : schedule.paused_reason === "too_many_failures" ? `${schedule.consecutive_failures} consecutive failures` : schedule.paused_reason === "machine_unavailable" ? "Workstation unavailable" : schedule.paused_reason}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className={cn("px-4 py-2.5 flex items-center gap-1.5 border-t border-border/20", "translate-y-0 opacity-100", "sm:translate-y-1 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100", "transition-all duration-300 ease-out")}>
+          <motion.button onClick={handleRunNow} disabled={!!actionLoading} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className={cn("h-7 px-3 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-colors", "bg-muted/50 hover:bg-muted text-foreground/60 hover:text-foreground", "disabled:opacity-40")}>
+            <CoastyIcon className="h-3 w-3" />{actionLoading === "run" ? "\u2026" : "Run"}
+          </motion.button>
+          <motion.button onClick={handleTogglePause} disabled={!!actionLoading} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="h-7 px-2.5 rounded-lg text-[11px] flex items-center gap-1.5 text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 transition-colors disabled:opacity-40">
+            {schedule.enabled ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+            {actionLoading === "pause" ? "\u2026" : schedule.enabled ? "Pause" : "Resume"}
+          </motion.button>
+          <div className="flex-1" />
+          {[
+            { icon: History, action: () => onViewHistory(schedule.chat_id), title: "Work Log" },
+            ...(onEdit ? [{ icon: Pencil, action: () => onEdit(schedule.chat_id), title: "Edit" }] : []),
+            { icon: Trash2, action: handleDelete, title: "Delete" },
+          ].map(({ icon: Icon, action, title }) => (
+            <motion.button key={title} onClick={action} disabled={!!actionLoading} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="h-7 w-7 rounded-lg flex items-center justify-center text-muted-foreground/30 hover:text-muted-foreground hover:bg-muted/50 transition-colors disabled:opacity-40" title={title}>
+              <Icon className="h-3.5 w-3.5" />
+            </motion.button>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════
+   Inline: ScheduleCalendar (day slider)
+   ═══════════════════════════════════════════════════════ */
+
+function parseCronField(field: string, max: number, min = 0): number[] {
+  const vals = new Set<number>()
+  for (const part of field.split(",")) {
+    const step = part.match(/^(\*|\d+(?:-\d+)?)\/(\d+)$/)
+    if (step) {
+      const s = parseInt(step[2])
+      let lo = min, hi = max
+      if (step[1] !== "*") { const [a, b] = step[1].split("-"); lo = parseInt(a); if (b !== undefined) hi = parseInt(b) }
+      for (let i = lo; i <= hi; i += s) vals.add(i)
+      continue
+    }
+    const range = part.match(/^(\d+)-(\d+)$/)
+    if (range) { for (let i = parseInt(range[1]); i <= parseInt(range[2]); i++) vals.add(i); continue }
+    if (part === "*") { for (let i = min; i <= max; i++) vals.add(i); continue }
+    const n = parseInt(part)
+    if (!isNaN(n)) vals.add(n)
+  }
+  return [...vals].sort((a, b) => a - b)
+}
+
+function getOccurrencesForMonth(schedule: ScheduleResponse, year: number, month: number): Map<number, { times: string[]; runsPerDay: number }> {
+  const result = new Map<number, { times: string[]; runsPerDay: number }>()
+  const dim = new Date(year, month + 1, 0).getDate()
+  if (!schedule.cron) return result
+  try {
+    const p = schedule.cron.trim().split(/\s+/)
+    if (p.length !== 5) return result
+    const [minF, hrF, domF, monF, dowF] = p
+    if (monF !== "*" && !parseCronField(monF, 12, 1).includes(month + 1)) return result
+    const hrs = parseCronField(hrF, 23)
+    const mins = parseCronField(minF, 59)
+    const allTimes: string[] = []
+    for (const h of hrs) for (const m of mins) allTimes.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`)
+    const rpd = allTimes.length
+    const show = rpd > 6 ? allTimes.slice(0, 3) : allTimes
+    const vDom = domF !== "*" ? parseCronField(domF, dim, 1) : null
+    const vDow = dowF !== "*" ? parseCronField(dowF, 6, 0) : null
+    for (let d = 1; d <= dim; d++) {
+      const dow = new Date(year, month, d).getDay()
+      let ok = !vDom && !vDow ? true : vDom && vDow ? vDom.includes(d) || vDow.includes(dow) : vDom ? vDom.includes(d) : vDow ? vDow.includes(dow) : false
+      if (ok) result.set(d, { times: show, runsPerDay: rpd })
+    }
+  } catch { for (let d = 1; d <= dim; d++) result.set(d, { times: [], runsPerDay: 1 }) }
+  return result
+}
+
+function getTasksForDate(schedules: ScheduleResponse[], date: Date) {
+  const y = date.getFullYear(), m = date.getMonth()
+  return schedules.flatMap((s) => {
+    const occ = getOccurrencesForMonth(s, y, m)
+    const info = occ.get(date.getDate())
+    return info ? [{ schedule: s, times: info.times, runsPerDay: info.runsPerDay }] : []
+  })
+}
+
+const SHORT_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+const TINY_DAYS = ["S", "M", "T", "W", "T", "F", "S"]
+
+function ScheduleCalendar({ schedules, selectedDate, onSelectDate, onRun, onPause, onEdit }: { schedules: ScheduleResponse[]; selectedDate: Date; onSelectDate: (d: Date) => void; onRun?: (chatId: string) => void; onPause?: (chatId: string) => void; onEdit?: (chatId: string) => void }) {
+  const today = new Date()
+  const [month, setMonth] = useState(selectedDate.getMonth())
+  const [year, setYear] = useState(selectedDate.getFullYear())
+  const [direction, setDirection] = useState(0)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const days = useMemo(() => {
+    const total = new Date(year, month + 1, 0).getDate()
+    return Array.from({ length: total }, (_, i) => new Date(year, month, i + 1))
+  }, [year, month])
+
+  const taskMap = useMemo(() => {
+    const map = new Map<number, number>()
+    for (const s of schedules) { const occ = getOccurrencesForMonth(s, year, month); for (const [day] of occ) map.set(day, (map.get(day) || 0) + 1) }
+    return map
+  }, [schedules, year, month])
+
+  const selectedTasks = useMemo(() => getTasksForDate(schedules, selectedDate), [schedules, selectedDate])
+
+  const isThisMonth = month === today.getMonth() && year === today.getFullYear()
+  const selDay = selectedDate.getDate(), selMonth = selectedDate.getMonth(), selYear = selectedDate.getFullYear()
+  const isSel = (d: Date) => d.getDate() === selDay && month === selMonth && year === selYear
+  const isTod = (d: Date) => d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear()
+  const isTodaySelected = selDay === today.getDate() && selMonth === today.getMonth() && selYear === today.getFullYear()
+
+  function nav(delta: number) {
+    setDirection(delta)
+    let m = month + delta, y = year
+    if (m > 11) { m = 0; y++ } if (m < 0) { m = 11; y-- }
+    setMonth(m); setYear(y); onSelectDate(new Date(y, m, 1))
+  }
+
+  useEffect(() => {
+    const el = scrollRef.current; if (!el) return
+    const target = el.querySelector('[data-selected="true"]') as HTMLElement
+    if (target) el.scrollTo({ left: target.offsetLeft - el.offsetWidth / 2 + target.offsetWidth / 2, behavior: "smooth" })
+  }, [month, year])
+
+  useEffect(() => {
+    const el = scrollRef.current; if (!el) return
+    requestAnimationFrame(() => {
+      const target = el.querySelector('[data-today="true"]') as HTMLElement
+      if (target) el.scrollTo({ left: target.offsetLeft - el.offsetWidth / 2 + target.offsetWidth / 2, behavior: "instant" })
+    })
+  }, [])
+
+  const monthSlide = {
+    enter: (dir: number) => ({ x: dir > 0 ? 40 : -40, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? -40 : 40, opacity: 0 }),
   }
 
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted/50 transition-all group">
-      <div className={cn(
-        "w-2 h-2 rounded-full shrink-0",
-        isActive ? "bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.5)]"
-          : s.paused_reason === "too_many_failures" ? "bg-amber-500"
-          : "bg-muted-foreground/30",
-      )} />
-      <div className="flex-1 min-w-0">
-        <p
-          className="text-sm font-medium text-foreground/80 truncate cursor-pointer hover:text-foreground transition-colors"
-          onClick={() => router.push(`/c/${s.chat_id}`)}
-        >
-          {s.title || t("untitledEmployee")}
-        </p>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button onClick={() => nav(-1)} className="p-1.5 rounded-lg hover:bg-muted/50 text-muted-foreground/50 hover:text-foreground transition-all"><ChevronLeft className="h-4 w-4" /></button>
+          <div className="relative overflow-hidden w-[160px] h-7">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.h2 key={`${year}-${month}`} custom={direction} variants={monthSlide} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25, ease: "easeOut" }} className="absolute inset-0 flex items-center text-base font-semibold tracking-tight text-foreground">
+                {new Date(year, month).toLocaleDateString(undefined, { month: "long", year: "numeric" })}
+              </motion.h2>
+            </AnimatePresence>
+          </div>
+          <button onClick={() => nav(1)} className="p-1.5 rounded-lg hover:bg-muted/50 text-muted-foreground/50 hover:text-foreground transition-all"><ChevronRight className="h-4 w-4" /></button>
+        </div>
+        {!isThisMonth && (
+          <motion.button initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} onClick={() => { setDirection(0); setMonth(today.getMonth()); setYear(today.getFullYear()); onSelectDate(today) }} className="text-[11px] px-3 py-1 rounded-lg bg-muted/40 hover:bg-muted/60 text-muted-foreground/60 hover:text-foreground transition-all">
+            Today
+          </motion.button>
+        )}
       </div>
-      <span className="text-xs text-muted-foreground/50 tabular-nums shrink-0">
-        {task.runsPerDay > 6 ? t("timesDaily", { count: task.runsPerDay }) : task.times.length > 0 ? task.times[0] : formatFrequency(s.frequency)}
-      </span>
-      <button
-        onClick={run}
-        disabled={!!loading}
-        className="h-6 px-2 rounded-md text-[11px] font-medium bg-muted/60 hover:bg-muted text-foreground/60 hover:text-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-all disabled:opacity-40"
-      >
-        {loading === "run" ? "\u2026" : t("run")}
-      </button>
+
+      <div className="relative">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div key={`${year}-${month}`} custom={direction} initial={{ x: direction > 0 ? 60 : -60, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: direction > 0 ? -60 : 60, opacity: 0 }} transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}>
+            <div ref={scrollRef} className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-invisible py-1 px-3" style={{ scrollSnapType: "x mandatory" }}>
+              {days.map((day) => {
+                const sel = isSel(day), tod = isTod(day), taskCount = taskMap.get(day.getDate()) || 0
+                return (
+                  <motion.button key={day.getDate()} data-selected={sel ? "true" : undefined} data-today={tod ? "true" : undefined} onClick={() => onSelectDate(day)} whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
+                    className={cn("relative flex flex-col items-center gap-1 px-2.5 sm:px-3 py-2.5 sm:py-3 rounded-xl shrink-0 transition-all duration-200 min-w-[44px] sm:min-w-[52px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", sel ? "bg-muted ring-1 ring-border shadow-sm" : "hover:bg-muted/40")}
+                    style={{ scrollSnapAlign: "center" }}
+                  >
+                    <span className={cn("text-[10px] font-medium uppercase tracking-wider leading-none", sel ? "text-foreground/60" : "text-muted-foreground/40")}>
+                      <span className="sm:hidden">{TINY_DAYS[day.getDay()]}</span><span className="hidden sm:inline">{SHORT_DAYS[day.getDay()]}</span>
+                    </span>
+                    <span className={cn("text-lg sm:text-xl font-bold leading-none tabular-nums", sel ? "text-foreground" : tod ? "text-foreground/80" : "text-foreground/50")}>{day.getDate()}</span>
+                    <div className="h-1.5 flex items-center justify-center gap-0.5 mt-0.5">
+                      {taskCount > 0 ? (
+                        <>{Array.from({ length: Math.min(taskCount, 3) }, (_, i) => <div key={i} className={cn("w-1 h-1 rounded-full transition-colors duration-300", sel ? "bg-emerald-500" : "bg-muted-foreground/25")} />)}{taskCount > 3 && <span className={cn("text-[8px] leading-none font-bold", sel ? "text-emerald-500" : "text-muted-foreground/25")}>+</span>}</>
+                      ) : <div className="w-1 h-1" />}
+                    </div>
+                    {tod && !sel && <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-muted-foreground/40" />}
+                  </motion.button>
+                )
+              })}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div key={`${selYear}-${selMonth}-${selDay}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2, ease: "easeOut" }} className="rounded-xl border border-border/20 bg-muted/20 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/50"><CalendarDays className="h-3.5 w-3.5 text-muted-foreground/50" /></div>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">{selectedDate.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}</h3>
+                <p className="text-[11px] text-muted-foreground/50">{selectedTasks.length === 0 ? "No employees scheduled" : `${selectedTasks.length} employee${selectedTasks.length > 1 ? "s" : ""} scheduled`}</p>
+              </div>
+            </div>
+            {isTodaySelected && <span className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground/40 bg-muted/50 px-2 py-0.5 rounded-md">Today</span>}
+          </div>
+          {selectedTasks.length > 0 ? (
+            <div className="px-2 pb-2 space-y-0.5">
+              {selectedTasks.map((task, i) => {
+                const s = task.schedule, isAct = s.enabled && !s.paused_reason, isFail = s.paused_reason === "too_many_failures"
+                return (
+                  <motion.div key={s.chat_id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05, duration: 0.2 }} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted/30 transition-all">
+                    {/* Status dot */}
+                    <div className={cn("w-2 h-2 rounded-full shrink-0", isAct ? "bg-emerald-500" : isFail ? "bg-amber-500" : "bg-muted-foreground/25")} />
+                    {/* Info — clickable */}
+                    <div className="flex-1 min-w-0 cursor-pointer" onClick={() => onEdit?.(s.chat_id)}>
+                      <div className="flex items-center gap-2">
+                        <p className="text-[13px] font-semibold text-foreground/70 truncate group-hover:text-foreground transition-colors">{s.title || "Untitled"}</p>
+                        <span className={cn("text-[10px] font-medium shrink-0", isAct ? "text-emerald-600 dark:text-emerald-400" : isFail ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground/30")}>{isAct ? "On Duty" : isFail ? "Attention" : "Standby"}</span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground/35 mt-0.5 tabular-nums">
+                        {task.runsPerDay > 6 ? `${task.runsPerDay}x/day` : task.times.length > 0 ? task.times[0] : formatFrequency(s.frequency)}
+                        {s.run_count > 0 ? ` · ${s.run_count} runs` : ""}
+                        {s.next_run_at ? ` · Next ${formatNextRun(s.next_run_at)}` : ""}
+                      </p>
+                    </div>
+                    {/* Actions */}
+                    <div className="flex items-center gap-0.5 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                      {onRun && <ActionButton icon={CoastyIcon} label="Run" onClick={() => onRun(s.chat_id)} />}
+                      {onPause && <ActionButton icon={s.enabled ? Pause : Play} onClick={() => onPause(s.chat_id)} />}
+                      {onEdit && <ActionButton icon={Pencil} onClick={() => onEdit(s.chat_id)} />}
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="pb-6 pt-2 text-center"><CoastyIcon className="h-5 w-5 text-muted-foreground/15 mx-auto mb-1.5" /><p className="text-[11px] text-muted-foreground/30">No employees on this day</p></div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════
+   Inline: ScheduleHistory
+   ═══════════════════════════════════════════════════════ */
+
+function historyStatusConfig(status: string) {
+  switch (status) {
+    case "completed": return { dotColor: "bg-emerald-500", label: "Completed", labelColor: "text-emerald-600 dark:text-emerald-400" }
+    case "failed": return { dotColor: "bg-rose-500", label: "Failed", labelColor: "text-rose-600 dark:text-rose-400" }
+    case "skipped": return { dotColor: "bg-muted-foreground/40", label: "Skipped", labelColor: "text-muted-foreground" }
+    case "cancelled": return { dotColor: "bg-muted-foreground/40", label: "Cancelled", labelColor: "text-muted-foreground" }
+    case "triggered": return { dotColor: "bg-sky-500", label: "Triggered", labelColor: "text-sky-600 dark:text-sky-400" }
+    default: return { dotColor: "bg-muted-foreground/40", label: status, labelColor: "text-muted-foreground" }
+  }
+}
+
+function formatHistoryDate(iso: string) {
+  const d = new Date(iso), now = new Date(), diffMs = now.getTime() - d.getTime()
+  const diffMins = Math.floor(diffMs / 60000), diffHrs = Math.floor(diffMs / 3600000), diffDays = Math.floor(diffMs / 86400000)
+  if (diffMins < 1) return "just now"
+  if (diffMins < 60) return `${diffMins}m ago`
+  if (diffHrs < 24) return `${diffHrs}h ago`
+  if (diffDays === 1) return "yesterday"
+  if (diffDays < 7) return `${diffDays}d ago`
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+}
+
+function ScheduleHistory({ chatId, limit = 20 }: { chatId?: string; limit?: number }) {
+  const [history, setHistory] = useState<ScheduleHistoryEntry[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setLoading(true)
+    getScheduleHistory(chatId, limit).then(setHistory).catch(() => setHistory([])).finally(() => setLoading(false))
+  }, [chatId, limit])
+
+  if (loading) return (
+    <div className="flex items-center justify-center py-12">
+      <div className="relative h-8 w-8"><div className="absolute inset-0 rounded-full border-2 border-border/20" /><div className="absolute inset-0 rounded-full border-2 border-transparent border-t-muted-foreground/50 animate-spin" /></div>
+    </div>
+  )
+
+  if (history.length === 0) return (
+    <div className="flex flex-col items-center justify-center py-14 text-center">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted/40 mb-3"><History className="h-5 w-5 text-muted-foreground/25" /></div>
+      <p className="text-sm font-medium text-muted-foreground/50">No activity yet</p>
+      <p className="text-[11px] text-muted-foreground/30 mt-1 max-w-[220px]">Logs will appear here once your employees start working</p>
+    </div>
+  )
+
+  return (
+    <div className="divide-y divide-border/10">
+      {history.map((entry, idx) => {
+        const cfg = historyStatusConfig(entry.status)
+        return (
+          <motion.div key={entry.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: idx * 0.03 }} className="group flex items-center gap-3 px-4 py-3 hover:bg-muted/20 transition-colors duration-200">
+            <div className={cn("w-2 h-2 rounded-full shrink-0", cfg.dotColor)} />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className={cn("text-xs font-semibold", cfg.labelColor)}>{cfg.label}</span>
+                {entry.trigger === "manual" && <span className="text-[10px] uppercase tracking-widest font-medium text-muted-foreground/30 bg-muted/40 px-1.5 py-px rounded">manual</span>}
+              </div>
+              {entry.error && <p className="text-[11px] text-muted-foreground/40 truncate mt-0.5" title={entry.error}>{entry.error}</p>}
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              {entry.duration_seconds != null && <span className="hidden sm:inline text-[11px] text-muted-foreground/30 tabular-nums font-medium">{entry.duration_seconds}s</span>}
+              {entry.credits_charged != null && entry.credits_charged > 0 && <span className="hidden sm:inline text-[11px] text-muted-foreground/30 tabular-nums">{entry.credits_charged} cr</span>}
+              <span className="text-[11px] text-muted-foreground/30 tabular-nums min-w-[48px] text-right" title={new Date(entry.executed_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}>{formatHistoryDate(entry.executed_at)}</span>
+            </div>
+          </motion.div>
+        )
+      })}
     </div>
   )
 }
@@ -643,7 +1027,7 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
                           className="w-full rounded-md px-2 py-1 text-[10px] resize-none bg-muted/60 border border-border/50 text-foreground focus:outline-none focus:border-border transition-all"
                           placeholder={t("guidelinesPlaceholder")} />
                         <div className="flex gap-1.5">
-                          <button onClick={() => saveEdit(team.hub_id, team.name, team.instructions || "")} className="h-6 px-2.5 rounded-md text-[10px] font-semibold text-background bg-foreground hover:bg-foreground/90 transition-all">{busy === "edit" ? "\u2026" : t("save")}</button>
+                          <button onClick={() => saveEdit(team.hub_id, team.name, team.instructions || "")} className="h-6 px-2.5 rounded-md text-[10px] font-semibold text-foreground bg-muted hover:bg-muted/80 ring-1 ring-border/50 transition-all">{busy === "edit" ? "\u2026" : t("save")}</button>
                           <button onClick={cancelEdit} className="h-6 px-2 rounded-md text-[10px] text-muted-foreground hover:text-foreground transition-all">{t("cancel")}</button>
                         </div>
                       </div>
@@ -811,9 +1195,28 @@ function OrgChart({ teams, schedules, onRefresh, onEdit }: { teams: TeamResponse
   )
 }
 
+/* ── Tiny action button ── */
+function ActionButton({ icon: Icon, label, onClick }: { icon: React.ComponentType<{ className?: string }>; label?: string; onClick: () => void }) {
+  return (
+    <motion.button
+      onClick={(e) => { e.stopPropagation(); onClick() }}
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.92 }}
+      className={cn(
+        "flex items-center gap-1 rounded-md transition-colors",
+        label ? "h-7 px-2 text-[11px] font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/50" : "h-7 w-7 justify-center text-muted-foreground/30 hover:text-muted-foreground hover:bg-muted/40",
+      )}
+    >
+      <Icon className="h-3 w-3" />
+      {label && <span>{label}</span>}
+    </motion.button>
+  )
+}
+
 /* ═══ Main ═══ */
 export function SchedulesContent() {
   const t = useTranslations("schedulesPage")
+  const router = useRouter()
   const { user } = useUser()
   const [schedules, setSchedules] = useState<ScheduleResponse[]>([])
   const [loading, setLoading] = useState(true)
@@ -863,10 +1266,6 @@ export function SchedulesContent() {
       : schedules.filter((s) => !s.enabled || s.paused_reason),
     [schedules, statusFilter]
   )
-
-  const dayTasks = useMemo(() => getTasksForDate(filteredSchedules, selectedDate), [filteredSchedules, selectedDate])
-
-  const isToday = selectedDate.getDate() === new Date().getDate() && selectedDate.getMonth() === new Date().getMonth() && selectedDate.getFullYear() === new Date().getFullYear()
 
   const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }>; count?: number }[] = [
     { id: "teams", label: t("teamsTab"), icon: Users, count: teams.length },
@@ -1122,7 +1521,7 @@ export function SchedulesContent() {
               )}
             </div>
           </div>
-          <button onClick={() => setShowCreateDialog(true)} className={cn("inline-flex h-9 items-center justify-center rounded-xl px-5 text-sm font-medium gap-2 transition-all bg-foreground text-background hover:bg-foreground/90")}>
+          <button onClick={() => setShowCreateDialog(true)} className={cn("inline-flex h-9 items-center justify-center rounded-xl px-5 text-sm font-medium gap-2 transition-all bg-muted hover:bg-muted/80 text-foreground ring-1 ring-border/50 hover:ring-border shadow-sm hover:shadow-md")}>
             <UserPlus className="h-4 w-4" />{t("hireEmployee")}
           </button>
         </motion.div>
@@ -1236,7 +1635,7 @@ export function SchedulesContent() {
                 ))}
               </div>
               <div className="flex items-center gap-3">
-                <button onClick={() => setShowCreateDialog(true)} className={cn("inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-300 text-background bg-foreground hover:bg-foreground/90 hover:scale-[1.02] active:scale-[0.98]")}>
+                <button onClick={() => setShowCreateDialog(true)} className={cn("inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-300 text-foreground bg-muted hover:bg-muted/80 ring-1 ring-border/50 hover:ring-border shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]")}>
                   <UserPlus className="h-3.5 w-3.5" />{t("hireEmployee")}
                 </button>
                 <Link href="/" className={cn("inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all border border-border/30 bg-card/50 text-foreground/80 hover:bg-card/80 hover:border-border/50")}>
@@ -1600,7 +1999,7 @@ export function SchedulesContent() {
                         className={cn(
                           "h-8 sm:h-9 px-4 sm:px-5 rounded-lg text-[12px] sm:text-[13px] font-semibold transition-all",
                           newTeamName.trim() && !provisioning
-                            ? "text-background bg-foreground hover:bg-foreground/90 shadow-sm"
+                            ? "text-foreground bg-muted hover:bg-muted/80 ring-1 ring-border/50 shadow-sm"
                             : "text-muted-foreground/40 bg-muted/60 cursor-not-allowed"
                         )}
                       >
@@ -1620,7 +2019,7 @@ export function SchedulesContent() {
                 <p className="text-xs text-muted-foreground/50 max-w-xs mx-auto mb-5">
                   {t("noTeams.description")}
                 </p>
-                <button onClick={() => setShowCreateTeam(true)} className={cn("inline-flex items-center gap-2 h-9 px-5 rounded-xl text-sm font-medium transition-all text-background bg-foreground hover:bg-foreground/90")}>
+                <button onClick={() => setShowCreateTeam(true)} className={cn("inline-flex items-center gap-2 h-9 px-5 rounded-xl text-sm font-medium transition-all text-foreground bg-muted hover:bg-muted/80 ring-1 ring-border/50 shadow-sm")}>
                   <Plus className="h-3.5 w-3.5" />{t("noTeams.newTeam")}
                 </button>
               </div>
@@ -1744,114 +2143,61 @@ export function SchedulesContent() {
 
         {/* ═══ EMPLOYEES TAB ═══ */}
         {schedules.length > 0 && activeTab === "employees" && (
-          <div className="space-y-6">
-            {/* Filter pills */}
-            <div className="flex flex-wrap gap-1.5">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.35 }}
+          >
+            {/* Filters */}
+            <div className="flex items-center gap-1 mb-5">
               {[
                 { id: "all", label: t("filters.all"), count: schedules.length },
                 { id: "active", label: t("filters.onDuty"), count: activeCount },
                 { id: "paused", label: t("filters.standby"), count: pausedCount },
               ].map((f) => (
                 <button key={f.id} onClick={() => setStatusFilter(f.id)} className={cn(
-                  "h-8 px-3.5 rounded-lg transition-all text-sm font-medium",
-                  statusFilter === f.id
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60",
+                  "relative h-8 px-3 text-[13px] font-medium transition-all duration-200",
+                  statusFilter === f.id ? "text-foreground" : "text-muted-foreground/40 hover:text-muted-foreground",
                 )}>
-                  <span className="flex items-center gap-1.5">
-                    {f.label}
-                    {f.count > 0 && (
-                      <span className={cn(
-                        "text-[11px] tabular-nums px-1.5 py-px rounded-full font-medium",
-                        statusFilter === f.id ? "bg-background/20 text-background/80" : "bg-muted/60",
-                      )}>
-                        {f.count}
-                      </span>
-                    )}
-                  </span>
+                  {f.label}
+                  <span className={cn("ml-1 text-[11px] tabular-nums", statusFilter === f.id ? "text-muted-foreground/50" : "text-muted-foreground/20")}>{f.count}</span>
+                  {statusFilter === f.id && (
+                    <motion.div layoutId="emp-filter" className="absolute inset-x-2 -bottom-px h-[2px] rounded-full bg-foreground/40" transition={{ type: "spring", stiffness: 400, damping: 30 }} />
+                  )}
                 </button>
               ))}
             </div>
 
-            {/* Employee grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filteredSchedules.map((s, i) => (
-                <motion.div
-                  key={s.chat_id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.05 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <ScheduleCard schedule={s} onUpdate={loadSchedules} onViewHistory={(id) => { setHistoryChat(id); setShowHistory(true) }} onEdit={setEditChatId} />
-                </motion.div>
-              ))}
-            </div>
+            {/* 2-column layout: left = calendar (employees inside), right = activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] xl:grid-cols-[1fr_340px] gap-6">
 
-            {/* Empty filter state */}
-            {filteredSchedules.length === 0 && schedules.length > 0 && (
-              <div className="flex flex-col items-center py-14">
-                <AgentIcon className="h-8 w-8 text-muted-foreground/20 mb-3" />
-                <p className="text-sm text-muted-foreground/60">{t("noMatch")}</p>
-              </div>
-            )}
+              {/* ── Left column: Calendar with interactive employee rows ── */}
+              <div className="min-w-0">
+                <ScheduleCalendar
+                  schedules={filteredSchedules}
+                  selectedDate={selectedDate}
+                  onSelectDate={setSelectedDate}
+                  onRun={async (chatId) => { trackScheduleTriggered(chatId); await triggerScheduleNow(chatId); loadSchedules() }}
+                  onPause={async (chatId) => { await pauseSchedule(chatId); loadSchedules() }}
+                  onEdit={setEditChatId}
+                />
 
-            {/* Schedule calendar */}
-            <div className="space-y-2 pt-2">
-              <div className="flex items-center gap-3 px-1">
-                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("schedule")}</h2>
-                <div className="flex-1 h-px bg-border/20" />
-              </div>
-              <div className="rounded-2xl border border-border/30 bg-card/50 backdrop-blur-sm p-4 sm:p-5">
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] xl:grid-cols-[1fr_320px] gap-4">
-                <ScheduleCalendar schedules={filteredSchedules} selectedDate={selectedDate} onSelectDate={setSelectedDate} />
-                <div className="lg:sticky lg:top-6 lg:self-start">
-                  <div className="rounded-xl overflow-hidden border border-border/30 bg-card/50 backdrop-blur-sm">
-                    <div className="px-4 py-3 border-b border-border/30">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-sm font-semibold text-foreground">
-                            {selectedDate.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
-                          </h3>
-                          <p className="text-[11px] text-muted-foreground/60 mt-0.5">
-                            {dayTasks.length === 0 ? t("noEmployeesScheduled") : t("employees", { count: dayTasks.length })}
-                          </p>
-                        </div>
-                        {isToday && (
-                          <span className="text-[11px] uppercase tracking-widest font-semibold px-2 py-0.5 rounded-full bg-foreground text-background">
-                            {t("today")}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    {dayTasks.length > 0 ? (
-                      <div className="p-2 space-y-0.5">
-                        {dayTasks.map((dt) => (
-                          <DayTaskItem key={dt.schedule.chat_id} task={dt} onUpdate={loadSchedules} />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="py-10 text-center">
-                        <AgentIcon className="h-6 w-6 text-muted-foreground/20 mx-auto mb-2" />
-                        <p className="text-[11px] text-muted-foreground/40">{t("noEmployeesDay")}</p>
-                      </div>
-                    )}
+                {/* Empty state */}
+                {filteredSchedules.length === 0 && (
+                  <div className="flex flex-col items-center py-12">
+                    <AgentIcon className="h-6 w-6 text-muted-foreground/10 mb-2" />
+                    <p className="text-[13px] text-muted-foreground/25">{t("noMatch")}</p>
                   </div>
-                </div>
+                )}
               </div>
-            </div>
-            </div>
 
-            {/* Activity log */}
-            <div className="space-y-2 pt-2">
-              <div className="flex items-center gap-3 px-1">
-                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("recentActivity")}</h2>
-                <div className="flex-1 h-px bg-border/20" />
-              </div>
-              <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm overflow-hidden">
+              {/* ── Right column: Activity ── */}
+              <div className="min-w-0 lg:border-l lg:border-border/15 lg:pl-6">
+                <p className="text-[11px] font-medium text-muted-foreground/30 uppercase tracking-widest mb-2">{t("recentActivity")}</p>
                 <ScheduleHistory chatId={showHistory ? historyChat : undefined} limit={10} />
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 

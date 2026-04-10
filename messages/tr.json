@@ -872,11 +872,11 @@
     "computers": "Bilgisayarlar",
     "active": "aktif",
     "view": "Goruntule",
-    "workforce": "Is Gucu",
-    "workforceDescription": "Otomatik ajanlari ve tetikleyicileri zamanla",
+    "workforce": "Zamanlamalar",
+    "workforceDescription": "Otomatik görevleri ve tetikleyicileri planla",
     "workforcePopup": {
       "title": "Zamanlanmis otomasyon",
-      "description": "Cron zamanlama ve ajandan ajana tetikleyicilerle tekrarlayan gorevler kurun. Is gucunuz siz uyurken calisir."
+      "description": "Cron zamanlamaları ve ajanlar arası tetikleyicilerle tekrarlanan görevler ayarlayın. Zamanlamalarınız siz uyurken çalışır."
     },
     "credentials": "Kimlik Bilgileri",
     "credentialsDescription": "Ajan erisimi icin girisleri guvenle saklayin",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Giris",
-    "assign": "Ata",
-    "assignDescription": "Bu gorevi calistirmak icin bir calisan ata",
+    "assign": "Planla",
+    "assignDescription": "Bu görevi otomatik çalışacak şekilde planla",
     "computer": "Bilgisayar",
     "showComputer": "Bilgisayari Goster",
     "hideComputer": "Bilgisayari Gizle",
@@ -1526,7 +1526,7 @@
       "machines": "Makineler",
       "credentials": "Kimlik bilgileri",
       "swarmMode": "Suru Modu",
-      "workforce": "Is gucu",
+      "workforce": "Zamanlamalar",
       "desktopApp": "Masaustu uygulamasi",
       "billing": "Faturalandirma ve krediler"
     },

@@ -872,11 +872,11 @@
     "computers": "Computadores",
     "active": "ativo",
     "view": "Ver",
-    "workforce": "Força de Trabalho",
-    "workforceDescription": "Agendar agentes automatizados e gatilhos",
+    "workforce": "Agendamentos",
+    "workforceDescription": "Agendar tarefas automatizadas e gatilhos",
     "workforcePopup": {
       "title": "Automação agendada",
-      "description": "Configure tarefas recorrentes com agendamentos cron e gatilhos agente-para-agente. Sua força de trabalho opera enquanto você dorme."
+      "description": "Configure tarefas recorrentes com agendamentos cron e gatilhos entre agentes. Seus agendamentos funcionam enquanto você dorme."
     },
     "credentials": "Credenciais",
     "credentialsDescription": "Armazenar logins com segurança para acesso do agente",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Login",
-    "assign": "Atribuir",
-    "assignDescription": "Atribuir um funcionário para executar esta tarefa",
+    "assign": "Agendar",
+    "assignDescription": "Agendar esta tarefa para execução automática",
     "computer": "Computador",
     "showComputer": "Mostrar Computador",
     "hideComputer": "Ocultar Computador",
@@ -1526,7 +1526,7 @@
       "machines": "Máquinas",
       "credentials": "Credenciais",
       "swarmMode": "Modo Enxame",
-      "workforce": "Equipe",
+      "workforce": "Agendamentos",
       "desktopApp": "App Desktop",
       "billing": "Cobrança e Créditos"
     },

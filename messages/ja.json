@@ -872,11 +872,11 @@
     "computers": "コンピュータ",
     "active": "アクティブ",
     "view": "表示",
-    "workforce": "ワークフォース",
-    "workforceDescription": "自動化エージェントとトリガーをスケジュール",
+    "workforce": "スケジュール",
+    "workforceDescription": "自動タスクとトリガーをスケジュール",
     "workforcePopup": {
       "title": "スケジュール自動化",
-      "description": "cronスケジュールとエージェント間トリガーで繰り返しタスクを設定。ワークフォースはあなたが眠っている間も稼働します。"
+      "description": "cronスケジュールとエージェント間トリガーで定期タスクを設定します。スケジュールはあなたが寝ている間も実行されます。"
     },
     "credentials": "認証情報",
     "credentialsDescription": "エージェントアクセス用のログインを安全に保存",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "ログイン",
-    "assign": "割り当て",
-    "assignDescription": "このタスクを実行する担当者を割り当て",
+    "assign": "スケジュール",
+    "assignDescription": "このタスクを自動実行にスケジュール",
     "computer": "コンピュータ",
     "showComputer": "コンピュータを表示",
     "hideComputer": "コンピュータを非表示",
@@ -1526,7 +1526,7 @@
       "machines": "マシン",
       "credentials": "認証情報",
       "swarmMode": "スウォームモード",
-      "workforce": "ワークフォース",
+      "workforce": "スケジュール",
       "desktopApp": "デスクトップアプリ",
       "billing": "課金とクレジット"
     },

@@ -872,11 +872,11 @@
     "computers": "Computere",
     "active": "activ",
     "view": "Vezi",
-    "workforce": "Forta de munca",
-    "workforceDescription": "Programeaza agenti automatizati si triggere",
+    "workforce": "Programări",
+    "workforceDescription": "Programează sarcini și declanșatoare automate",
     "workforcePopup": {
       "title": "Automatizare programata",
-      "description": "Configureaza sarcini recurente cu programari cron si triggere intre agenti. Forta ta de munca ruleaza in timp ce dormi."
+      "description": "Configurați sarcini recurente cu programări cron și declanșatoare între agenți. Programările dvs. rulează în timp ce dormiți."
     },
     "credentials": "Credentiale",
     "credentialsDescription": "Stocheaza in siguranta login-urile pentru acces agenti",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Autentificare",
-    "assign": "Atribuie",
-    "assignDescription": "Atribuie un angajat pentru a rula aceasta sarcina",
+    "assign": "Programează",
+    "assignDescription": "Programează această sarcină să ruleze automat",
     "computer": "Computer",
     "showComputer": "Arata computerul",
     "hideComputer": "Ascunde computerul",
@@ -1526,7 +1526,7 @@
       "machines": "Mașini",
       "credentials": "Date de autentificare",
       "swarmMode": "Swarm Mode",
-      "workforce": "Forță de muncă",
+      "workforce": "Programări",
       "desktopApp": "Aplicație desktop",
       "billing": "Facturare și credite"
     },

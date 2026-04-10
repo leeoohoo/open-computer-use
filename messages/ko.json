@@ -872,11 +872,11 @@
     "computers": "컴퓨터",
     "active": "활성",
     "view": "보기",
-    "workforce": "워크포스",
-    "workforceDescription": "예약된 에이전트 및 트리거 관리",
+    "workforce": "일정",
+    "workforceDescription": "자동화된 작업 및 트리거 예약",
     "workforcePopup": {
       "title": "예약 자동화",
-      "description": "크론 스케줄과 에이전트 간 트리거로 반복 작업을 설정하세요. 워크포스가 잠자는 동안에도 실행됩니다."
+      "description": "cron 일정과 에이전트 간 트리거로 반복 작업을 설정하세요. 일정은 당신이 자는 동안 실행됩니다."
     },
     "credentials": "자격 증명",
     "credentialsDescription": "에이전트 접근을 위한 로그인 정보 안전 저장",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "로그인",
-    "assign": "배정",
-    "assignDescription": "이 작업을 실행할 직원 배정",
+    "assign": "예약",
+    "assignDescription": "이 작업을 자동으로 실행하도록 예약",
     "computer": "컴퓨터",
     "showComputer": "컴퓨터 표시",
     "hideComputer": "컴퓨터 숨기기",
@@ -1526,7 +1526,7 @@
       "machines": "머신",
       "credentials": "자격 증명",
       "swarmMode": "스웜 모드",
-      "workforce": "워크포스",
+      "workforce": "일정",
       "desktopApp": "데스크톱 앱",
       "billing": "결제 & 크레딧"
     },

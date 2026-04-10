@@ -872,11 +872,11 @@
     "computers": "Computer",
     "active": "aktiv",
     "view": "Anzeigen",
-    "workforce": "Arbeitskräfte",
-    "workforceDescription": "Automatisierte Agenten und Trigger planen",
+    "workforce": "Zeitpläne",
+    "workforceDescription": "Automatisierte Aufgaben und Auslöser planen",
     "workforcePopup": {
       "title": "Geplante Automatisierung",
-      "description": "Richten Sie wiederkehrende Aufgaben mit Cron-Plänen und Agent-zu-Agent-Triggern ein. Ihre Arbeitskräfte arbeiten, während Sie schlafen."
+      "description": "Richten Sie wiederkehrende Aufgaben mit Cron-Zeitplänen und Agent-zu-Agent-Auslösern ein. Ihre Zeitpläne laufen, während Sie schlafen."
     },
     "credentials": "Zugangsdaten",
     "credentialsDescription": "Logins sicher für den Agentenzugriff speichern",
@@ -943,8 +943,8 @@
   },
   "appHeader": {
     "login": "Anmelden",
-    "assign": "Zuweisen",
-    "assignDescription": "Einen Mitarbeiter für diese Aufgabe zuweisen",
+    "assign": "Planen",
+    "assignDescription": "Diese Aufgabe zur automatischen Ausführung planen",
     "computer": "Computer",
     "showComputer": "Computer anzeigen",
     "hideComputer": "Computer ausblenden",
@@ -1526,7 +1526,7 @@
       "machines": "Maschinen",
       "credentials": "Zugangsdaten",
       "swarmMode": "Schwarm-Modus",
-      "workforce": "Belegschaft",
+      "workforce": "Zeitpläne",
       "desktopApp": "Desktop-App",
       "billing": "Abrechnung und Credits"
     },
