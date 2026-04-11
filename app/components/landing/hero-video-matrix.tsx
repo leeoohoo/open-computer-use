@@ -216,7 +216,6 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
             transformOrigin: "center center",
             willChange: "transform, opacity",
             backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden" as unknown as string,
           }}
         >
           {tiles.map((tile, i) => (
