@@ -48,15 +48,15 @@ const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const
 const EASE_OUT_BACK = [0.34, 1.3, 0.64, 1] as const // gentle overshoot
 const EASE_IN_QUAD = [0.26, 0, 0.6, 0.2] as const // smooth accelerate
 
-// Showcase grid: 3×2, symmetric around center (50%, 50%)
-// Top row 24%, bottom row 76% → both 26% from center input
+// Showcase grid: tightly clustered, overlapping like fanned cards
+// Top row ~30%, bottom row ~70% — close to the input so they overlap each other
 const SHOWCASE = [
-  { left: 26, top: 24, rotate: -4, scale: 0.9 },
-  { left: 50, top: 24, rotate: 1, scale: 0.92 },
-  { left: 74, top: 24, rotate: 3, scale: 0.9 },
-  { left: 26, top: 76, rotate: 3, scale: 0.88 },
-  { left: 50, top: 76, rotate: -2, scale: 0.9 },
-  { left: 74, top: 76, rotate: -3, scale: 0.88 },
+  { left: 35, top: 30, rotate: -5, scale: 0.88 },
+  { left: 50, top: 27, rotate: 1, scale: 0.92 },
+  { left: 65, top: 30, rotate: 4, scale: 0.88 },
+  { left: 35, top: 70, rotate: 4, scale: 0.85 },
+  { left: 50, top: 73, rotate: -2, scale: 0.88 },
+  { left: 65, top: 70, rotate: -4, scale: 0.85 },
 ]
 
 // Subtle idle drift per thumbnail (different speeds so they feel independent)
@@ -83,14 +83,14 @@ const T = {
   SEND_HOLD: 300, // how long "sent" state shows
   CLEAR_DUR: 160, // text wipe between tasks
   HERO_HOLD: 500, // pause to admire thumbnails
-  EXIT_THUMB_DUR: 600, // each thumbnail's fly-toward-camera duration
+  EXIT_THUMB_DUR: 900, // each thumbnail's fly-toward-camera duration
   EXIT_THUMB_STAGGER: 90, // ms between each thumbnail exiting
-  EXIT_WAIT: 1100, // total wait for all thumbnails to finish
+  EXIT_WAIT: 1450, // total wait for all thumbnails to finish
   INPUT_FADE_DUR: 500, // input fade-out duration
   INPUT_FADE_WAIT: 550, // wait for input fade before removing overlay
-  TAGLINE_FADE_IN: 600, // tagline text fade in
-  TAGLINE_HOLD: 2800, // how long tagline stays visible
-  TAGLINE_FADE_OUT: 500, // tagline fade out
+  TAGLINE_FADE_IN: 700, // tagline text fade in
+  TAGLINE_HOLD: 3500, // how long tagline stays visible
+  TAGLINE_FADE_OUT: 600, // tagline fade out
   OVERLAY_FADE: 200, // final overlay fade
 } as const
 
@@ -404,8 +404,8 @@ const Thumb = memo(function Thumb({
       return {
         x: "-50%",
         y: "-50%",
-        z: 700,
-        scale: 2.2,
+        z: 880,
+        scale: 3,
         rotate: s.rotate,
         opacity: 0,
       }
@@ -435,6 +435,7 @@ const Thumb = memo(function Thumb({
         duration: T.EXIT_THUMB_DUR / 1000,
         ease: EASE_IN_QUAD,
         delay: exitRank * (T.EXIT_THUMB_STAGGER / 1000),
+        opacity: { ease: [0.7, 0, 1, 1], duration: T.EXIT_THUMB_DUR / 1000 },
       }
     : {
         duration: 0.85,
