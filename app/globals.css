@@ -95,6 +95,38 @@
   );
 }
 
+/* Shine sweep for page loader titles */
+@keyframes text-shine {
+  0% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: -100% center;
+  }
+}
+
+.text-shine {
+  --shine-fg: currentColor;
+  --shine-highlight: rgba(180, 180, 200, 0.45);
+  background: linear-gradient(
+    120deg,
+    var(--shine-fg) 0%,
+    var(--shine-fg) 38%,
+    var(--shine-highlight) 50%,
+    var(--shine-fg) 62%,
+    var(--shine-fg) 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shine 3.5s ease-in-out infinite;
+}
+
+.dark .text-shine {
+  --shine-highlight: rgba(255, 255, 255, 0.35);
+}
+
 /* Aura shimmer animation for monitor display */
 @keyframes shimmerAura {
   0% {
