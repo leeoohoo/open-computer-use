@@ -486,6 +486,13 @@
       "connecting": "מתחבר...",
       "continueWithGoogle": "המשך עם Google"
     },
+    "inAppBrowser": {
+      "blocked": "התחברות עם Google לא עובדת בדפדפנים מוטמעים. פתח את הדף הזה בדפדפן שלך, או השתמש בקישור קסם.",
+      "blockedNamed": "התחברות עם Google לא עובדת בתוך {app}. פתח את הדף הזה בדפדפן שלך, או השתמש בקישור קסם.",
+      "copyLink": "העתק קישור",
+      "copied": "הועתק!",
+      "useMagicLink": "השתמש בקישור קסם"
+    },
     "or": "או",
     "email": "אימייל",
     "emailPlaceholder": "you@example.com",

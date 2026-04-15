@@ -486,6 +486,13 @@
       "connecting": "Se conecteaza...",
       "continueWithGoogle": "Continua cu Google"
     },
+    "inAppBrowser": {
+      "blocked": "Autentificarea cu Google nu funcționează în browserele încorporate. Deschide această pagină în browserul tău sau folosește un link magic.",
+      "blockedNamed": "Autentificarea cu Google nu funcționează în {app}. Deschide această pagină în browserul tău sau folosește un link magic.",
+      "copyLink": "Copiază linkul",
+      "copied": "Copiat!",
+      "useMagicLink": "Folosește link magic"
+    },
     "or": "sau",
     "email": "E-mail",
     "emailPlaceholder": "you@example.com",

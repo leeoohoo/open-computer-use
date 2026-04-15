@@ -486,6 +486,13 @@
       "connecting": "Kobler til...",
       "continueWithGoogle": "Fortsett med Google"
     },
+    "inAppBrowser": {
+      "blocked": "Google-innlogging fungerer ikke i innebygde nettlesere. Åpne denne siden i nettleseren din, eller bruk en magisk lenke.",
+      "blockedNamed": "Google-innlogging fungerer ikke i {app}. Åpne denne siden i nettleseren din, eller bruk en magisk lenke.",
+      "copyLink": "Kopier lenke",
+      "copied": "Kopiert!",
+      "useMagicLink": "Bruk magisk lenke"
+    },
     "or": "eller",
     "email": "E-post",
     "emailPlaceholder": "deg@eksempel.no",

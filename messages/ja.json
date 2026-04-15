@@ -486,6 +486,13 @@
       "connecting": "接続中...",
       "continueWithGoogle": "Google で続ける"
     },
+    "inAppBrowser": {
+      "blocked": "Google ログインは埋め込みブラウザでは動作しません。ブラウザでこのページを開くか、マジックリンクをご利用ください。",
+      "blockedNamed": "Google ログインは {app} 内では動作しません。ブラウザでこのページを開くか、マジックリンクをご利用ください。",
+      "copyLink": "リンクをコピー",
+      "copied": "コピーしました！",
+      "useMagicLink": "マジックリンクを使用"
+    },
     "or": "または",
     "email": "メールアドレス",
     "emailPlaceholder": "you@example.com",

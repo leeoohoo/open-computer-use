@@ -447,7 +447,8 @@
       "contact": "Contact",
       "privacy": "Privacy",
       "terms": "Terms"
-    }
+    },
+    "status": "All systems operational"
   },
   "languageSwitcher": {
     "label": "Language"
@@ -503,6 +504,13 @@
     "google": {
       "connecting": "Connecting...",
       "continueWithGoogle": "Continue with Google"
+    },
+    "inAppBrowser": {
+      "blocked": "Google sign-in doesn't work in embedded browsers. Open this page in your browser, or use a magic link instead.",
+      "blockedNamed": "Google sign-in doesn't work inside {app}. Open this page in your browser, or use a magic link instead.",
+      "copyLink": "Copy link",
+      "copied": "Copied!",
+      "useMagicLink": "Use magic link"
     },
     "or": "or",
     "email": "Email",
@@ -1922,10 +1930,10 @@
       "disruption": "We are aware of the issue and actively working on a fix."
     },
     "responseTime": "{ms}ms response time",
-    "uptimeLabel": "90-Day Uptime",
-    "daysAgo": "90 days ago",
+    "uptimeLabel": "7-Day Uptime",
+    "daysAgo": "7 days ago",
     "today": "Today",
-    "overallUptime": "Overall 90-Day Uptime",
+    "overallUptime": "Overall 7-Day Uptime",
     "overallUptimeDesc": "Aggregate availability across all services",
     "services": "Services",
     "clickUptime": "click to view uptime",
@@ -1935,12 +1943,12 @@
     "talkToCofounders": "Talk to Cofounders",
     "emailUs": "Email Us",
     "serviceNames": {
-      "website": "Website",
-      "aiBackend": "AI Backend",
-      "database": "Database",
-      "authentication": "Authentication",
-      "aiModels": "AI Models",
-      "fileStorage": "File Storage"
+      "website": "Web Application",
+      "aiBackend": "Orchestration Engine",
+      "database": "Data Layer",
+      "authentication": "Identity & Auth",
+      "aiModels": "Model Inference",
+      "fileStorage": "Object Storage"
     }
   },
 

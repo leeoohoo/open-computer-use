@@ -486,6 +486,13 @@
       "connecting": "Menghubungkan...",
       "continueWithGoogle": "Lanjutkan dengan Google"
     },
+    "inAppBrowser": {
+      "blocked": "Masuk dengan Google tidak berfungsi di browser tertanam. Buka halaman ini di browser Anda, atau gunakan tautan ajaib.",
+      "blockedNamed": "Masuk dengan Google tidak berfungsi di dalam {app}. Buka halaman ini di browser Anda, atau gunakan tautan ajaib.",
+      "copyLink": "Salin tautan",
+      "copied": "Disalin!",
+      "useMagicLink": "Gunakan tautan ajaib"
+    },
     "or": "atau",
     "email": "Email",
     "emailPlaceholder": "anda@contoh.com",

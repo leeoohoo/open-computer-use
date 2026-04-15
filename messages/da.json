@@ -486,6 +486,13 @@
       "connecting": "Forbinder...",
       "continueWithGoogle": "Fortsaet med Google"
     },
+    "inAppBrowser": {
+      "blocked": "Google-login virker ikke i indlejrede browsere. Åbn denne side i din browser, eller brug et magisk link i stedet.",
+      "blockedNamed": "Google-login virker ikke i {app}. Åbn denne side i din browser, eller brug et magisk link i stedet.",
+      "copyLink": "Kopiér link",
+      "copied": "Kopieret!",
+      "useMagicLink": "Brug magisk link"
+    },
     "or": "eller",
     "email": "Email",
     "emailPlaceholder": "you@example.com",

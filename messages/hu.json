@@ -486,6 +486,13 @@
       "connecting": "Csatlakozás...",
       "continueWithGoogle": "Folytatás Google-lal"
     },
+    "inAppBrowser": {
+      "blocked": "A Google-bejelentkezés nem működik beágyazott böngészőkben. Nyisd meg ezt az oldalt a böngésződben, vagy használj magic linket.",
+      "blockedNamed": "A Google-bejelentkezés nem működik a(z) {app} alkalmazásban. Nyisd meg ezt az oldalt a böngésződben, vagy használj magic linket.",
+      "copyLink": "Link másolása",
+      "copied": "Másolva!",
+      "useMagicLink": "Magic link használata"
+    },
     "or": "vagy",
     "email": "E-mail",
     "emailPlaceholder": "you@example.com",

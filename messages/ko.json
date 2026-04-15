@@ -486,6 +486,13 @@
       "connecting": "연결 중...",
       "continueWithGoogle": "Google로 계속하기"
     },
+    "inAppBrowser": {
+      "blocked": "Google 로그인은 내장 브라우저에서 작동하지 않습니다. 브라우저에서 이 페이지를 열거나 매직 링크를 사용하세요.",
+      "blockedNamed": "Google 로그인은 {app} 내에서 작동하지 않습니다. 브라우저에서 이 페이지를 열거나 매직 링크를 사용하세요.",
+      "copyLink": "링크 복사",
+      "copied": "복사됨!",
+      "useMagicLink": "매직 링크 사용"
+    },
     "or": "또는",
     "email": "이메일",
     "emailPlaceholder": "you@example.com",

@@ -486,6 +486,13 @@
       "connecting": "Yhdistetään...",
       "continueWithGoogle": "Jatka Google-tilillä"
     },
+    "inAppBrowser": {
+      "blocked": "Google-kirjautuminen ei toimi upotetuissa selaimissa. Avaa tämä sivu selaimessasi tai käytä taikalinkkiä.",
+      "blockedNamed": "Google-kirjautuminen ei toimi sovelluksessa {app}. Avaa tämä sivu selaimessasi tai käytä taikalinkkiä.",
+      "copyLink": "Kopioi linkki",
+      "copied": "Kopioitu!",
+      "useMagicLink": "Käytä taikalinkkiä"
+    },
     "or": "tai",
     "email": "Sähköposti",
     "emailPlaceholder": "you@example.com",

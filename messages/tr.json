@@ -486,6 +486,13 @@
       "connecting": "Baglaniyor...",
       "continueWithGoogle": "Google ile devam et"
     },
+    "inAppBrowser": {
+      "blocked": "Google ile giriş, gömülü tarayıcılarda çalışmaz. Bu sayfayı tarayıcınızda açın veya sihirli bağlantı kullanın.",
+      "blockedNamed": "Google ile giriş {app} içinde çalışmaz. Bu sayfayı tarayıcınızda açın veya sihirli bağlantı kullanın.",
+      "copyLink": "Bağlantıyı kopyala",
+      "copied": "Kopyalandı!",
+      "useMagicLink": "Sihirli bağlantı kullan"
+    },
     "or": "veya",
     "email": "E-posta",
     "emailPlaceholder": "you@example.com",

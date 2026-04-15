@@ -486,6 +486,13 @@
       "connecting": "Připojování...",
       "continueWithGoogle": "Pokračovat přes Google"
     },
+    "inAppBrowser": {
+      "blocked": "Přihlášení přes Google nefunguje ve vestavěných prohlížečích. Otevřete tuto stránku v prohlížeči, nebo použijte magický odkaz.",
+      "blockedNamed": "Přihlášení přes Google nefunguje v aplikaci {app}. Otevřete tuto stránku v prohlížeči, nebo použijte magický odkaz.",
+      "copyLink": "Kopírovat odkaz",
+      "copied": "Zkopírováno!",
+      "useMagicLink": "Použít magický odkaz"
+    },
     "or": "nebo",
     "email": "E-mail",
     "emailPlaceholder": "you@example.com",

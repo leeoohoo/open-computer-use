@@ -486,6 +486,13 @@
       "connecting": "Connessione...",
       "continueWithGoogle": "Continua con Google"
     },
+    "inAppBrowser": {
+      "blocked": "L'accesso con Google non funziona nei browser incorporati. Apri questa pagina nel tuo browser o usa un link magico.",
+      "blockedNamed": "L'accesso con Google non funziona dentro {app}. Apri questa pagina nel tuo browser o usa un link magico.",
+      "copyLink": "Copia link",
+      "copied": "Copiato!",
+      "useMagicLink": "Usa link magico"
+    },
     "or": "o",
     "email": "Email",
     "emailPlaceholder": "you@example.com",

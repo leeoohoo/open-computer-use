@@ -486,6 +486,13 @@
       "connecting": "Menyambung...",
       "continueWithGoogle": "Teruskan dengan Google"
     },
+    "inAppBrowser": {
+      "blocked": "Log masuk Google tidak berfungsi dalam pelayar terbenam. Buka halaman ini dalam pelayar anda, atau gunakan pautan ajaib.",
+      "blockedNamed": "Log masuk Google tidak berfungsi dalam {app}. Buka halaman ini dalam pelayar anda, atau gunakan pautan ajaib.",
+      "copyLink": "Salin pautan",
+      "copied": "Disalin!",
+      "useMagicLink": "Gunakan pautan ajaib"
+    },
     "or": "atau",
     "email": "E-mel",
     "emailPlaceholder": "anda@contoh.com",

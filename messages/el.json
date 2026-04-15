@@ -486,6 +486,13 @@
       "connecting": "Σύνδεση...",
       "continueWithGoogle": "Συνέχεια με Google"
     },
+    "inAppBrowser": {
+      "blocked": "Η σύνδεση μέσω Google δεν λειτουργεί σε ενσωματωμένους περιηγητές. Ανοίξτε αυτή τη σελίδα στον περιηγητή σας ή χρησιμοποιήστε magic link.",
+      "blockedNamed": "Η σύνδεση μέσω Google δεν λειτουργεί μέσα στο {app}. Ανοίξτε αυτή τη σελίδα στον περιηγητή σας ή χρησιμοποιήστε magic link.",
+      "copyLink": "Αντιγραφή συνδέσμου",
+      "copied": "Αντιγράφηκε!",
+      "useMagicLink": "Χρήση magic link"
+    },
     "or": "ή",
     "email": "Email",
     "emailPlaceholder": "you@example.com",

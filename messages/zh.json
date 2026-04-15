@@ -486,6 +486,13 @@
       "connecting": "连接中...",
       "continueWithGoogle": "使用 Google 继续"
     },
+    "inAppBrowser": {
+      "blocked": "Google 登录在内嵌浏览器中无法使用。请在浏览器中打开此页面，或使用魔法链接登录。",
+      "blockedNamed": "Google 登录在 {app} 中无法使用。请在浏览器中打开此页面，或使用魔法链接登录。",
+      "copyLink": "复制链接",
+      "copied": "已复制！",
+      "useMagicLink": "使用魔法链接"
+    },
     "or": "或",
     "email": "邮箱",
     "emailPlaceholder": "you@example.com",

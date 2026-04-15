@@ -486,6 +486,13 @@
       "connecting": "Ansluter...",
       "continueWithGoogle": "Fortsatt med Google"
     },
+    "inAppBrowser": {
+      "blocked": "Google-inloggning fungerar inte i inbäddade webbläsare. Öppna den här sidan i din webbläsare eller använd en magisk länk.",
+      "blockedNamed": "Google-inloggning fungerar inte i {app}. Öppna den här sidan i din webbläsare eller använd en magisk länk.",
+      "copyLink": "Kopiera länk",
+      "copied": "Kopierat!",
+      "useMagicLink": "Använd magisk länk"
+    },
     "or": "eller",
     "email": "E-post",
     "emailPlaceholder": "you@example.com",

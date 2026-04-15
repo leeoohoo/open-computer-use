@@ -486,6 +486,13 @@
       "connecting": "Laczenie...",
       "continueWithGoogle": "Kontynuuj z Google"
     },
+    "inAppBrowser": {
+      "blocked": "Logowanie przez Google nie działa w wbudowanych przeglądarkach. Otwórz tę stronę w przeglądarce lub użyj magicznego linku.",
+      "blockedNamed": "Logowanie przez Google nie działa w aplikacji {app}. Otwórz tę stronę w przeglądarce lub użyj magicznego linku.",
+      "copyLink": "Kopiuj link",
+      "copied": "Skopiowano!",
+      "useMagicLink": "Użyj magicznego linku"
+    },
     "or": "lub",
     "email": "E-mail",
     "emailPlaceholder": "ty@przyklad.pl",

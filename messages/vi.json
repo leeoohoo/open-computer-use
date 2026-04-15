@@ -486,6 +486,13 @@
       "connecting": "Dang ket noi...",
       "continueWithGoogle": "Tiep tuc voi Google"
     },
+    "inAppBrowser": {
+      "blocked": "Đăng nhập bằng Google không hoạt động trong trình duyệt nhúng. Mở trang này trong trình duyệt của bạn hoặc sử dụng liên kết ma thuật.",
+      "blockedNamed": "Đăng nhập bằng Google không hoạt động trong {app}. Mở trang này trong trình duyệt của bạn hoặc sử dụng liên kết ma thuật.",
+      "copyLink": "Sao chép liên kết",
+      "copied": "Đã sao chép!",
+      "useMagicLink": "Sử dụng liên kết ma thuật"
+    },
     "or": "hoac",
     "email": "Email",
     "emailPlaceholder": "you@example.com",

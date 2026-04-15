@@ -486,6 +486,13 @@
       "connecting": "Verbindung wird hergestellt...",
       "continueWithGoogle": "Weiter mit Google"
     },
+    "inAppBrowser": {
+      "blocked": "Die Google-Anmeldung funktioniert nicht in eingebetteten Browsern. Öffne diese Seite in deinem Browser oder verwende einen Magic Link.",
+      "blockedNamed": "Die Google-Anmeldung funktioniert nicht in {app}. Öffne diese Seite in deinem Browser oder verwende einen Magic Link.",
+      "copyLink": "Link kopieren",
+      "copied": "Kopiert!",
+      "useMagicLink": "Magic Link verwenden"
+    },
     "or": "oder",
     "email": "E-Mail",
     "emailPlaceholder": "you@example.com",

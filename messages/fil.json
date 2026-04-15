@@ -488,6 +488,13 @@
       "connecting": "Kumokonekta...",
       "continueWithGoogle": "Magpatuloy gamit ang Google"
     },
+    "inAppBrowser": {
+      "blocked": "Hindi gumagana ang Google sign-in sa mga naka-embed na browser. Buksan ang pahinang ito sa iyong browser, o gumamit ng magic link.",
+      "blockedNamed": "Hindi gumagana ang Google sign-in sa loob ng {app}. Buksan ang pahinang ito sa iyong browser, o gumamit ng magic link.",
+      "copyLink": "Kopyahin ang link",
+      "copied": "Nakopya na!",
+      "useMagicLink": "Gumamit ng magic link"
+    },
     "or": "o",
     "email": "Email",
     "emailPlaceholder": "you@example.com",

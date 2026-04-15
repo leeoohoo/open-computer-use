@@ -486,6 +486,13 @@
       "connecting": "Verbinden...",
       "continueWithGoogle": "Doorgaan met Google"
     },
+    "inAppBrowser": {
+      "blocked": "Inloggen met Google werkt niet in ingebedde browsers. Open deze pagina in je browser of gebruik een magische link.",
+      "blockedNamed": "Inloggen met Google werkt niet in {app}. Open deze pagina in je browser of gebruik een magische link.",
+      "copyLink": "Link kopiëren",
+      "copied": "Gekopieerd!",
+      "useMagicLink": "Magische link gebruiken"
+    },
     "or": "of",
     "email": "E-mail",
     "emailPlaceholder": "you@example.com",
