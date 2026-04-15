@@ -289,16 +289,17 @@ export function LandingPage() {
       {/* Hero Section — cinematic zoom-out video matrix */}
       <HeroVideoMatrix isMobile={isMobile} />
 
-      {/* Main content */}
-      <main className="relative">
-
-        {/* First content after hero — fades in as a group after the matrix dissolves */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+      {/* Main content — pulled up 100vh so it fills the viewport exactly when
+          the hero un-sticks. z-[1] places it above the hero. The hero's rAF
+          loop cross-fades #hero-crossfade from opacity 0→1 during the dissolve
+          phase, creating a seamless cinema dissolve from grid to content. */}
+      <main className="relative z-[1]" style={{ marginTop: '-100vh' }}>
+        <div
+          id="hero-crossfade"
+          className="bg-background"
+          style={{ opacity: 0, pointerEvents: "none" }}
         >
+
           <SectionDivider />
 
           {/* Social Proof Bar */}
@@ -331,7 +332,6 @@ export function LandingPage() {
               </div>
             </div>
           </section>
-        </motion.div>
 
         <SectionDivider />
 
@@ -1747,6 +1747,7 @@ export function LandingPage() {
 
         {/* Footer */}
         <LandingFooter />
+        </div>{/* end #hero-crossfade */}
       </main>
       </div>
     </>

@@ -91,11 +91,22 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
     const bgLayer = bgLayerRef.current
     if (!container || !grid) return
 
+    // Cache external DOM lookups once — avoids getElementById per frame
+    const header = document.getElementById("landing-header-wrap")
+    const guides = document.getElementById("guide-lines-wrap")
+    const beamsEl = document.getElementById("beams-bg")
+    const crossfade = document.getElementById("hero-crossfade")
+
     const maxScale = cols
     let rafId = 0
     let isActive = true
     let lastP = -1
     const EPS = 0.0005
+
+    // Track discrete states to avoid redundant DOM writes that thrash layers
+    let gridHidden = false
+    let overlayHidden = false
+    let headerDisabled = false
 
     const update = () => {
       if (!isActive) {
@@ -123,21 +134,31 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
       const currentScale = +(maxScale - zoomEased * (maxScale - minScale)).toFixed(3)
 
       // ── Phase 2: Dissolve (last 35%) ──
-      const dissolveP = Math.min(1, Math.max(0, (p - 0.65) / 0.3))
+      // Use the full remaining scroll range (0.65→1.0) so the grid dissolve
+      // ends exactly when the next section enters — no blank gap.
+      const dissolveP = Math.min(1, Math.max(0, (p - 0.65) / 0.35))
       const dissolveEased = Math.min(1, dissolveP * dissolveP * 1.1)
 
       const gridOpacity = 1 - dissolveEased
       grid.style.transform = `translate3d(0,0,0) scale3d(${currentScale}, ${currentScale}, 1)`
       grid.style.setProperty("--tile-opacity", String(Math.min(1, p * 3.3)))
       grid.style.opacity = String(gridOpacity)
-      grid.style.visibility = gridOpacity <= 0 ? "hidden" : "visible"
+      const shouldHideGrid = gridOpacity < 0.005
+      if (shouldHideGrid !== gridHidden) {
+        grid.style.visibility = shouldHideGrid ? "hidden" : "visible"
+        gridHidden = shouldHideGrid
+      }
 
       if (overlay) {
-        const s = +(currentScale / maxScale).toFixed(4)
+        const s = +(currentScale / maxScale).toFixed(3)
         const overlayOpacity = 1 - dissolveEased
-        overlay.style.transform = `translate3d(0,0,0) scale3d(${s}, ${s}, 1)`
+        overlay.style.transform = `translate3d(0,0,0) scale3d(${s},${s},1)`
         overlay.style.opacity = String(overlayOpacity)
-        overlay.style.visibility = overlayOpacity <= 0 ? "hidden" : "visible"
+        const shouldHideOverlay = overlayOpacity < 0.005
+        if (shouldHideOverlay !== overlayHidden) {
+          overlay.style.visibility = shouldHideOverlay ? "hidden" : "visible"
+          overlayHidden = shouldHideOverlay
+        }
       }
 
       if (scrollInd) {
@@ -159,11 +180,13 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
       const uiFadeIn = dissolveP * dissolveP
       const uiOpacity = String(Math.max(0, Math.min(1, 1 - uiFadeOut + uiFadeOut * uiFadeIn)))
 
-      const header = document.getElementById("landing-header-wrap")
-      const guides = document.getElementById("guide-lines-wrap")
       if (header) {
         header.style.opacity = uiOpacity
-        header.style.pointerEvents = parseFloat(uiOpacity) < 0.5 ? "none" : ""
+        const shouldDisable = parseFloat(uiOpacity) < 0.5
+        if (shouldDisable !== headerDisabled) {
+          header.style.pointerEvents = shouldDisable ? "none" : ""
+          headerDisabled = shouldDisable
+        }
       }
       if (guides) {
         guides.style.opacity = uiOpacity
@@ -172,15 +195,28 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
       const beamsFadeOut = Math.min(1, p * 4)
       const beamsFadeIn = dissolveP
       const beamsOpacity = String(Math.max(0, Math.min(1, 1 - beamsFadeOut + beamsFadeOut * beamsFadeIn)))
-      const beamsEl = document.getElementById("beams-bg")
       if (beamsEl) {
         beamsEl.style.opacity = beamsOpacity
       }
 
       // Separate composited background layer — avoids repainting the sticky
       // element itself (which on Safari causes the sticky+transform jitter bug).
+      // Fades in early (p 0.01→0.05) and holds during zoom/dissolve, then
+      // fades OUT near the end (p 0.93→1.0) so the hero becomes transparent
+      // and the beams + content below show through — no black gap.
       if (bgLayer) {
-        bgLayer.style.opacity = p > 0.03 ? "1" : "0"
+        const bgIn = Math.min(1, Math.max(0, (p - 0.01) * 25))
+        const bgOut = Math.min(1, Math.max(0, (1 - p) / 0.07))
+        bgLayer.style.opacity = String(Math.min(bgIn, bgOut))
+      }
+
+      // Cross-fade: content section fades IN as the hero grid fades OUT.
+      // Uses the second half of the dissolve so the grid is already mostly
+      // gone before content appears — avoids a messy double-exposure.
+      if (crossfade) {
+        const contentOpacity = Math.max(0, Math.min(1, dissolveEased * 2 - 1))
+        crossfade.style.opacity = String(contentOpacity)
+        crossfade.style.pointerEvents = contentOpacity > 0.3 ? "" : "none"
       }
     }
 
@@ -205,12 +241,11 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
       isActive = false
       if (rafId) cancelAnimationFrame(rafId)
       io.disconnect()
-      const header = document.getElementById("landing-header-wrap")
-      const guides = document.getElementById("guide-lines-wrap")
-      const beamsEl = document.getElementById("beams-bg")
+      // Use cached refs — no getElementById in cleanup
       if (header) { header.style.opacity = "1"; header.style.pointerEvents = "" }
       if (guides) guides.style.opacity = "1"
       if (beamsEl) beamsEl.style.opacity = "1"
+      if (crossfade) { crossfade.style.opacity = "1"; crossfade.style.pointerEvents = "" }
     }
   }, [cols])
 
@@ -218,7 +253,7 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
     <section
       id="hero"
       ref={containerRef}
-      style={{ height: isMobile ? "250vh" : "300vh" }}
+      style={{ height: "250vh" }}
       className="relative"
     >
       <div
@@ -236,7 +271,7 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
         <div
           ref={bgLayerRef}
           className="absolute inset-0 bg-background pointer-events-none"
-          style={{ opacity: 0, zIndex: 0, willChange: "opacity" }}
+          style={{ opacity: 0.001, zIndex: 0, willChange: "opacity", transform: "translateZ(0)" }}
           aria-hidden="true"
         />
         {/* ─── Video tile grid ─── */}
@@ -253,7 +288,6 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
             transform: `scale3d(${cols}, ${cols}, 1)`,
             transformOrigin: "center center",
             willChange: "transform, opacity",
-            backfaceVisibility: "hidden",
           }}
         >
           {tiles.map((tile, i) => (
@@ -299,6 +333,7 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
             background:
               "radial-gradient(ellipse 55% 45% at 50% 50%, transparent 20%, var(--background) 75%)",
             willChange: "opacity",
+            transform: "translateZ(0)",
           }}
         />
 
@@ -306,7 +341,7 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
         <div
           ref={bottomFadeRef}
           className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-[6] bg-gradient-to-t from-background via-background/60 to-transparent"
-          style={{ opacity: 0 }}
+          style={{ opacity: 0.001, willChange: "opacity", transform: "translateZ(0)" }}
         />
 
         {/* ─── Hero text — separate overlay, scales in sync with grid ─── */}
@@ -317,6 +352,7 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
             isMobile ? "pt-24 pb-20" : "pt-28 pb-24"
           )}
           style={{
+            transform: "translateZ(0)",
             willChange: "transform, opacity",
             transformOrigin: "center center",
           }}
