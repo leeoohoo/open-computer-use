@@ -242,17 +242,19 @@ export function LandingFooter() {
       </div>
 
       {/* ── Giant Coasty wordmark ── */}
-      <div className="relative flex w-full items-end justify-center select-none overflow-x-clip overflow-y-visible px-7 pb-8 sm:px-10">
-        {/* Ambient glow */}
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-[50%] w-[65%] rounded-full bg-gradient-to-r from-blue-500/[0.04] via-purple-500/[0.05] to-blue-500/[0.04] blur-[100px] dark:from-blue-400/[0.025] dark:via-purple-400/[0.035] dark:to-blue-400/[0.025]" />
+      <div className="relative w-full select-none overflow-x-clip px-7 pb-8 sm:px-10">
+        <div className="relative flex w-full items-end justify-center overflow-visible">
+          {/* Ambient glow */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="h-[50%] w-[65%] rounded-full bg-gradient-to-r from-blue-500/[0.04] via-purple-500/[0.05] to-blue-500/[0.04] blur-[100px] dark:from-blue-400/[0.025] dark:via-purple-400/[0.035] dark:to-blue-400/[0.025]" />
+          </div>
+          <h2
+            className="relative bg-gradient-to-b from-foreground/[0.14] via-foreground/[0.06] to-transparent bg-clip-text text-[20vw] font-black leading-none tracking-[-0.04em] text-transparent sm:text-[18vw] md:text-[15vw] lg:text-[13vw]"
+            aria-hidden="true"
+          >
+            Coasty
+          </h2>
         </div>
-        <h2
-          className="relative bg-gradient-to-b from-foreground/[0.14] via-foreground/[0.06] to-transparent bg-clip-text pb-[0.12em] text-[20vw] font-black leading-[1.05] tracking-[-0.04em] text-transparent sm:text-[18vw] md:text-[15vw] lg:text-[13vw]"
-          aria-hidden="true"
-        >
-          Coasty
-        </h2>
       </div>
     </footer>
   )
