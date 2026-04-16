@@ -46,8 +46,9 @@ const blogDropdownDef = [
 ]
 
 const navItemsDef = [
-  { href: "/discover", labelKey: "discover", external: true },
-  { href: "/pricing", labelKey: "pricing", external: true },
+  { href: "/discover", labelKey: "discover", label: "Community", external: true },
+  { href: "/pricing", labelKey: "pricing", label: "Pricing", external: true },
+  { href: "/api-docs", labelKey: "api", label: "API", external: true },
 ]
 
 /* ─── spring configs ─── */
@@ -611,7 +612,7 @@ export function LandingHeader({
                     <li key={item.labelKey} className="relative">
                       {item.external ? (
                         <Link href={item.href} className={cls}>
-                          {t(item.labelKey)}
+                          {item.label}
                           {isActive && (
                             <motion.span
                               layoutId="nav-active-indicator"
@@ -626,7 +627,7 @@ export function LandingHeader({
                           onClick={(e) => handleNavClick(e, item.href, item.external)}
                           className={cls}
                         >
-                          {t(item.labelKey)}
+                          {item.label}
                           {isActive && (
                             <motion.span
                               layoutId="nav-active-indicator"
@@ -896,7 +897,7 @@ export function LandingHeader({
                         >
                           {item.external ? (
                             <Link href={item.href} className={cls} onClick={closeMobileMenu}>
-                              {t(item.labelKey)}
+                              {item.label}
                             </Link>
                           ) : (
                             <a
@@ -904,7 +905,7 @@ export function LandingHeader({
                               onClick={(e) => handleNavClick(e, item.href, item.external)}
                               className={cls}
                             >
-                              {t(item.labelKey)}
+                              {item.label}
                             </a>
                           )}
                         </motion.div>

@@ -18,7 +18,6 @@ import {
   Lightning,
   Monitor,
   CreditCard,
-  ArrowRight,
   VideoCamera,
   UsersThree,
 } from "@phosphor-icons/react"
@@ -32,6 +31,7 @@ import { SwarmModeTab } from "./tabs/swarm-mode"
 import { WorkforceTab } from "./tabs/workforce"
 import { DesktopAppTab } from "./tabs/desktop-app"
 import { BillingTab } from "./tabs/billing"
+import { APITab } from "./tabs/api"
 
 /* ─── tab config ─── */
 
@@ -45,6 +45,7 @@ const tabConfig = [
   { id: "workforce", labelKey: "tabs.workforce", shortLabel: "Workforce", icon: UsersThree },
   { id: "desktop-app", labelKey: "tabs.desktopApp", shortLabel: "Desktop", icon: Monitor },
   { id: "billing", labelKey: "tabs.billing", shortLabel: "Billing", icon: CreditCard },
+  { id: "api", labelKey: "", shortLabel: "API", icon: Lightning },
 ] as const
 
 type TabId = (typeof tabConfig)[number]["id"]
@@ -84,6 +85,8 @@ function TabContent({ activeTab, inApp }: { activeTab: TabId; inApp: boolean }) 
       return <DesktopAppTab inApp={inApp} />
     case "billing":
       return <BillingTab inApp={inApp} />
+    case "api":
+      return <APITab inApp={inApp} />
   }
 }
 
@@ -118,7 +121,7 @@ function TabNav({ activeTab, onTabChange }: { activeTab: TabId; onTabChange: (id
                 weight={isActive ? "fill" : "duotone"}
                 className="shrink-0"
               />
-              <span className="hidden sm:inline truncate">{t(tab.labelKey)}</span>
+              <span className="hidden sm:inline truncate">{tab.labelKey ? t(tab.labelKey) : tab.shortLabel}</span>
               <span className="sm:hidden truncate">{tab.shortLabel}</span>
             </button>
           )

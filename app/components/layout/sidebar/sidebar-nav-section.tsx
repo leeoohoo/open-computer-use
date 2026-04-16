@@ -35,7 +35,7 @@ import { useLazyFetch } from "./hooks/use-lazy-fetch"
 type HoverInfo = {
   description: string
   detail: string
-  visual: "history" | "swarms" | "guide" | "machines" | "workforce" | "credentials"
+  visual: "history" | "swarms" | "guide" | "machines" | "workforce" | "credentials" | "developers"
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -317,6 +317,42 @@ function CredentialsVisual() {
   )
 }
 
+function DevelopersVisual() {
+  return (
+    <div className="w-full h-full flex flex-col px-3 py-2 gap-1.5">
+      <div className="flex items-center gap-1.5 shv-row" style={{ animationDelay: "0s" }}>
+        <div className="flex items-center gap-1 px-2 py-[4px] rounded border border-foreground/10 bg-foreground/[0.03] flex-1">
+          <div className="w-[5px] h-[5px] rounded-full bg-purple-500/50" />
+          <div className="h-[3px] w-12 bg-foreground/10 rounded-full" />
+          <div className="ml-auto h-[3px] w-6 bg-foreground/[0.06] rounded-full" />
+        </div>
+      </div>
+      <div className="flex items-center gap-1.5 px-1 shv-row" style={{ animationDelay: "0.2s" }}>
+        <span className="text-[5px] font-bold text-emerald-500/60 tracking-wide">POST</span>
+        <div className="h-[3px] w-20 bg-foreground/10 rounded-full" />
+        <span className="text-[5px] text-foreground/20 font-mono ml-auto">5 cr</span>
+      </div>
+      <div className="flex items-center gap-1.5 px-1 shv-row" style={{ animationDelay: "0.4s" }}>
+        <span className="text-[5px] font-bold text-blue-500/60 tracking-wide">GET</span>
+        <div className="h-[3px] w-16 bg-foreground/10 rounded-full" />
+        <span className="text-[5px] text-foreground/20 font-mono ml-auto">free</span>
+      </div>
+      <div className="flex items-center gap-1 mt-1 shv-fade-up" style={{ animationDelay: "0.8s" }}>
+        <div className="flex-1 px-2 py-[3px] rounded border border-foreground/10 bg-foreground/[0.02]">
+          <div className="flex items-center gap-[1px]">
+            {Array.from("cua_sk_").map((c, i) => (
+              <span key={i} className="text-[5px] text-purple-500/40 font-mono shv-type-char" style={{ animationDelay: `${1 + i * 0.05}s` }}>{c}</span>
+            ))}
+            {Array.from("...").map((c, i) => (
+              <span key={`d${i}`} className="text-[5px] text-foreground/20 font-mono shv-type-char" style={{ animationDelay: `${1.4 + i * 0.05}s` }}>{c}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const visualComponents: Record<string, React.FC> = {
   history: HistoryVisual,
   swarms: SwarmsVisual,
@@ -324,6 +360,7 @@ const visualComponents: Record<string, React.FC> = {
   machines: MachinesVisual,
   workforce: WorkforceVisual,
   credentials: CredentialsVisual,
+  developers: DevelopersVisual,
 }
 
 // ─── Shared popup components ──────────────────────────────────────
@@ -986,6 +1023,21 @@ export const SidebarNavSection = memo(function SidebarNavSection({
             description: t("credentialsPopup.title"),
             detail: t("credentialsPopup.description"),
             visual: "credentials",
+          }}
+        />
+        <NavButton
+          id="sidebar-developers-link"
+          icon={<IconKey size={16} stroke={1.5} className="shrink-0" />}
+          label="Developer API"
+          tooltip="API keys & integration"
+          href="/developers"
+          isActive={isItemActive("/developers")}
+          accentColor="text-purple-500 dark:text-purple-400"
+          onClick={closeMobileIfNeeded}
+          hoverInfo={{
+            description: "Developer API",
+            detail: "Create API keys, view endpoints, and integrate computer-use intelligence into your apps.",
+            visual: "developers",
           }}
         />
       </div>
