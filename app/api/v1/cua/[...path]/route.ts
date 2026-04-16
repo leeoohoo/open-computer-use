@@ -60,7 +60,16 @@ async function proxyToBackend(
   }
 
   try {
-    const response = await fetch(url.toString(), fetchOptions)
+    // 90s timeout — must finish before Cloudflare's ~100s proxy timeout
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 90_000)
+
+    const response = await fetch(url.toString(), {
+      ...fetchOptions,
+      signal: controller.signal,
+    })
+
+    clearTimeout(timeout)
 
     // Stream the response back, preserving status and headers
     const responseHeaders = new Headers()
@@ -76,10 +85,19 @@ async function proxyToBackend(
       status: response.status,
       headers: responseHeaders,
     })
-  } catch {
+  } catch (err) {
+    const isTimeout = err instanceof DOMException && err.name === "AbortError"
     return NextResponse.json(
-      { error: { code: "SERVICE_UNAVAILABLE", message: "API service temporarily unavailable", type: "server_error" } },
-      { status: 503 },
+      {
+        error: {
+          code: isTimeout ? "PREDICTION_TIMEOUT" : "SERVICE_UNAVAILABLE",
+          message: isTimeout
+            ? "Request timed out. The AI model may be under heavy load — please retry."
+            : "API service temporarily unavailable",
+          type: "server_error",
+        },
+      },
+      { status: isTimeout ? 504 : 503 },
     )
   }
 }
@@ -90,4 +108,4 @@ export const PUT = proxyToBackend
 export const DELETE = proxyToBackend
 
 // Allow long-running requests (sessions, predictions can take time)
-export const maxDuration = 120
+export const maxDuration = 300

@@ -284,7 +284,7 @@ export function MachineCard({ machine, onUpdate, onDelete }: MachineCardProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-7 w-7 p-0 rounded-lg text-muted-foreground/30 hover:text-foreground opacity-0 group-hover:opacity-100 transition-all shrink-0"
+                  className="h-7 w-7 p-0 rounded-lg text-muted-foreground/30 hover:text-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-all shrink-0"
                 >
                   <MoreVertical className="h-3.5 w-3.5" />
                 </Button>

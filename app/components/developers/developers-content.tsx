@@ -359,9 +359,9 @@ function CreatedKeySnippet({ apiKey, onCopy }: { apiKey: string; onCopy: (text: 
 
   return (
     <div className="border-t border-border/20 bg-foreground/[0.015]">
-      <div className="px-6 pt-4 pb-3">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[11px] font-semibold text-foreground/50 uppercase tracking-wider">Quick start</p>
+      <div className="px-4 sm:px-6 pt-3 sm:pt-4 pb-3">
+        <div className="flex items-center justify-between mb-2.5">
+          <p className="text-[10px] sm:text-[11px] font-semibold text-foreground/50 uppercase tracking-wider">Quick start</p>
           <button
             onClick={() => onCopy(code).then(() => toast.success("Snippet copied"))}
             className="text-[10px] text-muted-foreground/30 hover:text-foreground/50 transition-colors"
@@ -371,13 +371,13 @@ function CreatedKeySnippet({ apiKey, onCopy }: { apiKey: string; onCopy: (text: 
         </div>
 
         {/* Language tabs */}
-        <div className="flex items-center gap-1 mb-3">
+        <div className="flex items-center gap-0.5 sm:gap-1 mb-2.5 overflow-x-auto scrollbar-invisible">
           {SNIPPET_LANGS.map(l => (
             <button
               key={l.id}
               onClick={() => setSnippetLang(l.id)}
               className={cn(
-                "px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-150",
+                "px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-[11px] font-medium transition-all duration-150 shrink-0",
                 snippetLang === l.id
                   ? "bg-background shadow-sm text-foreground border border-border/30"
                   : "text-muted-foreground/40 hover:text-muted-foreground/70 hover:bg-foreground/[0.03]"
@@ -390,7 +390,7 @@ function CreatedKeySnippet({ apiKey, onCopy }: { apiKey: string; onCopy: (text: 
 
         {/* Code */}
         <div className="rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] overflow-hidden">
-          <pre className="px-3.5 py-3 text-[11px] leading-relaxed font-mono text-foreground/60 overflow-x-auto scrollbar-invisible">
+          <pre className="px-3 sm:px-3.5 py-2.5 sm:py-3 text-[10px] sm:text-[11px] leading-relaxed font-mono text-foreground/60 overflow-x-auto scrollbar-invisible">
             <code>{code}</code>
           </pre>
         </div>
@@ -568,7 +568,7 @@ function APIKeyCard({ apiKey, index, fullKey, onRevoke }: { apiKey: APIKey; inde
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 w-7 p-0 rounded-lg text-muted-foreground/30 hover:text-foreground opacity-0 group-hover:opacity-100 transition-all shrink-0"
+                className="h-7 w-7 p-0 rounded-lg text-muted-foreground/30 hover:text-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-all shrink-0"
               >
                 <MoreHorizontal className="h-3.5 w-3.5" />
               </Button>
@@ -1001,14 +1001,14 @@ export function DevelopersContent() {
 
       {/* ── Create Dialog ── */}
       <AlertDialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>Create API Key</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-sm sm:text-base">Create API Key</AlertDialogTitle>
+            <AlertDialogDescription className="text-xs sm:text-sm">
               Give your key a name to identify it later. The secret key will only be shown once.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="py-3">
+          <div className="py-2 sm:py-3">
             <input
               autoFocus
               type="text"
@@ -1017,7 +1017,7 @@ export function DevelopersContent() {
               onChange={e => setNewKeyName(e.target.value)}
               onKeyDown={e => e.key === "Enter" && createKey()}
               className={cn(
-                "w-full h-10 px-3 rounded-xl border border-border/40 bg-background/60 backdrop-blur-sm text-sm",
+                "w-full h-9 sm:h-10 px-3 rounded-xl border border-border/40 bg-background/60 backdrop-blur-sm text-xs sm:text-sm",
                 "placeholder:text-muted-foreground/50",
                 "focus:outline-none focus:ring-1 focus:ring-ring focus:border-border/60",
                 "transition-all duration-200"
@@ -1025,8 +1025,8 @@ export function DevelopersContent() {
             />
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button onClick={createKey} disabled={creating || !newKeyName.trim()}>
+            <AlertDialogCancel className="text-xs sm:text-sm">Cancel</AlertDialogCancel>
+            <Button className="text-xs sm:text-sm" onClick={createKey} disabled={creating || !newKeyName.trim()}>
               {creating ? "Creating..." : "Create"}
             </Button>
           </AlertDialogFooter>
@@ -1035,34 +1035,34 @@ export function DevelopersContent() {
 
       {/* ── Created Key (shown once) ── */}
       <AlertDialog open={!!createdKey} onOpenChange={() => setCreatedKey(null)}>
-        <AlertDialogContent className="sm:max-w-lg gap-0 p-0 overflow-hidden">
+        <AlertDialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg gap-0 p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
           {/* Header */}
-          <div className="px-6 pt-6 pb-4">
-            <AlertDialogTitle className="flex items-center gap-2.5 text-base">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10">
-                <Check className="h-4 w-4 text-emerald-500" />
+          <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-3 sm:pb-4">
+            <AlertDialogTitle className="flex items-center gap-2 text-sm sm:text-base">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10">
+                <Check className="h-3.5 w-3.5 text-emerald-500" />
               </div>
               Your API key is ready
             </AlertDialogTitle>
-            <AlertDialogDescription className="mt-1.5 pl-[38px] text-[13px]">
+            <AlertDialogDescription className="mt-1.5 text-xs sm:text-[13px]">
               Save this key somewhere safe. It won&apos;t be shown again.
             </AlertDialogDescription>
           </div>
 
           {/* Key + Copy */}
-          <div className="px-6 pb-4 space-y-2">
+          <div className="px-4 sm:px-6 pb-3 sm:pb-4 space-y-2">
             <input
               readOnly
               value={createdKey ?? ""}
               onFocus={e => e.target.select()}
               className={cn(
-                "w-full px-3 py-2.5 rounded-lg font-mono text-xs",
+                "w-full px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg font-mono text-[10px] sm:text-xs",
                 "bg-muted/40 border border-border/30 text-foreground/80",
                 "focus:outline-none focus:ring-1 focus:ring-ring cursor-text",
               )}
             />
             <Button
-              className="w-full gap-2"
+              className="w-full gap-2 text-xs sm:text-sm"
               onClick={() => {
                 if (!createdKey) return
                 copyToClipboard(createdKey).then(() => {
@@ -1085,7 +1085,7 @@ export function DevelopersContent() {
           <CreatedKeySnippet apiKey={createdKey ?? ""} onCopy={copyToClipboard} />
 
           {/* Footer */}
-          <div className="border-t border-border/20 px-6 py-3 flex items-center justify-between">
+          <div className="border-t border-border/20 px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
             <AlertDialogCancel className="text-xs h-8">Close</AlertDialogCancel>
             <AlertDialogAction
               className="gap-1.5 text-xs h-8"
@@ -1095,7 +1095,7 @@ export function DevelopersContent() {
               }}
             >
               <Code2 className="h-3.5 w-3.5" />
-              View Full Docs
+              <span className="hidden sm:inline">View Full</span> Docs
             </AlertDialogAction>
           </div>
         </AlertDialogContent>
