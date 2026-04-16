@@ -90,16 +90,15 @@ export function PostThumbnail({ postId, className = "" }: PostThumbnailProps) {
 
   return (
     <div className={`relative overflow-hidden rounded-lg ${className}`} style={{ aspectRatio: "16/9" }}>
-      {/* Dark base */}
-      <div className="absolute inset-0 bg-neutral-950" />
+      {/* Base — adapts to theme */}
+      <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-950" />
 
-      {/* Smoke blobs */}
+      {/* Smoke blobs — more saturated in light mode */}
       {palette.map((color, i) => (
         <div
           key={i}
           className="absolute rounded-full"
           style={{
-            background: `radial-gradient(circle, ${color}40 0%, ${color}15 40%, transparent 70%)`,
             width: "70%",
             height: "70%",
             left: `${blobPositions[i].x}%`,
@@ -107,24 +106,33 @@ export function PostThumbnail({ postId, className = "" }: PostThumbnailProps) {
             transform: "translate(-50%, -50%)",
             filter: "blur(20px)",
           }}
-        />
+        >
+          <div
+            className="w-full h-full hidden dark:block"
+            style={{ background: `radial-gradient(circle, ${color}40 0%, ${color}15 40%, transparent 70%)` }}
+          />
+          <div
+            className="w-full h-full dark:hidden"
+            style={{ background: `radial-gradient(circle, ${color}30 0%, ${color}12 40%, transparent 70%)` }}
+          />
+        </div>
       ))}
 
       {/* Subtle noise overlay */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.03]"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
           backgroundSize: "128px 128px",
         }}
       />
 
-      {/* Keyboard keys */}
+      {/* Keyboard keys — themed */}
       <div className="absolute inset-0 flex items-center justify-center gap-1.5">
         {keys.map((key, i) => (
           <span key={i} className="flex items-center">
             <kbd
-              className="inline-flex items-center justify-center rounded-md border border-white/10 bg-white/[0.06] backdrop-blur-sm px-2.5 py-1.5 text-xs font-medium text-white/70 shadow-[0_1px_3px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]"
+              className="inline-flex items-center justify-center rounded-md border border-black/[0.08] dark:border-white/10 bg-white/60 dark:bg-white/[0.06] backdrop-blur-sm px-2.5 py-1.5 text-xs font-medium text-neutral-600 dark:text-white/70 shadow-[0_1px_3px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.7)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]"
               style={{
                 minWidth: key.length === 1 ? "28px" : undefined,
                 fontSize: key.length === 1 && key.charCodeAt(0) > 127 ? "14px" : undefined,
@@ -133,17 +141,23 @@ export function PostThumbnail({ postId, className = "" }: PostThumbnailProps) {
               {key}
             </kbd>
             {i < keys.length - 1 && (
-              <span className="text-white/20 text-[10px] mx-0.5">+</span>
+              <span className="text-black/15 dark:text-white/20 text-[10px] mx-0.5">+</span>
             )}
           </span>
         ))}
       </div>
 
-      {/* Vignette */}
+      {/* Vignette — lighter in light mode */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 hidden dark:block"
         style={{
           background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.4) 100%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 dark:hidden"
+        style={{
+          background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.06) 100%)",
         }}
       />
     </div>
@@ -178,8 +192,8 @@ export function FeaturedThumbnail({ postId, className = "" }: FeaturedThumbnailP
 
   return (
     <div className={`relative overflow-hidden rounded-xl ${className}`} style={{ aspectRatio: "21/9" }}>
-      {/* Dark base */}
-      <div className="absolute inset-0 bg-neutral-950" />
+      {/* Base — adapts to theme */}
+      <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-950" />
 
       {/* Larger, more diffuse smoke blobs for featured */}
       {palette.map((color, i) => (
@@ -187,7 +201,6 @@ export function FeaturedThumbnail({ postId, className = "" }: FeaturedThumbnailP
           key={i}
           className="absolute rounded-full"
           style={{
-            background: `radial-gradient(circle, ${color}35 0%, ${color}12 45%, transparent 70%)`,
             width: "80%",
             height: "80%",
             left: `${blobPositions[i].x}%`,
@@ -195,7 +208,16 @@ export function FeaturedThumbnail({ postId, className = "" }: FeaturedThumbnailP
             transform: "translate(-50%, -50%)",
             filter: "blur(30px)",
           }}
-        />
+        >
+          <div
+            className="w-full h-full hidden dark:block"
+            style={{ background: `radial-gradient(circle, ${color}35 0%, ${color}12 45%, transparent 70%)` }}
+          />
+          <div
+            className="w-full h-full dark:hidden"
+            style={{ background: `radial-gradient(circle, ${color}28 0%, ${color}10 45%, transparent 70%)` }}
+          />
+        </div>
       ))}
 
       {/* Noise */}
@@ -207,12 +229,12 @@ export function FeaturedThumbnail({ postId, className = "" }: FeaturedThumbnailP
         }}
       />
 
-      {/* Keys — larger for featured */}
+      {/* Keys — larger for featured, themed */}
       <div className="absolute inset-0 flex items-center justify-center gap-2">
         {keys.map((key, i) => (
           <span key={i} className="flex items-center">
             <kbd
-              className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] backdrop-blur-sm px-4 py-2.5 text-sm font-medium text-white/70 shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]"
+              className="inline-flex items-center justify-center rounded-lg border border-black/[0.08] dark:border-white/10 bg-white/60 dark:bg-white/[0.06] backdrop-blur-sm px-4 py-2.5 text-sm font-medium text-neutral-600 dark:text-white/70 shadow-[0_2px_6px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.7)] dark:shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]"
               style={{
                 minWidth: key.length === 1 ? "40px" : undefined,
                 fontSize: key.length === 1 && key.charCodeAt(0) > 127 ? "18px" : undefined,
@@ -221,17 +243,23 @@ export function FeaturedThumbnail({ postId, className = "" }: FeaturedThumbnailP
               {key}
             </kbd>
             {i < keys.length - 1 && (
-              <span className="text-white/20 text-xs mx-1">+</span>
+              <span className="text-black/15 dark:text-white/20 text-xs mx-1">+</span>
             )}
           </span>
         ))}
       </div>
 
-      {/* Vignette */}
+      {/* Vignette — lighter in light mode */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 hidden dark:block"
         style={{
           background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.4) 100%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 dark:hidden"
+        style={{
+          background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.06) 100%)",
         }}
       />
     </div>
