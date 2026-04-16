@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "AI calisaniniz ne yapmali?",
-    "placeholderAlt": "AI'niza bilgisayarda ne yapacagini soyleyin...",
+    "placeholder": "Bu bilgisayarda ne yapmam gerektigini soyleyin...",
+    "placeholderAlt": "Baslamak icin bir bilgisayar secin...",
     "vmError": {
       "title": "Sanal Makine Hatasi",
       "description": "Sanal makine hata durumunda veya siliniyor.",

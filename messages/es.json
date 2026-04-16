@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "¿Qué debe hacer tu trabajador de IA?",
-    "placeholderAlt": "Dile a tu IA qué hacer en la computadora...",
+    "placeholder": "Dime qué hacer en esta computadora...",
+    "placeholderAlt": "Selecciona una computadora para comenzar...",
     "vmError": {
       "title": "Error de máquina virtual",
       "description": "La máquina virtual está en estado de error o se está eliminando.",

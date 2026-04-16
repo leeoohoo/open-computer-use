@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Tac tu AI cua ban nen lam gi?",
-    "placeholderAlt": "Noi cho AI biet phai lam gi tren may tinh...",
+    "placeholder": "Cho toi biet can lam gi tren may tinh nay...",
+    "placeholderAlt": "Chon mot may tinh de bat dau...",
     "vmError": {
       "title": "Loi may ao",
       "description": "May ao dang trong trang thai loi hoac dang bi xoa.",

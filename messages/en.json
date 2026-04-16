@@ -692,8 +692,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "What should your AI worker do?",
-    "placeholderAlt": "Tell your AI what to do on the computer...",
+    "placeholder": "Tell me what to do on this computer...",
+    "placeholderAlt": "Select a computer to get started...",
     "vmError": {
       "title": "Virtual Machine Error",
       "description": "The virtual machine is in an error state or is being deleted.",

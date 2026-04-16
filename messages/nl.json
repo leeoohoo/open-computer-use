@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Wat moet je AI-werker doen?",
-    "placeholderAlt": "Vertel je AI wat het op de computer moet doen...",
+    "placeholder": "Vertel me wat ik op deze computer moet doen...",
+    "placeholderAlt": "Selecteer een computer om te beginnen...",
     "vmError": {
       "title": "Virtuele Machine Fout",
       "description": "De virtuele machine is in een foutstatus of wordt verwijderd.",

@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Hvad skal din AI-medarbejder gore?",
-    "placeholderAlt": "Fortael din AI hvad den skal gore pa computeren...",
+    "placeholder": "Fortael mig hvad jeg skal goere paa denne computer...",
+    "placeholderAlt": "Vaelg en computer for at komme i gang...",
     "vmError": {
       "title": "Virtuel maskine fejl",
       "description": "Den virtuelle maskine er i fejltilstand eller bliver slettet.",

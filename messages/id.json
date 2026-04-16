@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Apa yang harus dilakukan pekerja AI Anda?",
-    "placeholderAlt": "Beritahu AI Anda apa yang harus dilakukan di komputer...",
+    "placeholder": "Beritahu saya apa yang harus dilakukan di komputer ini...",
+    "placeholderAlt": "Pilih komputer untuk memulai...",
     "vmError": {
       "title": "Kesalahan Mesin Virtual",
       "description": "Mesin virtual sedang dalam keadaan error atau sedang dihapus.",

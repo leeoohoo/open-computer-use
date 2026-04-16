@@ -675,8 +675,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Ano ang dapat gawin ng iyong AI worker?",
-    "placeholderAlt": "Sabihin sa iyong AI kung ano ang gagawin sa computer...",
+    "placeholder": "Sabihin mo sa akin kung ano ang gagawin sa computer na ito...",
+    "placeholderAlt": "Pumili ng computer para makapagsimula...",
     "vmError": {
       "title": "Error sa Virtual Machine",
       "description": "Ang virtual machine ay nasa error state o dine-delete.",

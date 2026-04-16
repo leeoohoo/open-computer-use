@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Cosa deve fare il tuo lavoratore AI?",
-    "placeholderAlt": "Di' alla tua AI cosa fare sul computer...",
+    "placeholder": "Dimmi cosa fare su questo computer...",
+    "placeholderAlt": "Seleziona un computer per iniziare...",
     "vmError": {
       "title": "Errore Macchina Virtuale",
       "description": "La macchina virtuale è in stato di errore o è in fase di eliminazione.",

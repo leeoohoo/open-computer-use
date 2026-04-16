@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Que doit faire votre assistant IA ?",
-    "placeholderAlt": "Dites à votre IA quoi faire sur l'ordinateur...",
+    "placeholder": "Dites-moi quoi faire sur cet ordinateur...",
+    "placeholderAlt": "Sélectionnez un ordinateur pour commencer...",
     "vmError": {
       "title": "Erreur de machine virtuelle",
       "description": "La machine virtuelle est en état d'erreur ou en cours de suppression.",

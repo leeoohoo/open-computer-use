@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "AI ของคุณควรทำอะไร?",
-    "placeholderAlt": "บอก AI ของคุณว่าต้องทำอะไรบนคอมพิวเตอร์...",
+    "placeholder": "บอกฉันว่าต้องทำอะไรบนคอมพิวเตอร์เครื่องนี้...",
+    "placeholderAlt": "เลือกคอมพิวเตอร์เพื่อเริ่มต้น...",
     "vmError": {
       "title": "ข้อผิดพลาด Virtual Machine",
       "description": "Virtual Machine อยู่ในสถานะผิดพลาดหรือกำลังถูกลบ",

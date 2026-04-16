@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Vad ska din AI-arbetare gora?",
-    "placeholderAlt": "Berattta for din AI vad den ska gora pa datorn...",
+    "placeholder": "Beraetta foer mig vad jag ska goera paa den haer datorn...",
+    "placeholderAlt": "Vaelj en dator foer att komma igaang...",
     "vmError": {
       "title": "Fel pa virtuell maskin",
       "description": "Den virtuella maskinen ar i felstatus eller haller pa att raderas.",

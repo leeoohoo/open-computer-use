@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "AI 助手应该做什么？",
-    "placeholderAlt": "告诉 AI 在电脑上做什么...",
+    "placeholder": "告诉我在这台电脑上做什么...",
+    "placeholderAlt": "选择一台电脑以开始...",
     "vmError": {
       "title": "虚拟机错误",
       "description": "虚拟机处于错误状态或正在删除中。",

@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Co má váš AI pracovník udělat?",
-    "placeholderAlt": "Řekněte svému AI, co má udělat na počítači...",
+    "placeholder": "Řekněte mi, co mám dělat na tomto počítači...",
+    "placeholderAlt": "Vyberte počítač pro začátek...",
     "vmError": {
       "title": "Chyba virtuálního stroje",
       "description": "Virtuální stroj je v chybovém stavu nebo je odstraňován.",

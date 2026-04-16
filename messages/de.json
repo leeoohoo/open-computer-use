@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Was soll Ihr KI-Mitarbeiter tun?",
-    "placeholderAlt": "Sagen Sie Ihrer KI, was sie am Computer tun soll...",
+    "placeholder": "Sag mir, was ich auf diesem Computer tun soll...",
+    "placeholderAlt": "Wähle einen Computer aus, um loszulegen...",
     "vmError": {
       "title": "Fehler bei virtueller Maschine",
       "description": "Die virtuelle Maschine befindet sich in einem Fehlerzustand oder wird gerade gelöscht.",

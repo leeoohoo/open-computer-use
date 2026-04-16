@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Apa yang perlu dilakukan pekerja AI anda?",
-    "placeholderAlt": "Beritahu AI anda apa yang perlu dilakukan pada komputer...",
+    "placeholder": "Beritahu saya apa yang perlu dilakukan pada komputer ini...",
+    "placeholderAlt": "Pilih komputer untuk bermula...",
     "vmError": {
       "title": "Ralat Mesin Maya",
       "description": "Mesin maya dalam keadaan ralat atau sedang dipadam.",

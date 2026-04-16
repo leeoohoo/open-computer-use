@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "AIワーカーに何をさせますか？",
-    "placeholderAlt": "コンピュータ上でAIに何をさせるか指示してください...",
+    "placeholder": "このコンピュータで何をすればいいか教えてください...",
+    "placeholderAlt": "コンピュータを選択して開始...",
     "vmError": {
       "title": "仮想マシンエラー",
       "description": "仮想マシンがエラー状態にあるか、削除中です。",

@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Mit csináljon az AI munkásod?",
-    "placeholderAlt": "Mondd el az AI-nak, mit csináljon a számítógépen...",
+    "placeholder": "Mondd el, mit csináljak ezen a számítógépen...",
+    "placeholderAlt": "Válassz egy számítógépet a kezdéshez...",
     "vmError": {
       "title": "Virtuális gép hiba",
       "description": "A virtuális gép hibás állapotban van vagy törlés alatt áll.",

@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Mitä AI-työntekijäsi pitäisi tehdä?",
-    "placeholderAlt": "Kerro AI:llesi mitä tehdä tietokoneella...",
+    "placeholder": "Kerro mitä tehdä tällä tietokoneella...",
+    "placeholderAlt": "Valitse tietokone aloittaaksesi...",
     "vmError": {
       "title": "Virtuaalikonevirhe",
       "description": "Virtuaalikone on virhetilassa tai sitä poistetaan.",

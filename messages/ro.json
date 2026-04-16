@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Ce ar trebui sa faca lucratorul tau AI?",
-    "placeholderAlt": "Spune-i AI-ului tau ce sa faca pe computer...",
+    "placeholder": "Spune-mi ce sa fac pe acest computer...",
+    "placeholderAlt": "Selecteaza un computer pentru a incepe...",
     "vmError": {
       "title": "Eroare masina virtuala",
       "description": "Masina virtuala este intr-o stare de eroare sau este stearsa.",

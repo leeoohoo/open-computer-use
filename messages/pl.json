@@ -673,8 +673,8 @@
     }
   },
   "chatInput": {
-    "placeholder": "Co ma zrobic Twoj pracownik AI?",
-    "placeholderAlt": "Powiedz swojemu AI, co ma zrobic na komputerze...",
+    "placeholder": "Powiedz mi, co mam zrobic na tym komputerze...",
+    "placeholderAlt": "Wybierz komputer, aby rozpoczac...",
     "vmError": {
       "title": "Blad maszyny wirtualnej",
       "description": "Maszyna wirtualna jest w stanie bledu lub jest usuwana.",
