@@ -43,7 +43,7 @@ const SERVICE_DISPLAY_NAMES: Record<string, string> = {
   "File Storage": "Object Storage",
 }
 
-const SERVICE_ICONS: Record<string, React.ComponentType<{ size?: number; weight?: string; className?: string }>> = {
+const SERVICE_ICONS: Record<string, React.ComponentType<any>> = {
   Website: Globe,
   "AI Backend": Cpu,
   Database: Database,
@@ -234,7 +234,7 @@ const BANNER_GLOW: Record<ServiceStatus, string> = {
     "from-rose-500/20 via-rose-500/5 to-transparent dark:from-rose-400/15 dark:via-rose-400/5",
 }
 
-const BANNER_ICONS: Record<ServiceStatus, React.ComponentType<{ size?: number; weight?: string; className?: string }>> = {
+const BANNER_ICONS: Record<ServiceStatus, React.ComponentType<any>> = {
   operational: CheckCircle,
   degraded: Warning,
   outage: XCircle,

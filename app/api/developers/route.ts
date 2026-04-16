@@ -42,16 +42,16 @@ export async function GET() {
       .gte("created_at", thirtyDaysAgo)
       .order("created_at", { ascending: false })
 
-    const rows = usage ?? []
+    const rows: { endpoint: string; credits_charged: number; created_at: string; request_id: string }[] = usage ?? []
 
     // ── Aggregate stats ──
     const totalRequests = rows.length
-    const totalCredits = rows.reduce((s, r) => s + (r.credits_charged ?? 0), 0)
+    const totalCredits = rows.reduce((s: number, r) => s + (r.credits_charged ?? 0), 0)
 
     // Requests in last 24h and 7d
     const requests24h = rows.filter(r => r.created_at >= oneDayAgo).length
     const requests7d = rows.filter(r => r.created_at >= sevenDaysAgo).length
-    const credits7d = rows.filter(r => r.created_at >= sevenDaysAgo).reduce((s, r) => s + (r.credits_charged ?? 0), 0)
+    const credits7d = rows.filter(r => r.created_at >= sevenDaysAgo).reduce((s: number, r) => s + (r.credits_charged ?? 0), 0)
 
     // ── Per-endpoint breakdown ──
     const byEndpoint: Record<string, { requests: number; credits: number }> = {}

@@ -18,7 +18,7 @@ export async function GET(request: Request) {
   // Persist to database (best-effort)
   const supabase = createServiceClient()
   if (supabase) {
-    const { error } = await supabase.from("status_checks").insert(rows)
+    const { error } = await (supabase as any).from("status_checks").insert(rows)
     if (error) {
       console.error("[Status Cron] Failed to persist checks:", error.message)
     }
