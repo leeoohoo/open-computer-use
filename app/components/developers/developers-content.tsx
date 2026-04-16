@@ -302,60 +302,82 @@ const SNIPPET_LANGS = [
 
 type SnippetLangId = (typeof SNIPPET_LANGS)[number]["id"]
 
-function getSnippetCode(lang: SnippetLangId, key: string): string {
+function getSnippetCode(lang: SnippetLangId, key: string, forCopy: boolean): string {
+  // forCopy=true: inline the full key for clipboard
+  // forCopy=false: use a variable so it fits on screen
   switch (lang) {
     case "python":
-      return `import requests, base64
+      return forCopy
+        ? `import requests, base64
 
-screenshot = base64.b64encode(
+API_KEY = "${key}"
+img = base64.b64encode(open("screen.png", "rb").read()).decode()
+
+r = requests.post(
+    "https://coasty.ai/api/v1/cua/predict",
+    headers={"X-API-Key": API_KEY},
+    json={
+        "screenshot": img,
+        "instruction": "Click the login button",
+    },
+)
+for action in r.json()["actions"]:
+    print(action["action_type"], action["params"])`
+        : `import requests, base64
+
+API_KEY = "${key}"
+img = base64.b64encode(
     open("screen.png", "rb").read()
 ).decode()
 
 r = requests.post(
     "https://coasty.ai/api/v1/cua/predict",
-    headers={"X-API-Key": "${key}"},
+    headers={"X-API-Key": API_KEY},
     json={
-        "screenshot": screenshot,
+        "screenshot": img,
         "instruction": "Click the login button",
     },
 )
-
 for action in r.json()["actions"]:
     print(action["action_type"], action["params"])`
     case "javascript":
-      return `const fs = require("fs");
-const screenshot = fs.readFileSync("screen.png").toString("base64");
+      return `const API_KEY = "${key}";
+const screenshot = fs.readFileSync("screen.png")
+  .toString("base64");
 
-const res = await fetch("https://coasty.ai/api/v1/cua/predict", {
-  method: "POST",
-  headers: {
-    "X-API-Key": "${key}",
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    screenshot,
-    instruction: "Click the login button",
-  }),
-});
-
-const { actions } = await res.json();
-actions.forEach(a => console.log(a.action_type, a.params));`
+const res = await fetch(
+  "https://coasty.ai/api/v1/cua/predict",
+  {
+    method: "POST",
+    headers: {
+      "X-API-Key": API_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      screenshot,
+      instruction: "Click the login button",
+    }),
+  }
+);
+const { actions } = await res.json();`
     case "curl":
-      return `SCREENSHOT=$(base64 -w 0 screen.png)
+      return `API_KEY="${key}"
 
-curl -X POST https://coasty.ai/api/v1/cua/predict \\
-  -H "X-API-Key: ${key}" \\
+curl -X POST \\
+  https://coasty.ai/api/v1/cua/predict \\
+  -H "X-API-Key: $API_KEY" \\
   -H "Content-Type: application/json" \\
-  -d "{
-    \\"screenshot\\": \\"$SCREENSHOT\\",
-    \\"instruction\\": \\"Click the login button\\"
-  }"`
+  -d '{
+    "screenshot": "'$(base64 -w0 screen.png)'",
+    "instruction": "Click the login button"
+  }'`
   }
 }
 
 function CreatedKeySnippet({ apiKey, onCopy }: { apiKey: string; onCopy: (text: string) => Promise<void> }) {
   const [snippetLang, setSnippetLang] = useState<SnippetLangId>("python")
-  const code = getSnippetCode(snippetLang, apiKey)
+  const displayCode = getSnippetCode(snippetLang, apiKey, false)
+  const copyCode = getSnippetCode(snippetLang, apiKey, true)
 
   return (
     <div className="border-t border-border/20 bg-foreground/[0.015]">
@@ -363,7 +385,7 @@ function CreatedKeySnippet({ apiKey, onCopy }: { apiKey: string; onCopy: (text: 
         <div className="flex items-center justify-between mb-2.5">
           <p className="text-[10px] sm:text-[11px] font-semibold text-foreground/50 uppercase tracking-wider">Quick start</p>
           <button
-            onClick={() => onCopy(code).then(() => toast.success("Snippet copied"))}
+            onClick={() => onCopy(copyCode).then(() => toast.success("Snippet copied"))}
             className="text-[10px] text-muted-foreground/30 hover:text-foreground/50 transition-colors"
           >
             Copy
@@ -391,7 +413,7 @@ function CreatedKeySnippet({ apiKey, onCopy }: { apiKey: string; onCopy: (text: 
         {/* Code */}
         <div className="rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] overflow-hidden">
           <pre className="px-3 sm:px-3.5 py-2.5 sm:py-3 text-[10px] sm:text-[11px] leading-relaxed font-mono text-foreground/60 overflow-x-auto scrollbar-invisible">
-            <code>{code}</code>
+            <code>{displayCode}</code>
           </pre>
         </div>
       </div>
