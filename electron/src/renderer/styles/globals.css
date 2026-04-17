@@ -108,54 +108,6 @@ html, body {
   animation: chat-reveal 350ms cubic-bezier(0.22, 1, 0.36, 1) 60ms both;
 }
 
-/* ── Permissions guide: view slide-in/out (list ↔ guide swap) ── */
-@keyframes perm-view-in {
-  from { opacity: 0; transform: translateX(24px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes perm-view-out {
-  from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(-24px); }
-}
-.perm-view-in  { animation: perm-view-in  320ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.perm-view-out { animation: perm-view-out 260ms cubic-bezier(0.4, 0, 1, 1) both; }
-
-/* ── Permissions guide: drag-and-drop demo loop ── */
-/* Icon travels from the Finder source (left) to the Settings target (right),
-   pauses over the drop zone, then fades and resets. */
-@keyframes perm-drag-demo {
-  0%            { transform: translate3d(0, 0, 0) scale(1);    opacity: 1; }
-  8%            { transform: translate3d(0, -4px, 0) scale(1.08); opacity: 1; }
-  60%           { transform: translate3d(var(--drag-dx, 150px), -4px, 0) scale(1.08); opacity: 1; }
-  72%           { transform: translate3d(var(--drag-dx, 150px), 0, 0) scale(1);    opacity: 1; }
-  82%           { transform: translate3d(var(--drag-dx, 150px), 0, 0) scale(1);    opacity: 0; }
-  83%           { transform: translate3d(0, 0, 0) scale(1);    opacity: 0; }
-  100%          { transform: translate3d(0, 0, 0) scale(1);    opacity: 1; }
-}
-.perm-drag-icon {
-  animation: perm-drag-demo 2600ms cubic-bezier(0.45, 0, 0.2, 1) infinite;
-  will-change: transform, opacity;
-}
-
-/* Subtle pulse on the drop zone, synced with the icon arrival. */
-@keyframes perm-drop-pulse {
-  0%, 55% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-  60%     { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.45); }
-  75%     { box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); }
-  100%    { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
-}
-.perm-drop-zone {
-  animation: perm-drop-pulse 2600ms cubic-bezier(0.45, 0, 0.2, 1) infinite;
-}
-
-/* Dashed guide arrow fade in/out to suggest motion. */
-@keyframes perm-arrow-shimmer {
-  0%, 10%  { opacity: 0.25; }
-  40%, 60% { opacity: 0.8; }
-  90%, 100%{ opacity: 0.25; }
-}
-.perm-arrow { animation: perm-arrow-shimmer 2600ms ease-in-out infinite; }
-
 /* ── Placeholder carousel (vertical slide, 16px per item) ── */
 @keyframes carousel-slide {
   0%, 17% {

@@ -3,17 +3,14 @@ import { join, resolve } from 'path'
 import { ElectronAuth } from './auth'
 import { WebSocketBridge } from './ws-bridge'
 import { registerIpcHandlers } from './ipc-handlers'
-import { setMainWindow, setWindowMode, setWindowOpacity, getWindowOpacity, getWindowSize, getWindowBounds, startResize, stopResize, moveToDisplay, positionAlongsideSettings } from './window-manager'
+import { setMainWindow, setWindowMode, setWindowOpacity, getWindowOpacity, getWindowSize, getWindowBounds, startResize, stopResize, moveToDisplay } from './window-manager'
 import { initAutoUpdater, getUpdateStatus, getUpdateVersion, checkForUpdates, quitAndInstall } from './auto-updater'
 import {
   checkAllPermissions,
   requestAccessibility,
   openScreenRecordingSettings,
   openAccessibilitySettings,
-  openPermissionPane,
-  getAppBundlePath,
 } from './permissions'
-import { startWindowTracking, stopWindowTracking, warmupWindowTracker } from './window-tracker'
 import { ApprovalManager } from './approval-manager'
 import { showAmbientRainbow, hideAmbientRainbow, moveRainbowToDisplay } from './rainbow-border'
 import { warmupNativeScreenshot } from './native-screenshot'
@@ -304,54 +301,6 @@ app.whenReady().then(async () => {
   secureHandle('permissions:open-screen-recording', () => openScreenRecordingSettings())
   secureHandle('permissions:open-accessibility', () => openAccessibilitySettings())
 
-  // Start the in-app guided drop flow:
-  //  1. Switch the main window into 'guide' mode (narrow dock, always-on-top).
-  //  2. Open the correct Privacy pane in System Settings.
-  //  3. Start the window-tracker, which continuously docks the helper
-  //     alongside the Settings window as it's moved / resized.
-  secureHandle('permissions:start-guide', async (_event, type: 'screen' | 'accessibility') => {
-    setWindowMode('guide')
-    openPermissionPane(type)
-
-    await startWindowTracking((update) => {
-      positionAlongsideSettings(update.found ? update.bounds : null)
-    })
-  })
-
-  // Stop the guided flow — user hit Back or permissions were granted.
-  // Return the window to the standard auth sizing so the permissions-list
-  // view fits, and tear down the tracker process.
-  secureHandle('permissions:stop-guide', () => {
-    stopWindowTracking()
-    setWindowMode('auth')
-  })
-
-  // Native file drag: renderer calls this from an `ondragstart` handler
-  // (having first called `preventDefault()` to suppress the browser's own
-  // drag). Electron's `webContents.startDrag` hands off to AppKit, which
-  // produces a real file drag that System Settings accepts as "add app
-  // to permissions list" — the same affordance as the `+` button.
-  ipcMain.on('drag:start-app-bundle', async (event) => {
-    const bundle = getAppBundlePath()
-    if (!bundle) {
-      console.warn('[Drag] No app bundle available (dev mode or non-mac)')
-      return
-    }
-    try {
-      // Pull the icon macOS already associates with the bundle so the drag
-      // preview shows the real Coasty icon, not a generic document.
-      const icon = await app.getFileIcon(bundle, { size: 'large' })
-      event.sender.startDrag({
-        file: bundle,
-        icon: icon.isEmpty()
-          ? nativeImage.createFromPath(join(app.getAppPath(), '..', '..', 'Resources', 'icon.icns'))
-          : icon,
-      })
-    } catch (err) {
-      console.warn('[Drag] startDrag failed:', err)
-    }
-  })
-
   // Display selection (multi-monitor)
   secureHandle('displays:list', () => getDisplayList())
   secureHandle('displays:get-active', () => getActiveDisplayId())
@@ -397,10 +346,6 @@ app.whenReady().then(async () => {
   // time; the binary is cached to disk across app restarts.
   warmupNativeScreenshot()
 
-  // Pre-compile the window-tracker helper so the permission guide can dock
-  // alongside System Settings the moment the user clicks "Grant".
-  warmupWindowTracker()
-
 })
 
 // Quit the process as soon as the last window is gone, on every platform.
@@ -418,6 +363,4 @@ app.on('window-all-closed', () => {
 app.on('before-quit', () => {
   performFullShutdown({ wsBridge, auth, tray })
   tray = null
-  // Kill the window-tracker child process so it doesn't outlive the app.
-  stopWindowTracking()
 })

@@ -2,19 +2,13 @@ import { BrowserWindow, screen } from 'electron'
 import { release } from 'os'
 import { getActiveDisplay } from './display-manager'
 
-export type WindowMode = 'auth' | 'compact' | 'expanded' | 'guide'
+export type WindowMode = 'auth' | 'compact' | 'expanded'
 
 const MODE_CONFIG = {
   auth:     { width: 400, height: 500, alwaysOnTop: false, skipTaskbar: false },
   compact:  { width: 360, height: 56,  alwaysOnTop: true,  skipTaskbar: false },
   expanded: { width: 520, height: 680, alwaysOnTop: true,  skipTaskbar: false },
-  // Guide: narrow dock that rides alongside System Settings. Always-on-top
-  // so it stays visible while the user interacts with Settings.
-  guide:    { width: 300, height: 420, alwaysOnTop: true,  skipTaskbar: false },
 }
-
-const GUIDE_DOCK_GAP = 12        // px gap between helper and Settings window
-const GUIDE_FALLBACK_MARGIN = 24 // px from screen edge when Settings isn't visible
 
 const ANIM_DURATION = 320 // ms – longer for a relaxed, natural feel
 const ANIM_INTERVAL = 10  // ~100fps target (OS throttles gracefully)
@@ -221,13 +215,6 @@ export function setWindowMode(mode: WindowMode): void {
   if (mode === 'auth') {
     // Center on screen
     x = workX + Math.round((screenW - cfg.width) / 2)
-    y = workY + Math.round((display.workAreaSize.height - cfg.height) / 2)
-    savedPosition = null
-  } else if (mode === 'guide') {
-    // Initial dock position — right edge of screen. The window-tracker will
-    // slide us into the correct spot alongside System Settings within a
-    // couple of poll ticks (~200ms).
-    x = workX + screenW - cfg.width - GUIDE_FALLBACK_MARGIN
     y = workY + Math.round((display.workAreaSize.height - cfg.height) / 2)
     savedPosition = null
   } else if (mode === 'compact') {
@@ -589,79 +576,6 @@ export function showAfterDesktopAction(): void {
     win.setOpacity(eased * targetOpacity)
     if (t >= 1) { clearInterval(screenshotFadeTimer!); screenshotFadeTimer = null }
   }, FADE_STEP)
-}
-
-/**
- * Dock the helper window alongside the System Settings window for the
- * permission-guide flow. Called from the window-tracker poll loop.
- *
- * Placement rules:
- *  - If Settings is on the left half of the screen → dock helper to its RIGHT.
- *  - If Settings is on the right half → dock helper to its LEFT.
- *  - If there's not enough room on the chosen side (narrow screen, or
- *    Settings spans most of the screen), fall back to the other side or
- *    the screen's edge so the helper is never clipped.
- *  - Vertically align the helper to Settings' vertical center.
- *
- * No-op when the window isn't in guide mode, so stray callbacks after the
- * user exits the guide can't accidentally move the overlay.
- */
-export function positionAlongsideSettings(
-  bounds: { x: number; y: number; w: number; h: number } | null,
-): void {
-  const win = mainWindow
-  if (!win || win.isDestroyed()) return
-  if (currentMode !== 'guide') return
-
-  const cfg = MODE_CONFIG.guide
-  const display = getActiveDisplay()
-  const { x: workX, y: workY } = display.workArea
-  const { width: workW, height: workH } = display.workAreaSize
-
-  let x: number
-  let y: number
-
-  if (bounds) {
-    const roomLeft = bounds.x - workX
-    const roomRight = workX + workW - (bounds.x + bounds.w)
-    const needed = cfg.width + GUIDE_DOCK_GAP
-
-    // Prefer the side with more space; break ties by docking to the right
-    // (matches Settings' content alignment — the list is on the right column).
-    const dockRight = roomRight >= needed || roomRight >= roomLeft
-
-    if (dockRight) {
-      x = bounds.x + bounds.w + GUIDE_DOCK_GAP
-    } else {
-      x = bounds.x - cfg.width - GUIDE_DOCK_GAP
-    }
-
-    // Vertically center against Settings but keep both the top and bottom
-    // of the helper on-screen.
-    y = bounds.y + Math.round((bounds.h - cfg.height) / 2)
-  } else {
-    // Settings hidden / hasn't opened yet — rest against the screen edge.
-    x = workX + workW - cfg.width - GUIDE_FALLBACK_MARGIN
-    y = workY + Math.round((workH - cfg.height) / 2)
-  }
-
-  // Clamp to the work area so the helper is never clipped off-screen.
-  x = Math.max(workX, Math.min(x, workX + workW - cfg.width))
-  y = Math.max(workY, Math.min(y, workY + workH - cfg.height))
-
-  const current = win.getBounds()
-  // Skip setBounds if we're already within 1px — avoids macOS repainting
-  // during every poll tick when the user isn't moving Settings.
-  if (
-    Math.abs(current.x - x) < 1 &&
-    Math.abs(current.y - y) < 1 &&
-    current.width === cfg.width &&
-    current.height === cfg.height
-  ) {
-    return
-  }
-
-  win.setBounds({ x, y, width: cfg.width, height: cfg.height })
 }
 
 /**
