@@ -1,4 +1,5 @@
 import { systemPreferences, desktopCapturer, shell } from 'electron'
+import { resolve } from 'path'
 
 export interface PermissionStatus {
   screenRecording: 'granted' | 'denied' | 'not-applicable'
@@ -93,4 +94,38 @@ export function openAccessibilitySettings(): void {
   shell.openExternal(
     'x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility',
   )
+}
+
+/**
+ * Resolve the .app bundle of the currently-running process.
+ *
+ * Packaged: `/Applications/Coasty.app/Contents/MacOS/Coasty`
+ *     → returns `/Applications/Coasty.app`.
+ * Dev (`npm run dev`):
+ *     `.../node_modules/electron/dist/Electron.app/Contents/MacOS/Electron`
+ *     → returns `.../Electron.app`.
+ *
+ * macOS ties Accessibility / Screen Recording permissions to the running
+ * process path, so in dev the user legitimately needs to add "Electron" to
+ * the list — dragging this path into the pane grants permission to the same
+ * binary that `npm run dev` keeps launching, and state survives reloads.
+ *
+ * Returns null if the exec path doesn't resolve to a `.app` (shouldn't
+ * happen on macOS, but guard against freak setups).
+ */
+export function getAppBundlePath(): string | null {
+  if (process.platform !== 'darwin') return null
+  const candidate = resolve(process.execPath, '..', '..', '..')
+  if (!candidate.endsWith('.app')) return null
+  return candidate
+}
+
+/**
+ * Open the correct Privacy pane for a permission type. The actual
+ * tracking + window repositioning happens in `main/index.ts` so this
+ * module stays free of window-manager coupling.
+ */
+export function openPermissionPane(type: 'screen' | 'accessibility'): void {
+  if (type === 'screen') openScreenRecordingSettings()
+  else openAccessibilitySettings()
 }

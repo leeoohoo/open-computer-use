@@ -105,6 +105,13 @@ contextBridge.exposeInMainWorld('coasty', {
   requestAccessibility: () => ipcRenderer.invoke('permissions:request-accessibility'),
   openScreenRecordingSettings: () => ipcRenderer.invoke('permissions:open-screen-recording'),
   openAccessibilitySettings: () => ipcRenderer.invoke('permissions:open-accessibility'),
+  startPermissionGuide: (type: 'screen' | 'accessibility') =>
+    ipcRenderer.invoke('permissions:start-guide', type),
+  stopPermissionGuide: () => ipcRenderer.invoke('permissions:stop-guide'),
+  // Fire-and-forget: starts a native OS drag of the Coasty.app bundle from
+  // the current window. Must be called synchronously inside an HTML
+  // `dragstart` handler that has already called `preventDefault()`.
+  startDragAppBundle: () => ipcRenderer.send('drag:start-app-bundle'),
   onPermissionDenied: (callback: (data: { type: string; message: string }) => void) => {
     const handler = (_event: any, data: { type: string; message: string }) => callback(data)
     ipcRenderer.on('permission:denied', handler)
@@ -247,6 +254,9 @@ export interface CoastyAPI {
   requestAccessibility: () => Promise<boolean>
   openScreenRecordingSettings: () => Promise<void>
   openAccessibilitySettings: () => Promise<void>
+  startPermissionGuide: (type: 'screen' | 'accessibility') => Promise<void>
+  stopPermissionGuide: () => Promise<void>
+  startDragAppBundle: () => void
   onPermissionDenied: (callback: (data: { type: string; message: string }) => void) => () => void
   getPlatform: () => string
 
