@@ -548,6 +548,27 @@ export function registerIpcHandlers(
     // the backend and rejects any further commands that arrive on the bridge.
     const bridge = getWsBridge()
     if (bridge) bridge.stopTask()
+
+    // ALSO hit the dedicated HTTP stop endpoint. The WebSocket task_stop
+    // only arrives if vm_control is mid-recv on this machine — if the
+    // executor is blocked inside agent.predict() or code_agent, no one is
+    // reading the socket and the message sits in the buffer. The HTTP call
+    // goes to a separate request handler that unconditionally sets the
+    // cancellation event.
+    try {
+      const machineId = auth.getMachineId()
+      const token = await auth.getAccessToken()
+      if (machineId && token) {
+        await fetch(`${backendUrl}/api/chat/stop-machine/${machineId}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+        }).catch((err) => {
+          console.error('[chat:abort] stop-machine HTTP call failed:', err?.message || err)
+        })
+      }
+    } catch (err: any) {
+      console.error('[chat:abort] stop-machine error:', err?.message || err)
+    }
     return { success: true }
   })
 

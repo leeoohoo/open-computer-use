@@ -45,8 +45,20 @@ resource "aws_lb_target_group" "frontend" {
     matcher             = "200"
   }
 
-  # Speed up deployments — drain connections in 30s instead of default 300s
-  deregistration_delay = 30
+  # During a rolling deploy the ALB stops forwarding new requests to the
+  # deregistering target and waits this long for in-flight requests to finish
+  # before yanking the target.  30 s was too short for long-running SSE /
+  # streaming endpoints — clients saw truncated responses on every deploy.
+  # 120 s drains almost all realistic requests while still letting a deploy
+  # complete within a reasonable window.  The AWS default is 300 s.
+  #
+  # NOTE: ALB (HTTP/HTTPS) target groups do NOT support
+  # `deregistration_delay.connection_termination.enabled` — that attribute is
+  # NLB-only.  ALB will close idle keepalive connections at the listener's
+  # `idle_timeout`, and open SSE streams will be severed when the target is
+  # finally removed.  Mitigations live in the app: UvicornWorker gets 90 s
+  # `timeout`, SSE handlers emit keepalives, and clients reconnect.
+  deregistration_delay = 120
 
   # Sticky sessions (uncomment if your app needs session affinity)
   # stickiness {
@@ -82,7 +94,11 @@ resource "aws_lb_target_group" "backend" {
     matcher             = "200"
   }
 
-  deregistration_delay = 30
+  # Backend handles the Electron WebSocket (long-lived) and SSE chat streams.
+  # Bumped from 30 s → 120 s to avoid severing long requests mid-deploy.  See
+  # the frontend target group above for the full rationale and the ALB vs NLB
+  # note on `connection_termination` (ALB does not expose it).
+  deregistration_delay = 120
 
   tags = { Name = "${var.project_name}-backend-tg" }
 }

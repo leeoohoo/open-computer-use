@@ -95,6 +95,16 @@
   );
 }
 
+/* Shimmer sweep driver for .shimmer-text (Super Humans thinking indicator) */
+@keyframes super-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 /* Shine sweep for page loader titles */
 @keyframes text-shine {
   0% {
