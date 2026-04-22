@@ -238,13 +238,6 @@ export function ReferralContent() {
           className="absolute -bottom-[30%] -right-[10%] h-[70%] w-[50%] rounded-full opacity-[0.02] dark:opacity-[0.04] blur-[100px]"
           style={{ background: "radial-gradient(circle, currentColor, transparent 70%)" }}
         />
-        <div
-          className="absolute inset-0 opacity-[0.012] dark:opacity-[0.025]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(128,128,128,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(128,128,128,0.3) 1px, transparent 1px)`,
-            backgroundSize: "80px 80px",
-          }}
-        />
       </div>
 
       <div className="relative flex flex-col lg:flex-row h-full">

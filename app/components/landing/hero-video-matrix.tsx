@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight, Video, ChevronDown } from "lucide-react"
 import Link from "next/link"
+import NextImage from "next/image"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
 
@@ -76,10 +77,16 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
   }, [cols, rows, centerCol, centerRow])
 
   // ─── Scroll-driven animation via continuous rAF loop ───
-  // We run a rAF loop instead of listening to `scroll` events because Safari
-  // coalesces scroll events during momentum scroll and can even stop updating
-  // window.scrollY mid-gesture — which causes visible jumps. Reading the
-  // container rect fresh every frame tracks the actual visual position.
+  // We run a rAF loop instead of `scroll` events because Safari coalesces
+  // scroll events during momentum scroll and can even stop updating
+  // window.scrollY mid-gesture — which causes visible jumps.
+  //
+  // Performance note: we READ `window.scrollY` (cached by the browser, no
+  // layout) and subtract a CACHED container offset. Previously this loop
+  // called getBoundingClientRect() every frame, which forced a layout
+  // recalc after each style write — a classic 60fps→30fps thrash on older
+  // hardware. We recompute the cache only on resize.
+  //
   // An IntersectionObserver pauses the loop while the hero is offscreen.
   useEffect(() => {
     const container = containerRef.current
@@ -96,6 +103,17 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
     const guides = document.getElementById("guide-lines-wrap")
     const beamsEl = document.getElementById("beams-bg")
     const crossfade = document.getElementById("hero-crossfade")
+
+    // Cached geometry — recomputed only on resize / ResizeObserver fire.
+    // Measured via getBoundingClientRect ONCE, outside the rAF loop.
+    let containerTop = 0
+    let scrollable = 0
+    const measure = () => {
+      const r = container.getBoundingClientRect()
+      containerTop = r.top + window.scrollY
+      scrollable = container.offsetHeight - window.innerHeight
+    }
+    measure()
 
     const maxScale = cols
     let rafId = 0
@@ -115,11 +133,11 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
       }
       rafId = requestAnimationFrame(update)
 
-      const rect = container.getBoundingClientRect()
-      const scrollable = container.offsetHeight - window.innerHeight
       if (scrollable <= 0) return
 
-      const scrolled = Math.max(0, -rect.top)
+      // window.scrollY is cached by the browser — reading it does not force
+      // layout, unlike getBoundingClientRect() after style writes.
+      const scrolled = Math.max(0, window.scrollY - containerTop)
       const p = Math.min(1, scrolled / scrollable) // linear 0 → 1
 
       // Skip DOM writes when progress is unchanged — Safari still invalidates
@@ -235,12 +253,22 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
     )
     io.observe(container)
 
+    // Re-measure on viewport changes. ResizeObserver covers content-driven
+    // size changes (font-load reflows, image decodes); the resize event
+    // covers viewport-driven changes that ResizeObserver misses.
+    const ro = new ResizeObserver(measure)
+    ro.observe(container)
+    const onResize = () => measure()
+    window.addEventListener("resize", onResize, { passive: true })
+
     rafId = requestAnimationFrame(update)
 
     return () => {
       isActive = false
       if (rafId) cancelAnimationFrame(rafId)
       io.disconnect()
+      ro.disconnect()
+      window.removeEventListener("resize", onResize)
       // Use cached refs — no getElementById in cleanup
       if (header) { header.style.opacity = "1"; header.style.pointerEvents = "" }
       if (guides) guides.style.opacity = "1"
@@ -307,13 +335,16 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
             >
               {!tile.isCenter && (
                 <>
-                  <img
+                  <NextImage
                     src={`https://img.youtube.com/vi/${tile.videoId}/hqdefault.jpg`}
                     alt=""
-                    width={480}
-                    height={360}
-                    decoding="async"
+                    fill
+                    // Tiles are tiny once the grid zooms out — pin sizes to
+                    // ~12vw so Next/Image picks the smallest variant. Six
+                    // unique URLs across 77 tiles → only 6 actual fetches.
+                    sizes="(max-width: 768px) 12vw, 10vw"
                     draggable={false}
+                    unoptimized
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/15 dark:bg-black/25" />

@@ -744,7 +744,7 @@ export function DevelopersContent() {
 
   return (
     <PageLoader isLoading={loading} title="Developer API" description="Loading your API dashboard.">
-    <div className="h-full overflow-y-auto scrollbar-invisible relative bg-transparent">
+    <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-invisible relative bg-transparent">
 
       {/* Ambient background */}
       <div className="pointer-events-none fixed inset-0">

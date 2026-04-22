@@ -9,6 +9,8 @@ import {
   IconGift,
   IconVideo,
   IconLogout,
+  IconBook2,
+  IconCompass,
 } from "@tabler/icons-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -79,6 +81,8 @@ function AvatarMenu({
   const items: Item[] = [
     { kind: "button", icon: IconSettings, label: t("account"), onClick: () => { openDialog("account"); onAction() } },
     { kind: "button", icon: IconCreditCard, label: t("credits.buy"), onClick: () => { openDialog("billing"); onAction() } },
+    { kind: "link", icon: IconBook2, label: t("guide"), href: "/guide" },
+    { kind: "link", icon: IconCompass, label: "Community", href: "/discover" },
     { kind: "link", icon: IconGift, label: t("inviteEarn"), href: "/referral" },
     { kind: "external", icon: IconVideo, label: t("talkToUs"), href: "https://cal.com/coasty/15min" },
   ]

@@ -230,7 +230,7 @@ export function HistoryContent() {
       title="Your History"
       description="A quiet record of every conversation, task, and idea you've explored."
     >
-    <div className="h-full overflow-y-auto scrollbar-invisible relative">
+    <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-invisible relative">
       {/* Ambient background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div

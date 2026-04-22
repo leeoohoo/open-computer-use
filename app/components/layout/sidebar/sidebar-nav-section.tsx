@@ -7,8 +7,6 @@ import {
   IconPlus,
   IconClockPlay,
   IconBinaryTree,
-  IconBook2,
-  IconCompass,
   IconDeviceDesktop,
   IconCalendarClock,
   IconShieldLock,
@@ -801,6 +799,100 @@ function SectionHeader({ label, expanded }: { label: string; expanded: boolean }
 }
 
 // ═══════════════════════════════════════════════════════════════════
+//  ResourceStrip — horizontal icon trio (Computers · Schedules · Creds)
+//  ~30px tall, hairline-separated. Labels surface on hover via Tooltip.
+//  Only used in expanded sidebar; collapsed mode keeps items stacked.
+// ═══════════════════════════════════════════════════════════════════
+type ResourceStripItem = {
+  id: string
+  icon: ReactNode
+  label: string
+  count?: number
+  href: string
+  active: boolean
+  dot?: boolean
+  onNavigate: () => void
+}
+
+function ResourceStrip({ items }: { items: ResourceStripItem[] }) {
+  return (
+    <div className="flex h-[30px] rounded-lg border border-border/40 dark:border-white/[0.06] overflow-hidden">
+      {items.map((item, i) => (
+        <div key={item.id} className="flex flex-1 min-w-0">
+          {i > 0 && <div className="w-px bg-border/40 dark:bg-white/[0.06]" />}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                id={item.id}
+                type="button"
+                onClick={item.onNavigate}
+                aria-label={item.label}
+                className={cn(
+                  "group/btn relative flex-1 flex items-center justify-center transition-colors duration-150",
+                  item.active
+                    ? "bg-foreground/[0.07] text-foreground dark:bg-white/[0.08]"
+                    : "text-foreground/55 hover:text-foreground/90 hover:bg-foreground/[0.04] dark:hover:bg-white/[0.04]"
+                )}
+              >
+                <span className="relative flex items-center justify-center w-4 h-4">
+                  {item.icon}
+                  {item.dot && (
+                    <span className="absolute -top-0.5 -right-0.5 h-1 w-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+                  )}
+                </span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6}>
+              <div className="flex items-center gap-1.5">
+                <span>{item.label}</span>
+                {typeof item.count === "number" && item.count > 0 && (
+                  <span className="text-muted-foreground tabular-nums">· {item.count}</span>
+                )}
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function CollapsedIconButton({
+  id,
+  icon,
+  active,
+  dot,
+  onClick,
+}: {
+  id: string
+  icon: ReactNode
+  active: boolean
+  dot?: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      id={id}
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "group/btn relative flex w-full items-center gap-2.5 px-2 h-[30px] rounded-lg transition-colors duration-150",
+        active
+          ? "bg-foreground/[0.07] text-foreground dark:bg-white/[0.08]"
+          : "text-foreground/55 hover:text-foreground/90 hover:bg-foreground/[0.04] dark:hover:bg-white/[0.04]"
+      )}
+    >
+      <span className="relative shrink-0 flex items-center justify-center w-4 h-4">
+        {icon}
+        {dot && (
+          <span className="absolute -top-0.5 -right-0.5 h-1 w-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+        )}
+      </span>
+    </button>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════
 //  SidebarNavSection — owns machine polling + lazy popup data
 //  so state changes here don't re-render the footer
 // ═══════════════════════════════════════════════════════════════════
@@ -921,110 +1013,56 @@ export const SidebarNavSection = memo(function SidebarNavSection({
       <SectionHeader label="Workspace" expanded={expanded} />
 
       {/* ── Group 2 · Resources ───────────────────────────────────
-          Concrete → abstract: Computers exist, Schedules run on
-          them, Credentials secure them. Reading the group teaches
-          the mental model of the product. */}
+          Expanded: a single ~30px horizontal strip with three icon
+          buttons (Computers / Schedules / Credentials), hairline-
+          separated. Labels appear on hover via tooltip. Collapsed
+          mode keeps the items stacked (they're already icon-only).
+          Developer API stays as its own row below — it's a
+          distinct destination, not part of the resources triad. */}
       <div className="space-y-0.5">
-        {/* Computers — single unified button. Same layout as NavButton
-            so the icon stays anchored at sidebar-x=24 in both modes.
-            Running dot floats off the icon's top-right corner as a
-            tiny badge; the count badge appears on the right when
-            expanded only. */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              id="sidebar-machines-link"
-              type="button"
-              className={cn(
-                "group/btn relative flex w-full items-center gap-2.5 px-2 h-[30px] rounded-lg transition-colors duration-150",
-                isItemActive("/machines")
-                  ? "bg-foreground/[0.07] text-foreground dark:bg-white/[0.08]"
-                  : "text-foreground/55 hover:text-foreground/90 hover:bg-foreground/[0.04] dark:hover:bg-white/[0.04]"
-              )}
-              onClick={() => {
-                router.push("/machines")
-                closeMobileIfNeeded()
-              }}
-            >
-              <span className={cn(
-                "relative shrink-0 flex items-center justify-center w-4 h-4 transition-colors duration-150",
-                isItemActive("/machines")
-                  ? "text-foreground"
-                  : "group-hover/btn:text-foreground/80"
-              )}>
-                <IconDeviceDesktop size={16} stroke={1.5} />
-                {!expanded && machineStats.running > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 h-1 w-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-                )}
-              </span>
-              {expanded && (
-                <>
-                  <span className="truncate text-[12.5px] font-medium tracking-[-0.01em]">
-                    {machineStats.total === 1 ? t("computer") : t("computers")}
-                  </span>
-                  {machineStats.total > 0 && (
-                    <span className="ml-auto flex items-center gap-1.5 shrink-0">
-                      {machineStats.running > 0 && (
-                        <span className="h-1 w-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-                      )}
-                      <span className={cn(
-                        "text-[10.5px] tabular-nums font-medium",
-                        isItemActive("/machines") ? "text-foreground/55" : "text-foreground/30"
-                      )}>
-                        {machineStats.total}
-                      </span>
-                    </span>
-                  )}
-                </>
-              )}
-            </button>
-          </TooltipTrigger>
-          {!expanded && (
-            <TooltipContent side="right" sideOffset={8}>
-              <div className="flex items-center gap-1.5">
-                <span className="font-semibold">{machineStats.total}</span>
-                <span className="text-muted-foreground">{machineStats.total === 1 ? t("computer") : t("computers")}</span>
-                {machineStats.running > 0 && (
-                  <span className="text-emerald-500 dark:text-emerald-400">({machineStats.running} {t("active")})</span>
-                )}
-              </div>
-            </TooltipContent>
-          )}
-        </Tooltip>
-        <NavButton
-          id="sidebar-schedules-link"
-          icon={<IconCalendarClock size={16} stroke={1.5} className="shrink-0" />}
-          label={t("workforce")}
-          tooltip={t("workforceDescription")}
-          href="/schedules"
-          isActive={isItemActive("/schedules")}
-          accentColor="text-amber-500 dark:text-amber-400"
-          onClick={closeMobileIfNeeded}
-          livePopup={schedulesPopup}
-          onHoverCardOpen={triggerSchedulesFetch}
-          hoverInfo={{
-            description: t("workforcePopup.title"),
-            detail: t("workforcePopup.description"),
-            visual: "workforce",
-          }}
-        />
-        <NavButton
-          id="sidebar-secrets-link"
-          icon={<IconShieldLock size={16} stroke={1.5} className="shrink-0" />}
-          label={t("credentials")}
-          tooltip={t("credentialsDescription")}
-          href="/secrets"
-          isActive={isItemActive("/secrets")}
-          accentColor="text-rose-500 dark:text-rose-400"
-          onClick={closeMobileIfNeeded}
-          livePopup={secretsPopup}
-          onHoverCardOpen={triggerSecretsFetch}
-          hoverInfo={{
-            description: t("credentialsPopup.title"),
-            detail: t("credentialsPopup.description"),
-            visual: "credentials",
-          }}
-        />
+        {expanded ? (
+          <ResourceStrip
+            items={[
+              {
+                id: "sidebar-machines-link",
+                icon: <IconDeviceDesktop size={16} stroke={1.5} />,
+                label: t(machineStats.total === 1 ? "computer" : "computers"),
+                count: machineStats.total,
+                href: "/machines",
+                active: isItemActive("/machines"),
+                dot: machineStats.running > 0,
+                onNavigate: () => { router.push("/machines"); closeMobileIfNeeded() },
+              },
+              {
+                id: "sidebar-schedules-link",
+                icon: <IconCalendarClock size={16} stroke={1.5} />,
+                label: t("workforce"),
+                href: "/schedules",
+                active: isItemActive("/schedules"),
+                onNavigate: () => { router.push("/schedules"); closeMobileIfNeeded() },
+              },
+              {
+                id: "sidebar-secrets-link",
+                icon: <IconShieldLock size={16} stroke={1.5} />,
+                label: t("credentials"),
+                href: "/secrets",
+                active: isItemActive("/secrets"),
+                onNavigate: () => { router.push("/secrets"); closeMobileIfNeeded() },
+              },
+            ]}
+          />
+        ) : (
+          // Collapsed: a single representative icon (Computers). Schedules
+          // and Credentials are only exposed when the sidebar is expanded —
+          // collapsed mode is reserved for the highest-frequency destination.
+          <CollapsedIconButton
+            id="sidebar-machines-link"
+            icon={<IconDeviceDesktop size={16} stroke={1.5} />}
+            active={isItemActive("/machines")}
+            dot={machineStats.running > 0}
+            onClick={() => { router.push("/machines"); closeMobileIfNeeded() }}
+          />
+        )}
         <NavButton
           id="sidebar-developers-link"
           icon={<IconKey size={16} stroke={1.5} className="shrink-0" />}
@@ -1038,45 +1076,6 @@ export const SidebarNavSection = memo(function SidebarNavSection({
             description: "Developer API",
             detail: "Create API keys, view endpoints, and integrate computer-use intelligence into your apps.",
             visual: "developers",
-          }}
-        />
-      </div>
-
-      <SectionHeader label="Help" expanded={expanded} />
-
-      {/* ── Group 3 · Help ────────────────────────────────────────
-          Lowest-frequency, passive learning. Lives at the bottom
-          like Apple's "Help" or Settings' "About" — present but
-          never competing for attention. */}
-      <div className="space-y-0.5">
-        <NavButton
-          id="sidebar-guide-link"
-          icon={<IconBook2 size={16} stroke={1.5} className="shrink-0" />}
-          label={t("guide")}
-          tooltip={t("guideDescription")}
-          href="/guide"
-          isActive={isItemActive("/guide")}
-          accentColor="text-emerald-500 dark:text-emerald-400"
-          onClick={closeMobileIfNeeded}
-          hoverInfo={{
-            description: t("guidePopup.title"),
-            detail: t("guidePopup.description"),
-            visual: "guide",
-          }}
-        />
-        <NavButton
-          id="sidebar-discover-link"
-          icon={<IconCompass size={16} stroke={1.5} className="shrink-0" />}
-          label="Community"
-          tooltip="See how people use Coasty"
-          href="/discover"
-          isActive={isItemActive("/discover")}
-          accentColor="text-sky-500 dark:text-sky-400"
-          onClick={closeMobileIfNeeded}
-          hoverInfo={{
-            description: "Community Sessions",
-            detail: "See what others are automating and get inspired for your next workflow.",
-            visual: "guide",
           }}
         />
       </div>

@@ -370,18 +370,11 @@ export function SecretsContent() {
       title="Credentials"
       description="Your secrets are safe with us. Unlocking the vault."
     >
-    <div className="h-full overflow-y-auto scrollbar-invisible relative bg-transparent">
-      {/* Ambient background */}
+    <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-invisible relative bg-transparent">
+      {/* Ambient background — soft blur orbs only; grid removed for calm */}
       <div className="pointer-events-none fixed inset-0">
         <div className="absolute -top-1/4 -right-1/4 h-[600px] w-[600px] rounded-full bg-foreground/[0.02] dark:bg-foreground/[0.04] blur-3xl" />
         <div className="absolute -bottom-1/4 -left-1/4 h-[500px] w-[500px] rounded-full bg-foreground/[0.02] dark:bg-foreground/[0.04] blur-3xl" />
-        <div
-          className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
-          style={{
-            backgroundImage: "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-            backgroundSize: "80px 80px",
-          }}
-        />
       </div>
 
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl space-y-6 relative">

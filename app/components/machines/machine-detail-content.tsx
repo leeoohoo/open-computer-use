@@ -604,16 +604,6 @@ export function MachineDetailContent({ machineId }: MachineDetailContentProps) {
               filter: "blur(70px)",
             }}
           />
-          {/* Subtle grid pattern */}
-          <div
-            className="absolute inset-0 opacity-[0.018] dark:opacity-[0.03] pointer-events-none"
-            style={{
-              backgroundImage: `linear-gradient(rgba(128,128,128,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(128,128,128,0.4) 1px, transparent 1px)`,
-              backgroundSize: "32px 32px",
-              maskImage: "radial-gradient(ellipse at top right, black 30%, transparent 75%)",
-              WebkitMaskImage: "radial-gradient(ellipse at top right, black 30%, transparent 75%)",
-            }}
-          />
 
           {/* ── Header section ───────────────────────────── */}
           <div className="relative p-6 sm:p-8">

@@ -1221,7 +1221,7 @@ export function SchedulesContent() {
   const { user } = useUser()
   const [schedules, setSchedules] = useState<ScheduleResponse[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<Tab>("teams")
+  const [activeTab, setActiveTab] = useState<Tab>("employees")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [machines, setMachines] = useState<UserMachine[]>([])
@@ -1269,7 +1269,7 @@ export function SchedulesContent() {
   )
 
   const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }>; count?: number }[] = [
-    { id: "teams", label: t("teamsTab"), icon: Users, count: teams.length },
+    // { id: "teams", label: t("teamsTab"), icon: Users, count: teams.length },
     { id: "employees", label: t("title"), icon: AgentIcon, count: schedules.length },
   ]
 
@@ -1462,18 +1462,11 @@ export function SchedulesContent() {
       title="Schedules"
       description="Right on time, every time. Syncing your automations."
     >
-    <div className="h-full overflow-y-auto scrollbar-invisible relative bg-transparent">
-      {/* Ambient background */}
+    <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-invisible relative bg-transparent">
+      {/* Ambient background — soft blur orbs only; grid removed for calm */}
       <div className="pointer-events-none fixed inset-0">
         <div className="absolute -top-1/4 -right-1/4 h-[600px] w-[600px] rounded-full bg-foreground/[0.02] dark:bg-foreground/[0.04] blur-3xl" />
         <div className="absolute -bottom-1/4 -left-1/4 h-[500px] w-[500px] rounded-full bg-foreground/[0.02] dark:bg-foreground/[0.04] blur-3xl" />
-        <div
-          className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
-          style={{
-            backgroundImage: "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-            backgroundSize: "80px 80px",
-          }}
-        />
       </div>
 
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl space-y-6 relative">
@@ -1538,7 +1531,7 @@ export function SchedulesContent() {
         </motion.div>
 
         {/* Tabs */}
-        {schedules.length > 0 && (
+        {schedules.length > 0 && tabs.length > 1 && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}

@@ -16,10 +16,18 @@ import { LandingHeader } from "./landing-header"
 import { LandingFooter } from "./landing-footer"
 import { HeroVideoMatrix } from "./hero-video-matrix"
 import { GuideLines, SectionDivider as SharedSectionDivider } from "./guide-lines"
-import Beams from "@/components/Beams"
+import dynamic from "next/dynamic"
+import { useLiteMode } from "@/lib/hooks/use-lite-mode"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { Caveat } from "next/font/google"
+
+// WebGL beams — dynamically loaded so THREE.js stays out of the initial bundle
+// and never loads on mobile/low-end devices where it gets gated below.
+const Beams = dynamic(() => import("@/components/Beams"), {
+  ssr: false,
+  loading: () => null,
+})
 
 const handwriting = Caveat({
   subsets: ["latin"],
@@ -63,8 +71,12 @@ export function LandingPage() {
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { resolvedTheme } = useTheme()
+  const lite = useLiteMode()
   const t = useTranslations()
   const tc = useTranslations("common")
+  // Gate the WebGL beams: skip on mobile, on low-end, and under reduced-motion.
+  // These devices fall back to the page's natural gradient background.
+  const showBeams = mounted && !isMobile && !lite.lite
 
   const searchParams = useSearchParams()
 
@@ -263,20 +275,24 @@ export function LandingPage() {
         <GuideLines />
       </div>
 
-      {/* Beams background — covers full viewport including behind navbar, inverted in light mode */}
+      {/* Beams background — WebGL, gated on device capability. Mobile/low-end
+          users get the page's natural gradient instead, keeping the scene
+          calm without burning GPU cycles. */}
       <div id="beams-bg" className={cn("fixed inset-0 z-0 pointer-events-none", mounted && resolvedTheme !== "dark" && "invert")} aria-hidden="true">
         <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
           <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_80%_80%_at_50%_45%,black_0%,black_30%,transparent_75%)] sm:[mask-image:radial-gradient(ellipse_100%_90%_at_50%_45%,black_0%,black_40%,transparent_85%)]">
-            <Beams
-              beamWidth={3}
-              beamHeight={30}
-              beamNumber={20}
-              lightColor="#ffffff"
-              speed={2}
-              noiseIntensity={1.75}
-              scale={0.2}
-              rotation={30}
-            />
+            {showBeams && (
+              <Beams
+                beamWidth={3}
+                beamHeight={30}
+                beamNumber={20}
+                lightColor="#ffffff"
+                speed={2}
+                noiseIntensity={1.75}
+                scale={0.2}
+                rotation={30}
+              />
+            )}
           </div>
         </div>
       </div>

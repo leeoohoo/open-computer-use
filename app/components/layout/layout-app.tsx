@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { Header } from "@/app/components/layout/header"
 import { AppSidebar } from "@/app/components/layout/sidebar/app-sidebar"
 import { AppTopBar } from "@/app/components/layout/topbar/app-topbar"
@@ -23,7 +24,14 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   const { isOpen: isNavigatorOpen, toggleNavigator, width: navigatorWidth } = useProjectNavigator()
   const { chatId } = useChatSession()
   const { getChatById } = useChats()
+  const pathname = usePathname()
   const hasSidebar = preferences.layout === "sidebar"
+
+  // The decorative background belongs to chat surfaces only — the home
+  // composer ("/") and individual chats ("/c/:id"). On resource pages
+  // (schedules, machines, secrets, history, etc.) it competes with
+  // dense content and reads as visual noise.
+  const isChatSurface = pathname === "/" || pathname?.startsWith("/c/") || false
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -70,7 +78,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
           !isHorizontal && "bg-background",
           mounted && hasSidebar && !isHorizontal && "md:rounded-2xl md:overflow-hidden md:shadow-sm"
         )}>
-          {mounted && <ChatBackgroundLayer background={preferences.chatBackground} />}
+          {mounted && isChatSurface && <ChatBackgroundLayer background={preferences.chatBackground} />}
           {isHorizontal ? (
             <AppTopBar />
           ) : (

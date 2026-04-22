@@ -92,17 +92,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Transform database results to TypeScript format
-    const allDbMachines = (dbMachines || []).map(transformMachineFromDB);
-
-    // Separate cloud machines from Electron (local) machines for limit calculations
-    // Electron machines are registered in user_machines for display but must NOT
-    // count towards cloud VM limits.
+    // Parse settings helper (used in several places below).
     const parseSettings = (m: any) => {
       const raw = m.settings;
       if (typeof raw === 'string') try { return JSON.parse(raw); } catch { return {}; }
       return raw || {};
     };
+
+    // Hide Electron devices the user has explicitly unregistered.  The row
+    // is kept in the DB (to block silent re-registration by the still-running
+    // Electron app), but must not surface in the UI or any counts.
+    const visibleDbMachines = (dbMachines || []).filter((m: any) => {
+      const s = parseSettings(m);
+      return !s.unregistered;
+    });
+
+    // Transform database results to TypeScript format
+    const allDbMachines = visibleDbMachines.map(transformMachineFromDB);
+
+    // Separate cloud machines from Electron (local) machines for limit calculations
+    // Electron machines are registered in user_machines for display but must NOT
+    // count towards cloud VM limits.
     const cloudMachines = allDbMachines.filter((m: any) => {
       const s = parseSettings(m);
       return s.provider !== 'electron' && !s.isLocal;
