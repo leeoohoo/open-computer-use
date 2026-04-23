@@ -42,6 +42,63 @@ resource "aws_vpc_security_group_egress_rule" "redis_egress" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
+# -----------------------------------------------------------------------------
+# CloudWatch log group for ElastiCache slow logs.
+#
+# We MUST NOT reuse /ecs/llmhub (the shared app log group) as the slow-log
+# destination.  ElastiCache verifies log-delivery permissions synchronously
+# inside CreateReplicationGroup; without a CloudWatch Logs resource policy on
+# the destination log group allowing `delivery.logs.amazonaws.com`, the
+# verification times out and AWS returns the unhelpful 408
+# `InvalidCredentialsException: This action cannot be completed now. Please
+# try again.`  We fix this by giving ElastiCache its own log group and
+# attaching a resource policy scoped to the ElastiCache service principal.
+# -----------------------------------------------------------------------------
+
+resource "aws_cloudwatch_log_group" "elasticache_slow" {
+  name              = "/aws/elasticache/${var.project_name}/slow-log"
+  retention_in_days = 14
+
+  tags = { Name = "${var.project_name}-cache-slow-log" }
+}
+
+# Log-group resource policy: allow the CloudWatch Logs "vended logs" delivery
+# principal to write on behalf of ElastiCache.  This is an ACCOUNT-level
+# resource policy (not attached to the log group directly) but scoped via the
+# Condition to this specific log group only.
+resource "aws_cloudwatch_log_resource_policy" "elasticache_slow" {
+  policy_name = "${var.project_name}-elasticache-slowlog-delivery"
+  policy_document = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid    = "AllowElastiCacheVendedLogDelivery"
+      Effect = "Allow"
+      Principal = {
+        Service = "delivery.logs.amazonaws.com"
+      }
+      Action = [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+      ]
+      Resource = "${aws_cloudwatch_log_group.elasticache_slow.arn}:*"
+      Condition = {
+        StringEquals = {
+          "aws:SourceAccount" = data.aws_caller_identity.elasticache[0].account_id
+        }
+        ArnLike = {
+          "aws:SourceArn" = "arn:aws:elasticache:${var.aws_region}:${data.aws_caller_identity.elasticache[0].account_id}:replicationgroup:${var.project_name}-cache"
+        }
+      }
+    }]
+  })
+}
+
+# Scoped data source — only fetched here so we don't collide with the one
+# created conditionally inside cloudfront.tf (which has count = 1 guard).
+data "aws_caller_identity" "elasticache" {
+  count = 1
+}
+
 resource "aws_elasticache_replication_group" "main" {
   replication_group_id = "${var.project_name}-cache"
   description          = "Coasty shared cache: rate limiter, JWT cache, hot images, circuit breaker"
@@ -77,11 +134,16 @@ resource "aws_elasticache_replication_group" "main" {
   maintenance_window       = "sun:05:00-sun:07:00"
 
   log_delivery_configuration {
-    destination      = aws_cloudwatch_log_group.ecs.name
+    destination      = aws_cloudwatch_log_group.elasticache_slow.name
     destination_type = "cloudwatch-logs"
     log_format       = "json"
     log_type         = "slow-log"
   }
+
+  # Force the resource policy to exist *before* we call CreateReplicationGroup,
+  # otherwise the log-delivery permission verification inside that call will
+  # time out and return the infamous "408 / InvalidCredentialsException".
+  depends_on = [aws_cloudwatch_log_resource_policy.elasticache_slow]
 
   tags = { Name = "${var.project_name}-cache" }
 }
