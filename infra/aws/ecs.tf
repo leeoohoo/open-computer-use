@@ -101,6 +101,11 @@ resource "aws_ecs_task_definition" "app" {
           { name = "ENVIRONMENT", value = "production" },
           { name = "DEBUG", value = "false" },
           { name = "CORS_ORIGINS", value = "http://localhost:3000,https://coasty.ai,https://www.coasty.ai" },
+          # Wire up the Valkey replication group provisioned in elasticache.tf.
+          # backend_env_vars (terraform.tfvars) takes precedence — set REDIS_URL
+          # there to override (e.g. for a pinned reader endpoint).
+          { name = "REDIS_URL", value = "rediss://${aws_elasticache_replication_group.main.primary_endpoint_address}:6379" },
+          { name = "CACHE_ENABLED", value = "true" },
         ],
         [for k, v in var.backend_env_vars : { name = k, value = v }]
       )

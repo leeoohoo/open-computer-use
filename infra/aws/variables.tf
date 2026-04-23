@@ -30,6 +30,17 @@ variable "vpc_cidr" {
   default     = "10.0.0.0/16"
 }
 
+variable "nat_gateway_count" {
+  description = "Number of NAT gateways (1 = cost-saving / dev, 2 = HA / prod). One per AZ."
+  type        = number
+  default     = 2
+
+  validation {
+    condition     = var.nat_gateway_count >= 1 && var.nat_gateway_count <= 2
+    error_message = "nat_gateway_count must be 1 or 2 (matches subnet count)."
+  }
+}
+
 # -----------------------------------------------------------------------------
 # Container Images
 # -----------------------------------------------------------------------------
@@ -150,4 +161,32 @@ variable "backend_env_vars" {
   description = "Environment variables for the backend container (key = value pairs)"
   type        = map(string)
   default     = {}
+}
+
+# -----------------------------------------------------------------------------
+# ElastiCache (Valkey)
+# -----------------------------------------------------------------------------
+
+variable "redis_node_type" {
+  description = "ElastiCache node type. cache.t4g.micro for dev/staging (~$11/mo), cache.r7g.large for prod (~$130/mo)."
+  type        = string
+  default     = "cache.t4g.micro"
+}
+
+variable "redis_replica_count" {
+  description = "Number of read replicas (0 = single-node, no failover; 1 = HA across 2 AZs; 2 = extra read capacity)."
+  type        = number
+  default     = 1
+}
+
+variable "redis_parameter_group_name" {
+  description = "Parameter group name for the Valkey cluster. Use default.valkey7 unless you need custom maxmemory policies."
+  type        = string
+  default     = "default.valkey7"
+}
+
+variable "redis_snapshot_retention_days" {
+  description = "Days to retain automatic snapshots (0 disables snapshots)."
+  type        = number
+  default     = 5
 }

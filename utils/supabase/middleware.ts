@@ -77,28 +77,52 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Redirect authenticated users who haven't completed onboarding
-  // Skip for onboarding page itself, auth routes, API routes, and static assets
+  // Redirect authenticated users who haven't completed onboarding.
+  // Skip for onboarding page itself, auth routes, API routes, and static assets.
+  //
+  // PERF (P1): the middleware runs on every page navigation.  Querying
+  // `users.onboarding_completed` on every navigation was a hot path.  Once a
+  // user completes onboarding the flag never flips back, so we cache the
+  // "done" state in a long-lived first-party cookie (`coasty_onb=1`,
+  // 30 days, httpOnly).  When the cookie is present we skip the DB round-trip
+  // entirely — for the 99 %+ of authenticated traffic that's already
+  // onboarded, this turns a ~50 ms Supabase query into a cookie read.
   const skipOnboardingCheck = ['/onboarding', '/auth', '/api/', '/_next/', '/favicon']
   const shouldCheckOnboarding = user && !skipOnboardingCheck.some(path =>
     request.nextUrl.pathname.startsWith(path)
   )
 
   if (shouldCheckOnboarding) {
-    try {
-      const { data: userData } = await supabase
-        .from('users')
-        .select('onboarding_completed')
-        .eq('id', user.id)
-        .single()
+    const onboardedCookie = request.cookies.get('coasty_onb')?.value
+    if (onboardedCookie !== '1') {
+      try {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('onboarding_completed')
+          .eq('id', user.id)
+          .single()
 
-      if (userData && !userData.onboarding_completed) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/onboarding'
-        return NextResponse.redirect(url)
+        if (userData && !userData.onboarding_completed) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/onboarding'
+          return NextResponse.redirect(url)
+        }
+
+        // Persist the "done" state — never query again until the cookie expires
+        // or the user logs out (Supabase SSR clears auth cookies on sign-out;
+        // we leave coasty_onb because it's also a no-op for fresh users).
+        if (userData?.onboarding_completed) {
+          supabaseResponse.cookies.set('coasty_onb', '1', {
+            path: '/',
+            maxAge: 30 * 24 * 60 * 60,
+            sameSite: 'lax',
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+          })
+        }
+      } catch {
+        // If onboarding check fails, don't block the user
       }
-    } catch {
-      // If onboarding check fails, don't block the user
     }
   }
 

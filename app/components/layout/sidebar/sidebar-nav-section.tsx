@@ -1,6 +1,6 @@
 "use client"
 
-import { memo, useMemo, type ReactNode } from "react"
+import { memo, useMemo, useState, useEffect, useCallback, type ReactNode } from "react"
 import { useTranslations } from "next-intl"
 import { useRouter, usePathname } from "next/navigation"
 import {
@@ -11,6 +11,7 @@ import {
   IconCalendarClock,
   IconShieldLock,
   IconKey,
+  IconStack2,
 } from "@tabler/icons-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -24,6 +25,11 @@ import {
   HoverCardTrigger,
   HoverCardContent,
 } from "@/components/ui/hover-card"
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover"
 import { useSidebar } from "@/components/ui/sidebar"
 import { useChats } from "@/lib/chat-store/chats/provider"
 import { useSidebarMachines } from "./hooks/use-sidebar-machines"
@@ -492,108 +498,6 @@ function SwarmsLivePopup({ swarms }: { swarms: { swarm_id: string; status?: stri
   )
 }
 
-function WorkforceLivePopup({ schedules }: { schedules: { chat_id: string; title: string | null; enabled: boolean; frequency: string; next_run_at: string | null; run_count: number; consecutive_failures: number }[] }) {
-  const t = useTranslations("sidebar")
-  const recent = schedules.slice(0, 4)
-  const active = schedules.filter(s => s.enabled).length
-  const totalRuns = schedules.reduce((acc, s) => acc + s.run_count, 0)
-
-  const formatNext = (d: string | null) => {
-    if (!d) return t("notScheduled")
-    const ms = new Date(d).getTime() - Date.now()
-    if (ms < 0) return t("overdue")
-    if (ms < 60_000) return t("lessThanMin")
-    if (ms < 3_600_000) return t("inMinutes", { count: Math.round(ms / 60_000) })
-    if (ms < 86_400_000) return t("inHours", { count: Math.round(ms / 3_600_000) })
-    return new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric" })
-  }
-
-  return (
-    <PopupShell>
-      <div className="px-4 pt-4 pb-2">
-        <div className="flex items-baseline justify-between">
-          <span className="text-sm font-semibold text-popover-foreground">{t("schedulesCount", { count: schedules.length })}</span>
-          <span className="text-[10px] text-muted-foreground">{t("totalRuns", { count: totalRuns })}</span>
-        </div>
-        <div className="flex gap-3 mt-1.5">
-          <span className="text-[9px] text-amber-500 dark:text-amber-400/70">{active} {t("active")}</span>
-          <span className="text-[9px] text-muted-foreground">{schedules.length - active} {t("paused")}</span>
-        </div>
-      </div>
-      <GlassSection>
-        <div className="space-y-1.5">
-          {recent.map((s) => (
-            <div key={s.chat_id} className="flex items-center gap-2 px-2 py-1.5 rounded-md">
-              <div className={cn(
-                "w-1.5 h-1.5 rounded-full shrink-0",
-                s.enabled ? "bg-amber-500 dark:bg-amber-400" : "bg-foreground/15",
-                s.consecutive_failures > 0 && "bg-red-500 dark:bg-red-400"
-              )} />
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] text-popover-foreground/70 truncate font-medium">
-                  {s.title || "Untitled schedule"}
-                </p>
-                <p className="text-[9px] text-muted-foreground">{s.frequency} · {s.run_count} runs</p>
-              </div>
-              <span className={cn(
-                "text-[9px] shrink-0 tabular-nums",
-                s.enabled ? "text-amber-500/60 dark:text-amber-400/50" : "text-muted-foreground/50"
-              )}>
-                {s.enabled ? formatNext(s.next_run_at) : t("paused")}
-              </span>
-            </div>
-          ))}
-        </div>
-      </GlassSection>
-      <Link href="/schedules" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
-        <span className="text-[10px] font-medium text-amber-500 dark:text-amber-400">{t("viewAllSchedules")}</span>
-      </Link>
-    </PopupShell>
-  )
-}
-
-function CredentialsLivePopup({ secrets }: { secrets: { id: string; name: string; service: string; username: string; updatedAt: string }[] }) {
-  const t = useTranslations("sidebar")
-  const recent = secrets.slice(0, 4)
-
-  const timeAgo = (d: string) => {
-    const ms = Date.now() - new Date(d).getTime()
-    if (ms < 86_400_000) return t("today")
-    if (ms < 172_800_000) return t("yesterday")
-    return `${Math.round(ms / 86_400_000)}d ago`
-  }
-
-  return (
-    <PopupShell>
-      <div className="px-4 pt-4 pb-2">
-        <div className="flex items-baseline justify-between">
-          <span className="text-sm font-semibold text-popover-foreground">{t("credentialsCount", { count: secrets.length })}</span>
-          <span className="text-[10px] text-muted-foreground">{t("encryptedVault")}</span>
-        </div>
-      </div>
-      <GlassSection>
-        <div className="space-y-1.5">
-          {recent.map((s) => (
-            <div key={s.id} className="flex items-center gap-2 px-2 py-1.5 rounded-md">
-              <div className="w-5 h-5 rounded bg-foreground/[0.06] border border-foreground/[0.08] flex items-center justify-center shrink-0">
-                <IconKey size={10} stroke={1.5} className="text-rose-500/70 dark:text-rose-400/70" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] text-popover-foreground/70 truncate font-medium">{s.name || s.service}</p>
-                <p className="text-[9px] text-muted-foreground truncate">{s.username}</p>
-              </div>
-              <span className="text-[9px] text-muted-foreground/50 shrink-0 tabular-nums">{timeAgo(s.updatedAt)}</span>
-            </div>
-          ))}
-        </div>
-      </GlassSection>
-      <Link href="/secrets" className="block px-4 pb-3 hover:opacity-80 transition-opacity">
-        <span className="text-[10px] font-medium text-rose-500 dark:text-rose-400">{t("manageCredentials")}</span>
-      </Link>
-    </PopupShell>
-  )
-}
-
 // ─── Nav hover card content ────────────────────────────────────────
 function NavHoverContent({ label, info }: { label: string; info: HoverInfo }) {
   const Visual = visualComponents[info.visual]
@@ -799,11 +703,29 @@ function SectionHeader({ label, expanded }: { label: string; expanded: boolean }
 }
 
 // ═══════════════════════════════════════════════════════════════════
-//  ResourceStrip — horizontal icon trio (Computers · Schedules · Creds)
-//  ~30px tall, hairline-separated. Labels surface on hover via Tooltip.
-//  Only used in expanded sidebar; collapsed mode keeps items stacked.
+//  ResourceDropdown — disclosure row for Computers · Schedules · Creds
+//
+//  A 30px "Resources" trigger row with a custom-drawn caret; expands
+//  inline to reveal three indented destinations along a gradient rail.
+//  Defaults closed so the caret is the affordance; auto-opens when
+//  the user is on a child route, and remembers manual toggles in
+//  localStorage.
+//
+//  Details the eye registers without naming:
+//   · Caret is hand-drawn at 10px with round caps — Tabler's default
+//     has square joins that telegraph "stock icon".
+//   · Open state paints a whisper of bg (foreground/[0.025]) behind
+//     the trigger so it reads as a container, not a button.
+//   · Rail fades top/bottom with a gradient instead of flat 1px line,
+//     so its endpoints don't compete with adjacent rows.
+//   · Active item paints a 2px caret bar exactly on the rail axis,
+//     so the rail visually "lights up" where the user is.
+//   · Items animate in with shv-row's slide-from-left, staggered 30ms.
+//
+//  Collapsed mode gets ResourcesFlyout — a click-popover with the
+//  same three destinations in a compact shell.
 // ═══════════════════════════════════════════════════════════════════
-type ResourceStripItem = {
+type ResourceItem = {
   id: string
   icon: ReactNode
   label: string
@@ -814,81 +736,277 @@ type ResourceStripItem = {
   onNavigate: () => void
 }
 
-function ResourceStrip({ items }: { items: ResourceStripItem[] }) {
+const RESOURCES_STORAGE_KEY = "coasty:sidebar:resources-open"
+
+function Caret({ open, className }: { open: boolean; className?: string }) {
   return (
-    <div className="flex h-[30px] rounded-lg border border-border/40 dark:border-white/[0.06] overflow-hidden">
-      {items.map((item, i) => (
-        <div key={item.id} className="flex flex-1 min-w-0">
-          {i > 0 && <div className="w-px bg-border/40 dark:bg-white/[0.06]" />}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
+    <svg
+      width="10"
+      height="10"
+      viewBox="0 0 10 10"
+      aria-hidden="true"
+      className={cn(
+        "shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+        open && "rotate-90",
+        className
+      )}
+    >
+      <path
+        d="M3.75 2.5L6.25 5L3.75 7.5"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  )
+}
+
+function ResourceDropdown({ items, label }: { items: ResourceItem[]; label: string }) {
+  const anyActive = items.some((i) => i.active)
+  const anyDot = items.some((i) => i.dot)
+
+  // `null` = user hasn't set a preference; fall back to anyActive.
+  const [userOpen, setUserOpen] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const saved = window.localStorage.getItem(RESOURCES_STORAGE_KEY)
+    if (saved === "true") setUserOpen(true)
+    else if (saved === "false") setUserOpen(false)
+  }, [])
+
+  const open = userOpen ?? anyActive
+
+  const toggle = useCallback(() => {
+    setUserOpen((prev) => {
+      const next = !(prev ?? anyActive)
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(RESOURCES_STORAGE_KEY, String(next))
+      }
+      return next
+    })
+  }, [anyActive])
+
+  // Re-mount the items wrapper on each open so the shv-row stagger replays.
+  // Closing still animates smoothly via the outer grid-rows.
+  const [mountKey, setMountKey] = useState(0)
+  useEffect(() => {
+    if (open) setMountKey((k) => k + 1)
+  }, [open])
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={toggle}
+        aria-expanded={open}
+        aria-controls="sidebar-resources-panel"
+        className={cn(
+          "group/trig relative flex w-full items-center gap-2.5 px-2 h-[30px] rounded-lg",
+          "transition-[background-color,color] duration-200 ease-out",
+          "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring/50",
+          open
+            ? "text-foreground/80 bg-foreground/[0.025] dark:bg-white/[0.03]"
+            : "text-foreground/55 hover:text-foreground/90 hover:bg-foreground/[0.035] dark:hover:bg-white/[0.035]"
+        )}
+      >
+        <span className="relative shrink-0 flex items-center justify-center w-4 h-4">
+          <IconStack2
+            size={16}
+            stroke={1.5}
+            className={cn(
+              "transition-colors duration-200",
+              open ? "text-foreground/75" : "group-hover/trig:text-foreground/80"
+            )}
+          />
+          {anyDot && !open && (
+            <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-[1.5px] ring-sidebar dark:bg-emerald-400" />
+          )}
+        </span>
+        <span className="flex-1 text-left truncate text-[12.5px] font-medium tracking-[-0.01em]">
+          {label}
+        </span>
+        <Caret open={open} className={open ? "text-foreground/55" : "text-foreground/30"} />
+      </button>
+
+      <div
+        id="sidebar-resources-panel"
+        className={cn(
+          "grid transition-[grid-template-rows,opacity] ease-[cubic-bezier(0.32,0.72,0,1)]",
+          open
+            ? "grid-rows-[1fr] opacity-100 duration-300"
+            : "grid-rows-[0fr] opacity-0 duration-200"
+        )}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div key={mountKey} className="relative pl-4 pr-0 pt-1 pb-0.5 space-y-[1px]">
+            {/* Gradient rail — fades at the endpoints so it doesn't
+                bleed into the trigger above or the sibling row below. */}
+            <div
+              className="pointer-events-none absolute left-[15px] top-0 bottom-0 w-px
+                         bg-gradient-to-b from-transparent via-foreground/15 to-transparent
+                         dark:via-white/[0.09]"
+            />
+            {items.map((item, i) => (
+              <Link
+                key={item.id}
                 id={item.id}
-                type="button"
+                href={item.href}
                 onClick={item.onNavigate}
-                aria-label={item.label}
-                className={cn(
-                  "group/btn relative flex-1 flex items-center justify-center transition-colors duration-150",
-                  item.active
-                    ? "bg-foreground/[0.07] text-foreground dark:bg-white/[0.08]"
-                    : "text-foreground/55 hover:text-foreground/90 hover:bg-foreground/[0.04] dark:hover:bg-white/[0.04]"
-                )}
+                className="block shv-row"
+                style={{ animationDelay: `${i * 30}ms`, animationDuration: "280ms" }}
               >
-                <span className="relative flex items-center justify-center w-4 h-4">
-                  {item.icon}
-                  {item.dot && (
-                    <span className="absolute -top-0.5 -right-0.5 h-1 w-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+                <span
+                  className={cn(
+                    "group/item relative flex w-full items-center gap-2.5 pl-3 pr-2 h-[28px] rounded-md",
+                    "transition-[background-color,color] duration-150",
+                    item.active
+                      ? "bg-foreground/[0.06] text-foreground dark:bg-white/[0.07]"
+                      : "text-foreground/55 hover:text-foreground/90 hover:bg-foreground/[0.035] dark:hover:bg-white/[0.035]"
+                  )}
+                >
+                  {/* Active caret bar sits exactly on the rail axis. */}
+                  {item.active && (
+                    <span className="absolute left-[-1px] top-[7px] bottom-[7px] w-[2px] rounded-full bg-foreground/55" />
+                  )}
+                  <span className="relative shrink-0 flex items-center justify-center w-4 h-4">
+                    {item.icon}
+                    {item.dot && (
+                      <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-[1.5px] ring-sidebar dark:bg-emerald-400" />
+                    )}
+                  </span>
+                  <span className="flex-1 truncate text-[12px] font-medium tracking-[-0.01em]">
+                    {item.label}
+                  </span>
+                  {typeof item.count === "number" && item.count > 0 && (
+                    <span
+                      className={cn(
+                        "shrink-0 text-[10px] tabular-nums tracking-wide transition-colors",
+                        item.active ? "text-foreground/55" : "text-foreground/30 group-hover/item:text-foreground/50"
+                      )}
+                    >
+                      {item.count}
+                    </span>
                   )}
                 </span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" sideOffset={6}>
-              <div className="flex items-center gap-1.5">
-                <span>{item.label}</span>
-                {typeof item.count === "number" && item.count > 0 && (
-                  <span className="text-muted-foreground tabular-nums">· {item.count}</span>
-                )}
-              </div>
-            </TooltipContent>
-          </Tooltip>
+              </Link>
+            ))}
+          </div>
         </div>
-      ))}
+      </div>
     </div>
   )
 }
 
-function CollapsedIconButton({
-  id,
-  icon,
-  active,
+// ─── ResourcesFlyout ─────────────────────────────────────────────
+//   Collapsed-sidebar affordance for the resources group. A single
+//   IconStack2 button with an emerald dot if anything is live; on
+//   click, a compact popover reveals the same three destinations.
+//   Matches the visual language of the inline dropdown so the two
+//   modes feel like the same component at different scales.
+function ResourcesFlyout({
+  items,
   dot,
-  onClick,
+  anyActive,
 }: {
-  id: string
-  icon: ReactNode
-  active: boolean
-  dot?: boolean
-  onClick: () => void
+  items: ResourceItem[]
+  dot: boolean
+  anyActive: boolean
 }) {
+  const [open, setOpen] = useState(false)
   return (
-    <button
-      id={id}
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "group/btn relative flex w-full items-center gap-2.5 px-2 h-[30px] rounded-lg transition-colors duration-150",
-        active
-          ? "bg-foreground/[0.07] text-foreground dark:bg-white/[0.08]"
-          : "text-foreground/55 hover:text-foreground/90 hover:bg-foreground/[0.04] dark:hover:bg-white/[0.04]"
-      )}
-    >
-      <span className="relative shrink-0 flex items-center justify-center w-4 h-4">
-        {icon}
-        {dot && (
-          <span className="absolute -top-0.5 -right-0.5 h-1 w-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+    <Popover open={open} onOpenChange={setOpen}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <PopoverTrigger asChild>
+            <button
+              id="sidebar-resources-collapsed"
+              type="button"
+              aria-label="Resources"
+              className={cn(
+                "group/trig relative flex w-full items-center gap-2.5 px-2 h-[30px] rounded-lg",
+                "transition-[background-color,color] duration-200 ease-out",
+                "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring/50",
+                open || anyActive
+                  ? "bg-foreground/[0.06] text-foreground dark:bg-white/[0.07]"
+                  : "text-foreground/55 hover:text-foreground/90 hover:bg-foreground/[0.035] dark:hover:bg-white/[0.035]"
+              )}
+            >
+              <span className="relative shrink-0 flex items-center justify-center w-4 h-4">
+                <IconStack2 size={16} stroke={1.5} />
+                {dot && (
+                  <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-[1.5px] ring-sidebar dark:bg-emerald-400" />
+                )}
+              </span>
+            </button>
+          </PopoverTrigger>
+        </TooltipTrigger>
+        {!open && (
+          <TooltipContent side="right" sideOffset={8}>
+            <span className="font-medium text-[12px]">Resources</span>
+          </TooltipContent>
         )}
-      </span>
-    </button>
+      </Tooltip>
+      <PopoverContent
+        side="right"
+        align="start"
+        sideOffset={10}
+        className="w-52 p-1 rounded-xl border border-border/60 bg-popover shadow-2xl dark:border-white/[0.06]"
+      >
+        <div className="px-2.5 pt-2 pb-1.5">
+          <span className="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted-foreground">
+            Resources
+          </span>
+        </div>
+        <div className="h-px bg-border/40 dark:bg-white/[0.05] mx-1 mb-1" />
+        <div className="space-y-[1px]">
+          {items.map((item, i) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              onClick={() => {
+                item.onNavigate()
+                setOpen(false)
+              }}
+              className="block shv-row"
+              style={{ animationDelay: `${i * 25}ms`, animationDuration: "240ms" }}
+            >
+              <span
+                className={cn(
+                  "group/row relative flex w-full items-center gap-2.5 px-2 h-[30px] rounded-md",
+                  "transition-[background-color,color] duration-150",
+                  item.active
+                    ? "bg-foreground/[0.06] text-foreground dark:bg-white/[0.07]"
+                    : "text-foreground/65 hover:text-foreground hover:bg-foreground/[0.04] dark:hover:bg-white/[0.04]"
+                )}
+              >
+                <span className="relative shrink-0 flex items-center justify-center w-4 h-4">
+                  {item.icon}
+                  {item.dot && (
+                    <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-[1.5px] ring-popover dark:bg-emerald-400" />
+                  )}
+                </span>
+                <span className="flex-1 truncate text-[12px] font-medium tracking-[-0.01em]">
+                  {item.label}
+                </span>
+                {typeof item.count === "number" && item.count > 0 && (
+                  <span
+                    className={cn(
+                      "shrink-0 text-[10px] tabular-nums",
+                      item.active ? "text-foreground/55" : "text-foreground/35"
+                    )}
+                  >
+                    {item.count}
+                  </span>
+                )}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
 
@@ -915,21 +1033,14 @@ export const SidebarNavSection = memo(function SidebarNavSection({
   const { chats: allChats } = useChats()
   const { stats: machineStats } = useSidebarMachines(user)
 
-  // Lazy-fetch popup data — only fetched on first hover
+  // Lazy-fetch popup data — only fetched on first hover. Schedules and
+  // secrets previews are handled inside the Resources dropdown itself,
+  // so only history (always shown) and swarms (its own nav row) need
+  // lazy fetches here.
   const [sidebarSwarms, triggerSwarmsFetch] = useLazyFetch(
     "/api/swarms",
-    (d: any) => d.swarms || [],
+    (d: { swarms?: { swarm_id: string; status?: string; created_at: string; prompt?: string; machine_count?: number }[] }) => d.swarms || [],
     [] as { swarm_id: string; status?: string; created_at: string; prompt?: string; machine_count?: number }[]
-  )
-  const [sidebarSchedules, triggerSchedulesFetch] = useLazyFetch(
-    "/api/schedules",
-    (d: any) => d.schedules || [],
-    [] as { chat_id: string; title: string | null; enabled: boolean; frequency: string; next_run_at: string | null; run_count: number; consecutive_failures: number }[]
-  )
-  const [sidebarSecrets, triggerSecretsFetch] = useLazyFetch(
-    "/api/secrets",
-    (d: any) => d.secrets || [],
-    [] as { id: string; name: string; service: string; username: string; updatedAt: string }[]
   )
 
   const isItemActive = (href: string) => {
@@ -945,14 +1056,6 @@ export const SidebarNavSection = memo(function SidebarNavSection({
   const swarmsPopup = useMemo(
     () => sidebarSwarms.length > 0 ? <SwarmsLivePopup swarms={sidebarSwarms} /> : undefined,
     [sidebarSwarms]
-  )
-  const schedulesPopup = useMemo(
-    () => sidebarSchedules.length > 0 ? <WorkforceLivePopup schedules={sidebarSchedules} /> : undefined,
-    [sidebarSchedules]
-  )
-  const secretsPopup = useMemo(
-    () => sidebarSecrets.length > 0 ? <CredentialsLivePopup secrets={sidebarSecrets} /> : undefined,
-    [sidebarSecrets]
   )
 
   return (
@@ -1013,56 +1116,56 @@ export const SidebarNavSection = memo(function SidebarNavSection({
       <SectionHeader label="Workspace" expanded={expanded} />
 
       {/* ── Group 2 · Resources ───────────────────────────────────
-          Expanded: a single ~30px horizontal strip with three icon
-          buttons (Computers / Schedules / Credentials), hairline-
-          separated. Labels appear on hover via tooltip. Collapsed
-          mode keeps the items stacked (they're already icon-only).
-          Developer API stays as its own row below — it's a
-          distinct destination, not part of the resources triad. */}
+          Expanded: a collapsible "Resources" row with a rotating
+          caret that expands inline to show Computers / Schedules /
+          Credentials along a gradient rail. Defaults closed so the
+          caret is an obvious affordance; auto-opens on child routes
+          and remembers manual toggles in localStorage.
+          Collapsed: a single IconStack2 button that opens a popover
+          flyout with the same three destinations — so no items are
+          hidden in the narrow rail. Developer API stays as its own
+          row below — it's a distinct destination, not a resource. */}
       <div className="space-y-0.5">
-        {expanded ? (
-          <ResourceStrip
-            items={[
-              {
-                id: "sidebar-machines-link",
-                icon: <IconDeviceDesktop size={16} stroke={1.5} />,
-                label: t(machineStats.total === 1 ? "computer" : "computers"),
-                count: machineStats.total,
-                href: "/machines",
-                active: isItemActive("/machines"),
-                dot: machineStats.running > 0,
-                onNavigate: () => { router.push("/machines"); closeMobileIfNeeded() },
-              },
-              {
-                id: "sidebar-schedules-link",
-                icon: <IconCalendarClock size={16} stroke={1.5} />,
-                label: t("workforce"),
-                href: "/schedules",
-                active: isItemActive("/schedules"),
-                onNavigate: () => { router.push("/schedules"); closeMobileIfNeeded() },
-              },
-              {
-                id: "sidebar-secrets-link",
-                icon: <IconShieldLock size={16} stroke={1.5} />,
-                label: t("credentials"),
-                href: "/secrets",
-                active: isItemActive("/secrets"),
-                onNavigate: () => { router.push("/secrets"); closeMobileIfNeeded() },
-              },
-            ]}
-          />
-        ) : (
-          // Collapsed: a single representative icon (Computers). Schedules
-          // and Credentials are only exposed when the sidebar is expanded —
-          // collapsed mode is reserved for the highest-frequency destination.
-          <CollapsedIconButton
-            id="sidebar-machines-link"
-            icon={<IconDeviceDesktop size={16} stroke={1.5} />}
-            active={isItemActive("/machines")}
-            dot={machineStats.running > 0}
-            onClick={() => { router.push("/machines"); closeMobileIfNeeded() }}
-          />
-        )}
+        {(() => {
+          const resourceItems: ResourceItem[] = [
+            {
+              id: "sidebar-machines-link",
+              icon: <IconDeviceDesktop size={16} stroke={1.5} />,
+              label: t(machineStats.total === 1 ? "computer" : "computers"),
+              count: machineStats.total,
+              href: "/machines",
+              active: isItemActive("/machines"),
+              dot: machineStats.running > 0,
+              onNavigate: closeMobileIfNeeded,
+            },
+            {
+              id: "sidebar-schedules-link",
+              icon: <IconCalendarClock size={16} stroke={1.5} />,
+              label: t("workforce"),
+              href: "/schedules",
+              active: isItemActive("/schedules"),
+              onNavigate: closeMobileIfNeeded,
+            },
+            {
+              id: "sidebar-secrets-link",
+              icon: <IconShieldLock size={16} stroke={1.5} />,
+              label: t("credentials"),
+              href: "/secrets",
+              active: isItemActive("/secrets"),
+              onNavigate: closeMobileIfNeeded,
+            },
+          ]
+          const anyResourceActive = resourceItems.some((r) => r.active)
+          return expanded ? (
+            <ResourceDropdown label="Resources" items={resourceItems} />
+          ) : (
+            <ResourcesFlyout
+              items={resourceItems}
+              dot={machineStats.running > 0}
+              anyActive={anyResourceActive}
+            />
+          )
+        })()}
         <NavButton
           id="sidebar-developers-link"
           icon={<IconKey size={16} stroke={1.5} className="shrink-0" />}
