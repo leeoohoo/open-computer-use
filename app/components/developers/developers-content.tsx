@@ -86,6 +86,259 @@ function timeAgo(date: string | null) {
   return new Date(date).toLocaleDateString()
 }
 
+/* ─── Cinematic Create-Key Intro — 3-scene loop ─── */
+
+function ForgeScene() {
+  const target = "cua_sk_9fA2b7dC"
+  const pool = "abcdefghijklmnopqrstuvwxyz0123456789"
+  const [text, setText] = useState(target.replace(/[^_]/g, "•"))
+  useEffect(() => {
+    let frame = 0
+    const id = setInterval(() => {
+      frame++
+      const steps = 16
+      if (frame > steps) return
+      const progress = frame / steps
+      const revealed = Math.floor(progress * target.length)
+      let next = target.slice(0, revealed)
+      for (let i = revealed; i < target.length; i++) {
+        const c = target[i]
+        next += c === "_" ? "_" : pool[Math.floor(Math.random() * pool.length)]
+      }
+      setText(next)
+    }, 55)
+    return () => clearInterval(id)
+  }, [])
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.32, ease: EASE }}
+      className="flex items-center gap-3"
+    >
+      <div className="relative h-10 w-10 flex items-center justify-center rounded-xl border border-border/50 bg-foreground/[0.04]">
+        <Key className="h-4 w-4 text-foreground/65" strokeWidth={1.8} />
+        <motion.span
+          className="absolute inset-0 rounded-xl border border-foreground/20"
+          animate={{ opacity: [0, 0.8, 0], scale: [1, 1.22, 1.4] }}
+          transition={{ duration: 1.35, repeat: Infinity, ease: "easeOut" }}
+        />
+      </div>
+      <div>
+        <div className="text-[9px] font-mono text-muted-foreground/50 uppercase tracking-[0.18em] mb-1">
+          generating
+        </div>
+        <div className="font-mono text-[13px] font-semibold text-foreground/85 tabular-nums leading-none flex items-center">
+          <span>{text}</span>
+          <motion.span
+            animate={{ opacity: [1, 0, 1] }}
+            transition={{ duration: 0.65, repeat: Infinity }}
+            className="inline-block ml-0.5 w-[5px] h-[11px] bg-foreground/60"
+          />
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+function TransmitScene() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.32, ease: EASE }}
+      className="flex items-center gap-3 w-full max-w-[320px] px-4"
+    >
+      <div className="flex flex-col items-center gap-1.5 shrink-0">
+        <div className="h-9 w-9 flex items-center justify-center rounded-lg border border-border/50 bg-foreground/[0.04]">
+          <Terminal className="h-4 w-4 text-foreground/65" strokeWidth={1.8} />
+        </div>
+        <span className="text-[8.5px] font-mono text-muted-foreground/45 uppercase tracking-wider">
+          client
+        </span>
+      </div>
+
+      <div className="relative flex-1 h-9 flex items-center">
+        <div className="w-full h-px bg-border/50" />
+        {[0.05, 0.4].map((d, k) => (
+          <motion.span
+            key={k}
+            initial={{ x: "-8%", opacity: 0 }}
+            animate={{ x: ["-8%", "108%"], opacity: [0, 1, 1, 0] }}
+            transition={{ duration: 1.1, delay: d, times: [0, 0.15, 0.85, 1], ease: "easeInOut" }}
+            className="absolute h-[3px] w-6 rounded-full bg-foreground/70 shadow-[0_0_12px_rgba(255,255,255,0.4)]"
+          />
+        ))}
+        <div className="absolute inset-x-0 -bottom-1 text-center text-[9px] font-mono text-muted-foreground/50">
+          POST /v1/cua/predict
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center gap-1.5 shrink-0">
+        <motion.div
+          initial={{ scale: 1 }}
+          animate={{ scale: [1, 1.18, 1] }}
+          transition={{ duration: 0.45, delay: 0.95, ease: EASE }}
+          className="relative h-9 w-9 flex items-center justify-center rounded-lg border border-emerald-500/40 bg-emerald-500/[0.08]"
+        >
+          <motion.span
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 1.0, ease: EASE }}
+          >
+            <Check className="h-4 w-4 text-emerald-500" strokeWidth={2.2} />
+          </motion.span>
+          <motion.span
+            className="absolute inset-0 rounded-lg border border-emerald-500/40"
+            initial={{ opacity: 0, scale: 1 }}
+            animate={{ opacity: [0, 0.7, 0], scale: [1, 1.6, 2] }}
+            transition={{ duration: 0.9, delay: 1.0, ease: "easeOut" }}
+          />
+        </motion.div>
+        <span className="text-[8.5px] font-mono font-semibold text-emerald-600 dark:text-emerald-400">
+          200 OK
+        </span>
+      </div>
+    </motion.div>
+  )
+}
+
+function SecureScene() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.32, ease: EASE }}
+      className="flex items-center gap-4"
+    >
+      <div className="relative h-12 w-12 flex items-center justify-center">
+        {[0, 0.3, 0.6].map((d, k) => (
+          <motion.span
+            key={k}
+            className="absolute inset-0 rounded-full border border-emerald-500/30"
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: [0.7, 1.7], opacity: [0.7, 0] }}
+            transition={{ duration: 1.3, delay: d, repeat: Infinity, ease: "easeOut" }}
+          />
+        ))}
+        <div className="relative h-9 w-9 flex items-center justify-center rounded-full bg-gradient-to-b from-emerald-500/20 to-emerald-500/5 border border-emerald-500/50">
+          <Shield className="h-4 w-4 text-emerald-500" strokeWidth={1.9} />
+        </div>
+      </div>
+      <div>
+        <div className="text-[9px] font-mono text-muted-foreground/50 uppercase tracking-[0.18em] mb-1">
+          secured
+        </div>
+        <div className="text-[13px] font-semibold text-foreground/85 leading-tight">
+          Keyed, signed, delivered
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+function CreateKeyIntro() {
+  const scenes = ["FORGE", "TRANSMIT", "SECURE"] as const
+  const [idx, setIdx] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setIdx((p) => (p + 1) % scenes.length), 1700)
+    return () => clearInterval(id)
+  }, [])
+
+  const [tc, setTc] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setTc((t) => (t + 1) % 1000), 33)
+    return () => clearInterval(id)
+  }, [])
+  const frames = String(tc % 24).padStart(2, "0")
+  const secs = String(Math.floor(tc / 24) % 60).padStart(2, "0")
+
+  return (
+    <div className="relative mb-3 overflow-hidden rounded-xl border border-border/40 bg-gradient-to-b from-muted/25 via-background/40 to-background/80 h-[128px]">
+      {/* letterbox hairlines */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
+
+      {/* ambient light sweep */}
+      <motion.div
+        aria-hidden
+        className="absolute inset-y-0 w-[180px] bg-gradient-to-r from-transparent via-foreground/[0.05] to-transparent pointer-events-none"
+        animate={{ x: ["-180px", "calc(100% + 180px)"] }}
+        transition={{ duration: 3.6, repeat: Infinity, ease: "linear" }}
+      />
+
+      {/* grid watermark */}
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.035] pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
+          backgroundSize: "22px 22px",
+          maskImage: "radial-gradient(ellipse at center, black 40%, transparent 85%)",
+        }}
+      />
+
+      {/* Top-left scene slate */}
+      <div className="absolute top-2 left-3 flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground/55 uppercase tracking-[0.18em] pointer-events-none">
+        <span className="tabular-nums">{idx + 1}/3</span>
+        <span className="text-muted-foreground/30">·</span>
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={scenes[idx]}
+            initial={{ opacity: 0, y: 3 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -3 }}
+            transition={{ duration: 0.2 }}
+          >
+            {scenes[idx]}
+          </motion.span>
+        </AnimatePresence>
+      </div>
+
+      {/* Top-right REC + timecode */}
+      <div className="absolute top-2 right-3 flex items-center gap-2 text-[9px] font-mono text-muted-foreground/55 uppercase tracking-[0.18em] pointer-events-none">
+        <span className="flex items-center gap-1">
+          <motion.span
+            animate={{ opacity: [1, 0.25, 1] }}
+            transition={{ duration: 1.4, repeat: Infinity }}
+            className="h-1.5 w-1.5 rounded-full bg-red-500"
+          />
+          REC
+        </span>
+        <span className="text-muted-foreground/30">·</span>
+        <span className="tabular-nums text-muted-foreground/45">00:{secs}:{frames}</span>
+      </div>
+
+      {/* Bottom progress ticks */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 pointer-events-none">
+        {scenes.map((_, k) => (
+          <span
+            key={k}
+            className={cn(
+              "h-[3px] rounded-full transition-all duration-300",
+              k === idx ? "w-6 bg-foreground/60" : "w-1.5 bg-foreground/20"
+            )}
+          />
+        ))}
+      </div>
+
+      {/* Scene body */}
+      <div className="absolute inset-0 flex items-center justify-center pt-2 pb-4">
+        <AnimatePresence mode="wait">
+          {idx === 0 && <ForgeScene key="forge" />}
+          {idx === 1 && <TransmitScene key="transmit" />}
+          {idx === 2 && <SecureScene key="secure" />}
+        </AnimatePresence>
+      </div>
+    </div>
+  )
+}
+
 /* ─── Activity Chart — always looks good, any data level ─── */
 
 function ActivityChart({ daily }: { daily: DailyPoint[] }) {
@@ -296,88 +549,188 @@ function StatCard({ label, value, subtext, icon: Icon, detail, sparkData }: {
 
 const SNIPPET_LANGS = [
   { id: "python", label: "Python" },
-  { id: "javascript", label: "JavaScript" },
+  { id: "javascript", label: "Node" },
   { id: "curl", label: "cURL" },
+  { id: "go", label: "Go" },
+  { id: "ruby", label: "Ruby" },
+  { id: "php", label: "PHP" },
 ] as const
 
 type SnippetLangId = (typeof SNIPPET_LANGS)[number]["id"]
 
+/**
+ * API keys are `cua_sk_` + 48 hex chars (55 chars total), which alone pushes
+ * a single-line assignment past the dialog's ~66 char visible width. For the
+ * on-screen version we abbreviate; the clipboard version gets the real key.
+ */
+function abbreviateKey(key: string): string {
+  if (key.length <= 24) return key
+  return `${key.slice(0, 12)}...${key.slice(-5)}`
+}
+
 function getSnippetCode(lang: SnippetLangId, key: string, forCopy: boolean): string {
-  // forCopy=true: inline the full key for clipboard
-  // forCopy=false: use a variable so it fits on screen
+  const k = forCopy ? key : abbreviateKey(key)
+
   switch (lang) {
     case "python":
-      return forCopy
-        ? `import requests, base64
+      return `import requests, base64
 
-API_KEY = "${key}"
-img = base64.b64encode(open("screen.png", "rb").read()).decode()
-
-r = requests.post(
-    "https://coasty.ai/api/v1/cua/predict",
-    headers={"X-API-Key": API_KEY},
-    json={
-        "screenshot": img,
-        "instruction": "Click the login button",
-    },
-)
-for action in r.json()["actions"]:
-    print(action["action_type"], action["params"])`
-        : `import requests, base64
-
-API_KEY = "${key}"
+KEY = "${k}"
 img = base64.b64encode(
     open("screen.png", "rb").read()
 ).decode()
 
 r = requests.post(
     "https://coasty.ai/api/v1/cua/predict",
-    headers={"X-API-Key": API_KEY},
+    headers={"X-API-Key": KEY},
     json={
         "screenshot": img,
         "instruction": "Click the login button",
     },
 )
-for action in r.json()["actions"]:
-    print(action["action_type"], action["params"])`
+for a in r.json()["actions"]:
+    print(a["action_type"], a["params"])`
+
     case "javascript":
-      return `const API_KEY = "${key}";
-const screenshot = fs.readFileSync("screen.png")
-  .toString("base64");
+      // Node 18+: global fetch, ESM module for top-level await.
+      return `import fs from "node:fs"
+
+const KEY = "${k}"
+const img = fs
+  .readFileSync("screen.png")
+  .toString("base64")
 
 const res = await fetch(
   "https://coasty.ai/api/v1/cua/predict",
   {
     method: "POST",
     headers: {
-      "X-API-Key": API_KEY,
+      "X-API-Key": KEY,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      screenshot,
+      screenshot: img,
       instruction: "Click the login button",
     }),
-  }
-);
-const { actions } = await res.json();`
+  },
+)
+const { actions } = await res.json()`
+
     case "curl":
-      return `API_KEY="${key}"
+      // Heredoc + `tr -d '\\n'` is portable across macOS/Linux
+      // (GNU \`base64 -w0\` is Linux-only).
+      return `KEY="${k}"
 
 curl -X POST \\
   https://coasty.ai/api/v1/cua/predict \\
-  -H "X-API-Key: $API_KEY" \\
+  -H "X-API-Key: $KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{
-    "screenshot": "'$(base64 -w0 screen.png)'",
-    "instruction": "Click the login button"
-  }'`
+  -d @- <<EOF
+{
+  "screenshot": "$(base64 < screen.png | tr -d '\\n')",
+  "instruction": "Click the login button"
+}
+EOF`
+
+    case "go":
+      return `package main
+
+import (
+  "bytes"
+  "encoding/base64"
+  "encoding/json"
+  "net/http"
+  "os"
+)
+
+const KEY = "${k}"
+
+func main() {
+  f, _ := os.ReadFile("screen.png")
+  img := base64.StdEncoding.EncodeToString(f)
+
+  body, _ := json.Marshal(map[string]any{
+    "screenshot":  img,
+    "instruction": "Click the login button",
+  })
+
+  req, _ := http.NewRequest("POST",
+    "https://coasty.ai/api/v1/cua/predict",
+    bytes.NewReader(body))
+  req.Header.Set("X-API-Key", KEY)
+  req.Header.Set(
+    "Content-Type", "application/json")
+
+  http.DefaultClient.Do(req)
+}`
+
+    case "ruby":
+      return `require "base64"
+require "json"
+require "net/http"
+
+KEY = "${k}"
+img = Base64.strict_encode64(
+  File.read("screen.png")
+)
+
+uri = URI(
+  "https://coasty.ai/api/v1/cua/predict"
+)
+req = Net::HTTP::Post.new(uri)
+req["X-API-Key"] = KEY
+req["Content-Type"] = "application/json"
+req.body = {
+  screenshot: img,
+  instruction: "Click the login button"
+}.to_json
+
+res = Net::HTTP.start(
+  uri.hostname, uri.port, use_ssl: true
+) { |h| h.request(req) }`
+
+    case "php":
+      return `<?php
+$KEY = "${k}";
+$img = base64_encode(
+  file_get_contents("screen.png")
+);
+
+$ch = curl_init(
+  "https://coasty.ai/api/v1/cua/predict"
+);
+curl_setopt_array($ch, [
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_POST => true,
+  CURLOPT_HTTPHEADER => [
+    "X-API-Key: $KEY",
+    "Content-Type: application/json",
+  ],
+  CURLOPT_POSTFIELDS => json_encode([
+    "screenshot" => $img,
+    "instruction" => "Click the login button",
+  ]),
+]);
+
+$res = curl_exec($ch);`
   }
 }
 
 function CreatedKeySnippet({ apiKey, onCopy }: { apiKey: string; onCopy: (text: string) => Promise<void> }) {
   const [snippetLang, setSnippetLang] = useState<SnippetLangId>("python")
+  const [copiedSnippet, setCopiedSnippet] = useState(false)
   const displayCode = getSnippetCode(snippetLang, apiKey, false)
   const copyCode = getSnippetCode(snippetLang, apiKey, true)
+
+  const handleCopySnippet = () => {
+    onCopy(copyCode)
+      .then(() => {
+        setCopiedSnippet(true)
+        toast.success("Snippet copied")
+        setTimeout(() => setCopiedSnippet(false), 1800)
+      })
+      .catch(() => toast.error("Copy failed"))
+  }
 
   return (
     <div className="border-t border-border/20 bg-foreground/[0.015]">
@@ -385,10 +738,58 @@ function CreatedKeySnippet({ apiKey, onCopy }: { apiKey: string; onCopy: (text: 
         <div className="flex items-center justify-between mb-2.5">
           <p className="text-[10px] sm:text-[11px] font-semibold text-foreground/50 uppercase tracking-wider">Quick start</p>
           <button
-            onClick={() => onCopy(copyCode).then(() => toast.success("Snippet copied"))}
-            className="text-[10px] text-muted-foreground/30 hover:text-foreground/50 transition-colors"
+            onClick={handleCopySnippet}
+            aria-label={copiedSnippet ? "Snippet copied" : "Copy snippet"}
+            className={cn(
+              "group relative inline-flex items-center gap-1 h-6 px-1.5 -mr-1 rounded-md text-[10px] font-medium transition-colors",
+              copiedSnippet
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-muted-foreground/45 hover:text-foreground/70"
+            )}
           >
-            Copy
+            <AnimatePresence mode="wait" initial={false}>
+              {copiedSnippet ? (
+                <motion.span
+                  key="copied"
+                  initial={{ opacity: 0, y: 4, scale: 0.92 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -4, scale: 0.92 }}
+                  transition={{ duration: 0.18, ease: EASE }}
+                  className="flex items-center gap-1"
+                >
+                  <motion.span
+                    initial={{ scale: 0.4, rotate: -30 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 20 }}
+                    className="flex"
+                  >
+                    <Check className="h-3 w-3" strokeWidth={2.6} />
+                  </motion.span>
+                  Copied
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="copy"
+                  initial={{ opacity: 0, y: -4, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 4, scale: 0.96 }}
+                  transition={{ duration: 0.18, ease: EASE }}
+                  className="flex items-center gap-1"
+                >
+                  <Copy className="h-3 w-3 opacity-70 group-hover:opacity-100 transition-opacity" />
+                  Copy
+                </motion.span>
+              )}
+            </AnimatePresence>
+            {copiedSnippet && (
+              <motion.span
+                aria-hidden
+                initial={{ opacity: 0.35, scale: 0.8 }}
+                animate={{ opacity: 0, scale: 1.6 }}
+                transition={{ duration: 0.55, ease: EASE }}
+                className="absolute inset-0 rounded-md border border-emerald-500/50 pointer-events-none"
+              />
+            )}
           </button>
         </div>
 
@@ -1030,6 +1431,7 @@ export function DevelopersContent() {
               Give your key a name to identify it later. The secret key will only be shown once.
             </AlertDialogDescription>
           </AlertDialogHeader>
+          {showCreateDialog && <CreateKeyIntro />}
           <div className="py-2 sm:py-3">
             <input
               autoFocus

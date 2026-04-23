@@ -1,11 +1,12 @@
 "use client"
 
-import { GuideLines } from "@/app/components/landing/guide-lines"
+import { GuideLines, SectionDivider } from "@/app/components/landing/guide-lines"
 import { LandingHeader } from "@/app/components/landing/landing-header"
 import { LandingFooter } from "@/app/components/landing/landing-footer"
 import { APITab } from "@/app/guide/tabs/api"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion"
 import Link from "next/link"
+import { useEffect, useState, type MouseEvent } from "react"
 import {
   ArrowRight,
   MousePointerClick,
@@ -15,160 +16,654 @@ import {
   Code2,
   Layers,
   Eye,
-  Keyboard,
+  Check,
+  Copy,
+  Command,
+  Globe,
+  Cpu,
+  Sparkles,
+  ChevronRight,
   type LucideIcon,
 } from "lucide-react"
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-/* ─── Animated demo visual ─── */
+/* ═══════════════════════════════════════════════════════════════
+   HERO VISUAL — cinematic request/response device
+   ═══════════════════════════════════════════════════════════════ */
 
-function DemoVisual() {
+type Scene = {
+  kind: "click" | "type" | "press"
+  target: { x: number; y: number; w: number; h: number }
+  code: string
+  resp: { action_type: string; params: Record<string, string | number> }
+}
+
+const SCENES: Scene[] = [
+  {
+    kind: "click",
+    target: { x: 24, y: 120, w: 148, h: 32 },
+    code: 'click(x=98, y=136)',
+    resp: { action_type: "click", params: { x: 98, y: 136 } },
+  },
+  {
+    kind: "type",
+    target: { x: 24, y: 64, w: 280, h: 32 },
+    code: 'type("open-source alternatives")',
+    resp: { action_type: "type_text", params: { text: "open-source…" } },
+  },
+  {
+    kind: "press",
+    target: { x: 188, y: 120, w: 116, h: 32 },
+    code: 'click(x=246, y=136)',
+    resp: { action_type: "click", params: { x: 246, y: 136 } },
+  },
+]
+
+function HeroVisual() {
+  const [i, setI] = useState(0)
+  const scene = SCENES[i]
+
+  useEffect(() => {
+    const id = setInterval(() => setI((p) => (p + 1) % SCENES.length), 3400)
+    return () => clearInterval(id)
+  }, [])
+
+  // subtle parallax tilt on pointer
+  const rx = useMotionValue(0)
+  const ry = useMotionValue(0)
+  const srx = useSpring(rx, { stiffness: 120, damping: 18 })
+  const sry = useSpring(ry, { stiffness: 120, damping: 18 })
+  const onMove = (e: MouseEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    const dx = (e.clientX - r.left) / r.width - 0.5
+    const dy = (e.clientY - r.top) / r.height - 0.5
+    rx.set(dy * -4)
+    ry.set(dx * 4)
+  }
+  const onLeave = () => {
+    rx.set(0)
+    ry.set(0)
+  }
+
   return (
-    <div className="relative w-full max-w-md mx-auto">
-      {/* Browser window */}
+    <div
+      className="relative w-full max-w-md mx-auto"
+      style={{ perspective: 1200 }}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+    >
+      {/* faint orbit glow */}
+      <div className="absolute -inset-12 -z-10 opacity-40 dark:opacity-60 pointer-events-none">
+        <div className="absolute inset-0 rounded-[40px] bg-[radial-gradient(circle_at_30%_20%,_rgba(59,130,246,0.18),transparent_60%),radial-gradient(circle_at_70%_80%,_rgba(16,185,129,0.12),transparent_55%)] blur-2xl" />
+      </div>
+
       <motion.div
+        style={{ rotateX: srx, rotateY: sry, transformStyle: "preserve-3d" }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2, ease }}
-        className="rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm overflow-hidden shadow-2xl shadow-black/[0.08] dark:shadow-black/[0.3]"
+        transition={{ duration: 0.7, delay: 0.1, ease }}
+        className="relative rounded-2xl border border-border/40 bg-card/80 backdrop-blur-xl overflow-hidden shadow-[0_30px_80px_-30px_rgba(0,0,0,0.25)] dark:shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)]"
       >
-        {/* Title bar */}
-        <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-border/30 bg-muted/20">
-          <div className="h-2.5 w-2.5 rounded-full bg-red-400/50" />
-          <div className="h-2.5 w-2.5 rounded-full bg-yellow-400/50" />
-          <div className="h-2.5 w-2.5 rounded-full bg-green-400/50" />
-          <div className="ml-3 flex-1 h-5 rounded-md bg-muted/40 max-w-[200px]" />
+        {/* hairline top highlight */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
+
+        {/* Chrome */}
+        <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-border/30 bg-gradient-to-b from-muted/30 to-transparent">
+          <div className="h-2 w-2 rounded-full bg-muted-foreground/30" />
+          <div className="h-2 w-2 rounded-full bg-muted-foreground/30" />
+          <div className="h-2 w-2 rounded-full bg-muted-foreground/30" />
+          <div className="ml-3 flex items-center gap-1.5 h-5 rounded-md bg-muted/30 px-2.5 text-[9px] font-mono text-muted-foreground/50">
+            <Globe className="h-2.5 w-2.5" />
+            <span>coasty.ai/demo</span>
+          </div>
+          <div className="ml-auto flex items-center gap-1 text-[9px] font-mono text-muted-foreground/40">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>live</span>
+          </div>
         </div>
 
-        {/* Page content mockup */}
-        <div className="p-6 space-y-4 relative min-h-[200px]">
-          {/* Nav bar */}
-          <div className="flex items-center gap-3">
-            <div className="h-5 w-5 rounded bg-blue-500/15" />
-            <div className="h-2.5 w-16 rounded-full bg-muted/50" />
-            <div className="ml-auto flex gap-2">
-              <div className="h-2.5 w-10 rounded-full bg-muted/30" />
-              <div className="h-2.5 w-10 rounded-full bg-muted/30" />
-            </div>
-          </div>
-
-          {/* Form fields */}
-          <div className="space-y-3 pt-2">
-            <div className="h-8 rounded-lg border border-border/30 bg-muted/20 px-3 flex items-center">
-              <div className="h-2 w-24 rounded-full bg-muted/40" />
-            </div>
-            <div className="h-8 rounded-lg border border-border/30 bg-muted/20 px-3 flex items-center">
-              <div className="h-2 w-32 rounded-full bg-muted/40" />
-            </div>
-            <div className="flex gap-2">
-              <div className="h-8 flex-1 rounded-lg bg-foreground/[0.06] flex items-center justify-center">
-                <div className="h-2 w-12 rounded-full bg-muted/50" />
-              </div>
-              <div className="h-8 w-20 rounded-lg bg-foreground/10 flex items-center justify-center">
-                <div className="h-2 w-10 rounded-full bg-foreground/20" />
-              </div>
-            </div>
-          </div>
-
-          {/* Animated cursor */}
-          <motion.div
-            className="absolute"
-            initial={{ top: 80, left: 60, opacity: 0 }}
-            animate={{
-              top: [100, 80, 130, 160, 160],
-              left: [60, 200, 120, 180, 180],
-              opacity: [0, 1, 1, 1, 0],
+        {/* Canvas — target UI */}
+        <div className="relative h-[240px] overflow-hidden">
+          {/* subtle grid backdrop */}
+          <div
+            className="absolute inset-0 opacity-[0.04] dark:opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
+              backgroundSize: "16px 16px",
             }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+          />
+
+          {/* Mock UI */}
+          <div className="relative p-6 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-5 rounded-md bg-foreground/[0.08]" />
+              <div className="h-2 w-16 rounded-full bg-foreground/[0.08]" />
+              <div className="ml-auto h-2 w-10 rounded-full bg-foreground/[0.05]" />
+            </div>
+
+            {/* search bar */}
+            <div className="relative h-8 rounded-lg border border-border/40 bg-background/60 px-3 flex items-center">
+              <div className="h-2 w-2.5 rounded-full bg-foreground/20" />
+              <div className="ml-2 h-2 w-32 rounded-full bg-foreground/[0.06]" />
+            </div>
+
+            {/* buttons row */}
+            <div className="flex gap-2">
+              <div className="relative h-8 flex-1 rounded-lg bg-foreground/[0.04] flex items-center justify-center">
+                <div className="h-2 w-10 rounded-full bg-foreground/[0.12]" />
+              </div>
+              <div className="relative h-8 w-[116px] rounded-lg bg-foreground text-background flex items-center justify-center">
+                <div className="h-2 w-10 rounded-full bg-background/60" />
+              </div>
+            </div>
+
+            {/* result cards */}
+            <div className="pt-1 space-y-1.5">
+              {[0, 1].map((k) => (
+                <div key={k} className="h-6 rounded-md border border-border/20 bg-background/40 px-2 flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-foreground/15" />
+                  <div className="h-1.5 w-20 rounded-full bg-foreground/[0.06]" />
+                  <div className="ml-auto h-1.5 w-8 rounded-full bg-foreground/[0.04]" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Moving bounding box */}
+          <motion.div
+            animate={{
+              left: scene.target.x,
+              top: scene.target.y,
+              width: scene.target.w,
+              height: scene.target.h,
+            }}
+            transition={{ type: "spring", stiffness: 180, damping: 22 }}
+            className="absolute rounded-md border border-blue-500/90 pointer-events-none"
+            style={{ boxShadow: "0 0 0 3px rgba(59,130,246,0.12)" }}
           >
-            <MousePointerClick className="h-5 w-5 text-foreground/50 drop-shadow-md" />
+            {/* corner ticks */}
+            {[
+              "top-0 left-0 border-t border-l -translate-x-[1px] -translate-y-[1px]",
+              "top-0 right-0 border-t border-r translate-x-[1px] -translate-y-[1px]",
+              "bottom-0 left-0 border-b border-l -translate-x-[1px] translate-y-[1px]",
+              "bottom-0 right-0 border-b border-r translate-x-[1px] translate-y-[1px]",
+            ].map((cls, idx) => (
+              <span key={idx} className={`absolute h-1.5 w-1.5 border-blue-500 ${cls}`} />
+            ))}
+            {/* label */}
+            <div className="absolute -top-5 left-0 text-[9px] font-mono font-medium text-blue-500 bg-background/90 border border-blue-500/20 rounded px-1 py-[1px]">
+              {scene.kind}
+            </div>
+          </motion.div>
+
+          {/* Cursor */}
+          <motion.div
+            animate={{
+              left: scene.target.x + scene.target.w / 2,
+              top: scene.target.y + scene.target.h / 2,
+            }}
+            transition={{ type: "spring", stiffness: 120, damping: 18 }}
+            className="absolute pointer-events-none"
+          >
+            <motion.div
+              animate={{ scale: [1, 0.88, 1] }}
+              transition={{ duration: 0.5, delay: 0.4, ease }}
+            >
+              <MousePointerClick className="h-4 w-4 text-foreground drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]" />
+            </motion.div>
+            {/* click ripple */}
+            <motion.div
+              key={i}
+              initial={{ scale: 0, opacity: 0.6 }}
+              animate={{ scale: 2.5, opacity: 0 }}
+              transition={{ duration: 0.7, delay: 0.45, ease }}
+              className="absolute -inset-2 rounded-full border border-blue-500/50"
+            />
           </motion.div>
         </div>
       </motion.div>
 
-      {/* Floating action cards */}
+      {/* Floating JSON response card */}
       <motion.div
-        initial={{ opacity: 0, x: 20, y: -10 }}
+        initial={{ opacity: 0, x: 28, y: 12 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.8, ease }}
-        className="absolute -right-4 top-16 rounded-xl border border-border/30 bg-card/90 backdrop-blur-md p-3 shadow-lg shadow-black/[0.05] max-w-[180px]"
+        transition={{ duration: 0.6, delay: 0.9, ease }}
+        className="absolute -right-4 -bottom-8 rounded-xl border border-border/40 bg-card/95 backdrop-blur-xl p-3 shadow-[0_12px_30px_-12px_rgba(0,0,0,0.25)] dark:shadow-[0_12px_30px_-12px_rgba(0,0,0,0.7)] w-[220px]"
       >
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-1.5">
-            <div className="h-4 w-4 rounded bg-emerald-500/15 flex items-center justify-center">
-              <MousePointerClick className="h-2.5 w-2.5 text-emerald-500" />
-            </div>
-            <span className="text-[9px] font-mono text-foreground/50">click(200, 130)</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="h-4 w-4 rounded bg-blue-500/15 flex items-center justify-center">
-              <Keyboard className="h-2.5 w-2.5 text-blue-500" />
-            </div>
-            <span className="text-[9px] font-mono text-foreground/50">type(&quot;hello&quot;)</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="h-4 w-4 rounded bg-amber-500/15 flex items-center justify-center">
-              <Keyboard className="h-2.5 w-2.5 text-amber-500" />
-            </div>
-            <span className="text-[9px] font-mono text-foreground/50">press(enter)</span>
-          </div>
+        <div className="flex items-center gap-1.5 pb-2 mb-2 border-b border-border/20">
+          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          <span className="text-[9px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-wider">
+            200 OK
+          </span>
+          <span className="ml-auto text-[9px] font-mono text-muted-foreground/35">1.2s</span>
         </div>
+        <AnimatePresence mode="wait">
+          <motion.pre
+            key={i}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.25, ease }}
+            className="text-[10px] font-mono leading-[1.5]"
+          >
+            <span className="text-muted-foreground/40">{"{"}</span>
+            {"\n  "}
+            <span className="text-blue-500">&quot;action_type&quot;</span>
+            <span className="text-muted-foreground/40">: </span>
+            <span className="text-emerald-600 dark:text-emerald-400">&quot;{scene.resp.action_type}&quot;</span>
+            <span className="text-muted-foreground/40">,</span>
+            {"\n  "}
+            <span className="text-blue-500">&quot;params&quot;</span>
+            <span className="text-muted-foreground/40">: {"{"}</span>
+            {Object.entries(scene.resp.params).map(([k, v]) => (
+              <span key={k}>
+                {"\n    "}
+                <span className="text-blue-500">&quot;{k}&quot;</span>
+                <span className="text-muted-foreground/40">: </span>
+                <span className="text-amber-600 dark:text-amber-400">
+                  {typeof v === "string" ? `"${v}"` : v}
+                </span>
+                <span className="text-muted-foreground/40">,</span>
+              </span>
+            ))}
+            {"\n  "}
+            <span className="text-muted-foreground/40">{"}"}</span>
+            {"\n"}
+            <span className="text-muted-foreground/40">{"}"}</span>
+          </motion.pre>
+        </AnimatePresence>
       </motion.div>
 
-      {/* Status pill */}
+      {/* Sidecar chip — inference time */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 1.2, ease }}
-        className="absolute -left-2 bottom-8 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.06] backdrop-blur-md px-3 py-1.5 flex items-center gap-2"
+        initial={{ opacity: 0, x: -16 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 1.1, ease }}
+        className="absolute -left-3 top-20 rounded-lg border border-border/40 bg-card/90 backdrop-blur-md px-2.5 py-1.5 flex items-center gap-1.5"
       >
-        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-        <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">Task complete</span>
+        <Cpu className="h-3 w-3 text-foreground/45" />
+        <span className="text-[10px] font-mono font-medium text-foreground/55">3.5s / step</span>
       </motion.div>
     </div>
   )
 }
 
-/* ─── Feature card ─── */
+/* ═══════════════════════════════════════════════════════════════
+   LANGUAGE SWITCHER (Try it section)
+   ═══════════════════════════════════════════════════════════════ */
 
-function FeatureCard({ icon: Icon, title, description, delay }: {
-  icon: LucideIcon; title: string; description: string; delay: number
+const LANGS = [
+  { id: "python", label: "Python" },
+  { id: "javascript", label: "Node" },
+  { id: "curl", label: "cURL" },
+  { id: "go", label: "Go" },
+] as const
+type LangId = (typeof LANGS)[number]["id"]
+
+const SNIPPETS: Record<LangId, string> = {
+  python: `import requests, base64
+
+img = base64.b64encode(open("screen.png", "rb").read()).decode()
+
+r = requests.post(
+    "https://coasty.ai/api/v1/cua/predict",
+    headers={"X-API-Key": "cua_sk_..."},
+    json={
+        "screenshot": img,
+        "instruction": "Click the search bar and type 'hello'",
+    },
+)
+
+for a in r.json()["actions"]:
+    print(a["action_type"], a["params"])`,
+  javascript: `const img = fs.readFileSync("screen.png").toString("base64")
+
+const res = await fetch("https://coasty.ai/api/v1/cua/predict", {
+  method: "POST",
+  headers: {
+    "X-API-Key": "cua_sk_...",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    screenshot: img,
+    instruction: "Click the search bar and type 'hello'",
+  }),
+})
+
+const { actions } = await res.json()
+actions.forEach(a => console.log(a.action_type, a.params))`,
+  curl: `curl https://coasty.ai/api/v1/cua/predict \\
+  -H "X-API-Key: cua_sk_..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "screenshot": "<base64_encoded_png>",
+    "instruction": "Click the search bar and type \\"hello\\""
+  }'`,
+  go: `body, _ := json.Marshal(map[string]any{
+    "screenshot":  img,
+    "instruction": "Click the search bar and type 'hello'",
+})
+
+req, _ := http.NewRequest("POST",
+    "https://coasty.ai/api/v1/cua/predict",
+    bytes.NewReader(body))
+req.Header.Set("X-API-Key", "cua_sk_...")
+req.Header.Set("Content-Type", "application/json")
+
+resp, _ := http.DefaultClient.Do(req)
+defer resp.Body.Close()`,
+}
+
+function highlightLine(line: string, lang: LangId) {
+  // cheap, safe token coloring — no runtime risk, purely regex-based
+  const parts: { t: string; c?: string }[] = []
+  let s = line
+  const push = (t: string, c?: string) => parts.push({ t, c })
+
+  if (lang === "curl") {
+    const m = s.match(/^(\s*)(curl|-H|-d)(.*)$/)
+    if (m) {
+      push(m[1])
+      push(m[2], "text-emerald-600 dark:text-emerald-400")
+      push(m[3], "text-foreground/70")
+      return parts
+    }
+  }
+  // string literals
+  const strRe = /("[^"]*"|'[^']*')/g
+  let last = 0
+  let match: RegExpExecArray | null
+  while ((match = strRe.exec(s)) !== null) {
+    if (match.index > last) push(s.slice(last, match.index), "text-foreground/75")
+    push(match[0], "text-amber-600 dark:text-amber-400")
+    last = match.index + match[0].length
+  }
+  if (last < s.length) push(s.slice(last), "text-foreground/75")
+  return parts
+}
+
+function CodeBlock({ code, lang }: { code: string; lang: LangId }) {
+  const [copied, setCopied] = useState(false)
+  const lines = code.split("\n")
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
+    } catch {
+      /* ignore */
+    }
+  }
+
+  return (
+    <div className="relative group">
+      <button
+        onClick={onCopy}
+        aria-label="Copy code"
+        className="absolute top-3 right-3 z-10 flex items-center gap-1.5 h-7 px-2.5 rounded-md border border-border/40 bg-card/90 backdrop-blur text-[10px] font-medium text-muted-foreground/70 hover:text-foreground hover:border-border/70 hover:bg-card transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+      >
+        <AnimatePresence mode="wait">
+          {copied ? (
+            <motion.span
+              key="c"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400"
+            >
+              <Check className="h-3 w-3" /> Copied
+            </motion.span>
+          ) : (
+            <motion.span
+              key="d"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="flex items-center gap-1"
+            >
+              <Copy className="h-3 w-3" /> Copy
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </button>
+
+      <pre className="text-[12px] font-mono leading-[1.75] px-5 py-5 pr-20 overflow-x-auto">
+        {lines.map((line, li) => (
+          <div key={li} className="flex gap-4">
+            <span className="shrink-0 text-muted-foreground/25 select-none w-5 text-right tabular-nums">
+              {li + 1}
+            </span>
+            <span className="flex-1 whitespace-pre">
+              {line.length === 0
+                ? "\u00A0"
+                : highlightLine(line, lang).map((p, pi) => (
+                    <span key={pi} className={p.c}>
+                      {p.t}
+                    </span>
+                  ))}
+            </span>
+          </div>
+        ))}
+      </pre>
+    </div>
+  )
+}
+
+function TryIt() {
+  const [lang, setLang] = useState<LangId>("python")
+
+  return (
+    <div className="mx-auto max-w-3xl">
+      {/* Tabs */}
+      <div className="relative inline-flex items-center rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm p-1 mb-5">
+        {LANGS.map((l) => {
+          const active = l.id === lang
+          return (
+            <button
+              key={l.id}
+              onClick={() => setLang(l.id)}
+              className={`relative px-4 py-1.5 text-[12px] font-medium rounded-lg transition-colors ${
+                active ? "text-foreground" : "text-muted-foreground/55 hover:text-foreground/80"
+              }`}
+            >
+              {active && (
+                <motion.span
+                  layoutId="lang-pill"
+                  transition={{ type: "spring", stiffness: 320, damping: 28 }}
+                  className="absolute inset-0 rounded-lg bg-foreground/[0.06] border border-border/40"
+                />
+              )}
+              <span className="relative">{l.label}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Code card */}
+      <div className="relative rounded-2xl border border-border/30 bg-card/50 backdrop-blur-sm overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
+
+        {/* File chrome */}
+        <div className="flex items-center justify-between px-5 py-2.5 border-b border-border/20">
+          <div className="flex items-center gap-2">
+            <Terminal className="h-3.5 w-3.5 text-muted-foreground/40" />
+            <span className="text-[11px] font-mono text-muted-foreground/55">
+              POST /api/v1/cua/predict
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground/35">
+            <span className="hidden sm:flex items-center gap-1">
+              <Command className="h-3 w-3" />C
+            </span>
+          </div>
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={lang}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.2, ease }}
+          >
+            <CodeBlock code={SNIPPETS[lang]} lang={lang} />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Response sample strip */}
+      <div className="mt-3 flex items-center gap-2 text-[11px] font-mono text-muted-foreground/45">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        <span>Returns a stream of typed actions — coordinates, keystrokes, and confidence.</span>
+        <a
+          href="#docs"
+          className="ml-auto hidden sm:inline-flex items-center gap-1 text-foreground/60 hover:text-foreground transition-colors"
+        >
+          Full reference <ChevronRight className="h-3 w-3" />
+        </a>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FEATURE CARD — border-light hover, signature icon watermark
+   ═══════════════════════════════════════════════════════════════ */
+
+function FeatureCard({
+  icon: Icon,
+  title,
+  description,
+  delay,
+}: {
+  icon: LucideIcon
+  title: string
+  description: string
+  delay: number
 }) {
+  const [mp, setMp] = useState({ x: -999, y: -999 })
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay, ease }}
-      className="relative rounded-2xl border border-border/30 bg-card/50 backdrop-blur-sm p-6 overflow-hidden group hover:border-border/50 transition-colors"
+      onMouseMove={(e) => {
+        const r = e.currentTarget.getBoundingClientRect()
+        setMp({ x: e.clientX - r.left, y: e.clientY - r.top })
+      }}
+      onMouseLeave={() => setMp({ x: -999, y: -999 })}
+      className="relative rounded-2xl border border-border/30 bg-card/40 backdrop-blur-sm p-6 overflow-hidden group transition-colors hover:border-border/60"
     >
+      {/* spotlight */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{
+          background: `radial-gradient(240px circle at ${mp.x}px ${mp.y}px, rgba(255,255,255,0.06), transparent 65%)`,
+        }}
+      />
+      {/* top hairline */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent" />
-      <Icon className="h-20 w-20 absolute -bottom-3 -right-3 text-foreground/[0.03] pointer-events-none" strokeWidth={1} />
+      {/* watermark */}
+      <Icon
+        className="h-24 w-24 absolute -bottom-4 -right-4 text-foreground/[0.03] group-hover:text-foreground/[0.05] transition-colors pointer-events-none"
+        strokeWidth={1}
+      />
+
       <div className="relative">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-foreground/[0.04] mb-4">
-          <Icon className="h-4.5 w-4.5 text-foreground/50" strokeWidth={1.8} />
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-foreground/[0.05] border border-border/20 mb-4 group-hover:border-border/40 transition-colors">
+          <Icon className="h-4 w-4 text-foreground/60" strokeWidth={1.8} />
         </div>
         <h3 className="text-sm font-semibold mb-1.5">{title}</h3>
-        <p className="text-[13px] text-muted-foreground/50 leading-relaxed">{description}</p>
+        <p className="text-[13px] text-muted-foreground/55 leading-relaxed">{description}</p>
       </div>
     </motion.div>
   )
 }
 
-/* ─── Pricing row ─── */
+/* ═══════════════════════════════════════════════════════════════
+   PRICING ROW — inline hover bar, tight typography
+   ═══════════════════════════════════════════════════════════════ */
 
-function PricingRow({ endpoint, cost, description }: { endpoint: string; cost: string; description: string }) {
+function PricingRow({
+  endpoint,
+  cost,
+  description,
+  highlight,
+}: {
+  endpoint: string
+  cost: string
+  description: string
+  highlight?: boolean
+}) {
   return (
-    <div className="flex items-center gap-4 px-5 py-3.5">
-      <code className="text-[11px] font-mono text-foreground/60 flex-1 truncate">{endpoint}</code>
-      <span className="text-[11px] text-muted-foreground/40 hidden sm:block w-44 truncate">{description}</span>
-      <span className="text-[11px] font-mono font-semibold text-foreground/50 w-14 text-right shrink-0">{cost}</span>
+    <div className="group relative flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-foreground/[0.015]">
+      <span className="absolute inset-y-0 left-0 w-[2px] bg-foreground/30 scale-y-0 group-hover:scale-y-100 transition-transform origin-center" />
+      <code className="text-[11.5px] font-mono text-foreground/70 flex-1 truncate">{endpoint}</code>
+      <span className="text-[11px] text-muted-foreground/45 hidden sm:block w-44 truncate">
+        {description}
+      </span>
+      <span
+        className={`text-[11px] font-mono font-semibold w-16 text-right shrink-0 ${
+          highlight ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/60"
+        }`}
+      >
+        {cost}
+      </span>
     </div>
   )
 }
 
-/* ─── Main page ─── */
+/* ═══════════════════════════════════════════════════════════════
+   MAGNETIC PRIMARY CTA
+   ═══════════════════════════════════════════════════════════════ */
+
+function PrimaryCTA({
+  href,
+  children,
+}: {
+  href: string
+  children: React.ReactNode
+}) {
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const sx = useSpring(x, { stiffness: 200, damping: 18 })
+  const sy = useSpring(y, { stiffness: 200, damping: 18 })
+
+  return (
+    <motion.div style={{ x: sx, y: sy }} className="inline-block">
+      <Link
+        href={href}
+        onMouseMove={(e) => {
+          const r = e.currentTarget.getBoundingClientRect()
+          x.set(((e.clientX - r.left) / r.width - 0.5) * 8)
+          y.set(((e.clientY - r.top) / r.height - 0.5) * 8)
+        }}
+        onMouseLeave={() => {
+          x.set(0)
+          y.set(0)
+        }}
+        className="relative inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-colors bg-foreground text-background overflow-hidden group"
+      >
+        {/* shine sweep */}
+        <span className="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[1100ms] ease-out bg-gradient-to-r from-transparent via-background/20 to-transparent" />
+        <span className="relative flex items-center gap-2">
+          {children}
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </Link>
+    </motion.div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN PAGE
+   ═══════════════════════════════════════════════════════════════ */
 
 export default function ApiDocsPage() {
   return (
@@ -176,83 +671,158 @@ export default function ApiDocsPage() {
       <GuideLines />
       <LandingHeader />
 
-      {/* ════════════════════════════════════════════════════
-          HERO
-          ════════════════════════════════════════════════════ */}
-      <section className="pt-32 sm:pt-40 pb-20 px-7 sm:px-10 relative overflow-hidden">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left — copy */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease }}
-              >
-                <div className="flex items-center gap-2 mb-5">
-                  <div className="h-5 w-5 rounded-md bg-foreground/[0.06] flex items-center justify-center">
-                    <Terminal className="h-3 w-3 text-foreground/50" />
-                  </div>
-                  <span className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-[0.15em]">Computer Use API</span>
-                </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1] mb-5">
-                  Give your code<br />
-                  <span className="text-muted-foreground/40">eyes and hands</span>
-                </h1>
-                <p className="text-base sm:text-lg text-muted-foreground/55 leading-relaxed max-w-md mb-8">
-                  Send a screenshot, get structured mouse and keyboard actions back. Build automation, testing, and AI agents that interact with any GUI.
-                </p>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Link
-                    href="/auth"
-                    className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all bg-foreground text-background hover:bg-foreground/90"
-                  >
-                    Get Started Free
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <a
-                    href="#docs"
-                    className="inline-flex items-center gap-2 rounded-xl border border-border/40 px-6 py-3 text-sm font-medium text-muted-foreground/70 hover:text-foreground hover:border-border/60 transition-all"
-                  >
-                    <Code2 className="h-4 w-4" />
-                    Read the Docs
-                  </a>
-                </div>
-              </motion.div>
-            </div>
+      {/* ─── HERO ─── */}
+      <section className="pt-32 sm:pt-40 pb-24 px-7 sm:px-10 relative overflow-hidden">
+        {/* top gradient wash */}
+        <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[520px] w-[1100px] bg-[radial-gradient(closest-side,_rgba(59,130,246,0.10),transparent)] blur-2xl" />
 
-            {/* Right — animated demo */}
+        <div className="mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-14 lg:gap-20 items-center">
+            {/* Left — copy */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease }}
+            >
+              {/* eyebrow */}
+              <div className="inline-flex items-center gap-2 h-7 pl-1 pr-3 rounded-full border border-border/40 bg-card/40 backdrop-blur-sm mb-6">
+                <span className="relative flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.06]">
+                  <Terminal className="h-3 w-3 text-foreground/60" />
+                </span>
+                <span className="text-[10.5px] font-semibold text-muted-foreground/60 uppercase tracking-[0.14em]">
+                  Computer Use API
+                </span>
+                <span className="h-3 w-px bg-border/50" />
+                <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <span className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
+                  v1
+                </span>
+              </div>
+
+              <h1 className="text-[38px] sm:text-5xl lg:text-[56px] font-bold tracking-[-0.025em] leading-[1.02] mb-6">
+                Give your code
+                <br />
+                <span className="relative inline-block">
+                  <span className="bg-gradient-to-r from-foreground via-foreground/60 to-foreground/40 bg-clip-text text-transparent">
+                    eyes and hands.
+                  </span>
+                  <motion.span
+                    aria-hidden
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.8, delay: 0.5, ease }}
+                    className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-foreground/40 to-transparent origin-left"
+                  />
+                </span>
+              </h1>
+
+              <p className="text-[15px] sm:text-[17px] text-muted-foreground/65 leading-[1.55] max-w-md mb-8">
+                Send a screenshot. Get structured mouse and keyboard actions back. One REST endpoint — for automation, browser testing, and AI agents that interact with any GUI.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-3 mb-10">
+                <PrimaryCTA href="/auth">Get Started Free</PrimaryCTA>
+                <a
+                  href="#docs"
+                  className="inline-flex items-center gap-2 rounded-xl border border-border/40 px-6 py-3 text-sm font-medium text-muted-foreground/75 hover:text-foreground hover:border-border/70 transition-all group"
+                >
+                  <Code2 className="h-4 w-4" />
+                  Read the Docs
+                  <ChevronRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </a>
+              </div>
+
+              {/* Metric strip */}
+              <div className="grid grid-cols-3 gap-6 max-w-md">
+                {[
+                  { v: "3.5s", l: "median step latency" },
+                  { v: "10", l: "action primitives" },
+                  { v: "99.9%", l: "uptime SLA" },
+                ].map((m, k) => (
+                  <motion.div
+                    key={m.l}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.35 + k * 0.08, ease }}
+                  >
+                    <div className="text-lg font-semibold tabular-nums tracking-tight">{m.v}</div>
+                    <div className="text-[10.5px] text-muted-foreground/45 uppercase tracking-wider leading-tight mt-0.5">
+                      {m.l}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Right — signature device */}
             <div className="hidden lg:block">
-              <DemoVisual />
+              <HeroVisual />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          HOW IT WORKS
-          ════════════════════════════════════════════════════ */}
-      <section className="py-20 px-7 sm:px-10 border-t border-border/10">
+      <SectionDivider />
+
+      {/* ─── TRY IT ─── */}
+      <section className="py-24 px-7 sm:px-10 relative">
         <div className="mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
-            className="text-center mb-14"
+            className="text-center mb-12"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">One API call. Full control.</h2>
-            <p className="text-sm sm:text-base text-muted-foreground/50 max-w-lg mx-auto">
-              Screenshot in, structured actions out. No browser drivers, no DOM parsing, no selectors to maintain.
+            <div className="inline-flex items-center gap-2 h-6 px-3 rounded-full border border-border/30 bg-card/30 text-[10px] font-mono text-muted-foreground/60 mb-5">
+              <Sparkles className="h-3 w-3" />
+              One call. Four lines.
+            </div>
+            <h2 className="text-[28px] sm:text-4xl font-bold tracking-[-0.02em] mb-4">
+              Built for any stack.
+            </h2>
+            <p className="text-[14px] sm:text-base text-muted-foreground/55 max-w-lg mx-auto">
+              Pure REST. No SDK lock-in, no extra servers, no browser drivers.
             </p>
           </motion.div>
 
-          {/* Steps */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-16">
+          <TryIt />
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ─── HOW IT WORKS ─── */}
+      <section className="py-24 px-7 sm:px-10">
+        <div className="mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-[28px] sm:text-4xl font-bold tracking-[-0.02em] mb-4">
+              Screenshot in. Actions out.
+            </h2>
+            <p className="text-[14px] sm:text-base text-muted-foreground/55 max-w-lg mx-auto">
+              No selectors. No DOM parsing. No brittle XPath. Just vision.
+            </p>
+          </motion.div>
+
+          {/* Steps with connecting line */}
+          <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-20">
+            <motion.div
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.9, delay: 0.3, ease }}
+              className="hidden sm:block absolute top-5 left-[16.66%] right-[16.66%] h-px bg-gradient-to-r from-transparent via-border/70 to-transparent origin-left"
+            />
             {[
-              { num: "1", label: "Send screenshot", sub: "Base64 PNG/JPEG + instruction" },
-              { num: "2", label: "AI reasons", sub: "Vision model identifies UI elements" },
-              { num: "3", label: "Get actions", sub: "click(512, 340), type('hello')" },
+              { num: "01", label: "Send screenshot", sub: "Base64 PNG/JPEG + plain-language intent" },
+              { num: "02", label: "AI reasons visually", sub: "Vision model identifies the target UI element" },
+              { num: "03", label: "Execute actions", sub: "Typed primitives: click, type, scroll, press…" },
             ].map((s, i) => (
               <motion.div
                 key={s.num}
@@ -260,44 +830,81 @@ export default function ApiDocsPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.1, ease }}
-                className="text-center"
+                className="relative text-center"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground/[0.05] mx-auto mb-3">
-                  <span className="text-sm font-bold text-foreground/50">{s.num}</span>
+                <div className="relative mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-background border border-border/60">
+                  <span className="text-[11px] font-mono font-semibold text-foreground/70 tabular-nums">
+                    {s.num}
+                  </span>
+                  <span className="absolute inset-0 rounded-full border border-foreground/10 animate-ping opacity-40" />
                 </div>
-                <p className="text-sm font-semibold mb-1">{s.label}</p>
-                <p className="text-[12px] text-muted-foreground/40">{s.sub}</p>
+                <p className="text-sm font-semibold mb-1.5">{s.label}</p>
+                <p className="text-[12.5px] text-muted-foreground/50 leading-relaxed max-w-[220px] mx-auto">
+                  {s.sub}
+                </p>
               </motion.div>
             ))}
           </div>
 
           {/* Feature grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <FeatureCard icon={Eye} title="Vision-First" description="Understands any UI — web apps, desktop software, mobile screens. No selectors or DOM access needed." delay={0} />
-            <FeatureCard icon={Layers} title="Multi-Step Sessions" description="Stateful sessions maintain trajectory history across steps. The AI remembers what it's already done." delay={0.06} />
-            <FeatureCard icon={Zap} title="Two Engines" description="V3 for speed (3.5s/step, multi-action). V1 for accuracy (reflection, single-action). Choose per request." delay={0.12} />
-            <FeatureCard icon={Monitor} title="Any Screen" description="Works with browser screenshots, desktop apps, mobile emulators, VNC streams — anything visual." delay={0.18} />
-            <FeatureCard icon={Terminal} title="10 Action Types" description="click, type, scroll, drag, key combos, and more. Exact coordinates returned for every action." delay={0.24} />
-            <FeatureCard icon={Code2} title="Any Language" description="Simple REST API. Works with Python, JavaScript, Go, Ruby, PHP, Java, C#, cURL — anything with HTTP." delay={0.3} />
+            <FeatureCard
+              icon={Eye}
+              title="Vision-First"
+              description="Works on any UI — web, desktop, mobile, VNC. No DOM access, no selectors, no agents."
+              delay={0}
+            />
+            <FeatureCard
+              icon={Layers}
+              title="Stateful Sessions"
+              description="Multi-step trajectories. The model remembers what it tried, what worked, and what's next."
+              delay={0.05}
+            />
+            <FeatureCard
+              icon={Zap}
+              title="Two Engines"
+              description="V3 for speed (3.5s/step, multi-action). V1 for precision (reflection, single-action)."
+              delay={0.1}
+            />
+            <FeatureCard
+              icon={Monitor}
+              title="Any Screen"
+              description="Browser tabs, desktop apps, mobile emulators, VNC feeds — anything you can capture visually."
+              delay={0.15}
+            />
+            <FeatureCard
+              icon={Terminal}
+              title="10 Action Types"
+              description="click, double_click, type, scroll, drag, key_press, key_combo, wait, done, fail."
+              delay={0.2}
+            />
+            <FeatureCard
+              icon={Code2}
+              title="Any Language"
+              description="Plain REST + JSON. Python, Node, Go, Ruby, PHP, Java, C#, or cURL from your terminal."
+              delay={0.25}
+            />
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          PRICING
-          ════════════════════════════════════════════════════ */}
-      <section className="py-20 px-7 sm:px-10 border-t border-border/10">
+      <SectionDivider />
+
+      {/* ─── PRICING ─── */}
+      <section className="py-24 px-7 sm:px-10">
         <div className="mx-auto max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
-            className="text-center mb-10"
+            className="text-center mb-12"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">Simple, per-request pricing</h2>
-            <p className="text-sm sm:text-base text-muted-foreground/50 max-w-md mx-auto">
-              Pay only for what you use. Credits deducted from your shared balance. No separate API subscription.
+            <h2 className="text-[28px] sm:text-4xl font-bold tracking-[-0.02em] mb-4">
+              Per-request pricing. No subscription.
+            </h2>
+            <p className="text-[14px] sm:text-base text-muted-foreground/55 max-w-md mx-auto">
+              Deducted from your shared credit balance. Management endpoints always free.
             </p>
           </motion.div>
 
@@ -306,17 +913,34 @@ export default function ApiDocsPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1, ease }}
-            className="rounded-2xl border border-border/30 bg-card/50 backdrop-blur-sm overflow-hidden"
+            className="relative rounded-2xl border border-border/30 bg-card/40 backdrop-blur-sm overflow-hidden"
           >
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent" />
-            <div className="divide-y divide-border/10">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
+            {/* header row */}
+            <div className="flex items-center gap-4 px-5 py-2.5 border-b border-border/20 bg-foreground/[0.015]">
+              <span className="text-[9.5px] font-mono font-semibold text-muted-foreground/45 uppercase tracking-[0.15em] flex-1">
+                Endpoint
+              </span>
+              <span className="text-[9.5px] font-mono font-semibold text-muted-foreground/45 uppercase tracking-[0.15em] hidden sm:block w-44">
+                Description
+              </span>
+              <span className="text-[9.5px] font-mono font-semibold text-muted-foreground/45 uppercase tracking-[0.15em] w-16 text-right">
+                Cost
+              </span>
+            </div>
+            <div className="divide-y divide-border/15">
               <PricingRow endpoint="POST /predict" cost="5 cr" description="Screenshot to actions" />
               <PricingRow endpoint="POST /sessions" cost="10 cr" description="Create multi-step session" />
               <PricingRow endpoint="POST /sessions/{id}/predict" cost="4 cr" description="Predict within session" />
               <PricingRow endpoint="POST /ground" cost="3 cr" description="Find element coordinates" />
               <PricingRow endpoint="POST /ocr" cost="3 cr" description="Extract text from image" />
-              <PricingRow endpoint="POST /parse" cost="Free" description="Parse action code" />
-              <PricingRow endpoint="GET /models, /usage, /sessions" cost="Free" description="Management endpoints" />
+              <PricingRow endpoint="POST /parse" cost="Free" description="Parse action code" highlight />
+              <PricingRow
+                endpoint="GET /models, /usage, /sessions"
+                cost="Free"
+                description="Management endpoints"
+                highlight
+              />
             </div>
           </motion.div>
 
@@ -328,17 +952,24 @@ export default function ApiDocsPage() {
             transition={{ duration: 0.4, delay: 0.2, ease }}
             className="mt-4 rounded-xl border border-border/20 bg-card/30 px-5 py-4"
           >
-            <p className="text-[11px] font-semibold text-muted-foreground/40 uppercase tracking-wider mb-3">Surcharges</p>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-[12px]">
+            <p className="text-[10px] font-semibold text-muted-foreground/45 uppercase tracking-[0.15em] mb-3">
+              Surcharges
+            </p>
+            <div className="flex flex-wrap gap-2">
               {[
                 ["Trajectory screenshot", "+2 cr each"],
-                ["HD image (>1280x720)", "+1 cr/image"],
+                ["HD image >1280×720", "+1 cr/image"],
                 ["V1 engine", "+3 cr/request"],
                 ["Custom system prompt", "+1 cr"],
               ].map(([label, cost]) => (
-                <div key={label} className="contents">
-                  <span className="text-muted-foreground/45">{label}</span>
-                  <span className="text-right font-mono text-muted-foreground/35">{cost}</span>
+                <div
+                  key={label}
+                  className="group inline-flex items-center gap-2 h-7 pl-2.5 pr-1 rounded-full border border-border/25 bg-background/50 text-[11px] transition-colors hover:border-border/50"
+                >
+                  <span className="text-muted-foreground/60">{label}</span>
+                  <span className="h-[18px] inline-flex items-center px-1.5 rounded-full bg-foreground/[0.05] font-mono text-[10px] text-foreground/65">
+                    {cost}
+                  </span>
                 </div>
               ))}
             </div>
@@ -346,43 +977,47 @@ export default function ApiDocsPage() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          FULL DOCS
-          ════════════════════════════════════════════════════ */}
-      <section id="docs" className="py-20 px-7 sm:px-10 border-t border-border/10 scroll-mt-16">
+      <SectionDivider />
+
+      {/* ─── FULL DOCS ─── */}
+      <section id="docs" className="py-20 px-7 sm:px-10 scroll-mt-16">
         <div className="mx-auto max-w-5xl">
           <APITab inApp={false} />
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          CTA
-          ════════════════════════════════════════════════════ */}
-      <section className="py-24 px-7 sm:px-10 border-t border-border/10">
-        <div className="mx-auto max-w-2xl text-center">
+      <SectionDivider />
+
+      {/* ─── CTA ─── */}
+      <section className="py-28 px-7 sm:px-10 relative overflow-hidden">
+        {/* subtle grid flourish */}
+        <div
+          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+            maskImage: "radial-gradient(ellipse at center, black 30%, transparent 70%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-2xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
           >
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-4">
-              Start building in minutes
+            <h2 className="text-[28px] sm:text-4xl font-bold tracking-[-0.02em] mb-4">
+              Ship your first click in minutes.
             </h2>
-            <p className="text-sm sm:text-base text-muted-foreground/50 mb-8 max-w-md mx-auto">
-              Create a free account, generate an API key, and send your first screenshot. No credit card required.
+            <p className="text-[14px] sm:text-base text-muted-foreground/55 mb-9 max-w-md mx-auto">
+              Free account, free keys, free credits to start. No card required.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/auth"
-                className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all bg-foreground text-background hover:bg-foreground/90"
-              >
-                Create Free Account
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <PrimaryCTA href="/auth">Create Free Account</PrimaryCTA>
               <Link
                 href="/pricing"
-                className="inline-flex items-center gap-2 rounded-xl border border-border/40 px-6 py-3 text-sm font-medium text-muted-foreground/70 hover:text-foreground hover:border-border/60 transition-all"
+                className="inline-flex items-center gap-2 rounded-xl border border-border/40 px-6 py-3 text-sm font-medium text-muted-foreground/75 hover:text-foreground hover:border-border/70 transition-all"
               >
                 View Plans
               </Link>
