@@ -173,3 +173,34 @@ resource "aws_cloudwatch_log_group" "ecs" {
 
   tags = { Name = "${var.project_name}-logs" }
 }
+
+# -----------------------------------------------------------------------------
+# Cross-variable validations
+# -----------------------------------------------------------------------------
+#
+# Terraform variable `validation` blocks can't reference other variables, so we
+# enforce cross-flag invariants via `check` blocks.  `check` assertions run at
+# plan time and fail with a clear error instead of letting the apply produce
+# a cryptic resource-level failure.
+# -----------------------------------------------------------------------------
+
+check "sidecar_removal_requires_split" {
+  assert {
+    condition     = !var.remove_frontend_sidecar || var.three_service_split_enabled
+    error_message = "remove_frontend_sidecar=true requires three_service_split_enabled=true. Without the split, there is no api target group for the ALB default action to forward to and every Next.js frontend→backend call would 502."
+  }
+}
+
+check "sse_custom_metric_requires_split" {
+  assert {
+    condition     = !var.sse_autoscale_on_active_streams || var.three_service_split_enabled
+    error_message = "sse_autoscale_on_active_streams=true requires three_service_split_enabled=true. The custom-metric policy attaches to aws_ecs_service.sse which only exists when the split is enabled."
+  }
+}
+
+check "ws_custom_metric_requires_split" {
+  assert {
+    condition     = !var.ws_autoscale_on_connections || var.three_service_split_enabled
+    error_message = "ws_autoscale_on_connections=true requires three_service_split_enabled=true. The custom-metric policy attaches to aws_ecs_service.ws which only exists when the split is enabled."
+  }
+}

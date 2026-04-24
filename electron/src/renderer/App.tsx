@@ -43,9 +43,18 @@ export default function App() {
     }
   }, [isAuthenticated])
 
-  // Auto sign-out when backend rejects authentication
+  // Auto sign-out ONLY when the backend explicitly rejects the JWT
+  // ('auth_error' state is set from ws-bridge.ts on an auth_failed message).
+  //
+  // Previously this fired on ANY 'error' state — which includes transient
+  // connection errors (TLS handshake blip, brief 503, DNS hiccup, WS upgrade
+  // rejected).  The result was: sign-in succeeds → bridge:connect → first WS
+  // error → auto-sign-out → back to AuthScreen, making it look like sign-in
+  // is broken.  Gate strictly on 'auth_error' so genuine sign-outs still
+  // happen when the token is revoked, but connectivity blips don't kick the
+  // user.
   React.useEffect(() => {
-    if (connectionState === 'error' && isAuthenticated) {
+    if (connectionState === 'auth_error' && isAuthenticated) {
       signOut()
     }
   }, [connectionState])

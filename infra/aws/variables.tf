@@ -164,6 +164,210 @@ variable "backend_env_vars" {
 }
 
 # -----------------------------------------------------------------------------
+# 3-Service Split (coasty-api / coasty-sse / coasty-ws)
+#
+# When enabled, provisions three backend-only ECS services that mount disjoint
+# subsets of routers (see backend/main.py COASTY_SERVICE_MODE).  ALB listener
+# rules on port 8001 route `/api/electron/ws` → ws service, `/api/chat/*` and
+# `/api/swarm/*` → sse service, and everything else → api service.
+#
+# The frontend+backend sidecar task stays up when this flag is on: the
+# frontend still calls its local backend via `http://localhost:8001` for
+# internal API proxying (CRUD, credits, etc.), but all EXTERNAL port-8001
+# traffic (Electron app direct, public API consumers) routes to the split
+# services.  Rollback = set flag to false and apply.
+# -----------------------------------------------------------------------------
+
+variable "three_service_split_enabled" {
+  description = "Provision the coasty-api/sse/ws split services + ALB listener rules. When false (default) the legacy sidecar setup is unchanged."
+  type        = bool
+  default     = false
+}
+
+# Opt-in: remove the backend sidecar container from the frontend task and route
+# internal frontend→backend calls through the ALB to the api service.
+#
+# REQUIRES three_service_split_enabled = true (there must be an api service for
+# the default listener action to forward to).  Validated via the check block in
+# main.tf.
+#
+# Effect when true:
+#   * Frontend task drops the backend sidecar container (frontend task memory
+#     ~1 GB instead of ~2 GB; ~40% savings per frontend task).
+#   * PYTHON_BACKEND_URL in the frontend container flips from
+#     http://localhost:8001  →  http://<alb_dns>:8001
+#     Next.js API routes reach the api/sse/ws services by path via ALB rules.
+#   * The :8001 listener's default action forwards to api-tg instead of
+#     backend-tg (the legacy sidecar target group; left in place but unused).
+#   * aws_ecs_service.app's second load_balancer block (backend → backend-tg)
+#     is omitted.
+#
+# Rollback: set to false and apply.  The backend sidecar container returns,
+# PYTHON_BACKEND_URL goes back to localhost, default action returns to
+# backend-tg.  Safe with zero code changes.
+variable "remove_frontend_sidecar" {
+  description = "Remove the backend sidecar container from the frontend task and route internal calls through the ALB. REQUIRES three_service_split_enabled = true."
+  type        = bool
+  default     = false
+}
+
+# ---- api service (REST CRUD) --------------------------------------------
+
+variable "split_api_cpu" {
+  description = "CPU units for the api service task"
+  type        = number
+  default     = 512
+}
+
+variable "split_api_memory" {
+  description = "Memory (MiB) for the api service task"
+  type        = number
+  default     = 1024
+}
+
+variable "split_api_desired_count" {
+  description = "Initial desired task count for the api service"
+  type        = number
+  default     = 1
+}
+
+variable "split_api_min_capacity" {
+  description = "Autoscaling floor for the api service"
+  type        = number
+  default     = 1
+}
+
+variable "split_api_max_capacity" {
+  description = "Autoscaling ceiling for the api service"
+  type        = number
+  default     = 4
+}
+
+variable "split_api_cpu_target" {
+  description = "Target CPU utilization (%) for api service autoscaling"
+  type        = number
+  default     = 70
+}
+
+# ---- sse service (long-lived streaming) ---------------------------------
+
+variable "split_sse_cpu" {
+  description = "CPU units for the sse service task (streams are not CPU-bound but concurrent streams hold event-loop time)"
+  type        = number
+  default     = 1024
+}
+
+variable "split_sse_memory" {
+  description = "Memory (MiB) for the sse service task"
+  type        = number
+  default     = 2048
+}
+
+variable "split_sse_desired_count" {
+  description = "Initial desired task count for the sse service"
+  type        = number
+  default     = 1
+}
+
+variable "split_sse_min_capacity" {
+  description = "Autoscaling floor for the sse service"
+  type        = number
+  default     = 1
+}
+
+variable "split_sse_max_capacity" {
+  description = "Autoscaling ceiling for the sse service"
+  type        = number
+  default     = 4
+}
+
+variable "split_sse_cpu_target" {
+  description = "Target CPU utilization (%) for sse service autoscaling (lower than api because streams hold threads). Used only when sse_autoscale_on_active_streams = false."
+  type        = number
+  default     = 50
+}
+
+# Opt-in: scale coasty-sse on the live SSE-stream count instead of CPU%.
+# When true, replaces the CPU-based policy with a target-tracking policy
+# whose customised metric is Coasty/SSE::ActiveStreams (emitted by every
+# sse worker via app.services.metrics).  CPU% is a poor proxy for long
+# streams because idle streams use near-zero CPU; a task can hold 2 000
+# SSE clients at 30 % CPU and never trigger scale-out.  See the module
+# docstring in app/services/metrics.py for full rationale.
+#
+# REQUIRES three_service_split_enabled = true.
+variable "sse_autoscale_on_active_streams" {
+  description = "Scale coasty-sse on Coasty/SSE::ActiveStreams custom metric instead of CPU%."
+  type        = bool
+  default     = false
+}
+
+variable "split_sse_streams_target" {
+  description = "Target average ActiveStreams count per worker for sse autoscaling. Rule of thumb: ~150 SSE streams per uvicorn worker keeps p99 time-to-first-byte under 500 ms."
+  type        = number
+  default     = 150
+}
+
+# ---- ws service (Electron WebSocket) ------------------------------------
+
+variable "split_ws_cpu" {
+  description = "CPU units for the ws service task (WebSockets are I/O-bound, small CPU)"
+  type        = number
+  default     = 512
+}
+
+variable "split_ws_memory" {
+  description = "Memory (MiB) for the ws service task (each open WebSocket holds ~50-100KB of buffer memory)"
+  type        = number
+  default     = 2048
+}
+
+variable "split_ws_desired_count" {
+  description = "Initial desired task count for the ws service"
+  type        = number
+  default     = 1
+}
+
+variable "split_ws_min_capacity" {
+  description = "Autoscaling floor for the ws service"
+  type        = number
+  default     = 1
+}
+
+variable "split_ws_max_capacity" {
+  description = "Autoscaling ceiling for the ws service"
+  type        = number
+  default     = 3
+}
+
+variable "split_ws_memory_target" {
+  description = "Target memory utilization (%) for ws service autoscaling — WS holds memory, not CPU. Used only when ws_autoscale_on_connections = false."
+  type        = number
+  default     = 70
+}
+
+# Opt-in: scale coasty-ws on the live Electron WebSocket connection count
+# instead of memory%.  When true, replaces the memory-based policy with a
+# target-tracking policy whose customised metric is
+# Coasty/WS::LocalConnections (emitted by every ws worker via
+# app.services.metrics).  Memory% is a proxy for connection count but
+# distorted by Python GC + per-connection buffer variance.  See the module
+# docstring in app/services/metrics.py for full rationale.
+#
+# REQUIRES three_service_split_enabled = true.
+variable "ws_autoscale_on_connections" {
+  description = "Scale coasty-ws on Coasty/WS::LocalConnections custom metric instead of memory%."
+  type        = bool
+  default     = false
+}
+
+variable "split_ws_connections_target" {
+  description = "Target average LocalConnections count per worker for ws autoscaling. A Python event loop comfortably handles ~2 000 idle WebSockets, but we aim much lower (200/worker) to leave headroom for command-dispatch latency and CPU bursts during screenshot handling."
+  type        = number
+  default     = 200
+}
+
+# -----------------------------------------------------------------------------
 # ElastiCache (Valkey)
 # -----------------------------------------------------------------------------
 

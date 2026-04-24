@@ -150,3 +150,4 @@ campaigns/config.py
 scripts/setup-posthog-dashboards.mjs
 scripts/build-golden-ami.mjs
 scripts/build-windows-golden-ami.mjs
+supabase/migrations/

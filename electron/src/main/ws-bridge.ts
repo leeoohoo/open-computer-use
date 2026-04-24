@@ -5,7 +5,9 @@ import { LocalExecutor } from './local-executor'
 import { ApprovalManager } from './approval-manager'
 import { showRainbowBorder, hideRainbowBorder, initRainbowBorder } from './rainbow-border'
 
-export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error'
+// 'error'      → transient connection error (TLS/DNS/5xx/network); keeps retrying
+// 'auth_error' → backend rejected the JWT; fatal, triggers sign-out in the renderer
+export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error' | 'auth_error'
 
 /** Collect local system details to send to the backend. */
 function getSystemInfo(): Record<string, string> {
@@ -233,8 +235,11 @@ export class WebSocketBridge {
           // Pre-create rainbow border so first show is instant
           initRainbowBorder()
         } else if (message.type === 'auth_failed') {
+          // Distinct from generic connection 'error' so the renderer can tell
+          // "your JWT is invalid, log out" apart from "transient network blip,
+          // keep retrying". App.tsx only auto-signs-out on 'auth_error'.
           console.error('[WS Bridge] Authentication failed:', message.reason)
-          this.setState('error')
+          this.setState('auth_error')
           this.intentionalClose = true
           this.ws?.close()
         }

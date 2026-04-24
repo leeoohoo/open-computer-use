@@ -15,9 +15,16 @@ resource "aws_ecs_cluster" "main" {
 
 # -----------------------------------------------------------------------------
 # Task Definition
-# Two containers in one task (sidecar pattern):
-#   - nextjs-app (port 3000) — the frontend, receives ALB traffic
-#   - backend (port 8001) — FastAPI, reachable at localhost:8001 from frontend
+#
+# One or two containers depending on var.remove_frontend_sidecar:
+#   * remove_frontend_sidecar = false (default):
+#       - nextjs-app (port 3000) — the frontend, receives ALB traffic
+#       - backend    (port 8001) — FastAPI, reachable at localhost:8001 from
+#                                  frontend (sidecar pattern)
+#   * remove_frontend_sidecar = true (requires three_service_split_enabled):
+#       - nextjs-app only.  Next.js API routes reach the backend via ALB DNS
+#         (PYTHON_BACKEND_URL), which routes by path to the split
+#         api/sse/ws services.  ~40% memory reduction per frontend task.
 # -----------------------------------------------------------------------------
 
 resource "aws_ecs_task_definition" "app" {
@@ -29,105 +36,176 @@ resource "aws_ecs_task_definition" "app" {
   execution_role_arn       = aws_iam_role.ecs_execution.arn
   task_role_arn            = aws_iam_role.ecs_task.arn
 
-  container_definitions = jsonencode([
-    # ----- Frontend Container -----
-    {
-      name      = "nextjs-app"
-      image     = var.frontend_image
-      essential = true
-      cpu       = var.frontend_cpu
-      memory    = var.frontend_memory
+  # The Route53 / time_sleep dependency from an earlier (failed) attempt was
+  # removed along with route53.tf — see alb_internal.tf for the correct
+  # approach.  The task def no longer needs to wait on any DNS propagation
+  # because the internal ALB's DNS is auto-registered in AWS's resolver and
+  # available immediately on ALB creation.
 
-      portMappings = [{
-        containerPort = 3000
-        protocol      = "tcp"
-      }]
+  # Container list is built conditionally.  `merge(...)` on the nextjs-app
+  # definition conditionally attaches `dependsOn` (only when the backend
+  # sidecar exists; otherwise the frontend would wait forever for a HEALTHY
+  # signal that never arrives).  `concat(...)` on the outer list drops the
+  # backend container entirely when remove_frontend_sidecar = true.
+  container_definitions = jsonencode(concat(
+    [
+      # ----- Frontend Container (always present) -------------------------
+      merge(
+        {
+          name      = "nextjs-app"
+          image     = var.frontend_image
+          essential = true
+          cpu       = var.frontend_cpu
+          memory    = var.frontend_memory
 
-      environment = concat(
-        [
-          { name = "NODE_ENV", value = "production" },
-          { name = "NEXT_TELEMETRY_DISABLED", value = "1" },
-          { name = "PYTHON_BACKEND_URL", value = "http://localhost:8001" },
-          # HOSTNAME must be set explicitly — Fargate's container runtime can
-          # override the Dockerfile ENV with the task hostname, causing Next.js
-          # to bind to the wrong interface and reject localhost health checks.
-          { name = "HOSTNAME", value = "0.0.0.0" },
-          { name = "PORT", value = "3000" },
-        ],
-        [for k, v in var.frontend_env_vars : { name = k, value = v }]
-      )
+          portMappings = [{
+            containerPort = 3000
+            protocol      = "tcp"
+          }]
 
-      # Wait for backend to be running before starting frontend
-      dependsOn = [{
-        containerName = "backend"
-        condition     = "HEALTHY"
-      }]
+          # Environment layering (early → late; LATE wins under ECS duplicate
+          # resolution):
+          #   1. Static defaults (NODE_ENV, HOSTNAME, PORT).
+          #   2. User-provided frontend_env_vars from tfvars — FILTERED to
+          #      drop PYTHON_BACKEND_URL so a stale user override can't
+          #      silently undo the infrastructure's routing decision.  That
+          #      env var is entirely owned by var.remove_frontend_sidecar and
+          #      is set last, below, so it always wins.
+          #   3. Infrastructure-owned PYTHON_BACKEND_URL last → wins even if
+          #      a duplicate slipped through.
+          environment = concat(
+            [
+              { name = "NODE_ENV", value = "production" },
+              { name = "NEXT_TELEMETRY_DISABLED", value = "1" },
+              # HOSTNAME must be set explicitly — Fargate's container runtime
+              # can override the Dockerfile ENV with the task hostname, causing
+              # Next.js to bind to the wrong interface and reject health checks.
+              { name = "HOSTNAME", value = "0.0.0.0" },
+              { name = "PORT", value = "3000" },
+            ],
+            [
+              for k, v in var.frontend_env_vars : { name = k, value = v }
+              # Drop PYTHON_BACKEND_URL from user overrides — the infra-side
+              # value (below) is the only correct source under the split +
+              # sidecar-removal flag combinations.
+              if k != "PYTHON_BACKEND_URL"
+            ],
+            [
+              # PYTHON_BACKEND_URL appears LAST so ECS's duplicate-key
+              # resolution (keeps the last) can't be reversed by upstream
+              # config drift.
+              #
+              # Port + host selection:
+              #   * Sidecar present    → http://localhost:8001
+              #       (loopback; backend container in the same task)
+              #   * Sidecar removed    → http://<internal-alb-dns>:8001
+              #       (scheme=internal ALB, private IPs only from within VPC,
+              #        forwards by path to api/sse/ws target groups)
+              #
+              # Background on why the "obvious" options don't work:
+              #   • Public ALB DNS (:8001 HTTPS) — cert is for coasty.ai,
+              #     so TLS validation fails against the raw ALB hostname.
+              #   • Public ALB DNS (:8002 HTTP) — ALB is internet-facing,
+              #     DNS resolves to PUBLIC IPs from inside the VPC.  Traffic
+              #     exits via NAT; the ALB SG rule "from ECS SG" rejects the
+              #     NAT-sourced packet.  Dropped.
+              #   • Route53 private hosted zone with alias to the public ALB —
+              #     still returns the ALB's PUBLIC IPs (documented AWS limit
+              #     for internet-facing ALBs).  Same NAT loop, same SG drop.
+              #   • coasty.ai on port 8001 via Cloudflare — that's the public
+              #     edge, goes to NAT too AND adds the CF hop.
+              #
+              # The supported answer is a second ALB with `internal = true`
+              # (see alb_internal.tf).  Internal ALB DNS resolves to the
+              # ALB's private ENI addresses from within the VPC.  Traffic
+              # stays on the VPC fabric: ~1 ms round-trip, no NAT, no SG
+              # mismatch.  Listener rules in ecs_split.tf forward to the
+              # same api/sse/ws target groups as the public ALB does.
+              { name = "PYTHON_BACKEND_URL", value = (
+                var.remove_frontend_sidecar && length(aws_lb.internal_backend) > 0
+                ? "http://${aws_lb.internal_backend[0].dns_name}:8001"
+                : "http://localhost:8001"
+              ) },
+            ]
+          )
 
-      healthCheck = {
-        command     = ["CMD-SHELL", "node -e \"const http=require('http');const r=http.get('http://localhost:3000/api/health',res=>{process.exit(res.statusCode===200?0:1)});r.on('error',()=>process.exit(1));r.setTimeout(4000,()=>{r.destroy();process.exit(1)})\""]
-        interval    = 30
-        timeout     = 5
-        retries     = 3
-        startPeriod = 60
-      }
+          healthCheck = {
+            command     = ["CMD-SHELL", "node -e \"const http=require('http');const r=http.get('http://localhost:3000/api/health',res=>{process.exit(res.statusCode===200?0:1)});r.on('error',()=>process.exit(1));r.setTimeout(4000,()=>{r.destroy();process.exit(1)})\""]
+            interval    = 30
+            timeout     = 5
+            retries     = 3
+            startPeriod = 60
+          }
 
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
-          "awslogs-region"        = var.aws_region
-          "awslogs-stream-prefix" = "frontend"
+          logConfiguration = {
+            logDriver = "awslogs"
+            options = {
+              "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
+              "awslogs-region"        = var.aws_region
+              "awslogs-stream-prefix" = "frontend"
+            }
+          }
+        },
+        # Only declare dependsOn when the backend sidecar exists in this task.
+        # With the sidecar removed, nextjs-app has no intra-task dependency.
+        var.remove_frontend_sidecar ? {} : {
+          dependsOn = [{
+            containerName = "backend"
+            condition     = "HEALTHY"
+          }]
+        }
+      ),
+    ],
+
+    # ----- Backend Sidecar Container (omitted when remove_frontend_sidecar) -
+    var.remove_frontend_sidecar ? [] : [
+      {
+        name      = "backend"
+        image     = var.backend_image
+        essential = true
+        cpu       = var.backend_cpu
+        memory    = var.backend_memory
+
+        portMappings = [{
+          containerPort = 8001
+          protocol      = "tcp"
+        }]
+
+        environment = concat(
+          [
+            { name = "SERVER_HOST", value = "0.0.0.0" },
+            { name = "SERVER_PORT", value = "8001" },
+            { name = "ENVIRONMENT", value = "production" },
+            { name = "DEBUG", value = "false" },
+            { name = "CORS_ORIGINS", value = "http://localhost:3000,https://coasty.ai,https://www.coasty.ai" },
+            # Wire up the Valkey replication group provisioned in elasticache.tf.
+            # backend_env_vars (terraform.tfvars) takes precedence — set REDIS_URL
+            # there to override (e.g. for a pinned reader endpoint).
+            { name = "REDIS_URL", value = "rediss://${aws_elasticache_replication_group.main.primary_endpoint_address}:6379" },
+            { name = "CACHE_ENABLED", value = "true" },
+          ],
+          [for k, v in var.backend_env_vars : { name = k, value = v }]
+        )
+
+        healthCheck = {
+          command     = ["CMD-SHELL", "curl -sf http://localhost:8001/api/health || exit 1"]
+          interval    = 30
+          timeout     = 5
+          retries     = 3
+          startPeriod = 45
+        }
+
+        logConfiguration = {
+          logDriver = "awslogs"
+          options = {
+            "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
+            "awslogs-region"        = var.aws_region
+            "awslogs-stream-prefix" = "backend"
+          }
         }
       }
-    },
-
-    # ----- Backend Container (sidecar) -----
-    {
-      name      = "backend"
-      image     = var.backend_image
-      essential = true
-      cpu       = var.backend_cpu
-      memory    = var.backend_memory
-
-      portMappings = [{
-        containerPort = 8001
-        protocol      = "tcp"
-      }]
-
-      environment = concat(
-        [
-          { name = "SERVER_HOST", value = "0.0.0.0" },
-          { name = "SERVER_PORT", value = "8001" },
-          { name = "ENVIRONMENT", value = "production" },
-          { name = "DEBUG", value = "false" },
-          { name = "CORS_ORIGINS", value = "http://localhost:3000,https://coasty.ai,https://www.coasty.ai" },
-          # Wire up the Valkey replication group provisioned in elasticache.tf.
-          # backend_env_vars (terraform.tfvars) takes precedence — set REDIS_URL
-          # there to override (e.g. for a pinned reader endpoint).
-          { name = "REDIS_URL", value = "rediss://${aws_elasticache_replication_group.main.primary_endpoint_address}:6379" },
-          { name = "CACHE_ENABLED", value = "true" },
-        ],
-        [for k, v in var.backend_env_vars : { name = k, value = v }]
-      )
-
-      healthCheck = {
-        command     = ["CMD-SHELL", "curl -sf http://localhost:8001/api/health || exit 1"]
-        interval    = 30
-        timeout     = 5
-        retries     = 3
-        startPeriod = 45
-      }
-
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
-          "awslogs-region"        = var.aws_region
-          "awslogs-stream-prefix" = "backend"
-        }
-      }
-    }
-  ])
+    ]
+  ))
 }
 
 # -----------------------------------------------------------------------------
@@ -153,11 +231,17 @@ resource "aws_ecs_service" "app" {
     container_port   = 3000
   }
 
-  # Backend API — exposed on ALB port 8001 for the Electron app
-  load_balancer {
-    target_group_arn = aws_lb_target_group.backend.arn
-    container_name   = "backend"
-    container_port   = 8001
+  # Backend API — exposed on ALB port 8001 via the legacy backend target group.
+  # Only attached when the sidecar container exists in the task definition;
+  # with remove_frontend_sidecar=true there's no "backend" container for ECS
+  # to register, so this block is omitted.
+  dynamic "load_balancer" {
+    for_each = var.remove_frontend_sidecar ? [] : [1]
+    content {
+      target_group_arn = aws_lb_target_group.backend.arn
+      container_name   = "backend"
+      container_port   = 8001
+    }
   }
 
   # Give containers time to start before ALB health checks count against the task.
