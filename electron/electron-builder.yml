@@ -39,10 +39,73 @@ mac:
   entitlementsInherit: build/entitlements.mac.plist
   notarize: true
 linux:
+  # Three Linux targets, chosen to cover every distro + cross-build scenario:
+  #
+  #   AppImage — primary; one file, runs anywhere with libfuse2 (most distros).
+  #              Ubuntu 24.04 dropped libfuse2; users there can run with
+  #              `./Coasty.AppImage --appimage-extract-and-run` OR install
+  #              libfuse2t64 OR use the .deb / .tar.gz alternatives below.
+  #
+  #   deb     — Debian/Ubuntu native install; integrates with apt + menus.
+  #
+  #   tar.gz  — Pure tarball, no system deps to install; works on Windows
+  #              cross-build (no mksquashfs, no fakeroot needed). User
+  #              extracts and runs `./coasty-desktop`. The "out of box"
+  #              fallback when AppImage/deb tooling is unavailable on the
+  #              build host or unwanted on the user's distro.
   target:
-    - AppImage
+    - target: AppImage
+      arch: [x64]
+    - target: deb
+      arch: [x64]
+    - target: tar.gz
+      arch: [x64]
   icon: build/icon.png
   category: Utility
+  description: AI agent for your local machine — desktop automation and chat overlay.
+  synopsis: AI agent for your local machine
+  desktop:
+    entry:
+      Name: Coasty Desktop
+      GenericName: AI Desktop Assistant
+      Comment: AI agent for your local machine
+      Categories: Utility;Network;Office;
+      Keywords: ai;automation;desktop;assistant;agent;
+      MimeType: x-scheme-handler/coasty;
+      StartupNotify: "true"
+      StartupWMClass: coasty-desktop
+  # Pass Wayland-friendly flags to the Chromium runtime. Electron 40
+  # has a known bug where the GPU process doesn't inherit the ozone
+  # platform flags from the zygote, causing ~5x CPU overhead on
+  # multi-monitor Wayland setups (electron/electron#50462). Setting
+  # WaylandLinuxDrmSyncobj here ensures the GPU process uses the right
+  # synchronization path. Once we move past Electron 40, this can be
+  # removed.
+  executableArgs:
+    - --enable-features=WaylandLinuxDrmSyncobj
+    - --ozone-platform-hint=auto
+appImage:
+  license: build/LICENSE.txt
+  artifactName: ${productName}-${version}-${arch}.${ext}
+deb:
+  artifactName: ${productName}-${version}-${arch}.${ext}
+  # Runtime libs Electron + the overlay need on Debian/Ubuntu. Specifies
+  # `libayatana-appindicator3-1` (current standard — `libappindicator3-1`
+  # was removed from Debian 11+ / Ubuntu 22.04+). xdotool + wmctrl are
+  # used by desktop-automation.ts for click/type/scroll/window mgmt.
+  depends:
+    - libgtk-3-0
+    - libnotify4
+    - libnss3
+    - libxss1
+    - libxtst6
+    - xdg-utils
+    - libatspi2.0-0
+    - libuuid1
+    - libsecret-1-0
+    - libayatana-appindicator3-1
+    - xdotool
+    - wmctrl
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true

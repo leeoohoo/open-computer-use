@@ -19,6 +19,7 @@ import { hideForDesktopAction, showAfterDesktopAction } from './window-manager'
 import { getActiveDisplay } from './display-manager'
 import { execFile } from 'child_process'
 import { BrowserWindow } from 'electron'
+import { tryInterceptShellCommand } from './shell-intercept'
 
 type CommandHandler = (params: any) => Promise<any>
 
@@ -55,6 +56,54 @@ export class LocalExecutor {
   }
 
   async executeCommand(command: string, parameters: any = {}): Promise<any> {
+    // ── Cross-platform shell interception ──────────────────────────────
+    // Some agents emit Linux-only tools (xdotool, wmctrl, …) via
+    // terminal_execute even on Windows / macOS. Catch those before they hit
+    // the shell and route them to the equivalent native handler so the
+    // agent's output Just Works regardless of OS. Multi-statement chains
+    // (joined by `&&` or `;`) are recognized as drag / modifier-click /
+    // sequence patterns. Anything not recognized falls through.
+    if (command === 'terminal_execute' || command === 'execute_command') {
+      const intercept = tryInterceptShellCommand(parameters?.command)
+      if (intercept) {
+        console.log(`[LocalExecutor] Intercepted: ${intercept.reason}`)
+        return this.dispatchIntercept(intercept.command, intercept.parameters)
+      }
+    }
+
+    return this.dispatchIntercept(command, parameters)
+  }
+
+  /**
+   * Dispatch a (possibly intercepted) command to its handler. Knows how to
+   * unfold the synthetic `__sequence` pseudo-command into a serial run of
+   * sub-commands so multi-step shell chains can be executed natively.
+   */
+  private async dispatchIntercept(command: string, parameters: any): Promise<any> {
+    if (command === '__sequence') {
+      const steps: Array<{ command: string; parameters: any }> = parameters?.steps ?? []
+      const results: any[] = []
+      for (const step of steps) {
+        const r = await this.executeCommand(step.command, step.parameters)
+        results.push(r)
+        // Stop on first failure — matches `&&` semantics in shell
+        if (r && r.success === false) break
+      }
+      const allOk = results.length > 0 && results.every((r) => r && r.success !== false)
+      const output = results.map((r) => r?.output ?? '').filter(Boolean).join('\n').slice(0, 5000)
+      return {
+        success: allOk,
+        steps: results,
+        output,
+        ...(allOk ? {} : { error: results.find((r) => r?.success === false)?.error ?? 'sequence step failed' }),
+      }
+    }
+
+    if (command === '__noop') {
+      // sleep-only / no-op — succeed silently
+      return { success: true, output: '' }
+    }
+
     const handler = this.handlers.get(command)
     if (!handler) {
       console.warn(`[LocalExecutor] Unknown command: ${command}`)
@@ -62,7 +111,6 @@ export class LocalExecutor {
     }
 
     try {
-      // Normalize parameters before passing to handler
       const normalized = this.normalizeParams(command, parameters)
       return await handler(normalized)
     } catch (error: any) {

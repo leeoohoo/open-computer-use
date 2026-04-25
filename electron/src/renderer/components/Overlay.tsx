@@ -8,6 +8,7 @@ import { useChatStore } from '../stores/chat-store'
 import { MessageList } from './MessageList'
 import { ChatHistory } from './ChatHistory'
 import { ApprovalPrompt } from './ApprovalPrompt'
+import { StreamingTicker } from './StreamingTicker'
 import { useApprovalStore, APPROVAL_MODE_ORDER, APPROVAL_MODE_LABELS } from '../stores/approval-store'
 import type { ApprovalMode } from '../stores/approval-store'
 import { useDisplayStore } from '../stores/display-store'
@@ -303,10 +304,18 @@ function SubPageHeader({ title, onBack }: { title: string; onBack: () => void })
 
 /* ─── Welcome screen ─── */
 
-const SUGGESTIONS = [
-  'Search for flights to Tokyo',
-  'Fill out the form I have open',
-  'Organize my Downloads folder',
+const TAGLINE_WORDS = [
+  'I',
+  'can',
+  'do',
+  'anything',
+  'on',
+  'your',
+  'computer,',
+  'just',
+  'like',
+  'a',
+  'human.',
 ]
 
 function WelcomeScreen({ user, showGuide, onTry, onDismiss, onEnable, connected }: {
@@ -317,48 +326,79 @@ function WelcomeScreen({ user, showGuide, onTry, onDismiss, onEnable, connected 
   onEnable: () => void
   connected: boolean
 }) {
-  return (
-    <div className="flex-1 flex flex-col items-center px-4 py-4 text-center overflow-y-auto">
-      <div className="flex-1 flex flex-col items-center justify-center gap-3 max-w-[300px]">
-        {/* Greeting */}
-        <h3 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Caveat', cursive" }}>
-          <span className="inline-block -rotate-1 text-neutral-100/90">
-            Hello{user?.name ? `, ${user.name.split(' ')[0]}` : ''}!
-          </span>
-        </h3>
+  const firstName = user?.name?.split(' ')[0] ?? ''
 
-        {/* Suggestions — inline chips */}
-        <div className="w-full flex flex-wrap justify-center gap-1.5">
-          {SUGGESTIONS.map((s) => (
-            <button key={s} onClick={() => onTry(s)} disabled={!connected}
-              className="px-2.5 py-1 rounded-full bg-neutral-800/50 border border-neutral-700/25 text-[10px] text-neutral-500 hover:text-neutral-200 hover:bg-neutral-700/60 hover:border-neutral-600/40 transition-all disabled:opacity-30">
-              {s}
-            </button>
-          ))}
+  return (
+    <div className="flex-1 flex flex-col items-center px-6 py-6 text-center overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-[340px]">
+
+        {/* ── Greeting with aurora wash ── */}
+        <div className="relative">
+          {/* Slow indigo→violet aurora drifting behind the greeting */}
+          <div
+            aria-hidden="true"
+            className="aurora-drift absolute inset-0 -z-10 pointer-events-none"
+            style={{
+              filter: 'blur(40px)',
+              background:
+                'radial-gradient(60% 60% at 50% 55%, rgba(99,102,241,0.55) 0%, rgba(168,85,247,0.28) 42%, transparent 78%)',
+            }}
+          />
+          <h3
+            className="word-rise text-[42px] font-bold tracking-tight leading-none px-6 py-3"
+            style={{ fontFamily: "'Caveat', cursive", animationDelay: '60ms', animationDuration: '760ms' }}
+          >
+            <span className="inline-block -rotate-1 text-neutral-50">
+              Hello{firstName ? `, ${firstName}` : ''}!
+            </span>
+          </h3>
         </div>
 
-        {/* Remote control CTA */}
-        <a href="https://coasty.ai" target="_blank" rel="noopener noreferrer"
-          className="w-full rounded-xl overflow-hidden border border-neutral-700/30 bg-neutral-800/30 hover:border-neutral-600/50 transition-all group cursor-pointer block">
-          <img src="https://coasty.ai/demo-screenshot-mobile.png" alt="Control this PC from your phone"
-            className="w-full block" loading="lazy"
-            onError={(e) => { (e.target as HTMLImageElement).onerror = null; (e.target as HTMLImageElement).src = 'https://coasty.ai/demo-screenshot.png' }} />
-          <div className="px-3 py-2 flex items-center gap-2">
-            <svg className="w-3.5 h-3.5 text-neutral-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-            <span className="text-[10px] text-neutral-500 group-hover:text-neutral-300 transition-colors">
-              Control this PC remotely from your phone at <span className="text-neutral-300 font-medium">coasty.ai</span>
+        {/* ── Tagline — word-by-word stagger reveal ── */}
+        <p className="text-[13.5px] text-neutral-200/95 tracking-tight leading-[1.65] font-normal px-2 mt-3 max-w-[280px]">
+          {TAGLINE_WORDS.map((w, i) => (
+            <span
+              key={`${w}-${i}`}
+              className="word-rise inline-block"
+              style={{ animationDelay: `${380 + i * 80}ms`, animationDuration: '600ms' }}
+            >
+              {w}
+              {i < TAGLINE_WORDS.length - 1 ? ' ' : ''}
             </span>
-          </div>
-        </a>
-      </div>
+          ))}
+        </p>
 
+        {/* ── Sample prompts — Spotlight-style quoted text rows ──
+             No icons, no chips, no colored accents. Just curly-quoted
+             example commands that brighten on hover. The quotes carry
+             the "this is a thing you can say" semantic. */}
+        {/* Sample prompts removed — welcome screen is now greeting + tagline only.
+            The "Continue on your phone" CTA lives as a persistent compact pill
+            above the chat input, so it shows on every screen, not just here. */}
+
+        {/* The Continue-on-phone CTA used to live here — it's now a
+            persistent compact pill above the chat input so it stays
+            visible during conversations, not just on the welcome screen. */}
+      </div>
     </div>
   )
 }
 
 /* ─── Account Menu ─── */
 
-function AccountMenu({ onBack, updateStatus: initialUpdateStatus }: { onBack: () => void; updateStatus: string }) {
+function AccountMenu({
+  onBack, updateStatus: initialUpdateStatus,
+  approvalMode, pendingCount, onNavigateApproval,
+  opacity, setOpacityAndPersist,
+}: {
+  onBack: () => void
+  updateStatus: string
+  approvalMode: ApprovalMode
+  pendingCount: number
+  onNavigateApproval: () => void
+  opacity: number
+  setOpacityAndPersist: (v: number) => void
+}) {
   const { user, signOut } = useAuthStore()
   const [credits, setCredits] = React.useState<number | null>(null)
   const [runtime, setRuntime] = React.useState<number | null>(null)
@@ -434,6 +474,49 @@ function AccountMenu({ onBack, updateStatus: initialUpdateStatus }: { onBack: ()
             </div>
           </button>
         )}
+
+        <div className="h-px bg-neutral-800/40" />
+        <div className="space-y-0.5">
+          <div className="px-3 pt-1 pb-0.5"><span className="text-[9px] font-medium text-neutral-600 uppercase tracking-widest">Overlay</span></div>
+
+          {/* Approval mode — opens the approval-mode chooser page */}
+          <button onClick={onNavigateApproval} className="press-scale w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/[0.04] group">
+            <span className={`flex-shrink-0 ${shieldColor(approvalMode, pendingCount > 0)}`}>
+              <ShieldIcon mode={approvalMode} />
+            </span>
+            <div className="flex-1 min-w-0 text-left">
+              <div className="text-xs font-medium text-neutral-300 group-hover:text-neutral-100 tracking-tight">Approval mode</div>
+              <div className="text-[10px] text-neutral-600">{shieldLabel(approvalMode)}{pendingCount > 0 ? ` · ${pendingCount} pending` : ''}</div>
+            </div>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-600 flex-shrink-0">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+
+          {/* Opacity — inline preset dots, sets immediately on click */}
+          <div className="flex items-center gap-3 px-3 py-2">
+            <span className="flex-shrink-0 text-neutral-500"><EyeIcon opacity={opacity} /></span>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-medium text-neutral-300 tracking-tight">Opacity</div>
+              <div className="text-[10px] text-neutral-600">{Math.round(opacity * 100)}%</div>
+            </div>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              {[1, 0.7, 0.4, 0.2].map((p) => {
+                const active = Math.abs(opacity - p) < 0.05
+                return (
+                  <button
+                    key={p}
+                    onClick={() => setOpacityAndPersist(p)}
+                    aria-label={`${Math.round(p * 100)}%`}
+                    title={`${Math.round(p * 100)}%`}
+                    className={`press-scale size-3.5 rounded-full transition-all ${active ? 'ring-2 ring-white/80' : 'ring-1 ring-white/15 hover:ring-white/40'}`}
+                    style={{ background: `rgba(255,255,255,${0.2 + p * 0.6})` }}
+                  />
+                )
+              })}
+            </div>
+          </div>
+        </div>
 
         <div className="h-px bg-neutral-800/40" />
         <div className="space-y-0.5">
@@ -542,6 +625,73 @@ export function Overlay() {
   // Auto-expand on approval
   React.useEffect(() => { if (pendingApprovals.length > 0 && !isExpanded) toggleExpanded() }, [pendingApprovals.length])
 
+  // Auto-collapse on stream START + auto-restore on stream END.
+  //
+  //   stream START (false→true edge):
+  //     - Save whether the user was in expanded mode (`wasExpandedAtStart`)
+  //     - If expanded → collapse to pill so the ticker becomes the focus
+  //     - Reset the user-stopped flag (fresh task)
+  //
+  //   stream END (true→false edge):
+  //     - If user clicked Stop → ALWAYS expand back so they can see what
+  //       happened and decide what to do next (the agent may have
+  //       partially completed something they want to react to)
+  //     - Else if they started in expanded and we auto-collapsed them,
+  //       restore back to expanded. Seamless return to where they started.
+  //     - Else (started in compact, finished naturally) → leave compact.
+  //     - In all cases, only restore when mode is currently compact —
+  //       respect any manual re-expand the user did mid-stream.
+  //
+  // We capture `wasStreaming` once at the top of the effect so even an
+  // instant-fail stream (true→false in the same render cycle) reliably
+  // detects both edges via the snapshot rather than the ref.
+  const prevStreamingRef = React.useRef(false)
+  const wasExpandedAtStartRef = React.useRef(false)
+  const userStoppedRef = React.useRef(false)
+  const { setMode } = useWindowStore()
+
+  // Wraps handleStop with a flag set so the auto-restore effect can tell
+  // a user-initiated stop apart from a natural stream completion.
+  const stopTask = React.useCallback(() => {
+    userStoppedRef.current = true
+    handleStop()
+  }, [handleStop])
+
+  React.useEffect(() => {
+    const wasStreaming = prevStreamingRef.current
+
+    if (isStreaming && !wasStreaming) {
+      // Stream START
+      wasExpandedAtStartRef.current = mode === 'expanded'
+      userStoppedRef.current = false
+      if (mode === 'expanded') setMode('compact')
+    } else if (!isStreaming && wasStreaming) {
+      // Stream END — decide whether to auto-expand back
+      const stoppedByUser = userStoppedRef.current
+      const wasExpanded = wasExpandedAtStartRef.current
+      if (mode === 'compact' && (stoppedByUser || wasExpanded)) {
+        setMode('expanded')
+      }
+      wasExpandedAtStartRef.current = false
+      userStoppedRef.current = false
+    }
+
+    prevStreamingRef.current = isStreaming
+  }, [isStreaming])
+
+  // Drive the rainbow lifecycle from `isStreaming`. The renderer's
+  // stream state is the only reliable signal for "is the agent doing work
+  // right now". The backend's task_end WebSocket message is fire-and-forget
+  // and can be lost (network blip, backend exception, etc.) — relying on it
+  // alone leaves the rainbow stuck on. Guarded by a ref so we only push on
+  // actual edge transitions, not on initial mount.
+  const prevTaskActiveRef = React.useRef<boolean | null>(null)
+  React.useEffect(() => {
+    if (prevTaskActiveRef.current === isStreaming) return
+    prevTaskActiveRef.current = isStreaming
+    window.coasty.setTaskActive(isStreaming).catch(() => {})
+  }, [isStreaming])
+
   // Sync opacity
   React.useEffect(() => {
     window.coasty.getOpacity().then(setOpacity)
@@ -605,7 +755,37 @@ export function Overlay() {
   const goToPage = (p: Page) => { if (!isExpanded) toggleExpanded(); setPage(p) }
 
   return (
-    <div className="glow-border relative flex flex-col w-full h-full rounded-2xl bg-neutral-900/95 backdrop-blur-xl overflow-hidden">
+    <div
+      // The rotating beam (.glow-border) lives on the compact pill only —
+      // it's a signature of the floating-pill identity. In expanded mode
+      // the panel reads as a card, so the beam would feel decorative.
+      className={`morph-radius relative flex flex-col w-full h-full overflow-hidden premium-shadow ${isExpanded ? '' : 'glow-border'}`}
+      style={{
+        borderRadius: isExpanded ? 22 : 28,
+        isolation: 'isolate',
+      }}
+    >
+      {/* Opaque backing inside the rounded clip — anti-aliased corner pixels
+          can never reveal the desktop because the tinted glass sits ABOVE
+          a fully-opaque dark layer. Layer order:
+            1. solid dark (back)
+            2. blurred glass tint (front, applies backdrop-filter)
+            3. top-down lighting gradient (subtle Apple specular) */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10"
+        style={{ background: 'rgb(10, 10, 12)', borderRadius: 'inherit' }} />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background: 'rgba(255, 255, 255, 0.015)',
+          backdropFilter: 'blur(40px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+          borderRadius: 'inherit',
+        }} />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0) 38%, rgba(0,0,0,0.18) 100%)',
+          borderRadius: 'inherit',
+        }} />
 
       {/* ═══ PILL BAR ═══ */}
       <div className="titlebar-drag flex items-center gap-2.5 w-full h-14 px-3 flex-shrink-0 select-none">
@@ -626,101 +806,106 @@ export function Overlay() {
             <defs><linearGradient id="coastyGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(255,255,255,0)" stopOpacity={0} /><stop offset="30%" stopColor="rgba(255,255,255,0.1)" stopOpacity={1} /><stop offset="50%" stopColor="rgba(255,255,255,0.3)" stopOpacity={1} /><stop offset="70%" stopColor="rgba(255,255,255,0.6)" stopOpacity={1} /><stop offset="100%" stopColor="rgba(255,255,255,1)" stopOpacity={1} /></linearGradient></defs>
             <circle cx="100" cy="100" r="100" fill="url(#coastyGrad)" />
           </svg>
-          <div className={`absolute -bottom-px -right-px w-1.5 h-1.5 rounded-full ring-[1.5px] ring-neutral-900 ${statusDot(connectionState)}`} />
-          {updateStatus === 'ready' && <div className="absolute -top-px -right-px w-1.5 h-1.5 rounded-full bg-emerald-400 ring-[1.5px] ring-neutral-900" />}
+          <div className={`absolute -bottom-px -right-px w-1.5 h-1.5 rounded-full ring-[1.5px] ring-neutral-950 ${statusDot(connectionState)} ${isStreaming && connectionState === 'connected' ? 'breathe-emerald' : ''}`} />
+          {updateStatus === 'ready' && <div className="absolute -top-px -right-px w-1.5 h-1.5 rounded-full bg-emerald-400 ring-[1.5px] ring-neutral-950" />}
         </div>
 
-        {/* Input / title */}
+        {/* Input / title / live activity */}
         {isExpanded ? (
           <span className="flex-1 min-w-0 text-xs font-medium text-neutral-200 truncate">
             {chatTitle || 'Coasty'}
           </span>
+        ) : isStreaming ? (
+          <StreamingTicker />
         ) : (
           <div className="titlebar-no-drag flex-1 min-w-0 relative">
-            {!input && !isStreaming && <div className="absolute inset-0 flex items-center"><PlaceholderCarousel /></div>}
+            {!input && <div className="absolute inset-0 flex items-center"><PlaceholderCarousel /></div>}
             <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={onKeyDown}
-              placeholder={isStreaming ? 'Working...' : ''} disabled={connectionState !== 'connected' || isStreaming}
+              placeholder="" disabled={connectionState !== 'connected'}
               className="relative z-10 w-full bg-transparent text-xs text-neutral-200 placeholder-neutral-500 outline-none disabled:opacity-50" />
           </div>
         )}
 
         {/* Right actions */}
-        <div className="titlebar-no-drag flex items-center gap-1">
+        <div className="titlebar-no-drag flex items-center gap-0.5">
           {!isExpanded && isStreaming ? (
-            <button onClick={handleStop} className="px-2 py-1 rounded-lg bg-red-600/20 border border-red-500/30 text-red-400 text-[11px] font-medium hover:bg-red-600/30 transition-colors">Stop</button>
+            <button onClick={stopTask} aria-label="Stop" title="Stop"
+              className="stop-fab press-scale size-7 rounded-full flex items-center justify-center text-white ml-0.5 mr-0.5">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="7" width="10" height="10" rx="1.75" /></svg>
+            </button>
           ) : !isExpanded && input.trim() ? (
-            <button onClick={() => onSubmit()} disabled={!canSend(input)} className="px-2 py-1 rounded-lg bg-brand-600 text-white text-[11px] font-medium hover:bg-brand-500 disabled:opacity-30 transition-colors">Send</button>
+            <button onClick={() => onSubmit()} disabled={!canSend(input)} aria-label="Send" title="Send"
+              className="send-fab press-scale size-7 rounded-full flex items-center justify-center text-neutral-900 ml-0.5 mr-0.5 disabled:cursor-not-allowed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>
+            </button>
           ) : null}
 
+          {/* New task — expanded chat only */}
           {isExpanded && page === 'chat' && (
-            <button onClick={clearMessages} className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800/60 transition-colors" title="Start a new task">
+            <button onClick={clearMessages} className="press-scale flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium text-neutral-500 hover:text-neutral-100 hover:bg-white/[0.06]" title="Start a new task">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
               New
+            </button>
+          )}
+
+          {/* History — expanded chat only, promoted from old toolbar row to the header */}
+          {isExpanded && page === 'chat' && (
+            <button onClick={() => goToPage('history')} className="press-scale flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium text-neutral-500 hover:text-neutral-100 hover:bg-white/[0.06]" title="Past tasks">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+              History
             </button>
           )}
 
           {/* Display selector — compact: expand overlay and open dropdown */}
           {!isExpanded && useDisplayStore.getState().hasMultiple && (
             <button onClick={() => { setDisplayAutoOpen(true); toggleExpanded(); setPage('chat') }}
-              className="p-1.5 rounded-lg hover:bg-neutral-800/60 text-neutral-400 hover:text-neutral-200 transition-colors"
+              className="press-scale p-1.5 rounded-full hover:bg-white/[0.06] text-neutral-400 hover:text-neutral-100"
               title="Select display">
               <MonitorIcon size={13} />
             </button>
           )}
 
-          {/* Opacity — compact icon only */}
-          <button onClick={cycleOpacity} className="p-1.5 rounded-lg hover:bg-neutral-800/60 text-neutral-400 hover:text-neutral-200 transition-colors" title={`Opacity ${Math.round(opacity * 100)}% (Ctrl+Scroll)`}>
-            <EyeIcon opacity={opacity} />
-          </button>
-
-          {/* Expand / Collapse */}
-          <button onClick={() => toggleExpanded()} className="p-1.5 rounded-lg hover:bg-neutral-800/60 text-neutral-400 hover:text-neutral-200 transition-colors" title={isExpanded ? 'Collapse' : 'Expand'}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              {isExpanded ? <polyline points="18 15 12 9 6 15" /> : <polyline points="6 9 12 15 18 9" />}
+          {/* Expand / Collapse — chevron rotates instead of swapping */}
+          <button onClick={() => toggleExpanded()} className="press-scale p-1.5 rounded-full hover:bg-white/[0.06] text-neutral-400 hover:text-neutral-100" title={isExpanded ? 'Collapse' : 'Expand'}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              style={{ transition: 'transform 320ms cubic-bezier(0.22, 1, 0.36, 1)', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0)' }}>
+              <polyline points="6 9 12 15 18 9" />
             </svg>
           </button>
 
-          {/* Quit — fully exits the app (tears down rainbow border + ws bridge + tray) */}
-          <button
-            onClick={() => window.coasty.quit()}
-            className="p-1.5 rounded-lg hover:bg-red-500/20 text-neutral-400 hover:text-red-400 transition-colors"
-            title="Quit Coasty"
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-
-          {/* Avatar → Account */}
+          {/* Avatar → Account (with amber pending-approval dot for visibility) */}
           {isExpanded && (
-            <button onClick={() => goToPage('account')} className={`p-0.5 rounded-full transition-all ${page === 'account' ? 'ring-2 ring-brand-500/60' : 'hover:ring-2 hover:ring-neutral-600'}`} title={user?.name || 'Account'}>
+            <button onClick={() => goToPage('account')} className={`press-scale relative p-0.5 rounded-full ml-0.5 ${page === 'account' ? 'ring-2 ring-brand-500/60' : 'hover:ring-2 hover:ring-white/10'}`}
+              style={{ transition: 'box-shadow 220ms var(--ease-spring), transform 180ms var(--ease-apple)' }}
+              title={pendingApprovals.length > 0 ? `${pendingApprovals.length} pending approval${pendingApprovals.length === 1 ? '' : 's'}` : (user?.name || 'Account')}>
               <UserAvatar avatar={user?.avatar} name={user?.name} size={24} />
+              {pendingApprovals.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber-400 animate-pulse ring-[1.5px] ring-neutral-950" />
+              )}
             </button>
           )}
         </div>
       </div>
 
-      {/* ═══ TOOLBAR — expanded chat only ═══ */}
-      {isExpanded && page === 'chat' && (
-        <div className="flex items-center gap-0.5 px-3 pb-1.5 flex-shrink-0">
-          <button onClick={() => goToPage('history')} className="flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-medium text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800/60 transition-colors">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-            History
-          </button>
-          <button onClick={() => goToPage('approval')} className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-medium transition-colors hover:bg-neutral-800/60 ${shieldColor(approvalMode, pendingApprovals.length > 0)}`}>
-            <ShieldIcon mode={approvalMode} />
-            {shieldLabel(approvalMode)}
-          </button>
-        </div>
-      )}
+      {/* TOOLBAR row removed — History promoted to header right cluster,
+          Approval mode + Opacity moved into the Account page (Overlay section). */}
 
       {/* ═══ RESIZE ═══ */}
       {isExpanded && <ResizeHandles windowSize={windowSize} />}
 
       {/* ═══ PAGES ═══ */}
 
-      {isExpanded && page === 'account' && <AccountMenu onBack={() => setPage('chat')} updateStatus={updateStatus} />}
+      {isExpanded && page === 'account' && (
+        <AccountMenu
+          onBack={() => setPage('chat')}
+          updateStatus={updateStatus}
+          approvalMode={approvalMode}
+          pendingCount={pendingApprovals.length}
+          onNavigateApproval={() => setPage('approval')}
+          opacity={opacity}
+          setOpacityAndPersist={(v) => { setOpacity(v); window.coasty.setOpacity(v) }}
+        />
+      )}
 
       {isExpanded && page === 'history' && (
         <ChatHistory onSelectChat={(id) => { loadChat(id); setPage('chat') }} onBack={() => setPage('chat')} />
@@ -787,7 +972,50 @@ export function Overlay() {
               </div>
             )}
 
-            <form onSubmit={onSubmit} className="rounded-2xl bg-neutral-800 border border-neutral-700/50 p-2 shadow-lg transition-all duration-300 focus-within:shadow-xl focus-within:border-neutral-600/50">
+            {/* Compact "Continue on phone" pill — persistent above the input.
+                Single line, smaller icon, micro shimmer + soft aura kept
+                from the welcome version but at half scale. */}
+            <a
+              href="https://coasty.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group press-scale shimmer-sweep flex items-center gap-2 px-2 py-1 mb-1.5 rounded-full bg-white/[0.025] hover:bg-white/[0.05] transition-colors self-center max-w-full"
+              style={{ boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.05)' }}
+              title="Open coasty.ai on your phone"
+            >
+              <span
+                className="relative flex-shrink-0 w-4 h-4 rounded-[5px] flex items-center justify-center bg-blue-500/15"
+                style={{ boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.05)' }}
+              >
+                <span aria-hidden="true" className="aura-ring" />
+                <svg
+                  width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+                  className="text-blue-300 relative z-10"
+                >
+                  <rect x="5" y="2" width="14" height="20" rx="2.5" />
+                  <line x1="12" y1="18" x2="12.01" y2="18" />
+                </svg>
+              </span>
+              <span className="text-[10px] text-neutral-400 group-hover:text-neutral-100 tracking-tight transition-colors whitespace-nowrap">
+                Continue on your phone
+              </span>
+              <span className="text-[10px] font-medium text-neutral-300 group-hover:text-neutral-50 tracking-tight transition-colors whitespace-nowrap">
+                coasty.ai
+              </span>
+              <svg
+                width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                className="nudge-arrow text-neutral-600 group-hover:text-neutral-200 flex-shrink-0"
+              >
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+            </a>
+
+            <form onSubmit={onSubmit}
+              className="rounded-[22px] bg-neutral-900/70 p-2 transition-all duration-300 focus-within:bg-neutral-900/90"
+              style={{
+                boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.07), inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 24px rgba(0,0,0,0.35)',
+              }}>
               {attachedFiles.length > 0 && (
                 <div className="flex flex-wrap gap-1 px-2 pt-1 pb-1.5 max-h-[52px] overflow-y-auto flex-shrink-0">
                   {attachedFiles.map((f) => (
@@ -810,20 +1038,20 @@ export function Overlay() {
                 className={`w-full bg-transparent text-sm text-neutral-200 placeholder-neutral-500 resize-none px-3 pt-2 pb-1 outline-none overflow-y-auto disabled:opacity-50 ${attachedFiles.length > 0 ? 'h-[40px]' : 'h-[60px]'}`} />
               <div className="flex items-center justify-between px-1 pb-0.5">
                 <div className="flex items-center gap-0.5">
-                  <button type="button" onClick={() => pickItems()} disabled={connectionState !== 'connected'} className="size-8 rounded-full text-neutral-500 hover:text-neutral-300 hover:bg-neutral-700/50 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200" title="Attach files">
+                  <button type="button" onClick={() => pickItems()} disabled={connectionState !== 'connected'} className="press-scale size-8 rounded-full text-neutral-500 hover:text-neutral-100 hover:bg-white/[0.06] flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed" title="Attach files">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" /></svg>
                   </button>
-                  <button type="button" onClick={() => pickItems(true)} disabled={connectionState !== 'connected'} className="size-8 rounded-full text-neutral-500 hover:text-neutral-300 hover:bg-neutral-700/50 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200" title="Attach folder">
+                  <button type="button" onClick={() => pickItems(true)} disabled={connectionState !== 'connected'} className="press-scale size-8 rounded-full text-neutral-500 hover:text-neutral-100 hover:bg-white/[0.06] flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed" title="Attach folder">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" /></svg>
                   </button>
                   <DisplaySelector disabled={connectionState !== 'connected'} autoOpen={displayAutoOpen} onAutoOpened={() => setDisplayAutoOpen(false)} />
                 </div>
                 {isStreaming ? (
-                  <button type="button" onClick={handleStop} className="size-8 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-500 transition-all duration-300" aria-label="Stop">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1" /></svg>
+                  <button type="button" onClick={stopTask} className="stop-fab size-8 rounded-full flex items-center justify-center text-white" aria-label="Stop">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="7" width="10" height="10" rx="1.5" /></svg>
                   </button>
                 ) : (
-                  <button type="submit" disabled={!canSend(input)} className="size-8 rounded-full bg-white text-neutral-900 flex items-center justify-center hover:bg-neutral-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300" aria-label="Send">
+                  <button type="submit" disabled={!canSend(input)} className="send-fab size-8 rounded-full text-neutral-900 flex items-center justify-center disabled:cursor-not-allowed" aria-label="Send">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>
                   </button>
                 )}

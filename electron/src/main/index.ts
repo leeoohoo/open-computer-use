@@ -57,6 +57,20 @@ if (!gotSingleLock) {
 // "Unable to move the cache: Access is denied" errors.
 app.commandLine.appendSwitch('disable-gpu-shader-disk-cache')
 
+// ── Linux Wayland fixes ──────────────────────────────────────────────────
+// Electron 40 has a known regression where the GPU process zygote doesn't
+// inherit ozone platform + DRM-syncobj flags on Wayland, producing ~5x
+// CPU overhead on multi-monitor setups (electron/electron#50462). We pin
+// the platform hint to auto (so X11 sessions still work) and explicitly
+// enable WaylandLinuxDrmSyncobj so the GPU process uses the right sync
+// path. Skip on non-Linux platforms — these flags are no-ops elsewhere
+// but adding them unconditionally would still appear in user-agent and
+// `chrome://gpu` reports unnecessarily.
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('ozone-platform-hint', 'auto')
+  app.commandLine.appendSwitch('enable-features', 'WaylandLinuxDrmSyncobj')
+}
+
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 let auth: ElectronAuth | null = null

@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld('coasty', {
   connectBridge: () => ipcRenderer.invoke('bridge:connect'),
   disconnectBridge: () => ipcRenderer.invoke('bridge:disconnect'),
   getBridgeState: () => ipcRenderer.invoke('bridge:get-state'),
+  setTaskActive: (active: boolean) => ipcRenderer.invoke('bridge:set-task-active', active),
 
   // Config
   getBackendUrl: () => ipcRenderer.invoke('config:get-backend-url'),
@@ -178,6 +179,7 @@ export interface CoastyAPI {
   connectBridge: () => Promise<{ success: boolean; machineId?: string; error?: string }>
   disconnectBridge: () => Promise<{ success: boolean }>
   getBridgeState: () => Promise<string>
+  setTaskActive: (active: boolean) => Promise<{ success: boolean }>
 
   getBackendUrl: () => Promise<string>
   getMachineId: () => Promise<string>

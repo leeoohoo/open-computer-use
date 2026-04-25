@@ -9,6 +9,68 @@ import { showRainbowBorder, hideRainbowBorder, initRainbowBorder } from './rainb
 // 'auth_error' → backend rejected the JWT; fatal, triggers sign-out in the renderer
 export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error' | 'auth_error'
 
+/**
+ * Per-command parameter preview for failure logs. Pulls the most
+ * informative field for each command type so a "failed" log line
+ * actually tells you what was attempted (we previously logged only
+ * the command name, which made every terminal_execute failure look
+ * identical).
+ */
+function previewParameters(command: string, parameters: any): string | null {
+  if (!parameters || typeof parameters !== 'object') return null
+  const trim = (s: any, n = 100) => {
+    const str = typeof s === 'string' ? s : JSON.stringify(s)
+    if (!str) return ''
+    return str.length > n ? str.slice(0, n) + '…' : str
+  }
+  switch (command) {
+    case 'terminal_execute':
+    case 'execute_command':
+      return trim(parameters.command)
+    case 'terminal_type':
+    case 'type':
+      return trim(parameters.text)
+    case 'key_press':
+    case 'key_combo':
+      return trim(parameters.keys ?? parameters.key)
+    case 'click':
+    case 'double_click':
+    case 'click_with_modifiers':
+      if (typeof parameters.x === 'number' && typeof parameters.y === 'number') {
+        return `(${parameters.x}, ${parameters.y})`
+      }
+      return null
+    case 'browser_navigate':
+      return trim(parameters.url)
+    case 'browser_type':
+      return trim(parameters.text)
+    case 'file_read':
+    case 'file_write':
+    case 'file_edit':
+    case 'file_delete':
+    case 'file_exists':
+    case 'directory_list':
+      return trim(parameters.path ?? parameters.filepath ?? parameters.dirpath)
+    default:
+      return null
+  }
+}
+
+/** Compose a human-readable failure reason from an executor result. */
+function formatFailureReason(result: any): string {
+  if (!result || typeof result !== 'object') return 'no result returned'
+  const parts: string[] = []
+  if (result.error) parts.push(String(result.error))
+  if (result.exit_code !== undefined && result.exit_code !== 0) {
+    parts.push(`exit=${result.exit_code}`)
+  }
+  if (result.output && typeof result.output === 'string' && result.output.trim()) {
+    const head = result.output.trim().split('\n').slice(0, 2).join(' / ').slice(0, 200)
+    parts.push(`out="${head}"`)
+  }
+  return parts.length ? parts.join(' | ') : 'unknown failure (no error message in result)'
+}
+
 /** Collect local system details to send to the backend. */
 function getSystemInfo(): Record<string, string> {
   const primary = screen.getPrimaryDisplay()
@@ -45,6 +107,28 @@ export class WebSocketBridge {
   private rainbowActive = false
   // When true, reject all incoming commands (user clicked Stop)
   private taskStopped = false
+  /**
+   * Strict serial queue for command execution.
+   *
+   * The 'message' WebSocket handler is `async` — Node's ws library will
+   * dispatch the next message as soon as the current handler hits its
+   * first `await`. If two commands land in the bridge before the first
+   * completes, both call `executor.executeCommand` concurrently. That's
+   * a problem: many commands wrap the action in `withOverlayHidden`,
+   * which hides the overlay (50ms wait) → runs the action → schedules
+   * a fire-and-forget 250ms fade-in. Concurrent execution causes:
+   *   - the overlay fade-in for cmd A overlapping the hide for cmd B
+   *   - screenshots capturing the overlay mid-fade
+   *   - keyboard input from `type` interleaving with `key_press`
+   *   - the result for cmd B arriving at the backend before cmd A
+   *
+   * Even if the backend awaits each result before sending the next
+   * (it does), network jitter or backend pipelining can land two
+   * messages in the bridge before the first's full chain (hide → action
+   * → send-result) finishes. Chaining onto a single promise guarantees
+   * strict in-order, one-at-a-time execution. Errors don't break the chain.
+   */
+  private commandQueue: Promise<unknown> = Promise.resolve()
 
   private getToken: (() => Promise<string | null>) | null = null
 
@@ -76,8 +160,71 @@ export class WebSocketBridge {
     hideRainbowBorder()
   }
 
+  /**
+   * Run a command through the serial queue. Each call chains onto the
+   * previous one's completion (success OR failure), guaranteeing strict
+   * in-order execution. The returned promise resolves when THIS command
+   * completes; the queue itself swallows errors so a failed command
+   * doesn't break the chain for subsequent ones.
+   *
+   * Telemetry: logs duration + outcome so concurrency / latency issues
+   * show up in the logs.
+   */
+  private executeSerially(command: string, parameters: any): Promise<any> {
+    const start = Date.now()
+    // For commands whose parameters carry the actual workload (e.g.
+    // terminal_execute's `command` field), log a short preview so a
+    // failure log has enough context to debug what was attempted.
+    const paramPreview = previewParameters(command, parameters)
+    if (paramPreview) {
+      console.log(`[WS Bridge] ${command} → ${paramPreview}`)
+    }
+
+    const next = this.commandQueue.then(() =>
+      this.executor.executeCommand(command, parameters),
+    )
+    // Don't break the chain on rejected promises — every chain link
+    // must always resolve so subsequent commands still get to run.
+    this.commandQueue = next.catch(() => undefined)
+    next.then(
+      (result) => {
+        const ms = Date.now() - start
+        const ok = result && result.success !== false
+        if (ok) {
+          console.log(`[WS Bridge] ${command} ok (${ms}ms)`)
+        } else {
+          // Surface the actual failure cause: the executor's error string,
+          // the exit code (terminal commands), and the head of any output.
+          const reason = formatFailureReason(result)
+          console.log(`[WS Bridge] ${command} failed (${ms}ms) — ${reason}`)
+        }
+      },
+      (err) => {
+        const ms = Date.now() - start
+        console.log(`[WS Bridge] ${command} threw (${ms}ms): ${err?.message || err}`)
+      },
+    )
+    return next
+  }
+
   getState(): ConnectionState {
     return this.state
+  }
+
+  /**
+   * External task-active sync — driven by the renderer's `isStreaming`
+   * state via IPC. The backend's `task_end` WebSocket message is a
+   * fire-and-forget send and isn't always delivered (network blip,
+   * backend exception, missing is_electron flag, etc.), so we can't
+   * rely on it alone. The renderer is the source of truth: when its
+   * SSE stream finishes, this method ensures the rainbow follows.
+   * Both `startRainbow`/`stopRainbow` are guarded by `rainbowActive`,
+   * so this is idempotent and safe to interleave with the bridge's
+   * own task-end / disconnect handlers.
+   */
+  setTaskActive(active: boolean): void {
+    if (active) this.startRainbow()
+    else this.stopRainbow()
   }
 
   /** Signal that the user stopped the current task. Tells the backend to
@@ -164,7 +311,9 @@ export class WebSocketBridge {
             console.log(`[WS Bridge] Auto-approved: ${command}`)
             this.startRainbow()
             try {
-              const result = await this.executor.executeCommand(command, parameters)
+              // Route through the serial queue — never call executor directly.
+              // See comment on `commandQueue` for why this MUST be serialized.
+              const result = await this.executeSerially(command, parameters)
               this.send({ type: 'result', data: result })
             } catch (error: any) {
               this.send({
@@ -199,7 +348,8 @@ export class WebSocketBridge {
               console.log(`[WS Bridge] Approved: ${command}`)
               this.startRainbow()
               try {
-                const result = await this.executor.executeCommand(command, parameters)
+                // Route through the serial queue — never call executor directly.
+                const result = await this.executeSerially(command, parameters)
                 this.send({ type: 'result', data: result })
               } catch (error: any) {
                 this.send({

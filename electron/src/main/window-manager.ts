@@ -1,6 +1,7 @@
 import { BrowserWindow, screen } from 'electron'
 import { release } from 'os'
 import { getActiveDisplay } from './display-manager'
+import { setRainbowOrigin } from './rainbow-border'
 
 export type WindowMode = 'auth' | 'compact' | 'expanded'
 
@@ -97,9 +98,21 @@ function animateBounds(win: BrowserWindow, target: Electron.Rectangle): void {
   }, ANIM_INTERVAL)
 }
 
-/** Start periodic topmost enforcement (Windows-only safety net). */
+/**
+ * Start periodic topmost enforcement.
+ *
+ * Originally Windows-only because that platform's transparent frameless
+ * windows lose their TOPMOST flag on focus changes. Linux/X11 hits the
+ * same class of problem — `_NET_WM_STATE_ABOVE` is advisory and many
+ * window managers / compositors don't enforce strict topmost ordering
+ * across focus events. Periodic re-assertion via setAlwaysOnTop +
+ * moveTop is the same belt-and-suspenders fix on both platforms.
+ *
+ * macOS uses real window levels (`NSWindowLevel`) which the OS enforces
+ * structurally, so the enforcer is unnecessary there and we skip it.
+ */
 function startTopmostEnforcer(win: BrowserWindow): void {
-  if (process.platform !== 'win32') return
+  if (process.platform === 'darwin') return
   stopTopmostEnforcer()
 
   enforcerInterval = setInterval(() => {
@@ -117,6 +130,20 @@ function stopTopmostEnforcer(): void {
     clearInterval(enforcerInterval)
     enforcerInterval = null
   }
+}
+
+/**
+ * Push the pill's center (in display-local px) to the rainbow window so
+ * its particle dispersion always emanates from the pill, not the screen
+ * perimeter. Y origin sits at the center of the header bar.
+ */
+function pushOriginToRainbow(pill: { x: number; y: number; width: number; height: number }): void {
+  if (currentMode === 'auth') return
+  const display = getActiveDisplay()
+  const headerCenter = currentMode === 'compact' ? 28 : 22
+  const localX = pill.x - display.bounds.x + pill.width / 2
+  const localY = pill.y - display.bounds.y + headerCenter
+  setRainbowOrigin(localX, localY)
 }
 
 export function getMainWindow(): BrowserWindow | null {
@@ -137,6 +164,8 @@ export function setMainWindow(win: BrowserWindow): void {
     if (currentMode !== 'auth') {
       const [x, y] = win.getPosition()
       savedPosition = { x, y }
+      const [w, h] = win.getSize()
+      pushOriginToRainbow({ x, y, width: w, height: h })
     }
   })
 
@@ -146,6 +175,8 @@ export function setMainWindow(win: BrowserWindow): void {
       const [w, h] = win.getSize()
       savedExpandedSize = { width: w, height: h }
       win.webContents.send('window-size-changed', { width: w, height: h })
+      const [x, y] = win.getPosition()
+      pushOriginToRainbow({ x, y, width: w, height: h })
     }
   })
 
@@ -273,6 +304,11 @@ export function setWindowMode(mode: WindowMode): void {
     animateBounds(win, target)
   } else {
     win.setBounds(target)
+  }
+
+  // Push the new pill center to the rainbow so dispersion tracks the move.
+  if (mode !== 'auth') {
+    pushOriginToRainbow(target)
   }
 
   if (isFromAuth) {
