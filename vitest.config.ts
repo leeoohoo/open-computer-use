@@ -10,8 +10,25 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    include: ["tests/**/*.test.ts"],
-    exclude: ["node_modules", "electron", ".next", "backend"],
+    // Frontend (Next.js) test surface — TypeScript only, anywhere under tests/.
+    include: ["tests/**/*.test.{ts,tsx}"],
+    // Explicit exclusions for adjacent test surfaces and non-CI test dirs.
+    // tests/post_deploy/** is the live-environment smoke suite that hits real
+    // AWS / Supabase / Stripe — must NEVER run in unit-test contexts. Even
+    // though it has only .py files today, this guards against accidental
+    // .test.ts files being added there in the future.
+    exclude: [
+      "node_modules/**",
+      "electron/**",          // electron has its own vitest config
+      "backend/**",           // backend uses pytest
+      ".next/**",
+      "out/**",
+      "dist/**",
+      "coverage/**",
+      "tests/post_deploy/**", // live-environment smoke tests — run separately
+      "OSWorld/**",           // upstream benchmark; not part of CI
+      "docker/**",            // docker image build-time tests
+    ],
     testTimeout: 15000,
     setupFiles: ["tests/setup.ts"],
     coverage: {
