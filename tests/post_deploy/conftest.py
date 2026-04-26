@@ -360,10 +360,27 @@ def assert_status(resp, expected: int | tuple[int, ...]):
     httpx's default `resp.raise_for_status()` only tells you the code;
     post-deploy debugging usually needs the body to spot things like a
     Cloudflare challenge page or a FastAPI error envelope.
+
+    Streaming-safe: when the response was opened with `http.stream(...)`,
+    `resp.text` raises `httpx.ResponseNotRead`.  We try to read whatever
+    the server has already buffered; if even that fails we fall back to
+    a placeholder.  Without this guard, the assertion's diagnostic step
+    masks the real failure with a secondary `ResponseNotRead` exception
+    (this hit `test_08_chat_post_via_cloudflare_sse_first_frame` and
+    `test_09_chat_post_via_direct_backend_sse_first_frame`).
     """
     exp = (expected,) if isinstance(expected, int) else expected
     if resp.status_code not in exp:
-        body = resp.text[:500] if resp.text else "<empty>"
+        try:
+            body = resp.text[:500] if resp.text else "<empty>"
+        except Exception:
+            # ResponseNotRead from streaming, or any encoding edge case.
+            try:
+                # Try to read whatever is buffered for streaming responses.
+                resp.read()
+                body = resp.text[:500] if resp.text else "<empty>"
+            except Exception:
+                body = "<streaming response — body could not be read>"
         raise AssertionError(
             f"Expected HTTP {exp}, got {resp.status_code} from "
             f"{resp.request.method} {resp.request.url}\nBody: {body}"
