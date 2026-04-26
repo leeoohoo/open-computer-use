@@ -63,12 +63,43 @@ let savedOpacityBeforeScreenshot = 1
 let intendedOpacity = 1  // The user's actual desired opacity (not mid-fade)
 let screenshotFadeTimer: ReturnType<typeof setInterval> | null = null
 
+/**
+ * True while WE are mutating the window's bounds programmatically
+ * (mode-change setBounds, animateBounds frames, etc.). The 'moved' /
+ * 'resize' event handlers check this and skip the savedPosition /
+ * savedExpandedSize update when set — otherwise our own animation
+ * frames overwrite the user's true position with a mid-animation
+ * snapshot, and the *next* mode change (e.g. auto-expand on stream
+ * end firing while auto-collapse is still animating) computes its
+ * target from the corrupted snapshot and lands off-center.
+ */
+let isProgrammaticBoundsUpdate = false
+
+/** Programmatic setBounds wrapper that suppresses the 'moved'/'resize'
+ *  event handlers' state updates. Use this anywhere we set bounds
+ *  ourselves rather than the user dragging/resizing. */
+function setBoundsProgrammatic(win: BrowserWindow, bounds: Electron.Rectangle): void {
+  isProgrammaticBoundsUpdate = true
+  try {
+    win.setBounds(bounds)
+  } finally {
+    // Reset on next tick so the synchronous 'resize'/'moved' that fires
+    // immediately after setBounds (Windows/macOS) is still suppressed.
+    setImmediate(() => { isProgrammaticBoundsUpdate = false })
+  }
+}
+
 /** Smoothly animate window bounds from current to target. */
 function animateBounds(win: BrowserWindow, target: Electron.Rectangle): void {
   if (animTimer) {
     clearInterval(animTimer)
     animTimer = null
   }
+
+  // Set the guard IMMEDIATELY — the OS may fire 'moved'/'resize' events
+  // before our first interval frame runs (10ms gap), and those still
+  // need to be suppressed so they don't pollute savedPosition.
+  isProgrammaticBoundsUpdate = true
 
   const start = win.getBounds()
   const startTime = Date.now()
@@ -77,6 +108,7 @@ function animateBounds(win: BrowserWindow, target: Electron.Rectangle): void {
     if (win.isDestroyed()) {
       clearInterval(animTimer!)
       animTimer = null
+      isProgrammaticBoundsUpdate = false
       return
     }
 
@@ -84,6 +116,8 @@ function animateBounds(win: BrowserWindow, target: Electron.Rectangle): void {
     const t = Math.min(elapsed / ANIM_DURATION, 1)
     const e = easeOutQuint(t)
 
+    // Re-assert each frame in case some other code path has flipped it.
+    isProgrammaticBoundsUpdate = true
     win.setBounds({
       x: Math.round(start.x + (target.x - start.x) * e),
       y: Math.round(start.y + (target.y - start.y) * e),
@@ -94,6 +128,9 @@ function animateBounds(win: BrowserWindow, target: Electron.Rectangle): void {
     if (t >= 1) {
       clearInterval(animTimer!)
       animTimer = null
+      // Reset on next tick so the final 'moved'/'resize' fired
+      // synchronously by setBounds is still suppressed.
+      setImmediate(() => { isProgrammaticBoundsUpdate = false })
     }
   }, ANIM_INTERVAL)
 }
@@ -159,8 +196,12 @@ export function setMainWindow(win: BrowserWindow): void {
     win.setContentProtection(true)
   }
 
-  // Track position when the user drags the overlay
+  // Track position when the user drags the overlay. Skip events fired
+  // by our own animation/setBounds (guarded via isProgrammaticBoundsUpdate)
+  // — otherwise mid-animation snapshots overwrite the user's real
+  // position and corrupt the next mode-change target calculation.
   win.on('moved', () => {
+    if (isProgrammaticBoundsUpdate) return
     if (currentMode !== 'auth') {
       const [x, y] = win.getPosition()
       savedPosition = { x, y }
@@ -169,8 +210,11 @@ export function setMainWindow(win: BrowserWindow): void {
     }
   })
 
-  // Track size when the user resizes in expanded mode
+  // Track size when the user resizes in expanded mode. Same guard —
+  // animation frames trigger 'resize' too and would otherwise constantly
+  // overwrite savedExpandedSize with mid-animation values.
   win.on('resize', () => {
+    if (isProgrammaticBoundsUpdate) return
     if (currentMode === 'expanded' && !win.isDestroyed()) {
       const [w, h] = win.getSize()
       savedExpandedSize = { width: w, height: h }
@@ -303,7 +347,7 @@ export function setWindowMode(mode: WindowMode): void {
   if (isOverlaySwitch) {
     animateBounds(win, target)
   } else {
-    win.setBounds(target)
+    setBoundsProgrammatic(win, target)
   }
 
   // Push the new pill center to the rainbow so dispersion tracks the move.

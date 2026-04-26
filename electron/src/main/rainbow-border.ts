@@ -1,4 +1,4 @@
-import { BrowserWindow, screen } from 'electron'
+import { BrowserWindow } from 'electron'
 import { contentProtectionReliable, getMainWindow } from './window-manager'
 import { getActiveDisplay } from './display-manager'
 

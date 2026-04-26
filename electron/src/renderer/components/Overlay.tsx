@@ -625,37 +625,53 @@ export function Overlay() {
   // Auto-expand on approval
   React.useEffect(() => { if (pendingApprovals.length > 0 && !isExpanded) toggleExpanded() }, [pendingApprovals.length])
 
-  // Auto-collapse on stream START + auto-restore on stream END.
+  // ─── Auto-collapse on stream START + auto-restore on stream END ───
   //
-  //   stream START (false→true edge):
-  //     - Save whether the user was in expanded mode (`wasExpandedAtStart`)
-  //     - If expanded → collapse to pill so the ticker becomes the focus
-  //     - Reset the user-stopped flag (fresh task)
+  // Three refs drive the state machine:
   //
-  //   stream END (true→false edge):
-  //     - If user clicked Stop → ALWAYS expand back so they can see what
-  //       happened and decide what to do next (the agent may have
-  //       partially completed something they want to react to)
-  //     - Else if they started in expanded and we auto-collapsed them,
-  //       restore back to expanded. Seamless return to where they started.
-  //     - Else (started in compact, finished naturally) → leave compact.
-  //     - In all cases, only restore when mode is currently compact —
-  //       respect any manual re-expand the user did mid-stream.
+  //   wasExpandedAtStartRef — were they expanded when this stream began?
+  //   userStoppedRef         — did they click Stop themselves?
+  //   userToggledDuringStreamRef — did they manually toggle mode mid-task?
   //
-  // We capture `wasStreaming` once at the top of the effect so even an
-  // instant-fail stream (true→false in the same render cycle) reliably
-  // detects both edges via the snapshot rather than the ref.
+  // Decision tree at stream END (true→false edge), given mode === 'compact':
+  //
+  //   stoppedByUser → expand. They asked us to abort; show them the panel
+  //                   so they can react regardless of any prior toggling.
+  //   wasExpanded
+  //     && !userToggled → expand. Started expanded, didn't manually
+  //                       override mid-stream → restore where they started.
+  //   else            → leave compact. They started compact, OR they
+  //                       manually toggled to compact during the stream.
+  //                       Either way, respect their last choice.
+  //
+  // The `userToggled` flag is set by `userToggleExpand()` (defined below),
+  // which wraps every user-initiated mode toggle. The system-driven
+  // approval auto-expand and the auto-collapse/restore effect itself use
+  // `setMode`/`toggleExpanded` directly so they don't pollute the flag.
+  //
+  // `wasStreaming` is captured at the top of the effect once so an
+  // instant-fail stream (true→false in the same render cycle) still
+  // reliably hits both edges via the snapshot rather than the ref.
   const prevStreamingRef = React.useRef(false)
   const wasExpandedAtStartRef = React.useRef(false)
   const userStoppedRef = React.useRef(false)
+  const userToggledDuringStreamRef = React.useRef(false)
   const { setMode } = useWindowStore()
 
-  // Wraps handleStop with a flag set so the auto-restore effect can tell
-  // a user-initiated stop apart from a natural stream completion.
+  // Wraps handleStop so the END branch can tell a user-initiated stop
+  // apart from a natural stream completion.
   const stopTask = React.useCallback(() => {
     userStoppedRef.current = true
     handleStop()
   }, [handleStop])
+
+  // Wraps toggleExpanded so user-initiated mode toggles during a stream
+  // mark the userToggled flag — preventing the END branch from overriding
+  // the user's last manual choice on a natural completion.
+  const userToggleExpand = React.useCallback(() => {
+    if (isStreaming) userToggledDuringStreamRef.current = true
+    toggleExpanded()
+  }, [isStreaming, toggleExpanded])
 
   React.useEffect(() => {
     const wasStreaming = prevStreamingRef.current
@@ -664,16 +680,29 @@ export function Overlay() {
       // Stream START
       wasExpandedAtStartRef.current = mode === 'expanded'
       userStoppedRef.current = false
+      userToggledDuringStreamRef.current = false
       if (mode === 'expanded') setMode('compact')
     } else if (!isStreaming && wasStreaming) {
-      // Stream END — decide whether to auto-expand back
+      // Stream END
       const stoppedByUser = userStoppedRef.current
       const wasExpanded = wasExpandedAtStartRef.current
-      if (mode === 'compact' && (stoppedByUser || wasExpanded)) {
-        setMode('expanded')
+      const userToggled = userToggledDuringStreamRef.current
+
+      if (mode === 'compact') {
+        if (stoppedByUser) {
+          // User-initiated stop ALWAYS expands so they see what happened
+          setMode('expanded')
+        } else if (wasExpanded && !userToggled) {
+          // Natural end + we auto-collapsed at start + user didn't
+          // manually override mid-stream → restore to expanded
+          setMode('expanded')
+        }
+        // else: stayed in compact intentionally — respect their choice
       }
+
       wasExpandedAtStartRef.current = false
       userStoppedRef.current = false
+      userToggledDuringStreamRef.current = false
     }
 
     prevStreamingRef.current = isStreaming
@@ -747,12 +776,12 @@ export function Overlay() {
     if (!canSend(input)) return
     handleSubmit(input, attachedFiles.length > 0 ? attachedFiles : undefined)
     setInput(''); setAttachedFiles([])
-    if (!isExpanded) toggleExpanded()
+    if (!isExpanded) userToggleExpand()
     if (page !== 'chat') setPage('chat')
   }
   const onKeyDown = (e: React.KeyboardEvent) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); onSubmit() } }
 
-  const goToPage = (p: Page) => { if (!isExpanded) toggleExpanded(); setPage(p) }
+  const goToPage = (p: Page) => { if (!isExpanded) userToggleExpand(); setPage(p) }
 
   return (
     <div
@@ -858,7 +887,7 @@ export function Overlay() {
 
           {/* Display selector — compact: expand overlay and open dropdown */}
           {!isExpanded && useDisplayStore.getState().hasMultiple && (
-            <button onClick={() => { setDisplayAutoOpen(true); toggleExpanded(); setPage('chat') }}
+            <button onClick={() => { setDisplayAutoOpen(true); userToggleExpand(); setPage('chat') }}
               className="press-scale p-1.5 rounded-full hover:bg-white/[0.06] text-neutral-400 hover:text-neutral-100"
               title="Select display">
               <MonitorIcon size={13} />
@@ -866,7 +895,7 @@ export function Overlay() {
           )}
 
           {/* Expand / Collapse — chevron rotates instead of swapping */}
-          <button onClick={() => toggleExpanded()} className="press-scale p-1.5 rounded-full hover:bg-white/[0.06] text-neutral-400 hover:text-neutral-100" title={isExpanded ? 'Collapse' : 'Expand'}>
+          <button onClick={() => userToggleExpand()} className="press-scale p-1.5 rounded-full hover:bg-white/[0.06] text-neutral-400 hover:text-neutral-100" title={isExpanded ? 'Collapse' : 'Expand'}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
               style={{ transition: 'transform 320ms cubic-bezier(0.22, 1, 0.36, 1)', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0)' }}>
               <polyline points="6 9 12 15 18 9" />
