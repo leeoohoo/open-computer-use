@@ -533,13 +533,12 @@ export default function LoginPage() {
       }
     } catch (err: unknown) {
       const message = (err as Error).message
-      if (message?.includes("Email not confirmed")) {
-        setError(te("confirmEmail"))
-      } else if (message?.includes("Invalid login credentials")) {
-        setError(te("invalidCredentials"))
-      } else {
-        setError(message || te("signInFailed"))
-      }
+      // SECURITY (P1-05): Do NOT differentiate "Email not confirmed" vs
+      // "Invalid login credentials" — both leak account existence to a
+      // network-observer. Show a single generic error to the user; log the
+      // underlying reason locally for operator diagnostics only.
+      console.error("[auth] Sign-in failed:", message)
+      setError(te("invalidCredentials"))
     } finally {
       setIsLoading(false)
     }
@@ -619,15 +618,17 @@ export default function LoginPage() {
 
       await signInWithMagicLink(supabase, email)
       trackSignIn("magic_link")
+      // SECURITY (P1-02): Always show the same "check your email" success
+      // toast — the lib/api wrapper swallows the "Signups not allowed for
+      // otp" error so the existing-user and unknown-user paths are
+      // indistinguishable client-side.
       setSuccess(ts("checkEmailMagicLink"))
     } catch (err: unknown) {
+      // Genuine errors only at this point (network, throttling, malformed
+      // email). The account-enumeration error has already been swallowed
+      // upstream in lib/api.signInWithMagicLink.
       const message = (err as Error).message
-      if (message?.includes("Signups not allowed for otp")) {
-        setAuthView("sign-up")
-        setError(te("noAccountFound"))
-      } else {
-        setError(message || te("magicLinkFailed"))
-      }
+      setError(message || te("magicLinkFailed"))
     } finally {
       setIsLoading(false)
     }

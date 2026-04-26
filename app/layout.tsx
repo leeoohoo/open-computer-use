@@ -17,7 +17,7 @@ import { LayoutClient } from "./layout-client"
 import { PostHogProvider } from "@/lib/posthog/provider"
 import { PostHogPageView } from "@/lib/posthog/page-view"
 import { LocalizedSEOSchemas } from "./seo-schemas"
-import { NextIntlClientProvider } from "next-intl"
+import { IntlClientProvider } from "./intl-client-provider"
 import { getLocale, getMessages, getTranslations } from "next-intl/server"
 import { locales, rtlLocales, type Locale } from "@/i18n/config"
 import { getHreflangAlternates } from "@/lib/seo"
@@ -359,7 +359,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <IntlClientProvider locale={locale} messages={messages as Record<string, unknown>}>
           <PostHogProvider>
             <PostHogPageView />
             <TanstackQueryProvider>
@@ -392,7 +392,7 @@ export default async function RootLayout({
               </UserProvider>
             </TanstackQueryProvider>
           </PostHogProvider>
-        </NextIntlClientProvider>
+        </IntlClientProvider>
       </body>
     </html>
   )
