@@ -12,7 +12,9 @@
     "recommended": "Recomandat",
     "month": "luna",
     "creditsPerMonth": "{count} credite/luna",
-    "agentsInParallel": "{count} agenti in paralel"
+    "agentsInParallel": "{count} agenti in paralel",
+    "whatsIncluded": "Ce este inclus",
+    "hideDetails": "Ascunde detaliile"
   },
   "header": {
     "useCases": "Cazuri de utilizare",
@@ -72,7 +74,8 @@
       "webScraping": "Web Scraping",
       "jobApplications": "Aplicatii pentru locuri de munca",
       "demosResults": "Demo-uri si rezultate",
-      "guide": "Ghid"
+      "guide": "Ghid",
+      "discover": "Comunitate"
     },
     "blogStats": {
       "allPosts": "{stat} articole publicate saptamanal",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} pagini per sesiune",
       "jobApplications": "{stat} aplicatii per sesiune",
       "demosResults": "{stat} studii de caz reale",
-      "guide": "{stat} ghiduri de utilizare"
-    }
+      "guide": "{stat} ghiduri de utilizare",
+      "discover": "Vezi cum îl folosesc oamenii"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "Agentul Computer-Use #1 · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Contact",
       "privacy": "Confidentialitate",
       "terms": "Termeni"
-    }
+    },
+    "status": "Toate sistemele funcționează"
   },
   "languageSwitcher": {
     "label": "Limba"

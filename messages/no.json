@@ -12,7 +12,9 @@
     "recommended": "Anbefalt",
     "month": "maned",
     "creditsPerMonth": "{count} kreditter/mnd",
-    "agentsInParallel": "{count} agenter parallelt"
+    "agentsInParallel": "{count} agenter parallelt",
+    "whatsIncluded": "Hva er inkludert",
+    "hideDetails": "Skjul detaljer"
   },
   "header": {
     "useCases": "Bruksomrader",
@@ -72,7 +74,8 @@
       "webScraping": "Web Scraping",
       "jobApplications": "Jobbsoknader",
       "demosResults": "Demoer og resultater",
-      "guide": "Veiledning"
+      "guide": "Veiledning",
+      "discover": "Fellesskap"
     },
     "blogStats": {
       "allPosts": "{stat} artikler publisert ukentlig",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} sider per okt",
       "jobApplications": "{stat} soknader per okt",
       "demosResults": "{stat} ekte casestudier",
-      "guide": "{stat} bruksomradegjennomganger"
-    }
+      "guide": "{stat} bruksomradegjennomganger",
+      "discover": "Se hvordan folk bruker det"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Kontakt",
       "privacy": "Personvern",
       "terms": "Vilkar"
-    }
+    },
+    "status": "Alle systemer er operative"
   },
   "languageSwitcher": {
     "label": "Sprak"

@@ -12,7 +12,9 @@
     "recommended": "Aanbevolen",
     "month": "maand",
     "creditsPerMonth": "{count} credits/maand",
-    "agentsInParallel": "{count} agents parallel"
+    "agentsInParallel": "{count} agents parallel",
+    "whatsIncluded": "Wat is inbegrepen",
+    "hideDetails": "Details verbergen"
   },
   "header": {
     "useCases": "Toepassingen",
@@ -72,7 +74,8 @@
       "webScraping": "Web scraping",
       "jobApplications": "Sollicitaties",
       "demosResults": "Demo's en resultaten",
-      "guide": "Handleiding"
+      "guide": "Handleiding",
+      "discover": "Community"
     },
     "blogStats": {
       "allPosts": "{stat} artikelen wekelijks gepubliceerd",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} pagina's per sessie",
       "jobApplications": "{stat} sollicitaties per sessie",
       "demosResults": "{stat} echte casestudies",
-      "guide": "{stat} handleidingen voor toepassingen"
-    }
+      "guide": "{stat} handleidingen voor toepassingen",
+      "discover": "Zie hoe mensen het gebruiken"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Contact",
       "privacy": "Privacy",
       "terms": "Voorwaarden"
-    }
+    },
+    "status": "Alle systemen operationeel"
   },
   "languageSwitcher": {
     "label": "Taal"

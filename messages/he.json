@@ -12,7 +12,9 @@
     "recommended": "מומלץ",
     "month": "חודש",
     "creditsPerMonth": "{count} קרדיטים/חודש",
-    "agentsInParallel": "{count} סוכנים במקביל"
+    "agentsInParallel": "{count} סוכנים במקביל",
+    "whatsIncluded": "מה כלול",
+    "hideDetails": "הסתר פרטים"
   },
   "header": {
     "useCases": "שימושים",
@@ -72,7 +74,8 @@
       "webScraping": "Web scraping",
       "jobApplications": "מועמדויות לעבודה",
       "demosResults": "הדגמות ותוצאות",
-      "guide": "מדריך"
+      "guide": "מדריך",
+      "discover": "קהילה"
     },
     "blogStats": {
       "allPosts": "{stat} מאמרים מתפרסמים שבועית",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} דפים להפעלה",
       "jobApplications": "{stat} מועמדויות להפעלה",
       "demosResults": "{stat} מקרי בוחן אמיתיים",
-      "guide": "{stat} הדרכות לשימושים"
-    }
+      "guide": "{stat} הדרכות לשימושים",
+      "discover": "ראה איך אנשים משתמשים בזה"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "צור קשר",
       "privacy": "פרטיות",
       "terms": "תנאים"
-    }
+    },
+    "status": "כל המערכות פועלות"
   },
   "languageSwitcher": {
     "label": "שפה"

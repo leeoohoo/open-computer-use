@@ -74,7 +74,8 @@
       "webScraping": "Web Scraping",
       "jobApplications": "Mga Aplikasyon sa Trabaho",
       "demosResults": "Mga Demo at Resulta",
-      "guide": "Gabay"
+      "guide": "Gabay",
+      "discover": "Komunidad"
     },
     "blogStats": {
       "allPosts": "{stat} artikulo na ini-publish lingguhan",
@@ -84,8 +85,10 @@
       "webScraping": "{stat} pages bawat session",
       "jobApplications": "{stat} aplikasyon bawat session",
       "demosResults": "{stat} totoong case studies",
-      "guide": "{stat} use case walkthroughs"
-    }
+      "guide": "{stat} use case walkthroughs",
+      "discover": "Tingnan kung paano ito ginagamit"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
@@ -431,7 +434,8 @@
       "contact": "Makipag-ugnayan",
       "privacy": "Privacy",
       "terms": "Mga Tuntunin"
-    }
+    },
+    "status": "Gumagana ang lahat ng sistema"
   },
   "languageSwitcher": {
     "label": "Wika"

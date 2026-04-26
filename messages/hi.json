@@ -12,7 +12,9 @@
     "recommended": "अनुशंसित",
     "month": "महीना",
     "creditsPerMonth": "{count} क्रेडिट/माह",
-    "agentsInParallel": "{count} एजेंट समानांतर में"
+    "agentsInParallel": "{count} एजेंट समानांतर में",
+    "whatsIncluded": "क्या शामिल है",
+    "hideDetails": "विवरण छिपाएं"
   },
   "header": {
     "useCases": "उपयोग के मामले",
@@ -72,7 +74,8 @@
       "webScraping": "वेब स्क्रैपिंग",
       "jobApplications": "नौकरी आवेदन",
       "demosResults": "डेमो और परिणाम",
-      "guide": "गाइड"
+      "guide": "गाइड",
+      "discover": "समुदाय"
     },
     "blogStats": {
       "allPosts": "{stat} लेख साप्ताहिक प्रकाशित",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} पेज प्रति सत्र",
       "jobApplications": "{stat} आवेदन प्रति सत्र",
       "demosResults": "{stat} वास्तविक केस स्टडी",
-      "guide": "{stat} उपयोग केस वॉकथ्रू"
-    }
+      "guide": "{stat} उपयोग केस वॉकथ्रू",
+      "discover": "देखें लोग इसका उपयोग कैसे करते हैं"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 कंप्यूटर-उपयोग एजेंट · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "संपर्क",
       "privacy": "गोपनीयता",
       "terms": "शर्तें"
-    }
+    },
+    "status": "सभी सिस्टम चालू हैं"
   },
   "languageSwitcher": {
     "label": "भाषा"

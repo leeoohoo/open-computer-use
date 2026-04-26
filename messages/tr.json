@@ -12,7 +12,9 @@
     "recommended": "Onerilen",
     "month": "ay",
     "creditsPerMonth": "{count} kredi/ay",
-    "agentsInParallel": "{count} paralel ajan"
+    "agentsInParallel": "{count} paralel ajan",
+    "whatsIncluded": "Neler dahil",
+    "hideDetails": "Ayrıntıları gizle"
   },
   "header": {
     "useCases": "Kullanim Alanlari",
@@ -72,7 +74,8 @@
       "webScraping": "Web Scraping",
       "jobApplications": "Is Basvurulari",
       "demosResults": "Demolar ve Sonuclar",
-      "guide": "Rehber"
+      "guide": "Rehber",
+      "discover": "Topluluk"
     },
     "blogStats": {
       "allPosts": "{stat} makale haftalik yayinlandi",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} sayfa oturum basina",
       "jobApplications": "{stat} basvuru oturum basina",
       "demosResults": "{stat} gercek vaka calismasi",
-      "guide": "{stat} kullanim alani kilavuzu"
-    }
+      "guide": "{stat} kullanim alani kilavuzu",
+      "discover": "İnsanların nasıl kullandığını görün"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use Ajani · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Iletisim",
       "privacy": "Gizlilik",
       "terms": "Sartlar"
-    }
+    },
+    "status": "Tüm sistemler çalışıyor"
   },
   "languageSwitcher": {
     "label": "Dil"

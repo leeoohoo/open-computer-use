@@ -12,7 +12,9 @@
     "recommended": "Anbefalet",
     "month": "måned",
     "creditsPerMonth": "{count} kreditter/md.",
-    "agentsInParallel": "{count} agenter parallelt"
+    "agentsInParallel": "{count} agenter parallelt",
+    "whatsIncluded": "Hvad er inkluderet",
+    "hideDetails": "Skjul detaljer"
   },
   "header": {
     "useCases": "Anvendelser",
@@ -72,7 +74,8 @@
       "webScraping": "Web scraping",
       "jobApplications": "Jobansøgninger",
       "demosResults": "Demoer og resultater",
-      "guide": "Guide"
+      "guide": "Guide",
+      "discover": "Fællesskab"
     },
     "blogStats": {
       "allPosts": "{stat} artikler publiceret ugentligt",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} sider pr. session",
       "jobApplications": "{stat} ansøgninger pr. session",
       "demosResults": "{stat} virkelige casestudier",
-      "guide": "{stat} use case-gennemgange"
-    }
+      "guide": "{stat} use case-gennemgange",
+      "discover": "Se hvordan folk bruger det"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Kontakt",
       "privacy": "Privatliv",
       "terms": "Vilkår"
-    }
+    },
+    "status": "Alle systemer fungerer"
   },
   "languageSwitcher": {
     "label": "Sprog"

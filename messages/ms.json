@@ -12,7 +12,9 @@
     "recommended": "Disyorkan",
     "month": "bulan",
     "creditsPerMonth": "{count} kredit/bln",
-    "agentsInParallel": "{count} agen secara selari"
+    "agentsInParallel": "{count} agen secara selari",
+    "whatsIncluded": "Apa yang termasuk",
+    "hideDetails": "Sembunyikan butiran"
   },
   "header": {
     "useCases": "Kes Penggunaan",
@@ -72,7 +74,8 @@
       "webScraping": "Web Scraping",
       "jobApplications": "Permohonan Kerja",
       "demosResults": "Demo & Keputusan",
-      "guide": "Panduan"
+      "guide": "Panduan",
+      "discover": "Komuniti"
     },
     "blogStats": {
       "allPosts": "{stat} artikel diterbitkan setiap minggu",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} halaman setiap sesi",
       "jobApplications": "{stat} permohonan setiap sesi",
       "demosResults": "{stat} kajian kes sebenar",
-      "guide": "{stat} panduan kes penggunaan"
-    }
+      "guide": "{stat} panduan kes penggunaan",
+      "discover": "Lihat bagaimana orang menggunakannya"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "Agen Computer-Use #1 · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Hubungi",
       "privacy": "Privasi",
       "terms": "Terma"
-    }
+    },
+    "status": "Semua sistem berfungsi"
   },
   "languageSwitcher": {
     "label": "Bahasa"

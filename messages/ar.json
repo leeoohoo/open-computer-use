@@ -12,7 +12,9 @@
     "recommended": "موصى به",
     "month": "شهر",
     "creditsPerMonth": "{count} رصيد/شهر",
-    "agentsInParallel": "{count} وكلاء بالتوازي"
+    "agentsInParallel": "{count} وكلاء بالتوازي",
+    "whatsIncluded": "ما المتضمن",
+    "hideDetails": "إخفاء التفاصيل"
   },
   "header": {
     "useCases": "حالات الاستخدام",
@@ -72,7 +74,8 @@
       "webScraping": "استخراج بيانات الويب",
       "jobApplications": "طلبات التوظيف",
       "demosResults": "العروض والنتائج",
-      "guide": "دليل"
+      "guide": "دليل",
+      "discover": "المجتمع"
     },
     "blogStats": {
       "allPosts": "{stat} مقالة تُنشر أسبوعياً",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} صفحة لكل جلسة",
       "jobApplications": "{stat} طلب لكل جلسة",
       "demosResults": "{stat} دراسة حالة حقيقية",
-      "guide": "{stat} شرح لحالات الاستخدام"
-    }
+      "guide": "{stat} شرح لحالات الاستخدام",
+      "discover": "شاهد كيف يستخدمه الناس"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "الوكيل رقم 1 لاستخدام الحاسوب · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "اتصل بنا",
       "privacy": "الخصوصية",
       "terms": "الشروط"
-    }
+    },
+    "status": "جميع الأنظمة تعمل"
   },
   "languageSwitcher": {
     "label": "اللغة"

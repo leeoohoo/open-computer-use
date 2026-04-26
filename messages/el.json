@@ -12,7 +12,9 @@
     "recommended": "Προτεινόμενο",
     "month": "μήνα",
     "creditsPerMonth": "{count} πιστώσεις/μήνα",
-    "agentsInParallel": "{count} agents παράλληλα"
+    "agentsInParallel": "{count} agents παράλληλα",
+    "whatsIncluded": "Τι περιλαμβάνεται",
+    "hideDetails": "Απόκρυψη λεπτομερειών"
   },
   "header": {
     "useCases": "Περιπτώσεις χρήσης",
@@ -72,7 +74,8 @@
       "webScraping": "Web scraping",
       "jobApplications": "Αιτήσεις εργασίας",
       "demosResults": "Επιδείξεις και αποτελέσματα",
-      "guide": "Οδηγός"
+      "guide": "Οδηγός",
+      "discover": "Κοινότητα"
     },
     "blogStats": {
       "allPosts": "{stat} άρθρα δημοσιεύονται εβδομαδιαία",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} σελίδες ανά συνεδρία",
       "jobApplications": "{stat} αιτήσεις ανά συνεδρία",
       "demosResults": "{stat} πραγματικές μελέτες περιπτώσεων",
-      "guide": "{stat} αναλυτικοί οδηγοί χρήσης"
-    }
+      "guide": "{stat} αναλυτικοί οδηγοί χρήσης",
+      "discover": "Δείτε πώς το χρησιμοποιούν"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Επικοινωνία",
       "privacy": "Απόρρητο",
       "terms": "Όροι"
-    }
+    },
+    "status": "Όλα τα συστήματα λειτουργούν"
   },
   "languageSwitcher": {
     "label": "Γλώσσα"

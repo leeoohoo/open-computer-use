@@ -12,7 +12,9 @@
     "recommended": "Suositeltu",
     "month": "kuukausi",
     "creditsPerMonth": "{count} krediittiä/kk",
-    "agentsInParallel": "{count} agenttia rinnakkain"
+    "agentsInParallel": "{count} agenttia rinnakkain",
+    "whatsIncluded": "Mitä sisältyy",
+    "hideDetails": "Piilota tiedot"
   },
   "header": {
     "useCases": "Käyttötapaukset",
@@ -72,7 +74,8 @@
       "webScraping": "Web scraping",
       "jobApplications": "Työhakemukset",
       "demosResults": "Demot ja tulokset",
-      "guide": "Opas"
+      "guide": "Opas",
+      "discover": "Yhteisö"
     },
     "blogStats": {
       "allPosts": "{stat} artikkelia julkaistaan viikoittain",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} sivua per istunto",
       "jobApplications": "{stat} hakemusta per istunto",
       "demosResults": "{stat} todellista tapaustutkimusta",
-      "guide": "{stat} käyttötapauskävelyä"
-    }
+      "guide": "{stat} käyttötapauskävelyä",
+      "discover": "Katso miten ihmiset käyttävät sitä"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Yhteystiedot",
       "privacy": "Tietosuoja",
       "terms": "Ehdot"
-    }
+    },
+    "status": "Kaikki järjestelmät toimivat"
   },
   "languageSwitcher": {
     "label": "Kieli"

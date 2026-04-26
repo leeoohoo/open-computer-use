@@ -12,7 +12,9 @@
     "recommended": "추천",
     "month": "월",
     "creditsPerMonth": "월 {count} 크레딧",
-    "agentsInParallel": "{count}개 에이전트 병렬 실행"
+    "agentsInParallel": "{count}개 에이전트 병렬 실행",
+    "whatsIncluded": "포함된 내용",
+    "hideDetails": "세부정보 숨기기"
   },
   "header": {
     "useCases": "활용 사례",
@@ -72,7 +74,8 @@
       "webScraping": "웹 스크래핑",
       "jobApplications": "입사 지원",
       "demosResults": "데모 및 결과",
-      "guide": "가이드"
+      "guide": "가이드",
+      "discover": "커뮤니티"
     },
     "blogStats": {
       "allPosts": "매주 {stat}개 기사 게시",
@@ -82,8 +85,10 @@
       "webScraping": "세션당 {stat}개 페이지",
       "jobApplications": "세션당 {stat}개 지원",
       "demosResults": "{stat}개 실제 사례 연구",
-      "guide": "{stat}개 활용 사례 안내"
-    }
+      "guide": "{stat}개 활용 사례 안내",
+      "discover": "사람들이 어떻게 사용하는지 보기"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 컴퓨터 사용 에이전트 · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "문의",
       "privacy": "개인정보처리방침",
       "terms": "이용약관"
-    }
+    },
+    "status": "모든 시스템 정상 작동 중"
   },
   "languageSwitcher": {
     "label": "언어"

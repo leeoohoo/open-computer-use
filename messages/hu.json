@@ -12,7 +12,9 @@
     "recommended": "Ajánlott",
     "month": "hónap",
     "creditsPerMonth": "{count} kredit/hó",
-    "agentsInParallel": "{count} ügynök párhuzamosan"
+    "agentsInParallel": "{count} ügynök párhuzamosan",
+    "whatsIncluded": "Mit tartalmaz",
+    "hideDetails": "Részletek elrejtése"
   },
   "header": {
     "useCases": "Felhasználási esetek",
@@ -72,7 +74,8 @@
       "webScraping": "Web scraping",
       "jobApplications": "Álláspályázatok",
       "demosResults": "Demók és eredmények",
-      "guide": "Útmutató"
+      "guide": "Útmutató",
+      "discover": "Közösség"
     },
     "blogStats": {
       "allPosts": "{stat} cikk megjelenik hetente",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} oldal munkamenetenként",
       "jobApplications": "{stat} pályázat munkamenetenként",
       "demosResults": "{stat} valós esettanulmány",
-      "guide": "{stat} felhasználási eset bemutató"
-    }
+      "guide": "{stat} felhasználási eset bemutató",
+      "discover": "Nézze meg, hogyan használják"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Kapcsolat",
       "privacy": "Adatvédelem",
       "terms": "Feltételek"
-    }
+    },
+    "status": "Minden rendszer működik"
   },
   "languageSwitcher": {
     "label": "Nyelv"

@@ -12,7 +12,9 @@
     "recommended": "推荐",
     "month": "月",
     "creditsPerMonth": "{count} 积分/月",
-    "agentsInParallel": "{count} 个智能体并行"
+    "agentsInParallel": "{count} 个智能体并行",
+    "whatsIncluded": "包含内容",
+    "hideDetails": "隐藏详情"
   },
   "header": {
     "useCases": "使用场景",
@@ -72,7 +74,8 @@
       "webScraping": "网页抓取",
       "jobApplications": "求职申请",
       "demosResults": "演示与结果",
-      "guide": "指南"
+      "guide": "指南",
+      "discover": "社区"
     },
     "blogStats": {
       "allPosts": "每周发布 {stat} 篇文章",
@@ -82,8 +85,10 @@
       "webScraping": "每次会话处理 {stat} 个页面",
       "jobApplications": "每次会话投递 {stat} 份申请",
       "demosResults": "{stat} 个真实案例研究",
-      "guide": "{stat} 个使用场景教程"
-    }
+      "guide": "{stat} 个使用场景教程",
+      "discover": "看看人们如何使用"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 计算机使用智能体 · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "联系我们",
       "privacy": "隐私政策",
       "terms": "服务条款"
-    }
+    },
+    "status": "所有系统运行正常"
   },
   "languageSwitcher": {
     "label": "语言"

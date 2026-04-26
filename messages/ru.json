@@ -12,7 +12,9 @@
     "recommended": "Рекомендуемый",
     "month": "месяц",
     "creditsPerMonth": "{count} кредитов/мес",
-    "agentsInParallel": "{count} агентов параллельно"
+    "agentsInParallel": "{count} агентов параллельно",
+    "whatsIncluded": "Что включено",
+    "hideDetails": "Скрыть подробности"
   },
   "header": {
     "useCases": "Сценарии использования",
@@ -72,7 +74,8 @@
       "webScraping": "Веб-скрапинг",
       "jobApplications": "Поиск работы",
       "demosResults": "Демо и результаты",
-      "guide": "Руководство"
+      "guide": "Руководство",
+      "discover": "Сообщество"
     },
     "blogStats": {
       "allPosts": "{stat} статей публикуется еженедельно",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} страниц за сессию",
       "jobApplications": "{stat} заявок за сессию",
       "demosResults": "{stat} реальных кейсов",
-      "guide": "{stat} пошаговых руководств"
-    }
+      "guide": "{stat} пошаговых руководств",
+      "discover": "Посмотрите, как люди это используют"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 агент управления компьютером · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Контакты",
       "privacy": "Конфиденциальность",
       "terms": "Условия"
-    }
+    },
+    "status": "Все системы работают"
   },
   "languageSwitcher": {
     "label": "Язык"

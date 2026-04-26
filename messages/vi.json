@@ -12,7 +12,9 @@
     "recommended": "Duoc de xuat",
     "month": "thang",
     "creditsPerMonth": "{count} tin chi/thang",
-    "agentsInParallel": "{count} tac tu song song"
+    "agentsInParallel": "{count} tac tu song song",
+    "whatsIncluded": "Bao gồm những gì",
+    "hideDetails": "Ẩn chi tiết"
   },
   "header": {
     "useCases": "Truong hop su dung",
@@ -72,7 +74,8 @@
       "webScraping": "Web Scraping",
       "jobApplications": "Ung tuyen viec lam",
       "demosResults": "Demo & Ket qua",
-      "guide": "Huong dan"
+      "guide": "Huong dan",
+      "discover": "Cộng đồng"
     },
     "blogStats": {
       "allPosts": "{stat} bai viet duoc xuat ban hang tuan",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} trang moi phien",
       "jobApplications": "{stat} don ung tuyen moi phien",
       "demosResults": "{stat} nghien cuu tinh huong thuc te",
-      "guide": "{stat} huong dan truong hop su dung"
-    }
+      "guide": "{stat} huong dan truong hop su dung",
+      "discover": "Xem mọi người sử dụng như thế nào"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "Tac tu Computer-Use #1 · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Lien he",
       "privacy": "Quyen rieng tu",
       "terms": "Dieu khoan"
-    }
+    },
+    "status": "Tất cả hệ thống đang hoạt động"
   },
   "languageSwitcher": {
     "label": "Ngon ngu"

@@ -12,7 +12,9 @@
     "recommended": "Empfohlen",
     "month": "Monat",
     "creditsPerMonth": "{count} Credits/Monat",
-    "agentsInParallel": "{count} Agenten parallel"
+    "agentsInParallel": "{count} Agenten parallel",
+    "whatsIncluded": "Inbegriffene Leistungen",
+    "hideDetails": "Details ausblenden"
   },
   "header": {
     "useCases": "Anwendungsfälle",
@@ -72,7 +74,8 @@
       "webScraping": "Web-Scraping",
       "jobApplications": "Bewerbungen",
       "demosResults": "Demos & Ergebnisse",
-      "guide": "Anleitung"
+      "guide": "Anleitung",
+      "discover": "Community"
     },
     "blogStats": {
       "allPosts": "{stat} Artikel wöchentlich veröffentlicht",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} Seiten pro Sitzung",
       "jobApplications": "{stat} Bewerbungen pro Sitzung",
       "demosResults": "{stat} echte Fallstudien",
-      "guide": "{stat} Anwendungsbeispiele"
-    }
+      "guide": "{stat} Anwendungsbeispiele",
+      "discover": "Sehen Sie, wie es genutzt wird"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use-Agent · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Kontakt",
       "privacy": "Datenschutz",
       "terms": "Nutzungsbedingungen"
-    }
+    },
+    "status": "Alle Systeme betriebsbereit"
   },
   "languageSwitcher": {
     "label": "Sprache"

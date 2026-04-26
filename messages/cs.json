@@ -12,7 +12,9 @@
     "recommended": "Doporučeno",
     "month": "měsíc",
     "creditsPerMonth": "{count} kreditů/měs.",
-    "agentsInParallel": "{count} agentů paralelně"
+    "agentsInParallel": "{count} agentů paralelně",
+    "whatsIncluded": "Co je zahrnuto",
+    "hideDetails": "Skrýt podrobnosti"
   },
   "header": {
     "useCases": "Případy užití",
@@ -72,7 +74,8 @@
       "webScraping": "Web scraping",
       "jobApplications": "Žádosti o práci",
       "demosResults": "Ukázky a výsledky",
-      "guide": "Průvodce"
+      "guide": "Průvodce",
+      "discover": "Komunita"
     },
     "blogStats": {
       "allPosts": "{stat} článků publikováno týdně",
@@ -82,8 +85,10 @@
       "webScraping": "{stat} stránek za relaci",
       "jobApplications": "{stat} žádostí za relaci",
       "demosResults": "{stat} skutečných případových studií",
-      "guide": "{stat} návodů pro případy užití"
-    }
+      "guide": "{stat} návodů pro případy užití",
+      "discover": "Podívejte se, jak ji lidé používají"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 Computer-Use Agent · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "Kontakt",
       "privacy": "Soukromí",
       "terms": "Podmínky"
-    }
+    },
+    "status": "Všechny systémy v provozu"
   },
   "languageSwitcher": {
     "label": "Jazyk"

@@ -12,7 +12,9 @@
     "recommended": "おすすめ",
     "month": "月",
     "creditsPerMonth": "{count} クレジット/月",
-    "agentsInParallel": "{count} エージェント並列実行"
+    "agentsInParallel": "{count} エージェント並列実行",
+    "whatsIncluded": "含まれる内容",
+    "hideDetails": "詳細を隠す"
   },
   "header": {
     "useCases": "ユースケース",
@@ -72,7 +74,8 @@
       "webScraping": "Webスクレイピング",
       "jobApplications": "求人応募",
       "demosResults": "デモと結果",
-      "guide": "ガイド"
+      "guide": "ガイド",
+      "discover": "コミュニティ"
     },
     "blogStats": {
       "allPosts": "{stat} 記事を毎週公開",
@@ -82,8 +85,10 @@
       "webScraping": "セッションあたり{stat}ページ",
       "jobApplications": "セッションあたり{stat}件の応募",
       "demosResults": "{stat} 件の実際のケーススタディ",
-      "guide": "{stat} 件のユースケースウォークスルー"
-    }
+      "guide": "{stat} 件のユースケースウォークスルー",
+      "discover": "皆さんの使い方を見る"
+    },
+    "api": "API"
   },
   "hero": {
     "badge": "#1 コンピュータ操作エージェント · {score} OSWorld",
@@ -429,7 +434,8 @@
       "contact": "お問い合わせ",
       "privacy": "プライバシー",
       "terms": "利用規約"
-    }
+    },
+    "status": "すべてのシステムは正常です"
   },
   "languageSwitcher": {
     "label": "言語"
