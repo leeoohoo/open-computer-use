@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 // HeroParallaxChat removed — demo section is now static
-import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, ChevronDown, Star, ArrowRight, Bot, Brain, Rocket, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download, CalendarCheck, RefreshCw, GitFork } from "lucide-react"
+import { Check, Zap, Shield, Globe, Code, Users, Sparkles, ChevronRight, Star, ArrowRight, Bot, Brain, Rocket, X, MessageSquare, FileText, Search, Terminal, Cloud, Cpu, Monitor, HardDrive, Clock, Infinity, Play, Download, CalendarCheck, RefreshCw, GitFork } from "lucide-react"
 import { CoastyIcon } from "@/components/icons/coasty"
 import Link from "next/link"
 import { useState, useEffect, useCallback, useRef } from "react"
@@ -22,7 +22,6 @@ import {
   LandingSectionTopGlow,
 } from "./section-shell"
 import dynamic from "next/dynamic"
-import { useLiteMode } from "@/lib/hooks/use-lite-mode"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { Caveat } from "next/font/google"
@@ -77,7 +76,6 @@ export function LandingPage() {
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { resolvedTheme } = useTheme()
-  const lite = useLiteMode()
   const t = useTranslations()
   const tc = useTranslations("common")
   // The cursor murmuration self-gates by device tier — see
@@ -134,69 +132,107 @@ export function LandingPage() {
       }
 
   // ── Section progress tracking ──
-  // Continuous scroll progress through the guided sections, used by the
-  // slim top progress bar (no more sticky-card stacking, no per-frame
-  // transforms — sections flow naturally and the indicator is purely
-  // informational).
+  // Continuous scroll progress through the guided sections. Range is [0, N]
+  // for N sections: 0 = before the first section, k = at the top of section k,
+  // N = at the bottom of the last section. The progress bar fill maps to
+  // `progress / N`; the active dot is `floor(progress)` clamped to [0, N-1].
   const [scrollProgress, setScrollProgress] = useState(0)
-  const activeLandingSection = Math.round(scrollProgress)
-
-  // Pricing card: which plan has "What's included" expanded. Null = all collapsed.
-  const [expandedPlan, setExpandedPlan] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!mounted) return
     const sectionEls = LANDING_NAV_SECTIONS
       .map(s => document.getElementById(s.id))
       .filter(Boolean) as HTMLElement[]
     if (!sectionEls.length) return
 
-    let sectionTops: number[] = []
+    // sectionRanges[i] = { top, bottom } for section i in document coords.
+    // Re-measured on resize and on any section size change (ResizeObserver).
+    let sectionRanges: { top: number; bottom: number }[] = []
 
-    const measurePositions = () => {
-      sectionTops = sectionEls.map(el => {
-        // Sections are now position:static — getBoundingClientRect + scrollY
-        // gives us a stable document-relative top with no DOM mutation.
-        return el.getBoundingClientRect().top + window.scrollY
+    const measure = () => {
+      sectionRanges = sectionEls.map(el => {
+        const r = el.getBoundingClientRect()
+        return { top: r.top + window.scrollY, bottom: r.bottom + window.scrollY }
       })
     }
 
-    const onScroll = () => {
-      const trigger = window.scrollY + window.innerHeight * 0.35
-      let progress = 0
-      for (let i = sectionTops.length - 1; i >= 0; i--) {
-        if (sectionTops[i] <= trigger) {
-          if (i < sectionTops.length - 1) {
-            const span = sectionTops[i + 1] - sectionTops[i]
-            const frac = span > 0 ? Math.min(1, (trigger - sectionTops[i]) / span) : 0
-            progress = i + frac
-          } else {
-            progress = i
-          }
-          break
+    let rafId = 0
+    const update = () => {
+      rafId = 0
+      if (!sectionRanges.length) return
+
+      // Trigger point at 40% down the viewport — the eye fixates here while
+      // scrolling, so the active dot transitions where it visually feels right.
+      const trigger = window.scrollY + window.innerHeight * 0.4
+      const N = sectionRanges.length
+      let progress: number
+
+      if (trigger < sectionRanges[0].top) {
+        // Before the first section.
+        progress = 0
+      } else if (trigger >= sectionRanges[N - 1].top) {
+        // Inside or past the last section. Linearly continue from N-1 to N
+        // using the section's own height, so the bar keeps filling through
+        // the final section and saturates at 100% on exit.
+        const last = sectionRanges[N - 1]
+        const span = Math.max(1, last.bottom - last.top)
+        const frac = Math.min(1, Math.max(0, (trigger - last.top) / span))
+        progress = (N - 1) + frac
+      } else {
+        // Find which adjacent section pair the trigger sits between.
+        let i = 0
+        for (; i < N - 1; i++) {
+          if (trigger < sectionRanges[i + 1].top) break
         }
+        const span = Math.max(1, sectionRanges[i + 1].top - sectionRanges[i].top)
+        const frac = (trigger - sectionRanges[i].top) / span
+        progress = i + Math.min(1, Math.max(0, frac))
       }
+
       setScrollProgress(progress)
     }
 
-    const onResize = () => {
-      measurePositions()
-      onScroll()
+    const onScroll = () => {
+      // Coalesce scroll bursts into one rAF — prevents redundant React state
+      // updates during smooth-scroll-into-view animations and momentum scroll.
+      if (rafId) return
+      rafId = requestAnimationFrame(update)
     }
 
-    measurePositions()
-    onScroll()
+    const onResize = () => {
+      measure()
+      update()
+    }
+
+    // Section heights change for many reasons (image/font loading, framer
+    // entry animations, expanded states). ResizeObserver keeps the cache in
+    // sync without us having to predict every cause.
+    const ro = new ResizeObserver(() => {
+      measure()
+      update()
+    })
+    for (const el of sectionEls) ro.observe(el)
+    // Document height also changes when content above the sections grows.
+    if (document.documentElement) ro.observe(document.documentElement)
+
+    measure()
+    update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize)
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
+      ro.disconnect()
+      if (rafId) cancelAnimationFrame(rafId)
     }
   }, [mounted])
 
   const scrollToLandingSection = useCallback((index: number) => {
     const el = document.getElementById(LANDING_NAV_SECTIONS[index]?.id)
     if (!el) return
-    const top = el.getBoundingClientRect().top + window.scrollY - 90
+    // Header is ~64px + a small margin so the section eyebrow lands clear of
+    // the floating progress rail.
+    const top = el.getBoundingClientRect().top + window.scrollY - 96
     window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
   }, [])
 
@@ -1344,7 +1380,6 @@ export function LandingPage() {
                 : "grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
             )}>
               {PLAN_DATA.map((plan, planIdx) => {
-                const isExpanded = expandedPlan === plan.key
                 const vmLabel =
                   plan.machines === 0
                     ? t("pricing.vmTemporary")
@@ -1403,55 +1438,26 @@ export function LandingPage() {
                     </Link>
                   </Button>
 
-                  {/* Collapsible "What's included" — compact by default on every device */}
-                  <button
-                    type="button"
-                    onClick={() => setExpandedPlan(isExpanded ? null : plan.key)}
-                    aria-expanded={isExpanded}
-                    aria-controls={`plan-details-${plan.key}`}
-                    className="mt-3 flex items-center justify-between gap-2 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors relative z-10"
-                  >
-                    <span>{isExpanded ? tc("hideDetails") : tc("whatsIncluded")}</span>
-                    <ChevronDown
-                      className={cn(
-                        "h-3.5 w-3.5 transition-transform duration-300",
-                        isExpanded && "rotate-180"
-                      )}
-                    />
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {isExpanded && (
-                      <motion.div
-                        id={`plan-details-${plan.key}`}
-                        key="details"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <ul className="mt-3 space-y-1.5 border-t border-border/40 pt-3">
-                          {plan.credits > 0 && (
-                            <li className="flex items-start gap-2 text-xs text-muted-foreground">
-                              <Check className="h-3 w-3 mt-0.5 flex-shrink-0 text-foreground/60" />
-                              <span>{tc("creditsPerMonth", { count: plan.credits.toLocaleString() })}</span>
-                            </li>
-                          )}
-                          <li className="flex items-start gap-2 text-xs text-muted-foreground">
-                            <Check className="h-3 w-3 mt-0.5 flex-shrink-0 text-foreground/60" />
-                            <span>{vmLabel}</span>
-                          </li>
-                          {plan.swarm > 0 && (
-                            <li className="flex items-start gap-2 text-xs text-muted-foreground">
-                              <Check className="h-3 w-3 mt-0.5 flex-shrink-0 text-foreground/60" />
-                              <span>{tc("agentsInParallel", { count: plan.swarm })}</span>
-                            </li>
-                          )}
-                        </ul>
-                      </motion.div>
+                  {/* "What's included" — always visible so every plan reads
+                      identically at a glance. No toggle, no jump-on-click. */}
+                  <ul className="mt-4 space-y-1.5 border-t border-border/40 pt-3">
+                    {plan.credits > 0 && (
+                      <li className="flex items-start gap-2 text-xs text-muted-foreground">
+                        <Check className="h-3 w-3 mt-0.5 flex-shrink-0 text-foreground/60" />
+                        <span>{tc("creditsPerMonth", { count: plan.credits.toLocaleString() })}</span>
+                      </li>
                     )}
-                  </AnimatePresence>
+                    <li className="flex items-start gap-2 text-xs text-muted-foreground">
+                      <Check className="h-3 w-3 mt-0.5 flex-shrink-0 text-foreground/60" />
+                      <span>{vmLabel}</span>
+                    </li>
+                    {plan.swarm > 0 && (
+                      <li className="flex items-start gap-2 text-xs text-muted-foreground">
+                        <Check className="h-3 w-3 mt-0.5 flex-shrink-0 text-foreground/60" />
+                        <span>{tc("agentsInParallel", { count: plan.swarm })}</span>
+                      </li>
+                    )}
+                  </ul>
                 </motion.div>
               )
               })}

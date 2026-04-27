@@ -26,17 +26,6 @@ const TIP_OFFSET_DEG = 122
 
 const VIEWBOX_W = 1600
 const VIEWBOX_H = 900
-
-// Cursors cluster in the central hero zone (the rectangle that roughly
-// encloses the title + subhead + CTAs) rather than filling the whole canvas.
-// Same proportional region the WebGL flock uses for its initial spawn area.
-const CLUSTER_X0 = VIEWBOX_W * 0.25
-const CLUSTER_X1 = VIEWBOX_W * 0.75
-const CLUSTER_Y0 = VIEWBOX_H * 0.2
-const CLUSTER_Y1 = VIEWBOX_H * 0.8
-const CLUSTER_W = CLUSTER_X1 - CLUSTER_X0
-const CLUSTER_H = CLUSTER_Y1 - CLUSTER_Y0
-
 const CURSOR_COUNT = 110
 
 // Mulberry32 — small, fast, deterministic PRNG. Seeded so SSR and CSR
@@ -65,8 +54,7 @@ function generateLayout(): StaticCursor[] {
   const rng = mulberry32(0xc045)
 
   // Smooth flow field — base direction with two octaves of modulation.
-  // Returns a math-sense angle (0 = right, +π/2 = up). Sampled in
-  // viewBox coords so the field is consistent regardless of cluster size.
+  // Returns a math-sense angle (0 = right, +π/2 = up).
   const flowAt = (x: number, y: number): number => {
     const xn = x / VIEWBOX_W
     const yn = y / VIEWBOX_H
@@ -78,17 +66,17 @@ function generateLayout(): StaticCursor[] {
   }
 
   const cursors: StaticCursor[] = []
-  // 12 columns × 9 rows = 108 stratified cells, packed into the central
-  // cluster region (not the full viewBox) so the flock hugs the hero.
+  // 12 columns × 9 rows = 108 stratified cells, plus 2 random extras at the
+  // edges so the grid never reads as a grid.
   const COLS = 12
   const ROWS = 9
   for (let i = 0; i < COLS * ROWS; i++) {
     const col = i % COLS
     const row = Math.floor(i / COLS)
-    const cellW = CLUSTER_W / COLS
-    const cellH = CLUSTER_H / ROWS
-    const x = CLUSTER_X0 + col * cellW + (0.15 + rng() * 0.7) * cellW
-    const y = CLUSTER_Y0 + row * cellH + (0.15 + rng() * 0.7) * cellH
+    const cellW = VIEWBOX_W / COLS
+    const cellH = VIEWBOX_H / ROWS
+    const x = col * cellW + (0.15 + rng() * 0.7) * cellW
+    const y = row * cellH + (0.15 + rng() * 0.7) * cellH
 
     const flow = flowAt(x, y)
     const jitter = (rng() - 0.5) * 0.45
@@ -106,10 +94,9 @@ function generateLayout(): StaticCursor[] {
   }
 
   // Add 2 oversized "leaders" at the front of the visual flow — these read
-  // as the flock's vanguard and break the otherwise even density. Placed in
-  // the upper-right of the cluster, in the direction the flow points.
+  // as the flock's vanguard and break the otherwise even density.
   const leaders = [
-    { fx: 0.66, fy: 0.38 }, // viewBox-relative
+    { fx: 0.62, fy: 0.36 },
     { fx: 0.74, fy: 0.52 },
   ]
   for (const l of leaders) {

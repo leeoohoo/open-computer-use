@@ -38,18 +38,9 @@ const MIN_SPEED = 1.8
 const MAX_FORCE = 7.0
 const DAMPING = 0.992
 
-// World bounds — tight enough that the flock stays in the central hero zone
-// rather than wandering to the edges of the canvas.
-const BOUND_X = 12
-const BOUND_Y = 8
-const BOUND_Z = 3
-
-// Initial spawn area — roughly the footprint of the hero title + captions in
-// world units. The flock opens compactly around the headline and only ever
-// drifts a short distance from there because the attractor stays near (0,0).
-const INIT_BOUND_X = 6
-const INIT_BOUND_Y = 4
-const INIT_BOUND_Z = 2
+const BOUND_X = 15
+const BOUND_Y = 10
+const BOUND_Z = 3.5
 
 const FIXED_DT = 1 / 60
 
@@ -216,14 +207,15 @@ function initBoidState(count: number): BoidState {
     )
   }
 
-  // Stratified grid sized to the *initial* bounds' aspect ratio — gives a
-  // uniform compact composition centered on the hero, which the boids
-  // simulation then evolves into a flowing flock around the title.
-  const aspect = (INIT_BOUND_X * 2) / (INIT_BOUND_Y * 2)
+  // Stratified grid sized to the bounds' aspect ratio — gives a uniform
+  // initial composition without reading as a grid (per-cell jitter breaks
+  // the rows). The boids simulation then evolves it into a flowing flock
+  // over the first second or two.
+  const aspect = (BOUND_X * 2) / (BOUND_Y * 2)
   const cols = Math.max(1, Math.round(Math.sqrt(count * aspect)))
   const rows = Math.max(1, Math.ceil(count / cols))
-  const cellW = (INIT_BOUND_X * 2) / cols
-  const cellH = (INIT_BOUND_Y * 2) / rows
+  const cellW = (BOUND_X * 2) / cols
+  const cellH = (BOUND_Y * 2) / rows
 
   for (let i = 0; i < count; i++) {
     const col = i % cols
@@ -232,9 +224,9 @@ function initBoidState(count: number): BoidState {
     // visually even while never landing on a perfect lattice.
     const jx = 0.2 + rng() * 0.6
     const jy = 0.2 + rng() * 0.6
-    const x = -INIT_BOUND_X + (col + jx) * cellW
-    const y = -INIT_BOUND_Y + (row + jy) * cellH
-    const z = (rng() - 0.5) * INIT_BOUND_Z * 2
+    const x = -BOUND_X + (col + jx) * cellW
+    const y = -BOUND_Y + (row + jy) * cellH
+    const z = (rng() - 0.5) * BOUND_Z * 2
 
     positions[i * 3] = x
     positions[i * 3 + 1] = y
@@ -278,14 +270,10 @@ function stepBoids(
 ) {
   const { positions: P, velocities: V, accelerations: A, count: n, grid } = s
 
-  // Slowly-orbiting invisible attractor — sized to stay within the central
-  // hero zone so the flock orbits the title rather than touring the canvas.
-  // Worst-case excursion: ±4.5 X, ±2.8 Y. Combined with the orbit reach
-  // below (max 4u from attractor), cursors stay roughly within 8.5u of
-  // center, comfortably inside BOUND_X/Y.
-  const ax = Math.sin(time * 0.13) * 3 + Math.sin(time * 0.31) * 1.5
-  const ay = Math.cos(time * 0.17) * 1.8 + Math.sin(time * 0.27) * 1.0
-  const az = Math.sin(time * 0.19) * 0.5
+  // Slowly-orbiting invisible attractor — gives the flock its overall arc.
+  const ax = Math.sin(time * 0.13) * 8 + Math.sin(time * 0.31) * 5
+  const ay = Math.cos(time * 0.17) * 4 + Math.sin(time * 0.27) * 3
+  const az = Math.sin(time * 0.19) * 1.5
 
   // Repopulate the spatial hash from the current frame's positions.
   grid.clear()
@@ -359,14 +347,12 @@ function stepBoids(
       fz += (coZ * inv - iz) * COHESION_WEIGHT
     }
 
-    // Soft attractor with tight falloff — orbits at 1.5–4u from the
-    // attractor, so the flock hugs the central hero zone instead of
-    // ranging widely.
+    // Soft attractor with falloff inside 2u → flock orbits, never collapses.
     const tdx = ax - ix
     const tdy = ay - iy
     const tdz = az - iz
     const tdist = Math.sqrt(tdx * tdx + tdy * tdy + tdz * tdz) || 1e-4
-    const reach = Math.min(1, Math.max(0, (tdist - 1.5) / 2.5))
+    const reach = Math.min(1, Math.max(0, (tdist - 2) / 4))
     const inv = 1 / tdist
     fx += tdx * inv * reach * ATTRACT_WEIGHT
     fy += tdy * inv * reach * ATTRACT_WEIGHT

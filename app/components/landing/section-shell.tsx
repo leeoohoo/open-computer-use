@@ -96,16 +96,24 @@ export function LandingProgressRail({
   onJump,
 }: {
   sections: readonly { id: string; label: string }[]
-  scrollProgress: number // 0..(sections.length - 1), continuous
+  // Continuous in [0, sections.length]. 0 = before first, k = top of
+  // section k, sections.length = bottom of the last section.
+  scrollProgress: number
   onJump: (i: number) => void
 }) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
-  const total = Math.max(1, sections.length - 1)
-  const fillPct = Math.max(0, Math.min(1, scrollProgress / total)) * 100
-  const activeIdx = Math.round(scrollProgress)
-  // Only show while inside the guided range (with a small buffer at each end
-  // so it doesn't flicker when the user lands exactly on a boundary).
-  const visible = scrollProgress > 0.05 && scrollProgress < total + 0.5
+  const N = Math.max(1, sections.length)
+  // Bar fills proportionally to total scrolled-through distance — every
+  // section contributes 1/N of the fill, regardless of its own height.
+  const fillPct = Math.max(0, Math.min(1, scrollProgress / N)) * 100
+  // The active dot is the section the trigger is currently INSIDE — so it
+  // tracks reading position rather than "closest to". `floor` matches the
+  // continuous formula's i + frac convention exactly.
+  const activeIdx = Math.max(0, Math.min(N - 1, Math.floor(scrollProgress)))
+  // Show throughout the guided range; hide before the first section and
+  // after the last section is fully exited (small dead zones at each end
+  // prevent the rail from flickering on boundary crossings).
+  const visible = scrollProgress > 0.04 && scrollProgress < N - 0.04
 
   return (
     <div
@@ -126,18 +134,18 @@ export function LandingProgressRail({
           "dark:shadow-[0_1px_2px_rgba(0,0,0,0.2),0_8px_24px_-12px_rgba(0,0,0,0.4)]"
         )}
       >
-        {/* Connecting hairline behind the dots — sized to match the dot row */}
+        {/* Track + fill — nested so the fill width is a clean percentage of
+            the visible track regardless of horizontal padding (px-3 vs sm:px-4). */}
         <div
-          className="pointer-events-none absolute left-3 sm:left-4 right-3 sm:right-4 top-1/2 -translate-y-1/2 h-px bg-foreground/10 dark:bg-foreground/[0.08]"
           aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-px bg-foreground/45 dark:bg-foreground/35 transition-[width] duration-300 ease-out"
-          style={{
-            width: `calc((100% - ${24 + (sections.length - 1) * 8}px) * ${fillPct / 100})`,
-          }}
-          aria-hidden
-        />
+          className="pointer-events-none absolute left-3 sm:left-4 right-3 sm:right-4 top-1/2 -translate-y-1/2 h-px"
+        >
+          <div className="absolute inset-0 bg-foreground/10 dark:bg-foreground/[0.08]" />
+          <div
+            className="absolute inset-y-0 left-0 bg-foreground/45 dark:bg-foreground/35 transition-[width] duration-300 ease-out"
+            style={{ width: `${fillPct}%` }}
+          />
+        </div>
 
         {sections.map((section, i) => {
           const isActive = i === activeIdx
