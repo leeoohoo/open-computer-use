@@ -25,6 +25,7 @@ Design notes
 from __future__ import annotations
 
 import json
+import os
 import time
 from typing import Any
 
@@ -949,4 +950,114 @@ def test_health_json_shape_stable(http: httpx.Client):
     assert body["service"] == expected_service, (
         f"Service identifier drifted: got {body['service']!r}, expected "
         f"{expected_service!r}"
+    )
+
+
+# ───────────────────────────────────────────────────────────────────────────
+# 21. Validation handler — malformed screenshot must surface as 422 not 500
+# ───────────────────────────────────────────────────────────────────────────
+
+@pytest.mark.backend
+@pytest.mark.security
+def test_predict_with_malformed_screenshot_returns_422(http: httpx.Client):
+    """Regression guard for the ``validation_exception_handler`` fix in
+    ``backend/app/core/exceptions.py``.
+
+    Background
+    ----------
+    Pydantic v2 packs JSON-incompatible values into
+    ``RequestValidationError.errors()`` — bytes in ``input``, Exception
+    instances in ``ctx['error']``.  Without the ``jsonable_encoder``
+    ``custom_encoder`` mapping, the handler crashed inside
+    ``json.dumps`` and clients got an opaque 500
+    ``{"error":"Internal server error"}`` instead of the structured 422.
+    Production saw 35 such 500s on /api/v1/cua/predict and /parse in a
+    24-hour window before the fix landed.
+
+    A 500 here historically also leaked Python tracebacks to the client
+    on routes that didn't have a generic exception handler installed —
+    hence the ``security`` mark.
+
+    Design
+    ------
+    * Use the public-API key auth path (``X-API-Key``) so this test
+      exercises the same code path real customers hit.
+    * Skip cleanly when ``TEST_PUBLIC_API_KEY`` is unset (CI / local dev
+      without a real key configured) — the assertion only runs when we
+      can actually reach the route.
+    * Assert ``status_code == 422`` (NOT 500) and that ``details`` is
+      present.  The error body should mention ``screenshot`` or
+      ``base64`` somewhere so a regression to the generic 500 envelope
+      is unambiguously caught.
+    """
+    key = os.environ.get("TEST_PUBLIC_API_KEY", "").strip()
+    if not key:
+        pytest.skip(
+            "TEST_PUBLIC_API_KEY not set — can't exercise /api/v1/cua/predict. "
+            "Mint a key at /agents-api/keys while signed in as the test user "
+            "and export it as TEST_PUBLIC_API_KEY."
+        )
+
+    resp = http.post(
+        f"{cfg().backend_public_url}/api/v1/cua/predict",
+        json={
+            "task": "click the green button",
+            "screenshot": "obviously-not-base64-!@#$%",
+        },
+        headers={
+            "Content-Type": "application/json",
+            "X-API-Key": key,
+        },
+    )
+
+    # Headline regression: must NOT be 500.  Before the fix, the
+    # ValueError from the screenshot field-validator landed in
+    # `errors()[0]['ctx']['error']` and crashed JSONResponse.
+    assert resp.status_code != 500, (
+        f"REGRESSION: /api/v1/cua/predict returned 500 on a malformed "
+        f"screenshot input.  This is the validation_exception_handler "
+        f"crash in backend/app/core/exceptions.py — re-check the "
+        f"jsonable_encoder custom_encoder mapping for `Exception`. "
+        f"Body: {resp.text[:500]}"
+    )
+    assert resp.status_code == 422, (
+        f"Expected 422 for invalid screenshot, got {resp.status_code}. "
+        f"Body: {resp.text[:500]}"
+    )
+
+    # Body must be JSON.
+    ctype = resp.headers.get("content-type", "")
+    assert "application/json" in ctype, (
+        f"422 must be JSON, got {ctype!r}. Body: {resp.text[:300]}"
+    )
+    body = resp.json()
+
+    # The route may return either:
+    #   * the generic FastAPI/handler envelope: {"error": "Validation error",
+    #     "details": [...]}
+    #   * the public-API wrapped envelope:      {"detail": {"error": {...}}}
+    # Pull out a list of details we can scan, accepting either shape.
+    details: list[dict[str, Any]] = []
+    if isinstance(body.get("details"), list):
+        details = body["details"]
+    elif isinstance(body.get("detail"), dict):
+        # Public-API envelope sometimes nests details under detail.error.details
+        nested = body["detail"].get("error", {})
+        if isinstance(nested, dict) and isinstance(nested.get("details"), list):
+            details = nested["details"]
+
+    assert details, (
+        f"Expected a non-empty 'details' field in 422 body so a regression "
+        f"to the opaque {{'error': 'Internal server error'}} 500 is caught. "
+        f"Body: {body}"
+    )
+
+    # The error should reference the offending field/concept.  We accept
+    # either "screenshot" (loc/msg) or "base64" (validator message) so
+    # this test survives minor wording changes in the validator.
+    haystack = json.dumps(details).lower()
+    assert "screenshot" in haystack or "base64" in haystack, (
+        f"Expected 'screenshot' or 'base64' to appear in the validation "
+        f"details so a 500-vs-422 regression is unambiguous.  Details: "
+        f"{details}"
     )
