@@ -82,6 +82,36 @@ resource "aws_ecs_task_definition" "app" {
               # Next.js to bind to the wrong interface and reject health checks.
               { name = "HOSTNAME", value = "0.0.0.0" },
               { name = "PORT", value = "3000" },
+              # NODE_OPTIONS: cap V8's old-generation heap so a slow leak or a
+              # genuinely large request can't push the container into a hard OOM.
+              # Background — 2026-04-24T03:18:36Z incident: container 86867d6a
+              # died with FATAL ERROR: Reached heap limit after a 140 s
+              # mark-sweep that freed only 3 MB (502→499 MB).  Without an
+              # explicit cap, V8's default heap on Node 20 is ~75% of the
+              # memlimit cgroup it sees, which on Fargate is the *task* memory
+              # (2048 MiB), not the per-container reservation (1024 MiB) — so
+              # V8 happily grows past the container limit and the kernel kills
+              # us with no graceful shutdown, no rolling-deploy hooks, no
+              # opportunity to drain in-flight requests.
+              #
+              # 768 MiB = 75% of the 1024 MiB frontend container reservation.
+              # Stays comfortably below the 1024 MiB memlimit so non-heap
+              # overhead (stacks, V8 code cache, native buffers, async I/O
+              # queues) has ~25% headroom.  V8 will start GCing aggressively
+              # before the container hits the cgroup limit, surfacing pressure
+              # as observable GC pauses and slow responses (which the
+              # ALBRequestCountPerTarget autoscaling policy will catch) rather
+              # than as a sudden SIGKILL.
+              #
+              # If profiling later shows we genuinely need a bigger heap, the
+              # right next move is to bump frontend_memory to 2048 MiB AND
+              # raise this to 1536 — NOT to raise this alone, which would let
+              # V8 fight the kernel for memory it doesn't have.
+              #
+              # SIGUSR2 heap snapshots (`process.kill(pid, 'SIGUSR2')`) are
+              # available on Node ≥18 if we ever need to capture one from a
+              # running task.  ECS Exec into the task to send the signal.
+              { name = "NODE_OPTIONS", value = "--max-old-space-size=768" },
             ],
             [
               for k, v in var.frontend_env_vars : { name = k, value = v }
@@ -178,6 +208,11 @@ resource "aws_ecs_task_definition" "app" {
             { name = "ENVIRONMENT", value = "production" },
             { name = "DEBUG", value = "false" },
             { name = "CORS_ORIGINS", value = "http://localhost:3000,https://coasty.ai,https://www.coasty.ai" },
+            # Admin allowlist for /api/billing/sessions/cleanup (and future
+            # admin routes) — see backend/app/services/auth.py::require_admin.
+            # Empty = no admins (fail-closed). Operators set var.admin_emails
+            # in terraform.tfvars to populate.
+            { name = "ADMIN_EMAILS", value = var.admin_emails },
             # Wire up the Valkey replication group provisioned in elasticache.tf.
             # backend_env_vars (terraform.tfvars) takes precedence — set REDIS_URL
             # there to override (e.g. for a pinned reader endpoint).
@@ -310,6 +345,51 @@ resource "aws_appautoscaling_policy" "memory" {
       predefined_metric_type = "ECSServiceAverageMemoryUtilization"
     }
     target_value       = var.memory_scaling_target
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 60
+  }
+}
+
+# -----------------------------------------------------------------------------
+# Scale on ALB request count per target.
+#
+# Background — why we added this in addition to CPU and memory policies
+# ---------------------------------------------------------------------
+# On 2026-04-23T03:18Z (23:18 EDT 04-23) the frontend received a 1,040
+# req/s burst against a single Next.js task.  P99 latency climbed to
+# 53.38 s — past the public ALB's 60 s idle timeout — and 970 of those
+# requests came back as ELB 5xx.  The auto-scaling policies in place at
+# the time (CPU 70% / memory 80%) never fired: Next.js's request queue
+# fills up before CPU saturates, so by the time CPU would trip the alarm
+# the requests are already timing out.
+#
+# ALBRequestCountPerTarget reacts to *queue length* (effectively, RPS per
+# task), not CPU.  At >200 sustained reqs/min per running task, scale out
+# before the queue overflows.  This is a leading indicator; CPU/memory
+# remain as backstop policies for workloads that are CPU-bound rather
+# than I/O-bound.
+#
+# `resource_label` is the special "<alb-arn-suffix>/<tg-arn-suffix>" form
+# required by ALBRequestCountPerTarget so the autoscaling target knows
+# WHICH ALB target group's request count to monitor.  See
+# https://docs.aws.amazon.com/autoscaling/application/userguide/services-that-can-integrate-applicationelb.html#applicationelb-resource-label
+# -----------------------------------------------------------------------------
+
+resource "aws_appautoscaling_policy" "request_count" {
+  name               = "${var.project_name}-request-count-scaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ALBRequestCountPerTarget"
+      resource_label         = "${aws_lb.main.arn_suffix}/${aws_lb_target_group.frontend.arn_suffix}"
+    }
+    target_value       = var.request_count_per_target_target
+    # Scale-out fast (60s) so a burst doesn't sit on the queue for long.
+    # Scale-in slow (300s) so we don't oscillate when traffic dips briefly.
     scale_in_cooldown  = 300
     scale_out_cooldown = 60
   }

@@ -47,6 +47,11 @@ locals {
       { name = "DEBUG", value = "false" },
       # The same wide CORS_ORIGINS list as the sidecar backend.
       { name = "CORS_ORIGINS", value = "http://localhost:3000,https://coasty.ai,https://www.coasty.ai" },
+      # Admin allowlist for /api/billing/sessions/cleanup (and future admin
+      # routes) — see backend/app/services/auth.py::require_admin. Empty =
+      # no admins (fail-closed). Mirrored from the sidecar task in ecs.tf so
+      # the api/sse/ws split services share the same gate.
+      { name = "ADMIN_EMAILS", value = var.admin_emails },
       { name = "REDIS_URL", value = "rediss://${aws_elasticache_replication_group.main.primary_endpoint_address}:6379" },
       { name = "CACHE_ENABLED", value = "true" },
       # Project name — consumed by app/services/metrics.py to construct the

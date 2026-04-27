@@ -129,6 +129,29 @@ variable "memory_scaling_target" {
   default     = 80
 }
 
+variable "request_count_per_target_target" {
+  description = <<-EOT
+    Target requests-per-minute per running frontend task to trigger scale-out
+    via the ALBRequestCountPerTarget predefined metric.
+
+    Why we have this in addition to CPU and memory:
+      The 2026-04-23T03:18Z incident saw the frontend task hit P99 latency
+      53s and produce 970 ELB 5xx in a single minute, well before CPU
+      crossed the 70% target.  Next.js's queueing behaviour means a
+      saturated event loop doesn't necessarily show up as CPU pressure
+      until requests are already timing out.  Request-count-per-target
+      reacts faster: at >200 reqs/min sustained, scale out before the
+      queue overflows.
+
+    200 is a deliberate cap-and-double of typical steady-state RPS for the
+    frontend and is well under what a single Fargate vCPU can serve cleanly
+    for SSR pages.  Tune this lower for spikier traffic or up to 400 if
+    the workload is mostly static-served.
+  EOT
+  type        = number
+  default     = 200
+}
+
 # -----------------------------------------------------------------------------
 # Load Balancer & HTTPS
 # -----------------------------------------------------------------------------
@@ -161,6 +184,21 @@ variable "backend_env_vars" {
   description = "Environment variables for the backend container (key = value pairs)"
   type        = map(string)
   default     = {}
+}
+
+# -----------------------------------------------------------------------------
+# Admin allowlist — gates POST /api/billing/sessions/cleanup (and future admin
+# routes) via require_admin().  Empty default fails closed: no admins, every
+# admin endpoint returns 403.  See backend/app/services/auth.py::require_admin.
+# Set explicitly in terraform.tfvars when operators need manual cleanup access.
+# Not flagged sensitive — this is an allowlist of emails, not a credential.
+# -----------------------------------------------------------------------------
+
+variable "admin_emails" {
+  description = "Comma-separated admin email allowlist for /api/billing/sessions/cleanup and future admin routes"
+  type        = string
+  default     = ""
+  sensitive   = false
 }
 
 # -----------------------------------------------------------------------------

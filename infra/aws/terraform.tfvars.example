@@ -30,11 +30,12 @@ backend_memory  = 1024
 # Scaling
 # -----------------------------------------------------------------------------
 
-desired_count         = 1
-min_capacity          = 1
+desired_count         = 2    # Initial only — autoscaling owns it after first apply.
+min_capacity          = 2    # Always-warm floor so a single task can't be the SPOF.
 max_capacity          = 4
-cpu_scaling_target    = 70   # Scale out when avg CPU > 70%
-memory_scaling_target = 80   # Scale out when avg memory > 80%
+cpu_scaling_target    = 70                # Scale out when avg CPU > 70%
+memory_scaling_target = 80                # Scale out when avg memory > 80%
+request_count_per_target_target = 200     # Scale out when each task >200 reqs/min
 
 # -----------------------------------------------------------------------------
 # 3-Service ECS Split (coasty-api / coasty-sse / coasty-ws)
@@ -109,3 +110,12 @@ backend_env_vars = {
   GOOGLE_SEARCH_KEY = "your-google-search-key"
   GOOGLE_SEARCH_CX  = "your-google-search-cx"
 }
+
+# -----------------------------------------------------------------------------
+# Admin allowlist — comma-separated emails granted access to admin-only routes
+# (currently POST /api/billing/sessions/cleanup; gated by require_admin in
+# backend/app/services/auth.py).  Empty = no admins (fail-closed default; the
+# periodic background cleanup task still runs unaffected).
+# -----------------------------------------------------------------------------
+
+admin_emails = ""  # comma-separated list, e.g., "ops@coasty.ai,oncall@coasty.ai"
