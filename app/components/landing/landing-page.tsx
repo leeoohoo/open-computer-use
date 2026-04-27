@@ -16,15 +16,21 @@ import { LandingHeader } from "./landing-header"
 import { LandingFooter } from "./landing-footer"
 import { HeroVideoMatrix } from "./hero-video-matrix"
 import { GuideLines, SectionDivider as SharedSectionDivider } from "./guide-lines"
+import {
+  LandingProgressRail,
+  LandingSectionHeader,
+  LandingSectionTopGlow,
+} from "./section-shell"
 import dynamic from "next/dynamic"
 import { useLiteMode } from "@/lib/hooks/use-lite-mode"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { Caveat } from "next/font/google"
 
-// WebGL beams — dynamically loaded so THREE.js stays out of the initial bundle
-// and never loads on mobile/low-end devices where it gets gated below.
-const Beams = dynamic(() => import("@/components/Beams"), {
+// Cursor murmuration — boids flock of OS-pointer arrows. Self-gates by
+// device tier internally: WebGL on desktop/tablet, static SVG on mobile and
+// reduced-motion. Loads three.js only when the WebGL path is actually used.
+const CursorMurmuration = dynamic(() => import("@/components/CursorMurmuration"), {
   ssr: false,
   loading: () => null,
 })
@@ -74,9 +80,9 @@ export function LandingPage() {
   const lite = useLiteMode()
   const t = useTranslations()
   const tc = useTranslations("common")
-  // Gate the WebGL beams: skip on mobile, on low-end, and under reduced-motion.
-  // These devices fall back to the page's natural gradient background.
-  const showBeams = mounted && !isMobile && !lite.lite
+  // The cursor murmuration self-gates by device tier — see
+  // [CursorMurmuration.tsx](../../../components/CursorMurmuration.tsx). It's
+  // only mounted after hydration to avoid SSR layout flash.
 
   const searchParams = useSearchParams()
 
@@ -127,9 +133,11 @@ export function LandingPage() {
         }
       }
 
-  // ── Global section navigation: continuous scroll progress ──
-  // Caches document-relative flow positions on mount/resize by temporarily
-  // removing sticky so offsetTop chain gives the true layout position.
+  // ── Section progress tracking ──
+  // Continuous scroll progress through the guided sections, used by the
+  // slim top progress bar (no more sticky-card stacking, no per-frame
+  // transforms — sections flow naturally and the indicator is purely
+  // informational).
   const [scrollProgress, setScrollProgress] = useState(0)
   const activeLandingSection = Math.round(scrollProgress)
 
@@ -145,24 +153,11 @@ export function LandingPage() {
     let sectionTops: number[] = []
 
     const measurePositions = () => {
-      // Remove sticky from all sections at once (single reflow)
-      const originals = sectionEls.map(el => {
-        const orig = el.style.position
-        el.style.position = 'relative'
-        return orig
-      })
-      // Walk offsetParent chain for document-relative positions
       sectionTops = sectionEls.map(el => {
-        let top = 0
-        let node: HTMLElement | null = el
-        while (node) {
-          top += node.offsetTop
-          node = node.offsetParent as HTMLElement | null
-        }
-        return top
+        // Sections are now position:static — getBoundingClientRect + scrollY
+        // gives us a stable document-relative top with no DOM mutation.
+        return el.getBoundingClientRect().top + window.scrollY
       })
-      // Restore (single reflow)
-      sectionEls.forEach((el, i) => { el.style.position = originals[i] })
     }
 
     const onScroll = () => {
@@ -181,44 +176,11 @@ export function LandingPage() {
         }
       }
       setScrollProgress(progress)
-
-      // Scroll-driven card stacking: leaving cards recede with eased fade
-      if (window.innerWidth >= 768) {
-        for (let ci = 0; ci < sectionEls.length; ci++) {
-          const cardEl = sectionEls[ci]
-          const covered = Math.max(0, Math.min(1, progress - ci))
-          if (covered > 0) {
-            // Cubic ease-in: card stays pristine for ~50% of scroll, then gracefully exits
-            const e = covered * covered * covered
-            const s = 1 - e * 0.06            // 1.0 → 0.94
-            const ty = e * -20                // 0px → -20px (recedes upward)
-            const b = e * 3.5                 // 0 → 3.5px depth blur
-            const bright = 1 - e * 0.15       // 1.0 → 0.85 dimming
-            const sat = 1 - e * 0.25          // 1.0 → 0.75 desaturate
-            const o = 1 - e * 0.4             // 1.0 → 0.6 fade
-            cardEl.style.transform = `scale(${s}) translateY(${ty}px)`
-            cardEl.style.opacity = `${o}`
-            cardEl.style.filter = `blur(${b}px) brightness(${bright}) saturate(${sat})`
-          } else {
-            cardEl.style.transform = ''
-            cardEl.style.opacity = ''
-            cardEl.style.filter = ''
-          }
-        }
-      }
     }
 
     const onResize = () => {
       measurePositions()
       onScroll()
-      // Reset transforms when switching to mobile
-      if (window.innerWidth < 768) {
-        for (const el of sectionEls) {
-          el.style.transform = ''
-          el.style.opacity = ''
-          el.style.filter = ''
-        }
-      }
     }
 
     measurePositions()
@@ -228,27 +190,14 @@ export function LandingPage() {
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
-      for (const el of sectionEls) {
-        el.style.transform = ''
-        el.style.opacity = ''
-        el.style.filter = ''
-      }
     }
   }, [mounted])
 
   const scrollToLandingSection = useCallback((index: number) => {
     const el = document.getElementById(LANDING_NAV_SECTIONS[index]?.id)
     if (!el) return
-    const original = el.style.position
-    el.style.position = 'relative'
-    let top = 0
-    let node: HTMLElement | null = el
-    while (node) {
-      top += node.offsetTop
-      node = node.offsetParent as HTMLElement | null
-    }
-    el.style.position = original
-    window.scrollTo({ top: Math.max(0, top - 90), behavior: 'smooth' })
+    const top = el.getBoundingClientRect().top + window.scrollY - 90
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
   }, [])
 
   // ── Shared card interaction handlers (mouse-tracking gradient) ──
@@ -275,24 +224,16 @@ export function LandingPage() {
         <GuideLines />
       </div>
 
-      {/* Beams background — WebGL, gated on device capability. Mobile/low-end
-          users get the page's natural gradient instead, keeping the scene
-          calm without burning GPU cycles. */}
+      {/* Cursor murmuration — hundreds of tiny pointer arrows flocking like
+          starlings. WebGL on desktop, static SVG on mobile / reduced-motion.
+          The element ID is preserved so the hero scroll choreography in
+          [hero-video-matrix.tsx](./hero-video-matrix.tsx) can keep fading
+          this layer as the user scrolls. In light mode the layer is
+          inverted so the white-cursor scene reads as black-on-light. */}
       <div id="beams-bg" className={cn("fixed inset-0 z-0 pointer-events-none", mounted && resolvedTheme !== "dark" && "invert")} aria-hidden="true">
         <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
-          <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_80%_80%_at_50%_45%,black_0%,black_30%,transparent_75%)] sm:[mask-image:radial-gradient(ellipse_100%_90%_at_50%_45%,black_0%,black_40%,transparent_85%)]">
-            {showBeams && (
-              <Beams
-                beamWidth={3}
-                beamHeight={30}
-                beamNumber={20}
-                lightColor="#ffffff"
-                speed={2}
-                noiseIntensity={1.75}
-                scale={0.2}
-                rotation={30}
-              />
-            )}
+          <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_90%_85%_at_50%_45%,black_0%,black_38%,transparent_82%)] sm:[mask-image:radial-gradient(ellipse_110%_95%_at_50%_45%,black_0%,black_45%,transparent_92%)]">
+            {mounted && <CursorMurmuration />}
           </div>
         </div>
       </div>
@@ -352,146 +293,42 @@ export function LandingPage() {
         <SectionDivider />
 
         {/* ══════════════════════════════════════════════════════════════
-            Guided Sections: Sticky Left Nav + Right Card Stack
-            Wraps Why Coasty → Pricing inside a two-column layout
-            that sits within the guide lines (max-w-7xl).
-            On mobile: single column, no sidebar.
+            Guided Sections — flowing vertical layout.
+            Each section sits at its natural height with consistent
+            rhythm (py-20 sm:py-24 lg:py-32) inside a max-w-6xl container.
+            Section transitions are handled by SectionDivider between them.
+            A slim top progress rail (LandingProgressRail) replaces the
+            old left sticky nav.
            ══════════════════════════════════════════════════════════════ */}
-        <div className={cn(
-          "max-w-7xl mx-auto",
-          isMobile ? "" : "flex gap-0 px-6 sm:px-10 lg:px-12"
-        )}>
-
-          {/* ── LEFT: Sticky section navigator ── */}
-          {!isMobile && (() => {
-            const count = LANDING_NAV_SECTIONS.length
-            const rowH = 18
-            const gap = 28
-            const stride = rowH + gap
-            const trackH = (count - 1) * stride
-            const progress = count > 1 ? Math.min(1, scrollProgress / (count - 1)) : 0
-            // Soft-edge mask: solid up to progress point, then fades out
-            const pct = progress * 100
-            const softMask = `linear-gradient(to bottom, black ${Math.max(0, pct - 6)}%, transparent ${Math.min(100, pct + 2)}%)`
-
-            return (
-            <div className="w-44 flex-shrink-0">
-              <div className="sticky top-0 h-screen flex flex-col justify-center">
-                <nav className="relative text-foreground">
-
-                  {/* ── Track + Progress ── */}
-                  <div
-                    className="absolute pointer-events-none"
-                    style={{
-                      left: 6,
-                      top: rowH / 2,
-                      height: trackH,
-                    }}
-                  >
-                    {/* Background rail */}
-                    <div
-                      className="absolute bg-foreground/[0.05] dark:bg-foreground/[0.03]"
-                      style={{ left: 0, top: 0, width: 1, height: '100%' }}
-                    />
-                    {/* Progress glow (wide, ambient) */}
-                    <div
-                      className="absolute bg-foreground/[0.03] dark:bg-foreground/[0.025]"
-                      style={{
-                        left: -2,
-                        top: 0,
-                        width: 5,
-                        height: '100%',
-                        borderRadius: 3,
-                        maskImage: softMask,
-                        WebkitMaskImage: softMask,
-                      }}
-                    />
-                    {/* Progress core line */}
-                    <div
-                      className="absolute bg-foreground/[0.18] dark:bg-foreground/[0.12]"
-                      style={{
-                        left: 0,
-                        top: 0,
-                        width: 1,
-                        height: '100%',
-                        maskImage: softMask,
-                        WebkitMaskImage: softMask,
-                      }}
-                    />
-                  </div>
-
-
-                  {/* ── Section rows ── */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap }}>
-                    {LANDING_NAV_SECTIONS.map((section, i) => {
-                      const isActive = activeLandingSection === i
-                      const isPast = i <= activeLandingSection
-                      return (
-                        <button
-                          key={section.id}
-                          onClick={() => scrollToLandingSection(i)}
-                          className="flex items-center cursor-pointer group"
-                          style={{ height: rowH, paddingLeft: 24 }}
-                        >
-                          <span
-                            className={cn(
-                              "text-[12.5px] font-medium leading-none whitespace-nowrap transition-all duration-500",
-                              isActive
-                                ? "text-foreground"
-                                : isPast
-                                  ? "text-foreground/35 dark:text-foreground/25"
-                                  : "text-foreground/[0.18] dark:text-foreground/[0.12] group-hover:text-foreground/35 dark:group-hover:text-foreground/25"
-                            )}
-                            style={{ letterSpacing: '0.01em' }}
-                          >
-                            {section.label}
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </nav>
-              </div>
-            </div>
-            )
-          })()}
-
-          {/* ── RIGHT: Sections as sticky card stack ── */}
-          <div className={cn(
-            isMobile ? "" : "flex-1 min-w-0 pb-[40vh] pl-8 pr-8 lg:pl-10 lg:pr-10"
-          )}>
+        <LandingProgressRail
+          sections={LANDING_NAV_SECTIONS}
+          scrollProgress={scrollProgress}
+          onJump={scrollToLandingSection}
+        />
+        <div className="max-w-7xl mx-auto">
 
         {/* OSWorld Benchmark Section */}
         <section
           id="benchmark"
-          className={cn(
-            isMobile
-              ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top flex flex-col"
-          )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 1 } : undefined}
+          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
         >
+          <LandingSectionTopGlow />
+          <div className="max-w-5xl w-full mx-auto">
+            <LandingSectionHeader
+              index={1}
+              total={LANDING_NAV_SECTIONS.length}
+              eyebrow={LANDING_NAV_SECTIONS[0].label}
+              title={t("benchmark.title")}
+              subtitle={t("benchmark.subtitle")}
+              isMobile={isMobile}
+            />
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-5xl w-full mx-auto my-auto"
+            className="w-full"
           >
-            <motion.div variants={itemVariants} className="text-center mb-6">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
-              )}>
-                {t("benchmark.title")}
-              </h2>
-              <p className={cn(
-                "text-muted-foreground mt-2 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-sm"
-              )}>
-                {t("benchmark.subtitle")}
-              </p>
-            </motion.div>
 
             {/* Legend */}
             <motion.div variants={itemVariants} className="flex items-center justify-center gap-4 sm:gap-6 mb-4">
@@ -653,25 +490,31 @@ export function LandingPage() {
               ))}
             </motion.div>
           </motion.div>
+          </div>
         </section>
 
+        <SectionDivider />
 
         {/* Why Coasty Section */}
         <section
           id="why-coasty"
-          className={cn(
-            isMobile
-              ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top flex flex-col"
-          )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 2 } : undefined}
+          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
         >
+          <LandingSectionTopGlow />
+          <div className="max-w-6xl w-full mx-auto">
+            <LandingSectionHeader
+              index={2}
+              total={LANDING_NAV_SECTIONS.length}
+              eyebrow={LANDING_NAV_SECTIONS[1].label}
+              title={t("whyCoasty.title")}
+              isMobile={isMobile}
+            />
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="w-full my-auto"
+            className="w-full"
           >
             {/* CSS animations for visual cards (used across multiple sections) */}
             <style dangerouslySetInnerHTML={{ __html: `
@@ -691,45 +534,7 @@ export function LandingPage() {
               @keyframes lp-swarm-stagger-1 { 0% { width: 0 } 100% { width: 85% } }
               @keyframes lp-swarm-stagger-2 { 0% { width: 0 } 100% { width: 65% } }
               @keyframes lp-swarm-stagger-3 { 0% { width: 0 } 100% { width: 40% } }
-              /* Premium card layered shadow */
-              .lp-card-glass { box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px -2px rgba(0,0,0,0.06), 0 20px 50px -16px rgba(0,0,0,0.1); }
-              .dark .lp-card-glass { box-shadow: 0 0 0 1px rgba(255,255,255,0.035), 0 2px 8px -2px rgba(0,0,0,0.2), 0 20px 50px -16px rgba(0,0,0,0.3); }
-              /* Card glass edge highlight + ambient top glow */
-              @media (min-width: 768px) {
-                .lp-section-card::before {
-                  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-                  background: linear-gradient(90deg, transparent 5%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.07) 50%, rgba(0,0,0,0.05) 70%, transparent 95%);
-                  z-index: 20; pointer-events: none;
-                }
-                .dark .lp-section-card::before {
-                  background: linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.06) 70%, transparent 95%);
-                }
-                .lp-section-card::after {
-                  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 200px;
-                  background: radial-gradient(ellipse 70% 100% at 50% 0%, rgba(0,0,0,0.012), transparent);
-                  z-index: 0; pointer-events: none; border-radius: 16px 16px 0 0;
-                }
-                .dark .lp-section-card::after {
-                  background: radial-gradient(ellipse 70% 100% at 50% 0%, rgba(255,255,255,0.02), transparent);
-                }
-              }
             `}} />
-
-            {/* Section header */}
-            <motion.div variants={itemVariants} className="text-center mb-8">
-              <p className={cn(
-                "text-muted-foreground/60 font-medium uppercase tracking-[0.15em] mb-2",
-                isMobile ? "text-[10px]" : "text-xs"
-              )}>
-                {t("whyCoasty.sectionLabel")}
-              </p>
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-4xl sm:text-5xl"
-              )}>
-                {t("whyCoasty.title")}
-              </h2>
-            </motion.div>
 
             {/* ── Cards: 2-col grid with staggered cascade + mouse-tracking gradient ── */}
             <div className={cn(
@@ -857,34 +662,32 @@ export function LandingPage() {
                 ))}
             </div>
           </motion.div>
+          </div>
         </section>
 
+        <SectionDivider />
 
         {/* How It Works Section */}
         <section
           id="how-it-works"
-          className={cn(
-            isMobile
-              ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top flex flex-col"
-          )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 3 } : undefined}
+          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
         >
+          <LandingSectionTopGlow />
+          <div className="max-w-6xl w-full mx-auto">
+            <LandingSectionHeader
+              index={3}
+              total={LANDING_NAV_SECTIONS.length}
+              eyebrow={LANDING_NAV_SECTIONS[2].label}
+              title={t("howItWorks.title")}
+              isMobile={isMobile}
+            />
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-5xl w-full mx-auto my-auto"
+            className="w-full"
           >
-            <motion.div variants={itemVariants} className="text-center mb-8">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
-              )}>
-                {t("howItWorks.title")}
-              </h2>
-            </motion.div>
 
             <div className={cn(
               "grid gap-4",
@@ -1037,40 +840,33 @@ export function LandingPage() {
               </motion.div>
             </div>
           </motion.div>
+          </div>
         </section>
 
+        <SectionDivider />
 
         {/* Demo Section */}
         <section
           id="demo"
-          className={cn(
-            isMobile
-              ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top flex flex-col"
-          )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 4 } : undefined}
+          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
         >
+          <LandingSectionTopGlow />
+          <div className="max-w-6xl w-full mx-auto">
+            <LandingSectionHeader
+              index={4}
+              total={LANDING_NAV_SECTIONS.length}
+              eyebrow={LANDING_NAV_SECTIONS[3].label}
+              title={t("demo.title")}
+              subtitle={t("demo.subtitle")}
+              isMobile={isMobile}
+            />
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-5xl w-full mx-auto my-auto"
+            className="w-full"
           >
-            <motion.div variants={itemVariants} className="text-center mb-8">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
-              )}>
-                {t("demo.title")}
-              </h2>
-              <p className={cn(
-                "text-muted-foreground mt-2 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-sm"
-              )}>
-                {t("demo.subtitle")}
-              </p>
-            </motion.div>
 
             <div className={cn(
               "grid gap-3",
@@ -1140,40 +936,33 @@ export function LandingPage() {
               ))}
             </div>
           </motion.div>
+          </div>
         </section>
 
+        <SectionDivider />
 
         {/* Cost Comparison */}
         <section
           id="cost"
-          className={cn(
-            isMobile
-              ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top flex flex-col"
-          )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 5 } : undefined}
+          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
         >
+          <LandingSectionTopGlow />
+          <div className="max-w-6xl w-full mx-auto">
+            <LandingSectionHeader
+              index={5}
+              total={LANDING_NAV_SECTIONS.length}
+              eyebrow={LANDING_NAV_SECTIONS[4].label}
+              title={t("comparison.title")}
+              subtitle={t("comparison.subtitle")}
+              isMobile={isMobile}
+            />
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-5xl w-full mx-auto my-auto"
+            className="w-full"
           >
-            <motion.div variants={itemVariants} className="text-center mb-8">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
-              )}>
-                {t("comparison.title")}
-              </h2>
-              <p className={cn(
-                "text-muted-foreground mt-2 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-sm"
-              )}>
-                {t("comparison.subtitle")}
-              </p>
-            </motion.div>
 
             <div className={cn(
               "grid",
@@ -1295,34 +1084,32 @@ export function LandingPage() {
               </div>
             </motion.div>
           </motion.div>
+          </div>
         </section>
 
+        <SectionDivider />
 
         {/* Features Section */}
         <section
           id="features"
-          className={cn(
-            isMobile
-              ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top flex flex-col"
-          )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 6 } : undefined}
+          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
         >
+          <LandingSectionTopGlow />
+          <div className="max-w-6xl w-full mx-auto">
+            <LandingSectionHeader
+              index={6}
+              total={LANDING_NAV_SECTIONS.length}
+              eyebrow={LANDING_NAV_SECTIONS[5].label}
+              title={t("features.title")}
+              isMobile={isMobile}
+            />
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-5xl w-full mx-auto my-auto"
+            className="w-full"
           >
-            <motion.div variants={itemVariants} className="text-center mb-8">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
-              )}>
-                {t("features.title")}
-              </h2>
-            </motion.div>
 
             <div className={cn(
               "grid gap-4",
@@ -1521,41 +1308,33 @@ export function LandingPage() {
               </motion.div>
             </div>
           </motion.div>
+          </div>
         </section>
 
+        <SectionDivider />
 
         {/* Pricing Section — simplified overview */}
         <section
           id="pricing"
-          className={cn(
-            isMobile
-              ? "py-16 px-7"
-              : "sticky rounded-2xl border border-border/20 bg-background lp-card-glass lp-section-card px-8 lg:px-10 pt-10 pb-8 mb-6 will-change-[transform,opacity,filter] h-[calc(100vh-8rem)] overflow-hidden origin-top flex flex-col"
-          )}
-          style={!isMobile ? { top: '5.5rem', zIndex: 7 } : undefined}
+          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
         >
+          <LandingSectionTopGlow />
+          <div className="max-w-6xl w-full mx-auto">
+            <LandingSectionHeader
+              index={7}
+              total={LANDING_NAV_SECTIONS.length}
+              eyebrow={LANDING_NAV_SECTIONS[6].label}
+              title={t("pricing.title")}
+              subtitle={t("pricing.subtitle")}
+              isMobile={isMobile}
+            />
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={sectionViewport}
-            className="max-w-5xl w-full mx-auto my-auto"
+            className="w-full"
           >
-            {/* Header */}
-            <motion.div variants={itemVariants} className="text-center mb-6 sm:mb-8">
-              <h2 className={cn(
-                "font-bold tracking-tight",
-                isMobile ? "text-3xl" : "text-3xl sm:text-4xl"
-              )}>
-                {t("pricing.title")}
-              </h2>
-              <p className={cn(
-                "text-muted-foreground mt-2 max-w-lg mx-auto",
-                isMobile ? "text-sm" : "text-sm"
-              )}>
-                {t("pricing.subtitle")}
-              </p>
-            </motion.div>
 
             {/* Plan cards — responsive grid: 1 → 2 → 3 → 5 columns */}
             <div className={cn(
@@ -1679,10 +1458,10 @@ export function LandingPage() {
             </div>
 
           </motion.div>
+          </div>
         </section>
 
-          </div>{/* end RIGHT card stack */}
-        </div>{/* end Guided Sections flex wrapper */}
+        </div>{/* end Guided Sections wrapper */}
 
         <SectionDivider />
 
