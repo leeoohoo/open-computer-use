@@ -315,7 +315,7 @@ function GuideCodeBlock({ code, label }: { code: string; label?: string }) {
       <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent" />
 
       {label && (
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-foreground/[0.04] bg-foreground/[0.015] dark:bg-foreground/[0.03]">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-foreground/[0.04] bg-foreground/[0.015] dark:bg-foreground/[0.03]">
           <span className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">{label}</span>
           <button
             onClick={() => {
@@ -330,7 +330,7 @@ function GuideCodeBlock({ code, label }: { code: string; label?: string }) {
         </div>
       )}
       <div className="relative bg-foreground/[0.01] dark:bg-foreground/[0.02]">
-        <pre className="px-4 py-4 text-[12px] leading-[1.7] font-mono text-foreground/60 overflow-x-auto scrollbar-invisible">
+        <pre className="px-5 py-5 text-[12px] leading-[1.7] font-mono text-foreground/60 overflow-x-auto scrollbar-invisible">
           <code>{code}</code>
         </pre>
       </div>
@@ -357,7 +357,7 @@ function Section({ id, title, children, icon: Icon, description }: {
   const g = SECTION_GRADIENTS[gradientIndex]
 
   return (
-    <motion.section id={id} variants={fadeUp} className="relative space-y-5 scroll-mt-24 rounded-2xl border border-border/[0.06] p-6 sm:p-8 overflow-hidden">
+    <motion.section id={id} variants={fadeUp} className="relative space-y-7 scroll-mt-24 rounded-2xl border border-border/[0.06] p-7 sm:p-9 overflow-hidden">
       {/* Aurora gradient header strip */}
       <div
         className="absolute inset-x-0 top-0 h-32 pointer-events-none"
@@ -380,7 +380,7 @@ function Section({ id, title, children, icon: Icon, description }: {
           <p className="text-[13px] text-muted-foreground/55 leading-relaxed pl-[42px]">{description}</p>
         )}
       </div>
-      <div className="relative">
+      <div className="relative space-y-5">
         {children}
       </div>
     </motion.section>
@@ -636,7 +636,7 @@ export function APITab({ inApp }: { inApp: boolean }) {
         <div className="min-w-0 space-y-0">
 
       {/* ════ Auth + How it Works ════ */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-7 mb-8">
         <motion.div variants={fadeUp}>
           <Section id="authentication" title="Authentication" icon={Key}>
             <p className="text-[13px] text-muted-foreground/55 leading-relaxed">
@@ -673,7 +673,7 @@ export function APITab({ inApp }: { inApp: boolean }) {
       <SectionDivider />
 
       {/* ════ Quick Start ════ */}
-      <div className="py-6 mb-6">
+      <div className="py-8 mb-8">
         <Section id="quickstart" title="Quick Start" icon={Lightning} description="Choose your language. The predict endpoint is the core of the API — everything else builds on it.">
           {/* Language selector */}
           <div className="flex flex-wrap gap-1.5 p-1.5 rounded-xl bg-foreground/[0.025] border border-foreground/[0.04] w-fit">
@@ -697,7 +697,7 @@ export function APITab({ inApp }: { inApp: boolean }) {
             <GuideCodeBlock label="install" code={snippet.install} />
           )}
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-7">
             <GuideCodeBlock label="predict — single screenshot" code={snippet.predict} />
             <GuideCodeBlock label="sessions — multi-step tasks" code={snippet.session} />
           </div>
@@ -707,7 +707,7 @@ export function APITab({ inApp }: { inApp: boolean }) {
       <SectionDivider />
 
       {/* ════ Response Format ════ */}
-      <div className="py-6 mb-6">
+      <div className="py-8 mb-8">
         <Section id="response" title="Response Format" icon={BracketsAngle} description="Every prediction returns structured actions with exact coordinates, a status signal, and token usage.">
           <GuideCodeBlock
             label="response"
@@ -738,7 +738,7 @@ export function APITab({ inApp }: { inApp: boolean }) {
       <SectionDivider />
 
       {/* ════ Action Types + Request Options ════ */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 py-6 mb-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-7 py-8 mb-8">
         <motion.div variants={fadeUp}>
           <Section id="actions" title="Action Types" icon={CursorClick}>
             <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.01] overflow-hidden divide-y divide-foreground/[0.04]">
@@ -791,7 +791,7 @@ export function APITab({ inApp }: { inApp: boolean }) {
       <SectionDivider />
 
       {/* ════ Endpoints ════ */}
-      <div className="py-6 mb-6">
+      <div className="py-8 mb-8">
         <Section id="endpoints" title="All Endpoints" icon={Terminal} description="All endpoints require the X-API-Key header. Credits deducted from your shared balance.">
           <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.01] overflow-hidden">
             {/* Group: Prediction */}
@@ -869,8 +869,8 @@ export function APITab({ inApp }: { inApp: boolean }) {
       <SectionDivider />
 
       {/* ════ Errors ════ */}
-      <div className="py-6 mb-4">
-        <Section title="Error Handling" icon={Eye} description="All errors return a JSON body with error.code and error.message fields.">
+      <div className="py-8 mb-6">
+        <Section id="errors" title="Error Handling" icon={Eye} description="All errors return a JSON body with error.code and error.message fields.">
           <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.01] overflow-hidden divide-y divide-foreground/[0.04]">
             {[
               { code: "401", name: "INVALID_API_KEY", desc: "Missing or invalid X-API-Key" },
@@ -888,6 +888,9 @@ export function APITab({ inApp }: { inApp: boolean }) {
             ))}
           </div>
         </Section>
+      </div>
+
+        </div>
       </div>
 
     </motion.div>

@@ -8,6 +8,123 @@ import NextImage from "next/image"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
 
+/* ─── stat helpers (count-up + value parsing) ───
+ * Numbers in the resource-saved row count up on first viewport entry.
+ * `parseStat` splits "$3,200" / "30 hrs" / "10×" / "0" into prefix/num/suffix
+ * so we can animate the integer part while preserving formatting (commas,
+ * units, multiplier glyph). */
+
+function parseStat(raw: string): { prefix: string; num: number; suffix: string } {
+  const m = raw.match(/^(\D*?)([\d,]+)(.*)$/)
+  if (!m) return { prefix: "", num: 0, suffix: raw }
+  return {
+    prefix: m[1],
+    num: parseInt(m[2].replace(/,/g, ""), 10),
+    suffix: m[3],
+  }
+}
+
+function useCountUp(target: number, durationMs: number, start: boolean): number {
+  const [val, setVal] = useState(0)
+  useEffect(() => {
+    if (!start) return
+    if (target === 0) { setVal(0); return }
+    const t0 = performance.now()
+    let raf = 0
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - t0) / durationMs)
+      // ease-out cubic for a confident settle
+      const eased = 1 - Math.pow(1 - t, 3)
+      setVal(Math.round(target * eased))
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [target, durationMs, start])
+  return val
+}
+
+function StatCell({
+  rawValue,
+  label,
+  sublabel,
+  delay,
+  isMobile,
+}: {
+  rawValue: string
+  label: string
+  sublabel: string
+  delay: number
+  isMobile: boolean
+}) {
+  const { prefix, num, suffix } = useMemo(() => parseStat(rawValue), [rawValue])
+  const [inView, setInView] = useState(false)
+  const animated = useCountUp(num, 1500, inView)
+  const display = num === 0
+    ? `${prefix}0${suffix}`
+    : `${prefix}${animated.toLocaleString()}${suffix}`
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      onViewportEnter={() => setInView(true)}
+      viewport={{ once: true, amount: 0.45 }}
+      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={cn(
+        "group relative flex flex-col items-center text-center",
+        isMobile ? "px-2 py-1" : "px-4 py-1",
+      )}
+    >
+      {/* Number — gradient text, animated count-up. White tones for
+          legibility against the photographic card backdrop. */}
+      <div
+        className={cn(
+          "font-semibold tabular-nums tracking-[-0.04em] leading-none",
+          "bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent",
+          "drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]",
+          isMobile ? "text-[1.6rem]" : "text-[1.85rem] lg:text-[2.05rem]",
+        )}
+      >
+        {display}
+      </div>
+
+      {/* Hairline underline — draws in beneath the number once it's in
+          view; the single signature element of the row. */}
+      <motion.div
+        aria-hidden="true"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={inView ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+        transition={{ duration: 0.9, delay: delay + 0.15, ease: [0.22, 1, 0.36, 1] }}
+        className={cn(
+          "mt-2 h-px w-9 origin-center",
+          "bg-gradient-to-r from-transparent via-white/55 to-transparent",
+          "transition-[width,opacity] duration-300 group-hover:w-12 group-hover:via-white/85",
+        )}
+      />
+
+      {/* Label */}
+      <div
+        className={cn(
+          "font-medium leading-tight tracking-tight transition-colors duration-200",
+          "text-white/75 group-hover:text-white/95",
+          "drop-shadow-[0_1px_4px_rgba(0,0,0,0.45)]",
+          isMobile ? "mt-1.5 text-[10.5px]" : "mt-2 text-[11.5px]",
+        )}
+      >
+        {label}
+      </div>
+
+      {/* Sublabel */}
+      {!isMobile && (
+        <div className="mt-0.5 text-[10px] leading-tight text-white/55 drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]">
+          {sublabel}
+        </div>
+      )}
+    </motion.div>
+  )
+}
+
 // Demo video IDs cycled across the grid
 const VIDEO_IDS = [
   "icxgLDephHE", "qTvmGfg3HVw", "Wbo2o74hVIo",
@@ -41,6 +158,10 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
 
   const t = useTranslations("hero")
   const tc = useTranslations("common")
+  // Resource-saved stats — money / time / output / effort. Lives under
+  // `hero.resourceStats` in messages so it's hero-scoped (the generic
+  // `stats` namespace below the hero used different keys).
+  const RESOURCE_STAT_KEYS = ["money", "time", "speed", "effort"] as const
   const [headlineIndex, setHeadlineIndex] = useState(0)
   const HEADLINES = HEADLINE_KEYS.map((key) => t(`useCases.${key}.headline`))
 
@@ -380,7 +501,7 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
           ref={overlayRef}
           className={cn(
             "absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none",
-            isMobile ? "pt-24 pb-20" : "pt-28 pb-24"
+            isMobile ? "pt-20 pb-16" : "pt-24 pb-20"
           )}
           style={{
             transform: "translateZ(0)",
@@ -398,7 +519,7 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
             <div
               className={cn(
                 "flex justify-center",
-                isMobile ? "mb-4" : "mb-7"
+                isMobile ? "mb-3" : "mb-5"
               )}
             >
               <div
@@ -487,18 +608,106 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
               className={cn(
                 "mx-auto text-foreground/55 dark:text-white/60 leading-relaxed",
                 isMobile
-                  ? "mt-3 text-[13px] max-w-[340px]"
-                  : "mt-5 text-[16px] sm:text-[17px] max-w-lg"
+                  ? "mt-2.5 text-[12.5px] max-w-[320px]"
+                  : "mt-3.5 text-[15px] sm:text-[16px] max-w-[480px]"
               )}
             >
               {t("useCases.computerAgent.outcome")}
             </p>
 
+            {/* ─── Resources saved — money / time / output / effort.
+                Four hard numbers, count-up animated on viewport entry,
+                presented inside one unified hairline-bordered card.
+                No internal dividers — whitespace + a single signature
+                top-edge gradient hairline keep the row reading as one
+                cohesive surface, not four split columns. */}
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className={cn(
+                "relative mx-auto",
+                isMobile ? "mt-5 max-w-[340px]" : "mt-6 max-w-[760px]",
+              )}
+              aria-label="Resources saved per workflow"
+            >
+              {/* Outer card — hairline border, photographic backdrop. */}
+              <div
+                className={cn(
+                  "relative rounded-[18px] overflow-hidden isolate",
+                  "border border-white/[0.10]",
+                  "shadow-[0_1px_0_0_rgba(255,255,255,0.08)_inset,0_18px_44px_-22px_rgba(0,0,0,0.55)]",
+                )}
+              >
+                {/* Photographic backdrop. Sits below all content; the
+                    overlays above tune contrast for legibility. */}
+                <NextImage
+                  src="/lucas-calloch-P-yzuyWFEIk-unsplash.jpg"
+                  alt=""
+                  fill
+                  sizes="(max-width: 768px) 360px, 760px"
+                  priority
+                  draggable={false}
+                  className="-z-10 object-cover select-none"
+                />
+
+                {/* Legibility tint — vertical gradient that anchors text
+                    contrast without flattening the photograph. */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-black/35 via-black/45 to-black/55"
+                />
+
+                {/* Soft radial vignette — keeps the figures crisp at
+                    center, lets the photograph breathe at the edges. */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_90%_at_50%_50%,transparent_30%,rgba(0,0,0,0.35)_100%)]"
+                />
+
+                {/* Signature top hairline — the one decorative flourish. */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-x-12 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                />
+
+                <div
+                  className={cn(
+                    "relative grid",
+                    isMobile
+                      ? "grid-cols-2 gap-y-4 px-4 py-4"
+                      : "grid-cols-4 gap-x-1 px-6 py-5",
+                  )}
+                >
+                  {RESOURCE_STAT_KEYS.map((key, i) => (
+                    <StatCell
+                      key={key}
+                      isMobile={isMobile}
+                      delay={0.45 + i * 0.08}
+                      rawValue={t(`resourceStats.${key}.value`)}
+                      label={t(`resourceStats.${key}.label`)}
+                      sublabel={t(`resourceStats.${key}.sublabel`)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Faint outer halo — single signature flourish behind the
+                  card. Desktop only; mobile keeps the card edge crisp. */}
+              {!isMobile && (
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -inset-x-10 -inset-y-6 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.06),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.10),transparent_60%)] blur-2xl"
+                />
+              )}
+            </motion.div>
+
             {/* CTAs */}
             <div
               className={cn(
                 "flex items-center justify-center",
-                isMobile ? "mt-6 gap-4 flex-col" : "mt-9 gap-6"
+                isMobile ? "mt-5 gap-3 flex-col" : "mt-6 gap-5"
               )}
             >
               <Link href="/auth">

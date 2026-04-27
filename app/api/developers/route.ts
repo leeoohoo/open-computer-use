@@ -80,11 +80,12 @@ export async function GET() {
       .map(([date, v]) => ({ date, ...v }))
       .sort((a, b) => a.date.localeCompare(b.date))
 
-    // ── Recent requests (last 10) ──
-    const recent = rows.slice(0, 10).map(r => ({
+    // ── Recent requests (last 200, with request_id) ──
+    const recent = rows.slice(0, 200).map(r => ({
       endpoint: r.endpoint,
       credits: r.credits_charged ?? 0,
       time: r.created_at,
+      request_id: r.request_id ?? null,
     }))
 
     // ── Peak hour ──

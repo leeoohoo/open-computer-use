@@ -302,35 +302,10 @@ export function LandingPage() {
               They fade in with the content via the parent's opacity. */}
           <GuideLines />
 
-          <SectionDivider />
-
-          {/* Social Proof Bar */}
-          <section className="py-16 px-8 sm:px-10">
-            <div className="max-w-5xl mx-auto">
-              <div className={cn(
-                "grid text-center",
-                isMobile ? "grid-cols-2 gap-6" : "grid-cols-4 gap-0"
-              )}>
-                {(["osworld", "tools", "schedule", "setup"] as const).map((key, i) => {
-                  const stat = { value: t(`stats.${key}.value`), label: t(`stats.${key}.label`), sublabel: t(`stats.${key}.sublabel`) }
-                  return (
-                  <div key={stat.label} className={cn(
-                    !isMobile && i > 0 && "border-l border-border/30"
-                  )}>
-                    <div className={cn(
-                      "font-bold tracking-tight text-foreground",
-                      isMobile ? "text-2xl" : "text-3xl"
-                    )}>
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-                    <div className="text-xs text-muted-foreground/50 mt-0.5">{stat.sublabel}</div>
-                  </div>
-                  )
-                })}
-              </div>
-            </div>
-          </section>
+          {/* Social Proof Bar removed — these stats now live inside the hero
+              overlay (see [hero-video-matrix.tsx](./hero-video-matrix.tsx))
+              so users see every value dimension at the same time as the
+              headline, without an extra scroll. */}
 
         <SectionDivider />
 

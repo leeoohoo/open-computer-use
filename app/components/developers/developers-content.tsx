@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Plus, Copy, Check, Trash2, Key, Code2, MoreHorizontal, BarChart3,
-  Shield, Terminal, BookOpen, Braces, Send, MousePointerClick, Zap
+  Shield, Terminal, BookOpen, Braces, Send, MousePointerClick, Zap,
+  Search, Download, RefreshCw, ChevronDown, ChevronRight, X, FileJson, FileText, ArrowUpDown,
 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -69,6 +70,7 @@ interface RecentRequest {
   endpoint: string
   credits: number
   time: string
+  request_id?: string | null
 }
 
 /* ─── Helpers ─── */
@@ -1062,6 +1064,534 @@ function APIKeyCard({ apiKey, index, fullKey, onRevoke }: { apiKey: APIKey; inde
 
 /* ─── Code Block ─── */
 
+/* ─── Traces Panel — filters, export, expandable rows ─── */
+
+type TimeRange = "1h" | "24h" | "7d" | "14d" | "30d" | "all"
+type SortKey = "newest" | "oldest" | "credits-desc" | "credits-asc"
+
+const TIME_RANGES: { id: TimeRange; label: string; ms: number | null }[] = [
+  { id: "1h",  label: "1h",  ms: 60 * 60 * 1000 },
+  { id: "24h", label: "24h", ms: 24 * 60 * 60 * 1000 },
+  { id: "7d",  label: "7d",  ms: 7 * 24 * 60 * 60 * 1000 },
+  { id: "14d", label: "14d", ms: 14 * 24 * 60 * 60 * 1000 },
+  { id: "30d", label: "30d", ms: 30 * 24 * 60 * 60 * 1000 },
+  { id: "all", label: "All", ms: null },
+]
+
+const SORT_LABELS: Record<SortKey, string> = {
+  "newest":       "Newest first",
+  "oldest":       "Oldest first",
+  "credits-desc": "Credits (high → low)",
+  "credits-asc":  "Credits (low → high)",
+}
+
+function endpointBadgeClass(ep: string) {
+  if (ep.startsWith("session")) return "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+  if (ep === "ground") return "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+  if (ep === "ocr") return "bg-purple-500/10 text-purple-600 dark:text-purple-400"
+  if (ep === "parse") return "bg-slate-500/10 text-slate-600 dark:text-slate-400"
+  return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+}
+
+function endpointShort(ep: string) {
+  if (ep === "predict") return "PRED"
+  if (ep === "session_predict") return "S/PRED"
+  if (ep === "session_create") return "S/NEW"
+  if (ep === "session_reset") return "S/RST"
+  if (ep === "session_delete") return "S/DEL"
+  return ep.slice(0, 5).toUpperCase()
+}
+
+function downloadFile(filename: string, content: string, mime: string) {
+  const blob = new Blob([content], { type: mime })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  setTimeout(() => URL.revokeObjectURL(url), 0)
+}
+
+function rowsToCSV(rows: RecentRequest[]): string {
+  const header = ["request_id", "endpoint", "credits", "time"]
+  const escape = (v: unknown) => {
+    const s = v == null ? "" : String(v)
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
+  }
+  const lines = [header.join(",")]
+  for (const r of rows) {
+    lines.push([escape(r.request_id ?? ""), escape(r.endpoint), escape(r.credits), escape(r.time)].join(","))
+  }
+  return lines.join("\n")
+}
+
+function TracesPanel({ recent, onRefresh }: { recent: RecentRequest[]; onRefresh: () => Promise<void> | void }) {
+  const [search, setSearch] = useState("")
+  const [selectedEndpoints, setSelectedEndpoints] = useState<Set<string>>(new Set())
+  const [timeRange, setTimeRange] = useState<TimeRange>("24h")
+  const [sortKey, setSortKey] = useState<SortKey>("newest")
+  const [autoRefresh, setAutoRefresh] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(25)
+  const [expanded, setExpanded] = useState<string | null>(null)
+  const [copiedKey, setCopiedKey] = useState<string | null>(null)
+
+  // Reset visible count when filters change
+  useEffect(() => { setVisibleCount(25) }, [search, selectedEndpoints, timeRange, sortKey])
+
+  // Auto-refresh every 30s
+  useEffect(() => {
+    if (!autoRefresh) return
+    const id = setInterval(() => {
+      Promise.resolve(onRefresh()).catch(() => {})
+    }, 30000)
+    return () => clearInterval(id)
+  }, [autoRefresh, onRefresh])
+
+  const allEndpoints = useMemo(() => {
+    const set = new Set<string>()
+    for (const r of recent) set.add(r.endpoint)
+    return Array.from(set).sort()
+  }, [recent])
+
+  const filtered = useMemo(() => {
+    const now = Date.now()
+    const range = TIME_RANGES.find(r => r.id === timeRange)
+    const cutoff = range?.ms ? now - range.ms : null
+    const q = search.trim().toLowerCase()
+
+    let rows = recent.filter(r => {
+      if (cutoff !== null && new Date(r.time).getTime() < cutoff) return false
+      if (selectedEndpoints.size > 0 && !selectedEndpoints.has(r.endpoint)) return false
+      if (q) {
+        const hay = `${r.endpoint} ${r.request_id ?? ""}`.toLowerCase()
+        if (!hay.includes(q)) return false
+      }
+      return true
+    })
+
+    rows = [...rows].sort((a, b) => {
+      switch (sortKey) {
+        case "oldest":       return new Date(a.time).getTime() - new Date(b.time).getTime()
+        case "credits-desc": return b.credits - a.credits
+        case "credits-asc":  return a.credits - b.credits
+        case "newest":
+        default:             return new Date(b.time).getTime() - new Date(a.time).getTime()
+      }
+    })
+    return rows
+  }, [recent, search, selectedEndpoints, timeRange, sortKey])
+
+  const visible = filtered.slice(0, visibleCount)
+  const hasFilters = search.length > 0 || selectedEndpoints.size > 0 || timeRange !== "24h"
+
+  const clearFilters = () => {
+    setSearch("")
+    setSelectedEndpoints(new Set())
+    setTimeRange("24h")
+  }
+
+  const toggleEndpoint = (ep: string) => {
+    setSelectedEndpoints(prev => {
+      const next = new Set(prev)
+      if (next.has(ep)) next.delete(ep); else next.add(ep)
+      return next
+    })
+  }
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    try { await onRefresh() } finally { setRefreshing(false) }
+  }
+
+  const exportCSV = () => {
+    if (filtered.length === 0) return
+    downloadFile(`traces-${new Date().toISOString().slice(0, 10)}.csv`, rowsToCSV(filtered), "text/csv;charset=utf-8")
+    toast.success(`Exported ${filtered.length} row${filtered.length === 1 ? "" : "s"}`)
+  }
+
+  const exportJSON = () => {
+    if (filtered.length === 0) return
+    downloadFile(
+      `traces-${new Date().toISOString().slice(0, 10)}.json`,
+      JSON.stringify(filtered, null, 2),
+      "application/json",
+    )
+    toast.success(`Exported ${filtered.length} row${filtered.length === 1 ? "" : "s"}`)
+  }
+
+  const copyJSON = () => {
+    if (filtered.length === 0) return
+    navigator.clipboard?.writeText(JSON.stringify(filtered, null, 2))
+      .then(() => toast.success("Copied JSON"))
+      .catch(() => toast.error("Copy failed"))
+  }
+
+  const copyValue = (v: string, k: string) => {
+    navigator.clipboard?.writeText(v)
+      .then(() => {
+        setCopiedKey(k)
+        setTimeout(() => setCopiedKey(prev => (prev === k ? null : prev)), 1400)
+      })
+      .catch(() => {})
+  }
+
+  return (
+    <div className="relative rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
+
+      {/* Header */}
+      <div className="px-5 pt-3.5 pb-3 flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-baseline gap-3">
+          <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Traces</span>
+          <span className="text-[10px] text-muted-foreground/35 tabular-nums">
+            {filtered.length === recent.length
+              ? `${recent.length}`
+              : `${filtered.length} of ${recent.length}`}
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setAutoRefresh(v => !v)}
+            title={autoRefresh ? "Auto-refresh on (30s)" : "Auto-refresh off"}
+            className={cn(
+              "inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[10.5px] font-medium border transition-all",
+              autoRefresh
+                ? "border-emerald-500/25 bg-emerald-500/[0.06] text-emerald-600 dark:text-emerald-400"
+                : "border-border/40 bg-background/40 text-muted-foreground/55 hover:text-foreground hover:border-border/70",
+            )}
+          >
+            <span className={cn(
+              "h-1.5 w-1.5 rounded-full",
+              autoRefresh ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/30",
+            )} />
+            Live
+          </button>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            title="Refresh now"
+            className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border/40 bg-background/40 text-muted-foreground/60 hover:text-foreground hover:border-border/70 disabled:opacity-50 transition-all"
+          >
+            <RefreshCw className={cn("h-3 w-3", refreshing && "animate-spin")} />
+          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                disabled={filtered.length === 0}
+                title="Export"
+                className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-[10.5px] font-medium border border-border/40 bg-background/40 text-muted-foreground/60 hover:text-foreground hover:border-border/70 disabled:opacity-40 transition-all"
+              >
+                <Download className="h-3 w-3" />
+                Export
+                <ChevronDown className="h-3 w-3 opacity-60" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuItem onClick={exportCSV} className="text-[12px]">
+                <FileText className="h-3.5 w-3.5 mr-2" />CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportJSON} className="text-[12px]">
+                <FileJson className="h-3.5 w-3.5 mr-2" />JSON
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={copyJSON} className="text-[12px]">
+                <Copy className="h-3.5 w-3.5 mr-2" />Copy JSON
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Toolbar */}
+      <div className="px-5 pb-3 flex items-center gap-2 flex-wrap border-b border-border/15">
+        {/* Search */}
+        <div className="relative flex-1 min-w-[180px] max-w-sm">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground/40" />
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search endpoint or request_id"
+            className={cn(
+              "w-full h-7 pl-7 pr-7 rounded-md text-[11.5px] bg-background/40 border border-border/40",
+              "placeholder:text-muted-foreground/35 text-foreground/85",
+              "focus:outline-none focus:border-border/80 focus:bg-background/70 transition-colors",
+            )}
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-foreground transition-colors"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+
+        {/* Time-range segmented */}
+        <div className="inline-flex items-center rounded-md border border-border/40 bg-background/40 p-0.5">
+          {TIME_RANGES.map(r => (
+            <button
+              key={r.id}
+              onClick={() => setTimeRange(r.id)}
+              className={cn(
+                "h-6 px-2 rounded text-[10.5px] font-medium tabular-nums transition-colors",
+                timeRange === r.id
+                  ? "bg-foreground/[0.08] text-foreground"
+                  : "text-muted-foreground/50 hover:text-foreground/85",
+              )}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Endpoint filter */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className={cn(
+                "inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-[10.5px] font-medium border bg-background/40 transition-all",
+                selectedEndpoints.size > 0
+                  ? "border-foreground/30 text-foreground"
+                  : "border-border/40 text-muted-foreground/60 hover:text-foreground hover:border-border/70",
+              )}
+            >
+              Endpoints
+              {selectedEndpoints.size > 0 && (
+                <span className="ml-0.5 h-4 min-w-4 px-1 rounded-full bg-foreground text-background text-[9px] font-bold tabular-nums inline-flex items-center justify-center">
+                  {selectedEndpoints.size}
+                </span>
+              )}
+              <ChevronDown className="h-3 w-3 opacity-60" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-52">
+            {allEndpoints.length === 0 ? (
+              <div className="px-2 py-1.5 text-[11px] text-muted-foreground/40">No endpoints yet</div>
+            ) : (
+              <>
+                {allEndpoints.map(ep => {
+                  const checked = selectedEndpoints.has(ep)
+                  return (
+                    <DropdownMenuItem
+                      key={ep}
+                      onSelect={(e) => { e.preventDefault(); toggleEndpoint(ep) }}
+                      className="text-[11.5px] flex items-center gap-2"
+                    >
+                      <span className={cn(
+                        "flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-sm border transition-colors",
+                        checked ? "bg-foreground border-foreground" : "border-border/60",
+                      )}>
+                        {checked && <Check className="h-2.5 w-2.5 text-background" />}
+                      </span>
+                      <code className="flex-1 truncate font-mono text-[11px]">{ep}</code>
+                    </DropdownMenuItem>
+                  )
+                })}
+                {selectedEndpoints.size > 0 && (
+                  <DropdownMenuItem
+                    onSelect={(e) => { e.preventDefault(); setSelectedEndpoints(new Set()) }}
+                    className="text-[11px] text-muted-foreground/60 border-t border-border/20 mt-1 pt-1.5"
+                  >
+                    <X className="h-3 w-3 mr-2" />Clear selection
+                  </DropdownMenuItem>
+                )}
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Sort */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-[10.5px] font-medium border border-border/40 bg-background/40 text-muted-foreground/60 hover:text-foreground hover:border-border/70 transition-all">
+              <ArrowUpDown className="h-3 w-3" />
+              {SORT_LABELS[sortKey]}
+              <ChevronDown className="h-3 w-3 opacity-60" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52">
+            {(Object.keys(SORT_LABELS) as SortKey[]).map(k => (
+              <DropdownMenuItem
+                key={k}
+                onSelect={() => setSortKey(k)}
+                className="text-[11.5px] flex items-center gap-2"
+              >
+                <span className={cn(
+                  "h-1.5 w-1.5 rounded-full",
+                  sortKey === k ? "bg-foreground" : "bg-transparent border border-border/60",
+                )} />
+                {SORT_LABELS[k]}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {hasFilters && (
+          <button
+            onClick={clearFilters}
+            className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-[10.5px] text-muted-foreground/55 hover:text-foreground transition-colors"
+          >
+            <X className="h-3 w-3" />Clear
+          </button>
+        )}
+      </div>
+
+      {/* Body */}
+      {recent.length === 0 ? (
+        <div className="px-5 pb-6 pt-6 flex flex-col items-center text-center">
+          <BarChart3 className="h-8 w-8 text-muted-foreground/15 mb-3" strokeWidth={1} />
+          <p className="text-[11px] text-muted-foreground/30">
+            API requests will appear here as you make calls
+          </p>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="px-5 pb-6 pt-6 flex flex-col items-center text-center">
+          <Search className="h-7 w-7 text-muted-foreground/15 mb-3" strokeWidth={1} />
+          <p className="text-[11px] text-muted-foreground/40">No traces match these filters</p>
+          <button
+            onClick={clearFilters}
+            className="mt-2 text-[10.5px] font-medium text-foreground/70 hover:text-foreground underline-offset-2 hover:underline"
+          >
+            Clear filters
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="divide-y divide-border/10">
+            {visible.map((r, i) => {
+              const key = r.request_id || `${r.time}-${i}`
+              const isOpen = expanded === key
+              return (
+                <div key={key} className="group/row">
+                  <button
+                    onClick={() => setExpanded(isOpen ? null : key)}
+                    className="w-full flex items-center gap-3 px-5 py-2.5 text-left transition-colors hover:bg-foreground/[0.015]"
+                  >
+                    <ChevronRight
+                      className={cn(
+                        "h-3 w-3 text-muted-foreground/30 shrink-0 transition-transform",
+                        isOpen && "rotate-90 text-muted-foreground/60",
+                      )}
+                    />
+                    <span className={cn(
+                      "shrink-0 w-12 text-center text-[10px] font-bold tracking-wider py-0.5 rounded",
+                      endpointBadgeClass(r.endpoint),
+                    )}>
+                      {endpointShort(r.endpoint)}
+                    </span>
+                    <span className="text-[11px] text-muted-foreground/60 flex-1 truncate font-mono">
+                      {r.request_id ?? r.endpoint.replace(/_/g, " ")}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground/40 tabular-nums">{r.credits} cr</span>
+                    <span className="text-[10px] text-muted-foreground/30 tabular-nums w-14 text-right">
+                      {timeAgo(r.time)}
+                    </span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key="detail"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.22, ease: EASE }}
+                        className="overflow-hidden bg-foreground/[0.012]"
+                      >
+                        <div className="px-12 py-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                          <DetailRow
+                            label="Endpoint"
+                            value={r.endpoint}
+                            onCopy={() => copyValue(r.endpoint, `${key}-ep`)}
+                            copied={copiedKey === `${key}-ep`}
+                            mono
+                          />
+                          <DetailRow
+                            label="Credits"
+                            value={`${r.credits}`}
+                            onCopy={() => copyValue(String(r.credits), `${key}-cr`)}
+                            copied={copiedKey === `${key}-cr`}
+                          />
+                          <DetailRow
+                            label="Request ID"
+                            value={r.request_id ?? "—"}
+                            onCopy={r.request_id ? () => copyValue(r.request_id!, `${key}-id`) : undefined}
+                            copied={copiedKey === `${key}-id`}
+                            mono
+                          />
+                          <DetailRow
+                            label="Timestamp"
+                            value={new Date(r.time).toLocaleString()}
+                            secondary={r.time}
+                            onCopy={() => copyValue(r.time, `${key}-t`)}
+                            copied={copiedKey === `${key}-t`}
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )
+            })}
+          </div>
+
+          {visibleCount < filtered.length && (
+            <div className="border-t border-border/15 px-5 py-2.5 flex items-center justify-center">
+              <button
+                onClick={() => setVisibleCount(c => c + 25)}
+                className="text-[11px] font-medium text-muted-foreground/65 hover:text-foreground transition-colors"
+              >
+                Load 25 more &nbsp;·&nbsp; <span className="text-muted-foreground/35 tabular-nums">{filtered.length - visibleCount} remaining</span>
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
+function DetailRow({ label, value, secondary, onCopy, copied, mono }: {
+  label: string
+  value: string
+  secondary?: string
+  onCopy?: () => void
+  copied?: boolean
+  mono?: boolean
+}) {
+  return (
+    <div className="flex items-start gap-3 group/detail">
+      <span className="text-[9.5px] font-semibold text-muted-foreground/40 uppercase tracking-[0.14em] w-16 shrink-0 pt-0.5">
+        {label}
+      </span>
+      <div className="flex-1 min-w-0">
+        <div className={cn(
+          "text-[11.5px] text-foreground/80 break-all",
+          mono && "font-mono text-[11px]",
+        )}>
+          {value}
+        </div>
+        {secondary && (
+          <div className="text-[10px] text-muted-foreground/35 font-mono truncate mt-0.5">{secondary}</div>
+        )}
+      </div>
+      {onCopy && (
+        <button
+          onClick={onCopy}
+          className="opacity-0 group-hover/detail:opacity-100 text-muted-foreground/40 hover:text-foreground transition-all shrink-0"
+          title="Copy"
+        >
+          {copied ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
+        </button>
+      )}
+    </div>
+  )
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN CONTENT
    ═══════════════════════════════════════════════════════════════════ */
@@ -1358,50 +1888,8 @@ export function DevelopersContent() {
               {/* Activity chart */}
               <ActivityChart daily={daily} />
 
-              {/* Request log */}
-              <div className="relative rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm overflow-hidden">
-                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.08] to-transparent" />
-                <div className="px-5 py-3 flex items-center justify-between">
-                  <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Request Log</span>
-                  {recent.length > 0 && (
-                    <span className="text-[10px] text-muted-foreground/35">Last {recent.length}</span>
-                  )}
-                </div>
-
-                {recent.length > 0 ? (
-                  <div className="divide-y divide-border/10">
-                    {recent.map((r, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: 0.03 * i, ease: EASE }}
-                        className="flex items-center gap-3 px-5 py-2.5 transition-colors hover:bg-foreground/[0.015]"
-                      >
-                        <span className={cn(
-                          "shrink-0 w-12 text-center text-[10px] font-bold tracking-wider py-0.5 rounded",
-                          r.endpoint.startsWith("session") ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                            : r.endpoint === "ground" ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                            : r.endpoint === "ocr" ? "bg-purple-500/10 text-purple-600 dark:text-purple-400"
-                            : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                        )}>
-                          {r.endpoint === "predict" ? "PRED" : r.endpoint === "session_predict" ? "S/PRED" : r.endpoint === "session_create" ? "S/NEW" : r.endpoint.slice(0, 5).toUpperCase()}
-                        </span>
-                        <span className="text-[11px] text-muted-foreground/60 flex-1 truncate">{r.endpoint.replace(/_/g, " ")}</span>
-                        <span className="text-[10px] text-muted-foreground/40 tabular-nums">{r.credits} cr</span>
-                        <span className="text-[10px] text-muted-foreground/30 tabular-nums w-14 text-right">{timeAgo(r.time)}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="px-5 pb-6 pt-3 flex flex-col items-center text-center">
-                    <BarChart3 className="h-8 w-8 text-muted-foreground/15 mb-3" strokeWidth={1} />
-                    <p className="text-[11px] text-muted-foreground/30">
-                      API requests will appear here as you make calls
-                    </p>
-                  </div>
-                )}
-              </div>
+              {/* Traces — filters, export, expandable rows */}
+              <TracesPanel recent={recent} onRefresh={fetchKeys} />
             </motion.div>
           )}
 
