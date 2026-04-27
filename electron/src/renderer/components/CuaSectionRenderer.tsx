@@ -48,19 +48,28 @@ function IconCode({ className }: { className?: string }) {
   )
 }
 
-function IconBrain({ className }: { className?: string }) {
+function IconSparkle({ className }: { className?: string }) {
+  // 4-point star sparkle — used in the Session Summary header chip.
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9.5 2A5.5 5.5 0 0 0 4 7.5c0 1.5.6 2.9 1.6 3.9L12 18l6.4-6.6A5.5 5.5 0 0 0 14.5 2a5.5 5.5 0 0 0-5 3.2" />
-      <path d="M12 18v4" />
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0L13.6 9.4L23 12L13.6 14.6L12 24L10.4 14.6L1 12L10.4 9.4L12 0Z" />
     </svg>
   )
 }
 
-function IconLightning({ className }: { className?: string }) {
+function IconCopy({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M7 2v11h3v9l7-12h-4l4-8z" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  )
+}
+
+function IconCheck({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
     </svg>
   )
 }
@@ -351,6 +360,54 @@ function PlainDot({ status: _status }: { status: 'success' | 'error' | 'pending'
 
 // ── Primitives ──
 
+function stripResultFences(raw: string): string {
+  // The backend wraps stdout in ``` fences (see code_agent.py). Strip those
+  // fence lines so the Markdown renderer's code-block chrome (language label,
+  // its own copy button) doesn't appear inside the result card.
+  return raw
+    .split('\n')
+    .filter((line) => !/^\s*```\s*\w*\s*$/.test(line))
+    .join('\n')
+    .trim()
+}
+
+function CopyButton({
+  text,
+  className,
+}: {
+  text: string
+  className?: string
+}) {
+  const [copied, setCopied] = useState(false)
+
+  const onClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (typeof navigator === 'undefined' || !navigator.clipboard) return
+    void navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={copied ? 'Copied' : 'Copy result'}
+      title={copied ? 'Copied' : 'Copy'}
+      className={cn(
+        '-mr-1 inline-flex items-center justify-center w-6 h-6 rounded-md text-neutral-400/45 transition-all duration-150 hover:bg-white/[0.06] hover:text-neutral-100 active:scale-95',
+        className
+      )}
+    >
+      {copied ? (
+        <IconCheck className="w-3 h-3 text-emerald-400" />
+      ) : (
+        <IconCopy className="w-3 h-3" />
+      )}
+    </button>
+  )
+}
+
 function DetailRow({
   icon: Icon,
   label,
@@ -558,23 +615,43 @@ function ItemRenderer({
     }
 
     case 'code-agent-thought': {
-      const label = 'Thinking'
+      // Render the agent's mid-execution reasoning as regular timeline text —
+      // same size and color as the rest of the agent's output.
+      const cleaned = item.content.trim()
+      if (!cleaned) return null
       return (
-        <div className="pl-6">
-          <DetailRow icon={IconBrain} label={label}>
-            <Markdown>{item.content}</Markdown>
-          </DetailRow>
+        <div className="pl-6 py-0.5 text-[15px] leading-relaxed text-neutral-100">
+          <Markdown>{cleaned}</Markdown>
         </div>
       )
     }
 
     case 'code-agent-result': {
-      const label = 'Result'
+      // Show the result of one execution step in a clean two-row card:
+      // header strip with a contextual label + copy button, hairline divider,
+      // mono content below. Strip the producer's ``` fences first so the
+      // Markdown renderer's code-block chrome doesn't appear.
+      const cleaned = stripResultFences(item.content)
+      if (!cleaned) return null
+      const hasError = /\bError:\s/.test(cleaned)
       return (
-        <div className="pl-6">
-          <DetailRow icon={IconLightning} label={label} defaultOpen>
-            <Markdown>{item.content}</Markdown>
-          </DetailRow>
+        <div className="pl-6 py-1.5">
+          <div className="group/result-card relative overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.02] shadow-sm">
+            <div className="flex items-center justify-between gap-3 border-b border-white/[0.05] px-3.5 py-1.5">
+              <span
+                className={cn(
+                  'text-[10px] font-medium uppercase tracking-[0.12em]',
+                  hasError ? 'text-red-400/70' : 'text-neutral-200/40'
+                )}
+              >
+                {hasError ? 'Error' : 'Output'}
+              </span>
+              <CopyButton text={cleaned} />
+            </div>
+            <pre className="m-0 px-3.5 py-2.5 font-mono text-[12px] leading-[1.6] tabular-nums text-neutral-100/80 whitespace-pre-wrap break-words">
+              {cleaned}
+            </pre>
+          </div>
         </div>
       )
     }
@@ -589,14 +666,58 @@ function ItemRenderer({
         </div>
       )
 
-    case 'code-agent-summary':
+    case 'code-agent-summary': {
+      // The agent's end-of-execution recap. This is a "report card" — a
+      // dedicated, premium card with a sparkle-chip header, a hairline
+      // decorative top accent, a copy button, and refined markdown styling
+      // for the body (proper spacing for headings, lists, inline code).
+      const cleaned = item.content.trim()
+      if (!cleaned) return null
       return (
-        <div className="pl-6">
-          <DetailRow icon={IconTerminal} label="Summary" defaultOpen>
-            <Markdown>{item.content}</Markdown>
-          </DetailRow>
+        <div className="pl-6 py-2">
+          <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.025] shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
+            {/* Decorative top hairline gradient — gives a "premium card" cue */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.18] to-transparent" />
+
+            {/* Header: sparkle chip + label, copy button on the right */}
+            <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] px-4 py-2.5">
+              <div className="flex items-center gap-2">
+                <div className="flex w-5 h-5 items-center justify-center rounded-md bg-gradient-to-br from-white/[0.08] to-white/[0.04] ring-1 ring-white/[0.05]">
+                  <IconSparkle className="w-2.5 h-2.5 text-neutral-100/60" />
+                </div>
+                <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-neutral-200/55">
+                  Session Summary
+                </span>
+              </div>
+              <CopyButton text={cleaned} />
+            </div>
+
+            {/* Body: refined markdown styling */}
+            <div
+              className={cn(
+                'px-4 py-3 text-[14px] leading-[1.6] text-neutral-100/85',
+                '[&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
+                '[&_p]:my-2',
+                '[&_strong]:font-semibold [&_strong]:text-neutral-100',
+                '[&_em]:italic [&_em]:text-neutral-100/75',
+                '[&_ul]:my-2 [&_ul]:space-y-0.5 [&_ul]:pl-4',
+                '[&_ol]:my-2 [&_ol]:space-y-0.5 [&_ol]:pl-5',
+                '[&_li]:marker:text-neutral-400/40 [&_li]:leading-[1.55]',
+                '[&_h1]:mt-3 [&_h1]:mb-1.5 [&_h1]:text-[15px] [&_h1]:font-semibold [&_h1]:text-neutral-100',
+                '[&_h2]:mt-3 [&_h2]:mb-1.5 [&_h2]:text-[14.5px] [&_h2]:font-semibold [&_h2]:text-neutral-100',
+                '[&_h3]:mt-2.5 [&_h3]:mb-1 [&_h3]:text-[14px] [&_h3]:font-medium [&_h3]:text-neutral-100',
+                '[&_code]:rounded-md [&_code]:bg-white/[0.06] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[12px] [&_code]:text-neutral-100/90 [&_code]:before:content-none [&_code]:after:content-none',
+                '[&_pre]:my-2 [&_pre]:rounded-lg [&_pre]:border [&_pre]:border-white/[0.06] [&_pre]:!bg-white/[0.03] [&_pre]:p-3',
+                '[&_a]:text-neutral-100 [&_a]:underline [&_a]:underline-offset-[3px] [&_a]:decoration-neutral-400/40 hover:[&_a]:decoration-neutral-100/60',
+                '[&_blockquote]:my-2 [&_blockquote]:border-l-2 [&_blockquote]:border-white/15 [&_blockquote]:pl-3 [&_blockquote]:text-neutral-100/70 [&_blockquote]:italic'
+              )}
+            >
+              <Markdown>{cleaned}</Markdown>
+            </div>
+          </div>
         </div>
       )
+    }
 
     case 'search-results': {
       const label = item.query ? `Search: ${item.query}` : 'Web search'

@@ -124,19 +124,25 @@ export function TopAnnouncementBanner() {
             className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-background/25 to-transparent"
           />
 
-          <div className="relative mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto flex h-full max-w-7xl items-center gap-2 px-3 sm:px-5 lg:px-8">
+            {/* Invisible spacer matching the close button's footprint —
+                keeps the centered claim visually balanced on the row
+                without resorting to absolute positioning that could
+                collide with the text on narrow viewports. */}
+            <span aria-hidden="true" className="h-7 w-7 sm:h-8 sm:w-8 shrink-0" />
+
             {/* Centered claim — clickable, links to the OSWorld benchmark
-                section on the same page. Truncates instead of wrapping on
-                the smallest viewports so the banner stays one row tall. */}
+                section on the same page. Truncates with ellipsis instead
+                of wrapping so the banner stays exactly one row tall. */}
             <Link
               href="#benchmark"
               className={cn(
-                "mx-auto flex min-w-0 items-center gap-2 sm:gap-2.5",
+                "group flex min-w-0 flex-1 items-center justify-center gap-2 sm:gap-2.5",
                 "text-[11px] sm:text-[12.5px] font-medium tracking-tight",
-                "transition-opacity hover:opacity-80",
+                "transition-opacity hover:opacity-85",
               )}
             >
-              <span className="hidden xs:inline-flex h-[18px] items-center rounded-full bg-background/15 px-2 text-[9.5px] sm:text-[10px] font-semibold uppercase tracking-[0.14em]">
+              <span className="hidden sm:inline-flex h-[18px] shrink-0 items-center rounded-full bg-background/15 px-2 text-[10px] font-semibold uppercase tracking-[0.14em]">
                 New
               </span>
               <span className="truncate">
@@ -148,23 +154,22 @@ export function TopAnnouncementBanner() {
               </span>
               <span
                 aria-hidden="true"
-                className="hidden sm:inline text-[11px] opacity-60 transition-opacity group-hover:opacity-100"
+                className="hidden sm:inline shrink-0 text-[11px] opacity-50 transition-all group-hover:opacity-90 group-hover:translate-x-0.5"
               >
                 →
               </span>
             </Link>
 
-            {/* Close button — anchored to the right edge, padded for
-                comfortable touch targets on mobile. Sits over the banner
-                rather than inline so the centered claim stays balanced. */}
+            {/* Close button — sized for comfortable touch targets, paired
+                with the left spacer so the row reads as visually centred
+                regardless of how long the claim text becomes. */}
             <button
               ref={closeBtnRef}
               onClick={dismiss}
               type="button"
               aria-label="Dismiss announcement"
               className={cn(
-                "absolute right-1 sm:right-2",
-                "flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full",
+                "flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full",
                 "text-background/70 hover:text-background",
                 "hover:bg-background/10 active:bg-background/15",
                 "transition-colors",

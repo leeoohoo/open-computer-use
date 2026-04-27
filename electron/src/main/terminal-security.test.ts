@@ -536,14 +536,26 @@ describe('spawn target hygiene', () => {
     await promise
   })
 
-  it('uses -NoProfile -NonInteractive -ExecutionPolicy Bypass on Windows', async () => {
+  it('uses -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned on Windows', async () => {
     if (process.platform !== 'win32') return
     const promise = executeTerminal({ command: 'echo hi' })
     const args = execFileCalls[0].args
     expect(args).toContain('-NoProfile')
     expect(args).toContain('-NonInteractive')
     expect(args).toContain('-ExecutionPolicy')
-    expect(args[args.indexOf('-ExecutionPolicy') + 1]).toBe('Bypass')
+    // RemoteSigned matches the Microsoft-recommended default and is not
+    // flagged by AV / EDR as a RAT signature. Bypass / Unrestricted are.
+    expect(args[args.indexOf('-ExecutionPolicy') + 1]).toBe('RemoteSigned')
+    execFileCalls[0].cb(null, '', '')
+    await promise
+  })
+
+  it('regression: never uses -ExecutionPolicy Bypass or Unrestricted (AV signature)', async () => {
+    if (process.platform !== 'win32') return
+    const promise = executeTerminal({ command: 'echo hi' })
+    const args = execFileCalls[0].args
+    expect(args).not.toContain('Bypass')
+    expect(args).not.toContain('Unrestricted')
     execFileCalls[0].cb(null, '', '')
     await promise
   })

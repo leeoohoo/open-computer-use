@@ -401,7 +401,7 @@ describe('real-bridge integration: terminal_execute', () => {
     expect(lastResult().success).toBe(false)
   })
 
-  it('uses -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command on Windows', async () => {
+  it('uses -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command on Windows', async () => {
     if (process.platform !== 'win32') {
       // We only assert PowerShell args when actually running on Windows
       // (the impl branches on process.platform).
@@ -420,9 +420,27 @@ describe('real-bridge integration: terminal_execute', () => {
     expect(call.args).toContain('-NoProfile')
     expect(call.args).toContain('-NonInteractive')
     expect(call.args).toContain('-ExecutionPolicy')
-    expect(call.args).toContain('Bypass')
+    expect(call.args).toContain('RemoteSigned')
     expect(call.args).toContain('-Command')
     expect(call.args).toContain('Get-Process')
+  })
+
+  it('regression: never spawns PowerShell with -ExecutionPolicy Bypass (AV signature)', async () => {
+    // Bypass is the literal string Defender / CrowdStrike / SentinelOne flag
+    // as a Cobalt-Strike / RAT signature. If a refactor ever re-introduces
+    // it, this test catches it before it ships.
+    if (process.platform !== 'win32') return
+    h.setNextResponse({ kind: 'ok', stdout: '' })
+
+    const bridge = makeBridge()
+    connectAndAuth(bridge)
+    send('terminal_execute', { command: 'Get-Process' })
+
+    await settle()
+
+    const call = h.calls[0]
+    expect(call.args).not.toContain('Bypass')
+    expect(call.args).not.toContain('Unrestricted')
   })
 
   it('uses /bin/bash -c on Unix', async () => {

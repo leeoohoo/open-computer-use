@@ -19,6 +19,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@nut-tree-fork/libnut": "^4.2.6",
     "puppeteer-core": "^24.2.1",
     "ws": "^8.18.0"
   },

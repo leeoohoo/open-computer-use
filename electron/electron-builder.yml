@@ -12,6 +12,16 @@ files:
   - "!node_modules/**/*"
   - node_modules/puppeteer-core/**/*
   - node_modules/ws/**/*
+  # @nut-tree-fork/libnut — replaces PowerShell Add-Type + user32.dll P/Invoke
+  # for desktop automation. The .node binaries are signed N-API addons and
+  # don't trip Windows AMSI / Defender heuristics the way runtime C# does.
+  - node_modules/@nut-tree-fork/**/*
+asarUnpack:
+  # The native .node binary cannot be loaded from inside an ASAR archive —
+  # Node's dlopen needs a real filesystem path. asarUnpack copies it next to
+  # the asar so `require()` resolves it properly.
+  - node_modules/@nut-tree-fork/libnut-*/**/*.node
+  - node_modules/@nut-tree-fork/libnut-*/build/**/*
 extraResources:
   - from: build/icon.png
     to: icon.png

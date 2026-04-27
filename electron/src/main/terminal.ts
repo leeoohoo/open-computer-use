@@ -86,14 +86,35 @@ export async function executeTerminal(params: {
   return new Promise((resolve) => {
     const isWin = process.platform === 'win32'
     const shell = isWin ? 'powershell.exe' : '/bin/bash'
-    // -NoProfile prevents a slow / broken user PowerShell profile from
-    // failing the spawn (we'd previously inherit profile errors as our
-    // own failure). -ExecutionPolicy Bypass lets the agent run scripts
-    // even if the user's policy is Restricted (the default on consumer
-    // Windows installs); this matches the same posture as the action
-    // VMs which also bypass.
+    // PowerShell argv on Windows:
+    //   -NoProfile         — skip user profile (avoids slow / broken
+    //                        profiles silently failing the spawn).
+    //   -NonInteractive    — never prompt for input; we have no way to
+    //                        answer, and the prompt would hang the bridge
+    //                        forever.
+    //   -ExecutionPolicy RemoteSigned — Microsoft's recommended default
+    //                        and the policy that's already in effect on
+    //                        the vast majority of Windows installs. We
+    //                        used to pass "Bypass" here, which is the
+    //                        literal signature Defender / CrowdStrike /
+    //                        SentinelOne flag as Cobalt-Strike-/RAT-like
+    //                        ("Behavior:Win32/PowerShell.PSPolicy"), and
+    //                        which made the app trip false-positive AV
+    //                        scans on first run. RemoteSigned is
+    //                        functionally identical for our use case
+    //                        because execution policy gates SCRIPT FILES
+    //                        (.ps1) — every command the agent emits goes
+    //                        via `-Command "..."`, which is an inline
+    //                        string and not subject to the policy.
+    //   -Command           — run the inline string and exit.
+    //
+    // If a user has overridden their policy to AllSigned via group
+    // policy and the agent emits a command that loads a local .ps1
+    // (rare — most agent commands are inline), the spawn will fail with
+    // a clear PowerShell error. That's the right behaviour for a locked-
+    // down corporate environment; silently bypassing was always wrong.
     const args = isWin
-      ? ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-Command', command]
+      ? ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'RemoteSigned', '-Command', command]
       : ['-c', command]
 
     let resolved = false
