@@ -19,7 +19,7 @@ import { hideForDesktopAction, showAfterDesktopAction } from './window-manager'
 import { getActiveDisplay } from './display-manager'
 import { execFile } from 'child_process'
 import { BrowserWindow } from 'electron'
-import { tryInterceptShellCommand } from './shell-intercept'
+import { tryInterceptShellCommand, checkUnsupportedShellCommand } from './shell-intercept'
 
 type CommandHandler = (params: any) => Promise<any>
 
@@ -68,6 +68,16 @@ export class LocalExecutor {
       if (intercept) {
         console.log(`[LocalExecutor] Intercepted: ${intercept.reason}`)
         return this.dispatchIntercept(intercept.command, intercept.parameters)
+      }
+      // Safety net: if the agent emitted an unrecognized chain of Linux-only
+      // tools (xdotool / wmctrl) on Windows or macOS, refuse cleanly instead
+      // of letting PowerShell choke on `&&` or "command not found." Avoids
+      // confusing failures that look like shell bugs but are really missing
+      // intercept patterns we should add.
+      const unsupported = checkUnsupportedShellCommand(parameters?.command)
+      if (unsupported) {
+        console.warn(`[LocalExecutor] ${unsupported.error}`)
+        return unsupported
       }
     }
 

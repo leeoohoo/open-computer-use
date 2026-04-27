@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, shell } from 'electron'
 import { join, resolve } from 'path'
+import { pathToFileURL } from 'url'
 import { ElectronAuth } from './auth'
 import { WebSocketBridge } from './ws-bridge'
 import { registerIpcHandlers } from './ipc-handlers'
@@ -79,6 +80,145 @@ let approvalManager: ApprovalManager | null = null
 
 const BACKEND_URL = process.env.COASTY_BACKEND_URL || 'http://localhost:8001'
 
+// ── URL security: outbound + navigation guards ───────────────────────────
+//
+// External links from the renderer (window.open, will-navigate) flow through
+// these two predicates. The allowlist is intentionally narrow:
+//   - isSafeExternalUrl: schemes we'll forward to shell.openExternal
+//   - isAllowedAppNavigation: URLs the BrowserWindow itself may navigate to
+//
+// Any other URL is silently dropped (deny). This blocks `javascript:`,
+// `file://`, `data:`, `chrome:`, `vbscript:`, `about:`, `blob:`, ftp/ldap/
+// gopher, plus URLs targeting localhost / RFC1918 ranges, oversized URLs,
+// and URLs with embedded CRLF (header-injection style). See
+// `electron/src/main/url-window-security.test.ts` for the full contract.
+
+const SAFE_EXTERNAL_SCHEMES = new Set(['https:', 'http:', 'mailto:'])
+const MAX_URL_LENGTH = 2048
+
+function isPrivateOrLoopbackHostname(hostname: string): boolean {
+  // hostname comes from URL parser — already lowercased + IPv6 surrounded by []
+  const h = hostname.toLowerCase()
+  if (h === 'localhost' || h === '0.0.0.0' || h === '[::1]' || h === '::1') return true
+  // IPv4 private / loopback / link-local ranges
+  const m = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
+  if (m) {
+    const a = parseInt(m[1], 10)
+    const b = parseInt(m[2], 10)
+    if (a === 127) return true                                  // 127/8 loopback
+    if (a === 10) return true                                   // 10/8 private
+    if (a === 192 && b === 168) return true                     // 192.168/16 private
+    if (a === 172 && b >= 16 && b <= 31) return true            // 172.16-31/12 private
+    if (a === 169 && b === 254) return true                     // 169.254/16 link-local
+    if (a === 0) return true                                    // 0/8 "this network"
+  }
+  return false
+}
+
+export function isSafeExternalUrl(url: string): boolean {
+  if (typeof url !== 'string' || url.length === 0) return false
+  if (url.length > MAX_URL_LENGTH) return false
+  // CRLF in a URL has no legitimate use and enables header-injection style
+  // attacks against any downstream HTTP layer (e.g. an OS handler).
+  if (url.includes('\r') || url.includes('\n')) return false
+
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    return false
+  }
+
+  if (!SAFE_EXTERNAL_SCHEMES.has(parsed.protocol)) return false
+
+  // mailto: has no host component to validate (RFC 6068).
+  if (parsed.protocol === 'mailto:') return true
+
+  // For http/https, reject loopback + private network targets — those are
+  // never legitimate destinations for an "open in browser" link from the
+  // overlay and are the standard SSRF / pivot vector when an attacker can
+  // craft URLs.
+  if (!parsed.hostname) return false
+  if (isPrivateOrLoopbackHostname(parsed.hostname)) return false
+
+  return true
+}
+
+// The bundled renderer's URL prefix — captured at app startup. In dev this
+// is the electron-vite dev server (e.g. http://localhost:5173); in
+// production it's the file:// URL of the packaged HTML inside the asar.
+// Anything outside this exact prefix is rejected for in-window navigation.
+let RENDERER_PREFIX = ''
+
+function computeRendererPrefix(): string {
+  if (process.env.ELECTRON_RENDERER_URL) {
+    return process.env.ELECTRON_RENDERER_URL
+  }
+  // Production: derive the file:// URL of the packaged renderer HTML the
+  // same way createWindow() loads it (mainWindow.loadFile(join(__dirname,
+  // '../renderer/index.html'))). pathToFileURL gives a properly-encoded
+  // file:// URL identical to what Chromium reports for that file.
+  return pathToFileURL(join(__dirname, '../renderer/index.html')).toString()
+}
+
+export function isAllowedAppNavigation(url: string): boolean {
+  if (typeof url !== 'string' || url.length === 0) return false
+  if (!RENDERER_PREFIX) return false
+  // Strict prefix match — no normalization. The renderer URL is pinned at
+  // startup, so any URL that isn't a hash/query-only continuation of it
+  // (e.g. file:///…/index.html#/login) is rejected.
+  return url.startsWith(RENDERER_PREFIX)
+}
+
+/**
+ * Install URL-handling guards on a WebContents:
+ *   - setWindowOpenHandler: only safe-scheme external URLs reach
+ *     shell.openExternal; everything else is silently denied.
+ *   - will-navigate / will-redirect: block any navigation that would take
+ *     the window away from the bundled renderer; if the URL is a safe
+ *     external link, open it in the user's default browser instead.
+ *   - will-attach-webview: disable webviews entirely (we don't use them
+ *     and they expand the attack surface).
+ */
+function installWebContentsGuards(contents: Electron.WebContents): void {
+  contents.setWindowOpenHandler(({ url }) => {
+    if (isSafeExternalUrl(url)) {
+      shell.openExternal(url).catch(() => { /* best-effort */ })
+    }
+    return { action: 'deny' }
+  })
+
+  contents.on('will-navigate', (event, url) => {
+    if (isAllowedAppNavigation(url)) return
+    event.preventDefault()
+    if (isSafeExternalUrl(url)) {
+      shell.openExternal(url).catch(() => { /* best-effort */ })
+    }
+  })
+
+  contents.on('will-redirect', (event, url) => {
+    if (isAllowedAppNavigation(url)) return
+    event.preventDefault()
+    if (isSafeExternalUrl(url)) {
+      shell.openExternal(url).catch(() => { /* best-effort */ })
+    }
+  })
+
+  contents.on('will-attach-webview', (event) => {
+    event.preventDefault()
+  })
+}
+
+// Guard against double-registration (hot-reload, repeated whenReady).
+let webContentsGuardRegistered = false
+function registerWebContentsGuard(): void {
+  if (webContentsGuardRegistered) return
+  webContentsGuardRegistered = true
+  app.on('web-contents-created', (_event, contents) => {
+    installWebContentsGuards(contents)
+  })
+}
+
 function getIconPath(): string {
   // In dev, icons are in electron/build/; in production, they're in resources/
   const devPath = join(__dirname, '../../build/icon.png')
@@ -117,11 +257,10 @@ function createWindow(): void {
   // Register with window manager for mode switching & screenshot hiding
   setMainWindow(mainWindow)
 
-  // Open all external links in the user's default browser instead of a new Electron window
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url)
-    return { action: 'deny' }
-  })
+  // External links + navigation guards are installed via the
+  // registerWebContentsGuard listener, which catches every WebContents
+  // — main overlay, rainbow border, devtools. Keeping the registration
+  // centralized prevents drift between windows.
 
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show()
@@ -228,6 +367,16 @@ app.on('second-instance', (_event, argv) => {
 })
 
 app.whenReady().then(async () => {
+  // Pin the bundled-renderer URL prefix used by the navigation guard.
+  // Captured ONCE at startup so a later mutation of process.env can't widen
+  // the allowlist; in production this is the file:// URL of the asar HTML.
+  RENDERER_PREFIX = computeRendererPrefix()
+
+  // Install URL guards (setWindowOpenHandler + will-navigate + will-redirect
+  // + will-attach-webview) for every WebContents the app ever creates,
+  // including auxiliary windows like the rainbow border.
+  registerWebContentsGuard()
+
   // Initialize auth and approval manager
   auth = new ElectronAuth()
   approvalManager = new ApprovalManager()
@@ -310,7 +459,15 @@ app.whenReady().then(async () => {
   })
 
   // Permissions IPC (macOS)
-  secureHandle('permissions:check', () => checkAllPermissions())
+  // Defense-in-depth: even if a future change to checkAllPermissions
+  // re-introduces a `_debug` field, the IPC layer must never forward it
+  // to the renderer (P2-01).
+  secureHandle('permissions:check', async () => {
+    const result = (await checkAllPermissions()) as unknown as Record<string, unknown>
+    const { _debug: _drop, ...safe } = result
+    void _drop
+    return safe
+  })
   secureHandle('permissions:request-accessibility', () => requestAccessibility())
   secureHandle('permissions:open-screen-recording', () => openScreenRecordingSettings())
   secureHandle('permissions:open-accessibility', () => openAccessibilitySettings())

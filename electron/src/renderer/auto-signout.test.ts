@@ -16,12 +16,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 // React components, keeping the test fast and dependency-free.
 
 describe('Auto sign-out on auth failure', () => {
-  let signOut: ReturnType<typeof vi.fn>
-  let setMode: ReturnType<typeof vi.fn>
+  let signOut: ReturnType<typeof vi.fn<() => void>>
+  let setMode: ReturnType<typeof vi.fn<(mode: string) => void>>
 
   beforeEach(() => {
-    signOut = vi.fn()
-    setMode = vi.fn()
+    signOut = vi.fn<() => void>()
+    setMode = vi.fn<(mode: string) => void>()
   })
 
   /**

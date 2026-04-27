@@ -22,6 +22,9 @@
  * Patterns recognized (multi-statement, joined by && or ;):
  *   mousemove X1 Y1 → mousedown 1 → [mousemove(s)] → mouseup 1
  *      → drag { x1, y1, x2, y2 }
+ *   keydown MOD(s) → mousemove X1 Y1 → mousedown 1 → [mousemove(s)] →
+ *      mouseup 1 → keyup MOD(s)
+ *      → drag { x1, y1, x2, y2, hold_keys }
  *   keydown MOD → click N → keyup MOD
  *      → click_with_modifiers { x?, y?, modifiers, button }
  *   mousemove X Y → click N
@@ -386,6 +389,77 @@ function recognizeDrag(ops: ParsedOp[]): InterceptResult | null {
 }
 
 /**
+ * Modifier+drag pattern:
+ *   keydown MOD(s) → mousemove X1 Y1 → mousedown N → [mousemove(s)] →
+ *   mouseup N → keyup MOD(s)
+ *
+ * The agent emits this for shift-drag (text-selection extension), ctrl-drag
+ * (multi-select), alt-drag (resize), etc. The chain failed silently before:
+ * none of the existing recognizers handled the leading keydowns + drag, so
+ * it fell through to the shell where Linux xdotool isn't installed and
+ * PowerShell choked on `&&` (PS 5.1 syntax error). Routes to the native
+ * `drag` handler with `hold_keys` — desktopDrag already supports modifiers
+ * on Windows / macOS / Linux.
+ */
+function recognizeModifierDrag(ops: ParsedOp[]): InterceptResult | null {
+  const real = ops.filter((o) => o.kind !== 'noop')
+  // Need at minimum: 1 keydown + mousemove + mousedown + mousemove + mouseup + 1 keyup = 6
+  if (real.length < 6) return null
+
+  // Leading keydowns
+  const modifiers: string[] = []
+  let i = 0
+  while (i < real.length && real[i].kind === 'keydown') {
+    modifiers.push((real[i] as any).key)
+    i++
+  }
+  if (modifiers.length === 0) return null
+
+  // Required: mousemove (start) → mousedown → ... → mouseup
+  if (i >= real.length || real[i].kind !== 'mousemove') return null
+  const startMv = real[i] as any
+  const x1 = startMv.x, y1 = startMv.y
+  i++
+
+  if (i >= real.length || real[i].kind !== 'mousedown') return null
+  const downBtn = (real[i] as any).button
+  i++
+
+  // Intermediate mousemoves — at least one required (otherwise it's not a drag)
+  let lastX = x1, lastY = y1
+  let sawIntermediate = false
+  while (i < real.length && real[i].kind === 'mousemove') {
+    const mv = real[i] as any
+    lastX = mv.x; lastY = mv.y
+    sawIntermediate = true
+    i++
+  }
+  if (!sawIntermediate) return null
+
+  if (i >= real.length || real[i].kind !== 'mouseup') return null
+  if ((real[i] as any).button !== downBtn) return null
+  i++
+
+  // Trailing keyups must match the leading keydowns (same set, any order)
+  const keyups: string[] = []
+  while (i < real.length && real[i].kind === 'keyup') {
+    keyups.push((real[i] as any).key)
+    i++
+  }
+  if (i !== real.length) return null
+  if (keyups.length !== modifiers.length) return null
+  const sortedDowns = [...modifiers].sort()
+  const sortedUps = [...keyups].sort()
+  if (sortedDowns.join(',') !== sortedUps.join(',')) return null
+
+  return {
+    command: 'drag',
+    parameters: { x1, y1, x2: lastX, y2: lastY, hold_keys: modifiers },
+    reason: `xdotool modifier-drag chain → drag (${x1},${y1})→(${lastX},${lastY}) hold ${JSON.stringify(modifiers)}`,
+  }
+}
+
+/**
  * Modifier+click pattern: keydown MOD → click N → keyup MOD
  * (optionally with a leading mousemove for positioned click)
  */
@@ -488,6 +562,61 @@ function buildSequence(ops: ParsedOp[]): InterceptResult | null {
 
 /* ─── Public entrypoint ─────────────────────────────────────────── */
 
+/**
+ * Linux-only tools the agent emits that cannot run on Windows / macOS.
+ * Used as a defence-in-depth check after `tryInterceptShellCommand` returns
+ * null — keeps unsupported patterns from leaking into PowerShell where they
+ * produce confusing syntax errors (`&&` is not a valid statement separator
+ * in PS 5.1) instead of a clear "unsupported on this platform" failure.
+ */
+const LINUX_ONLY_TOOLS = new Set(['xdotool', 'wmctrl'])
+
+/**
+ * Returns a clean failure result when `cmd` starts with a Linux-only tool
+ * (or chains entirely composed of such tools) and we're not on Linux.
+ * Caller checks this AFTER `tryInterceptShellCommand` returns null — a
+ * recognized chain is always preferred over a hard fail.
+ *
+ * Returning null means "let the shell handle it normally."
+ */
+export function checkUnsupportedShellCommand(
+  cmd: unknown,
+  platform: NodeJS.Platform = process.platform,
+): { success: false; error: string } | null {
+  if (platform === 'linux') return null
+  if (typeof cmd !== 'string') return null
+  const trimmed = cmd.trim()
+  if (!trimmed) return null
+
+  let statements: string[]
+  try {
+    statements = splitStatements(trimmed)
+  } catch {
+    return null
+  }
+  if (statements.length === 0) return null
+
+  // If ANY statement starts with a Linux-only tool, fail the whole chain.
+  // The agent built the chain as one operation; partial execution is worse
+  // than a clean refusal — half a drag with the modifier still held would
+  // strand keyboard state.
+  for (const stmt of statements) {
+    const tokens = tokenize(stmt)
+    if (tokens.length === 0) continue
+    if (LINUX_ONLY_TOOLS.has(tokens[0])) {
+      return {
+        success: false,
+        error:
+          `Unsupported Linux-only command on ${platform}: "${tokens[0]}". ` +
+          `The shell-intercept layer didn't recognize this pattern; route ` +
+          `through the equivalent native handler (click / drag / key_press / ` +
+          `type / switch_to_window) instead.`,
+      }
+    }
+  }
+  return null
+}
+
 export function tryInterceptShellCommand(cmd: unknown): InterceptResult | null {
   if (typeof cmd !== 'string') return null
   const trimmed = cmd.trim()
@@ -522,7 +651,13 @@ export function tryInterceptShellCommand(cmd: unknown): InterceptResult | null {
     }
   }
 
-  // Multi-statement: try the structural patterns first, then generic sequence
+  // Multi-statement: try the structural patterns first, then generic sequence.
+  // Order matters — more-specific patterns (with leading keydowns) before
+  // their plain counterparts so a shift-drag isn't misread as a plain drag
+  // surrounded by keyup/keydown that buildSequence then can't lift.
+  const modDrag = recognizeModifierDrag(parsed)
+  if (modDrag) return modDrag
+
   const drag = recognizeDrag(parsed)
   if (drag) return drag
 

@@ -24,6 +24,7 @@ import {
   translateXdotoolKey,
   translateXdotoolCombo,
   splitStatements,
+  checkUnsupportedShellCommand,
 } from './shell-intercept'
 
 /* ──────────────────────────────────────────────────────────────────
@@ -62,6 +63,148 @@ describe('production-log strings (verbatim from user reports)', () => {
       parameters: { x1: 450, y1: 375, x2: 600, y2: 500 },
       reason: expect.stringContaining('drag'),
     })
+  })
+
+  // ── Regression: the EXACT shift-drag chain from the user's log
+  // (PowerShell choked on `&&`; intercept now routes to native drag.) ──
+  it('production shift-drag chain from log (keydown shift → mousemove → mousedown 1 → mousemove → mouseup 1 → keyup shift)', () => {
+    const r = tryInterceptShellCommand(
+      'xdotool keydown shift && xdotool mousemove --sync 450 450 && sleep 0.2 ' +
+      '&& xdotool mousedown 1 && xdotool mousemove --sync 700 600 && sleep 0.2 ' +
+      '&& xdotool mouseup 1 && xdotool keyup shift',
+    )
+    expect(r).toEqual({
+      command: 'drag',
+      parameters: { x1: 450, y1: 450, x2: 700, y2: 600, hold_keys: ['shift'] },
+      reason: expect.stringContaining('hold'),
+    })
+  })
+
+  it('ctrl-drag (multi-select) chain', () => {
+    const r = tryInterceptShellCommand(
+      'xdotool keydown ctrl && xdotool mousemove --sync 100 100 && xdotool mousedown 1 ' +
+      '&& xdotool mousemove --sync 300 300 && xdotool mouseup 1 && xdotool keyup ctrl',
+    )
+    expect(r!.command).toBe('drag')
+    expect(r!.parameters.hold_keys).toEqual(['ctrl'])
+    expect(r!.parameters.x1).toBe(100)
+    expect(r!.parameters.x2).toBe(300)
+  })
+
+  it('multi-modifier drag (ctrl+shift) — set semantics not order', () => {
+    const r = tryInterceptShellCommand(
+      'xdotool keydown ctrl && xdotool keydown shift && xdotool mousemove --sync 50 50 ' +
+      '&& xdotool mousedown 1 && xdotool mousemove --sync 200 200 && xdotool mouseup 1 ' +
+      '&& xdotool keyup shift && xdotool keyup ctrl',  // released in reverse — still valid
+    )
+    expect(r!.command).toBe('drag')
+    expect(r!.parameters.hold_keys.sort()).toEqual(['ctrl', 'shift'])
+  })
+
+  it('alt-drag with multiple intermediate mousemoves (smooth drag) → uses last waypoint', () => {
+    const r = tryInterceptShellCommand(
+      'xdotool keydown alt && xdotool mousemove --sync 100 100 && xdotool mousedown 1 ' +
+      '&& xdotool mousemove --sync 150 130 && xdotool mousemove --sync 200 160 ' +
+      '&& xdotool mousemove --sync 250 200 && xdotool mouseup 1 && xdotool keyup alt',
+    )
+    expect(r!.command).toBe('drag')
+    expect(r!.parameters.x2).toBe(250)
+    expect(r!.parameters.y2).toBe(200)
+    expect(r!.parameters.hold_keys).toEqual(['alt'])
+  })
+
+  it('mismatched modifiers (keydown shift, keyup ctrl) → not intercepted as drag', () => {
+    const r = tryInterceptShellCommand(
+      'xdotool keydown shift && xdotool mousemove --sync 0 0 && xdotool mousedown 1 ' +
+      '&& xdotool mousemove --sync 10 10 && xdotool mouseup 1 && xdotool keyup ctrl',
+    )
+    // Either falls through (returns null) or gets handled by another recognizer,
+    // but MUST NOT silently misreport hold_keys as ['shift'] when the chain is
+    // structurally inconsistent.
+    if (r && r.command === 'drag') {
+      expect(r.parameters.hold_keys).not.toEqual(['shift'])
+    }
+  })
+
+  it('button mismatch (mousedown 1 / mouseup 3) → rejected (cannot drag with two buttons)', () => {
+    const r = tryInterceptShellCommand(
+      'xdotool keydown shift && xdotool mousemove --sync 0 0 && xdotool mousedown 1 ' +
+      '&& xdotool mousemove --sync 10 10 && xdotool mouseup 3 && xdotool keyup shift',
+    )
+    // Same constraint as plain drag — buttons must match
+    if (r) expect(r.command).not.toBe('drag')
+  })
+})
+
+/* ──────────────────────────────────────────────────────────────────
+   1b. SAFETY NET — Linux-only commands that DON'T match any
+       recognizer must never reach the shell on Windows / macOS.
+   ────────────────────────────────────────────────────────────────── */
+
+describe('checkUnsupportedShellCommand — defence-in-depth on non-Linux', () => {
+  it('the EXACT failing shift-drag chain → clean failure on Windows even if no recognizer matched', () => {
+    // We pass it explicitly on win32 (the platform from the user's bug report).
+    // Even if a future refactor breaks recognizeModifierDrag, this safety net
+    // still prevents PowerShell from seeing `&&` and spitting syntax errors.
+    const trickyChain =
+      'xdotool keydown shift && xdotool mousemove --sync 450 450 && xdotool keydown unknown_thing'
+    const r = checkUnsupportedShellCommand(trickyChain, 'win32')
+    expect(r).toEqual({
+      success: false,
+      error: expect.stringContaining('Unsupported Linux-only'),
+    })
+    expect(r!.error).toContain('xdotool')
+    expect(r!.error).toContain('win32')
+  })
+
+  it('xdotool standalone → fails clean on win32', () => {
+    const r = checkUnsupportedShellCommand('xdotool key Return', 'win32')
+    expect(r?.success).toBe(false)
+  })
+
+  it('xdotool standalone → fails clean on darwin', () => {
+    const r = checkUnsupportedShellCommand('xdotool key Return', 'darwin')
+    expect(r?.success).toBe(false)
+  })
+
+  it('wmctrl chain that the parser rejects → fails clean on win32', () => {
+    const r = checkUnsupportedShellCommand('wmctrl -l && wmctrl -d', 'win32')
+    expect(r?.success).toBe(false)
+    expect(r!.error).toContain('wmctrl')
+  })
+
+  it('xdotool on linux → null (let it run natively, the tool actually exists)', () => {
+    const r = checkUnsupportedShellCommand('xdotool key Return', 'linux')
+    expect(r).toBeNull()
+  })
+
+  it('non-Linux-tool shell command (e.g. echo, ls) → null on every platform', () => {
+    expect(checkUnsupportedShellCommand('echo hello', 'win32')).toBeNull()
+    expect(checkUnsupportedShellCommand('ls -la', 'darwin')).toBeNull()
+    expect(checkUnsupportedShellCommand('git status', 'linux')).toBeNull()
+  })
+
+  it('mixed chain — first statement is a normal command, but a later one is xdotool → still fails clean', () => {
+    const r = checkUnsupportedShellCommand('echo hi && xdotool key Return', 'win32')
+    expect(r?.success).toBe(false)
+  })
+
+  it('empty string / whitespace / non-string → null (no false positives)', () => {
+    expect(checkUnsupportedShellCommand('', 'win32')).toBeNull()
+    expect(checkUnsupportedShellCommand('   ', 'win32')).toBeNull()
+    expect(checkUnsupportedShellCommand(null, 'win32')).toBeNull()
+    expect(checkUnsupportedShellCommand(undefined, 'win32')).toBeNull()
+    expect(checkUnsupportedShellCommand(42, 'win32')).toBeNull()
+  })
+
+  it('shell-injection attempt embedded in xdotool call → still flagged (prevents PS errors)', () => {
+    const r = checkUnsupportedShellCommand(
+      'xdotool key "$(whoami)" && rm -rf /',
+      'win32',
+    )
+    // The `;` / `&&` split keeps the dangerous part separate from intercept,
+    // but the FIRST statement starts with xdotool so we refuse the whole chain.
+    expect(r?.success).toBe(false)
   })
 })
 

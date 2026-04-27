@@ -55,16 +55,20 @@ export async function checkAllPermissions(): Promise<PermissionStatus> {
     }
   }
 
-  const result = {
-    screenRecording: screenGranted ? 'granted' as const : 'denied' as const,
-    accessibility: accessibilityGranted ? 'granted' as const : 'denied' as const,
-    _debug: {
-      screenApiStatus,
-      screenGranted,
-      accessibilityGranted,
-    },
+  // Debug-only logging in development. Never returned to the renderer:
+  // raw API enums + intermediate signals are an info leak via DevTools/IPC
+  // inspection (P2-01). The renderer only needs the binary verdict.
+  if (process.env.NODE_ENV === 'development') {
+    console.log(
+      '[permissions]',
+      JSON.stringify({ screenApiStatus, screenGranted, accessibilityGranted }),
+    )
   }
-  console.log('[permissions]', JSON.stringify(result._debug))
+
+  const result: PermissionStatus = {
+    screenRecording: screenGranted ? 'granted' : 'denied',
+    accessibility: accessibilityGranted ? 'granted' : 'denied',
+  }
 
   return result
 }

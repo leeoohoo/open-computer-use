@@ -548,7 +548,17 @@ export class ElectronAuth {
 
       const sessionPath = this.getSessionPath()
 
-      fs.writeFileSync(sessionPath, json, 'utf-8')
+      fs.writeFileSync(sessionPath, json, { encoding: 'utf-8', mode: 0o600 })
+      // Defend against pre-existing files with looser permissions on POSIX —
+      // writeFileSync's `mode` only applies on file creation. chmod is a no-op
+      // semantically on Windows but errors out cleanly there, so guard it.
+      if (process.platform !== 'win32') {
+        try {
+          fs.chmodSync(sessionPath, 0o600)
+        } catch (chmodErr) {
+          console.warn('[Auth] Failed to chmod 0600 on session file:', chmodErr)
+        }
+      }
       console.log('[Auth] Session saved to disk')
     } catch (err) {
       console.error('[Auth] Failed to store session:', err)
@@ -566,6 +576,29 @@ export class ElectronAuth {
       json = raw.toString('utf-8')
 
       const data = JSON.parse(json)
+
+      // Runtime shape guard — guard against tampered / malformed session files.
+      // Without this, a non-conforming JSON value (string, array, or an object
+      // missing required fields) would be cast straight to Session and could
+      // confuse downstream isAuthenticated() / refresh logic.
+      const isValidStoredSession = (d: unknown): d is Session => {
+        return (
+          typeof d === 'object' &&
+          d !== null &&
+          typeof (d as any).access_token === 'string' && (d as any).access_token.length > 0 &&
+          typeof (d as any).refresh_token === 'string' && (d as any).refresh_token.length > 0 &&
+          ((d as any).expires_at === undefined || typeof (d as any).expires_at === 'number') &&
+          (d as any).user !== null && typeof (d as any).user === 'object'
+        )
+      }
+
+      if (!isValidStoredSession(data)) {
+        console.warn('[Auth] Stored session has invalid shape, clearing')
+        this.session = null
+        this.clearStoredSession()
+        return
+      }
+
       this.session = data as Session
 
       if (this.isAuthenticated()) {

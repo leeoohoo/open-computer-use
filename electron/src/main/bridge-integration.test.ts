@@ -1011,7 +1011,11 @@ describe('real-bridge integration: chained shell commands (multi-statement)', ()
   })
 
   describe('NOT-recognized chains pass through to shell', () => {
-    it('chain with unknown command → null intercept → shell runs it', async () => {
+    it('chain mixing xdotool with unknown shell cmd → safety net refuses (no PowerShell &&-error)', async () => {
+      // On win32 / darwin, ANY chain that starts with a Linux-only tool is
+      // refused by the safety net before it reaches the shell — otherwise
+      // PowerShell 5.1 chokes on `&&` and the user gets a confusing parser
+      // error instead of "this isn't supported on your platform."
       h.setNextResponse({ kind: 'exit', code: 1, stderr: 'pwsh failed' })
       const bridge = makeBridge()
       connectAndAuth(bridge)
@@ -1019,8 +1023,15 @@ describe('real-bridge integration: chained shell commands (multi-statement)', ()
 
       await settle(80)
 
-      // The whole chain falls through — execFile WAS called
-      expect(h.mockExecFile).toHaveBeenCalledTimes(1)
+      if (process.platform === 'linux') {
+        // On Linux the shell can actually run xdotool, so it falls through.
+        expect(h.mockExecFile).toHaveBeenCalledTimes(1)
+      } else {
+        // On Windows / macOS the safety net catches it — execFile NEVER runs.
+        expect(h.mockExecFile).not.toHaveBeenCalled()
+        const result = lastResult()
+        expect(result?.success).toBe(false)
+      }
     })
 
     it('plain shell command not intercepted', async () => {
