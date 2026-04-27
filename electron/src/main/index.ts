@@ -17,6 +17,7 @@ import { showAmbientRainbow, hideAmbientRainbow, moveRainbowToDisplay } from './
 import { warmupNativeScreenshot } from './native-screenshot'
 import { getDisplayList, getActiveDisplayId, setActiveDisplayId, getActiveDisplay } from './display-manager'
 import { performFullShutdown } from './app-shutdown'
+import { launchAtLogin } from './launch-at-login'
 
 // ── Custom protocol for OAuth deep links ──────────────────────────────────
 // Registers coasty:// so the browser can redirect back to the app after
@@ -502,11 +503,22 @@ app.whenReady().then(async () => {
   secureHandle('update:check', () => checkForUpdates())
   secureHandle('update:install', () => quitAndInstall())
 
-  // Launch on system startup (only in packaged builds)
+  // Launch on system startup — opt-in, persisted to userData. Defaults to
+  // OFF for fresh installs (Windows AV products and behavioural EDR flag
+  // default-on persistence as a malware fingerprint). Existing users keep
+  // their auto-launch state on upgrade because launch-at-login seeds the
+  // preference from `getLoginItemSettings()` on first read.
   if (app.isPackaged) {
-    app.setLoginItemSettings({ openAtLogin: true })
+    launchAtLogin.applyOnStartup()
     initAutoUpdater()
   }
+
+  // Renderer-side toggle: settings UI calls these via the preload bridge.
+  ipcMain.handle('launch-at-login:get', () => launchAtLogin.getEnabled())
+  ipcMain.handle('launch-at-login:set', (_event, enabled: boolean) => {
+    launchAtLogin.setEnabled(!!enabled)
+    return launchAtLogin.getEnabled()
+  })
 
   installAppMenu()
   createWindow()
