@@ -418,33 +418,89 @@ export function LandingHeader({
               scrolled ? "max-w-5xl" : "",
             )}
           >
-            {/* glass shell — always present, opacity fades in on scroll */}
-            <div
-              className={cn(
-                "absolute inset-0 rounded-2xl",
-                "backdrop-blur-2xl backdrop-saturate-[1.8]",
-                "transition-[background-color,box-shadow,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                scrolled
-                  ? "bg-white/60 dark:bg-neutral-950/55 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.2),0_4px_16px_rgba(0,0,0,0.15)]"
-                  : "bg-white/0 dark:bg-neutral-950/0 shadow-[0_0_0_rgba(0,0,0,0),0_0_0_rgba(0,0,0,0)]",
-              )}
-            />
-            {/* border ring — separate div so opacity can be transitioned smoothly */}
+            {/* ── Chrome layers ─────────────────────────────────────────
+                Premium pill: a tinted glass body, a subtle ring, an inner
+                top sheen, a top highlight hairline, and a bottom hairline.
+                Each layer is a separate sibling so opacities and shadows
+                can interpolate independently between rest and scrolled. */}
+
+            {/* Glass body — split treatment between mobile and desktop so the
+                navbar is *guaranteed* visible on both.
+                  • Mobile (< 640px): solid-ish backgrounds — `bg-white/75`
+                    light, `dark:bg-neutral-900/75` dark. iOS Safari's
+                    backdrop-filter is flaky and the static cursor murmuration
+                    behind the bar shines straight through low-alpha tints.
+                    Solid colors guarantee separation regardless of GPU
+                    composition. neutral-900 in dark mode is a notch lighter
+                    than the near-black page bg, so the pill reads as a card
+                    above the page rather than a hole in it. backdrop-blur
+                    is also dropped on mobile — it's a perf cost (the
+                    murmuration animates behind the bar) and pointless once
+                    the body is mostly opaque.
+                  • Desktop (sm+): the original premium glass treatment —
+                    `bg-foreground/[0.025–0.05]` with `backdrop-blur-xl`. The
+                    foreground-derived alpha auto-flips per mode. */}
             <div
               className={cn(
                 "absolute inset-0 rounded-2xl pointer-events-none",
-                "ring-1 ring-black/[0.06] dark:ring-white/[0.08]",
-                "transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                scrolled ? "opacity-100" : "opacity-0",
+                "sm:backdrop-blur-xl sm:backdrop-saturate-150",
+                "transition-[background-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                scrolled
+                  ? "bg-white/90 dark:bg-neutral-900/85 sm:bg-foreground/[0.04] sm:dark:bg-foreground/[0.05]"
+                  : "bg-white/75 dark:bg-neutral-900/75 sm:bg-foreground/[0.025] sm:dark:bg-foreground/[0.03]",
               )}
             />
-            {/* top edge highlight */}
-            <div className={cn(
-              "absolute inset-x-0 top-0 h-px rounded-t-2xl pointer-events-none",
-              "bg-gradient-to-r from-transparent via-white/60 dark:via-white/10 to-transparent",
-              "transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
-              scrolled ? "opacity-100" : "opacity-0",
-            )} />
+            {/* Inner top sheen — a soft 1/2-height gradient that fades
+                downward, gives the glass a "lit from above" quality.
+                Held inside a clipping wrapper so its box can't bleed past
+                the rounded corners. */}
+            <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+              <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/[0.06] dark:from-white/[0.04] to-transparent" />
+            </div>
+            {/* Ring — single hairline border that intensifies on scroll.
+                Foreground-based so it adapts to both modes by definition.
+                Mobile gets a noticeably stronger ring to define the pill
+                edges crisply against the busy hero backdrop. */}
+            <div
+              className={cn(
+                "absolute inset-0 rounded-2xl pointer-events-none",
+                "transition-[box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                scrolled
+                  ? "ring-1 ring-foreground/[0.18] dark:ring-foreground/[0.20] sm:ring-foreground/[0.08] sm:dark:ring-foreground/[0.10]"
+                  : "ring-1 ring-foreground/[0.12] dark:ring-foreground/[0.14] sm:ring-foreground/[0.04] sm:dark:ring-foreground/[0.06]",
+              )}
+            />
+            {/* Top edge highlight — a 1px gradient line painted on top of
+                the ring, simulating a lit upper edge. Brighter in light
+                mode (white sheen) and present-but-restrained in dark. */}
+            <div className="absolute inset-x-0 top-0 h-px rounded-t-2xl pointer-events-none bg-gradient-to-r from-transparent via-white/70 dark:via-white/[0.18] to-transparent" />
+            {/* Bottom hairline — a thin foreground-tinted line that sets
+                the lower edge of the pill, completing the architectural
+                "two horizontal rails + glass body" look. */}
+            <div
+              className={cn(
+                "absolute inset-x-0 bottom-0 h-px rounded-b-2xl pointer-events-none bg-gradient-to-r from-transparent to-transparent",
+                "transition-[--tw-gradient-via-color] duration-500",
+                scrolled
+                  ? "via-foreground/[0.10] dark:via-foreground/[0.08]"
+                  : "via-foreground/[0.05] dark:via-foreground/[0.04]",
+              )}
+            />
+            {/* Outer drop shadow — only on scroll. Layered with three offsets
+                (close + medium + far) so the shadow feels like depth, not
+                a single soft blob. Dark mode uses pure black at higher alpha
+                because the surrounding bg is dark and lower alpha would
+                disappear. */}
+            <div
+              aria-hidden
+              className={cn(
+                "absolute inset-0 rounded-2xl pointer-events-none -z-10",
+                "transition-[box-shadow,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                scrolled
+                  ? "opacity-100 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_8px_20px_-6px_rgba(0,0,0,0.07),0_24px_48px_-16px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.5),0_8px_20px_-6px_rgba(0,0,0,0.55),0_24px_48px_-16px_rgba(0,0,0,0.6)]"
+                  : "opacity-0",
+              )}
+            />
 
             {/* nav content */}
             <nav

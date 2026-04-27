@@ -1314,39 +1314,29 @@ export function Chat() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 6, transition: { duration: 0.15 } }}
               transition={{ delay: 0.3, duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="mx-auto mt-5 mb-1 w-full max-w-[40rem]"
+              className="mx-auto mt-5 mb-1 flex w-full max-w-[34rem] flex-col items-center"
             >
-              <div className="flex flex-col">
-                {taskTemplates.map((t, i) => {
-                  const Icon = t.icon
-                  const summary = getTaskDescription(t.label)
-                  return (
-                    <motion.button
-                      key={t.label}
-                      type="button"
-                      onClick={() => handleCollaborativeInputChange(t.prompt)}
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.35 + i * 0.05, duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
-                      className={cn(
-                        "group relative flex w-full cursor-pointer items-center gap-3 py-1.5 text-left",
-                        i > 0 && "before:absolute before:left-3 before:right-3 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-foreground/[0.13] before:to-transparent before:content-['']",
-                      )}
-                    >
-                      <span className="absolute inset-x-1 inset-y-px rounded bg-transparent transition-colors duration-200 ease-out group-hover:bg-foreground/[0.03] dark:group-hover:bg-white/[0.035]" />
-
-                      <Icon
-                        strokeWidth={1.75}
-                        className="relative ml-3 size-3 shrink-0 text-foreground/30 transition-colors duration-300 ease-out group-hover:text-foreground/55"
-                      />
-
-                      <span className="relative min-w-0 flex-1 truncate pr-4 text-[11.5px] font-normal tracking-[-0.005em] text-foreground/55 transition-colors duration-200 ease-out group-hover:text-foreground/90">
-                        {summary}
-                      </span>
-                    </motion.button>
-                  )
-                })}
-              </div>
+              {taskTemplates.map((t, i) => {
+                const summary = getTaskDescription(t.label)
+                return (
+                  <motion.button
+                    key={t.label}
+                    type="button"
+                    onClick={() => handleCollaborativeInputChange(t.prompt)}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35 + i * 0.05, duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
+                    className={cn(
+                      "group relative flex w-full cursor-pointer items-center justify-center py-2 text-center",
+                      i > 0 && "before:absolute before:left-1/2 before:top-0 before:h-px before:w-24 before:-translate-x-1/2 before:bg-foreground/[0.07] before:content-['']",
+                    )}
+                  >
+                    <span className="relative truncate px-4 text-[11.5px] font-normal tracking-[-0.005em] text-foreground/45 transition-colors duration-200 ease-out group-hover:text-foreground/85">
+                      {summary}
+                    </span>
+                  </motion.button>
+                )
+              })}
             </motion.div>
           )}
         </AnimatePresence>

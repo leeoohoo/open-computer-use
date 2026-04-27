@@ -254,7 +254,11 @@ export function LandingPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-background relative">
+      {/* `isolate` creates a stacking context here so the cursor canvas can
+          sit at a negative z-index (below all siblings) without escaping
+          behind the page background. Without this, `-z-10` on `#beams-bg`
+          would render the canvas behind the body and disappear. */}
+      <div className="min-h-screen bg-background relative isolate overflow-x-clip">
 
       <div id="guide-lines-wrap">
         <GuideLines />
@@ -266,7 +270,7 @@ export function LandingPage() {
           [hero-video-matrix.tsx](./hero-video-matrix.tsx) can keep fading
           this layer as the user scrolls. In light mode the layer is
           inverted so the white-cursor scene reads as black-on-light. */}
-      <div id="beams-bg" className={cn("fixed inset-0 z-0 pointer-events-none", mounted && resolvedTheme !== "dark" && "invert")} aria-hidden="true">
+      <div id="beams-bg" className={cn("fixed inset-0 -z-10 pointer-events-none", mounted && resolvedTheme !== "dark" && "invert")} aria-hidden="true">
         <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 relative">
           <div className="absolute inset-y-0 left-4 sm:left-6 right-4 sm:right-6 overflow-hidden [mask-image:radial-gradient(ellipse_90%_85%_at_50%_45%,black_0%,black_38%,transparent_82%)] sm:[mask-image:radial-gradient(ellipse_110%_95%_at_50%_45%,black_0%,black_45%,transparent_92%)]">
             {mounted && <CursorMurmuration />}
@@ -289,17 +293,19 @@ export function LandingPage() {
       <main className="relative z-[1]" style={{ marginTop: '-100vh' }}>
         <div
           id="hero-crossfade"
-          className="bg-background"
+          className="bg-background relative"
           style={{ opacity: 0, pointerEvents: "none" }}
         >
+          {/* Guide lines for the content area — mirrored copy of the outer
+              GuideLines, scoped to #hero-crossfade so they paint on top of
+              this layer's `bg-background` instead of being hidden by it.
+              They fade in with the content via the parent's opacity. */}
+          <GuideLines />
 
           <SectionDivider />
 
           {/* Social Proof Bar */}
-          <section className={cn(
-            "py-16",
-            isMobile ? "px-7" : "px-10"
-          )}>
+          <section className="py-16 px-8 sm:px-10">
             <div className="max-w-5xl mx-auto">
               <div className={cn(
                 "grid text-center",
@@ -346,7 +352,7 @@ export function LandingPage() {
         {/* OSWorld Benchmark Section */}
         <section
           id="benchmark"
-          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
+          className="relative py-20 sm:py-24 lg:py-32 px-8 sm:px-10 lg:px-12"
         >
           <LandingSectionTopGlow />
           <div className="max-w-5xl w-full mx-auto">
@@ -534,7 +540,7 @@ export function LandingPage() {
         {/* Why Coasty Section */}
         <section
           id="why-coasty"
-          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
+          className="relative py-20 sm:py-24 lg:py-32 px-8 sm:px-10 lg:px-12"
         >
           <LandingSectionTopGlow />
           <div className="max-w-6xl w-full mx-auto">
@@ -706,7 +712,7 @@ export function LandingPage() {
         {/* How It Works Section */}
         <section
           id="how-it-works"
-          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
+          className="relative py-20 sm:py-24 lg:py-32 px-8 sm:px-10 lg:px-12"
         >
           <LandingSectionTopGlow />
           <div className="max-w-6xl w-full mx-auto">
@@ -884,7 +890,7 @@ export function LandingPage() {
         {/* Demo Section */}
         <section
           id="demo"
-          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
+          className="relative py-20 sm:py-24 lg:py-32 px-8 sm:px-10 lg:px-12"
         >
           <LandingSectionTopGlow />
           <div className="max-w-6xl w-full mx-auto">
@@ -980,7 +986,7 @@ export function LandingPage() {
         {/* Cost Comparison */}
         <section
           id="cost"
-          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
+          className="relative py-20 sm:py-24 lg:py-32 px-8 sm:px-10 lg:px-12"
         >
           <LandingSectionTopGlow />
           <div className="max-w-6xl w-full mx-auto">
@@ -1128,7 +1134,7 @@ export function LandingPage() {
         {/* Features Section */}
         <section
           id="features"
-          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
+          className="relative py-20 sm:py-24 lg:py-32 px-8 sm:px-10 lg:px-12"
         >
           <LandingSectionTopGlow />
           <div className="max-w-6xl w-full mx-auto">
@@ -1352,7 +1358,7 @@ export function LandingPage() {
         {/* Pricing Section — simplified overview */}
         <section
           id="pricing"
-          className="relative py-20 sm:py-24 lg:py-32 px-6 sm:px-10 lg:px-12"
+          className="relative py-20 sm:py-24 lg:py-32 px-8 sm:px-10 lg:px-12"
         >
           <LandingSectionTopGlow />
           <div className="max-w-6xl w-full mx-auto">
@@ -1472,10 +1478,7 @@ export function LandingPage() {
         <SectionDivider />
 
         {/* FAQ Section */}
-        <section id="faq" className={cn(
-          "py-20",
-          isMobile ? "px-7" : "px-10"
-        )}>
+        <section id="faq" className="py-20 px-8 sm:px-10">
           <motion.div
             variants={containerVariants}
             initial="hidden"

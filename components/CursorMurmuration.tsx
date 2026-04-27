@@ -74,6 +74,9 @@ export default function CursorMurmuration() {
   if (tier === null) return null
   if (tier === "static") return <CursorMurmurationStatic />
 
-  const count = tier === "desktop" ? 360 : 200
+  // Trimmed cursor counts — with the strong cohesion/alignment tuning the
+  // flock reads as a flock with far fewer instances, and a sparser scene
+  // keeps the hero text uncluttered on big displays.
+  const count = tier === "desktop" ? 120 : 80
   return <CursorMurmurationFlock count={count} />
 }

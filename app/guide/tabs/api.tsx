@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import {
@@ -14,6 +14,8 @@ import {
   Textbox,
   BracketsAngle,
   Plugs,
+  ListBullets,
+  type Icon as PhosphorIcon,
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
@@ -355,7 +357,7 @@ function Section({ id, title, children, icon: Icon, description }: {
   const g = SECTION_GRADIENTS[gradientIndex]
 
   return (
-    <motion.section id={id} variants={fadeUp} className="relative space-y-5 scroll-mt-8 rounded-2xl border border-border/[0.06] p-6 sm:p-8 overflow-hidden">
+    <motion.section id={id} variants={fadeUp} className="relative space-y-5 scroll-mt-24 rounded-2xl border border-border/[0.06] p-6 sm:p-8 overflow-hidden">
       {/* Aurora gradient header strip */}
       <div
         className="absolute inset-x-0 top-0 h-32 pointer-events-none"
@@ -385,11 +387,162 @@ function Section({ id, title, children, icon: Icon, description }: {
   )
 }
 
+/* ─── docs nav data + active-section hook ─── */
+
+type DocSection = { id: string; title: string; icon: PhosphorIcon; group: "Start" | "Reference" | "Errors" }
+
+const DOC_SECTIONS: DocSection[] = [
+  { id: "authentication", title: "Authentication",  icon: Key,           group: "Start" },
+  { id: "how-it-works",   title: "How it Works",    icon: CursorClick,   group: "Start" },
+  { id: "quickstart",     title: "Quick Start",     icon: Lightning,     group: "Start" },
+  { id: "response",       title: "Response Format", icon: BracketsAngle, group: "Reference" },
+  { id: "actions",        title: "Action Types",    icon: CursorClick,   group: "Reference" },
+  { id: "options",        title: "Request Options", icon: Textbox,       group: "Reference" },
+  { id: "endpoints",      title: "All Endpoints",   icon: Terminal,      group: "Reference" },
+  { id: "errors",         title: "Error Handling",  icon: Eye,           group: "Errors" },
+]
+
+function useActiveSection(ids: readonly string[]) {
+  const [active, setActive] = useState<string>(ids[0] ?? "")
+  // Track most recent visibility ratio per section so we can pick the dominant one.
+  const visibleMap = useRef<Map<string, number>>(new Map())
+
+  useEffect(() => {
+    const elements = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null)
+
+    if (elements.length === 0) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          visibleMap.current.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0)
+        }
+        let bestId = ""
+        let bestRatio = 0
+        visibleMap.current.forEach((ratio, id) => {
+          if (ratio > bestRatio) {
+            bestRatio = ratio
+            bestId = id
+          }
+        })
+        if (bestId && bestRatio > 0) setActive(bestId)
+      },
+      { rootMargin: "-96px 0px -55% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
+    )
+
+    elements.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [ids])
+
+  return active
+}
+
+/* ─── docs sidebar nav ─── */
+
+function DocsSidebar({ active }: { active: string }) {
+  const grouped = useMemo(() => {
+    const map = new Map<DocSection["group"], DocSection[]>()
+    for (const s of DOC_SECTIONS) {
+      const arr = map.get(s.group) ?? []
+      arr.push(s)
+      map.set(s.group, arr)
+    }
+    return Array.from(map.entries())
+  }, [])
+
+  const onJump = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault()
+    const el = document.getElementById(id)
+    if (!el) return
+    el.scrollIntoView({ behavior: "smooth", block: "start" })
+    if (typeof history !== "undefined") {
+      history.replaceState(null, "", `#${id}`)
+    }
+  }
+
+  return (
+    <nav aria-label="API documentation sections" className="flex flex-col gap-7">
+      <div className="flex items-center gap-2">
+        <ListBullets size={13} weight="duotone" className="text-muted-foreground/40" />
+        <span className="text-[10px] font-semibold text-muted-foreground/45 uppercase tracking-[0.16em]">
+          On this page
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-6">
+        {grouped.map(([group, items]) => (
+          <div key={group} className="flex flex-col gap-1.5">
+            <span className="px-2 text-[9.5px] font-semibold text-muted-foreground/35 uppercase tracking-[0.18em]">
+              {group}
+            </span>
+            <ul className="flex flex-col">
+              {items.map((s) => {
+                const isActive = active === s.id
+                const Icon = s.icon
+                return (
+                  <li key={s.id} className="relative">
+                    {isActive && (
+                      <motion.span
+                        layoutId="docs-nav-active"
+                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[1.5px] rounded-full bg-foreground/80"
+                      />
+                    )}
+                    <a
+                      href={`#${s.id}`}
+                      onClick={(e) => onJump(e, s.id)}
+                      aria-current={isActive ? "true" : undefined}
+                      className={cn(
+                        "group flex items-center gap-2.5 pl-3 pr-2 py-1.5 rounded-md text-[12.5px] font-medium transition-colors duration-150",
+                        isActive
+                          ? "text-foreground"
+                          : "text-muted-foreground/55 hover:text-foreground/85",
+                      )}
+                    >
+                      <Icon
+                        size={13}
+                        weight={isActive ? "fill" : "duotone"}
+                        className={cn(
+                          "shrink-0 transition-colors",
+                          isActive ? "text-foreground/80" : "text-muted-foreground/35 group-hover:text-foreground/55",
+                        )}
+                      />
+                      <span className="truncate">{s.title}</span>
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div className="pt-4 border-t border-border/30">
+        <a
+          href="#authentication"
+          onClick={(e) => {
+            e.preventDefault()
+            document.getElementById("authentication")?.scrollIntoView({ behavior: "smooth", block: "start" })
+          }}
+          className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground/45 hover:text-foreground transition-colors"
+        >
+          <ArrowRight size={11} className="rotate-[-90deg]" />
+          Back to top
+        </a>
+      </div>
+    </nav>
+  )
+}
+
 /* ─── main component ─── */
 
 export function APITab({ inApp }: { inApp: boolean }) {
   const [lang, setLang] = useState<LangId>("python")
   const snippet = SNIPPETS[lang]
+  const sectionIds = useMemo(() => DOC_SECTIONS.map((s) => s.id), [])
+  const active = useActiveSection(sectionIds)
 
   return (
     <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-0">
@@ -441,10 +594,51 @@ export function APITab({ inApp }: { inApp: boolean }) {
         </div>
       </motion.div>
 
+      {/* ════ Sticky sidebar nav + main docs body ════ */}
+      <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] xl:grid-cols-[220px_1fr] gap-x-12 gap-y-0">
+        {/* Sidebar — sticky, hidden on mobile */}
+        <aside className="hidden lg:block">
+          <div className="sticky top-24">
+            <DocsSidebar active={active} />
+          </div>
+        </aside>
+
+        {/* Mobile section picker — horizontal pill bar */}
+        <div className="lg:hidden -mx-1 mb-6 overflow-x-auto scrollbar-invisible">
+          <div className="flex items-center gap-1.5 px-1 min-w-max">
+            {DOC_SECTIONS.map((s) => {
+              const Icon = s.icon
+              const isActive = active === s.id
+              return (
+                <a
+                  key={s.id}
+                  href={`#${s.id}`}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    document.getElementById(s.id)?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }}
+                  className={cn(
+                    "shrink-0 inline-flex items-center gap-1.5 h-8 px-3 rounded-full border text-[11.5px] font-medium transition-colors",
+                    isActive
+                      ? "border-foreground/25 bg-foreground/[0.05] text-foreground"
+                      : "border-border/40 bg-card/40 text-muted-foreground/65 hover:text-foreground hover:border-border/70",
+                  )}
+                >
+                  <Icon size={12} weight={isActive ? "fill" : "duotone"} />
+                  {s.title}
+                </a>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Main docs body */}
+        <div className="min-w-0 space-y-0">
+
       {/* ════ Auth + How it Works ════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
         <motion.div variants={fadeUp}>
-          <Section title="Authentication" icon={Key}>
+          <Section id="authentication" title="Authentication" icon={Key}>
             <p className="text-[13px] text-muted-foreground/55 leading-relaxed">
               Every request needs an <code className="text-[11px] px-1.5 py-0.5 rounded-md bg-foreground/[0.04] font-mono">X-API-Key</code> header.
               {inApp ? (
@@ -458,7 +652,7 @@ export function APITab({ inApp }: { inApp: boolean }) {
         </motion.div>
 
         <motion.div variants={fadeUp}>
-          <Section title="How it Works" icon={CursorClick}>
+          <Section id="how-it-works" title="How it Works" icon={CursorClick}>
             <div className="space-y-3.5">
               {[
                 { step: "1", text: "Capture a screenshot of the target screen" },
@@ -514,7 +708,7 @@ export function APITab({ inApp }: { inApp: boolean }) {
 
       {/* ════ Response Format ════ */}
       <div className="py-6 mb-6">
-        <Section title="Response Format" icon={BracketsAngle} description="Every prediction returns structured actions with exact coordinates, a status signal, and token usage.">
+        <Section id="response" title="Response Format" icon={BracketsAngle} description="Every prediction returns structured actions with exact coordinates, a status signal, and token usage.">
           <GuideCodeBlock
             label="response"
             code={`{
@@ -544,9 +738,9 @@ export function APITab({ inApp }: { inApp: boolean }) {
       <SectionDivider />
 
       {/* ════ Action Types + Request Options ════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-6 mb-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 py-6 mb-6">
         <motion.div variants={fadeUp}>
-          <Section title="Action Types" icon={CursorClick}>
+          <Section id="actions" title="Action Types" icon={CursorClick}>
             <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.01] overflow-hidden divide-y divide-foreground/[0.04]">
               {[
                 { type: "click", desc: "Mouse click at (x, y)" },
@@ -570,7 +764,7 @@ export function APITab({ inApp }: { inApp: boolean }) {
         </motion.div>
 
         <motion.div variants={fadeUp}>
-          <Section title="Request Options" icon={Textbox} description="Only screenshot and instruction are required.">
+          <Section id="options" title="Request Options" icon={Textbox} description="Only screenshot and instruction are required.">
             <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.01] overflow-hidden divide-y divide-foreground/[0.04]">
               {[
                 { f: "screenshot", t: "string", req: true },
@@ -598,7 +792,7 @@ export function APITab({ inApp }: { inApp: boolean }) {
 
       {/* ════ Endpoints ════ */}
       <div className="py-6 mb-6">
-        <Section title="All Endpoints" icon={Terminal} description="All endpoints require the X-API-Key header. Credits deducted from your shared balance.">
+        <Section id="endpoints" title="All Endpoints" icon={Terminal} description="All endpoints require the X-API-Key header. Credits deducted from your shared balance.">
           <div className="rounded-xl border border-foreground/[0.06] bg-foreground/[0.01] overflow-hidden">
             {/* Group: Prediction */}
             <div className="px-5 py-2.5 bg-foreground/[0.02] border-b border-foreground/[0.04]">
