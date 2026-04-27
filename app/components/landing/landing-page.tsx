@@ -15,6 +15,7 @@ import { useSearchParams } from "next/navigation"
 import { LandingHeader } from "./landing-header"
 import { LandingFooter } from "./landing-footer"
 import { HeroVideoMatrix } from "./hero-video-matrix"
+import { TopAnnouncementBanner } from "./top-announcement-banner"
 import { GuideLines, SectionDivider as SharedSectionDivider } from "./guide-lines"
 import {
   LandingProgressRail,
@@ -277,6 +278,12 @@ export function LandingPage() {
           </div>
         </div>
       </div>
+
+      {/* Top announcement banner — fixed above the header, dismissible,
+          persisted in localStorage. The banner sets `--top-banner-h` on
+          the document root; the LandingHeader's `top` reads that var so
+          it sits flush below the banner whenever it's visible. */}
+      <TopAnnouncementBanner />
 
       {/* Fixed header */}
       <div id="landing-header-wrap">

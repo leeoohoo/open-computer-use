@@ -26,7 +26,6 @@ const TIP_OFFSET_DEG = 122
 
 const VIEWBOX_W = 1600
 const VIEWBOX_H = 900
-const CURSOR_COUNT = 110
 
 // Mulberry32 — small, fast, deterministic PRNG. Seeded so SSR and CSR
 // produce identical markup, no hydration mismatch, no first-paint flash.
@@ -66,20 +65,28 @@ function generateLayout(): StaticCursor[] {
   }
 
   const cursors: StaticCursor[] = []
-  // 12 columns × 9 rows = 108 stratified cells, plus 2 random extras at the
-  // edges so the grid never reads as a grid.
+  // Tight cluster — cursors are grouped near the canvas center, mirroring
+  // the WebGL flock's spawn so the loading-state SVG and the WebGL first
+  // frame land on near-identical compositions and the handoff is invisible.
   const COLS = 12
   const ROWS = 9
+  // Cluster spans ~36% × 40% of the viewBox, centered slightly above
+  // middle. The radial mask in the hero crops the corners anyway, so we
+  // concentrate density where it'll actually be seen.
+  const CLUSTER_CX = VIEWBOX_W * 0.5
+  const CLUSTER_CY = VIEWBOX_H * 0.55
+  const CLUSTER_HALF_W = VIEWBOX_W * 0.18
+  const CLUSTER_HALF_H = VIEWBOX_H * 0.2
+  const cellW = (CLUSTER_HALF_W * 2) / COLS
+  const cellH = (CLUSTER_HALF_H * 2) / ROWS
   for (let i = 0; i < COLS * ROWS; i++) {
     const col = i % COLS
     const row = Math.floor(i / COLS)
-    const cellW = VIEWBOX_W / COLS
-    const cellH = VIEWBOX_H / ROWS
-    const x = col * cellW + (0.15 + rng() * 0.7) * cellW
-    const y = row * cellH + (0.15 + rng() * 0.7) * cellH
+    const x = CLUSTER_CX - CLUSTER_HALF_W + col * cellW + (0.15 + rng() * 0.7) * cellW
+    const y = CLUSTER_CY - CLUSTER_HALF_H + row * cellH + (0.15 + rng() * 0.7) * cellH
 
     const flow = flowAt(x, y)
-    const jitter = (rng() - 0.5) * 0.45
+    const jitter = (rng() - 0.5) * 0.3
     const angleMath = flow + jitter
     const rotationDeg = TIP_OFFSET_DEG - (angleMath * 180) / Math.PI
 
@@ -93,19 +100,21 @@ function generateLayout(): StaticCursor[] {
     cursors.push({ x, y, rotationDeg, scale, opacity, haloOpacity })
   }
 
-  // Add 2 oversized "leaders" at the front of the visual flow — these read
-  // as the flock's vanguard and break the otherwise even density.
+  // Two oversized "leaders" at the front of the visual flow, placed at the
+  // leading edge of the cluster. They read as the flock's vanguard and
+  // break the otherwise even density.
+  const leaderAngle = flowAt(CLUSTER_CX, CLUSTER_CY)
+  const leaderDx = Math.cos(leaderAngle) * CLUSTER_HALF_W * 0.9
+  const leaderDy = Math.sin(leaderAngle) * CLUSTER_HALF_H * 0.9
   const leaders = [
-    { fx: 0.62, fy: 0.36 },
-    { fx: 0.74, fy: 0.52 },
+    { x: CLUSTER_CX + leaderDx * 0.85, y: CLUSTER_CY - leaderDy * 0.85 },
+    { x: CLUSTER_CX + leaderDx, y: CLUSTER_CY - leaderDy + cellH * 0.6 },
   ]
   for (const l of leaders) {
-    const x = l.fx * VIEWBOX_W
-    const y = l.fy * VIEWBOX_H
-    const angleMath = flowAt(x, y)
+    const angleMath = flowAt(l.x, l.y)
     cursors.push({
-      x,
-      y,
+      x: l.x,
+      y: l.y,
       rotationDeg: TIP_OFFSET_DEG - (angleMath * 180) / Math.PI,
       scale: 1.85,
       opacity: 0.92,

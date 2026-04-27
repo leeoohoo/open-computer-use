@@ -515,42 +515,6 @@ export function HeroVideoMatrix({ isMobile }: { isMobile: boolean }) {
               isMobile ? "px-5 max-w-[440px]" : "px-10 max-w-[900px]"
             )}
           >
-            {/* Badge */}
-            <div
-              className={cn(
-                "flex justify-center",
-                isMobile ? "mb-3" : "mb-5"
-              )}
-            >
-              <div
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-full",
-                  "border border-foreground/[0.06] dark:border-white/[0.08]",
-                  "bg-foreground/[0.03] dark:bg-white/[0.04]",
-                  "backdrop-blur-sm",
-                  isMobile ? "px-3 py-1" : "px-4 py-1.5"
-                )}
-              >
-                <span
-                  className={cn(
-                    "font-medium tracking-wide text-foreground/50 dark:text-white/60",
-                    isMobile ? "text-[10px]" : "text-xs"
-                  )}
-                >
-                  #1 Computer-Use Agent
-                </span>
-                <span className={cn("w-px bg-foreground/[0.1] dark:bg-white/[0.12]", isMobile ? "h-2.5" : "h-3")} />
-                <span
-                  className={cn(
-                    "font-semibold tracking-wide text-foreground dark:text-white",
-                    isMobile ? "text-[10px]" : "text-xs"
-                  )}
-                >
-                  82% OSWorld
-                </span>
-              </div>
-            </div>
-
             {/* Headline */}
             <h1
               className={cn(

@@ -193,29 +193,23 @@ function initBoidState(count: number): BoidState {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296
   }
 
-  // Smooth curl-flow field — assigns each cursor an initial heading that
-  // varies smoothly across the canvas, so neighbors lean in similar
-  // directions from the very first frame instead of pointing every which
-  // way. Boids takes over after that. Returns a math-sense angle.
-  const flowAt = (x: number, y: number): number => {
-    const xn = x / (BOUND_X * 2)
-    const yn = y / (BOUND_Y * 2)
-    return (
-      0.42 +
-      Math.sin(xn * 2.6 + yn * 1.4) * 0.45 +
-      Math.cos(yn * 3.1 - xn * 1.7) * 0.28
-    )
-  }
-
-  // Stratified grid sized to the bounds' aspect ratio — gives a uniform
-  // initial composition without reading as a grid (per-cell jitter breaks
-  // the rows). The boids simulation then evolves it into a flowing flock
-  // over the first second or two.
-  const aspect = (BOUND_X * 2) / (BOUND_Y * 2)
+  // Off-screen entry — cluster spawns to the left of the visible canvas
+  // (inside the radial-mask's transparent ring on desktop, past the camera
+  // frustum on narrower aspects), with every cursor's velocity pointing
+  // right. The flock streams in as one cohesive group; cohesion (5.5 u
+  // radius) and alignment (weight 2.2) keep them together while the
+  // attractor + swirl take over once they reach the visible region.
+  const CLUSTER_CX = -BOUND_X + 2 // -13 — well inside the toroidal bound, hidden by mask/frustum
+  const CLUSTER_CY = 0
+  const CLUSTER_CZ = 0
+  const CLUSTER_HALF_W = 2.0
+  const CLUSTER_HALF_H = 2.5
+  const CLUSTER_HALF_Z = 1.2
+  const aspect = CLUSTER_HALF_W / CLUSTER_HALF_H
   const cols = Math.max(1, Math.round(Math.sqrt(count * aspect)))
   const rows = Math.max(1, Math.ceil(count / cols))
-  const cellW = (BOUND_X * 2) / cols
-  const cellH = (BOUND_Y * 2) / rows
+  const cellW = (CLUSTER_HALF_W * 2) / cols
+  const cellH = (CLUSTER_HALF_H * 2) / rows
 
   for (let i = 0; i < count; i++) {
     const col = i % cols
@@ -224,21 +218,23 @@ function initBoidState(count: number): BoidState {
     // visually even while never landing on a perfect lattice.
     const jx = 0.2 + rng() * 0.6
     const jy = 0.2 + rng() * 0.6
-    const x = -BOUND_X + (col + jx) * cellW
-    const y = -BOUND_Y + (row + jy) * cellH
-    const z = (rng() - 0.5) * BOUND_Z * 2
+    const x = CLUSTER_CX - CLUSTER_HALF_W + (col + jx) * cellW
+    const y = CLUSTER_CY - CLUSTER_HALF_H + (row + jy) * cellH
+    const z = CLUSTER_CZ + (rng() - 0.5) * CLUSTER_HALF_Z * 2
 
     positions[i * 3] = x
     positions[i * 3 + 1] = y
     positions[i * 3 + 2] = z
 
-    // Heading from the flow field with a small jitter — keeps the opening
-    // frame coordinated without making it look mechanical.
-    const angleMath = flowAt(x, y) + (rng() - 0.5) * 0.3
-    const speed = 2.0 + rng() * 0.6
+    // All cursors enter heading +X with a small ±10° spread, so the flock
+    // reads as a single inbound mass rather than a wedge. A tiny upward
+    // bias (+0.05 rad) sets the flock arcing toward the attractor's t=0
+    // position at (0, 4, 0).
+    const angleMath = 0.05 + (rng() - 0.5) * 0.34
+    const speed = 2.6 + rng() * 0.4
     velocities[i * 3] = Math.cos(angleMath) * speed
     velocities[i * 3 + 1] = Math.sin(angleMath) * speed
-    velocities[i * 3 + 2] = (rng() - 0.5) * 0.4
+    velocities[i * 3 + 2] = (rng() - 0.5) * 0.3
 
     const zNorm = (z + BOUND_Z) / (2 * BOUND_Z)
     opacities[i] = Math.max(

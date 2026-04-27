@@ -14,7 +14,8 @@ const VIDEO_IDS = [
 
 interface ThumbnailConfig {
   videoId: string
-  x: number
+  side: "left" | "right"
+  inset: number
   y: number
   driftX: number
   driftY: number
@@ -26,93 +27,102 @@ interface ThumbnailConfig {
   enterFrom: { x: number; y: number; rotate: number }
 }
 
-// ── Desktop: 6 thumbnails — 4 corners + 2 mid-side accents ──
+// Strict mirror pairs — every magnitude (rotation, opacity, drift, duration,
+// enterFrom) is identical within a pair; only the SIGN flips. Right-side thumbs
+// are anchored with `right:` and their horizontal drift is negated at render
+// time so each pair breathes outward/inward together instead of drifting in the
+// same direction. Combined with `left:`/`right:` anchoring at equal `inset`,
+// this guarantees pixel-perfect symmetry from the chat-input edges at every
+// viewport width.
 const DESKTOP_THUMBNAILS: ThumbnailConfig[] = [
+  // Top corners
   {
     videoId: VIDEO_IDS[0],
-    x: 2, y: 10,
+    side: "left", inset: 2, y: 10,
     driftX: 14, driftY: 10,
-    durationX: 28, durationY: 22,
-    rotation: -3, scale: 1, opacity: 0.7,
-    enterFrom: { x: -120, y: -80, rotate: -45 },
+    durationX: 30, durationY: 24,
+    rotation: -3, scale: 1, opacity: 0.65,
+    enterFrom: { x: -120, y: -80, rotate: -40 },
   },
   {
     videoId: VIDEO_IDS[1],
-    x: 72, y: 8,
-    driftX: 12, driftY: 10,
-    durationX: 32, durationY: 26,
-    rotation: 2.5, scale: 1, opacity: 0.65,
-    enterFrom: { x: 120, y: -80, rotate: 35 },
+    side: "right", inset: 2, y: 10,
+    driftX: 14, driftY: 10,
+    durationX: 30, durationY: 24,
+    rotation: 3, scale: 1, opacity: 0.65,
+    enterFrom: { x: 120, y: -80, rotate: 40 },
   },
+  // Bottom corners
   {
     videoId: VIDEO_IDS[2],
-    x: 1, y: 58,
-    driftX: 16, driftY: 10,
-    durationX: 30, durationY: 24,
-    rotation: 2, scale: 1, opacity: 0.65,
-    enterFrom: { x: -100, y: 100, rotate: 40 },
+    side: "left", inset: 1, y: 58,
+    driftX: 14, driftY: 12,
+    durationX: 28, durationY: 26,
+    rotation: 2, scale: 1, opacity: 0.6,
+    enterFrom: { x: -100, y: 100, rotate: 45 },
   },
   {
     videoId: VIDEO_IDS[3],
-    x: 71, y: 60,
-    driftX: 12, driftY: 14,
-    durationX: 26, durationY: 30,
+    side: "right", inset: 1, y: 58,
+    driftX: 14, driftY: 12,
+    durationX: 28, durationY: 26,
     rotation: -2, scale: 1, opacity: 0.6,
-    enterFrom: { x: 100, y: 100, rotate: -50 },
+    enterFrom: { x: 100, y: 100, rotate: -45 },
   },
+  // Mid-side accents
   {
     videoId: VIDEO_IDS[4],
-    x: 4, y: 32,
-    driftX: 10, driftY: 8,
-    durationX: 34, durationY: 28,
+    side: "left", inset: 4, y: 32,
+    driftX: 10, driftY: 9,
+    durationX: 32, durationY: 30,
     rotation: -1.5, scale: 0.8, opacity: 0.4,
     enterFrom: { x: -140, y: 20, rotate: -30 },
   },
   {
     videoId: VIDEO_IDS[5],
-    x: 78, y: 34,
-    driftX: 10, driftY: 10,
-    durationX: 30, durationY: 32,
+    side: "right", inset: 4, y: 32,
+    driftX: 10, driftY: 9,
+    durationX: 32, durationY: 30,
     rotation: 1.5, scale: 0.8, opacity: 0.4,
     enterFrom: { x: 140, y: 20, rotate: 30 },
   },
 ]
 
 // ── Mobile: 4 corner thumbnails only, smaller + tighter to edges ──
-// Mid-side ones are dropped — on narrow screens they'd sit right on top of greeting text.
-// Positions use small x% values so the 120px thumbnails don't overflow the viewport.
+// Mid-side ones are dropped — on narrow screens they'd sit on top of greeting text.
+// Negative inset on both sides bleeds the 120px thumbnails symmetrically off-edge.
 const MOBILE_THUMBNAILS: ThumbnailConfig[] = [
   {
     videoId: VIDEO_IDS[0],
-    x: -4, y: 14,
+    side: "left", inset: -4, y: 14,
     driftX: 8, driftY: 6,
-    durationX: 26, durationY: 20,
-    rotation: -4, scale: 1, opacity: 0.6,
+    durationX: 28, durationY: 22,
+    rotation: -4, scale: 1, opacity: 0.55,
     enterFrom: { x: -80, y: -60, rotate: -35 },
   },
   {
     videoId: VIDEO_IDS[1],
-    x: 68, y: 13,
+    side: "right", inset: -4, y: 14,
     driftX: 8, driftY: 6,
-    durationX: 30, durationY: 24,
-    rotation: 3, scale: 1, opacity: 0.55,
-    enterFrom: { x: 80, y: -60, rotate: 30 },
+    durationX: 28, durationY: 22,
+    rotation: 4, scale: 1, opacity: 0.55,
+    enterFrom: { x: 80, y: -60, rotate: 35 },
   },
   {
     videoId: VIDEO_IDS[2],
-    x: -6, y: 64,
-    driftX: 10, driftY: 6,
-    durationX: 28, durationY: 22,
-    rotation: 3, scale: 1, opacity: 0.55,
-    enterFrom: { x: -70, y: 70, rotate: 30 },
+    side: "left", inset: -6, y: 64,
+    driftX: 9, driftY: 7,
+    durationX: 26, durationY: 24,
+    rotation: 3, scale: 1, opacity: 0.5,
+    enterFrom: { x: -70, y: 70, rotate: 35 },
   },
   {
     videoId: VIDEO_IDS[3],
-    x: 66, y: 66,
-    driftX: 8, driftY: 8,
-    durationX: 24, durationY: 28,
+    side: "right", inset: -6, y: 64,
+    driftX: 9, driftY: 7,
+    durationX: 26, durationY: 24,
     rotation: -3, scale: 1, opacity: 0.5,
-    enterFrom: { x: 70, y: 70, rotate: -40 },
+    enterFrom: { x: 70, y: 70, rotate: -35 },
   },
 ]
 
@@ -180,6 +190,11 @@ export function FloatingThumbnails({ visible, skipEntrance = false }: { visible:
 }
 
 function FloatingThumb({ config, index, skipEntrance = false, isMobile }: { config: ThumbnailConfig; index: number; skipEntrance?: boolean; isMobile: boolean }) {
+  const positionStyle: React.CSSProperties =
+    config.side === "left"
+      ? { left: `${config.inset}%`, top: `${config.y}%` }
+      : { right: `${config.inset}%`, top: `${config.y}%` }
+
   return (
     <motion.div
       className="absolute"
@@ -187,8 +202,6 @@ function FloatingThumb({ config, index, skipEntrance = false, isMobile }: { conf
         skipEntrance
           ? false
           : {
-              left: `${config.x}%`,
-              top: `${config.y}%`,
               x: config.enterFrom.x,
               y: config.enterFrom.y,
               rotate: config.enterFrom.rotate,
@@ -208,14 +221,14 @@ function FloatingThumb({ config, index, skipEntrance = false, isMobile }: { conf
         delay: 0.08 + index * 0.1,
         ease: [0.34, 1.56, 0.64, 1],
       }}
-      style={{
-        left: `${config.x}%`,
-        top: `${config.y}%`,
-      }}
+      style={positionStyle}
     >
       <div
         className="ft-x"
-        style={{ "--drift-x": `${config.driftX}px`, "--dur-x": `${config.durationX}s` } as React.CSSProperties}
+        style={{
+          "--drift-x": `${config.side === "right" ? -config.driftX : config.driftX}px`,
+          "--dur-x": `${config.durationX}s`,
+        } as React.CSSProperties}
       >
         <div
           className="ft-y"

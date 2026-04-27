@@ -1,0 +1,181 @@
+"use client"
+
+/**
+ * Top announcement banner — sits above the LandingHeader at the very top of
+ * the page until the user dismisses it. Persists the dismissal in
+ * localStorage so a closed banner doesn't reappear on subsequent visits.
+ *
+ * Coordinates with the rest of the page via a CSS custom property
+ * (`--top-banner-h`) on the document root: the LandingHeader reads this
+ * value to position itself below the banner. When the banner is dismissed
+ * or absent, the variable is `0` and the header sits at the top as usual.
+ */
+
+import { useEffect, useRef, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { X } from "lucide-react"
+import Link from "next/link"
+import { cn } from "@/lib/utils"
+
+const STORAGE_KEY = "coasty.top-banner.osworld.v1"
+// Banner heights — kept in sync with the inline className below so the
+// CSS var matches the rendered height exactly. Tailwind: h-9 = 36px,
+// sm:h-10 = 40px.
+const BANNER_H_MOBILE = 36
+const BANNER_H_DESKTOP = 40
+
+function readDismissed(): boolean {
+  if (typeof window === "undefined") return false
+  try {
+    return window.localStorage.getItem(STORAGE_KEY) === "1"
+  } catch {
+    return false
+  }
+}
+
+function writeDismissed() {
+  if (typeof window === "undefined") return
+  try {
+    window.localStorage.setItem(STORAGE_KEY, "1")
+  } catch {
+    /* private mode / disabled storage — fail silently, banner won't persist */
+  }
+}
+
+function setBannerCssVar(px: number) {
+  if (typeof document === "undefined") return
+  document.documentElement.style.setProperty("--top-banner-h", `${px}px`)
+}
+
+export function TopAnnouncementBanner() {
+  // Three-state visibility:
+  //   null    → SSR / pre-hydration, render nothing (avoids mismatch)
+  //   true    → show banner
+  //   false   → hide (already dismissed in a prior visit)
+  const [visible, setVisible] = useState<boolean | null>(null)
+  const closeBtnRef = useRef<HTMLButtonElement>(null)
+
+  // Determine initial visibility from storage on the client.
+  useEffect(() => {
+    setVisible(!readDismissed())
+  }, [])
+
+  // Sync the CSS var with current viewport width + visibility. The header
+  // reads this var via `top-[var(--top-banner-h,0px)]`.
+  useEffect(() => {
+    if (visible !== true) {
+      setBannerCssVar(0)
+      return
+    }
+    const apply = () =>
+      setBannerCssVar(
+        window.innerWidth >= 640 ? BANNER_H_DESKTOP : BANNER_H_MOBILE,
+      )
+    apply()
+    window.addEventListener("resize", apply, { passive: true })
+    return () => {
+      window.removeEventListener("resize", apply)
+      // Reset on unmount so a navigation away from this page doesn't leave
+      // a phantom offset on the next route's header.
+      setBannerCssVar(0)
+    }
+  }, [visible])
+
+  // Allow Esc to dismiss while the banner has focus, and allow keyboard
+  // users to reach the close button quickly with a clear focus ring.
+  useEffect(() => {
+    if (visible !== true) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && document.activeElement === closeBtnRef.current) {
+        dismiss()
+      }
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [visible])
+
+  const dismiss = () => {
+    writeDismissed()
+    setVisible(false)
+  }
+
+  return (
+    <AnimatePresence initial={false}>
+      {visible === true && (
+        <motion.div
+          key="top-banner"
+          initial={{ y: "-100%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "-100%", opacity: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          role="region"
+          aria-label="Announcement"
+          className={cn(
+            "fixed inset-x-0 top-0 z-[60]",
+            "h-9 sm:h-10",
+            "bg-foreground text-background",
+            "border-b border-foreground/20",
+          )}
+        >
+          {/* Subtle inner highlight along the top edge — keeps the banner
+              feeling lifted rather than slabby across themes. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-background/25 to-transparent"
+          />
+
+          <div className="relative mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+            {/* Centered claim — clickable, links to the OSWorld benchmark
+                section on the same page. Truncates instead of wrapping on
+                the smallest viewports so the banner stays one row tall. */}
+            <Link
+              href="#benchmark"
+              className={cn(
+                "mx-auto flex min-w-0 items-center gap-2 sm:gap-2.5",
+                "text-[11px] sm:text-[12.5px] font-medium tracking-tight",
+                "transition-opacity hover:opacity-80",
+              )}
+            >
+              <span className="hidden xs:inline-flex h-[18px] items-center rounded-full bg-background/15 px-2 text-[9.5px] sm:text-[10px] font-semibold uppercase tracking-[0.14em]">
+                New
+              </span>
+              <span className="truncate">
+                <span className="font-semibold">#1 Computer-Use Agent</span>
+                <span aria-hidden="true" className="mx-1.5 sm:mx-2 opacity-50">
+                  ·
+                </span>
+                <span className="font-medium tabular-nums">82% OSWorld</span>
+              </span>
+              <span
+                aria-hidden="true"
+                className="hidden sm:inline text-[11px] opacity-60 transition-opacity group-hover:opacity-100"
+              >
+                →
+              </span>
+            </Link>
+
+            {/* Close button — anchored to the right edge, padded for
+                comfortable touch targets on mobile. Sits over the banner
+                rather than inline so the centered claim stays balanced. */}
+            <button
+              ref={closeBtnRef}
+              onClick={dismiss}
+              type="button"
+              aria-label="Dismiss announcement"
+              className={cn(
+                "absolute right-1 sm:right-2",
+                "flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full",
+                "text-background/70 hover:text-background",
+                "hover:bg-background/10 active:bg-background/15",
+                "transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background/40",
+              )}
+            >
+              <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2.2} />
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}

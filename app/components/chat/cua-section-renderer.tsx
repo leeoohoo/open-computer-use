@@ -8,16 +8,67 @@ import {
   CaretRight,
   Eye,
   Code,
-  Brain,
-  Lightning,
   Terminal,
   MagnifyingGlass,
   Timer,
+  Copy,
+  Check,
+  Sparkle,
 } from "@phosphor-icons/react"
 import { AnimatePresence, motion } from "framer-motion"
 import { memo, useEffect, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
+import type { Components } from "react-markdown"
 import { AwaitingHumanBanner } from "./awaiting-human-banner"
+import { LinkMarkdown } from "./link-markdown"
+
+// ── Refined Markdown for CUA sections ──
+//
+// The shared <Markdown> component renders inline `<code>` as a `<span>` with
+// `bg-primary-foreground` — a high-contrast token that paints as black-on-white
+// in dark mode, which looks harsh inside the cua timeline. We override the
+// `code` mapper here so inline code becomes a subtle rounded chip (mono font,
+// 0.88em so it visually balances with surrounding text, hairline ring), while
+// keeping link rendering via the project's <LinkMarkdown> wrapper.
+
+const CUA_MARKDOWN_COMPONENTS: Partial<Components> = {
+  code: function CodeComponent({ className, children, node, ...props }: any) {
+    const isInline =
+      !node?.position?.start.line ||
+      node?.position?.start.line === node?.position?.end.line
+    if (isInline) {
+      return (
+        <span
+          className="rounded-md bg-foreground/[0.06] ring-1 ring-foreground/[0.05] px-1.5 py-0.5 font-mono text-[0.88em] text-foreground/90"
+          {...props}
+        >
+          {children}
+        </span>
+      )
+    }
+    // Block code: plain <code>, parent's [&_pre] selectors style the wrapper.
+    return (
+      <code
+        className={cn("font-mono text-[12px] text-foreground/85", className)}
+        {...props}
+      >
+        {children}
+      </code>
+    )
+  },
+  a: function AComponent({ href, children, ...props }: any) {
+    if (!href) return <span {...props}>{children}</span>
+    return (
+      <LinkMarkdown href={href} {...props}>
+        {children}
+      </LinkMarkdown>
+    )
+  },
+}
+
+function CuaMarkdown({ children }: { children: string }) {
+  return <Markdown components={CUA_MARKDOWN_COMPONENTS}>{children}</Markdown>
+}
 
 // ── Types ──
 
@@ -292,6 +343,54 @@ function PlainDot({ status: _status }: { status: "success" | "error" | "pending"
 
 // ── Primitives ──
 
+function stripResultFences(raw: string): string {
+  // The backend wraps stdout in ``` fences (see code_agent.py). Strip those
+  // fence lines so the Markdown renderer's code-block chrome (language label,
+  // its own copy button) doesn't appear inside the result card.
+  return raw
+    .split("\n")
+    .filter((line) => !/^\s*```\s*\w*\s*$/.test(line))
+    .join("\n")
+    .trim()
+}
+
+function CopyButton({
+  text,
+  className,
+}: {
+  text: string
+  className?: string
+}) {
+  const [copied, setCopied] = useState(false)
+
+  const onClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (typeof navigator === "undefined" || !navigator.clipboard) return
+    void navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={copied ? "Copied" : "Copy result"}
+      title={copied ? "Copied" : "Copy"}
+      className={cn(
+        "-mr-1 inline-flex size-6 items-center justify-center rounded-md text-foreground/35 transition-all duration-150 hover:bg-foreground/[0.06] hover:text-foreground/80 active:scale-95",
+        className
+      )}
+    >
+      {copied ? (
+        <Check weight="bold" className="size-3 text-emerald-500" />
+      ) : (
+        <Copy weight="regular" className="size-3" />
+      )}
+    </button>
+  )
+}
+
 function DetailRow({
   icon: Icon,
   label,
@@ -454,7 +553,7 @@ function StepCard({
       {step.observation && (
         <div className="mt-0.5">
           <DetailRow icon={Eye} label="What it noticed">
-            <Markdown>{step.observation}</Markdown>
+            <CuaMarkdown>{step.observation}</CuaMarkdown>
           </DetailRow>
         </div>
       )}
@@ -504,23 +603,43 @@ function ItemRenderer({
     }
 
     case "code-agent-thought": {
-      const label = "Thinking"
+      // Render the agent's mid-execution reasoning as regular timeline text —
+      // same size and color as the rest of the agent's output.
+      const cleaned = item.content.trim()
+      if (!cleaned) return null
       return (
-        <div className="pl-6">
-          <DetailRow icon={Brain} label={label}>
-            <Markdown>{item.content}</Markdown>
-          </DetailRow>
+        <div className="pl-6 py-0.5 text-[15px] leading-relaxed text-foreground">
+          <CuaMarkdown>{cleaned}</CuaMarkdown>
         </div>
       )
     }
 
     case "code-agent-result": {
-      const label = "Result"
+      // Show the result of one execution step in a clean two-row card:
+      // header strip with a contextual label + copy button, hairline divider,
+      // mono content below. Strip the producer's ``` fences first so the
+      // Markdown renderer's code-block chrome doesn't appear.
+      const cleaned = stripResultFences(item.content)
+      if (!cleaned) return null
+      const hasError = /\bError:\s/.test(cleaned)
       return (
-        <div className="pl-6">
-          <DetailRow icon={Lightning} label={label} defaultOpen>
-            <Markdown>{item.content}</Markdown>
-          </DetailRow>
+        <div className="pl-6 py-1.5">
+          <div className="group/result-card relative overflow-hidden rounded-xl border border-foreground/[0.07] bg-foreground/[0.02] shadow-sm">
+            <div className="flex items-center justify-between gap-3 border-b border-foreground/[0.05] px-3.5 py-1.5">
+              <span
+                className={cn(
+                  "text-[10px] font-medium uppercase tracking-[0.12em]",
+                  hasError ? "text-red-500/70" : "text-foreground/40"
+                )}
+              >
+                {hasError ? "Error" : "Output"}
+              </span>
+              <CopyButton text={cleaned} />
+            </div>
+            <pre className="m-0 px-3.5 py-2.5 font-mono text-[12px] leading-[1.6] tabular-nums text-foreground/80 whitespace-pre-wrap break-words">
+              {cleaned}
+            </pre>
+          </div>
         </div>
       )
     }
@@ -535,21 +654,64 @@ function ItemRenderer({
         </div>
       )
 
-    case "code-agent-summary":
+    case "code-agent-summary": {
+      // The agent's end-of-execution recap. This is a "report card" — a
+      // dedicated, premium card with a sparkle-chip header, a hairline
+      // decorative top accent, a copy button, and refined markdown styling
+      // for the body (proper spacing for headings, lists, inline code).
+      const cleaned = item.content.trim()
+      if (!cleaned) return null
       return (
-        <div className="pl-6">
-          <DetailRow icon={Terminal} label="Summary" defaultOpen>
-            <Markdown>{item.content}</Markdown>
-          </DetailRow>
+        <div className="pl-6 py-2">
+          <div className="relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.025] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            {/* Decorative top hairline gradient — gives a "premium card" cue */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.18] to-transparent" />
+
+            {/* Header: sparkle chip + label, copy button on the right */}
+            <div className="flex items-center justify-between gap-3 border-b border-foreground/[0.06] px-4 py-2.5">
+              <div className="flex items-center gap-2">
+                <div className="flex size-5 items-center justify-center rounded-md bg-gradient-to-br from-foreground/[0.08] to-foreground/[0.04] ring-1 ring-foreground/[0.05]">
+                  <Sparkle weight="fill" className="size-2.5 text-foreground/60" />
+                </div>
+                <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-foreground/55">
+                  Session Summary
+                </span>
+              </div>
+              <CopyButton text={cleaned} />
+            </div>
+
+            {/* Body: refined markdown styling */}
+            <div
+              className={cn(
+                "px-4 py-3 text-[14px] leading-[1.6] text-foreground/85",
+                "[&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
+                "[&_p]:my-2",
+                "[&_strong]:font-semibold [&_strong]:text-foreground",
+                "[&_em]:italic [&_em]:text-foreground/75",
+                "[&_ul]:my-2 [&_ul]:space-y-0.5 [&_ul]:pl-4",
+                "[&_ol]:my-2 [&_ol]:space-y-0.5 [&_ol]:pl-5",
+                "[&_li]:marker:text-foreground/35 [&_li]:leading-[1.55]",
+                "[&_h1]:mt-3 [&_h1]:mb-1.5 [&_h1]:text-[15px] [&_h1]:font-semibold [&_h1]:text-foreground",
+                "[&_h2]:mt-3 [&_h2]:mb-1.5 [&_h2]:text-[14.5px] [&_h2]:font-semibold [&_h2]:text-foreground",
+                "[&_h3]:mt-2.5 [&_h3]:mb-1 [&_h3]:text-[14px] [&_h3]:font-medium [&_h3]:text-foreground",
+                "[&_pre]:my-2 [&_pre]:rounded-lg [&_pre]:border [&_pre]:border-foreground/[0.06] [&_pre]:!bg-foreground/[0.03] [&_pre]:p-3",
+                "[&_a]:text-foreground [&_a]:underline [&_a]:underline-offset-[3px] [&_a]:decoration-foreground/30 hover:[&_a]:decoration-foreground/60",
+                "[&_blockquote]:my-2 [&_blockquote]:border-l-2 [&_blockquote]:border-foreground/15 [&_blockquote]:pl-3 [&_blockquote]:text-foreground/70 [&_blockquote]:italic"
+              )}
+            >
+              <CuaMarkdown>{cleaned}</CuaMarkdown>
+            </div>
+          </div>
         </div>
       )
+    }
 
     case "search-results": {
       const label = item.query ? `Search: ${item.query}` : "Web search"
       return (
         <div className="pl-6">
           <DetailRow icon={MagnifyingGlass} label={label} defaultOpen>
-            <Markdown>{item.content}</Markdown>
+            <CuaMarkdown>{item.content}</CuaMarkdown>
           </DetailRow>
         </div>
       )
@@ -603,7 +765,7 @@ function ItemRenderer({
       if (!cleaned) return null
       return (
         <div className="pl-6 py-0.5 text-[15px] leading-relaxed text-foreground/80">
-          <Markdown>{truncateText(cleaned, 500)}</Markdown>
+          <CuaMarkdown>{truncateText(cleaned, 500)}</CuaMarkdown>
         </div>
       )
     }

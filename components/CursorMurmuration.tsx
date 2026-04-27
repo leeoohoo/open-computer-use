@@ -18,9 +18,14 @@ import { useEffect, useState } from "react"
 import { useLiteMode } from "@/lib/hooks/use-lite-mode"
 import CursorMurmurationStatic from "./CursorMurmurationStatic"
 
+// No loading fallback: the WebGL flock spawns off-canvas and streams in,
+// so a centered static composition shown during the dynamic import would
+// flash a different layout right before the entry animation begins.
+// CursorMurmurationStatic is still used as the permanent fallback for
+// mobile / reduced-motion / low-end devices below.
 const CursorMurmurationFlock = dynamic(
   () => import("./CursorMurmurationFlock"),
-  { ssr: false, loading: () => <CursorMurmurationStatic /> }
+  { ssr: false }
 )
 
 type Tier = "static" | "tablet" | "desktop"

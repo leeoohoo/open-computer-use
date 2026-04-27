@@ -406,8 +406,13 @@ export function LandingHeader({
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        // `top` reads the `--top-banner-h` custom property set by the
+        // optional TopAnnouncementBanner. Defaults to 0 when the banner is
+        // absent or dismissed, so the header sits flush with the viewport
+        // edge as before.
+        style={{ top: "var(--top-banner-h, 0px)" }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "fixed left-0 right-0 z-50 transition-[top,padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
           scrolled ? "py-2" : "py-2.5 sm:py-3.5",
         )}
       >
