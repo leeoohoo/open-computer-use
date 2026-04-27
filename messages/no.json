@@ -165,6 +165,28 @@
         "label": "Sosiale medier",
         "task": "Publiser pa Hacker News og engasjer med kommentarer"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "spart pr. måned",
+        "sublabel": "mot en fulltids-VA"
+      },
+      "time": {
+        "value": "30 t.",
+        "label": "gjenvunnet pr. uke",
+        "sublabel": "manuelt arbeid eliminert"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "raskere resultat",
+        "sublabel": "oppgaver på minutter, ikke dager"
+      },
+      "effort": {
+        "value": "0",
+        "label": "kode eller ansettelser",
+        "sublabel": "fullt administrert ende til ende"
+      }
     }
   },
   "stats": {

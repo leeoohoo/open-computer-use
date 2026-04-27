@@ -165,6 +165,28 @@
         "label": "Sociale medier",
         "task": "Post på Hacker News og engagér med kommentarer"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "sparet pr. måned",
+        "sublabel": "vs. en fuldtids-VA"
+      },
+      "time": {
+        "value": "30 t.",
+        "label": "vundet pr. uge",
+        "sublabel": "manuelt arbejde elimineret"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "hurtigere output",
+        "sublabel": "opgaver på minutter, ikke dage"
+      },
+      "effort": {
+        "value": "0",
+        "label": "kode eller ansættelser",
+        "sublabel": "drevet end-to-end"
+      }
     }
   },
   "stats": {

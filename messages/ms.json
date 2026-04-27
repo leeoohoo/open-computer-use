@@ -165,6 +165,28 @@
         "label": "Media Sosial",
         "task": "Siarkan di Hacker News dan berinteraksi dengan komen"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "dijimat sebulan",
+        "sublabel": "berbanding VA sepenuh masa"
+      },
+      "time": {
+        "value": "30 jam",
+        "label": "dipulihkan seminggu",
+        "sublabel": "kerja manual dihapuskan"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "output lebih pantas",
+        "sublabel": "tugas dalam minit, bukan hari"
+      },
+      "effort": {
+        "value": "0",
+        "label": "kod atau pengambilan",
+        "sublabel": "diuruskan dari hujung ke hujung"
+      }
     }
   },
   "stats": {

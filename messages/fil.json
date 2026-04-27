@@ -165,6 +165,28 @@
         "label": "Social Media",
         "task": "Mag-post sa Hacker News at makipag-ugnayan sa mga komento"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "tipid kada buwan",
+        "sublabel": "vs. isang full-time VA"
+      },
+      "time": {
+        "value": "30 oras",
+        "label": "nabawi kada linggo",
+        "sublabel": "manual na trabaho, naalis"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "mas mabilis na output",
+        "sublabel": "gawain sa minuto, hindi araw"
+      },
+      "effort": {
+        "value": "0",
+        "label": "code o pag-hire",
+        "sublabel": "buong-buong pinamamahalaan end-to-end"
+      }
     }
   },
   "stats": {

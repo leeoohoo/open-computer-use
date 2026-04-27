@@ -165,6 +165,28 @@
         "label": "Sosiaalinen media",
         "task": "Julkaise Hacker News -alustalla ja osallistu kommentteihin"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "säästöä kuukaudessa",
+        "sublabel": "vs. kokoaikainen VA"
+      },
+      "time": {
+        "value": "30 t",
+        "label": "takaisin viikossa",
+        "sublabel": "manuaalinen työ poistettu"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "nopeampi tuotos",
+        "sublabel": "tehtävät minuuteissa, ei päivissä"
+      },
+      "effort": {
+        "value": "0",
+        "label": "koodia tai palkkauksia",
+        "sublabel": "täysin hallittu päästä päähän"
+      }
     }
   },
   "stats": {

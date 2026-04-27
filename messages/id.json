@@ -165,6 +165,28 @@
         "label": "Media Sosial",
         "task": "Posting di Hacker News dan berinteraksi dengan komentar"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "dihemat per bulan",
+        "sublabel": "vs. VA penuh waktu"
+      },
+      "time": {
+        "value": "30 jam",
+        "label": "dikembalikan per minggu",
+        "sublabel": "kerja manual dihilangkan"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "output lebih cepat",
+        "sublabel": "tugas dalam menit, bukan hari"
+      },
+      "effort": {
+        "value": "0",
+        "label": "kode atau perekrutan",
+        "sublabel": "dikelola end-to-end sepenuhnya"
+      }
     }
   },
   "stats": {

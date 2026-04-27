@@ -165,6 +165,28 @@
         "label": "Közösségi média",
         "task": "Posztolj a Hacker News-ra és reagálj a kommentekre"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "megspórolva havonta",
+        "sublabel": "egy teljes munkaidős VA-hoz képest"
+      },
+      "time": {
+        "value": "30 óra",
+        "label": "visszanyerve hetente",
+        "sublabel": "manuális munka megszüntetve"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "gyorsabb kimenet",
+        "sublabel": "feladatok percek, nem napok alatt"
+      },
+      "effort": {
+        "value": "0",
+        "label": "kód vagy felvétel",
+        "sublabel": "végponttól végpontig kezelve"
+      }
     }
   },
   "stats": {

@@ -165,6 +165,28 @@
         "label": "Social media",
         "task": "Plaats op Hacker News en reageer op comments"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "per maand bespaard",
+        "sublabel": "vs. een fulltime VA"
+      },
+      "time": {
+        "value": "30 uur",
+        "label": "per week teruggewonnen",
+        "sublabel": "handwerk geëlimineerd"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "snellere output",
+        "sublabel": "taken in minuten, niet dagen"
+      },
+      "effort": {
+        "value": "0",
+        "label": "code of aannames",
+        "sublabel": "volledig end-to-end beheerd"
+      }
     }
   },
   "stats": {

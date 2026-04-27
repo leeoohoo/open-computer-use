@@ -165,6 +165,28 @@
         "label": "Redes sociales",
         "task": "Publica en Hacker News e interactúa con comentarios"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "ahorrados al mes",
+        "sublabel": "vs. un VA a tiempo completo"
+      },
+      "time": {
+        "value": "30 h",
+        "label": "recuperadas por semana",
+        "sublabel": "trabajo manual eliminado"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "resultados más rápidos",
+        "sublabel": "tareas en minutos, no días"
+      },
+      "effort": {
+        "value": "0",
+        "label": "código ni contrataciones",
+        "sublabel": "gestionado de extremo a extremo"
+      }
     }
   },
   "stats": {

@@ -165,6 +165,28 @@
         "label": "Mang xa hoi",
         "task": "Dang bai tren Hacker News va tuong tac voi binh luan"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "tiết kiệm mỗi tháng",
+        "sublabel": "so với một VA toàn thời gian"
+      },
+      "time": {
+        "value": "30 giờ",
+        "label": "lấy lại mỗi tuần",
+        "sublabel": "công việc thủ công đã loại bỏ"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "kết quả nhanh hơn",
+        "sublabel": "nhiệm vụ trong phút, không phải ngày"
+      },
+      "effort": {
+        "value": "0",
+        "label": "mã hoặc tuyển dụng",
+        "sublabel": "quản lý đầu cuối toàn diện"
+      }
     }
   },
   "stats": {

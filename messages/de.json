@@ -165,6 +165,28 @@
         "label": "Social Media",
         "task": "Auf Hacker News posten und Kommentare beantworten"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "monatlich gespart",
+        "sublabel": "vs. eine Vollzeit-VA"
+      },
+      "time": {
+        "value": "30 Std.",
+        "label": "wöchentlich zurückgewonnen",
+        "sublabel": "manuelle Arbeit eliminiert"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "schnellere Ergebnisse",
+        "sublabel": "Aufgaben in Minuten, nicht Tagen"
+      },
+      "effort": {
+        "value": "0",
+        "label": "Code oder Einstellungen",
+        "sublabel": "vollständig Ende-zu-Ende verwaltet"
+      }
     }
   },
   "stats": {

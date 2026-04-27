@@ -165,6 +165,28 @@
         "label": "Réseaux sociaux",
         "task": "Publiez sur Hacker News et interagissez avec les commentaires"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "économisés par mois",
+        "sublabel": "vs. un VA à temps plein"
+      },
+      "time": {
+        "value": "30 h",
+        "label": "récupérées par semaine",
+        "sublabel": "travail manuel éliminé"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "production plus rapide",
+        "sublabel": "tâches en minutes, pas en jours"
+      },
+      "effort": {
+        "value": "0",
+        "label": "code ni embauche",
+        "sublabel": "géré de bout en bout"
+      }
     }
   },
   "stats": {

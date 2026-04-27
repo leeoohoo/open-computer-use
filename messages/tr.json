@@ -165,6 +165,28 @@
         "label": "Sosyal Medya",
         "task": "Hacker News'de yayinla ve yorumlarla etkilesime gir"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "aylık tasarruf",
+        "sublabel": "tam zamanlı VA'ya karşı"
+      },
+      "time": {
+        "value": "30 sa.",
+        "label": "haftalık geri kazanım",
+        "sublabel": "manuel iş ortadan kalktı"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "daha hızlı çıktı",
+        "sublabel": "dakikalarda iş, günlerde değil"
+      },
+      "effort": {
+        "value": "0",
+        "label": "kod veya işe alım",
+        "sublabel": "uçtan uca tam yönetim"
+      }
     }
   },
   "stats": {

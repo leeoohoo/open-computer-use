@@ -165,6 +165,28 @@
         "label": "소셜 미디어",
         "task": "Hacker News에 게시하고 댓글에 참여"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "월간 절감액",
+        "sublabel": "풀타임 VA 대비"
+      },
+      "time": {
+        "value": "30시간",
+        "label": "주간 회수 시간",
+        "sublabel": "수작업 제거"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "더 빠른 결과",
+        "sublabel": "며칠이 아닌 분 단위 작업"
+      },
+      "effort": {
+        "value": "0",
+        "label": "코딩이나 채용 없음",
+        "sublabel": "엔드투엔드 완전 관리"
+      }
     }
   },
   "stats": {

@@ -165,6 +165,28 @@
         "label": "Sociální média",
         "task": "Publikujte na Hacker News a reagujte na komentáře"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "ušetřeno měsíčně",
+        "sublabel": "oproti VA na plný úvazek"
+      },
+      "time": {
+        "value": "30 h",
+        "label": "získáno týdně",
+        "sublabel": "manuální práce odstraněna"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "rychlejší výstup",
+        "sublabel": "úkoly v minutách, ne ve dnech"
+      },
+      "effort": {
+        "value": "0",
+        "label": "kódu ani náborů",
+        "sublabel": "kompletně řízeno od A do Z"
+      }
     }
   },
   "stats": {

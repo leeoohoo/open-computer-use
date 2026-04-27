@@ -165,6 +165,28 @@
         "label": "社交媒体",
         "task": "在 Hacker News 上发帖并参与评论互动"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "每月节省",
+        "sublabel": "相比全职 VA"
+      },
+      "time": {
+        "value": "30 小时",
+        "label": "每周回收",
+        "sublabel": "手动工作已消除"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "更快产出",
+        "sublabel": "数分钟完成，而非数天"
+      },
+      "effort": {
+        "value": "0",
+        "label": "代码与招聘",
+        "sublabel": "端到端全程托管"
+      }
     }
   },
   "stats": {

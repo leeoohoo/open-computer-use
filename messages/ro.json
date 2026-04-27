@@ -165,6 +165,28 @@
         "label": "Social media",
         "task": "Posteaza pe Hacker News si interactioneaza cu comentariile"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "economisiți lunar",
+        "sublabel": "față de un VA full-time"
+      },
+      "time": {
+        "value": "30 h",
+        "label": "recuperate săptămânal",
+        "sublabel": "munca manuală eliminată"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "rezultat mai rapid",
+        "sublabel": "sarcini în minute, nu zile"
+      },
+      "effort": {
+        "value": "0",
+        "label": "cod sau angajări",
+        "sublabel": "gestionat complet end-to-end"
+      }
     }
   },
   "stats": {

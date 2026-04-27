@@ -165,6 +165,28 @@
         "label": "Media społecznościowe",
         "task": "Opublikuj na Hacker News i angażuj się w komentarze"
       }
+    },
+    "resourceStats": {
+      "money": {
+        "value": "$3,200",
+        "label": "oszczędność miesięcznie",
+        "sublabel": "vs. asystent na pełen etat"
+      },
+      "time": {
+        "value": "30 godz.",
+        "label": "odzyskane tygodniowo",
+        "sublabel": "praca ręczna wyeliminowana"
+      },
+      "speed": {
+        "value": "10×",
+        "label": "szybszy wynik",
+        "sublabel": "zadania w minutach, nie dniach"
+      },
+      "effort": {
+        "value": "0",
+        "label": "kodu i rekrutacji",
+        "sublabel": "w pełni zarządzane end-to-end"
+      }
     }
   },
   "stats": {
