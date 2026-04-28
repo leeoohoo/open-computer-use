@@ -69,6 +69,13 @@ win:
   target:
     - nsis
   icon: build/icon.ico
+  # All artifact names use literal dashes ("Coasty-Desktop-...") instead of
+  # ${productName} expansion. productName is "Coasty Desktop" (with a space)
+  # for menu/about-screen display, but space-bearing filenames break URL
+  # construction (manual %20 encoding everywhere) and confuse CDN/S3 caches
+  # when staff mix dashed/spaced spellings. The hand-rename to dashed names
+  # in latest.yml means every target's output filename has to match.
+  artifactName: Coasty-Desktop-Setup-${version}.${ext}
   azureSignOptions:
     endpoint: "https://eus.codesigning.azure.net/"
     codeSigningAccountName: "coastyai"
@@ -85,6 +92,11 @@ mac:
   entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.plist
   notarize: true
+  # Default for non-DMG mac targets — i.e. the ZIP that electron-updater
+  # downloads for differential updates. The "-mac" suffix is mandatory: that
+  # is what electron-updater greps for in latest-mac.yml. Override per-target
+  # below for DMG (no "-mac" needed there).
+  artifactName: Coasty-Desktop-${version}-${arch}-mac.${ext}
 linux:
   # Three Linux targets, chosen to cover every distro + cross-build scenario:
   #
@@ -131,11 +143,14 @@ linux:
   executableArgs:
     - --enable-features=WaylandLinuxDrmSyncobj
     - --ozone-platform-hint=auto
+  # Default for any linux target without its own artifactName — i.e. tar.gz.
+  # appImage and deb each set their own artifactName below and override this.
+  artifactName: Coasty-Desktop-${version}-${arch}.${ext}
 appImage:
   license: build/LICENSE.txt
-  artifactName: ${productName}-${version}-${arch}.${ext}
+  artifactName: Coasty-Desktop-${version}-${arch}.${ext}
 deb:
-  artifactName: ${productName}-${version}-${arch}.${ext}
+  artifactName: Coasty-Desktop-${version}-${arch}.${ext}
   # Runtime libs Electron + the overlay need on Debian/Ubuntu. Specifies
   # `libayatana-appindicator3-1` (current standard — `libappindicator3-1`
   # was removed from Debian 11+ / Ubuntu 22.04+). xdotool + wmctrl are
@@ -158,3 +173,7 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
+dmg:
+  # Override the mac.artifactName default — DMG installers don't carry the
+  # "-mac" suffix electron-updater needs on the ZIP.
+  artifactName: Coasty-Desktop-${version}-${arch}.${ext}
