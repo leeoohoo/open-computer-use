@@ -7,8 +7,45 @@ import { AuthScreen } from './components/AuthScreen'
 import { Overlay } from './components/Overlay'
 import { PermissionsGuard } from './components/PermissionsGuard'
 import { PermissionToast } from './components/PermissionToast'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
-export default function App() {
+// Install the renderer's global error listeners ONCE at module load time.
+// They forward into the main-process reporter via the preload bridge.
+//
+// Why module-level rather than inside the component? React's StrictMode
+// double-mounts effects in dev, which would install the listener twice.
+// At module level we install exactly once per renderer process — and
+// renderer processes don't "unmount" so we don't need a teardown.
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (e) => {
+    try {
+      window.coasty?.reportRendererError({
+        message: e.message || String(e.error || 'Unknown error'),
+        stack: e.error?.stack,
+        url: e.filename,
+        line: e.lineno,
+        col: e.colno,
+        userAgent: navigator.userAgent,
+        from: 'window',
+      })
+    } catch { /* nothing more we can do */ }
+  })
+  window.addEventListener('unhandledrejection', (e) => {
+    const reason = e.reason
+    try {
+      window.coasty?.reportRendererError({
+        message: typeof reason === 'string'
+          ? reason
+          : reason?.message || JSON.stringify(reason).slice(0, 200),
+        stack: reason?.stack,
+        userAgent: navigator.userAgent,
+        from: 'unhandledrejection',
+      })
+    } catch { /* nothing more we can do */ }
+  })
+}
+
+function AppInner() {
   const { isAuthenticated, loading, checkSession, signOut } = useAuthStore()
   const { connect, init: initConnection, state: connectionState } = useConnectionStore()
   const { mode, setMode, init: initWindow } = useWindowStore()
@@ -82,5 +119,13 @@ export default function App() {
       <Overlay />
       <PermissionToast />
     </PermissionsGuard>
+  )
+}
+
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <AppInner />
+    </ErrorBoundary>
   )
 }

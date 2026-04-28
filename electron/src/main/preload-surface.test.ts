@@ -66,12 +66,34 @@ describe('preload bridge static analysis', () => {
     expect(src).not.toMatch(/\beval\s*\(/)
   })
 
-  it('does not expose ipcRenderer.send (one-way) or ipcRenderer directly', () => {
-    // Only ipcRenderer.invoke and ipcRenderer.on/.removeListener should be used
-    // to keep the surface narrow. Direct .send to arbitrary channels is too
-    // permissive.
-    const sendCalls = src.match(/ipcRenderer\s*\.\s*send\b/g) || []
-    expect(sendCalls.length, 'preload uses ipcRenderer.send').toBe(0)
+  it('only uses ipcRenderer.send for the allowlisted error:report channel', () => {
+    // `invoke` is the default — request/response with main-process validation.
+    // `send` is fire-and-forget; we allow it ONLY for the error:report channel
+    // because:
+    //   1. Reporting an error must NEVER block the UI thread (which `invoke`
+    //      would do — it returns a promise the caller is expected to await).
+    //   2. The main-process handler (index.ts `ipcMain.on('error:report', ...)`)
+    //      validates the payload shape, re-stamps the category server-side,
+    //      and never trusts the renderer for routing or auth context.
+    // ANY other use of `.send` must add itself to the allowlist below.
+    const ALLOWED_SEND_CHANNELS = new Set(['error:report'])
+
+    const sendCallSites: string[] = []
+    const sendChannelRegex = /ipcRenderer\s*\.\s*send\s*\(\s*['"]([^'"]+)['"]/g
+    let m: RegExpExecArray | null
+    while ((m = sendChannelRegex.exec(src)) !== null) {
+      sendCallSites.push(m[1])
+    }
+    // Match the CALL-site only (followed by `(`), not the bare token in
+    // comments / docstrings — the explanation block above this allowlist
+    // mentions `ipcRenderer.send` in prose.
+    const totalSendCount = (src.match(/ipcRenderer\s*\.\s*send\s*\(/g) || []).length
+    // Every `.send` we found must have matched the regex (i.e. used a literal
+    // string channel that we can audit at compile time).
+    expect(sendCallSites.length, 'every ipcRenderer.send must use a literal string channel').toBe(totalSendCount)
+    for (const ch of sendCallSites) {
+      expect(ALLOWED_SEND_CHANNELS.has(ch), `unauthorized ipcRenderer.send channel: "${ch}"`).toBe(true)
+    }
     // ipcRenderer.invoke / on / removeListener are fine.
     expect(src).toMatch(/ipcRenderer\s*\.\s*invoke/)
   })
@@ -227,6 +249,8 @@ describe('window.coasty API surface snapshot', () => {
     'relaunch', 'quit', 'getAppVersion',
     // Connection state event
     'onConnectionStateChanged',
+    // Renderer-side error reporter (forwards to main-process error reporter)
+    'reportRendererError',
   ].sort()
 
   it('exposes exactly the documented keys, no more, no less', () => {

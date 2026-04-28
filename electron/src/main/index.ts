@@ -18,6 +18,19 @@ import { warmupNativeScreenshot } from './native-screenshot'
 import { getDisplayList, getActiveDisplayId, setActiveDisplayId, getActiveDisplay } from './display-manager'
 import { performFullShutdown } from './app-shutdown'
 import { launchAtLogin } from './launch-at-login'
+import { errorReporter, reportError } from './error-reporter'
+
+// ── Top-level error capture ───────────────────────────────────────────────
+// Install BEFORE any other module imports so even import-time crashes are
+// captured (the reporter itself lazily initialises its disk + WS sinks; only
+// the stdout sink is unconditionally available, which is what we want for
+// import-phase failures).
+process.on('uncaughtException', (err) => {
+  reportError('main_unhandled_exception', { error: err })
+})
+process.on('unhandledRejection', (reason) => {
+  reportError('main_unhandled_rejection', { error: reason })
+})
 
 // ── Custom protocol for OAuth deep links ──────────────────────────────────
 // Registers coasty:// so the browser can redirect back to the app after
@@ -368,6 +381,37 @@ app.on('second-instance', (_event, argv) => {
 })
 
 app.whenReady().then(async () => {
+  // Now that `app` is ready, the reporter can resolve userData/logs and
+  // start writing the file sink. The HTTP fallback URL comes from the same
+  // env var the WS bridge uses so they always match.
+  errorReporter.init({
+    backendUrl: process.env.COASTY_BACKEND_URL,
+    getAuthToken: async () => {
+      try { return (await auth?.getSession())?.access_token ?? null } catch { return null }
+    },
+  })
+
+  // Renderer / GPU / utility process crashes — Electron emits these on `app`
+  // when a child process dies. Without a listener these go to stderr only.
+  app.on('render-process-gone', (_event, _wc, details) => {
+    reportError('render_process_gone', {
+      message: `Renderer gone: reason=${details.reason}, exitCode=${details.exitCode}`,
+      context: { reason: details.reason, exitCode: details.exitCode },
+    })
+  })
+  app.on('child-process-gone', (_event, details) => {
+    reportError('child_process_gone', {
+      message: `Child process gone: type=${details.type}, reason=${details.reason}`,
+      context: {
+        type: details.type,
+        reason: details.reason,
+        exitCode: details.exitCode,
+        serviceName: details.serviceName,
+        name: details.name,
+      },
+    })
+  })
+
   // Pin the bundled-renderer URL prefix used by the navigation guard.
   // Captured ONCE at startup so a later mutation of process.env can't widen
   // the allowlist; in production this is the file:// URL of the asar HTML.
@@ -502,6 +546,27 @@ app.whenReady().then(async () => {
   secureHandle('update:get-version', () => getUpdateVersion())
   secureHandle('update:check', () => checkForUpdates())
   secureHandle('update:install', () => quitAndInstall())
+
+  // Renderer-side error forwarding. The renderer's `window.onerror`,
+  // `unhandledrejection`, and React ErrorBoundary all funnel here via the
+  // preload bridge. We accept ONLY a structured shape and re-stamp the
+  // category server-side so the renderer can't claim to be a main-process
+  // unhandled exception (which would mislead diagnostics).
+  ipcMain.on('error:report', (_event, raw: any) => {
+    if (!raw || typeof raw !== 'object') return
+    const fromBoundary = raw.from === 'boundary'
+    reportError(fromBoundary ? 'renderer_react_boundary' : 'renderer_unhandled', {
+      message: typeof raw.message === 'string' ? raw.message : '<unknown>',
+      error: raw.stack && typeof raw.stack === 'string' ? { message: raw.message, stack: raw.stack } : undefined,
+      context: {
+        url: typeof raw.url === 'string' ? raw.url : undefined,
+        line: typeof raw.line === 'number' ? raw.line : undefined,
+        col: typeof raw.col === 'number' ? raw.col : undefined,
+        component: typeof raw.component === 'string' ? raw.component : undefined,
+        userAgent: typeof raw.userAgent === 'string' ? raw.userAgent : undefined,
+      },
+    })
+  })
 
   // Launch on system startup — opt-in, persisted to userData. Defaults to
   // OFF for fresh installs (Windows AV products and behavioural EDR flag

@@ -77,14 +77,32 @@ function lib(): LibnutAPI {
 // ─── Multi-monitor cursor positioning (Windows-only fallback) ────────────
 
 /**
- * Move the cursor to absolute (x, y). On Windows, libnut's `moveMouse`
- * normalizes against the PRIMARY monitor's pixel size, so coords that fall
- * outside the primary display land wrong. Detect that and fall back to a
- * single signed-assembly PowerShell call (System.Windows.Forms is bundled
- * with the .NET runtime and signed by Microsoft — Defender/AMSI doesn't
- * flag it the way it flags inline `Add-Type @"..."@` with raw P/Invoke).
+ * Move the cursor to absolute (x, y). Two Windows quirks the wrapper handles:
  *
- * On macOS / Linux libnut already uses absolute screen coords correctly.
+ *  1. **Multi-monitor**: libnut's `moveMouse` normalises against the PRIMARY
+ *     monitor's pixel size, so coords that fall outside the primary display
+ *     land wrong. Detect off-primary and fall back to a signed-assembly
+ *     PowerShell call (System.Windows.Forms.Cursor uses virtual-desktop
+ *     coords, no AMSI heuristic match).
+ *
+ *  2. **DPI scaling**: libnut on Windows calls
+ *     `SetThreadDPIAwarenessContext(PER_MONITOR_AWARE_V2)` and operates in
+ *     PHYSICAL pixels. The agent's pipeline runs in LOGICAL pixels — the
+ *     screenshot is captured at `display.size` (logical), the agent reasons
+ *     in that space, and emits clicks back in that same logical space.
+ *     Pass logical coords directly to libnut and on a 4K@150% display every
+ *     click lands at ~67% of intended position. Multiply by scaleFactor to
+ *     bridge the two coordinate systems.
+ *
+ *     The old PowerShell path didn't have this bug because PowerShell is
+ *     not DPI-aware, so Windows auto-scaled logical→physical for it. The
+ *     libnut migration broke high-DPI Windows users until this scaling was
+ *     restored — that's the "clicking in wrong places" symptom.
+ *
+ * On macOS / Linux libnut already uses logical coords correctly:
+ *   - macOS: CGWarpMouseCursorPosition takes Cocoa points (logical pixels)
+ *   - Linux: X11 has no DPI abstraction; scaleFactor is 1.0 in practice
+ * So scaling is Windows-only.
  */
 async function moveMouseAbsolute(x: number, y: number): Promise<void> {
   if (process.platform === 'win32') {
@@ -94,9 +112,16 @@ async function moveMouseAbsolute(x: number, y: number): Promise<void> {
       // Coordinates already include the active-display offset (LocalExecutor
       // applies it before this is called). For non-primary monitors libnut
       // can't reach them, so use System.Windows.Forms.Cursor instead.
+      // PowerShell is non-DPI-aware so Windows handles the logical→physical
+      // conversion automatically — pass logical coords through unchanged.
       await runPowershellCursor(x, y)
       return
     }
+    // Primary monitor with libnut: scale logical → physical for DPI awareness.
+    // scaleFactor of 1.0 makes this a no-op on standard 100% displays.
+    const scale = display.scaleFactor || 1
+    lib().moveMouse(Math.round(x * scale), Math.round(y * scale))
+    return
   }
   lib().moveMouse(x, y)
 }

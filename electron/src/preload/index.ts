@@ -149,6 +149,25 @@ contextBridge.exposeInMainWorld('coasty', {
     ipcRenderer.on('connection-state-changed', handler)
     return () => ipcRenderer.removeListener('connection-state-changed', handler)
   },
+
+  // Renderer-side error reporting — funnels into the main-process
+  // error-reporter so renderer crashes get the same enrichment + persistence
+  // + backend forwarding as main-process errors.
+  //
+  // Use `ipcRenderer.send` (not `invoke`) so the reporter call is
+  // fire-and-forget and never blocks the UI loop. The main-process handler
+  // re-stamps the category to either 'renderer_unhandled' or
+  // 'renderer_react_boundary' depending on the `from` field.
+  reportRendererError: (payload: {
+    message: string
+    stack?: string
+    url?: string
+    line?: number
+    col?: number
+    component?: string
+    userAgent?: string
+    from?: 'window' | 'unhandledrejection' | 'boundary'
+  }) => ipcRenderer.send('error:report', payload),
 })
 
 // Type declaration for renderer
@@ -286,6 +305,17 @@ export interface CoastyAPI {
   getAppVersion: () => Promise<string>
 
   onConnectionStateChanged: (callback: (state: string) => void) => () => void
+
+  reportRendererError: (payload: {
+    message: string
+    stack?: string
+    url?: string
+    line?: number
+    col?: number
+    component?: string
+    userAgent?: string
+    from?: 'window' | 'unhandledrejection' | 'boundary'
+  }) => void
 }
 
 declare global {

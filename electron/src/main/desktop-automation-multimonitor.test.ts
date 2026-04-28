@@ -65,13 +65,14 @@ beforeEach(() => {
     if (typeof (fn as any).mockClear === 'function') (fn as any).mockClear()
   })
   h.execFileCalls = []
-  // Reset to primary display
+  // Reset to primary display at 1.0x DPI (most common: full-HD non-scaled)
   h.display = {
     id: 1,
     bounds: { x: 0, y: 0, width: 1920, height: 1080 },
     workArea: { x: 0, y: 0, width: 1920, height: 1040 },
     workAreaSize: { width: 1920, height: 1040 },
     size: { width: 1920, height: 1080 },
+    scaleFactor: 1.0,
   }
 })
 
@@ -95,6 +96,7 @@ describe('multi-monitor cursor positioning', () => {
       workArea: { x: 1920, y: 0, width: 1920, height: 1040 },
       workAreaSize: { width: 1920, height: 1040 },
       size: { width: 1920, height: 1080 },
+      scaleFactor: 1.0,
     }
 
     const result = await desktopAutomation.desktopClick({ x: 2400, y: 200 })
@@ -121,6 +123,7 @@ describe('multi-monitor cursor positioning', () => {
       workArea: { x: 1920, y: 0, width: 1920, height: 1040 },
       workAreaSize: { width: 1920, height: 1040 },
       size: { width: 1920, height: 1080 },
+      scaleFactor: 1.0,
     }
 
     await desktopAutomation.desktopClick({ x: 2400, y: 200 })
@@ -149,6 +152,7 @@ describe('multi-monitor cursor positioning', () => {
       workArea: { x: 1920, y: 0, width: 1920, height: 1040 },
       workAreaSize: { width: 1920, height: 1040 },
       size: { width: 1920, height: 1080 },
+      scaleFactor: 1.0,
     }
 
     await desktopAutomation.desktopDrag({ x1: 2000, y1: 100, x2: 2400, y2: 500 })
@@ -175,6 +179,7 @@ describe('multi-monitor cursor positioning', () => {
       workArea: { x: 1920, y: 0, width: 1920, height: 1040 },
       workAreaSize: { width: 1920, height: 1040 },
       size: { width: 1920, height: 1080 },
+      scaleFactor: 1.0,
     }
 
     await desktopAutomation.desktopClick({ x: 2400, y: 200 })
@@ -182,5 +187,180 @@ describe('multi-monitor cursor positioning', () => {
     expect(h.libnut.moveMouse).toHaveBeenCalledWith(2400, 200)
     const psCalls = h.execFileCalls.filter((c) => /powershell/i.test(c.cmd))
     expect(psCalls).toHaveLength(0)
+  })
+})
+
+// ─── DPI scaling regression tests ─────────────────────────────────────────
+//
+// The libnut migration introduced a subtle bug: libnut on Windows opts into
+// PER_MONITOR_AWARE_V2 DPI awareness and operates in PHYSICAL pixels, while
+// the Electron screenshot pipeline runs entirely in LOGICAL pixels. Pre-fix,
+// every click on a DPI-scaled Windows display landed at logical_x * 1/scale
+// — a 4K@150% user clicked at ~67% of intended position.
+//
+// These tests pin down the contract: on Windows, `moveMouseAbsolute(x, y)`
+// MUST call `libnut.moveMouse` with `(x * scaleFactor, y * scaleFactor)`
+// after the active display's scaleFactor.
+
+describe('DPI scaling on Windows (logical → physical at the libnut boundary)', () => {
+  it('1.0x DPI (no scaling) → libnut receives the same coords', async () => {
+    if (process.platform !== 'win32') return
+    h.display = {
+      id: 1,
+      bounds: { x: 0, y: 0, width: 1920, height: 1080 },
+      workArea: { x: 0, y: 0, width: 1920, height: 1040 },
+      workAreaSize: { width: 1920, height: 1040 },
+      size: { width: 1920, height: 1080 },
+      scaleFactor: 1.0,
+    }
+    await desktopAutomation.desktopClick({ x: 500, y: 400 })
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(500, 400)
+  })
+
+  it('1.25x DPI → libnut receives (x * 1.25, y * 1.25)', async () => {
+    if (process.platform !== 'win32') return
+    h.display = {
+      id: 1,
+      bounds: { x: 0, y: 0, width: 1920, height: 1080 },
+      workArea: { x: 0, y: 0, width: 1920, height: 1040 },
+      workAreaSize: { width: 1920, height: 1040 },
+      size: { width: 1920, height: 1080 },
+      scaleFactor: 1.25,
+    }
+    await desktopAutomation.desktopClick({ x: 800, y: 600 })
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(1000, 750)
+  })
+
+  it('1.5x DPI (common Win11 4K default) → libnut receives (x * 1.5, y * 1.5)', async () => {
+    if (process.platform !== 'win32') return
+    h.display = {
+      id: 1,
+      bounds: { x: 0, y: 0, width: 2560, height: 1440 },
+      workArea: { x: 0, y: 0, width: 2560, height: 1400 },
+      workAreaSize: { width: 2560, height: 1400 },
+      size: { width: 2560, height: 1440 },
+      scaleFactor: 1.5,
+    }
+    await desktopAutomation.desktopClick({ x: 1280, y: 720 })  // logical center of a 2560x1440
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(1920, 1080)  // physical center of the 3840x2160 panel
+  })
+
+  it('2.0x DPI (4K Surface, etc.) → libnut receives doubled coords', async () => {
+    if (process.platform !== 'win32') return
+    h.display = {
+      id: 1,
+      bounds: { x: 0, y: 0, width: 1920, height: 1080 },
+      workArea: { x: 0, y: 0, width: 1920, height: 1040 },
+      workAreaSize: { width: 1920, height: 1040 },
+      size: { width: 1920, height: 1080 },
+      scaleFactor: 2.0,
+    }
+    await desktopAutomation.desktopClick({ x: 100, y: 200 })
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(200, 400)
+  })
+
+  it('non-integer scaleFactor rounds half-up consistently', async () => {
+    if (process.platform !== 'win32') return
+    h.display = {
+      id: 1,
+      bounds: { x: 0, y: 0, width: 1920, height: 1080 },
+      workArea: { x: 0, y: 0, width: 1920, height: 1040 },
+      workAreaSize: { width: 1920, height: 1040 },
+      size: { width: 1920, height: 1080 },
+      scaleFactor: 1.5,
+    }
+    // 333 * 1.5 = 499.5 → Math.round → 500
+    // 167 * 1.5 = 250.5 → Math.round → 251
+    await desktopAutomation.desktopClick({ x: 333, y: 167 })
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(500, 251)
+  })
+
+  it('scaleFactor undefined falls back to 1.0 (defensive — never multiplies by NaN)', async () => {
+    if (process.platform !== 'win32') return
+    h.display = {
+      id: 1,
+      bounds: { x: 0, y: 0, width: 1920, height: 1080 },
+      workArea: { x: 0, y: 0, width: 1920, height: 1040 },
+      workAreaSize: { width: 1920, height: 1040 },
+      size: { width: 1920, height: 1080 },
+      // scaleFactor intentionally undefined — older Electron / oddly-configured display
+    } as any
+    await desktopAutomation.desktopClick({ x: 100, y: 100 })
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(100, 100)
+  })
+
+  it('drag through midpoint also DPI-scales every position', async () => {
+    if (process.platform !== 'win32') return
+    h.display = {
+      id: 1,
+      bounds: { x: 0, y: 0, width: 1920, height: 1080 },
+      workArea: { x: 0, y: 0, width: 1920, height: 1040 },
+      workAreaSize: { width: 1920, height: 1040 },
+      size: { width: 1920, height: 1080 },
+      scaleFactor: 2.0,
+    }
+    await desktopAutomation.desktopDrag({ x1: 100, y1: 100, x2: 500, y2: 500 })
+    // Three moveMouse calls: start, midpoint (300, 300), end
+    // All must be doubled for 2.0x DPI
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(200, 200)  // start
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(600, 600)  // midpoint
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(1000, 1000)  // end
+  })
+
+  it('on darwin: scaleFactor is IGNORED — libnut takes Cocoa-point logical coords', async () => {
+    if (process.platform !== 'darwin') return
+    // macOS Retina: scaleFactor 2.0 but Cocoa already uses logical points,
+    // so we MUST NOT multiply.
+    h.display = {
+      id: 1,
+      bounds: { x: 0, y: 0, width: 1440, height: 900 },
+      workArea: { x: 0, y: 0, width: 1440, height: 875 },
+      workAreaSize: { width: 1440, height: 875 },
+      size: { width: 1440, height: 900 },
+      scaleFactor: 2.0,
+    }
+    await desktopAutomation.desktopClick({ x: 720, y: 450 })
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(720, 450)
+  })
+
+  it('on linux: scaleFactor is IGNORED — X11 has no logical-pixel abstraction', async () => {
+    if (process.platform !== 'linux') return
+    h.display = {
+      id: 1,
+      bounds: { x: 0, y: 0, width: 1920, height: 1080 },
+      workArea: { x: 0, y: 0, width: 1920, height: 1040 },
+      workAreaSize: { width: 1920, height: 1040 },
+      size: { width: 1920, height: 1080 },
+      scaleFactor: 2.0,
+    }
+    await desktopAutomation.desktopClick({ x: 300, y: 300 })
+    expect(h.libnut.moveMouse).toHaveBeenCalledWith(300, 300)
+  })
+
+  it('non-primary monitor uses PowerShell — bypasses libnut DPI scaling', async () => {
+    if (process.platform !== 'win32') return
+    // Off-primary uses System.Windows.Forms.Cursor which is non-DPI-aware,
+    // so PowerShell receives logical coords directly. We must NOT pre-scale
+    // for that path — Windows handles the conversion automatically.
+    h.display = {
+      id: 2,
+      bounds: { x: 1920, y: 0, width: 1920, height: 1080 },
+      workArea: { x: 1920, y: 0, width: 1920, height: 1040 },
+      workAreaSize: { width: 1920, height: 1040 },
+      size: { width: 1920, height: 1080 },
+      scaleFactor: 1.5,
+    }
+    await desktopAutomation.desktopClick({ x: 2400, y: 200 })
+    // libnut.moveMouse must NOT have been called (off-primary fallback)
+    expect(h.libnut.moveMouse).not.toHaveBeenCalled()
+    // PowerShell DOES receive the un-scaled (logical) coords
+    const psCalls = h.execFileCalls.filter((c) => /powershell/i.test(c.cmd))
+    expect(psCalls.length).toBeGreaterThan(0)
+    const lastPs = psCalls[psCalls.length - 1].args.join(' ')
+    expect(lastPs).toContain('2400')
+    expect(lastPs).toContain('200')
+    // And the scaled values must NOT appear (we'd be double-scaling otherwise)
+    expect(lastPs).not.toContain('3600')  // 2400 * 1.5
+    expect(lastPs).not.toContain('300')   // 200  * 1.5
   })
 })

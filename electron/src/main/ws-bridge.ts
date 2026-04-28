@@ -4,6 +4,7 @@ import * as os from 'os'
 import { LocalExecutor } from './local-executor'
 import { ApprovalManager } from './approval-manager'
 import { showRainbowBorder, hideRainbowBorder, initRainbowBorder } from './rainbow-border'
+import { errorReporter, reportError } from './error-reporter'
 
 // 'error'      → transient connection error (TLS/DNS/5xx/network); keeps retrying
 // 'auth_error' → backend rejected the JWT; fatal, triggers sign-out in the renderer
@@ -197,11 +198,34 @@ export class WebSocketBridge {
           // the exit code (terminal commands), and the head of any output.
           const reason = formatFailureReason(result)
           console.log(`[WS Bridge] ${command} failed (${ms}ms) — ${reason}`)
+          // Funnel into the central reporter so this gets persisted to
+          // disk + shipped to the backend even when stdout is invisible
+          // (packaged builds, no attached terminal, etc.).
+          reportError('local_executor', {
+            severity: 'warn',
+            message: `${command} failed: ${reason}`,
+            command,
+            context: {
+              durationMs: ms,
+              exitCode: result?.exit_code,
+              permissionDenied: result?.permissionDenied || undefined,
+              permissionType: result?.permissionType || undefined,
+            },
+          })
         }
       },
       (err) => {
         const ms = Date.now() - start
         console.log(`[WS Bridge] ${command} threw (${ms}ms): ${err?.message || err}`)
+        // Exceptions bubbling out of a handler are MORE serious than a
+        // soft `success: false` — surface as error severity so they're
+        // never sampled and they always reach the backend.
+        reportError('local_executor', {
+          error: err,
+          message: `${command} threw: ${err?.message || String(err)}`,
+          command,
+          context: { durationMs: ms },
+        })
       },
     )
     return next
@@ -384,6 +408,19 @@ export class WebSocketBridge {
           this.startHeartbeat()
           // Pre-create rainbow border so first show is instant
           initRainbowBorder()
+          // Wire the error reporter so future errors flow over THIS WS.
+          // Identity propagates the user_id/machine_id into every report.
+          errorReporter.setIdentity(this.machineId, this.userId)
+          errorReporter.setWebSocketSink((report) => {
+            // Best-effort: if the underlying socket isn't open the send()
+            // helper logs and drops; the reporter then queues for the HTTP
+            // fallback. We never let the reporter's send throw upstream.
+            try {
+              this.send({ type: 'error_report', data: report })
+            } catch (e) {
+              throw e // signal failure so reporter falls back to HTTP queue
+            }
+          })
         } else if (message.type === 'auth_failed') {
           // Distinct from generic connection 'error' so the renderer can tell
           // "your JWT is invalid, log out" apart from "transient network blip,
@@ -392,9 +429,17 @@ export class WebSocketBridge {
           this.setState('auth_error')
           this.intentionalClose = true
           this.ws?.close()
+          reportError('auth', {
+            message: `Backend rejected JWT: ${message.reason || '<no reason>'}`,
+            context: { reason: message.reason },
+          })
         }
       } catch (e) {
         console.error('[WS Bridge] Error processing message:', e)
+        reportError('ws_bridge', {
+          error: e,
+          message: 'Error processing inbound WS message',
+        })
       }
     })
 
@@ -405,6 +450,9 @@ export class WebSocketBridge {
       // Cancel all pending approvals (local + remote) so promises don't hang
       this.approvalManager.cancelAll()
       this.cancelAllRemoteApprovals()
+      // Tear down the WS sink so future reports queue for HTTP instead of
+      // failing against a dead socket.
+      errorReporter.setWebSocketSink(null)
 
       if (!this.intentionalClose) {
         this.setState('disconnected')
@@ -415,6 +463,11 @@ export class WebSocketBridge {
     this.ws.on('error', (error) => {
       console.error('[WS Bridge] Error:', error.message)
       this.setState('error')
+      reportError('ws_bridge', {
+        severity: 'warn',  // transient network errors are warns; reconnect handles them
+        error,
+        message: `WebSocket error: ${error.message}`,
+      })
     })
   }
 

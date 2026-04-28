@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import {
-  Menu, X, ArrowRight, ChevronDown, Search, Bug, TrendingUp,
+  Menu, X, ArrowRight, ChevronDown, ChevronRight, Search, Bug, TrendingUp,
   FileText, Mail, ShoppingCart, Users, BarChart3, Globe, Eye,
   Send, MonitorSmartphone, Monitor, Keyboard, GitCompare,
   BookOpen, Newspaper, Compass, Download, Layers,
@@ -236,59 +236,79 @@ function DropdownPanel({
   )
 }
 
-/* ─── mobile accordion section ─── */
+/* ─── drawer helpers ─── */
 
-function MobileAccordionSection({
+// Path-active matcher used by the mobile drawer rows. Exact match for "/"
+// (otherwise it'd light up for every page); for everything else, treat any
+// nested route as active too so e.g. /use-cases/competitor-intel highlights
+// the "Use Cases" row in the drawer.
+function isPathActive(href: string, currentPath: string): boolean {
+  if (href === "/") return currentPath === "/" || currentPath === ""
+  return currentPath === href || currentPath.startsWith(href + "/")
+}
+
+// A single row in the mobile drawer — typography-first, hairline-quiet.
+// The fixed-position chevron prevents layout shift on hover (a chevron
+// that grows into existence is more nervous than one that just changes
+// alpha). `delay` lets the parent stagger the rows in as the drawer
+// settles, so the eye is led down the list rather than smacked with all
+// 10 items at once.
+function DrawerRow({
+  href,
   label,
-  isOpen,
-  onToggle,
-  isActive,
-  children,
+  onClick,
+  active,
   delay = 0,
 }: {
+  href: string
   label: string
-  isOpen: boolean
-  onToggle: () => void
-  isActive: boolean
-  children: React.ReactNode
+  onClick: () => void
+  active?: boolean
   delay?: number
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: -12 }}
+      initial={{ opacity: 0, x: 14 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay, duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ delay, duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
     >
-      <button
-        onClick={onToggle}
+      <Link
+        href={href}
+        onClick={onClick}
         className={cn(
-          "flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all duration-150",
-          "text-[15px] font-medium tracking-[-0.01em]",
-          isActive
-            ? "text-foreground bg-foreground/[0.04]"
-            : "text-foreground/50 hover:text-foreground hover:bg-foreground/[0.03] active:bg-foreground/[0.05]"
+          "group flex items-center justify-between px-3 py-3 rounded-lg transition-colors duration-150",
+          active
+            ? "bg-foreground/[0.05] text-foreground"
+            : "text-foreground/75 hover:text-foreground hover:bg-foreground/[0.03] active:bg-foreground/[0.06]",
         )}
       >
-        {label}
-        <ChevronDown className={cn(
-          "h-4 w-4 text-muted-foreground/40 transition-transform duration-200",
-          isOpen && "rotate-180"
-        )} />
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden"
-          >
-            {children}
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <span className="text-[15px] font-medium tracking-[-0.01em]">
+          {label}
+        </span>
+        <ChevronRight
+          className={cn(
+            "h-4 w-4 transition-colors duration-150",
+            active
+              ? "text-foreground/40"
+              : "text-foreground/15 group-hover:text-foreground/35",
+          )}
+          strokeWidth={1.8}
+        />
+      </Link>
     </motion.div>
+  )
+}
+
+// Tiny uppercase label used to delineate sections in the drawer. Quiet
+// enough that the eye scans past it as scaffolding, loud enough that the
+// section break is unambiguous.
+function DrawerSectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="px-3 pt-2 pb-1.5">
+      <span className="text-[10px] font-semibold tracking-[0.16em] uppercase text-foreground/30">
+        {children}
+      </span>
+    </div>
   )
 }
 
@@ -304,14 +324,11 @@ export function LandingHeader({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [useCasesOpen, setUseCasesOpen] = useState(false)
   const [hoveredUseCase, setHoveredUseCase] = useState(0)
-  const [mobileUseCasesOpen, setMobileUseCasesOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
   const [hoveredProduct, setHoveredProduct] = useState(0)
-  const [mobileProductsOpen, setMobileProductsOpen] = useState(false)
   const productsDropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [blogOpen, setBlogOpen] = useState(false)
   const [hoveredBlogItem, setHoveredBlogItem] = useState(0)
-  const [mobileBlogOpen, setMobileBlogOpen] = useState(false)
   const blogDropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const dropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { resolvedTheme } = useTheme()
@@ -826,223 +843,149 @@ export function LandingHeader({
         </div>
       </motion.header>
 
-      {/* ━━━ mobile menu ━━━ */}
+      {/* ━━━ mobile drawer ━━━
+          Modal side sheet pulled in from the right. Sits ABOVE the page
+          header (z-[60] vs z-50) so the drawer reads as its own page,
+          not as a panel hanging off the nav — the page header behind it
+          would otherwise show through and create a duplicated logo.
+          Structure: fixed-height header, scrollable nav body sectioned
+          into Product / Resources, pinned-bottom CTA. No accordions —
+          each item is a single tap; deeper exploration happens on the
+          destination page (e.g. /use-cases lays out all 12 use cases
+          with breathing room a 320px-wide drawer could never afford). */}
       <AnimatePresence>
-        {mobileMenuOpen && (
-          <>
-            {/* backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-40 bg-black/20 dark:bg-black/40 backdrop-blur-sm lg:hidden"
-              onClick={closeMobileMenu}
-            />
+        {mobileMenuOpen && (() => {
+          // Two flat sections, ordered by intent. Product = what we sell
+          // (highest commercial intent at the top); Resources = secondary
+          // material the visitor reaches for after deciding to evaluate.
+          const productLinks = [
+            { href: "/use-cases", label: t("useCases") },
+            { href: "/computer-use", label: t("productItems.computerUse") },
+            { href: "/agent-swarms", label: t("productItems.agentSwarms") },
+            { href: "/compare", label: t("productItems.compare") },
+            { href: "/pricing", label: "Pricing" },
+          ]
+          const resourceLinks = [
+            { href: "/blog", label: t("blog") },
+            { href: "/guide", label: t("blogItems.guide") },
+            { href: "/api-docs", label: "API" },
+            { href: "/discover", label: "Community" },
+            { href: "/download", label: t("download") },
+          ]
+          // 35ms stagger keeps the cascade brisk — at 10 rows that's a
+          // 315ms tail, finishing inside the drawer's own 320ms slide.
+          const STAGGER = 0.035
+          const HEAD_DELAY = 0.05
 
-            {/* panel */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-x-0 top-0 z-40 lg:hidden pt-[56px] sm:pt-[64px]"
-            >
-              <div className="mx-3 sm:mx-5 overflow-hidden rounded-b-2xl">
-                {/* glass bg */}
-                <div className={cn(
-                  "relative",
-                  "bg-white/85 dark:bg-neutral-950/85",
-                  "backdrop-blur-2xl backdrop-saturate-150",
-                  "ring-1 ring-black/[0.06] dark:ring-white/[0.08]",
-                  "shadow-[0_8px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]",
-                )}>
-                  {/* top highlight */}
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent" />
+          return (
+            <>
+              {/* backdrop — dims the page beneath; tap to dismiss. The
+                  blur is deliberately light (2px) — heavier blur looks
+                  expensive on phones and the dim alone reads as modal. */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="fixed inset-0 z-[55] bg-black/35 dark:bg-black/55 backdrop-blur-[2px] lg:hidden"
+                onClick={closeMobileMenu}
+              />
 
-                  <nav className="relative flex flex-col px-2 py-2.5 gap-0.5 max-h-[calc(100dvh-80px)] overflow-y-auto">
-                    {/* Use Cases accordion */}
-                    <MobileAccordionSection
-                      label={t("useCases")}
-                      isOpen={mobileUseCasesOpen}
-                      onToggle={() => setMobileUseCasesOpen(!mobileUseCasesOpen)}
-                      isActive={isUseCaseActive}
-                      delay={0}
+              {/* drawer — 88vw with a 360px cap. Wide enough that rows
+                  feel comfortable on phablets, narrow enough that ~12vw
+                  of dimmed page stays visible on small phones so the
+                  modal layer is unmistakable. */}
+              <motion.aside
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                className="fixed inset-y-0 right-0 z-[60] w-[88vw] max-w-[360px] lg:hidden"
+              >
+                <div
+                  className={cn(
+                    "relative h-full flex flex-col overflow-hidden",
+                    "bg-white dark:bg-neutral-950",
+                    "shadow-[-12px_0_48px_rgba(0,0,0,0.12)] dark:shadow-[-12px_0_48px_rgba(0,0,0,0.5)]",
+                  )}
+                >
+                  {/* leading-edge hairline — the drawer's left rail */}
+                  <div className="absolute inset-y-0 left-0 w-px bg-foreground/[0.08]" />
+
+                  {/* drawer header — fixed height so the body height
+                      math (flex-1 + bottom CTA) stays predictable. */}
+                  <header className="relative flex items-center justify-between pl-5 pr-2.5 h-[60px] flex-shrink-0 border-b border-foreground/[0.05]">
+                    <Link
+                      href="/"
+                      onClick={closeMobileMenu}
+                      className="flex items-center gap-2.5"
                     >
-                      <div className="grid grid-cols-2 gap-0.5 px-1 py-1.5">
-                        {useCaseDropdownDef.map((uc) => {
-                          const Icon = uc.icon
-                          const ucHref = "href" in uc ? (uc as { href: string }).href : `/use-cases/${uc.slug}`
-                          return (
-                            <Link
-                              key={uc.slug}
-                              href={ucHref}
-                              onClick={closeMobileMenu}
-                              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-foreground/[0.04] active:bg-foreground/[0.06] transition-all duration-150"
-                            >
-                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-foreground/[0.04]">
-                                <Icon className="size-3 text-muted-foreground/50" strokeWidth={1.8} />
-                              </span>
-                              <span className="text-[13px] font-medium text-foreground/55">
-                                {t(`useCaseItems.${uc.labelKey}`)}
-                              </span>
-                            </Link>
-                          )
-                        })}
-                      </div>
-                      <Link
-                        href="/use-cases"
+                      {mounted && (
+                        <Image
+                          src={resolvedTheme === "dark" ? "/logo_light.svg" : "/logo_dark.svg"}
+                          alt="Coasty"
+                          width={26}
+                          height={26}
+                          className="h-[26px] w-[26px] object-contain"
+                        />
+                      )}
+                      <span className="font-semibold text-[15px] tracking-[-0.02em] text-foreground">
+                        Coasty
+                      </span>
+                    </Link>
+                    <button
+                      onClick={closeMobileMenu}
+                      aria-label="Close menu"
+                      className="inline-flex items-center justify-center rounded-lg h-9 w-9 text-foreground/45 hover:text-foreground hover:bg-foreground/[0.05] active:bg-foreground/[0.10] transition-all duration-150"
+                    >
+                      <X className="h-[18px] w-[18px]" strokeWidth={1.5} />
+                    </button>
+                  </header>
+
+                  {/* nav body — scrollable in the unlikely event the
+                      viewport is short (landscape phones, browsers with
+                      tall toolbars). Two sections, hairline-divided. */}
+                  <nav className="relative flex-1 overflow-y-auto px-2 py-3">
+                    <DrawerSectionLabel>Product</DrawerSectionLabel>
+                    {productLinks.map((link, i) => (
+                      <DrawerRow
+                        key={link.href}
+                        href={link.href}
+                        label={link.label}
                         onClick={closeMobileMenu}
-                        className="flex items-center justify-center gap-1.5 px-3 py-2.5 mx-1 mb-1 rounded-xl hover:bg-foreground/[0.04] transition-all"
-                      >
-                        <span className="text-[12px] font-medium text-muted-foreground/40">View all use cases</span>
-                        <ArrowRight className="h-3 w-3 text-muted-foreground/30" />
-                      </Link>
-                    </MobileAccordionSection>
+                        active={isPathActive(link.href, currentPath)}
+                        delay={HEAD_DELAY + i * STAGGER}
+                      />
+                    ))}
 
-                    {/* Products accordion */}
-                    <MobileAccordionSection
-                      label={t("products")}
-                      isOpen={mobileProductsOpen}
-                      onToggle={() => setMobileProductsOpen(!mobileProductsOpen)}
-                      isActive={isProductActive}
-                      delay={0.03}
-                    >
-                      <div className="grid grid-cols-1 gap-0.5 px-1 py-1.5">
-                        {productDropdownDef.map((item) => {
-                          const Icon = item.icon
-                          return (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              onClick={closeMobileMenu}
-                              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-foreground/[0.04] active:bg-foreground/[0.06] transition-all duration-150"
-                            >
-                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-foreground/[0.04]">
-                                <Icon className="size-3 text-muted-foreground/50" strokeWidth={1.8} />
-                              </span>
-                              <span className="text-[13px] font-medium text-foreground/55">
-                                {t(`productItems.${item.labelKey}`)}
-                              </span>
-                            </Link>
-                          )
-                        })}
-                      </div>
-                    </MobileAccordionSection>
+                    <div className="mx-3 my-3 h-px bg-foreground/[0.05]" />
 
-                    {/* regular nav items */}
-                    {navItemsDef.map((item, index) => {
-                      const isActive = item.external
-                        ? currentPath === item.href
-                        : (currentPath === "/" || currentPath === "") &&
-                          activeSection === item.href.substring(2)
-
-                      const cls = cn(
-                        "flex items-center px-4 py-3 rounded-xl transition-all duration-150",
-                        "text-[15px] font-medium tracking-[-0.01em]",
-                        isActive
-                          ? "text-foreground bg-foreground/[0.04]"
-                          : "text-foreground/50 hover:text-foreground hover:bg-foreground/[0.03] active:bg-foreground/[0.05]",
-                      )
-
-                      return (
-                        <motion.div
-                          key={item.labelKey}
-                          initial={{ opacity: 0, x: -12 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{
-                            delay: (index + 1) * 0.03,
-                            duration: 0.25,
-                            ease: [0.22, 1, 0.36, 1],
-                          }}
-                        >
-                          {item.external ? (
-                            <Link href={item.href} className={cls} onClick={closeMobileMenu}>
-                              {item.label}
-                            </Link>
-                          ) : (
-                            <a
-                              href={item.href}
-                              onClick={(e) => handleNavClick(e, item.href, item.external)}
-                              className={cls}
-                            >
-                              {item.label}
-                            </a>
-                          )}
-                        </motion.div>
-                      )
-                    })}
-
-                    {/* Blog accordion */}
-                    <MobileAccordionSection
-                      label={t("blog")}
-                      isOpen={mobileBlogOpen}
-                      onToggle={() => setMobileBlogOpen(!mobileBlogOpen)}
-                      isActive={isBlogActive}
-                      delay={(navItemsDef.length + 1) * 0.03}
-                    >
-                      <div className="grid grid-cols-2 gap-0.5 px-1 py-1.5">
-                        {blogDropdownDef.map((item) => {
-                          const Icon = item.icon
-                          return (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              onClick={closeMobileMenu}
-                              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-foreground/[0.04] active:bg-foreground/[0.06] transition-all duration-150"
-                            >
-                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-foreground/[0.04]">
-                                <Icon className="size-3 text-muted-foreground/50" strokeWidth={1.8} />
-                              </span>
-                              <span className="text-[13px] font-medium text-foreground/55">
-                                {t(`blogItems.${item.labelKey}`)}
-                              </span>
-                            </Link>
-                          )
-                        })}
-                      </div>
-                      <Link
-                        href="/blog"
+                    <DrawerSectionLabel>Resources</DrawerSectionLabel>
+                    {resourceLinks.map((link, i) => (
+                      <DrawerRow
+                        key={link.href}
+                        href={link.href}
+                        label={link.label}
                         onClick={closeMobileMenu}
-                        className="flex items-center justify-center gap-1.5 px-3 py-2.5 mx-1 mb-1 rounded-xl hover:bg-foreground/[0.04] transition-all"
-                      >
-                        <span className="text-[12px] font-medium text-muted-foreground/40">View all posts</span>
-                        <ArrowRight className="h-3 w-3 text-muted-foreground/30" />
-                      </Link>
-                    </MobileAccordionSection>
+                        active={isPathActive(link.href, currentPath)}
+                        delay={HEAD_DELAY + (productLinks.length + i) * STAGGER}
+                      />
+                    ))}
+                  </nav>
 
-                    {/* Download link */}
+                  {/* CTA — pinned bottom, the drawer's single signature
+                      element. Everything above is quiet typography so
+                      the eye is led down to this. Bottom padding adds a
+                      safe-area-ish gap from the screen edge. */}
+                  <div className="relative flex-shrink-0 px-4 pt-3 pb-5 border-t border-foreground/[0.05]">
                     <motion.div
-                      initial={{ opacity: 0, x: -12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        delay: (navItemsDef.length + 2) * 0.03,
-                        duration: 0.25,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
-                    >
-                      <Link
-                        href="/download"
-                        onClick={closeMobileMenu}
-                        className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-[15px] font-medium tracking-[-0.01em] text-foreground/50 hover:text-foreground hover:bg-foreground/[0.03] active:bg-foreground/[0.05] transition-all duration-150"
-                      >
-                        <Download className="size-4 text-muted-foreground/40" strokeWidth={1.8} />
-                        {t("download")}
-                      </Link>
-                    </motion.div>
-
-                    {/* divider */}
-                    <div className="my-1.5 mx-4 border-t border-foreground/[0.05]" />
-
-                    {/* CTA */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 6 }}
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{
-                        delay: (navItemsDef.length + 2) * 0.03,
-                        duration: 0.25,
+                        delay: HEAD_DELAY + (productLinks.length + resourceLinks.length) * STAGGER,
+                        duration: 0.32,
+                        ease: [0.22, 1, 0.36, 1],
                       }}
-                      className="px-1.5 pb-1.5"
                     >
                       <Link
                         href="/auth"
@@ -1051,7 +994,7 @@ export function LandingHeader({
                           "flex items-center justify-center gap-2 w-full rounded-xl h-12",
                           "text-[15px] font-semibold tracking-[-0.01em]",
                           "bg-foreground text-background",
-                          "hover:opacity-90 active:scale-[0.98]",
+                          "hover:opacity-95 active:scale-[0.98]",
                           "shadow-[0_1px_3px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)]",
                           "dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)]",
                           "transition-all duration-150",
@@ -1061,12 +1004,12 @@ export function LandingHeader({
                         <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     </motion.div>
-                  </nav>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          </>
-        )}
+              </motion.aside>
+            </>
+          )
+        })()}
       </AnimatePresence>
     </>
   )

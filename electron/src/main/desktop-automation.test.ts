@@ -50,7 +50,10 @@ vi.mock('./permissions', () => ({
   requestAccessibility: vi.fn(),
 }))
 
-// Active display starts at (0, 0) so multi-monitor fallback never fires
+// Active display starts at (0, 0) with scaleFactor 1.0 so multi-monitor
+// fallback never fires AND the DPI-scaling multiplier is a no-op for the
+// existing test cases. The DPI-specific tests at the bottom of this file
+// override scaleFactor explicitly.
 vi.mock('./display-manager', () => ({
   getActiveDisplay: () => ({
     id: 1,
@@ -58,6 +61,7 @@ vi.mock('./display-manager', () => ({
     workArea: { x: 0, y: 0, width: 1920, height: 1040 },
     workAreaSize: { width: 1920, height: 1040 },
     size: { width: 1920, height: 1080 },
+    scaleFactor: 1.0,
   }),
 }))
 

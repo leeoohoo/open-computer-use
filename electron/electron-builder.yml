@@ -16,12 +16,45 @@ files:
   # for desktop automation. The .node binaries are signed N-API addons and
   # don't trip Windows AMSI / Defender heuristics the way runtime C# does.
   - node_modules/@nut-tree-fork/**/*
+  # libnut's transitive runtime deps. Without these the entry point
+  # (`libnut-{win32,darwin,linux}/index.js`) crashes at first call with:
+  #   "Cannot find module 'bindings'"
+  # because the asar excludes everything in node_modules and only allowlists
+  # what we name explicitly. `bindings` is what resolves the path of the
+  # `.node` file at runtime; `file-uri-to-path` is its direct dep. The same
+  # chain applies on EVERY platform — libnut-darwin's permissionCheck.js
+  # also does `require("bindings")("libnut")`.
+  - node_modules/bindings/**/*
+  - node_modules/file-uri-to-path/**/*
+  # Optional macOS-only dep used by libnut-darwin/permissionCheck.js to
+  # auto-prompt for Accessibility / Screen Recording. The require is wrapped
+  # in try/catch on the libnut side, so the app works without it (our own
+  # permissions.ts handles the prompts via Electron's macOS APIs). But when
+  # `npm install` does fetch it on a macOS host, we want it shipped — without
+  # this allowlist line the package would land on the macOS host's disk
+  # during build but get filtered out of the asar by the `!node_modules/**`
+  # exclusion. The line is a no-op on Windows / Linux builds where the
+  # optional dep was never installed.
+  - node_modules/@nut-tree-fork/node-mac-permissions/**/*
 asarUnpack:
   # The native .node binary cannot be loaded from inside an ASAR archive —
   # Node's dlopen needs a real filesystem path. asarUnpack copies it next to
   # the asar so `require()` resolves it properly.
+  #
+  # The wildcard `libnut-*` matches darwin / win32 / linux equally; the
+  # `@nut-tree-fork/libnut` meta-package declares all three platform
+  # sub-packages as `dependencies`, so npm installs ALL of them on every
+  # host. Each one carries its own .node file at build/Release/libnut.node,
+  # and our runtime loader (libnut-loader.ts) picks the right one via
+  # `process.platform`. Unpacking all three is harmless: only the active
+  # platform's binary actually gets loaded.
   - node_modules/@nut-tree-fork/libnut-*/**/*.node
   - node_modules/@nut-tree-fork/libnut-*/build/**/*
+  # node-mac-permissions has its own native binary (Objective-C bridge to
+  # AVCaptureDevice for permission queries). On macOS builds where it's
+  # installed, unpack so its dlopen works post-asar.
+  - node_modules/@nut-tree-fork/node-mac-permissions/**/*.node
+  - node_modules/@nut-tree-fork/node-mac-permissions/build/**/*
 extraResources:
   - from: build/icon.png
     to: icon.png

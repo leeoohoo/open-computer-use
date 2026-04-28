@@ -1,5 +1,11 @@
 import { autoUpdater, UpdateInfo } from 'electron-updater'
 import { BrowserWindow } from 'electron'
+// Static import: error-reporter is also statically imported by index.ts and
+// ws-bridge.ts, so any dynamic `import()` here would land in the same main
+// chunk anyway — Vite warned about exactly that on the win:signed build.
+// Keep the static path so we don't synthesise a useless dynamic-import
+// boundary that the bundler can't honour.
+import { reportError } from './error-reporter'
 
 export type UpdateStatus =
   | 'idle'
@@ -96,6 +102,14 @@ export function initAutoUpdater(): void {
     lastErrorMessage = safeMessage
     console.error('[Updater] Error:', safeMessage)
     setStatus('error')
+    // Pass the SANITIZED message — the original `err` may contain signing-cert
+    // paths or update-server URLs that the reporter's PII scrubber wouldn't
+    // otherwise know to redact. The reporter still applies its own scrub
+    // pass, but giving it pre-sanitised input is defence in depth.
+    reportError('auto_updater', {
+      message: `Auto-update failed: ${safeMessage}`,
+      context: { sanitized: safeMessage },
+    })
   })
 
   // Check after a short delay so the app starts up fast
