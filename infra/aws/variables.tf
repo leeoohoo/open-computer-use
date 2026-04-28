@@ -349,15 +349,15 @@ variable "split_sse_streams_target" {
 # ---- ws service (Electron WebSocket) ------------------------------------
 
 variable "split_ws_cpu" {
-  description = "CPU units for the ws service task (WebSockets are I/O-bound, small CPU)"
+  description = "CPU units for the ws service task. Bumped from 512 to 1024 (Fargate's lower bound for tasks with >=4GB memory) when 2GB workers were getting OOM-SIGKILLed under live Electron load."
   type        = number
-  default     = 512
+  default     = 1024
 }
 
 variable "split_ws_memory" {
-  description = "Memory (MiB) for the ws service task (each open WebSocket holds ~50-100KB of buffer memory)"
+  description = "Memory (MiB) for the ws service task. Bumped from 2048 to 4096 — observed peaks of 93% on 2GB triggering kernel OOM-kills (gunicorn worker SIGKILL with 'Perhaps out of memory?'); each Electron WS holds ~50-100KB plus screenshot buffers in flight, so headroom prevents drops."
   type        = number
-  default     = 2048
+  default     = 4096
 }
 
 variable "split_ws_desired_count" {
