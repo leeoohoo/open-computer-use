@@ -47,6 +47,19 @@ vi.mock('./permissions', () => ({
   isAccessibilityGranted: () => true,
   requestAccessibility: vi.fn(),
 }))
+// desktopScroll calls reportInfo for diagnostic logging. Stub the
+// reporter so we don't depend on Electron's `app` ready state in tests.
+vi.mock('./error-reporter', () => ({
+  reportError: vi.fn(),
+  reportWarn: vi.fn(),
+  reportInfo: vi.fn(),
+  errorReporter: {
+    init: vi.fn(),
+    setIdentity: vi.fn(),
+    setWebSocketSink: vi.fn(),
+    reportError: vi.fn(),
+  },
+}))
 vi.mock('./display-manager', () => ({
   getActiveDisplay: () => h.display,
 }))

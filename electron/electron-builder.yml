@@ -59,8 +59,12 @@ extraResources:
   - from: build/icon.png
     to: icon.png
 publish:
-  provider: generic
-  url: https://updates.coasty.ai
+  - provider: github
+    owner: LLmHub-dev
+    repo: open-computer-use
+    releaseType: release
+  - provider: generic
+    url: https://updates.coasty.ai
 win:
   target:
     - nsis

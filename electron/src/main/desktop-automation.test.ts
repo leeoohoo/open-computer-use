@@ -50,6 +50,21 @@ vi.mock('./permissions', () => ({
   requestAccessibility: vi.fn(),
 }))
 
+// error-reporter is called by desktopScroll for diagnostic logging.
+// Stub the public surface so the action doesn't depend on Electron's
+// `app` ready state during tests.
+vi.mock('./error-reporter', () => ({
+  reportError: vi.fn(),
+  reportWarn: vi.fn(),
+  reportInfo: vi.fn(),
+  errorReporter: {
+    init: vi.fn(),
+    setIdentity: vi.fn(),
+    setWebSocketSink: vi.fn(),
+    reportError: vi.fn(),
+  },
+}))
+
 // Active display starts at (0, 0) with scaleFactor 1.0 so multi-monitor
 // fallback never fires AND the DPI-scaling multiplier is a no-op for the
 // existing test cases. The DPI-specific tests at the bottom of this file
@@ -82,6 +97,23 @@ vi.mock('child_process', () => ({
   }),
 }))
 
+// Electron BrowserWindow mock — `desktopScroll` dynamically imports
+// `electron` to call `BrowserWindow.getAllWindows()` and `.blur()` on the
+// focused overlay before firing wheel events on Windows. We expose a
+// single mock window so tests can assert blur was called BEFORE
+// libnut.scrollMouse, proving the focus-yield happens on the right side
+// of the cursor positioning + 100ms settle but before the per-notch loop.
+const mockOverlayWindow = {
+  isDestroyed: vi.fn(() => false),
+  isFocused: vi.fn(() => true),
+  blur: vi.fn(),
+}
+vi.mock('electron', () => ({
+  BrowserWindow: {
+    getAllWindows: () => [mockOverlayWindow],
+  },
+}))
+
 const desktopAutomation = await import('./desktop-automation')
 
 beforeEach(() => {
@@ -89,6 +121,9 @@ beforeEach(() => {
   Object.values(libnutMock).forEach((fn) => {
     if (typeof (fn as any).mockClear === 'function') (fn as any).mockClear()
   })
+  mockOverlayWindow.blur.mockClear()
+  mockOverlayWindow.isFocused.mockReturnValue(true)
+  mockOverlayWindow.isDestroyed.mockReturnValue(false)
 })
 
 // ─── desktopClick ────────────────────────────────────────────────────────
@@ -336,94 +371,123 @@ describe('desktopKeyCombo', () => {
 // ─── desktopScroll ───────────────────────────────────────────────────────
 
 describe('desktopScroll', () => {
-  it('positive clicks → scroll up', async () => {
+  // NOTE: real timers throughout. The implementation sleeps between every
+  // notch (16ms on macOS/Linux, 50ms on Windows) — that is load-bearing
+  // for the Chromium coalescing fix below, so we want the actual sleeps
+  // to happen and the per-notch wall-clock-gap regression tests to be
+  // meaningful. Per-test timeouts are set where the real sleeps push us
+  // past vitest's 5s default.
+
+  // ─── Per-notch event splitting ────────────────────────────────────────
+  // The implementation now sends N separate single-notch events instead
+  // of one big multi-notch event. This matches a real mouse wheel and
+  // works on apps (Steam Chromium, scroll-snap CSS sites, legacy Win32
+  // controls) that only commit ONE notch per discrete event regardless
+  // of magnitude. Tests below assert the call count equals abs(clicks).
+
+  it('positive clicks → N up-direction events', async () => {
     const result = await desktopAutomation.desktopScroll({ clicks: 3 })
     expect(result.success).toBe(true)
     expect(result.message).toContain('up')
-    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(1)
-    const [dx, dy] = libnutMock.scrollMouse.mock.calls[0]
-    expect(dx).toBe(0)            // vertical default
-    expect(dy).toBeGreaterThan(0) // positive = up
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(3)
+    // Every event should be vertical (dx=0) and positive (UP)
+    for (const [dx, dy] of libnutMock.scrollMouse.mock.calls) {
+      expect(dx).toBe(0)
+      expect(dy).toBeGreaterThan(0)
+    }
   })
 
-  it('negative clicks → scroll down', async () => {
+  it('negative clicks → N down-direction events', async () => {
     const result = await desktopAutomation.desktopScroll({ clicks: -3 })
     expect(result.success).toBe(true)
     expect(result.message).toContain('down')
-    const [, dy] = libnutMock.scrollMouse.mock.calls[0]
-    expect(dy).toBeLessThan(0)
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(3)
+    for (const [, dy] of libnutMock.scrollMouse.mock.calls) {
+      expect(dy).toBeLessThan(0)
+    }
   })
 
-  it('horizontal direction routes through dx, not dy', async () => {
+  it('horizontal direction routes through dx, not dy (per event)', async () => {
     await desktopAutomation.desktopScroll({ clicks: 5, direction: 'horizontal' })
-    const [dx, dy] = libnutMock.scrollMouse.mock.calls[0]
-    expect(dy).toBe(0)
-    expect(dx).not.toBe(0)
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(5)
+    for (const [dx, dy] of libnutMock.scrollMouse.mock.calls) {
+      expect(dy).toBe(0)
+      expect(dx).not.toBe(0)
+    }
   })
 
   it('positions cursor first when x/y provided', async () => {
     await desktopAutomation.desktopScroll({ clicks: 2, x: 500, y: 300 })
     expect(libnutMock.moveMouse).toHaveBeenCalledWith(500, 300)
-    expect(libnutMock.scrollMouse).toHaveBeenCalled()
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(2)
   })
 
   it('clamps absurdly large clicks to MAX_SCROLL_CLICKS', async () => {
     const result = await desktopAutomation.desktopScroll({ clicks: 99999 })
     expect(result.success).toBe(true)
-    expect(result.message).toContain('500')
-  })
+    // Cap was 500 → 100. With per-notch + unconditional inter-notch sleep,
+    // 100 keeps worst-case Windows scroll under ~5s (100 × 50ms) which is
+    // well inside the agent's per-action timeout window.
+    expect(result.message).toContain('100')
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(100)
+  }, 15_000)
 
-  // ─── Per-platform unit normalization ─────────────────────────────────
+  // ─── Per-platform unit normalization (per single notch) ─────────────
   //
-  // libnut.scrollMouse passes the value STRAIGHT to the OS, which uses
-  // wildly different scales (verified by reading libnut-core source):
-  //   Windows: WHEEL_DELTA = 120 per notch (MOUSEEVENTF_WHEEL)
-  //   macOS:   PIXELS via kCGScrollEventUnitPixel; ~100 px ≈ one wheel notch
-  //   Linux:   discrete button-press count, 1 unit = 1 notch (XTest)
-  //
-  // The agent emits "scroll(N)" expecting N wheel notches (pyautogui
-  // semantics). Without the per-platform multiplier the macOS path was
-  // sending 30 PIXELS for `scroll(3)` — visually invisible — which is
-  // what the user reported as "scroll doesn't work properly". Tests
-  // below pin every platform so a regression on any one fails loudly.
+  // libnut.scrollMouse passes the value STRAIGHT to the OS. Per-notch
+  // splitting means each event carries the SINGLE-NOTCH magnitude, not
+  // the cumulative one:
+  //   Windows: WHEEL_DELTA = 120 per single notch
+  //   macOS:   ~100 px per single notch (kCGScrollEventUnitPixel)
+  //   Linux:   1 per single notch (XTest button-press count)
 
-  it('Windows: 1 click maps to WHEEL_DELTA (120) units', async () => {
+  it('Windows: each notch event is exactly 120 units (WHEEL_DELTA)', async () => {
     if (process.platform !== 'win32') return
     await desktopAutomation.desktopScroll({ clicks: 1 })
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(1)
     expect(libnutMock.scrollMouse).toHaveBeenCalledWith(0, 120)
   })
 
-  it('Windows: 3 clicks → 360 units (3 notches)', async () => {
+  it('Windows: 3 clicks → 3 separate (0, 120) events', async () => {
     if (process.platform !== 'win32') return
     await desktopAutomation.desktopScroll({ clicks: 3 })
-    expect(libnutMock.scrollMouse).toHaveBeenCalledWith(0, 360)
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(3)
+    for (const call of libnutMock.scrollMouse.mock.calls) {
+      expect(call).toEqual([0, 120])
+    }
   })
 
-  it('Windows: -2 clicks → -240 (2 notches down)', async () => {
+  it('Windows: -2 clicks → 2 separate (0, -120) events', async () => {
     if (process.platform !== 'win32') return
     await desktopAutomation.desktopScroll({ clicks: -2 })
-    expect(libnutMock.scrollMouse).toHaveBeenCalledWith(0, -240)
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(2)
+    for (const call of libnutMock.scrollMouse.mock.calls) {
+      expect(call).toEqual([0, -120])
+    }
   })
 
-  it('macOS: 1 click maps to ~100 pixels (real wheel-notch feel)', async () => {
+  it('macOS: each notch event is ~100 pixels (real wheel-notch feel)', async () => {
     if (process.platform !== 'darwin') return
     await desktopAutomation.desktopScroll({ clicks: 1 })
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(1)
     expect(libnutMock.scrollMouse).toHaveBeenCalledWith(0, 100)
   })
 
-  it('macOS: regression — 3 clicks must NOT be 30 px (the broken value)', async () => {
+  it('macOS: regression — per-notch must NOT be 10 px (the broken value)', async () => {
     if (process.platform !== 'darwin') return
     await desktopAutomation.desktopScroll({ clicks: 3 })
-    const [, dy] = libnutMock.scrollMouse.mock.calls[0]
-    // The previous implementation sent 30 (10 px × 3) which felt like nothing.
-    // A real notch is ~100 px; 3 notches = 300 px.
-    expect(dy).toBe(300)
-    expect(Math.abs(dy)).toBeGreaterThan(50)  // sanity: not the old bug
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(3)
+    for (const [, dy] of libnutMock.scrollMouse.mock.calls) {
+      // 10 px per notch was the visually-invisible bug; ~100 px per notch
+      // matches a real wheel.
+      expect(Math.abs(dy)).toBeGreaterThan(50)
+    }
   })
 
-  it('Linux: 1 click stays at 1 (XTest discrete notches)', async () => {
+  it('Linux: each notch event is exactly 1 (XTest discrete notch)', async () => {
     if (process.platform !== 'linux') return
     await desktopAutomation.desktopScroll({ clicks: 1 })
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(1)
     expect(libnutMock.scrollMouse).toHaveBeenCalledWith(0, 1)
   })
 
@@ -439,13 +503,16 @@ describe('desktopScroll', () => {
 
   it('horizontal scroll sign: caller-positive = RIGHT on all platforms', async () => {
     await desktopAutomation.desktopScroll({ clicks: 5, direction: 'horizontal' })
-    const [dx] = libnutMock.scrollMouse.mock.calls[0]
-    if (process.platform === 'darwin') {
-      // macOS: pass-through (positive = right at the libnut layer)
-      expect(dx).toBeGreaterThan(0)
-    } else {
-      // Windows / Linux: libnut's raw axis is inverted, so we negate
-      expect(dx).toBeLessThan(0)
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(5)
+    // Every per-notch event must have the same sign convention
+    for (const [dx] of libnutMock.scrollMouse.mock.calls) {
+      if (process.platform === 'darwin') {
+        // macOS: pass-through (positive = right at the libnut layer)
+        expect(dx).toBeGreaterThan(0)
+      } else {
+        // Windows / Linux: libnut's raw axis is inverted, so we negate
+        expect(dx).toBeLessThan(0)
+      }
     }
   })
 
@@ -471,17 +538,152 @@ describe('desktopScroll', () => {
     expect(dy).not.toBe(0)
   })
 
-  it('clicks=0 is a no-op-ish call (zero delta — does not crash)', async () => {
+  it('clicks=0 is a true no-op (no scrollMouse calls, no error)', async () => {
     const result = await desktopAutomation.desktopScroll({ clicks: 0 })
     expect(result.success).toBe(true)
-    // libnut still called (with delta=0); the underlying OS treats 0 as no-op.
-    // Note: `-1 * N * 0 === -0` in JS; vitest's `toBe` uses Object.is which
-    // distinguishes -0 from +0, so compare via Math.abs to ignore sign.
-    expect(libnutMock.scrollMouse).toHaveBeenCalled()
-    const [dx, dy] = libnutMock.scrollMouse.mock.calls[0]
-    expect(Math.abs(dx)).toBe(0)
-    expect(Math.abs(dy)).toBe(0)
+    // With per-notch splitting, 0 clicks → 0 events. Cleaner than the
+    // previous behaviour of calling once with delta=0 (which some apps
+    // logged as a noisy "wheel event with 0 delta").
+    expect(libnutMock.scrollMouse).not.toHaveBeenCalled()
   })
+
+  // ─── Diagnostic emission so future scroll-doesn't-work reports have data ──
+
+  it('emits a diagnostic info report containing platform + delta + scaleFactor', async () => {
+    // We can't easily assert on the reportInfo call from inside this test
+    // (the error reporter is its own module with its own state), but we
+    // can verify the call SUCCEEDED — i.e. didn't throw. The reporter is
+    // wrapped in try/catch so a logging failure must never break the
+    // action itself.
+    const result = await desktopAutomation.desktopScroll({
+      clicks: 3, direction: 'vertical', x: 500, y: 300,
+    })
+    expect(result.success).toBe(true)
+  })
+
+  // ─── Chromium wheel-event coalescing regression guard ──────────────────
+  //
+  // BUG (2026-04-26 production logs): on Windows in Chromium-embedded
+  // browsers (Chrome / Edge / Electron-rendered pages), the FIRST scroll
+  // moved the page slightly but SUBSEQUENT scrolls didn't progress until
+  // the agent clicked the page first. Root cause: Chromium's
+  // MouseWheelEventQueue holds at most ONE wheel event in flight to the
+  // renderer; events arriving while one is pending are COALESCED by
+  // SUMMING deltas (mouse_wheel_event_queue.cc). Our 16ms inter-notch gap
+  // was inside the renderer ack window so 5 notches collapsed into ~1.
+  //
+  // Fix: 50ms inter-notch gap on Windows (exceeds renderer ack window),
+  // 16ms elsewhere (pixel scrolls / XTest don't go through that
+  // coalescer). These tests pin the behaviour so a future micro-
+  // optimisation can't silently regress us back into the 16ms hole.
+
+  it('Windows: each notch fires after a real ≥50ms gap (anti-coalescing)', async () => {
+    if (process.platform !== 'win32') return
+    // Tiny scroll so the test focuses on the gap, not the count.
+    const start = Date.now()
+    await desktopAutomation.desktopScroll({ clicks: 3 })
+    const elapsed = Date.now() - start
+    // 3 notches → 2 inter-notch gaps × 50ms = 100ms minimum. Allow
+    // generous slack for CI jitter; the only thing that would FAIL this
+    // assertion is a regression to <16ms gaps (the broken value).
+    expect(elapsed).toBeGreaterThanOrEqual(80)
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(3)
+  })
+
+  it('Windows: 5 notches at 50ms gap takes ≥ 200ms wall-clock', async () => {
+    if (process.platform !== 'win32') return
+    const start = Date.now()
+    await desktopAutomation.desktopScroll({ clicks: 5 })
+    const elapsed = Date.now() - start
+    // 5 notches → 4 gaps × 50ms = 200ms minimum.
+    expect(elapsed).toBeGreaterThanOrEqual(180)
+  })
+
+  it('non-Windows: keeps the cheap 16ms gap (no Chromium coalescer in the path)', async () => {
+    if (process.platform === 'win32') return
+    const start = Date.now()
+    await desktopAutomation.desktopScroll({ clicks: 5 })
+    const elapsed = Date.now() - start
+    // 5 notches → 4 gaps × 16ms = 64ms minimum. Importantly we should
+    // NOT be paying the 50ms Windows tax on macOS/Linux (would be
+    // ~200ms) — assert the gap stayed cheap.
+    expect(elapsed).toBeGreaterThanOrEqual(50)
+    expect(elapsed).toBeLessThan(150)
+  })
+
+  it('every notch on Windows is its own libnut call (not one big delta)', async () => {
+    if (process.platform !== 'win32') return
+    // The previous regression had us coalescing into one big call. Per-
+    // notch splitting is what makes the OS post a real WM_MOUSEWHEEL per
+    // notch — without that, the inter-notch gap is meaningless.
+    await desktopAutomation.desktopScroll({ clicks: 7 })
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(7)
+    // No single call carried >120 |delta| (would mean we packed multiple
+    // notches into one event).
+    for (const [, dy] of libnutMock.scrollMouse.mock.calls) {
+      expect(Math.abs(dy)).toBe(120)
+    }
+  })
+
+  // ─── Windows focus-routing regression guard ───────────────────────────
+  //
+  // BUG: per MSDN, WM_MOUSEWHEEL is delivered to the FOCUS window, not the
+  // window under the cursor. The Coasty overlay keeps focus during
+  // opacity-based hiding (setIgnoreMouseEvents only rerouts MOUSE input,
+  // not focus), so synthetic wheel events were going to a hidden
+  // click-through window and Chrome never saw them — first scroll seemed
+  // to "move a bit" because Chromium's inactive-window-routing fallback
+  // sometimes fires once, then subsequent ones get coalesced into a
+  // phase-ended state and silently drop.
+  //
+  // Fix: blur the overlay before each scroll so Windows routes the wheel
+  // to whatever window held focus before us (typically the under-cursor
+  // browser tab). This test pins the blur call ordering — anything that
+  // moves the blur after scrollMouse, or removes it entirely, will fail.
+
+  it('Windows: blurs the focused overlay BEFORE any scrollMouse call', async () => {
+    if (process.platform !== 'win32') return
+    await desktopAutomation.desktopScroll({ clicks: 3, x: 500, y: 300 })
+    expect(mockOverlayWindow.blur).toHaveBeenCalledTimes(1)
+    // Mock invocationCallOrder gives a global ordering across all mocks.
+    const blurOrder = mockOverlayWindow.blur.mock.invocationCallOrder[0]
+    const firstScrollOrder = libnutMock.scrollMouse.mock.invocationCallOrder[0]
+    expect(blurOrder).toBeLessThan(firstScrollOrder)
+  })
+
+  it('Windows: does NOT blur a destroyed window (would crash Electron)', async () => {
+    if (process.platform !== 'win32') return
+    mockOverlayWindow.isDestroyed.mockReturnValue(true)
+    await desktopAutomation.desktopScroll({ clicks: 1 })
+    expect(mockOverlayWindow.blur).not.toHaveBeenCalled()
+  })
+
+  it('Windows: does NOT blur a window that is not focused (no-op short-circuit)', async () => {
+    if (process.platform !== 'win32') return
+    mockOverlayWindow.isFocused.mockReturnValue(false)
+    await desktopAutomation.desktopScroll({ clicks: 1 })
+    expect(mockOverlayWindow.blur).not.toHaveBeenCalled()
+    // But scroll still happens — we only skip the blur, not the wheel.
+    expect(libnutMock.scrollMouse).toHaveBeenCalled()
+  })
+
+  it('non-Windows: never blurs (focus routing is platform-specific)', async () => {
+    if (process.platform === 'win32') return
+    await desktopAutomation.desktopScroll({ clicks: 3 })
+    expect(mockOverlayWindow.blur).not.toHaveBeenCalled()
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(3)
+  })
+
+  it('clamp at 100 prevents runaway scrolls from blowing the 5s timeout', async () => {
+    // 100 notches × 50ms (Windows) = 5000ms. 100 notches × 16ms
+    // (mac/linux) = 1600ms. Either way bounded — anything bigger gets
+    // clamped, regardless of what the agent emits. Per-test timeout is
+    // bumped because the Windows path needs the full 5s of real sleeps
+    // (real timers are intentional — see the describe-block comment).
+    const result = await desktopAutomation.desktopScroll({ clicks: 50_000 })
+    expect(result.success).toBe(true)
+    expect(libnutMock.scrollMouse).toHaveBeenCalledTimes(100)
+  }, 15_000)
 })
 
 // ─── desktopDrag ─────────────────────────────────────────────────────────

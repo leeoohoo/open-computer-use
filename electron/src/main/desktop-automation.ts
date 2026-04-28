@@ -32,6 +32,7 @@ import { execFile } from 'child_process'
 import { isAccessibilityGranted, requestAccessibility } from './permissions'
 import { getActiveDisplay } from './display-manager'
 import { loadLibnut, type LibnutAPI } from './libnut-loader'
+import { reportInfo } from './error-reporter'
 
 // ─── macOS Accessibility gate ─────────────────────────────────────────────
 
@@ -141,6 +142,56 @@ function runPowershellCursor(x: number, y: number): Promise<void> {
       if (err) reject(err); else resolve()
     })
   })
+}
+
+/**
+ * Yield the Coasty overlay's focus before a synthetic wheel event so the
+ * window UNDER the cursor receives it.
+ *
+ * ─── Why this exists (Windows synthetic-scroll bug) ──────────────────────
+ * Per MSDN — https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-mousewheel:
+ *   "Sent to the focus window when the mouse wheel is rotated."
+ *
+ * `MOUSEEVENTF_WHEEL` (which libnut.scrollMouse uses internally) generates
+ * `WM_MOUSEWHEEL` — delivered to the **FOCUS window**, NOT the window under
+ * the cursor. Windows' "Scroll inactive windows when hovering"
+ * (registry: HKCU\Control Panel\Desktop\MouseWheelRouting=2) only reroutes
+ * the message via DefWindowProc when the focus window itself is wheel-aware
+ * and chooses to forward.
+ *
+ * The Coasty overlay is a frameless transparent always-on-top window.
+ * `hideForDesktopAction()` (window-manager.ts) sets opacity=0 and
+ * `setIgnoreMouseEvents(true)` — but it does NOT release focus. So the
+ * overlay still owns focus from the OS's perspective; synthetic wheels go
+ * to a hidden click-through window and Chrome never sees them.
+ *
+ * Real left-clicks don't have this problem: `WM_LBUTTONDOWN` triggers
+ * Win32 input activation — the under-cursor window becomes
+ * foreground/focus as a side effect. Wheel events do NOT activate. That's
+ * why the agent's "click first, then scroll" workaround works in CloudWatch
+ * traces, and why bumping inter-notch sleep to 50ms / cursor-settle to
+ * 100ms didn't help: those address coalescing, not the focus-routing bug.
+ *
+ * Fix: call `win.blur()` on the overlay before scrolling. Electron's blur
+ * gives up keyboard focus AND foreground status; Windows then routes the
+ * next synthetic wheel via WindowFromPoint at GetCursorPos, which is
+ * exactly where we positioned the cursor at the start of desktopScroll.
+ * No native deps, no inline C# (avoids AMSI keylogger heuristics — see
+ * file-header comment), no destructive side effects (blur doesn't dismiss
+ * popovers; SetForegroundWindow on a click would).
+ *
+ * After scrolling, `showAfterDesktopAction()` already calls
+ * `setAlwaysOnTop(true, 'screen-saver', 1) + moveTop()` so the overlay
+ * comes back on top normally.
+ */
+async function blurOverlayForScroll(): Promise<void> {
+  if (process.platform !== 'win32') return
+  try {
+    const { BrowserWindow } = await import('electron')
+    for (const win of BrowserWindow.getAllWindows()) {
+      if (!win.isDestroyed() && win.isFocused()) win.blur()
+    }
+  } catch { /* fall through — best-effort */ }
 }
 
 // ─── Key vocabulary translation ──────────────────────────────────────────
@@ -416,7 +467,12 @@ export async function desktopKeyCombo(params: { keys: string[] }): Promise<any> 
   }
 }
 
-const MAX_SCROLL_CLICKS = 500
+// Capped so the worst-case scroll completes inside the agent's command
+// timeout window. With per-notch event splitting + the inter-notch sleep
+// below, 100 notches takes ~5s on Windows and ~1.6s elsewhere — enough
+// for any realistic agent scroll, and a hard ceiling against runaway
+// requests like `vscroll(99999)`.
+const MAX_SCROLL_CLICKS = 100
 
 export async function desktopScroll(params: {
   clicks: number
@@ -444,8 +500,20 @@ export async function desktopScroll(params: {
       const x = validateInt(params.x, 'x')
       const y = validateInt(params.y, 'y')
       await moveMouseAbsolute(x, y)
-      await sleep(50)
+      // 100ms (was 50ms): some apps require the cursor to fully settle
+      // before they accept wheel events on a newly-hovered element. The
+      // longer pause empirically improves Steam / Chromium scroll
+      // reliability without adding noticeable latency to the agent loop.
+      await sleep(100)
     }
+
+    // ─── CRITICAL: yield focus on Windows ─────────────────────────────────
+    // WM_MOUSEWHEEL is routed to the FOCUS window per MSDN, not under-cursor.
+    // The Coasty overlay keeps focus during opacity-based hiding so wheel
+    // events go nowhere productive. Blur the overlay so Windows' inactive-
+    // window-scroll routing kicks in and the wheel reaches Chrome/Edge/etc.
+    // See blurOverlayForScroll() docstring above for full explanation.
+    await blurOverlayForScroll()
 
     // Per-platform unit normalisation — libnut's `scrollMouse(x, y)` passes
     // its arguments STRAIGHT to the OS, and each OS uses a fundamentally
@@ -453,46 +521,93 @@ export async function desktopScroll(params: {
     // linux}/mouse.c):
     //
     //   Windows: `mouseData = y` for MOUSEEVENTF_WHEEL, where the OS expects
-    //            WHEEL_DELTA units (120 per notch). Sub-120 deltas are
-    //            silently dropped by most apps. ⇒ 120 per click.
-    //
+    //            WHEEL_DELTA units (120 per notch).
     //   macOS:   `CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel,
-    //            2, y, x)` — `y` is in PIXELS. A real wheel notch is roughly
-    //            ~100 px in most macOS apps. The previous value of 10 was
-    //            "≈ pixels per line" which made every scroll a 30-px nudge —
-    //            visually invisible. ⇒ 100 per click.
-    //
+    //            2, y, x)` — `y` is in PIXELS. ~100 px ≈ one real wheel notch.
     //   Linux:   `XTestFakeButtonEvent` loop over abs(y) iterations. 1 unit
-    //            = 1 wheel notch already. ⇒ 1 per click.
+    //            = 1 wheel notch already.
     //
-    // If a future libnut release switches macOS to kCGScrollEventUnitLine,
-    // 100 will become wildly aggressive — change to ~3 lines/click then.
+    // ─── Per-notch event splitting ───────────────────────────────────────
+    // Sending ONE big wheel event (e.g. mouseData=-600 for 5 notches) is
+    // semantically different from a physical mouse wheel which emits 5
+    // separate events. Some apps (Steam's Chromium-embedded UI, certain
+    // legacy Win32 controls, scroll-snap CSS sites) only animate or commit
+    // ONE notch per discrete event regardless of magnitude — so a single
+    // big event scrolls one notch and then ignores the rest of the
+    // amplitude. Splitting into per-notch events at small intervals
+    // matches a real wheel and works on every app we've tested.
     const perClick =
       process.platform === 'win32' ? 120 :
       process.platform === 'darwin' ? 100 : 1
-    const delta = sign * perClick * amount
+    const perNotchDelta = sign * perClick
 
-    if (direction === 'vertical') {
-      // libnut sign for vertical is consistent across all platforms:
-      // positive y = UP. macOS "Natural Scrolling" preference inverts the
-      // perceived direction at the GUI layer — DON'T compensate here, let
-      // user preference apply.
-      lib().scrollMouse(0, delta)
-    } else {
-      // Horizontal sign is NOT consistent across platforms in libnut:
-      //   - Windows: libnut internally does `mouseData = -x`, which combined
-      //     with MOUSEEVENTF_HWHEEL's "positive = right" convention means
-      //     caller-positive = LEFT (raw libnut). Counter-intuitive, but
-      //     that's what the source does.
-      //   - macOS: kCGScrollEventUnitPixel x-axis: positive = RIGHT.
-      //   - Linux: button 6 = positive x = LEFT, button 7 = negative = RIGHT.
-      //
-      // Normalise so caller-positive = RIGHT on every platform (matches
-      // what pyautogui's hscroll(N>0) means). Negate on Windows + Linux.
-      const horizDelta =
-        process.platform === 'darwin' ? delta : -delta
-      lib().scrollMouse(horizDelta, 0)
+    // Horizontal sign is NOT consistent across platforms (verified against
+    // libnut-core source):
+    //   - Windows: libnut internally negates x in `mouseData = -x`,
+    //     combined with MOUSEEVENTF_HWHEEL's "positive = right" convention
+    //     means caller-positive = LEFT.
+    //   - macOS: kCGScrollEventUnitPixel x-axis: positive = RIGHT.
+    //   - Linux: button 6 = positive x = LEFT, button 7 = negative = RIGHT.
+    // Normalise to caller-positive = RIGHT on every platform.
+    const horizSignFlip = process.platform === 'darwin' ? 1 : -1
+
+    const libnut = lib()
+    // Inter-event sleep is critical and platform-specific:
+    //
+    //   Windows: Chromium's MouseWheelEventQueue (content/browser/
+    //   renderer_host/input/mouse_wheel_event_queue.cc) only allows ONE
+    //   wheel event in flight to the renderer. New events arriving while
+    //   one is pending are COALESCED into the pending event by SUMMING
+    //   deltas — they are NOT enqueued as separate events. The queue
+    //   drains on the next renderer ack (~one frame ≈ 16ms) but the
+    //   active wheel "phase" stays open for ~100ms (MouseWheelPhaseHandler
+    //   timeout). Sub-frame intervals therefore collapse N notches into
+    //   ~1 commit of progress — which is exactly what we saw in CloudWatch
+    //   ("page scrolled a bit" but subsequent notches didn't progress).
+    //   50ms exceeds the renderer ack window so each notch lands as a
+    //   discrete kPhaseChanged wheel event the compositor actually
+    //   animates.
+    //
+    //   macOS / Linux: 16ms ≈ one frame at 60fps. Pixel-unit scrolls on
+    //   macOS and XTest button events on Linux don't go through the
+    //   same coalescer, so 16ms is fine and keeps latency low.
+    //
+    // We sleep on EVERY notch transition (no threshold short-circuit) —
+    // the MAX_SCROLL_CLICKS cap above bounds the total time.
+    const interNotchMs = process.platform === 'win32' ? 50 : 16
+    for (let i = 0; i < amount; i++) {
+      if (direction === 'vertical') {
+        libnut.scrollMouse(0, perNotchDelta)
+      } else {
+        libnut.scrollMouse(horizSignFlip * perNotchDelta, 0)
+      }
+      if (i + 1 < amount) {
+        await sleep(interNotchMs)
+      }
     }
+
+    // Diagnostic log — surfaces in CloudWatch so a future "scroll isn't
+    // working" report has the actual platform + cursor + delta + scale
+    // information. Sampled (info-severity) so we don't flood logs under
+    // heavy load.
+    try {
+      const display = getActiveDisplay()
+      reportInfo('desktop_automation', {
+        message: `scroll: ${amount} ${direction} ${scrollUp ? 'UP' : 'DOWN'} clicks`,
+        command: 'scroll',
+        context: {
+          platform: process.platform,
+          rawClicks,
+          direction,
+          x: params.x,
+          y: params.y,
+          scaleFactor: display.scaleFactor,
+          perNotchDelta,
+          notchesEmitted: amount,
+          interNotchMs,
+        },
+      })
+    } catch { /* logging failure must never break the action */ }
 
     return { success: true, message: `Scrolled ${scrollUp ? 'up' : 'down'} ${amount} clicks` }
   } catch (error: any) {
