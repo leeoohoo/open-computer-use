@@ -372,6 +372,116 @@ describe('desktopScroll', () => {
     expect(result.success).toBe(true)
     expect(result.message).toContain('500')
   })
+
+  // ─── Per-platform unit normalization ─────────────────────────────────
+  //
+  // libnut.scrollMouse passes the value STRAIGHT to the OS, which uses
+  // wildly different scales (verified by reading libnut-core source):
+  //   Windows: WHEEL_DELTA = 120 per notch (MOUSEEVENTF_WHEEL)
+  //   macOS:   PIXELS via kCGScrollEventUnitPixel; ~100 px ≈ one wheel notch
+  //   Linux:   discrete button-press count, 1 unit = 1 notch (XTest)
+  //
+  // The agent emits "scroll(N)" expecting N wheel notches (pyautogui
+  // semantics). Without the per-platform multiplier the macOS path was
+  // sending 30 PIXELS for `scroll(3)` — visually invisible — which is
+  // what the user reported as "scroll doesn't work properly". Tests
+  // below pin every platform so a regression on any one fails loudly.
+
+  it('Windows: 1 click maps to WHEEL_DELTA (120) units', async () => {
+    if (process.platform !== 'win32') return
+    await desktopAutomation.desktopScroll({ clicks: 1 })
+    expect(libnutMock.scrollMouse).toHaveBeenCalledWith(0, 120)
+  })
+
+  it('Windows: 3 clicks → 360 units (3 notches)', async () => {
+    if (process.platform !== 'win32') return
+    await desktopAutomation.desktopScroll({ clicks: 3 })
+    expect(libnutMock.scrollMouse).toHaveBeenCalledWith(0, 360)
+  })
+
+  it('Windows: -2 clicks → -240 (2 notches down)', async () => {
+    if (process.platform !== 'win32') return
+    await desktopAutomation.desktopScroll({ clicks: -2 })
+    expect(libnutMock.scrollMouse).toHaveBeenCalledWith(0, -240)
+  })
+
+  it('macOS: 1 click maps to ~100 pixels (real wheel-notch feel)', async () => {
+    if (process.platform !== 'darwin') return
+    await desktopAutomation.desktopScroll({ clicks: 1 })
+    expect(libnutMock.scrollMouse).toHaveBeenCalledWith(0, 100)
+  })
+
+  it('macOS: regression — 3 clicks must NOT be 30 px (the broken value)', async () => {
+    if (process.platform !== 'darwin') return
+    await desktopAutomation.desktopScroll({ clicks: 3 })
+    const [, dy] = libnutMock.scrollMouse.mock.calls[0]
+    // The previous implementation sent 30 (10 px × 3) which felt like nothing.
+    // A real notch is ~100 px; 3 notches = 300 px.
+    expect(dy).toBe(300)
+    expect(Math.abs(dy)).toBeGreaterThan(50)  // sanity: not the old bug
+  })
+
+  it('Linux: 1 click stays at 1 (XTest discrete notches)', async () => {
+    if (process.platform !== 'linux') return
+    await desktopAutomation.desktopScroll({ clicks: 1 })
+    expect(libnutMock.scrollMouse).toHaveBeenCalledWith(0, 1)
+  })
+
+  // ─── Horizontal direction sign normalization ─────────────────────────
+  //
+  // libnut's horizontal sign is NOT consistent across platforms:
+  //   - Windows: internal `mouseData = -x` makes caller-positive = LEFT (raw libnut)
+  //   - macOS:   CGEventCreateScrollWheelEvent x: positive = RIGHT
+  //   - Linux:   button 6 (positive x) = LEFT, button 7 = RIGHT
+  // We normalize so caller-positive = RIGHT on all platforms (matches
+  // pyautogui.hscroll(N>0)). That means we negate on Windows + Linux,
+  // pass-through on macOS.
+
+  it('horizontal scroll sign: caller-positive = RIGHT on all platforms', async () => {
+    await desktopAutomation.desktopScroll({ clicks: 5, direction: 'horizontal' })
+    const [dx] = libnutMock.scrollMouse.mock.calls[0]
+    if (process.platform === 'darwin') {
+      // macOS: pass-through (positive = right at the libnut layer)
+      expect(dx).toBeGreaterThan(0)
+    } else {
+      // Windows / Linux: libnut's raw axis is inverted, so we negate
+      expect(dx).toBeLessThan(0)
+    }
+  })
+
+  it('cursor moves to (x,y) BEFORE scroll fires when both provided', async () => {
+    await desktopAutomation.desktopScroll({ clicks: 2, x: 500, y: 300 })
+    // Move must be called before scroll
+    const moveOrder = libnutMock.moveMouse.mock.invocationCallOrder[0]
+    const scrollOrder = libnutMock.scrollMouse.mock.invocationCallOrder[0]
+    expect(moveOrder).toBeLessThan(scrollOrder)
+  })
+
+  it('cursor positioning is SKIPPED when x/y omitted (scroll at current cursor)', async () => {
+    libnutMock.moveMouse.mockClear()
+    await desktopAutomation.desktopScroll({ clicks: 2 })
+    expect(libnutMock.moveMouse).not.toHaveBeenCalled()
+    expect(libnutMock.scrollMouse).toHaveBeenCalled()
+  })
+
+  it('explicit direction=vertical with no x/y still scrolls vertically', async () => {
+    await desktopAutomation.desktopScroll({ clicks: 2, direction: 'vertical' })
+    const [dx, dy] = libnutMock.scrollMouse.mock.calls[0]
+    expect(dx).toBe(0)
+    expect(dy).not.toBe(0)
+  })
+
+  it('clicks=0 is a no-op-ish call (zero delta — does not crash)', async () => {
+    const result = await desktopAutomation.desktopScroll({ clicks: 0 })
+    expect(result.success).toBe(true)
+    // libnut still called (with delta=0); the underlying OS treats 0 as no-op.
+    // Note: `-1 * N * 0 === -0` in JS; vitest's `toBe` uses Object.is which
+    // distinguishes -0 from +0, so compare via Math.abs to ignore sign.
+    expect(libnutMock.scrollMouse).toHaveBeenCalled()
+    const [dx, dy] = libnutMock.scrollMouse.mock.calls[0]
+    expect(Math.abs(dx)).toBe(0)
+    expect(Math.abs(dy)).toBe(0)
+  })
 })
 
 // ─── desktopDrag ─────────────────────────────────────────────────────────

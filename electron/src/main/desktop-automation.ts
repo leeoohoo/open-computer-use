@@ -434,6 +434,12 @@ export async function desktopScroll(params: {
     const scrollUp = rawClicks > 0
     const sign = scrollUp ? 1 : -1
 
+    // Cursor must be positioned BEFORE libnut.scrollMouse fires — libnut
+    // never moves the cursor itself; the OS routes the wheel event to the
+    // window under the current cursor on every platform:
+    //   Windows: MOUSEEVENTF_WHEEL fires at GetCursorPos
+    //   macOS:   CGEventCreateScrollWheelEvent(NULL, ...) uses HID location
+    //   Linux:   XTestFakeButtonEvent goes to pointer-focus window
     if (params.x !== undefined && params.y !== undefined) {
       const x = validateInt(params.x, 'x')
       const y = validateInt(params.y, 'y')
@@ -441,21 +447,51 @@ export async function desktopScroll(params: {
       await sleep(50)
     }
 
-    // Per-platform unit normalisation. libnut passes raw deltas through to
-    // the OS, which uses very different scales:
-    //   Windows: WHEEL_DELTA = 120 per notch (MOUSEEVENTF_WHEEL)
-    //   macOS:   pixels per line ≈ 10 (CGEventScrollWheel, line units would
-    //            need a different event ctor; we send pixel units here)
-    //   Linux:   button-press count, 1 unit per notch (XTest button 4/5)
+    // Per-platform unit normalisation — libnut's `scrollMouse(x, y)` passes
+    // its arguments STRAIGHT to the OS, and each OS uses a fundamentally
+    // different scale (verified by reading libnut-core/src/{win32,macos,
+    // linux}/mouse.c):
+    //
+    //   Windows: `mouseData = y` for MOUSEEVENTF_WHEEL, where the OS expects
+    //            WHEEL_DELTA units (120 per notch). Sub-120 deltas are
+    //            silently dropped by most apps. ⇒ 120 per click.
+    //
+    //   macOS:   `CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel,
+    //            2, y, x)` — `y` is in PIXELS. A real wheel notch is roughly
+    //            ~100 px in most macOS apps. The previous value of 10 was
+    //            "≈ pixels per line" which made every scroll a 30-px nudge —
+    //            visually invisible. ⇒ 100 per click.
+    //
+    //   Linux:   `XTestFakeButtonEvent` loop over abs(y) iterations. 1 unit
+    //            = 1 wheel notch already. ⇒ 1 per click.
+    //
+    // If a future libnut release switches macOS to kCGScrollEventUnitLine,
+    // 100 will become wildly aggressive — change to ~3 lines/click then.
     const perClick =
       process.platform === 'win32' ? 120 :
-      process.platform === 'darwin' ? 10 : 1
+      process.platform === 'darwin' ? 100 : 1
     const delta = sign * perClick * amount
 
     if (direction === 'vertical') {
+      // libnut sign for vertical is consistent across all platforms:
+      // positive y = UP. macOS "Natural Scrolling" preference inverts the
+      // perceived direction at the GUI layer — DON'T compensate here, let
+      // user preference apply.
       lib().scrollMouse(0, delta)
     } else {
-      lib().scrollMouse(delta, 0)
+      // Horizontal sign is NOT consistent across platforms in libnut:
+      //   - Windows: libnut internally does `mouseData = -x`, which combined
+      //     with MOUSEEVENTF_HWHEEL's "positive = right" convention means
+      //     caller-positive = LEFT (raw libnut). Counter-intuitive, but
+      //     that's what the source does.
+      //   - macOS: kCGScrollEventUnitPixel x-axis: positive = RIGHT.
+      //   - Linux: button 6 = positive x = LEFT, button 7 = negative = RIGHT.
+      //
+      // Normalise so caller-positive = RIGHT on every platform (matches
+      // what pyautogui's hscroll(N>0) means). Negate on Windows + Linux.
+      const horizDelta =
+        process.platform === 'darwin' ? delta : -delta
+      lib().scrollMouse(horizDelta, 0)
     }
 
     return { success: true, message: `Scrolled ${scrollUp ? 'up' : 'down'} ${amount} clicks` }
