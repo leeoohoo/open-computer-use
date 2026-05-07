@@ -1,0 +1,3 @@
+interface:
+  display_name: "Open Computer Use Agent"
+  short_description: "Use the Open Computer Use MCP tools more reliably"

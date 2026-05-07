@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Open Computer Use Console</title>
+  <link rel="stylesheet" href="/static/app.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="workspace-shell">
+      <header class="panel topbar topbar-panel">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">OC</div>
+          <div class="brand-copy">
+            <p class="eyebrow" data-i18n="appEyebrow">Desktop Agent Studio</p>
+            <h1 data-i18n="appTitle">Open Computer Use</h1>
+            <p class="muted" data-i18n="appSubtitle">Configure your model, operate desktop tools, and manage permissions from dedicated tabs.</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <nav class="tab-strip" aria-label="Primary sections" data-i18n-aria-label="primarySectionsAria">
+            <button id="tabRunConfig" class="tab-button active" type="button" data-tab="run-config" data-i18n="tabRunConfig">Run Config</button>
+            <button id="tabConsole" class="tab-button" type="button" data-tab="console" data-i18n="tabConsole">Console</button>
+            <button id="tabApps" class="tab-button" type="button" data-tab="apps" data-i18n="tabApps">Apps</button>
+            <button id="tabPermissions" class="tab-button" type="button" data-tab="permissions" data-i18n="tabPermissions">Permissions</button>
+          </nav>
+          <label class="language-switcher">
+            <span data-i18n="labelLanguage">Language</span>
+            <select id="languagePicker">
+              <option value="en" data-i18n="languageOptionEnglish">English</option>
+              <option value="zh" data-i18n="languageOptionChinese">中文</option>
+            </select>
+          </label>
+        </div>
+      </header>
+
+      <section id="runConfigTabPanel" class="tab-panel active" data-tab-panel="run-config">
+        <div class="config-shell">
+          <section class="panel config-panel">
+            <div class="panel-hero">
+              <p class="eyebrow" data-i18n="tabRunConfig">Run Config</p>
+              <h2 data-i18n="headingRunSetup">Run Setup</h2>
+              <p class="hint" data-i18n="hintConfig">Configuration is stored on the server so every browser session that connects here can reuse the same runtime settings. OCR is optional; the agent will prefer inspecting screenshots directly when the model supports vision.</p>
+            </div>
+
+            <label>
+              <span data-i18n="labelModel">Model</span>
+              <input id="model" value="gpt-4.1-mini" />
+            </label>
+            <label>
+              <span data-i18n="labelBaseUrl">Base URL</span>
+              <input id="baseUrl" value="https://api.openai.com/v1/" />
+            </label>
+            <label>
+              <span data-i18n="labelApiMode">API Mode</span>
+              <select id="apiMode">
+                <option value="auto">auto</option>
+                <option value="responses">responses</option>
+                <option value="chat_completions">chat_completions</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="labelThinkingMode">Thinking Mode</span>
+              <select id="thinkingMode">
+                <option value="auto" data-i18n="optionThinkingAuto">auto</option>
+                <option value="enabled" data-i18n="optionThinkingEnabled">enabled</option>
+                <option value="disabled" data-i18n="optionThinkingDisabled">disabled</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="labelReasoningEffort">Reasoning Effort</span>
+              <select id="reasoningEffort">
+                <option value="minimal">minimal</option>
+                <option value="low">low</option>
+                <option value="medium" selected>medium</option>
+                <option value="high">high</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="labelModelCompatMode">Compatibility Mode</span>
+              <select id="modelCompatMode">
+                <option value="auto" data-i18n="optionCompatAuto">auto</option>
+                <option value="standard" data-i18n="optionCompatStandard">standard</option>
+                <option value="aggressive_kimi" data-i18n="optionCompatAggressiveKimi">aggressive_kimi</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="labelApiKey">API Key</span>
+              <input id="apiKey" type="password" placeholder="sk-..." data-i18n-placeholder="placeholderApiKey" />
+            </label>
+            <label>
+              <span data-i18n="labelSystemPrompt">System Prompt</span>
+              <textarea id="systemPrompt" rows="7">You are a local desktop automation assistant. Use the provided tools when you need to inspect or control the computer. Inspect screenshot images returned by tools directly when available. If accessibility snapshots are empty or unusable, fall back to screenshot-based inspection and then local filesystem tools such as searching paths and listing directories. Be concise and action-oriented.</textarea>
+            </label>
+            <label>
+              <span data-i18n="labelMaxSteps">Max Steps</span>
+              <input id="maxSteps" type="number" min="1" max="500" value="100" />
+            </label>
+            <label>
+              <span data-i18n="labelEnableOcr">Enable OCR</span>
+              <select id="enableOcr">
+                <option value="false" selected>false</option>
+                <option value="true">true</option>
+              </select>
+            </label>
+            <div class="field-grid three-up">
+              <label>
+                <span data-i18n="labelMaxImagesPerToolResult">Images Per Tool</span>
+                <input id="maxImagesPerToolResult" type="number" min="0" max="5" value="1" />
+              </label>
+              <label>
+                <span data-i18n="labelModelImageMaxEdge">Image Max Edge</span>
+                <input id="modelImageMaxEdge" type="number" min="256" max="4096" value="1600" />
+              </label>
+              <label>
+                <span data-i18n="labelModelImageMaxBytes">Image Max Bytes</span>
+                <input id="modelImageMaxBytes" type="number" min="32768" max="4000000" value="350000" />
+              </label>
+            </div>
+            <button id="saveConfig" type="button" data-i18n="buttonSaveConfig">Save To Server</button>
+          </section>
+        </div>
+      </section>
+
+      <section id="consoleTabPanel" class="tab-panel" data-tab-panel="console" hidden>
+        <div class="console-shell">
+          <section class="panel chat-panel">
+            <div class="panel-header">
+              <div>
+                <h2 data-i18n="headingConversation">Conversation</h2>
+                <p class="hint panel-subtitle" data-i18n="hintConversation">Talk to the agent here, then move to the Apps tab when you want direct desktop control.</p>
+              </div>
+              <button id="clearChat" type="button" class="secondary" data-i18n="buttonClear">Clear</button>
+            </div>
+            <p id="statusLine" class="status-pill" data-i18n="statusReady">Ready.</p>
+            <section id="observationContextPanel" class="observation-context" hidden>
+              <div class="observation-context-head">
+                <div>
+                  <p class="eyebrow" data-i18n="headingObservationContextEyebrow">Live Context</p>
+                  <h3 data-i18n="headingObservationContext">Current Observation</h3>
+                </div>
+                <div id="observationContextBadges" class="tool-call-meta"></div>
+              </div>
+              <div class="observation-context-grid">
+                <div class="observation-context-copy">
+                  <pre id="observationContextMeta" class="mini-output observation-context-meta" data-i18n="emptyObservationContext">No active observation yet.</pre>
+                </div>
+                <div class="observation-context-preview">
+                  <img id="observationContextImage" alt="Current observation preview" data-i18n-alt="altObservationContext" hidden />
+                </div>
+              </div>
+            </section>
+            <div id="messages" class="messages"></div>
+            <form id="chatForm" class="composer">
+              <textarea id="userInput" rows="4" placeholder="Ask it to inspect, preview, open Safari, or click with debug output..." data-i18n-placeholder="placeholderUserInput"></textarea>
+              <button type="submit" id="sendButton" data-i18n="buttonSend">Send</button>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section id="appsTabPanel" class="tab-panel" data-tab-panel="apps" hidden>
+        <div class="apps-shell">
+          <section class="panel apps-hero-panel">
+            <div class="panel-hero compact-hero">
+              <div>
+                <p class="eyebrow" data-i18n="tabApps">Apps</p>
+                <h2 data-i18n="headingAppStudio">Desktop Control Studio</h2>
+                <p class="hint" data-i18n="hintApps">Search the local app catalog, identify the current frontmost app, capture the accessibility tree, and trigger precise actions from one workspace.</p>
+              </div>
+              <div class="hero-metrics">
+                <div class="metric-card">
+                  <span class="metric-label" data-i18n="metricCatalog">Catalog</span>
+                  <strong data-i18n="metricCatalogValue">Launch and focus apps</strong>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-label" data-i18n="metricSnapshot">Snapshot</span>
+                  <strong data-i18n="metricSnapshotValue">Inspect live UI state</strong>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-label" data-i18n="metricActions">Actions</span>
+                  <strong data-i18n="metricActionsValue">Click, type, preview</strong>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="apps-grid">
+            <section class="panel apps-panel">
+              <div class="panel-header">
+                <div>
+                  <h2 data-i18n="headingAppControl">App Control</h2>
+                  <p class="hint panel-subtitle" data-i18n="hintAppControl">Use app-level controls first to make sure the correct window is in front before you capture or click anything.</p>
+                </div>
+              </div>
+
+              <div class="app-control-stack">
+                <section class="app-surface">
+                  <label>
+                    <span data-i18n="labelFindApps">Find Apps</span>
+                    <input id="appQuery" placeholder="Safari / Finder / WeChat / Xcode..." data-i18n-placeholder="placeholderAppQuery" />
+                  </label>
+                  <div class="button-row">
+                    <button id="listAppsButton" type="button" class="secondary" data-i18n="buttonListApps">List Apps</button>
+                    <button id="frontmostAppButton" type="button" class="secondary" data-i18n="buttonFrontmost">Frontmost</button>
+                  </div>
+                </section>
+
+                <section class="app-surface accent-surface">
+                  <label>
+                    <span data-i18n="labelLaunchOrActivate">Launch Or Activate</span>
+                    <input id="appTarget" placeholder="App name, e.g. Safari" data-i18n-placeholder="placeholderAppTarget" />
+                  </label>
+                  <div class="button-row">
+                    <button id="launchAppButton" type="button" data-i18n="buttonLaunch">Launch</button>
+                    <button id="activateAppButton" type="button" class="secondary" data-i18n="buttonActivate">Activate</button>
+                  </div>
+                </section>
+
+                <pre id="appOutput" class="mini-output app-output" data-i18n="emptyAppOutput">No app actions yet.</pre>
+              </div>
+            </section>
+
+            <section class="panel snapshot-panel">
+              <div class="panel-header">
+                <div>
+                  <h2 data-i18n="headingUiSnapshot">UI Snapshot</h2>
+                  <p class="hint panel-subtitle" data-i18n="hintSnapshotStudio">Capture the accessibility tree, inspect the selected element, and run precise follow-up actions from one place.</p>
+                </div>
+              </div>
+
+              <div class="field-grid two-up">
+                <label>
+                  <span data-i18n="labelTargetAppOptional">Target App (Optional)</span>
+                  <input id="snapshotTarget" placeholder="Leave blank to inspect the frontmost app" data-i18n-placeholder="placeholderSnapshotTarget" />
+                </label>
+                <label>
+                  <span data-i18n="labelRoleFilter">Role Filter</span>
+                  <input id="roleFilter" placeholder="AXButton / AXTextField / AXLink..." data-i18n-placeholder="placeholderRoleFilter" />
+                </label>
+              </div>
+
+              <div class="field-grid three-up">
+                <label>
+                  <span data-i18n="labelTreeDepth">Tree Depth</span>
+                  <input id="snapshotDepth" type="number" min="0" max="8" value="3" />
+                </label>
+                <label>
+                  <span data-i18n="labelChildrenPerNode">Children Per Node</span>
+                  <input id="snapshotChildren" type="number" min="1" max="100" value="25" />
+                </label>
+                <label>
+                  <span data-i18n="labelReuseLastSnapshot">Reuse Last Snapshot</span>
+                  <select id="useCachedSnapshot">
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                </label>
+              </div>
+
+              <label>
+                <span data-i18n="labelShowOnlyInteractable">Show Only Interactable</span>
+                <select id="interactableFilter">
+                  <option value="all" data-i18n="optionAll">all</option>
+                  <option value="interactable" data-i18n="optionInteractableOnly">interactable only</option>
+                </select>
+              </label>
+
+              <button id="snapshotButton" type="button" data-i18n="buttonCaptureSnapshot">Capture Snapshot</button>
+
+              <div class="snapshot-workbench">
+                <div class="snapshot-column">
+                  <div id="snapshotTree" class="tree-list" data-i18n="emptySnapshotTree">No parsed elements yet.</div>
+                  <pre id="snapshotOutput" class="mini-output snapshot-output" data-i18n="emptySnapshotOutput">No UI snapshots yet.</pre>
+                </div>
+
+                <div class="snapshot-column">
+                  <div class="element-studio">
+                    <label>
+                      <span data-i18n="labelElementIdToClick">Element ID To Click</span>
+                      <input id="elementIdInput" placeholder="window-1/child-2/child-1" data-i18n-placeholder="placeholderElementId" />
+                    </label>
+                    <label>
+                      <span data-i18n="labelTextForSelectedElement">Text For Selected Element</span>
+                      <textarea id="elementTextInput" rows="3" placeholder="Type into a selected input field..." data-i18n-placeholder="placeholderElementText"></textarea>
+                    </label>
+                    <div class="field-grid two-up">
+                      <label>
+                        <span data-i18n="labelClearBeforeTyping">Clear Before Typing</span>
+                        <select id="clearFirstSelect">
+                          <option value="false">false</option>
+                          <option value="true">true</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span data-i18n="labelAccessibilityAction">Accessibility Action</span>
+                        <select id="elementActionSelect">
+                          <option value="" data-i18n="optionSelectAction">Select action from snapshot...</option>
+                        </select>
+                      </label>
+                    </div>
+                    <div class="button-row">
+                      <button id="clickElementButton" type="button" class="secondary" data-i18n="buttonClickElement">Click Element</button>
+                      <button id="pressElementButton" type="button" class="secondary" data-i18n="buttonPressElement">Press Element</button>
+                      <button id="focusElementButton" type="button" class="secondary" data-i18n="buttonFocusElement">Focus Element</button>
+                    </div>
+                    <div class="button-row">
+                      <button id="typeElementButton" type="button" data-i18n="buttonTypeIntoElement">Type Into Element</button>
+                      <button id="setValueButton" type="button" data-i18n="buttonSetValue">Set Value</button>
+                      <button id="performElementActionButton" type="button" class="secondary" data-i18n="buttonRunAction">Run Action</button>
+                    </div>
+                    <button id="previewElementButton" type="button" data-i18n="buttonPreviewElement">Preview Element</button>
+                    <div id="elementPreviewPane" class="preview-pane">
+                      <img id="elementPreviewImage" alt="Element preview" data-i18n-alt="altElementPreview" hidden />
+                    </div>
+                    <pre id="elementMetaOutput" class="mini-output" data-i18n="emptyElementMeta">No element selected yet.</pre>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="permissionsTabPanel" class="tab-panel" data-tab-panel="permissions" hidden>
+        <section class="panel permissions-panel">
+          <div class="panel-header">
+            <div>
+              <h2 data-i18n="headingPermissions">Permissions</h2>
+              <p class="hint panel-subtitle" data-i18n="hintPermissions">The app checks desktop permissions on load. On macOS, some items can open System Settings but still require manual approval.</p>
+            </div>
+            <div class="button-row compact">
+              <button id="refreshPermissionsButton" type="button" class="secondary" data-i18n="buttonRefresh">Refresh</button>
+              <button id="requestAllPermissionsButton" type="button" data-i18n="buttonRequestMissing">Request Missing</button>
+            </div>
+          </div>
+          <div id="permissionSummary" class="permission-summary" data-i18n="emptyPermissionSummary">Permission status not loaded yet.</div>
+          <div id="permissionList" class="permission-groups" data-i18n="emptyPermissionList">No permissions loaded yet.</div>
+          <pre id="permissionOutput" class="mini-output permission-output" data-i18n="emptyPermissionOutput">No permission actions yet.</pre>
+        </section>
+      </section>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

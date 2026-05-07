@@ -1,0 +1,8 @@
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+pydantic==2.10.2
+openai==2.15.0
+mss==10.0.0
+pyautogui==0.9.54
+Pillow==11.0.0
+websockets==13.1
