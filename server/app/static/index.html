@@ -140,7 +140,28 @@
                   <p class="eyebrow" data-i18n="headingObservationContextEyebrow">Live Context</p>
                   <h3 data-i18n="headingObservationContext">Current Observation</h3>
                 </div>
-                <div id="observationContextBadges" class="tool-call-meta"></div>
+                <div class="observation-context-actions">
+                  <div id="observationContextBadges" class="tool-call-meta"></div>
+                  <div class="field-grid two-up observation-context-controls">
+                    <label>
+                      <span data-i18n="labelObservationDisplay">Display</span>
+                      <select id="observationDisplaySelect"></select>
+                    </label>
+                    <label>
+                      <span data-i18n="labelObservationRefreshMode">Refresh Mode</span>
+                      <select id="observationRefreshModeSelect">
+                        <option value="display" data-i18n="optionObservationDisplay">Display</option>
+                        <option value="region" data-i18n="optionObservationRegion">Current Region</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div class="button-row compact">
+                    <button id="refreshObservationButton" type="button" class="secondary" data-i18n="buttonRefreshObservation">Refresh View</button>
+                    <button id="refreshPointerButton" type="button" class="secondary" data-i18n="buttonRefreshPointer">Locate Pointer</button>
+                    <button id="focusAppsTabButton" type="button" class="secondary" data-i18n="buttonJumpApps">Open Apps Tab</button>
+                    <button id="syncFrontmostButton" type="button" class="secondary" data-i18n="buttonUseFrontmost">Use Frontmost App</button>
+                  </div>
+                </div>
               </div>
               <div class="observation-context-grid">
                 <div class="observation-context-copy">

@@ -1,10 +1,15 @@
 import os
 import unittest
+from unittest.mock import patch
+
+from fastapi.testclient import TestClient
 
 from executor.client.desktop.controller import DesktopController
+from server.app.main import create_app
+from server.app.api import routes
 from server.app.services.mcp_http import HttpMCPService
 from server.app.services.orchestrator import LocalComputerUseService
-from shared.schemas.desktop import DisplayMetadata, Observation
+from shared.schemas.desktop import CoordinateTarget, DisplayMetadata, Observation
 
 
 class PermissionController(DesktopController):
@@ -125,6 +130,104 @@ class HttpMCPAndPermissionsTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(response.platform, controller.get_permission_overview().platform)
         self.assertIsInstance(response.results, list)
+
+    def test_observe_route_for_local_executor_supports_display_id(self) -> None:
+        app = create_app()
+        client = TestClient(app)
+
+        class ObserveDisplayOnlyLocalService:
+            def observe_display(self, display_id: str | None = None):
+                return Observation(
+                    screenshot_base64="ZmFrZQ==",
+                    screenshot_mime_type="image/png",
+                    image_width=120,
+                    image_height=90,
+                    display=DisplayMetadata(
+                        display_id=display_id or "main",
+                        logical_width=120,
+                        logical_height=90,
+                        physical_width=240,
+                        physical_height=180,
+                        scale_x=2.0,
+                        scale_y=2.0,
+                        offset_x=1440,
+                        offset_y=0,
+                    ),
+                    available_displays=[
+                        DisplayMetadata(
+                            display_id="main",
+                            logical_width=1440,
+                            logical_height=900,
+                            physical_width=2880,
+                            physical_height=1800,
+                            scale_x=2.0,
+                            scale_y=2.0,
+                            offset_x=0,
+                            offset_y=0,
+                        ),
+                        DisplayMetadata(
+                            display_id="display-2",
+                            logical_width=120,
+                            logical_height=90,
+                            physical_width=240,
+                            physical_height=180,
+                            scale_x=2.0,
+                            scale_y=2.0,
+                            offset_x=1440,
+                            offset_y=0,
+                        ),
+                    ],
+                    captured_display_id=display_id or "main",
+                    capture_scope="display",
+                    ocr_blocks=[],
+                    detected_elements=[],
+                    timestamp=1.0,
+                )
+
+        with patch.object(routes, "service", ObserveDisplayOnlyLocalService()):
+            response = client.get("/api/v1/observe?executor_id=local&display_id=display-2")
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["captured_display_id"], "display-2")
+        self.assertEqual(payload["display"]["display_id"], "display-2")
+        self.assertEqual(len(payload["available_displays"]), 2)
+
+    def test_pointer_route_for_local_executor_returns_display_and_coordinates(self) -> None:
+        app = create_app()
+        client = TestClient(app)
+
+        class PointerOnlyLocalService:
+            def get_pointer_state(self, executor_id: str | None = None):
+                from shared.schemas.desktop import PointerStateResponse
+
+                display = DisplayMetadata(
+                    display_id="display-3",
+                    logical_width=1600,
+                    logical_height=1000,
+                    physical_width=3200,
+                    physical_height=2000,
+                    scale_x=2.0,
+                    scale_y=2.0,
+                    offset_x=2880,
+                    offset_y=0,
+                )
+                return PointerStateResponse(
+                    executor_id=executor_id or "local",
+                    display=display,
+                    logical_position=CoordinateTarget(x=512, y=240, display_id="display-3"),
+                    physical_position=CoordinateTarget(x=1024, y=480, display_id="display-3"),
+                    message="Pointer state captured.",
+                )
+
+        with patch.object(routes, "service", PointerOnlyLocalService()):
+            response = client.get("/api/v1/pointer?executor_id=local")
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["display"]["display_id"], "display-3")
+        self.assertEqual(payload["logical_position"]["x"], 512)
+        self.assertEqual(payload["physical_position"]["x"], 1024)
 
 
 if __name__ == "__main__":

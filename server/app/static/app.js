@@ -100,6 +100,21 @@ const I18N = {
     headingObservationContext: "Current Observation",
     emptyObservationContext: "No active observation yet.",
     altObservationContext: "Current observation preview",
+    buttonRefreshObservation: "Refresh View",
+    buttonRefreshPointer: "Locate Pointer",
+    buttonJumpApps: "Open Apps Tab",
+    buttonUseFrontmost: "Use Frontmost App",
+    labelObservationDisplay: "Display",
+    labelObservationRefreshMode: "Refresh Mode",
+    optionObservationDisplay: "Display",
+    optionObservationRegion: "Current Region",
+    statusObservationDisplaySynced: "Observation display selection updated.",
+    statusRefreshingObservation: "Refreshing current observation...",
+    statusObservationRefreshed: "Current observation refreshed.",
+    statusObservationRefreshFailed: "Refreshing observation failed.",
+    statusRefreshingPointer: "Refreshing pointer state...",
+    statusPointerRefreshed: "Pointer state refreshed.",
+    statusPointerRefreshFailed: "Refreshing pointer state failed.",
     buttonClear: "Clear",
     statusReady: "Ready.",
     placeholderUserInput:
@@ -340,6 +355,21 @@ const I18N = {
     headingObservationContext: "当前观察",
     emptyObservationContext: "当前还没有可用的 observation。",
     altObservationContext: "当前观察预览",
+    buttonRefreshObservation: "刷新观察",
+    buttonRefreshPointer: "定位鼠标",
+    buttonJumpApps: "打开应用页",
+    buttonUseFrontmost: "使用前台应用",
+    labelObservationDisplay: "屏幕",
+    labelObservationRefreshMode: "刷新方式",
+    optionObservationDisplay: "整块屏幕",
+    optionObservationRegion: "当前区域",
+    statusObservationDisplaySynced: "Observation 屏幕选择已更新。",
+    statusRefreshingObservation: "正在刷新当前 observation...",
+    statusObservationRefreshed: "当前 observation 已刷新。",
+    statusObservationRefreshFailed: "刷新 observation 失败。",
+    statusRefreshingPointer: "正在刷新鼠标位置...",
+    statusPointerRefreshed: "鼠标位置已刷新。",
+    statusPointerRefreshFailed: "刷新鼠标位置失败。",
     buttonClear: "清空",
     statusReady: "就绪。",
     placeholderUserInput: "让它检查界面、预览、打开 Safari，或者带调试信息地点击某个位置...",
@@ -748,6 +778,12 @@ const elements = {
   observationContextBadges: document.getElementById("observationContextBadges"),
   observationContextMeta: document.getElementById("observationContextMeta"),
   observationContextImage: document.getElementById("observationContextImage"),
+  observationDisplaySelect: document.getElementById("observationDisplaySelect"),
+  observationRefreshModeSelect: document.getElementById("observationRefreshModeSelect"),
+  refreshObservationButton: document.getElementById("refreshObservationButton"),
+  refreshPointerButton: document.getElementById("refreshPointerButton"),
+  focusAppsTabButton: document.getElementById("focusAppsTabButton"),
+  syncFrontmostButton: document.getElementById("syncFrontmostButton"),
   appQuery: document.getElementById("appQuery"),
   appTarget: document.getElementById("appTarget"),
   listAppsButton: document.getElementById("listAppsButton"),
@@ -797,6 +833,7 @@ const state = {
   currentLanguage: "en",
   latestElementActions: [],
   latestObservationContext: null,
+  latestPointerState: null,
   statusEntry: i18nEntry("statusReady"),
   appOutputEntry: i18nEntry("emptyAppOutput"),
   permissionOutputEntry: i18nEntry("emptyPermissionOutput"),
@@ -970,6 +1007,20 @@ function extractTracePreviewImages(item) {
   return item.preview_images.filter((value) => typeof value === "string" && value.startsWith("data:image/"));
 }
 
+function toImageDataUrl(value, mimeType = "image/png") {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.startsWith("<base64:")) {
+    return null;
+  }
+  if (trimmed.startsWith("data:image/")) {
+    return trimmed;
+  }
+  return `data:${mimeType || "image/png"};base64,${trimmed}`;
+}
+
 function normalizeToolTraceItem(item = {}) {
   const result = item?.result ?? {};
   let status = item?.status;
@@ -1117,6 +1168,24 @@ function summarizeCoordinateSource(result = {}) {
   return logical || physical || "";
 }
 
+function summarizePointerState(pointer = {}) {
+  if (!pointer || typeof pointer !== "object") {
+    return "";
+  }
+  const logical = summarizeCoordinateTarget(pointer.logical_position);
+  const physical = summarizeCoordinateTarget(pointer.physical_position);
+  if (logical && physical && logical !== physical) {
+    return `pointer L ${logical} · P ${physical}`;
+  }
+  if (logical) {
+    return `pointer ${logical}`;
+  }
+  if (physical) {
+    return `pointer ${physical}`;
+  }
+  return "";
+}
+
 function summarizeVerification(result = {}) {
   const verification = result?.verification;
   if (!verification || typeof verification !== "object") {
@@ -1136,13 +1205,19 @@ function summarizeVerification(result = {}) {
   return [label, details].filter(Boolean).join(" · ");
 }
 
-function extractObservationContextFromResult(result = {}) {
+function extractObservationContextFromResult(result = {}, options = {}) {
   if (!result || typeof result !== "object") {
     return null;
   }
 
   const directObservation =
-    result.screenshot_base64 && result.display
+    result.display && (
+      "screenshot_base64" in result
+      || "captured_display_id" in result
+      || "capture_scope" in result
+      || "available_displays" in result
+      || "timestamp" in result
+    )
       ? result
       : result.observation && typeof result.observation === "object"
         ? result.observation
@@ -1152,6 +1227,15 @@ function extractObservationContextFromResult(result = {}) {
     return null;
   }
 
+  const previewImages = Array.isArray(options.previewImages)
+    ? options.previewImages.filter((value) => typeof value === "string" && value.startsWith("data:image/"))
+    : [];
+  const imageUrl =
+    previewImages[0]
+    || toImageDataUrl(directObservation.screenshot_base64, directObservation.screenshot_mime_type)
+    || toImageDataUrl(result.preview_image_base64, result.preview_image_mime_type)
+    || null;
+
   return {
     capture_scope: directObservation.capture_scope || null,
     captured_display_id: directObservation.captured_display_id || directObservation.display?.display_id || null,
@@ -1159,19 +1243,45 @@ function extractObservationContextFromResult(result = {}) {
     available_displays: Array.isArray(directObservation.available_displays) ? directObservation.available_displays : [],
     region: directObservation.region || null,
     frontmost_app: directObservation.frontmost_app || null,
-    image_url: extractTracePreviewImages({
-      preview_images: directObservation.screenshot_base64
-        ? [`data:${directObservation.screenshot_mime_type || "image/png"};base64,${directObservation.screenshot_base64}`]
-        : [],
-    })[0] || null,
+    image_url: imageUrl,
     image_width: Number.isFinite(directObservation.image_width) ? directObservation.image_width : null,
     image_height: Number.isFinite(directObservation.image_height) ? directObservation.image_height : null,
     timestamp: typeof directObservation.timestamp === "number" ? directObservation.timestamp : null,
   };
 }
 
+function updateLatestObservationContextFromToolTrace(toolTrace = []) {
+  const normalizedTrace = Array.isArray(toolTrace)
+    ? toolTrace.map((item) => normalizeToolTraceItem(item))
+    : [];
+  for (let index = normalizedTrace.length - 1; index >= 0; index -= 1) {
+    const item = normalizedTrace[index];
+    const observationContext = extractObservationContextFromResult(item.result || {}, {
+      previewImages: item.preview_images,
+    });
+    if (observationContext) {
+      state.latestObservationContext = observationContext;
+      return true;
+    }
+  }
+  return false;
+}
+
+function buildObservationContextWithPointer(context, pointerState = null) {
+  if (!context) {
+    return null;
+  }
+  return {
+    ...context,
+    pointer_state: pointerState || context.pointer_state || null,
+  };
+}
+
 function renderObservationContext() {
-  const context = state.latestObservationContext;
+  const context = buildObservationContextWithPointer(
+    state.latestObservationContext,
+    state.latestPointerState,
+  );
   if (!elements.observationContextPanel || !elements.observationContextMeta || !elements.observationContextBadges) {
     return;
   }
@@ -1180,6 +1290,12 @@ function renderObservationContext() {
     elements.observationContextPanel.hidden = true;
     elements.observationContextMeta.textContent = t("emptyObservationContext");
     elements.observationContextBadges.innerHTML = "";
+    if (elements.observationDisplaySelect) {
+      elements.observationDisplaySelect.innerHTML = "";
+    }
+    if (elements.observationRefreshModeSelect) {
+      elements.observationRefreshModeSelect.value = "display";
+    }
     if (elements.observationContextImage) {
       elements.observationContextImage.hidden = true;
       elements.observationContextImage.removeAttribute("src");
@@ -1193,8 +1309,9 @@ function renderObservationContext() {
   const observationSummary = summarizeObservationSource(context);
   const displaySummary = summarizeDisplayMetadata(context.display);
   const displaysCount = Array.isArray(context.available_displays) ? context.available_displays.length : 0;
+  const pointerSummary = summarizePointerState(context.pointer_state);
 
-  [observationSummary, displaySummary].filter(Boolean).forEach((text) => {
+  [observationSummary, displaySummary, pointerSummary].filter(Boolean).forEach((text) => {
     const badge = document.createElement("span");
     badge.className = "message-badge subtle";
     badge.textContent = text;
@@ -1208,10 +1325,45 @@ function renderObservationContext() {
     elements.observationContextBadges.appendChild(displaysBadge);
   }
 
+  if (elements.observationDisplaySelect) {
+    const available = context.available_displays?.length ? context.available_displays : (context.display ? [context.display] : []);
+    elements.observationDisplaySelect.innerHTML = "";
+    available.forEach((display) => {
+      const option = document.createElement("option");
+      option.value = display.display_id || "main";
+      option.textContent = summarizeDisplayMetadata(display) || display.display_id || "main";
+      option.selected = option.value === (context.captured_display_id || context.display?.display_id || "main");
+      elements.observationDisplaySelect.appendChild(option);
+    });
+  }
+
+  if (elements.observationRefreshModeSelect) {
+    const hasRegion =
+      context.region
+      && Number.isFinite(context.region.left)
+      && Number.isFinite(context.region.top)
+      && Number.isFinite(context.region.width)
+      && Number.isFinite(context.region.height);
+    const regionOption = Array.from(elements.observationRefreshModeSelect.options).find((option) => option.value === "region");
+    if (regionOption) {
+      regionOption.disabled = !hasRegion;
+    }
+    if (!hasRegion && elements.observationRefreshModeSelect.value === "region") {
+      elements.observationRefreshModeSelect.value = "display";
+    }
+  }
+
   const meta = {
     capture_scope: context.capture_scope || null,
     captured_display_id: context.captured_display_id || null,
     frontmost_app: context.frontmost_app?.name || null,
+    pointer_state: context.pointer_state
+      ? {
+          logical_position: context.pointer_state.logical_position || null,
+          physical_position: context.pointer_state.physical_position || null,
+          display: context.pointer_state.display || null,
+        }
+      : null,
     region: context.region || null,
     display: context.display || null,
     image_size:
@@ -1231,6 +1383,125 @@ function renderObservationContext() {
       elements.observationContextImage.removeAttribute("src");
     }
   }
+}
+
+async function refreshObservationContext() {
+  try {
+    setStatusKey("statusRefreshingObservation");
+    const selectedDisplayId = elements.observationDisplaySelect?.value || state.latestObservationContext?.captured_display_id || "main";
+    const refreshMode = elements.observationRefreshModeSelect?.value || "display";
+    let data;
+    let statusMessage = t("statusObservationRefreshed");
+    if (
+      refreshMode === "region"
+      && state.latestObservationContext?.region
+      && Number.isFinite(state.latestObservationContext.region.left)
+      && Number.isFinite(state.latestObservationContext.region.top)
+      && Number.isFinite(state.latestObservationContext.region.width)
+      && Number.isFinite(state.latestObservationContext.region.height)
+    ) {
+      data = await apiRequest("/api/v1/actions/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: {
+            action: "observe_region",
+            region: {
+              left: state.latestObservationContext.region.left,
+              top: state.latestObservationContext.region.top,
+              width: state.latestObservationContext.region.width,
+              height: state.latestObservationContext.region.height,
+            },
+            display_id: selectedDisplayId,
+          },
+          capture_after: false,
+          verify_action: false,
+        }),
+      });
+      statusMessage = data?.message || statusMessage;
+      data = data?.observation || data;
+    } else {
+      const suffix = selectedDisplayId ? `?executor_id=local&display_id=${encodeURIComponent(selectedDisplayId)}` : "";
+      data = await apiRequest(`/api/v1/observe${suffix}`);
+      statusMessage = data?.message || statusMessage;
+    }
+    const nextContext = extractObservationContextFromResult(data);
+    if (nextContext) {
+      state.latestObservationContext = nextContext;
+      renderObservationContext();
+      setStatusText(statusMessage);
+    } else {
+      setStatusKey("statusObservationRefreshFailed");
+    }
+  } catch (error) {
+    console.warn("Failed to refresh observation context", error);
+    setStatusKey("statusObservationRefreshFailed");
+  }
+}
+
+async function refreshPointerState() {
+  try {
+    setStatusKey("statusRefreshingPointer");
+    const data = await apiRequest("/api/v1/pointer?executor_id=local");
+    state.latestPointerState = data;
+    if (!state.latestObservationContext) {
+      state.latestObservationContext = {
+        capture_scope: null,
+        captured_display_id: data?.display?.display_id || data?.logical_position?.display_id || null,
+        display: data?.display || null,
+        available_displays: data?.display ? [data.display] : [],
+        region: null,
+        frontmost_app: null,
+        image_url: null,
+        image_width: null,
+        image_height: null,
+        timestamp: null,
+      };
+    }
+    renderObservationContext();
+    setStatusText(data?.message || t("statusPointerRefreshed"));
+  } catch (error) {
+    console.warn("Failed to refresh pointer state", error);
+    setStatusKey("statusPointerRefreshFailed");
+  }
+}
+
+function jumpToAppsTab() {
+  switchTab("apps");
+}
+
+async function syncFrontmostAppIntoAppsTab() {
+  try {
+    setStatusKey("statusReadingFrontmostApp");
+    const data = await apiRequest("/api/v1/apps/frontmost");
+    const appName = data?.app?.name || "";
+    if (appName) {
+      elements.appTarget.value = appName;
+      elements.snapshotTarget.value = appName;
+    }
+    setAppOutput(data);
+    setStatusText(data.message || t("statusFrontmostLoaded"));
+    switchTab("apps");
+  } catch (error) {
+    console.warn("Failed to sync frontmost app", error);
+    setStatusKey("statusFrontmostFailed");
+  }
+}
+
+function syncObservationDisplaySelection() {
+  if (!elements.observationDisplaySelect) {
+    return;
+  }
+  const selectedDisplayId = elements.observationDisplaySelect.value;
+  if (!state.latestObservationContext || !selectedDisplayId) {
+    return;
+  }
+  state.latestObservationContext = {
+    ...state.latestObservationContext,
+    captured_display_id: selectedDisplayId,
+  };
+  renderObservationContext();
+  setStatusKey("statusObservationDisplaySynced");
 }
 
 function formatRegion(region) {
@@ -1775,10 +2046,13 @@ function updateStreamingAssistantMessage(patch = {}) {
   }
   if (Array.isArray(patch.toolTrace)) {
     current.toolTrace = patch.toolTrace.map((item) => normalizeToolTraceItem(item));
+    updateLatestObservationContextFromToolTrace(current.toolTrace);
   }
   if (patch.tool) {
     current.toolTrace = mergeToolTraceItem(current.toolTrace || [], patch.tool);
-    const observationContext = extractObservationContextFromResult(patch.tool.result || {});
+    const observationContext = extractObservationContextFromResult(patch.tool.result || {}, {
+      previewImages: extractTracePreviewImages(patch.tool),
+    });
     if (observationContext) {
       state.latestObservationContext = observationContext;
     }
@@ -2624,6 +2898,7 @@ function clearConversation() {
   state.chatEntries = [];
   state.activeStreamMessageIndex = -1;
   state.latestObservationContext = null;
+  state.latestPointerState = null;
   renderMessages();
   renderObservationContext();
   setStatusKey("statusConversationCleared");
@@ -2947,6 +3222,7 @@ function applyLanguage(language) {
   applyStaticTranslations();
   renderSendButton();
   renderMessages();
+  renderObservationContext();
   renderStatus();
   renderOutputs();
   if (state.latestPermissionOverview) {
@@ -2978,6 +3254,11 @@ elements.refreshPermissionsButton.addEventListener("click", () => loadPermission
 elements.requestAllPermissionsButton.addEventListener("click", () => requestPermissions());
 elements.clearChat.addEventListener("click", clearConversation);
 elements.chatForm.addEventListener("submit", sendChat);
+elements.observationDisplaySelect.addEventListener("change", syncObservationDisplaySelection);
+elements.refreshObservationButton.addEventListener("click", refreshObservationContext);
+elements.refreshPointerButton.addEventListener("click", refreshPointerState);
+elements.focusAppsTabButton.addEventListener("click", jumpToAppsTab);
+elements.syncFrontmostButton.addEventListener("click", syncFrontmostAppIntoAppsTab);
 elements.listAppsButton.addEventListener("click", listApps);
 elements.frontmostAppButton.addEventListener("click", readFrontmostApp);
 elements.launchAppButton.addEventListener("click", () => controlApp("launch"));

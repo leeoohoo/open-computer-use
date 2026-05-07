@@ -95,9 +95,11 @@ async def list_executors() -> list[ExecutorStatus]:
 
 
 @router.get("/api/v1/observe", response_model=Observation)
-async def observe(executor_id: str | None = None) -> Observation:
+async def observe(executor_id: str | None = None, display_id: str | None = None) -> Observation:
     try:
-        return await registry.observe(executor_id)
+        if executor_id and executor_id != "local":
+            return await registry.observe(executor_id)
+        return service.observe_display(display_id=display_id)
     except DesktopDependencyError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except ValueError as exc:
